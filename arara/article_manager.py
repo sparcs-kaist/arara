@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 class ArticleManager(object):
+    """
+    게시글 및 검색 처리 클래스
+    """
 
     def __init__(self):
         pass
@@ -10,6 +13,8 @@ class ArticleManager(object):
         DB로부터 게시글 하나를 읽어옴
 
         >>> article.read(session_key, 300, "garbages")
+
+	    - Current Article Dictionary { no, read_status, title, author, date, hit, vote }
 
         @type  session_key: string
         @param session_key: User Key

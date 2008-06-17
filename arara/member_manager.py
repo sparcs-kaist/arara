@@ -11,6 +11,8 @@ class MemberManager(object):
 
         >>> member.register(user_reg_dic)
 
+	    - Current User Dictionary { ID, password, nickname, email, sig, default_language }
+
         @type  user_reg_dic: dictionary
         @param user_reg_dic: User Dictionary
         @rtype: boolean
