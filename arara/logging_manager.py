@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 class LoggingManager(object):
 
     def __init__(self):
