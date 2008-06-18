@@ -8,19 +8,19 @@ class LoginManager(object):
     def __init__(self):
         pass
 
-    def login(id, password):
+    def login(id, password, user_ip):
         """
         로그인 처리를 담당하는 함수.
         아이디와 패스워드를 받은 뒤 User Key를 리턴.
 
-        >>> session_key = login_manager.login(id, pw)
-
-        >>> article.read(session_key, 300)
+        >>> session_key = login_manager.login(id, pw, "143.248.234.143")
 
         @type  id: string
         @param id: User ID
         @type  password: string
-        @param password: User Password
+        @param password: User Passwordi
+	@type  user_ip: string
+	@param user_ip: User IP
         @rtype: string
         @return: 
             1. 로그인 성공 시: User Key
@@ -41,3 +41,16 @@ class LoginManager(object):
             2. 로그아웃 실패 시: False
         """
 
+    def updatesession(session_key):
+	"""
+	세션 expire시간을 연장해주는 함수
+
+	>>> login_manager.updatesession(session_key)
+
+        @type  session_key: string
+        @param session_key: User Key
+        @rtype: string
+        @return:
+            1. 업데이트 성공 시: True
+            2. 업데이트 실패 시: False
+        """

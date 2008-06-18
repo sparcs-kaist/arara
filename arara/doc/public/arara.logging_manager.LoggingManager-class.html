@@ -3,7 +3,7 @@
           "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>arara.blacklist_manager.BlacklistManager</title>
+  <title>arara.logging_manager.LoggingManager</title>
   <link rel="stylesheet" href="epydoc.css" type="text/css"></link>
 </head>
 <body bgcolor="white" text="black" link="blue" vlink="#204080"
@@ -24,23 +24,23 @@
     <td width="100%">
       <font size="-1"><b class="breadcrumbs">
         <a href="arara-module.html">Package&nbsp;arara</a> ::
-        <a href="arara.blacklist_manager-module.html">Module&nbsp;blacklist_manager</a> ::
-        Class&nbsp;BlacklistManager
+        <a href="arara.logging_manager-module.html">Module&nbsp;logging_manager</a> ::
+        Class&nbsp;LoggingManager
       </b></font></br>
     </td>
     <td><table cellpadding="0" cellspacing="0">
-      <tr><td align="right"><font size="-2">[<a href="../private/arara.blacklist_manager.BlacklistManager-class.html">show&nbsp;private</a>&nbsp;|&nbsp;hide&nbsp;private]</font></td></tr>
-      <tr><td align="right"><font size="-2">[<a href="frames.html"target="_top">frames</a>&nbsp;|&nbsp;<a href="arara.blacklist_manager.BlacklistManager-class.html" target="_top">no&nbsp;frames</a>]</font></td></tr>
+      <tr><td align="right"><font size="-2">[<a href="../private/arara.logging_manager.LoggingManager-class.html">show&nbsp;private</a>&nbsp;|&nbsp;hide&nbsp;private]</font></td></tr>
+      <tr><td align="right"><font size="-2">[<a href="frames.html"target="_top">frames</a>&nbsp;|&nbsp;<a href="arara.logging_manager.LoggingManager-class.html" target="_top">no&nbsp;frames</a>]</font></td></tr>
     </table></td>
 </tr></table>
 
 <!-- =========== START OF CLASS DESCRIPTION =========== -->
-<h2 class="class">Type BlacklistManager</h2>
+<h2 class="class">Type LoggingManager</h2>
 
 <pre class="base-tree">
 <a href="__builtin__.object-class.html"><code>object</code></a> --+
          |
-        <b>BlacklistManager</b>
+        <b>LoggingManager</b>
 </pre><br />
 
 <hr/>
@@ -53,23 +53,12 @@
 <tr><td align="right" valign="top" width="15%"><font size="-1">&nbsp;</font></td>
   <td><code><a name="__init__"></a><span class="summary-sig"><span class="summary-sig-name">__init__</span>(<span class=summary-sig-arg>self</span>)</span></code>
 </td></tr>
-<tr><td align="right" valign="top" width="15%"><font size="-1">        boolean
-</font></td>
-  <td><code><span class="summary-sig"><a href="arara.blacklist_manager.BlacklistManager-class.html#add" class="summary-sig-name"><code>add</code></a>(<span class=summary-sig-arg>session_key</span>,
-          <span class=summary-sig-arg>blacklist_id</span>)</span></code>
-<br />
-블랙리스트 id 추가</td></tr>
-<tr><td align="right" valign="top" width="15%"><font size="-1">        boolean
-</font></td>
-  <td><code><span class="summary-sig"><a href="arara.blacklist_manager.BlacklistManager-class.html#delete" class="summary-sig-name"><code>delete</code></a>(<span class=summary-sig-arg>session_key</span>,
-          <span class=summary-sig-arg>blacklist_id</span>)</span></code>
-<br />
-블랙리스트 id 삭제</td></tr>
 <tr><td align="right" valign="top" width="15%"><font size="-1">        list
 </font></td>
-  <td><code><span class="summary-sig"><a href="arara.blacklist_manager.BlacklistManager-class.html#list" class="summary-sig-name"><code>list</code></a>(<span class=summary-sig-arg>session_key</span>)</span></code>
+  <td><code><span class="summary-sig"><a href="arara.logging_manager.LoggingManager-class.html#search" class="summary-sig-name"><code>search</code></a>(<span class=summary-sig-arg>session_key</span>,
+          <span class=summary-sig-arg>log_search_dic</span>)</span></code>
 <br />
-블랙리스트로 설정한 사람의 목록을 보여줌</td></tr>
+�α� ���̺��� �˻��ϴ� �Լ�</td></tr>
 <tr bgcolor="#e8f0f8" class="group">
   <th colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;Inherited from object</th></tr>
 <tr><td align="right" valign="top" width="15%"><font size="-1">&nbsp;</font></td>
@@ -119,103 +108,40 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
   <th colspan="2">Method Details</th></tr>
 </table>
 
-<a name="add"></a>
+<a name="search"></a>
 <table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
-  <h3><span class="sig"><span class="sig-name">add</span>(<span class=sig-arg>session_key</span>,
-          <span class=sig-arg>blacklist_id</span>)</span>
+  <h3><span class="sig"><span class="sig-name">search</span>(<span class=sig-arg>session_key</span>,
+          <span class=sig-arg>log_search_dic</span>)</span>
   </h3>
-  블랙리스트 id 추가
+  �α� ���̺��� �˻��ϴ� �Լ�
 <pre class="doctestblock">
-<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>blacklist.add(session_key, <span class="py-string">&quot;pv457&quot;</span>)</span></pre>
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>logging.search(session_key, log_search_dic)</span></pre>
+  <ul>
+    <li>
+      Current log_search_dic { board_name, article_no, user_id, title, 
+      author, date } NULL Values are allowed for each key.
+    </li>
+  </ul>
   <dl><dt></dt><dd>
     <dl><dt><b>Parameters:</b></dt>
       <dd><code><b>session_key</b></code> -
          User Key
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         (type=string)</i>
-      <dd><code><b>blacklist_id</b></code> -
-         Blacklist ID
+      <dd><code><b>log_search_dic</b></code> -
+         Log Search Query Dictionary
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=string)</i>
+        (type=dictionary)</i>
       </dd>
     </dl>
     <dl><dt><b>Returns:</b></dt>
       <dd>
         <ol start="1">
           <li>
-            추가 성공: True
+            �˻� ����: Log Dictionary List
           </li>
           <li>
-            추가 실패: False
-          </li>
-        </ol>
-        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=boolean)</i>
-      </dd>
-    </dl>
-  </dd></dl>
-</td></tr></table>
-
-<a name="delete"></a>
-<table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
-  <h3><span class="sig"><span class="sig-name">delete</span>(<span class=sig-arg>session_key</span>,
-          <span class=sig-arg>blacklist_id</span>)</span>
-  </h3>
-  블랙리스트 id 삭제
-<pre class="doctestblock">
-<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>blacklist.delete(session_key, <span class="py-string">&quot;pv457&quot;</span>)</span></pre>
-  <dl><dt></dt><dd>
-    <dl><dt><b>Parameters:</b></dt>
-      <dd><code><b>session_key</b></code> -
-         User Key
-        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=string)</i>
-      <dd><code><b>blacklist_id</b></code> -
-         Blacklist ID
-        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=string)</i>
-      </dd>
-    </dl>
-    <dl><dt><b>Returns:</b></dt>
-      <dd>
-        <ol start="1">
-          <li>
-            삭제 성공: True
-          </li>
-          <li>
-            삭제 실패: False
-          </li>
-        </ol>
-        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=boolean)</i>
-      </dd>
-    </dl>
-  </dd></dl>
-</td></tr></table>
-
-<a name="list"></a>
-<table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
-  <h3><span class="sig"><span class="sig-name">list</span>(<span class=sig-arg>session_key</span>)</span>
-  </h3>
-  블랙리스트로 설정한 사람의 목록을 보여줌
-<pre class="doctestblock">
-<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>blacklist.list_show(session_key)</span></pre>
-  <dl><dt></dt><dd>
-    <dl><dt><b>Parameters:</b></dt>
-      <dd><code><b>session_key</b></code> -
-         User Key
-        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=string)</i>
-      </dd>
-    </dl>
-    <dl><dt><b>Returns:</b></dt>
-      <dd>
-        <ol start="1">
-          <li>
-            성공: Blacklist ID List
-          </li>
-          <li>
-            실패: False
+            �˻� ����: False
           </li>
         </ol>
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

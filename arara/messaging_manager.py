@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 class MessagingManager(object):
+    """
+    회원간 쪽지기능, 쿼리등을 담당하는 클래스
+    """
 
     def __init__(self):
         pass
@@ -23,7 +26,7 @@ class MessagingManager(object):
         """
         쪽지 전송하기
 
-        >>> sendmsg(session_key, "pv457", msg_dic)
+        >>> messaging.sendmsg(session_key, "pv457", msg_dic)
 
         @type  session_key: string
         @param session_key: User Key
@@ -36,3 +39,20 @@ class MessagingManager(object):
             1. 메세지 전송 성공: True
             2. 메세지 전송 실패: False
         """
+
+    def query(session_key, query_id):
+	"""
+	쿼리 함수
+
+	>>> messaging.query(session_key, "pv457")
+
+	@type  session_key: string
+	@param session_key: User Key
+	@type  query_id: string
+	@param query_id: User ID to send Query
+	@rtype: dictionary
+	@return:
+	    1. 쿼리 성공: query_dic
+	    2. 쿼리 실패: False
+
+	    query_dic { self_introduce, user_ip }

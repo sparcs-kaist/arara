@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 class MemberManager(object):
+    """
+    회원 가입, 회원정보 수정, 이메일 인증등을 담당하는 클래스
+    """
 
     def __init__(self):
         pass
@@ -11,7 +14,7 @@ class MemberManager(object):
 
         >>> member.register(user_reg_dic)
 
-	    - Current User Dictionary { ID, password, nickname, email, sig, default_language }
+	    - Current User Dictionary { ID, password, nickname, email, sig, self_introduce, default_language }
 
         @type  user_reg_dic: dictionary
         @param user_reg_dic: User Dictionary
