@@ -104,20 +104,16 @@ class ArticleManager(object):
             2. 리스트 읽어오기 실패: False
         """
 
-    def boardlist(session_key, board_name, page=1, page_length=20):
+    def boardlist(session_key, board_name):
         """
         게시판 목록 읽어오기
 
-        >>> article.boardlist(session_key, "garbages", 2, 18)
+        >>> article.boardlist(session_key, "garbages")
 
         @type  session_key: string
         @param session_key: User Key
         @type board_name: string
         @param board_name : BBS Name
-        @type  page: integer
-        @param page: Page Number to Request
-        @type  page_length: integer
-        @param page_length: Count of Article on a Page
         @rtype: list
         @return:
             1. 리스트 읽어오기 성공: Article List
