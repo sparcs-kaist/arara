@@ -56,3 +56,4 @@ class MessagingManager(object):
 	    2. 쿼리 실패: False
 
 	    query_dic { self_introduce, user_ip }
+	"""

@@ -7,7 +7,7 @@ class LoggingManager(object):
 
     def search(session_key, log_search_dic):
 	"""
-	·Î±× Å×ÀÌºíÀ» °Ë»öÇÏ´Â ÇÔ¼ö
+	ë¡œê·¸ í…Œì´ë¸”ì„ ê²€ìƒ‰í•˜ëŠ” í•¨ìˆ˜
 
 	>>> logging.search(session_key, log_search_dic)
 
@@ -20,6 +20,6 @@ class LoggingManager(object):
 	@param log_search_dic: Log Search Query Dictionary
 	@rtype: list
 	@return:
-	    1. °Ë»ö ¼º°ø: Log Dictionary List
-	    2. °Ë»ö ½ÇÆÐ: False
+	    1. ê²€ìƒ‰ ì„±ê³µ: Log Dictionary List
+	    2. ê²€ìƒ‰ ì‹¤íŒ¨: False
 	"""
