@@ -24,7 +24,11 @@ class LoginManager(object):
         @rtype: string
         @return: 
             1. 로그인 성공 시: User Key
-            2. 로그인 실패 시: False
+            2. 로그인 실패 시
+		1. 아이디 존재하지 않음: 1
+		2. 패스워드 불일치: 2
+		3. 데이터베이스 관련 에러: 99
+
         """
 
     def logout(session_key):
@@ -35,10 +39,12 @@ class LoginManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @rtype: string
+        @rtype: integer
         @return:
-            1. 로그아웃 성공 시: True
-            2. 로그아웃 실패 시: False
+            1. 로그아웃 성공 시: 0
+            2. 로그아웃 실패 시
+		1. 로그인되지 않은 사용자: 1
+		2. 데이터베이스 관련 에러: 99
         """
 
     def updatesession(session_key):
@@ -49,8 +55,10 @@ class LoginManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @rtype: string
+        @rtype: integer
         @return:
-            1. 업데이트 성공 시: True
-            2. 업데이트 실패 시: False
+            1. 업데이트 성공 시: 0
+            2. 업데이트 실패 시
+		1. 로그인되지 않은 사용자: 1
+		2. 데이터베이스 관련 에러: 99
         """
