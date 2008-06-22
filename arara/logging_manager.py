@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 
 class LoggingManager(object):
+    """
+    로깅관련 함수들을 모아놓은 클래스
+    아직 초안이라 논의되지 않은 메소드가 많음. 개선 필요
+    """
 
     def __init__(self):
 	pass
 
-    def search(session_key, log_search_dic):
+    def search(self, session_key, log_search_dic):
 	"""
 	로그 테이블을 검색하는 함수
 
