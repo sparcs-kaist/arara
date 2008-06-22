@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>arara.notice_manager.NoticeManager</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css"></link>
+</head>
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+
+<!-- =========== START OF NAVBAR =========== -->
+<table class="navbar" border="0" width="100%" cellpadding="0" bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="center">
+    <th class="navbar">&nbsp;&nbsp;&nbsp;<a class="navbar" href="arara-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+    <th class="navbar">&nbsp;&nbsp;&nbsp;<a class="navbar" href="trees.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+    <th class="navbar">&nbsp;&nbsp;&nbsp;<a class="navbar" href="indices.html">Index</a>&nbsp;&nbsp;&nbsp;</th>
+    <th class="navbar">&nbsp;&nbsp;&nbsp;<a class="navbar" href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+    <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <font size="-1"><b class="breadcrumbs">
+        <a href="arara-module.html">Package&nbsp;arara</a> ::
+        <a href="arara.notice_manager-module.html">Module&nbsp;notice_manager</a> ::
+        Class&nbsp;NoticeManager
+      </b></font></br>
+    </td>
+    <td><table cellpadding="0" cellspacing="0">
+      <tr><td align="right"><font size="-2">[<a href="../private/arara.notice_manager.NoticeManager-class.html">show&nbsp;private</a>&nbsp;|&nbsp;hide&nbsp;private]</font></td></tr>
+      <tr><td align="right"><font size="-2">[<a href="frames.html"target="_top">frames</a>&nbsp;|&nbsp;<a href="arara.notice_manager.NoticeManager-class.html" target="_top">no&nbsp;frames</a>]</font></td></tr>
+    </table></td>
+</tr></table>
+
+<!-- =========== START OF CLASS DESCRIPTION =========== -->
+<h2 class="class">Type NoticeManager</h2>
+
+<pre class="base-tree">
+<a href="__builtin__.object-class.html"><code>object</code></a> --+
+         |
+        <b>NoticeManager</b>
+</pre><br />
+
+<hr/>
+
+배너 및 환영 페이지 처리 관련 클래스
+<hr/>
+
+
+<!-- =========== START OF METHOD SUMMARY =========== -->
+<table class="summary" border="1" cellpadding="3" cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="summary">
+  <th colspan="2">Method Summary</th></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">&nbsp;</font></td>
+  <td><code><a name="__init__"></a><span class="summary-sig"><span class="summary-sig-name">__init__</span>(<span class=summary-sig-arg>self</span>)</span></code>
+</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">        string
+</font></td>
+  <td><code><span class="summary-sig"><a href="arara.notice_manager.NoticeManager-class.html#add_banner" class="summary-sig-name"><code>add_banner</code></a>(<span class=summary-sig-arg>self</span>,
+          <span class=summary-sig-arg>session_key</span>,
+          <span class=summary-sig-arg>banner_dic</span>)</span></code>
+<br />
+관리자용 배너 추가 함수</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">        string
+</font></td>
+  <td><code><span class="summary-sig"><a href="arara.notice_manager.NoticeManager-class.html#add_welcome" class="summary-sig-name"><code>add_welcome</code></a>(<span class=summary-sig-arg>self</span>,
+          <span class=summary-sig-arg>session_key</span>,
+          <span class=summary-sig-arg>welcome_dic</span>)</span></code>
+<br />
+관리자용 환영 페이지 추가 함수</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">        string
+</font></td>
+  <td><code><span class="summary-sig"><a href="arara.notice_manager.NoticeManager-class.html#get_banner" class="summary-sig-name"><code>get_banner</code></a>(<span class=summary-sig-arg>self</span>)</span></code>
+<br />
+배너를 가져오는 함수</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">        string
+</font></td>
+  <td><code><span class="summary-sig"><a href="arara.notice_manager.NoticeManager-class.html#get_welcome" class="summary-sig-name"><code>get_welcome</code></a>(<span class=summary-sig-arg>self</span>)</span></code>
+<br />
+환영 페이지를 가져오는 함수</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">        list
+</font></td>
+  <td><code><span class="summary-sig"><a href="arara.notice_manager.NoticeManager-class.html#list_banner" class="summary-sig-name"><code>list_banner</code></a>(<span class=summary-sig-arg>self</span>,
+          <span class=summary-sig-arg>session_key</span>)</span></code>
+<br />
+관리자용 배너 페이지 목록을 가져오는 함수</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">        list
+</font></td>
+  <td><code><span class="summary-sig"><a href="arara.notice_manager.NoticeManager-class.html#list_welcome" class="summary-sig-name"><code>list_welcome</code></a>(<span class=summary-sig-arg>self</span>,
+          <span class=summary-sig-arg>session_key</span>)</span></code>
+<br />
+관리자용 환영 페이지 목록을 가져오는 함수</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">        string
+</font></td>
+  <td><code><span class="summary-sig"><a href="arara.notice_manager.NoticeManager-class.html#remove_banner" class="summary-sig-name"><code>remove_banner</code></a>(<span class=summary-sig-arg>self</span>,
+          <span class=summary-sig-arg>session_key</span>,
+          <span class=summary-sig-arg>banner_no</span>)</span></code>
+<br />
+관리자용 배너 제거 함수</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">        string
+</font></td>
+  <td><code><span class="summary-sig"><a href="arara.notice_manager.NoticeManager-class.html#remove_welcome" class="summary-sig-name"><code>remove_welcome</code></a>(<span class=summary-sig-arg>self</span>,
+          <span class=summary-sig-arg>session_key</span>,
+          <span class=summary-sig-arg>welcome_no</span>)</span></code>
+<br />
+관리자용 환영 페이지 제거 함수</td></tr>
+<tr bgcolor="#e8f0f8" class="group">
+  <th colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;Inherited from object</th></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">&nbsp;</font></td>
+  <td><code><span class="summary-sig"><a href="__builtin__.object-class.html#__delattr__" class="summary-sig-name"><code>__delattr__</code></a>(<span class="summary-sig-vararg">...</span>)</span></code>
+<br />
+x.__delattr__('name') &lt;==&gt; del x.name</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">&nbsp;</font></td>
+  <td><code><span class="summary-sig"><a href="__builtin__.object-class.html#__getattribute__" class="summary-sig-name"><code>__getattribute__</code></a>(<span class="summary-sig-vararg">...</span>)</span></code>
+<br />
+x.__getattribute__('name') &lt;==&gt; x.name</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">&nbsp;</font></td>
+  <td><code><span class="summary-sig"><a href="__builtin__.object-class.html#__hash__" class="summary-sig-name"><code>__hash__</code></a>(<span class=summary-sig-arg>x</span>)</span></code>
+<br />
+x.__hash__() &lt;==&gt; hash(x)</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">&nbsp;</font></td>
+  <td><code><span class="summary-sig"><a href="__builtin__.object-class.html#__new__" class="summary-sig-name"><code>__new__</code></a>(<span class=summary-sig-arg>T</span>,
+          <span class=summary-sig-arg>S</span>,
+          <span class="summary-sig-vararg">...</span>)</span></code>
+<br />
+T.__new__(S, ...) -&gt; a new object with type S, a subtype of T</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">&nbsp;</font></td>
+  <td><code><span class="summary-sig"><a href="__builtin__.object-class.html#__reduce__" class="summary-sig-name"><code>__reduce__</code></a>(<span class="summary-sig-vararg">...</span>)</span></code>
+<br />
+helper for pickle</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">&nbsp;</font></td>
+  <td><code><span class="summary-sig"><a href="__builtin__.object-class.html#__reduce_ex__" class="summary-sig-name"><code>__reduce_ex__</code></a>(<span class="summary-sig-vararg">...</span>)</span></code>
+<br />
+helper for pickle</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">&nbsp;</font></td>
+  <td><code><span class="summary-sig"><a href="__builtin__.object-class.html#__repr__" class="summary-sig-name"><code>__repr__</code></a>(<span class=summary-sig-arg>x</span>)</span></code>
+<br />
+x.__repr__() &lt;==&gt; repr(x)</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">&nbsp;</font></td>
+  <td><code><span class="summary-sig"><a href="__builtin__.object-class.html#__setattr__" class="summary-sig-name"><code>__setattr__</code></a>(<span class="summary-sig-vararg">...</span>)</span></code>
+<br />
+x.__setattr__('name', value) &lt;==&gt; x.name = value</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">&nbsp;</font></td>
+  <td><code><span class="summary-sig"><a href="__builtin__.object-class.html#__str__" class="summary-sig-name"><code>__str__</code></a>(<span class=summary-sig-arg>x</span>)</span></code>
+<br />
+x.__str__() &lt;==&gt; str(x)</td></tr>
+</table><br />
+
+
+<!-- =========== START OF METHOD DETAILS =========== -->
+<table class="details" border="1" cellpadding="3" cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="details">
+  <th colspan="2">Method Details</th></tr>
+</table>
+
+<a name="add_banner"></a>
+<table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
+  <h3><span class="sig"><span class="sig-name">add_banner</span>(<span class=sig-arg>self</span>,
+          <span class=sig-arg>session_key</span>,
+          <span class=sig-arg>banner_dic</span>)</span>
+  </h3>
+  관리자용 배너 추가 함수
+<pre class="doctestblock">
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>notice.add_banner(SYSOP_session_key, banner_dic)</span>
+<span class="py-output">True, &quot;OK&quot;</span>
+
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>notice.add_banner(user_session_key, banner_dic)</span>
+<span class="py-output">False, &quot;NOT_SYSOP&quot;</span></pre>
+  --banner_dic {banner_no, banner_article}
+  <dl><dt></dt><dd>
+    <dl><dt><b>Returns:</b></dt>
+      <dd>
+        <ol start="1">
+          <li>
+            배너 페이지 추가에 성공하였을 때: True, 
+            &quot;OK&quot;
+          </li>
+          <li>
+            배너 페이지 추가에 실패하였을 때:
+            <ol start="1">
+              <li>
+                시삽이 아닐 때: False, &quot;NOT_SYSOP&quot;
+              </li>
+              <li>
+                데이터베이스 오류: False, 
+                &quot;DATABASE_ERROR&quot;
+              </li>
+            </ol>
+          </li>
+        </ol>
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=string)</i>
+      </dd>
+    </dl>
+  </dd></dl>
+</td></tr></table>
+
+<a name="add_welcome"></a>
+<table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
+  <h3><span class="sig"><span class="sig-name">add_welcome</span>(<span class=sig-arg>self</span>,
+          <span class=sig-arg>session_key</span>,
+          <span class=sig-arg>welcome_dic</span>)</span>
+  </h3>
+  관리자용 환영 페이지 추가 함수
+<pre class="doctestblock">
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>notice.add_banner(SYSOP_session_key, banner_dic)</span>
+<span class="py-output">True, &quot;OK&quot;</span>
+
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>notice.add_banner(user_session_key, banner_dic)</span>
+<span class="py-output">False, &quot;NOT_SYSOP&quot;</span></pre>
+  --welcome_dic {welcome_no, welcome_article}
+  <dl><dt></dt><dd>
+    <dl><dt><b>Returns:</b></dt>
+      <dd>
+        <ol start="1">
+          <li>
+            환영 페이지 추가에 성공하였을 때: True, 
+            &quot;OK&quot;
+          </li>
+          <li>
+            환영 페이지 추가에 실패하였을 때:
+            <ol start="1">
+              <li>
+                시삽이 아닐 때: False, &quot;NOT_SYSOP&quot;
+              </li>
+              <li>
+                데이터베이스 오류: False, 
+                &quot;DATABASE_ERROR&quot;
+              </li>
+            </ol>
+          </li>
+        </ol>
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=string)</i>
+      </dd>
+    </dl>
+  </dd></dl>
+</td></tr></table>
+
+<a name="get_banner"></a>
+<table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
+  <h3><span class="sig"><span class="sig-name">get_banner</span>(<span class=sig-arg>self</span>)</span>
+  </h3>
+  배너를 가져오는 함수
+<pre class="doctestblock">
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>notice.get_banner()</span>
+<span class="py-output">&quot;&lt;html&gt; .... &quot;</span></pre>
+  <dl><dt></dt><dd>
+    <dl><dt><b>Returns:</b></dt>
+      <dd>
+        <ol start="1">
+          <li>
+            배너가 있을 때: 랜덤하게 선택된 
+            배너(html)
+          </li>
+          <li>
+            배너가 없을 때: &quot;&quot;
+          </li>
+        </ol>
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=string)</i>
+      </dd>
+    </dl>
+  </dd></dl>
+</td></tr></table>
+
+<a name="get_welcome"></a>
+<table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
+  <h3><span class="sig"><span class="sig-name">get_welcome</span>(<span class=sig-arg>self</span>)</span>
+  </h3>
+  환영 페이지를 가져오는 함수
+<pre class="doctestblock">
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>notice.get_welcome()</span>
+<span class="py-output">&quot;스팍스에서 2009학년도 신입회원을 모집합니다. ...&quot;</span></pre>
+  <dl><dt></dt><dd>
+    <dl><dt><b>Returns:</b></dt>
+      <dd>
+        <ol start="1">
+          <li>
+            환영 페이지가 있을 때: 환영 페이지(text)
+          </li>
+          <li>
+            환영 페이지가 없을 때: &quot;&quot;
+          </li>
+        </ol>
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=string)</i>
+      </dd>
+    </dl>
+  </dd></dl>
+</td></tr></table>
+
+<a name="list_banner"></a>
+<table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
+  <h3><span class="sig"><span class="sig-name">list_banner</span>(<span class=sig-arg>self</span>,
+          <span class=sig-arg>session_key</span>)</span>
+  </h3>
+  관리자용 배너 페이지 목록을 가져오는 함수
+<pre class="doctestblock">
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>notice.list_welcome(SYSOP_session_key)</span>
+<span class="py-output">True, [{&quot;banner_no&quot;: 2, &quot;banner_article&quot;: &quot;&lt;html&gt;....&quot;}, {&quot;banner_no&quot;: 3, &quot;banner_article&quot;: &quot;&lt;html&gt;....&quot;}, ....]</span>
+
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>notice.list_welcome(user_session_key)</span>
+<span class="py-output">False, [&quot;NOT_SYSOP&quot;]</span></pre>
+  <dl><dt></dt><dd>
+    <dl><dt><b>Returns:</b></dt>
+      <dd>
+        <ol start="1">
+          <li>
+            배너 페이지 목록 읽기에 성공하였을 때: 
+            True, 배너 페이지들의 목록(text)
+          </li>
+          <li>
+            배너 페이지 목록 읽기에 실패하였을 때:
+            <ol start="1">
+              <li>
+                시삽이 아닐 때: False, &quot;NOT_SYSOP&quot;
+              </li>
+              <li>
+                데이터베이스 오류: False, 
+                &quot;DATABASE_ERROR&quot;
+              </li>
+            </ol>
+          </li>
+        </ol>
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=list)</i>
+      </dd>
+    </dl>
+  </dd></dl>
+</td></tr></table>
+
+<a name="list_welcome"></a>
+<table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
+  <h3><span class="sig"><span class="sig-name">list_welcome</span>(<span class=sig-arg>self</span>,
+          <span class=sig-arg>session_key</span>)</span>
+  </h3>
+  관리자용 환영 페이지 목록을 가져오는 함수
+<pre class="doctestblock">
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>notice.list_welcome(SYSOP_session_key)</span>
+<span class="py-output">[{&quot;welcome_no&quot;: 32, &quot;welcome_article&quot;: &quot;신입회원을 모집합니다&quot;}, {&quot;welcome_no&quot;:33, &quot;welcome_article&quot;: &quot;......&quot;}, ....]</span></pre>
+  <dl><dt></dt><dd>
+    <dl><dt><b>Returns:</b></dt>
+      <dd>
+        <ol start="1">
+          <li>
+            환영 페이지가 있을 때: True, 환영 
+            페이지들의 목록(text)
+          </li>
+          <li>
+            환영 페이지가 없을 때:
+            <ol start="1">
+              <li>
+                시삽이 아닐 때: False, &quot;NOT_SYSOP&quot;
+              </li>
+              <li>
+                데이터베이스 오류: False, 
+                &quot;DATABASE_ERROR&quot;
+              </li>
+            </ol>
+          </li>
+        </ol>
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=list)</i>
+      </dd>
+    </dl>
+  </dd></dl>
+</td></tr></table>
+
+<a name="remove_banner"></a>
+<table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
+  <h3><span class="sig"><span class="sig-name">remove_banner</span>(<span class=sig-arg>self</span>,
+          <span class=sig-arg>session_key</span>,
+          <span class=sig-arg>banner_no</span>)</span>
+  </h3>
+  관리자용 배너 제거 함수
+<pre class="doctestblock">
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>notice.remove_banner(SYSOP_session_key, 33)</span>
+<span class="py-output">True, &quot;OK&quot;</span>
+
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>notice.remove_banner(user_session_key, 33)</span>
+<span class="py-output">False, &quot;NOT_SYSOP&quot;</span>
+
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>notice.remove_banner(SYSOP_session_key, -1)</span>
+<span class="py-output">False, &quot;NOT_EXIST&quot;</span></pre>
+  <dl><dt></dt><dd>
+    <dl><dt><b>Returns:</b></dt>
+      <dd>
+        <ol start="1">
+          <li>
+            배너 제거에 성공하였을 때: True, 
+            &quot;OK&quot;
+          </li>
+          <li>
+            배너 제거에 실패하였을 때:
+            <ol start="1">
+              <li>
+                시삽이 아닐 때: False, &quot;NOT_SYSOP&quot;
+              </li>
+              <li>
+                존재하지 않는 배너번호일 때: False, 
+                &quot;NOT_EXIST&quot;
+              </li>
+              <li>
+                데이터베이스 오류: False, 
+                &quot;DATABASE_ERROR&quot;
+              </li>
+            </ol>
+          </li>
+        </ol>
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=string)</i>
+      </dd>
+    </dl>
+  </dd></dl>
+</td></tr></table>
+
+<a name="remove_welcome"></a>
+<table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
+  <h3><span class="sig"><span class="sig-name">remove_welcome</span>(<span class=sig-arg>self</span>,
+          <span class=sig-arg>session_key</span>,
+          <span class=sig-arg>welcome_no</span>)</span>
+  </h3>
+  관리자용 환영 페이지 제거 함수
+<pre class="doctestblock">
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>notice.remove_welcome(SYSOP_session_key, 33)</span>
+<span class="py-output">True, &quot;OK&quot;</span>
+
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>notice.remove_welcome(user_session_key, 33)</span>
+<span class="py-output">False, &quot;NOT_SYSOP&quot;</span>
+
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>notice.remove_welcome(SYSOP_session_key, -1)</span>
+<span class="py-output">False, &quot;NOT_EXIST&quot;</span></pre>
+  <dl><dt></dt><dd>
+    <dl><dt><b>Returns:</b></dt>
+      <dd>
+        <ol start="1">
+          <li>
+            환영 페이지 제거에 성공하였을 때: True, 
+            &quot;OK&quot;
+          </li>
+          <li>
+            환영 페이지 제거에 실패하였을 때:
+            <ol start="1">
+              <li>
+                시삽이 아닐 때: False, &quot;NOT_SYSOP&quot;
+              </li>
+              <li>
+                존재하지 않는 배너번호일 때: False, 
+                &quot;NOT_EXIST&quot;
+              </li>
+              <li>
+                데이터베이스 오류: False, 
+                &quot;DATABASE_ERROR&quot;
+              </li>
+            </ol>
+          </li>
+        </ol>
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=string)</i>
+      </dd>
+    </dl>
+  </dd></dl>
+</td></tr></table>
+<br />
+
+
+<!-- =========== START OF NAVBAR =========== -->
+<table class="navbar" border="0" width="100%" cellpadding="0" bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="center">
+    <th class="navbar">&nbsp;&nbsp;&nbsp;<a class="navbar" href="arara-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+    <th class="navbar">&nbsp;&nbsp;&nbsp;<a class="navbar" href="trees.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+    <th class="navbar">&nbsp;&nbsp;&nbsp;<a class="navbar" href="indices.html">Index</a>&nbsp;&nbsp;&nbsp;</th>
+    <th class="navbar">&nbsp;&nbsp;&nbsp;<a class="navbar" href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+    <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr>
+    <td align="left"><font size="-2">Generated by Epydoc 2.1 on Mon Jun 23 02:32:58 2008</font></td>
+    <td align="right"><a href="http://epydoc.sourceforge.net"
+                      ><font size="-2">http://epydoc.sf.net</font></a></td>
+  </tr>
+</table>
+</body>
+</html>

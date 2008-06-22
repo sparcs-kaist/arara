@@ -3,6 +3,7 @@
 class ReadStatusManager(object):
     """
     읽은 글, 통과한글 처리관련 클래스
+    """
 
     def __init__(self):
         pass

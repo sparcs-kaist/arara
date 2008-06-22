@@ -75,8 +75,8 @@ class NoticeManager(object):
 	True, "OK"
 	>>> notice.add_banner(user_session_key, banner_dic)
 	False, "NOT_SYSOP"
-
-	    --banner_dic {banner_no, banner_article}
+	
+	--banner_dic {banner_no, banner_article}
 
 	@rtype: string
 	@return:
@@ -94,8 +94,8 @@ class NoticeManager(object):
 	True, "OK"
 	>>> notice.add_banner(user_session_key, banner_dic)
 	False, "NOT_SYSOP"
-
-	    --welcome_dic {welcome_no, welcome_article}
+	
+	--welcome_dic {welcome_no, welcome_article}
 
 	@rtype: string
 	@return:

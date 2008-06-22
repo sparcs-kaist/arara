@@ -90,7 +90,7 @@ class MemberManager(object):
 	True, {'user_id': 'pv457', 'user_nickname': '심영준',
 	'self_introduce': '...', 'user_ip': '143.248.234.111'}
 
-	    ---query_dic { user_id, user_nickname, self_introduce, user_ip }
+	---query_dic { user_id, user_nickname, self_introduce, user_ip }
 
 	@type  session_key: string
 	@param session_key: User Key
@@ -112,8 +112,8 @@ class MemberManager(object):
 	>>> member.querybynick(session_key, "심영준")
 	True, {'user_id': 'pv457', 'user_nickname': '심영준',
 	'self_introduce': '...', 'user_ip': '143.248.234.111'}
-	    
-	    ---query_dic { user_id, user_nickname, self_introduce, user_ip }
+
+	---query_dic { user_id, user_nickname, self_introduce, user_ip }
 
 	@type  session_key: string
 	@param session_key: User Key

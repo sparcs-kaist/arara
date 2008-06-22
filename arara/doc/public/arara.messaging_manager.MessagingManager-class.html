@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<meta http-equiv='Content-Type' content='text/html;charset=utf-8' />
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
           "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -46,7 +45,7 @@
 
 <hr/>
 
-회원간 쪽지기능, 쿼리등을 담당하는 클래스
+회원간 쪽지기능등을 담당하는 클래스
 <hr/>
 
 
@@ -59,22 +58,24 @@
 </td></tr>
 <tr><td align="right" valign="top" width="15%"><font size="-1">        list
 </font></td>
-  <td><code><span class="summary-sig"><a href="arara.messaging_manager.MessagingManager-class.html#list" class="summary-sig-name"><code>list</code></a>(<span class=summary-sig-arg>session_key</span>)</span></code>
+  <td><code><span class="summary-sig"><a href="arara.messaging_manager.MessagingManager-class.html#receive_list" class="summary-sig-name"><code>receive_list</code></a>(<span class=summary-sig-arg>self</span>,
+          <span class=summary-sig-arg>session_key</span>)</span></code>
 <br />
-쪽지 리스트 읽어오기</td></tr>
-<tr><td align="right" valign="top" width="15%"><font size="-1">        dictionary
+받은 쪽지 리스트 읽어오기</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">        string
 </font></td>
-  <td><code><span class="summary-sig"><a href="arara.messaging_manager.MessagingManager-class.html#query" class="summary-sig-name"><code>query</code></a>(<span class=summary-sig-arg>session_key</span>,
-          <span class=summary-sig-arg>query_id</span>)</span></code>
-<br />
-쿼리 함수</td></tr>
-<tr><td align="right" valign="top" width="15%"><font size="-1">        boolean
-</font></td>
-  <td><code><span class="summary-sig"><a href="arara.messaging_manager.MessagingManager-class.html#sendmsg" class="summary-sig-name"><code>sendmsg</code></a>(<span class=summary-sig-arg>session_key</span>,
+  <td><code><span class="summary-sig"><a href="arara.messaging_manager.MessagingManager-class.html#send_message" class="summary-sig-name"><code>send_message</code></a>(<span class=summary-sig-arg>self</span>,
+          <span class=summary-sig-arg>session_key</span>,
           <span class=summary-sig-arg>id_to_send</span>,
           <span class=summary-sig-arg>msg_dic</span>)</span></code>
 <br />
 쪽지 전송하기</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">        list
+</font></td>
+  <td><code><span class="summary-sig"><a href="arara.messaging_manager.MessagingManager-class.html#sent_list" class="summary-sig-name"><code>sent_list</code></a>(<span class=summary-sig-arg>self</span>,
+          <span class=summary-sig-arg>session_key</span>)</span></code>
+<br />
+보낸 쪽지 리스트 읽어오기</td></tr>
 <tr bgcolor="#e8f0f8" class="group">
   <th colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;Inherited from object</th></tr>
 <tr><td align="right" valign="top" width="15%"><font size="-1">&nbsp;</font></td>
@@ -124,13 +125,16 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
   <th colspan="2">Method Details</th></tr>
 </table>
 
-<a name="list"></a>
+<a name="receive_list"></a>
 <table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
-  <h3><span class="sig"><span class="sig-name">list</span>(<span class=sig-arg>session_key</span>)</span>
+  <h3><span class="sig"><span class="sig-name">receive_list</span>(<span class=sig-arg>self</span>,
+          <span class=sig-arg>session_key</span>)</span>
   </h3>
-  쪽지 리스트 읽어오기
+  받은 쪽지 리스트 읽어오기
 <pre class="doctestblock">
-<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>messaging.list(key)</span></pre>
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>messaging.receive_list(session_key)</span>
+<span class="py-output">True, [{&quot;id_who_sent&quot;: &quot;serialx&quot;, &quot;id_to_send&quot;: &quot;pv457&quot;,
+&quot;message_article&quot;: &quot;장난? 아니거등?&quot;, &quot;time_when_sent&quot;: &quot;2008.02.13 12:15:32&quot;}, ...]</span></pre>
   <dl><dt></dt><dd>
     <dl><dt><b>Parameters:</b></dt>
       <dd><code><b>session_key</b></code> -
@@ -143,10 +147,20 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
       <dd>
         <ol start="1">
           <li>
-            리스트 읽어오기 성공: Message List
+            리스트 읽어오기 성공: True, Message List
           </li>
           <li>
-            리스트 읽어오기 실패: False
+            리스트 읽어오기 실패:
+            <ol start="1">
+              <li>
+                로그인되지 않은 사용자: False, 
+                &quot;NOT_LOGGEDIN&quot;
+              </li>
+              <li>
+                데이터베이스 오류: False, 
+                &quot;DATABASE_ERROR&quot;
+              </li>
+            </ol>
           </li>
         </ol>
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -156,53 +170,19 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
   </dd></dl>
 </td></tr></table>
 
-<a name="query"></a>
+<a name="send_message"></a>
 <table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
-  <h3><span class="sig"><span class="sig-name">query</span>(<span class=sig-arg>session_key</span>,
-          <span class=sig-arg>query_id</span>)</span>
-  </h3>
-  쿼리 함수
-<pre class="doctestblock">
-<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>messaging.query(session_key, <span class="py-string">&quot;pv457&quot;</span>)</span></pre>
-  <dl><dt></dt><dd>
-    <dl><dt><b>Parameters:</b></dt>
-      <dd><code><b>session_key</b></code> -
-         User Key
-        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=string)</i>
-      <dd><code><b>query_id</b></code> -
-         User ID to send Query
-        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=string)</i>
-      </dd>
-    </dl>
-    <dl><dt><b>Returns:</b></dt>
-      <dd>
-        <ol start="1">
-          <li>
-            쿼리 성공: query_dic
-          </li>
-          <li>
-            <p>쿼리 실패: False</p>
-            query_dic { self_introduce, user_ip }
-          </li>
-        </ol>
-        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=dictionary)</i>
-      </dd>
-    </dl>
-  </dd></dl>
-</td></tr></table>
-
-<a name="sendmsg"></a>
-<table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
-  <h3><span class="sig"><span class="sig-name">sendmsg</span>(<span class=sig-arg>session_key</span>,
+  <h3><span class="sig"><span class="sig-name">send_message</span>(<span class=sig-arg>self</span>,
+          <span class=sig-arg>session_key</span>,
           <span class=sig-arg>id_to_send</span>,
           <span class=sig-arg>msg_dic</span>)</span>
   </h3>
   쪽지 전송하기
 <pre class="doctestblock">
-<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>messaging.sendmsg(session_key, <span class="py-string">&quot;pv457&quot;</span>, msg_dic)</span></pre>
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>messaging.send_message(session_key, <span class="py-string">&quot;pv457&quot;</span>, msg_dic)</span>
+<span class="py-output">True, &quot;OK&quot;</span></pre>
+  --msg_dic: {id_who_sent, id_to_send, message_article, 
+  time_when_sent}
   <dl><dt></dt><dd>
     <dl><dt><b>Parameters:</b></dt>
       <dd><code><b>session_key</b></code> -
@@ -223,14 +203,73 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
       <dd>
         <ol start="1">
           <li>
-            메세지 전송 성공: True
+            메세지 전송 성공: True, &quot;OK&quot;
           </li>
           <li>
-            메세지 전송 실패: False
+            메세지 전송 실패:
+            <ol start="1">
+              <li>
+                보낼 아이디가 존재하지 않음: False, 
+                &quot;ID_TO_SEND_NOT_EXIST&quot;
+              </li>
+              <li>
+                로그인되지 않은 사용자: False, 
+                &quot;NOT_LOGGEDIN&quot;
+              </li>
+              <li>
+                데이터베이스 오류: False, 
+                &quot;DATABASE_ERROR&quot;
+              </li>
+            </ol>
           </li>
         </ol>
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=boolean)</i>
+        (type=string)</i>
+      </dd>
+    </dl>
+  </dd></dl>
+</td></tr></table>
+
+<a name="sent_list"></a>
+<table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
+  <h3><span class="sig"><span class="sig-name">sent_list</span>(<span class=sig-arg>self</span>,
+          <span class=sig-arg>session_key</span>)</span>
+  </h3>
+  보낸 쪽지 리스트 읽어오기
+<pre class="doctestblock">
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>messaging.sent_list(session_key)</span>
+<span class="py-output">True, [{&quot;id_who_sent&quot;: &quot;pv457&quot;, &quot;id_to_send&quot;: &quot;serialx&quot;,
+&quot;message_article&quot;: &quot;야! 너 북극곰이라며?&quot;, &quot;time_when_sent&quot;: &quot;2008.02.13 12:13:43&quot;}, ...]</span></pre>
+  <dl><dt></dt><dd>
+    <dl><dt><b>Parameters:</b></dt>
+      <dd><code><b>session_key</b></code> -
+         User Key
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=string)</i>
+      </dd>
+    </dl>
+    <dl><dt><b>Returns:</b></dt>
+      <dd>
+        <ol start="1">
+          <li>
+            리스트 읽어오기 성공: True, Message List
+          </li>
+          <li>
+            리스트 읽어오기 실패:
+            <ol start="1">
+              <li>
+                로그인되지 않은 사용자: False, 
+                &quot;NOT_LOGGEDIN&quot;
+              </li>
+              <li>
+                데이터베이스 오류: False, 
+                &quot;DATABASE_ERROR&quot;
+              </li>
+            </ol>
+          </li>
+        </ol>
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=list)</i>
       </dd>
     </dl>
   </dd></dl>
@@ -251,7 +290,7 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
 
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
   <tr>
-    <td align="left"><font size="-2">Generated by Epydoc 2.1 on Thu Jun 19 12:34:24 2008</font></td>
+    <td align="left"><font size="-2">Generated by Epydoc 2.1 on Mon Jun 23 02:32:58 2008</font></td>
     <td align="right"><a href="http://epydoc.sourceforge.net"
                       ><font size="-2">http://epydoc.sf.net</font></a></td>
   </tr>

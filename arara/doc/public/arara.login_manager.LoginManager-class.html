@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<meta http-equiv='Content-Type' content='text/html;charset=utf-8' />
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
           "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -59,19 +58,22 @@
 </td></tr>
 <tr><td align="right" valign="top" width="15%"><font size="-1">        string
 </font></td>
-  <td><code><span class="summary-sig"><a href="arara.login_manager.LoginManager-class.html#login" class="summary-sig-name"><code>login</code></a>(<span class=summary-sig-arg>id</span>,
+  <td><code><span class="summary-sig"><a href="arara.login_manager.LoginManager-class.html#login" class="summary-sig-name"><code>login</code></a>(<span class=summary-sig-arg>self</span>,
+          <span class=summary-sig-arg>id</span>,
           <span class=summary-sig-arg>password</span>,
           <span class=summary-sig-arg>user_ip</span>)</span></code>
 <br />
 로그인 처리를 담당하는 함수.</td></tr>
 <tr><td align="right" valign="top" width="15%"><font size="-1">        string
 </font></td>
-  <td><code><span class="summary-sig"><a href="arara.login_manager.LoginManager-class.html#logout" class="summary-sig-name"><code>logout</code></a>(<span class=summary-sig-arg>session_key</span>)</span></code>
+  <td><code><span class="summary-sig"><a href="arara.login_manager.LoginManager-class.html#logout" class="summary-sig-name"><code>logout</code></a>(<span class=summary-sig-arg>self</span>,
+          <span class=summary-sig-arg>session_key</span>)</span></code>
 <br />
 로그아웃 처리를 담당하는 함수.</td></tr>
-<tr><td align="right" valign="top" width="15%"><font size="-1">        string
+<tr><td align="right" valign="top" width="15%"><font size="-1">        integer
 </font></td>
-  <td><code><span class="summary-sig"><a href="arara.login_manager.LoginManager-class.html#updatesession" class="summary-sig-name"><code>updatesession</code></a>(<span class=summary-sig-arg>session_key</span>)</span></code>
+  <td><code><span class="summary-sig"><a href="arara.login_manager.LoginManager-class.html#update_session" class="summary-sig-name"><code>update_session</code></a>(<span class=summary-sig-arg>self</span>,
+          <span class=summary-sig-arg>session_key</span>)</span></code>
 <br />
 세션 expire시간을 연장해주는 함수</td></tr>
 <tr bgcolor="#e8f0f8" class="group">
@@ -125,14 +127,19 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
 
 <a name="login"></a>
 <table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
-  <h3><span class="sig"><span class="sig-name">login</span>(<span class=sig-arg>id</span>,
+  <h3><span class="sig"><span class="sig-name">login</span>(<span class=sig-arg>self</span>,
+          <span class=sig-arg>id</span>,
           <span class=sig-arg>password</span>,
           <span class=sig-arg>user_ip</span>)</span>
   </h3>
   로그인 처리를 담당하는 함수. 아이디와 
   패스워드를 받은 뒤 User Key를 리턴.
 <pre class="doctestblock">
-<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>session_key = login_manager.login(id, pw, <span class="py-string">&quot;143.248.234.143&quot;</span>)</span></pre>
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>session_key = login_manager.login(id, pw, <span class="py-string">&quot;143.248.234.143&quot;</span>)</span>
+<span class="py-output">True, &quot;6bd89dab95356&quot;</span>
+
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>session_key = login_manager.login(id, wrong_pw, <span class="py-string">&quot;143.248.234.143&quot;</span>)</span>
+<span class="py-output">False, &quot;WRONG_PASSWORD&quot;</span></pre>
   <dl><dt></dt><dd>
     <dl><dt><b>Parameters:</b></dt>
       <dd><code><b>id</b></code> -
@@ -153,10 +160,24 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
       <dd>
         <ol start="1">
           <li>
-            로그인 성공 시: User Key
+            로그인 성공 시: True, user_key
           </li>
           <li>
-            로그인 실패 시: False
+            로그인 실패 시
+            <ol start="1">
+              <li>
+                아이디 존재하지 않음: False, 
+                &quot;WRONG_ID&quot;
+              </li>
+              <li>
+                패스워드 불일치: False, 
+                &quot;WRONG_PASSWORD&quot;
+              </li>
+              <li>
+                데이터베이스 관련 에러: False, 
+                &quot;DATABASE_ERROR&quot;
+              </li>
+            </ol>
           </li>
         </ol>
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -168,11 +189,16 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
 
 <a name="logout"></a>
 <table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
-  <h3><span class="sig"><span class="sig-name">logout</span>(<span class=sig-arg>session_key</span>)</span>
+  <h3><span class="sig"><span class="sig-name">logout</span>(<span class=sig-arg>self</span>,
+          <span class=sig-arg>session_key</span>)</span>
   </h3>
   로그아웃 처리를 담당하는 함수.
 <pre class="doctestblock">
-<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>login_manager.logout(session_key)</span></pre>
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>login_manager.logout(logged_in_session_key)</span>
+<span class="py-output">True, &quot;OK&quot;</span>
+
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>login_manager.logout(NOT_logged_in_session_key)</span>
+<span class="py-output">False, &quot;NOT_LOGGEDIN&quot;</span></pre>
   <dl><dt></dt><dd>
     <dl><dt><b>Parameters:</b></dt>
       <dd><code><b>session_key</b></code> -
@@ -185,10 +211,20 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
       <dd>
         <ol start="1">
           <li>
-            로그아웃 성공 시: True
+            로그아웃 성공 시: True, &quot;OK&quot;
           </li>
           <li>
-            로그아웃 실패 시: False
+            로그아웃 실패 시
+            <ol start="1">
+              <li>
+                로그인되지 않은 사용자: False, 
+                &quot;NOT_LOGGEDIN&quot;
+              </li>
+              <li>
+                데이터베이스 관련 에러: False, 
+                &quot;DATABASE_ERROR&quot;
+              </li>
+            </ol>
           </li>
         </ol>
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -198,13 +234,18 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
   </dd></dl>
 </td></tr></table>
 
-<a name="updatesession"></a>
+<a name="update_session"></a>
 <table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
-  <h3><span class="sig"><span class="sig-name">updatesession</span>(<span class=sig-arg>session_key</span>)</span>
+  <h3><span class="sig"><span class="sig-name">update_session</span>(<span class=sig-arg>self</span>,
+          <span class=sig-arg>session_key</span>)</span>
   </h3>
   세션 expire시간을 연장해주는 함수
 <pre class="doctestblock">
-<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>login_manager.updatesession(session_key)</span></pre>
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>login_manager.update_session(logged_in_session_key)</span>
+<span class="py-output">True, &quot;OK&quot;</span>
+
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>login_manager.update_session(NOT_logged_in_session_key)</span>
+<span class="py-output">False, &quot;NOT_LOGGEDIN&quot;</span></pre>
   <dl><dt></dt><dd>
     <dl><dt><b>Parameters:</b></dt>
       <dd><code><b>session_key</b></code> -
@@ -217,14 +258,24 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
       <dd>
         <ol start="1">
           <li>
-            업데이트 성공 시: True
+            업데이트 성공 시: True, &quot;OK&quot;
           </li>
           <li>
-            업데이트 실패 시: False
+            업데이트 실패 시
+            <ol start="1">
+              <li>
+                로그인되지 않은 사용자: False, 
+                &quot;NOT_LOGGEDIN&quot;
+              </li>
+              <li>
+                데이터베이스 관련 에러: False, 
+                &quot;DATABASE_ERROR&quot;
+              </li>
+            </ol>
           </li>
         </ol>
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=string)</i>
+        (type=integer)</i>
       </dd>
     </dl>
   </dd></dl>
@@ -245,7 +296,7 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
 
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
   <tr>
-    <td align="left"><font size="-2">Generated by Epydoc 2.1 on Thu Jun 19 12:34:24 2008</font></td>
+    <td align="left"><font size="-2">Generated by Epydoc 2.1 on Mon Jun 23 02:32:59 2008</font></td>
     <td align="right"><a href="http://epydoc.sourceforge.net"
                       ><font size="-2">http://epydoc.sf.net</font></a></td>
   </tr>

@@ -103,11 +103,11 @@ class ArticleManager(object):
 		4. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
 
-    def articlelist(self, session_key, board_name, page=1, page_length=20):
+    def article_list(self, session_key, board_name, page=1, page_length=20):
         """
         게시판의 게시글 목록 읽어오기
 
-        >>> article.articlelist(session_key, "garbages", 2, 18)
+        >>> article.article_list(session_key, "garbages", 2, 18)
 	True, [{"no": 1, "read_status": "N", "title": ...}, {"no": 2, "read_status": "R", "title": ...}, ...]
 
         @type  session_key: string
@@ -127,17 +127,15 @@ class ArticleManager(object):
 		3. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
 
-    def boardlist(self, session_key):
+    def board_list(self, session_key):
         """
         게시판 목록 읽어오기
 
-        >>> article.boardlist(session_key)
+        >>> article.board_list(session_key)
 	True, ["garbages", "love", "buynsell[com]", ...]
 
         @type  session_key: string
         @param session_key: User Key
-        @type board_name: string
-        @param board_name : BBS Name
         @rtype: list
         @return:
             1. 리스트 읽어오기 성공: True, Board List
