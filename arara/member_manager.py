@@ -23,7 +23,8 @@ class MemberManager(object):
         @return:
             1. register 성공: True, "OK"
             2. register 실패:
-		1. 데이터베이스 오류: False, "DATABASE_ERROR"
+		1. 양식이 맞지 않음(부적절한 NULL값 등): "WRONG_DICTIONARY"
+		2. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
 
     def confirm(self, confirm_key):
@@ -63,6 +64,29 @@ class MemberManager(object):
 		3. 데이터베이스 오류: False, "DATABASE_ERROR"
 	"""
         
+    def modify_password(self, session_key, user_password_dic):
+        """
+        DB에 회원 정보 수정
+
+        >>> member.modify(session_key, user_password_dic)
+	True, "OK"
+
+	---user_password_dic {id, current_password, new_password}
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type  user_password_dic: dictionary
+        @param user_password_dic: User Dictionary
+        @rtype: string
+        @return:
+            1. modify 성공: True, "OK"
+            2. modify 실패:
+		1. 수정 권한 없음: "NO_PERMISSION"
+		2. 잘못된 현재 패스워드: "WRONG_PASSWORD"
+		3. 로그인되지 않은 유저: False, "NOT_LOGGEDIN"
+		4. 데이터베이스 오류: False, "DATABASE_ERROR"
+        """
+
     def modify(self, session_key, user_reg_dic):
         """
         DB에 회원 정보 수정

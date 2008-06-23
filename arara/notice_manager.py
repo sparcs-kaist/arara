@@ -102,7 +102,8 @@ class NoticeManager(object):
 	    1. 환영 페이지 추가에 성공하였을 때: True, "OK"
 	    2. 환영 페이지 추가에 실패하였을 때:
 		1. 시삽이 아닐 때: False, "NOT_SYSOP"
-		2. 데이터베이스 오류: False, "DATABASE_ERROR"
+		2. 양식에 맞지 않을때 (80X23): False, "TOO_BIG"
+		3. 데이터베이스 오류: False, "DATABASE_ERROR"
 	"""
     
     def remove_banner(self, session_key, banner_no):
