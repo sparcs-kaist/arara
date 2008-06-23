@@ -151,4 +151,38 @@ class MemberManager(object):
 		2. 로그인되지 않은 유저: False, "NOT_LOGGEDIN"
 		3. 데이터베이스 오류: False, "DATABASE_ERROR"
 	"""
-        
+       
+    def remove_user(self, session_key):
+	"""
+	session key로 로그인된 사용자를 등록된 사용자에서 제거한다" - 회원탈퇴
+
+	>>> member.remove_user(logged_session_key)
+	True, "OK"
+	>>> member.remove_user(not_logged_session_key)
+	False, "NOT LOGGEDIN"
+	
+	@type  session_key: string
+	@param session_key: User Key
+	@rtype: String
+	@return:
+	    1. 성공시: True, "OK"
+	    2. 실패시: False, "NOT LOGGEDIN"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
