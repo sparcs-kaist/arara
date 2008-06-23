@@ -5,7 +5,7 @@
 <head>
   <title>arara.article_manager.ArticleManager</title>
   <link rel="stylesheet" href="epydoc.css" type="text/css"></link>
-  <meta http-equiv='Content-Type' content='text/html;charset=utf-8' />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 </head>
 <body bgcolor="white" text="black" link="blue" vlink="#204080"
       alink="#204080">
@@ -46,7 +46,8 @@
 
 <hr/>
 
-게시글 및 검색 처리 클래스
+게시글 및 검색 처리 클래스 현재 게시글 표시방식이 
+절묘하기 때문에 read 메소드에 관한 논의가 필요.
 <hr/>
 
 
@@ -66,7 +67,7 @@
           <span class=summary-sig-arg>page_length</span>)</span></code>
 <br />
 게시판의 게시글 목록 읽어오기</td></tr>
-<tr><td align="right" valign="top" width="15%"><font size="-1">        list
+<tr><td align="right" valign="top" width="15%"><font size="-1">        dictionary
 </font></td>
   <td><code><span class="summary-sig"><a href="arara.article_manager.ArticleManager-class.html#board_list" class="summary-sig-name"><code>board_list</code></a>(<span class=summary-sig-arg>self</span>,
           <span class=summary-sig-arg>session_key</span>)</span></code>
@@ -110,12 +111,21 @@ DB로부터 게시글 하나를 읽어옴</td></tr>
 게시물 검색</td></tr>
 <tr><td align="right" valign="top" width="15%"><font size="-1">        string
 </font></td>
-  <td><code><span class="summary-sig"><a href="arara.article_manager.ArticleManager-class.html#write" class="summary-sig-name"><code>write</code></a>(<span class=summary-sig-arg>self</span>,
+  <td><code><span class="summary-sig"><a href="arara.article_manager.ArticleManager-class.html#write_article" class="summary-sig-name"><code>write_article</code></a>(<span class=summary-sig-arg>self</span>,
           <span class=summary-sig-arg>session_key</span>,
           <span class=summary-sig-arg>article_dic</span>,
           <span class=summary-sig-arg>board_name</span>)</span></code>
 <br />
 DB에 게시글 하나를 작성함</td></tr>
+<tr><td align="right" valign="top" width="15%"><font size="-1">        string
+</font></td>
+  <td><code><span class="summary-sig"><a href="arara.article_manager.ArticleManager-class.html#write_reply" class="summary-sig-name"><code>write_reply</code></a>(<span class=summary-sig-arg>self</span>,
+          <span class=summary-sig-arg>session_key</span>,
+          <span class=summary-sig-arg>reply_dic</span>,
+          <span class=summary-sig-arg>board_name</span>,
+          <span class=summary-sig-arg>article_no</span>)</span></code>
+<br />
+댓글 하나를 해당하는 글에 추가</td></tr>
 <tr bgcolor="#e8f0f8" class="group">
   <th colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;Inherited from object</th></tr>
 <tr><td align="right" valign="top" width="15%"><font size="-1">&nbsp;</font></td>
@@ -211,8 +221,8 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
                 &quot;BOARD_NOT_EXIST&quot;
               </li>
               <li>
-                로그인되지 않은 유저: False, 
-                &quot;NOT_LOGGEDIN&quot;
+                페이지 번호 오류: False, 
+                &quot;WRONG_PAGENUM&quot;
               </li>
               <li>
                 데이터베이스 오류: False, 
@@ -236,7 +246,7 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
   게시판 목록 읽어오기
 <pre class="doctestblock">
 <span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>article.board_list(session_key)</span>
-<span class="py-output">True, [&quot;garbages&quot;, &quot;love&quot;, &quot;buynsell[com]&quot;, ...]</span></pre>
+<span class="py-output">True, {&quot;garbages&quot;: 84, &quot;love&quot;: 0, &quot;buynsell[com]&quot;: 4, ...]</span></pre>
   <dl><dt></dt><dd>
     <dl><dt><b>Parameters:</b></dt>
       <dd><code><b>session_key</b></code> -
@@ -249,15 +259,12 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
       <dd>
         <ol start="1">
           <li>
-            리스트 읽어오기 성공: True, Board List
+            리스트 읽어오기 성공: True, Dictionary of boards 
+            with new article num
           </li>
           <li>
             리스트 읽어오기 실패: False
             <ol start="1">
-              <li>
-                로그인되지 않은 유저: False, 
-                &quot;NOT_LOGGEDIN&quot;
-              </li>
               <li>
                 데이터베이스 오류: False, 
                 &quot;DATABASE_ERROR&quot;
@@ -266,7 +273,7 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
           </li>
         </ol>
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=list)</i>
+        (type=dictionary)</i>
       </dd>
     </dl>
   </dd></dl>
@@ -319,6 +326,10 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
               <li>
                 로그인되지 않은 유저: False, 
                 &quot;NOT_LOGGEDIN&quot;
+              </li>
+              <li>
+                수정 권한이 없음: False, 
+                &quot;NO_PERMISSION&quot;
               </li>
               <li>
                 데이터베이스 오류: False, 
@@ -388,6 +399,10 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
                 &quot;NOT_LOGGEDIN&quot;
               </li>
               <li>
+                수정 권한이 없음: False, 
+                &quot;NO_PERMISSION&quot;
+              </li>
+              <li>
                 데이터베이스 오류: False, 
                 &quot;DATABASE_ERROR&quot;
               </li>
@@ -445,19 +460,19 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
             <ol start="1">
               <li>
                 존재하지 않는 게시물번호: False, 
-                {&quot;ARTICLE_NOT_EXIST&quot;}
+                &quot;ARTICLE_NOT_EXIST&quot;
               </li>
               <li>
                 존재하지 않는 게시판: False, 
-                {&quot;BOARD_NOT_EXIST&quot;}
+                &quot;BOARD_NOT_EXIST&quot;
               </li>
               <li>
                 로그인되지 않은 유저: False, 
-                {&quot;NOT_LOGGEDIN&quot;}
+                &quot;NOT_LOGGEDIN&quot;
               </li>
               <li>
                 데이터베이스 오류: False, 
-                {&quot;DATABASE_ERROR&quot;}
+                &quot;DATABASE_ERROR&quot;
               </li>
             </ol>
           </li>
@@ -482,7 +497,7 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
   게시물 검색
 <pre class="doctestblock">
 <span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>article.search(session_key, <span class="py-string">&quot;garbages&quot;</span>, <span class="py-string">&quot;심영준바보&quot;</span>, <span class="py-string">&quot;All&quot;</span>, 2, 18)</span>
-<span class="py-output">True, [{&quot;no&quot;: 1, &quot;read_status&quot;: &quot;N&quot;, &quot;title&quot;: ...}, {&quot;no&quot;: 2, &quot;read_status&quot;: &quot;R&quot;, &quot;title&quot;: ...}, ...]</span></pre>
+<span class="py-output">True, [44, {&quot;no&quot;: 1, &quot;read_status&quot;: &quot;N&quot;, &quot;title&quot;: ...}, {&quot;no&quot;: 2, &quot;read_status&quot;: &quot;R&quot;, &quot;title&quot;: ...}, ...]</span></pre>
   <dl><dt></dt><dd>
     <dl><dt><b>Parameters:</b></dt>
       <dd><code><b>session_key</b></code> -
@@ -515,7 +530,8 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
       <dd>
         <ol start="1">
           <li>
-            검색 성공: True, Article List
+            검색 성공: True, Article List(리스트의 맨 첫 
+            항목은 검색 결과수)
           </li>
           <li>
             검색 실패:
@@ -523,6 +539,14 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
               <li>
                 검색 결과가 존재하지 않음: False, 
                 &quot;NOT_FOUND&quot;
+              </li>
+              <li>
+                존재하지 않는 게시판: False, 
+                &quot;BOARD_NOT_EXIST&quot;
+              </li>
+              <li>
+                잘못된 페이지 번호: False, 
+                &quot;WROND_PAGENUM&quot;
               </li>
               <li>
                 로그인되지 않은 유저: False, 
@@ -542,16 +566,16 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
   </dd></dl>
 </td></tr></table>
 
-<a name="write"></a>
+<a name="write_article"></a>
 <table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
-  <h3><span class="sig"><span class="sig-name">write</span>(<span class=sig-arg>self</span>,
+  <h3><span class="sig"><span class="sig-name">write_article</span>(<span class=sig-arg>self</span>,
           <span class=sig-arg>session_key</span>,
           <span class=sig-arg>article_dic</span>,
           <span class=sig-arg>board_name</span>)</span>
   </h3>
   DB에 게시글 하나를 작성함
 <pre class="doctestblock">
-<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>article.write(session_key, article_dic, <span class="py-string">&quot;garbages&quot;</span>)</span>
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>article.write_article(session_key, article_dic, <span class="py-string">&quot;garbages&quot;</span>)</span>
 <span class="py-output">True, &quot;32&quot;</span></pre>
   <dl><dt></dt><dd>
     <dl><dt><b>Parameters:</b></dt>
@@ -599,6 +623,73 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
     </dl>
   </dd></dl>
 </td></tr></table>
+
+<a name="write_reply"></a>
+<table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
+  <h3><span class="sig"><span class="sig-name">write_reply</span>(<span class=sig-arg>self</span>,
+          <span class=sig-arg>session_key</span>,
+          <span class=sig-arg>reply_dic</span>,
+          <span class=sig-arg>board_name</span>,
+          <span class=sig-arg>article_no</span>)</span>
+  </h3>
+  댓글 하나를 해당하는 글에 추가
+<pre class="doctestblock">
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>article.write_reply(session_key, reply_dic, <span class="py-string">&quot;garbages&quot;</span>, 24)</span>
+<span class="py-output">True, &quot;24&quot;</span></pre>
+  <dl><dt></dt><dd>
+    <dl><dt><b>Parameters:</b></dt>
+      <dd><code><b>session_key</b></code> -
+         User Key
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=string)</i>
+      <dd><code><b>reply_dic</b></code> -
+         Reply Dictionary
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=dictionary)</i>
+      <dd><code><b>board_name</b></code> -
+         BBS Name
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=string)</i>
+      <dd><code><b>article_no</b></code> -
+         Article No in which the reply will be added
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=integer)</i>
+      </dd>
+    </dl>
+    <dl><dt><b>Returns:</b></dt>
+      <dd>
+        <ol start="1">
+          <li>
+            작성 성공: True, Article Number
+          </li>
+          <li>
+            작성 실패:
+            <ol start="1">
+              <li>
+                존재하지 않는 게시판: False, 
+                &quot;BOARD_NOT_EXIST&quot;
+              </li>
+              <li>
+                존재하지 않는 게시물: False, 
+                &quot;ARTICLE_NOT_EXIST&quot;
+              </li>
+              <li>
+                로그인되지 않은 유저: False, 
+                &quot;NOT_LOGGEDIN&quot;
+              </li>
+              <li>
+                데이터베이스 오류: False, 
+                &quot;DATABASE_ERROR&quot;
+              </li>
+            </ol>
+          </li>
+        </ol>
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=string)</i>
+      </dd>
+    </dl>
+  </dd></dl>
+</td></tr></table>
 <br />
 
 
@@ -615,7 +706,7 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
 
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
   <tr>
-    <td align="left"><font size="-2">Generated by Epydoc 2.1 on Mon Jun 23 02:32:58 2008</font></td>
+    <td align="left"><font size="-2">Generated by Epydoc 2.1 on Mon Jun 23 13:29:30 2008</font></td>
     <td align="right"><a href="http://epydoc.sourceforge.net"
                       ><font size="-2">http://epydoc.sf.net</font></a></td>
   </tr>
