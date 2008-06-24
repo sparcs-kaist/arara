@@ -167,6 +167,7 @@ class MemberManager(object):
 	@return:
 	    1. 성공시: True, "OK"
 	    2. 실패시: False, "NOT LOGGEDIN"
+	"""
 
 
 

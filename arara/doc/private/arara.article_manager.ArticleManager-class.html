@@ -45,8 +45,10 @@
 
 <hr/>
 
-게시글 및 검색 처리 클래스 현재 게시글 표시방식이 
-절묘하기 때문에 read 메소드에 관한 논의가 필요.
+<p>게시글 및 검색 처리 클래스 현재 게시글 표시방식이 
+절묘하기 때문에 read 메소드에 관한 논의가 필요.</p>
+article = {&quot;garbages&quot;:1:,2:}} 
+article[&quot;garbages&quot;][1]
 <hr/>
 
 
@@ -57,7 +59,7 @@
 <tr><td align="right" valign="top" width="15%"><font size="-1">&nbsp;</font></td>
   <td><code><a name="__init__"></a><span class="summary-sig"><span class="summary-sig-name">__init__</span>(<span class=summary-sig-arg>self</span>)</span></code>
 </td></tr>
-<tr><td align="right" valign="top" width="15%"><font size="-1">        list
+<tr><td align="right" valign="top" width="15%"><font size="-1">        boolean, list
 </font></td>
   <td><code><span class="summary-sig"><a href="arara.article_manager.ArticleManager-class.html#article_list" class="summary-sig-name"><code>article_list</code></a>(<span class=summary-sig-arg>self</span>,
           <span class=summary-sig-arg>session_key</span>,
@@ -66,38 +68,38 @@
           <span class=summary-sig-arg>page_length</span>)</span></code>
 <br />
 게시판의 게시글 목록 읽어오기</td></tr>
-<tr><td align="right" valign="top" width="15%"><font size="-1">        dictionary
+<tr><td align="right" valign="top" width="15%"><font size="-1">        boolean, list
 </font></td>
   <td><code><span class="summary-sig"><a href="arara.article_manager.ArticleManager-class.html#board_list" class="summary-sig-name"><code>board_list</code></a>(<span class=summary-sig-arg>self</span>,
           <span class=summary-sig-arg>session_key</span>)</span></code>
 <br />
 게시판 목록 읽어오기</td></tr>
-<tr><td align="right" valign="top" width="15%"><font size="-1">        string
+<tr><td align="right" valign="top" width="15%"><font size="-1">        boolean, string
 </font></td>
   <td><code><span class="summary-sig"><a href="arara.article_manager.ArticleManager-class.html#delete" class="summary-sig-name"><code>delete</code></a>(<span class=summary-sig-arg>self</span>,
           <span class=summary-sig-arg>session_key</span>,
-          <span class=summary-sig-arg>no</span>,
-          <span class=summary-sig-arg>board_name</span>)</span></code>
+          <span class=summary-sig-arg>board_name</span>,
+          <span class=summary-sig-arg>no</span>)</span></code>
 <br />
 DB에 해당하는 글 삭제</td></tr>
-<tr><td align="right" valign="top" width="15%"><font size="-1">        string
+<tr><td align="right" valign="top" width="15%"><font size="-1">        boolean, string
 </font></td>
   <td><code><span class="summary-sig"><a href="arara.article_manager.ArticleManager-class.html#modify" class="summary-sig-name"><code>modify</code></a>(<span class=summary-sig-arg>self</span>,
           <span class=summary-sig-arg>session_key</span>,
+          <span class=summary-sig-arg>board_name</span>,
           <span class=summary-sig-arg>no</span>,
-          <span class=summary-sig-arg>article_dic</span>,
-          <span class=summary-sig-arg>board_name</span>)</span></code>
+          <span class=summary-sig-arg>article_dic</span>)</span></code>
 <br />
 DB의 해당하는 게시글 수정</td></tr>
-<tr><td align="right" valign="top" width="15%"><font size="-1">        dictionary
+<tr><td align="right" valign="top" width="15%"><font size="-1">        boolean, dictionary
 </font></td>
   <td><code><span class="summary-sig"><a href="arara.article_manager.ArticleManager-class.html#read" class="summary-sig-name"><code>read</code></a>(<span class=summary-sig-arg>self</span>,
           <span class=summary-sig-arg>session_key</span>,
-          <span class=summary-sig-arg>no</span>,
-          <span class=summary-sig-arg>board_name</span>)</span></code>
+          <span class=summary-sig-arg>board_name</span>,
+          <span class=summary-sig-arg>no</span>)</span></code>
 <br />
 DB로부터 게시글 하나를 읽어옴</td></tr>
-<tr><td align="right" valign="top" width="15%"><font size="-1">        list
+<tr><td align="right" valign="top" width="15%"><font size="-1">        boolean, list
 </font></td>
   <td><code><span class="summary-sig"><a href="arara.article_manager.ArticleManager-class.html#search" class="summary-sig-name"><code>search</code></a>(<span class=summary-sig-arg>self</span>,
           <span class=summary-sig-arg>session_key</span>,
@@ -108,20 +110,20 @@ DB로부터 게시글 하나를 읽어옴</td></tr>
           <span class=summary-sig-arg>page_length</span>)</span></code>
 <br />
 게시물 검색</td></tr>
-<tr><td align="right" valign="top" width="15%"><font size="-1">        string
+<tr><td align="right" valign="top" width="15%"><font size="-1">        boolean, string
 </font></td>
   <td><code><span class="summary-sig"><a href="arara.article_manager.ArticleManager-class.html#write_article" class="summary-sig-name"><code>write_article</code></a>(<span class=summary-sig-arg>self</span>,
           <span class=summary-sig-arg>session_key</span>,
-          <span class=summary-sig-arg>article_dic</span>,
-          <span class=summary-sig-arg>board_name</span>)</span></code>
+          <span class=summary-sig-arg>board_name</span>,
+          <span class=summary-sig-arg>article_dic</span>)</span></code>
 <br />
 DB에 게시글 하나를 작성함</td></tr>
-<tr><td align="right" valign="top" width="15%"><font size="-1">        string
+<tr><td align="right" valign="top" width="15%"><font size="-1">        boolean, string
 </font></td>
   <td><code><span class="summary-sig"><a href="arara.article_manager.ArticleManager-class.html#write_reply" class="summary-sig-name"><code>write_reply</code></a>(<span class=summary-sig-arg>self</span>,
           <span class=summary-sig-arg>session_key</span>,
-          <span class=summary-sig-arg>reply_dic</span>,
           <span class=summary-sig-arg>board_name</span>,
+          <span class=summary-sig-arg>reply_dic</span>,
           <span class=summary-sig-arg>article_no</span>)</span></code>
 <br />
 댓글 하나를 해당하는 글에 추가</td></tr>
@@ -231,7 +233,7 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
           </li>
         </ol>
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=list)</i>
+        (type=boolean, list)</i>
       </dd>
     </dl>
   </dd></dl>
@@ -272,7 +274,7 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
           </li>
         </ol>
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=dictionary)</i>
+        (type=boolean, list)</i>
       </dd>
     </dl>
   </dd></dl>
@@ -282,12 +284,12 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
 <table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
   <h3><span class="sig"><span class="sig-name">delete</span>(<span class=sig-arg>self</span>,
           <span class=sig-arg>session_key</span>,
-          <span class=sig-arg>no</span>,
-          <span class=sig-arg>board_name</span>)</span>
+          <span class=sig-arg>board_name</span>,
+          <span class=sig-arg>no</span>)</span>
   </h3>
   DB에 해당하는 글 삭제
 <pre class="doctestblock">
-<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>article.delete(session_key, 300, <span class="py-string">&quot;garbages&quot;</span>)</span>
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>article.delete(session_key, <span class="py-string">&quot;garbages&quot;</span>, 300)</span>
 <span class="py-output">True, &quot;OK&quot;</span></pre>
   <dl><dt></dt><dd>
     <dl><dt><b>Parameters:</b></dt>
@@ -295,14 +297,14 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
          User Key
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         (type=string)</i>
-      <dd><code><b>no</b></code> -
-         Article Number
-        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=number)</i>
       <dd><code><b>board_name</b></code> -
          BBS Name
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         (type=string)</i>
+      <dd><code><b>no</b></code> -
+         Article Number
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=number)</i>
       </dd>
     </dl>
     <dl><dt><b>Returns:</b></dt>
@@ -338,7 +340,7 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
           </li>
         </ol>
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=string)</i>
+        (type=boolean, string)</i>
       </dd>
     </dl>
   </dd></dl>
@@ -348,18 +350,22 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
 <table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
   <h3><span class="sig"><span class="sig-name">modify</span>(<span class=sig-arg>self</span>,
           <span class=sig-arg>session_key</span>,
+          <span class=sig-arg>board_name</span>,
           <span class=sig-arg>no</span>,
-          <span class=sig-arg>article_dic</span>,
-          <span class=sig-arg>board_name</span>)</span>
+          <span class=sig-arg>article_dic</span>)</span>
   </h3>
   DB의 해당하는 게시글 수정
 <pre class="doctestblock">
-<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>article.modify(session_key, 300, article_dic, <span class="py-string">&quot;garbages&quot;</span>)</span>
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>article.modify(session_key, <span class="py-string">&quot;garbages&quot;</span>, 300, article_dic)</span>
 <span class="py-output">True, &quot;32&quot;</span></pre>
   <dl><dt></dt><dd>
     <dl><dt><b>Parameters:</b></dt>
       <dd><code><b>session_key</b></code> -
          User Key
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=string)</i>
+      <dd><code><b>board_name</b></code> -
+         BBS Name
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         (type=string)</i>
       <dd><code><b>no</b></code> -
@@ -370,10 +376,6 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
          Article Dictionary
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         (type=dictionary)</i>
-      <dd><code><b>board_name</b></code> -
-         BBS Name
-        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=string)</i>
       </dd>
     </dl>
     <dl><dt><b>Returns:</b></dt>
@@ -409,7 +411,7 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
           </li>
         </ol>
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=string)</i>
+        (type=boolean, string)</i>
       </dd>
     </dl>
   </dd></dl>
@@ -419,12 +421,12 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
 <table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
   <h3><span class="sig"><span class="sig-name">read</span>(<span class=sig-arg>self</span>,
           <span class=sig-arg>session_key</span>,
-          <span class=sig-arg>no</span>,
-          <span class=sig-arg>board_name</span>)</span>
+          <span class=sig-arg>board_name</span>,
+          <span class=sig-arg>no</span>)</span>
   </h3>
   DB로부터 게시글 하나를 읽어옴
 <pre class="doctestblock">
-<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>article.read(session_key, 300, <span class="py-string">&quot;garbages&quot;</span>)</span>
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>article.read(session_key, <span class="py-string">&quot;garbages&quot;</span>, 300)</span>
 <span class="py-output">True, {&quot;no&quot;: 32, &quot;read_status&quot;:N, &quot;title&quot;: &quot;성진이는 북극곰&quot;, ....}</span></pre>
   <ul>
     <li>
@@ -438,14 +440,14 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
          User Key
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         (type=string)</i>
-      <dd><code><b>no</b></code> -
-         Article Number
-        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=number)</i>
       <dd><code><b>board_name</b></code> -
          BBS Name
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         (type=string)</i>
+      <dd><code><b>no</b></code> -
+         Article Number
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=number)</i>
       </dd>
     </dl>
     <dl><dt><b>Returns:</b></dt>
@@ -477,7 +479,7 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
           </li>
         </ol>
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=dictionary)</i>
+        (type=boolean, dictionary)</i>
       </dd>
     </dl>
   </dd></dl>
@@ -559,7 +561,7 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
           </li>
         </ol>
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=list)</i>
+        (type=boolean, list)</i>
       </dd>
     </dl>
   </dd></dl>
@@ -569,12 +571,12 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
 <table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
   <h3><span class="sig"><span class="sig-name">write_article</span>(<span class=sig-arg>self</span>,
           <span class=sig-arg>session_key</span>,
-          <span class=sig-arg>article_dic</span>,
-          <span class=sig-arg>board_name</span>)</span>
+          <span class=sig-arg>board_name</span>,
+          <span class=sig-arg>article_dic</span>)</span>
   </h3>
   DB에 게시글 하나를 작성함
 <pre class="doctestblock">
-<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>article.write_article(session_key, article_dic, <span class="py-string">&quot;garbages&quot;</span>)</span>
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>article.write_article(session_key, <span class="py-string">&quot;garbages&quot;</span>,  article_dic)</span>
 <span class="py-output">True, &quot;32&quot;</span></pre>
   <dl><dt></dt><dd>
     <dl><dt><b>Parameters:</b></dt>
@@ -582,14 +584,14 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
          User Key
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         (type=string)</i>
-      <dd><code><b>article_dic</b></code> -
-         Article Dictionary
-        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=dictionary)</i>
       <dd><code><b>board_name</b></code> -
          BBS Name
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         (type=string)</i>
+      <dd><code><b>article_dic</b></code> -
+         Article Dictionary
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=dictionary)</i>
       </dd>
     </dl>
     <dl><dt><b>Returns:</b></dt>
@@ -617,7 +619,7 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
           </li>
         </ol>
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=string)</i>
+        (type=boolean, string)</i>
       </dd>
     </dl>
   </dd></dl>
@@ -627,13 +629,13 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
 <table width="100%" class="func-details" bgcolor="#e0e0e0"><tr><td>
   <h3><span class="sig"><span class="sig-name">write_reply</span>(<span class=sig-arg>self</span>,
           <span class=sig-arg>session_key</span>,
-          <span class=sig-arg>reply_dic</span>,
           <span class=sig-arg>board_name</span>,
+          <span class=sig-arg>reply_dic</span>,
           <span class=sig-arg>article_no</span>)</span>
   </h3>
   댓글 하나를 해당하는 글에 추가
 <pre class="doctestblock">
-<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>article.write_reply(session_key, reply_dic, <span class="py-string">&quot;garbages&quot;</span>, 24)</span>
+<span class="py-src"><span class="py-prompt">&gt;&gt;&gt; </span>article.write_reply(session_key,<span class="py-string">&quot;garbages&quot;</span>, reply_dic, 24)</span>
 <span class="py-output">True, &quot;24&quot;</span></pre>
   <dl><dt></dt><dd>
     <dl><dt><b>Parameters:</b></dt>
@@ -641,14 +643,14 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
          User Key
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         (type=string)</i>
-      <dd><code><b>reply_dic</b></code> -
-         Reply Dictionary
-        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=dictionary)</i>
       <dd><code><b>board_name</b></code> -
          BBS Name
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         (type=string)</i>
+      <dd><code><b>reply_dic</b></code> -
+         Reply Dictionary
+        <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (type=dictionary)</i>
       <dd><code><b>article_no</b></code> -
          Article No in which the reply will be added
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -684,7 +686,7 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
           </li>
         </ol>
         <br /><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        (type=string)</i>
+        (type=boolean, string)</i>
       </dd>
     </dl>
   </dd></dl>
@@ -705,7 +707,7 @@ x.__str__() &lt;==&gt; str(x)</td></tr>
 
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
   <tr>
-    <td align="left"><font size="-2">Generated by Epydoc 2.1 on Mon Jun 23 13:29:30 2008</font></td>
+    <td align="left"><font size="-2">Generated by Epydoc 2.1 on Tue Jun 24 16:00:30 2008</font></td>
     <td align="right"><a href="http://epydoc.sourceforge.net"
                       ><font size="-2">http://epydoc.sf.net</font></a></td>
   </tr>
