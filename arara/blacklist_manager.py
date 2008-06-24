@@ -20,7 +20,7 @@ class BlacklistManager(object):
         @param session_key: User Key
         @type  blacklist_list: list
         @param blacklist_list: Blacklist Dictionary List [{id, article, message}, ...]
-        @rtype: string
+        @rtype: boolean, string
         @return:
             1. 추가 성공: True, "OK"
             2. 추가 실패:
@@ -29,6 +29,7 @@ class BlacklistManager(object):
 		3. 로그인되지 않은 사용자: False, "NOT_LOGGEDIN"
 		4. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
+	return False, "NOT_IMPLEMENTED"	
 
     def delete(self,session_key, blacklist_id):
         """
@@ -41,7 +42,7 @@ class BlacklistManager(object):
         @param session_key: User Key
         @type  blacklist_id: string
         @param blacklist_id: Blacklist ID
-        @rtype: string
+        @rtype: boolean, string
         @return:
             1. 삭제 성공: True, "OK"
             2. 삭제 실패:
@@ -50,7 +51,9 @@ class BlacklistManager(object):
 		3. 로그인되지 않은 사용자: False, "NOT_LOGGEDIN"
 		4. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
-    
+	return False, "NOT_IMPLEMENTED"	
+
+
     def modify(self,session_key, blacklist_dic):
         """
         블랙리스트 id 수정 
@@ -63,7 +66,7 @@ class BlacklistManager(object):
         @param session_key: User Key
         @type  blacklist_dic: dictionary
         @param blacklist_dic: Blacklist Dictionary
-        @rtype: string
+        @rtype: boolean, string
 	@return:
             1. 삭제 성공: True, "OK"
             2. 삭제 실패:
@@ -72,7 +75,8 @@ class BlacklistManager(object):
 		3. 로그인되지 않은 사용자: False, "NOT_LOGGEDIN"
 		4. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
-    
+	return False, "NOT_IMPLEMENTED"	
+
     def list(self,session_key):
         """
         블랙리스트로 설정한 사람의 목록을 보여줌
@@ -83,10 +87,11 @@ class BlacklistManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @rtype: list
+        @rtype: boolean, list
         @return:
             1. 성공: True, Blacklist Dictionary List
 	    2. 실패:
 		1. 로그인되지 않은 사용자: False, "NOT_LOGGEDIN"
 		2. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
+	return False, "NOT_IMPLEMENTED"	
