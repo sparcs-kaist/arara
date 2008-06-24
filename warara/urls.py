@@ -8,4 +8,5 @@ urlpatterns = patterns('',
 #     (r'^admin/', include('django.contrib.admin.urls')),
     (r'^main/$', 'warara.views.main'),
     (r'^list/([^/]+)/$', 'warara.views.list'),
+    (r'^modify/([^/]+)/(\d)+/$', 'warara.views.modify'),
 )

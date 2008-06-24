@@ -1,0 +1,29 @@
+{% extends "mainframe.html" %}
+
+{% block arara_content %}
+<div id="header">
+    {{bbs_header}}
+</div>
+<form method="post">
+    <div id="article_header">
+	number : {{article_number}}
+	<br>subject
+	<input type="text" name="art_subject" value="{{article_subject}}">
+    </div>
+    <div id="content">
+	<textarea name="art_con">{{article_content}}</textarea>
+    </div>
+    <div id="attachment">
+	place for attachments
+    </div>
+    <div id="check">
+	show this article at search engine
+	<input type="checkbox" name="ch_sh_se"><br>
+    </div>
+    <div id="commands">
+	<input type="submit" name="sub_mod" value="Modify">
+	<input type="button" name="bu_canc" value="Cancel">
+	<input type="button" name="bu_list" value="&nbsp;List&nbsp;">
+    </div>
+</form>    
+{% endblock %}
