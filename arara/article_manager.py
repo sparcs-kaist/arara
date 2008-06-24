@@ -4,22 +4,35 @@ class ArticleManager(object):
     """
     게시글 및 검색 처리 클래스
     현재 게시글 표시방식이 절묘하기 때문에 read 메소드에 관한 논의가 필요.
-    
-    article = {"garbages":{1:{"t":"2","b":"3"},2:{"t":"3","b":"4"}}}
-    article["garbages"][1]
+
+    >>> article = ArticleManager()
+    >>> session_key = ""
+    >>> article_dic = {"author":"serialx", "title": "serialx is...",
+    ... "content": "polarbear", "method": "web"}
+    >>> article.write_article(session_key, "garbages", article_dic)
+    (True, 1)
+    >>> article.read(session_key, "garbages", 1)
+    (True, {'title': 'serialx is...', 'ip': '143.248.234.240', 'author': 'serialx', 'content': 'polarbear', 'time': '2008.06.16 23:34:34', 'reply': [], 'method': 'web'})
+    >>> reply_dic = {'author': 'pv457','context': 'asdf'}
+    >>> article.write_reply(session_key,"garbages", reply_dic, 24)
+    (False, 'ARTICLE_NOT_EXIST')
+    >>> article.write_reply(session_key,"garbages", reply_dic, 1)
+    (True, 'OK')
+    >>> article.read(session_key, "garbages", 1)
+    (True, {'title': 'serialx is...', 'ip': '143.248.234.240', 'author': 'serialx', 'content': 'polarbear', 'time': '2008.06.16 23:34:34', 'reply': [{'ip': '143.248.234.140', 'time': '2008.06.16 23:59:43', 'context': 'asdf', 'author': 'pv457'}], 'method': 'web'})
     """
 
     def __init__(self):
+	#monk data
 	self.articles = {'garbages': {} }
+	global article_no
+	article_no = 0
 
     def read(self, session_key, board_name, no):
         """
         DB로부터 게시글 하나를 읽어옴
 
-        >>> article.read(session_key, "garbages", 300)
-	True, {"no": 32, "read_status":N, "title": "성진이는 북극곰", ....}
-
-	    - Current Article Dictionary { no, read_status, title, author, date, hit, vote }
+	- Current Article Dictionary { no, read_status, title, author, date, hit, vote }
 
         @type  session_key: string
         @param session_key: User Key
@@ -37,19 +50,20 @@ class ArticleManager(object):
 		4. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
 	try:
-	    return self.articles[board_name][no]
+	    board = self.articles[board_name]
 	except KeyError:
 	    return False, "BOARD_NOT_EXIST"
-	except IndexError:
+
+	try:
+	    article = board[no]
+	    return True, article
+	except KeyError:
 	    return False, "ARTICLE_NOT_EXIST"
 
 
     def write_article(self, session_key, board_name, article_dic):
         """
         DB에 게시글 하나를 작성함
-
-        >>> article.write_article(session_key, "garbages",  article_dic)
-	True, "32"
 
         @type  session_key: string
         @param session_key: User Key
@@ -65,19 +79,26 @@ class ArticleManager(object):
 		2. 로그인되지 않은 유저: False, "NOT_LOGGEDIN"
 		3. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
+
+	global article_no
+
 	try:
-	    self.articles[board_name].append(article_dic)
-	    return True, "Article Number"
+	    board = self.articles[board_name]
 	except KeyError:
 	    return False, "BOARD_NOT_EXIST"
+
+	article_dic['ip'] = "143.248.234.240"
+	article_dic['time'] = "2008.06.16 23:34:34"
+
+	article_no += 1
+	self.articles[board_name][article_no] = article_dic
+	self.articles[board_name][article_no]['reply'] = []
+	return True, article_no
 	
 
     def write_reply(self, session_key, board_name, reply_dic, article_no):
 	"""
 	댓글 하나를 해당하는 글에 추가
-
-	>>> article.write_reply(session_key,"garbages", reply_dic, 24)
-	True, "24"
 
 	@type  session_key: string
 	@param session_key: User Key
@@ -97,7 +118,22 @@ class ArticleManager(object):
 		4. 데이터베이스 오류: False, "DATABASE_ERROR"
 	"""
 	try:
-	    self.articles[board_name][article_no].append(reply_dic)
+	    board = self.articles[board_name]
+	except KeyError:
+	    return False, "BOARD_NOT_EXIST"
+
+	try:
+	    article = board[article_no]
+	    #reply_no = len(board[article_no]['reply']) + 1
+	    #board[article_no]['reply'][reply_no] = reply_dic
+	    reply_dic['ip'] = "143.248.234.140"
+	    reply_dic['time'] = "2008.06.16 23:59:43"
+
+	    board[article_no]['reply'].append(reply_dic)
+	    return True, "OK"
+	except KeyError:
+	    return False, "ARTICLE_NOT_EXIST"
+
 	except KeyError:
 	    return False, "BOARD_NOT_EXIST"
 	    return False, "ARTICLE_NOT_EXIST"
@@ -107,9 +143,6 @@ class ArticleManager(object):
     def modify(self,session_key, board_name, no, article_dic):
         """
         DB의 해당하는 게시글 수정
-
-        >>> article.modify(session_key, "garbages", 300, article_dic)
-	True, "32"
 
         @type  session_key: string
         @param session_key: User Key
@@ -129,19 +162,29 @@ class ArticleManager(object):
 		4. 수정 권한이 없음: False, "NO_PERMISSION"
 		5. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
+
 	try:
-	    self.articles[board_name][article_no] = article_dic
+	    board = self.articles[board_name]
 	except KeyError:
 	    return False, "BOARD_NOT_EXIST"
+
+	try:
+	    article = board[no]
+	    try:
+		for key in article_dic:
+		    board[no][key] = article_dic[key]
+	    except KeyError:
+		return False, "WRONG_DIC_TYPE"
+
+	except KeyError:
 	    return False, "ARTICLE_NOT_EXIST"
+
+	return True, no
 
 
     def delete(self, session_key, board_name, no):
         """
         DB에 해당하는 글 삭제
-
-        >>> article.delete(session_key, "garbages", 300)
-	True, "OK"
         
         @type  session_key: string
         @param session_key: User Key
@@ -160,19 +203,23 @@ class ArticleManager(object):
 		5. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
 	try:
-	    self.articles[board_name][article_no] = "삭제된 게시글 입니다."
+	    board = self.articles[board_name]
 	except KeyError:
 	    return False, "BOARD_NOT_EXIST"
+
+	try:
+	    article = board[no]
+	except KeyError:
 	    return False, "ARTICLE_NOT_EXIST"
+
+	article['context'] = '삭제된 게시물입니다'
+	return True, no
 	
 
 	
     def article_list(self, session_key, board_name, page=1, page_length=20):
         """
         게시판의 게시글 목록 읽어오기
-
-        >>> article.article_list(session_key, "garbages", 2, 18)
-	True, [{"no": 1, "read_status": "N", "title": ...}, {"no": 2, "read_status": "R", "title": ...}, ...]
 
         @type  session_key: string
         @param session_key: User Key
@@ -195,16 +242,13 @@ class ArticleManager(object):
 	    for no in len(self.articles[board_name]):
 		article_list.append(self.articles[board_name][no])
 	    return article_list 
-	except KeyError:
+	except KeyError: 
 	    return False, "BOARD_NOT_EXIST"
 	     
 
     def board_list(self, session_key):
         """
         게시판 목록 읽어오기
-
-        >>> article.board_list(session_key)
-	True, {"garbages": 84, "love": 0, "buynsell[com]": 4, ...]
 
         @type  session_key: string
         @param session_key: User Key
@@ -227,9 +271,6 @@ class ArticleManager(object):
     def search(self, session_key, board_name, query_text, search_type, page=1, page_length=20):
         """
         게시물 검색
-
-        >>> article.search(session_key, "garbages", "심영준바보", "All", 2, 18)
-	True, [44, {"no": 1, "read_status": "N", "title": ...}, {"no": 2, "read_status": "R", "title": ...}, ...]
 
         @type  session_key: string
         @param session_key: User Key
@@ -255,3 +296,10 @@ class ArticleManager(object):
 
         """
 	return False, "NOT_IMPLEMENTED"
+
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == "__main__":
+    _test()
