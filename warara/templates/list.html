@@ -1,0 +1,39 @@
+{% extends "mainframe.html" %}
+
+{% block arara_content %}
+<div id="bbs_header">
+    {{bbs_header}}
+</div>
+<div id="bbs_columns">
+    <table border="1">
+        <tr>
+            <td>번호</td>
+            <td>*</td>
+            <td>제목</td>
+            <td>작성자</td>
+            <td>날짜</td>
+            <td>조회수</td>
+            <td>추천수</td>
+        </tr>
+    </table>
+</div>
+<div id="bbs_list">
+    {{article_list}}
+</div>
+<div id="footer">
+    <div id="menu">
+        {{menu}}
+    </div>
+    <div id="page">
+        {% for page in pages %}
+        {{page}}
+        {% endfor %}
+    </div>
+    <div id="search">
+        <form name="search" method="GET">
+            <input type="input" name="q">
+            <input type="submit" value="search">
+        </form>
+    </div>
+</div>
+{% endblock %}

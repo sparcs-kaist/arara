@@ -1,0 +1,47 @@
+<html>
+    <head>
+        <title>{{brower_title}}</title>
+        <style type="text/css">
+div#header{position:relative}
+div#container{width:1024px;margin:0 auto; background-color: #fdd}
+div#content{float:right;width:500px}
+div#navigation{float:left;width:200px; background-color: #dfd}
+        </style>
+    </head>
+    <body>
+        <div id="container">
+        <div id="header">
+            <table border = "1">
+                <tr>
+                    <td rowspan = "2">
+                        <h1>WebARARA!</h1>
+                    </td>
+                    <td>
+                        <form name = "ksearch" method = "GET" action = "http://sparcs40.kaist.ac.kr:8000/search">
+                            <input type = "text" name = "q">
+                            <input type = "submit" value = "KSearch">
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{arara_login}}
+                        <a href="/help">도움말</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="navigation">
+            {% for bbs in bbs_list %}
+            <a href="/list/{{bbs}}/">{{bbs}}</a><br/>
+            {% endfor %}
+            {{widget}}
+        </div>
+        <div id="content">
+            {% block arara_content %}
+            Content
+            {% endblock %}
+        </div>
+        </div>
+    </body>
+</html>
