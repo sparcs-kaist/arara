@@ -1,25 +1,33 @@
 # -*- coding: utf-8 -*-
 
+
+class AlreadyAddedException(Exception):
+    pass
+
+class NotExistIDException(Exception):
+    pass
+
 class BlacklistManager(object):
     """
     블랙리스트 처리 관련 클래스
     """
-
     def __init__(self):
         pass
 
-    def add(self, session_key, blacklist_list):
+    def add(self, session_key, blacklist_id):
         """
         블랙리스트 id 추가 
+	default 값 
+	    article과 message 모두 True
+	    저장 형태: { "pv457": {"article": "True", "message": "False"}} 
 
-	>>> blacklist.add(session_key, [{"id": "pv457", "article": "True",
-	"message": "False"}, {"id": "serialx" ...}, ...])
+	>>> blacklist.add(session_key,"pv457")
 	True, "OK"
 
         @type  session_key: string
         @param session_key: User Key
-        @type  blacklist_list: list
-        @param blacklist_list: Blacklist Dictionary List [{id, article, message}, ...]
+        @type  blacklist_id: stirng
+        @param blacklist_id: Blacklist ID 
         @rtype: boolean, string
         @return:
             1. 추가 성공: True, "OK"
@@ -29,8 +37,15 @@ class BlacklistManager(object):
 		3. 로그인되지 않은 사용자: False, "NOT_LOGGEDIN"
 		4. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
-	return False, "NOT_IMPLEMENTED"	
-
+	
+	blacklist = {}
+	try:
+	    if blacklist_id in blacklist:
+		raise AlreadyAddedException()
+	    blacklist["blacklist_id"] = {"article": "True", "message": "True"}
+	except AlreadyAddedException:
+	    return False, "ALREADY_ADDED_ID"	
+	    
     def delete(self,session_key, blacklist_id):
         """
         블랙리스트 id 삭제 
@@ -51,7 +66,13 @@ class BlacklistManager(object):
 		3. 로그인되지 않은 사용자: False, "NOT_LOGGEDIN"
 		4. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
-	return False, "NOT_IMPLEMENTED"	
+	blacklist = {}
+	try:
+	    if blacklist_id not in blacklist:
+		raise NotExistIDException()
+	    del blacklist["blacklist_id"]
+	except NotExistIDException:
+	    return False, "ID_NOT_IN_BLACKLIST"	
 
 
     def modify(self,session_key, blacklist_dic):
@@ -70,12 +91,18 @@ class BlacklistManager(object):
 	@return:
             1. 삭제 성공: True, "OK"
             2. 삭제 실패:
-		1. 존재하지 않는 아이디: False, "ID_NOT_EXIST"
-		2. 블랙리스트에 존재하지 않는 아이디: False, "ID_NOT_IN_BLACKLIST"
-		3. 로그인되지 않은 사용자: False, "NOT_LOGGEDIN"
-		4. 데이터베이스 오류: False, "DATABASE_ERROR"
+		1. 블랙리스트에 존재하지 않는 아이디: False, "ID_NOT_IN_BLACKLIST"
+		2. 로그인되지 않은 사용자: False, "NOT_LOGGEDIN"
+		3. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
-	return False, "NOT_IMPLEMENTED"	
+	blacklist = {}
+	try:
+	    if blacklist_id not in blacklist:
+		raise NotExistIDException()
+	    blacklist["blacklist_id"] = {"article": blacklist_dic["article"], "message": blacklist_dic["message"]}
+	except NotExistIDException:
+	    return False, "ID_NOT_IN_BLACKLIST"	
+
 
     def list(self,session_key):
         """
@@ -94,4 +121,6 @@ class BlacklistManager(object):
 		1. 로그인되지 않은 사용자: False, "NOT_LOGGEDIN"
 		2. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
-	return False, "NOT_IMPLEMENTED"	
+	blacklist = {}
+	return True, blacklist.keys()
+	"""return False, "NOT_IMPLEMENTED"	
