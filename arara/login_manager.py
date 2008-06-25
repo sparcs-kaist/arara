@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import hashlib
+import md5 as hashlib
 import datetime
-
-global session_dic
-session_dic = {}
 
 class LoginManager(object):
     """
@@ -12,7 +9,7 @@ class LoginManager(object):
     """
     
     def __init__(self):
-        pass
+	self.session_dic = {}
 
     def login(self, id, password, user_ip):
         """
@@ -39,13 +36,13 @@ class LoginManager(object):
 		3. 데이터베이스 관련 에러: False, "DATABASE_ERROR"
 
         """
-        global session_dic
+        
 
         if(id == "test"):
             if(password == "test"):
                 hash = hashlib.md5(id+password).hexdigest()
                 timestamp = datetime.datetime.isoformat(datetime.datetime.now())
-                session_dic[hash] = {"id": id, "ip": user_ip, "logintime": timestamp}
+                self.session_dic[hash] = {"id": id, "ip": user_ip, "logintime": timestamp}
                 return True, hash
             else:
                 return False, "WRONG_PASSWORD"
@@ -72,10 +69,10 @@ class LoginManager(object):
 		2. 데이터베이스 관련 에러: False, "DATABASE_ERROR"
         """
 
-        global session_dic
+        
 
         try:
-            session_dic.pop(session_key)
+            self.session_dic.pop(session_key)
             return True, "OK"
         except KeyError:
             return False, "NOT_LOGGEDIN"
@@ -109,12 +106,12 @@ class LoginManager(object):
         @param session_key: User Key
         @rtype: string
         @return:
-            1. 로그인 되어있을 경우: True, session_dic {id, user_ip, login_time}
+            1. 로그인 되어있을 경우: True, self.session_dic {id, user_ip, login_time}
             2. 로그인 되어있지 않을 경우: False, "NOT_LOGGEDIN"
         """
 
         try:
-            session_info = session_dic[session_key]
+            session_info = self.session_dic[session_key]
             return True, session_info
         except KeyError:
             return False, "NOT_LOGGEDIN"

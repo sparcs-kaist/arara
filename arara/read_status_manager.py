@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
 
+from login_manager import *
+
+class NotLoggedln(Exception):
+    pass
+
 class ReadStatusManager(object):
     """
     읽은 글, 통과한글 처리관련 클래스
     """
 
     def __init__(self):
-        pass
+	self.articles = {'garbages' : {}}
+	
 
     def check_stat(self, session_key, bbs_name, no):
         """
@@ -32,6 +38,7 @@ class ReadStatusManager(object):
 		2. 로그인되지 않은 유저: False, "NOT_LOGGEDIN"
 		3. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
+		
 
     def check_stats(self, session_key, bbs_name, no_list):
 	"""
