@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+    </head>
+    <body>
+	{% block message_top_menu %}
+	    <div id=message_top_menu>
+		{% for item in mtm_item %}
+			<a href="/message/{{item}}"> {{item}} </a>
+			|
+		{% endfor %}
+	    </div>
+	{% endblock %}
+	{% block message_content %}
+	    message_content
+	{% endblock %}
+    </body>
+</html>

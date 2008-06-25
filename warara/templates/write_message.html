@@ -1,0 +1,24 @@
+{% extends "message_frame.html" %}
+
+{% block message_content %}
+    <form method="post">
+	<div id=messgae_write>
+	    <div id=mw_receiver>
+		receiver
+		 <input type="text" name="mw_rec">
+		 <br>
+		 distinguish each receiver by space up to 10 people
+	     </div>
+	     <div id=mw_content>
+		 <textarea name="mw_con"></textarea>
+		 <br>
+		 <input type="checkbox" name="mw_save">
+		 save at outbox
+	     </div>
+	     <div id="mw_commands">
+		 <input type="submit" name="mw_sub" value="submit">
+		 <input type="button" name=_bu_canc" value="cancel">
+	     </div>
+	 </div>
+     </form>
+{% endblock %}

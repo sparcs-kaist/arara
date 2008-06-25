@@ -39,3 +39,14 @@ def list(request, bbs):
                    'menu':'글쓰기',
                    'pages':range(1, 11)})
     return HttpResponse(rendered)
+
+mtm_item={'mtm_item':['inbox', 'outbox', 'send', 'search user']}
+
+def write_message(request):
+    rendered = render_to_string('write_message.html', mtm_item)
+    return HttpResponse(rendered)
+
+def inbox_list(request):
+    mtm_item['m_list']=[]
+    rendered = render_to_string('inbox_list.html', mtm_item)
+    return HttpResponse(rendered)

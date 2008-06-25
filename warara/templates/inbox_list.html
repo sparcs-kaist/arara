@@ -1,0 +1,18 @@
+
+{% extends "message_frame.html" %}
+
+{% block message_content %}
+<!--
+{{num_new_m}}new message(s) / {{num_m}}message(s)
+-->
+    <div id="message_content">
+	<form action="">
+	    <select name="nmespp">
+		<option value="20">20</option>
+		<option value="30">30</option>
+		<option value="50">50</option>
+	    </select>
+	</form>
+
+    </div>
+{% endblock %}

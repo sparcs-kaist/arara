@@ -9,4 +9,7 @@ urlpatterns = patterns('',
     (r'^main/$', 'warara.views.main'),
     (r'^list/([^/]+)/$', 'warara.views.list'),
     (r'^modify/([^/]+)/(\d)+/$', 'warara.views.modify'),
+    (r'^message/send/$', 'warara.views.write_message'),
+    (r'^message/inbox/$', 'warara.views.inbox_list'),
+    (r'^message/outbox/$', 'warara.views.outbox_list'),
 )
