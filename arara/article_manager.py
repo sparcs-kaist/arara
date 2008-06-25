@@ -1,12 +1,20 @@
 # -*- coding: utf-8 -*-
 
+from login_manager import *
+
+class NotLoggedIn(Exception):
+    pass
+
 class ArticleManager(object):
     """
     게시글 및 검색 처리 클래스
     현재 게시글 표시방식이 절묘하기 때문에 read 메소드에 관한 논의가 필요.
 
+    >>> Login = LoginManager()
+    >>> Login.login("test", "test", "143.248.234.145")
+    (True, '05a671c66aefea124cc08b76ea6d30bb')
     >>> article = ArticleManager()
-    >>> session_key = ""
+    >>> session_key = "05a671c66aefea124cc08b76ea6d30bb"
     >>> article_dic = {"author":"serialx", "title": "serialx is...",
     ... "content": "polarbear", "method": "web"}
     >>> article.write_article(session_key, "garbages", article_dic)
@@ -20,12 +28,16 @@ class ArticleManager(object):
     (True, 'OK')
     >>> article.read(session_key, "garbages", 1)
     (True, {'title': 'serialx is...', 'ip': '143.248.234.240', 'author': 'serialx', 'content': 'polarbear', 'time': '2008.06.16 23:34:34', 'reply': [{'ip': '143.248.234.140', 'time': '2008.06.16 23:59:43', 'context': 'asdf', 'author': 'pv457'}], 'method': 'web'})
+    >>> Login.logout('05a671c66aefea124cc08b76ea6d30bb')
+    (True, 'OK')
     """
 
     def __init__(self):
 	#monk data
 	self.articles = {'garbages': {} }
 	global article_no
+        global Login
+        Login = LoginManager()
 	article_no = 0
 
     def read(self, session_key, board_name, no):
@@ -49,6 +61,14 @@ class ArticleManager(object):
 		3. 로그인되지 않은 유저: False, "NOT_LOGGEDIN"
 		4. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
+        global Login
+
+        try:
+            if not Login.is_logged_in(session_key)[0]:
+                raise NotLoggedIn()
+        except NotLoggedIn:
+            return False, "NOT_LOGGEDIN"
+
 	try:
 	    board = self.articles[board_name]
 	except KeyError:
@@ -79,6 +99,13 @@ class ArticleManager(object):
 		2. 로그인되지 않은 유저: False, "NOT_LOGGEDIN"
 		3. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
+        global Login
+
+        try:
+            if not Login.is_logged_in(session_key)[0]:
+                raise NotLoggedIn()
+        except NotLoggedIn:
+            return False, "NOT_LOGGEDIN"
 
 	global article_no
 
@@ -117,6 +144,14 @@ class ArticleManager(object):
 		3. 로그인되지 않은 유저: False, "NOT_LOGGEDIN"
 		4. 데이터베이스 오류: False, "DATABASE_ERROR"
 	"""
+        global Login
+
+        try:
+            if not Login.is_logged_in(session_key)[0]:
+                raise NotLoggedIn()
+        except NotLoggedIn:
+            return False, "NOT_LOGGEDIN"
+
 	try:
 	    board = self.articles[board_name]
 	except KeyError:
@@ -162,6 +197,14 @@ class ArticleManager(object):
 		4. 수정 권한이 없음: False, "NO_PERMISSION"
 		5. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
+        global Login
+
+        try:
+            if not Login.is_logged_in(session_key)[0]:
+                raise NotLoggedIn()
+        except NotLoggedIn:
+            return False, "NOT_LOGGEDIN"
+
 
 	try:
 	    board = self.articles[board_name]
@@ -202,6 +245,14 @@ class ArticleManager(object):
 		4. 수정 권한이 없음: False, "NO_PERMISSION"
 		5. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
+        global Login
+        
+        try:
+            if not Login.is_logged_in(session_key)[0]:
+                raise NotLoggedIn()
+        except NotLoggedIn:
+            return False, "NOT_LOGGEDIN"
+
 	try:
 	    board = self.articles[board_name]
 	except KeyError:
@@ -258,6 +309,12 @@ class ArticleManager(object):
             2. 리스트 읽어오기 실패: False 
 		1. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
+        try:
+            if not Login.is_logged_in(session_key)[0]:
+                raise NotLoggedIn()
+        except NotLoggedIn:
+            return False, "NOT_LOGGEDIN"
+
 	board = []
 	try:
 	    for no in len(self.article):
@@ -295,6 +352,12 @@ class ArticleManager(object):
 		5. 데이터베이스 오류: False, "DATABASE_ERROR"
 
         """
+        try:
+            if not Login.is_logged_in(session_key)[0]:
+                raise NotLoggedIn()
+        except NotLoggedIn:
+            return False, "NOT_LOGGEDIN"
+
 	return False, "NOT_IMPLEMENTED"
 
 def _test():

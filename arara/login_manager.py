@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import hashlib
+import datetime
+
+global session_dic
+session_dic = {}
+
 class LoginManager(object):
     """
     로그인 처리 관련 클래스
@@ -33,6 +39,19 @@ class LoginManager(object):
 		3. 데이터베이스 관련 에러: False, "DATABASE_ERROR"
 
         """
+        global session_dic
+
+        if(id == "test"):
+            if(password == "test"):
+                hash = hashlib.md5(id+password).hexdigest()
+                timestamp = datetime.datetime.isoformat(datetime.datetime.now())
+                session_dic[hash] = {"id": id, "ip": user_ip, "logintime": timestamp}
+                return True, hash
+            else:
+                return False, "WRONG_PASSWORD"
+        else:
+            return False, "WRONG_ID"
+
 
     def logout(self, session_key):
         """
@@ -53,6 +72,14 @@ class LoginManager(object):
 		2. 데이터베이스 관련 에러: False, "DATABASE_ERROR"
         """
 
+        global session_dic
+
+        try:
+            session_dic.pop(session_key)
+            return True, "OK"
+        except KeyError:
+            return False, "NOT_LOGGEDIN"
+
     def update_session(self, session_key):
 	"""
 	세션 expire시간을 연장해주는 함수
@@ -71,3 +98,23 @@ class LoginManager(object):
 		1. 로그인되지 않은 사용자: False, "NOT_LOGGEDIN"
 		2. 데이터베이스 관련 에러: False, "DATABASE_ERROR"
         """
+
+        return False, "NOT_IMPLEMENTED"
+
+    def is_logged_in(self, session_key):
+        """
+        로그인 여부를 체크하는 함수
+
+        @type  session_key: string
+        @param session_key: User Key
+        @rtype: string
+        @return:
+            1. 로그인 되어있을 경우: True, session_dic {id, user_ip, login_time}
+            2. 로그인 되어있지 않을 경우: False, "NOT_LOGGEDIN"
+        """
+
+        try:
+            session_info = session_dic[session_key]
+            return True, session_info
+        except KeyError:
+            return False, "NOT_LOGGEDIN"
