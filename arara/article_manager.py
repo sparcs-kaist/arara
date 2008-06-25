@@ -44,7 +44,7 @@ class ArticleManager(object):
         """
         DB로부터 게시글 하나를 읽어옴
 
-	- Current Article Dictionary { no, read_status, title, author, date, hit, vote }
+	Current Article Dictionary { no, read_status, title, author, date, hit, vote }
 
         @type  session_key: string
         @param session_key: User Key

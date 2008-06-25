@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from login_manager import *
+
+global blacklist
+blacklist = {}
 
 class AlreadyAddedException(Exception):
     pass
@@ -7,19 +11,26 @@ class AlreadyAddedException(Exception):
 class NotExistIDException(Exception):
     pass
 
+class NotLoggedIn(Exception):
+    pass
+
 class BlacklistManager(object):
     """
     블랙리스트 처리 관련 클래스
     """
     def __init__(self):
+        global blacklist
+        global Login
+        Login = LoginManager()
         pass
 
     def add(self, session_key, blacklist_id):
         """
-        블랙리스트 id 추가 
-	default 값 
-	    article과 message 모두 True
-	    저장 형태: { "pv457": {"article": "True", "message": "False"}} 
+        블랙리스트 id 추가
+
+	default 값: article과 message 모두 True
+
+	저장 형태: { "pv457": {"article": "True", "message": "False"}} 
 
 	>>> blacklist.add(session_key,"pv457")
 	True, "OK"
@@ -37,12 +48,20 @@ class BlacklistManager(object):
 		3. 로그인되지 않은 사용자: False, "NOT_LOGGEDIN"
 		4. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
+        global blacklist
+        global Login
+
+        try:
+            if not Login.is_logged_in(session_id):
+                raise NotLoggedIn ()
+        except NotLoggedIn:
+            return False, "NOT_LOGGEDIN"
 	
-	blacklist = {}
 	try:
 	    if blacklist_id in blacklist:
 		raise AlreadyAddedException()
-	    blacklist["blacklist_id"] = {"article": "True", "message": "True"}
+	    blacklist[blacklist_id] = {"article": "True", "message": "True"}
+            return True, "OK"
 	except AlreadyAddedException:
 	    return False, "ALREADY_ADDED_ID"	
 	    
@@ -66,11 +85,20 @@ class BlacklistManager(object):
 		3. 로그인되지 않은 사용자: False, "NOT_LOGGEDIN"
 		4. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
-	blacklist = {}
-	try:
+        global blacklist
+        global Login
+
+        try:
+            if not Login.is_logged_in(session_id):
+                raise NotLoggedIn ()
+        except NotLoggedIn:
+            return False, "NOT_LOGGEDIN"
+	
+	
+        try:
 	    if blacklist_id not in blacklist:
 		raise NotExistIDException()
-	    del blacklist["blacklist_id"]
+	    del blacklist[blacklist_id]
 	except NotExistIDException:
 	    return False, "ID_NOT_IN_BLACKLIST"	
 
@@ -95,11 +123,21 @@ class BlacklistManager(object):
 		2. 로그인되지 않은 사용자: False, "NOT_LOGGEDIN"
 		3. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
-	blacklist = {}
+        global blacklist
+        global Login
+
+        try:
+            if not Login.is_logged_in(session_id):
+                raise NotLoggedIn ()
+        except NotLoggedIn:
+            return False, "NOT_LOGGEDIN"
+	
+
 	try:
 	    if blacklist_id not in blacklist:
 		raise NotExistIDException()
-	    blacklist["blacklist_id"] = {"article": blacklist_dic["article"], "message": blacklist_dic["message"]}
+	    blacklist[blacklist_id] = {"article": blacklist_dic["article"], "message": blacklist_dic["message"]}
+            return True, "OK"
 	except NotExistIDException:
 	    return False, "ID_NOT_IN_BLACKLIST"	
 
@@ -121,6 +159,14 @@ class BlacklistManager(object):
 		1. 로그인되지 않은 사용자: False, "NOT_LOGGEDIN"
 		2. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
-	blacklist = {}
-	return True, blacklist.keys()
-	"""return False, "NOT_IMPLEMENTED"	
+        global blacklist
+        global Login
+
+        try:
+            if not Login.is_logged_in(session_id):
+                raise NotLoggedIn ()
+        except NotLoggedIn:
+            return False, "NOT_LOGGEDIN"
+	
+	
+        return True, blacklist

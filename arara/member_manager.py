@@ -1,11 +1,22 @@
 # -*- coding: utf-8 -*-
 
+import hashlib
+
+global member_dic
+global member_no
+member_dic = {}
+
+class WrongDictionary(Exception):
+    pass
+
 class MemberManager(object):
     """
     회원 가입, 회원정보 수정, 회원정보 조회, 이메일 인증등을 담당하는 클래스
     """
 
     def __init__(self):
+        global member_no
+        member_no = len(member_dic)
         pass
 
     def register(self, user_reg_dic):
@@ -27,11 +38,37 @@ class MemberManager(object):
 		2. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
 
-    def confirm(self, confirm_key):
+        global member_no
+
+        user_reg_keys = ["id", "password", "nickname", "email", "sig", "self_introduce", "default_language"]
+        tmp_user_dic = {}
+
+        try:
+            for key in user_reg_keys:
+                if not key in user_reg_dic:
+                    raise WrongDictionary()
+                tmp_user_dic[key] = user_reg_dic[key]
+        except WrongDictionary:
+            return False, "WRONG_DICTIONARY"
+
+        tmp_user_dic['activate'] = 'False'
+        tmp_user_dic['activate_code'] = hashlib.md5(tmp_user_dic['id']+
+                tmp_user_dic['password']+tmp_user_dic['nickname']).hexdigest()
+        
+        try:
+            member_no += 1
+            member_dic[member_no] = tmp_user_dic
+        except Exception:
+            return False, "THIS_EXCEPTION_SHOULD_NEVER_HAPPEN_DURING_DUMMY_CODE"
+
+        return True, member_dic[member_no]['activate_code']
+
+
+    def confirm(self, id_to_confirm, confirm_key):
         """
         인증코드 확인
 
-        >>> member.confirm(confirm_session_key)
+        >>> member.confirm( id_to_confirm, confirm_session_key)
 	True, "OK"
 
         @type  confirm_key: integer
@@ -43,6 +80,14 @@ class MemberManager(object):
 		1. 잘못된 인증코드: False, "WRONG_CONFIRM_KEY"
 		2. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
+
+    def is_registered(self, user_id, password):
+        #remove quote when MD5 hash for UI is available
+        #
+        for keys in member_dic:
+            if user_id == member_dic[keys]['id']:
+                if password = member_dic[keys]['password']:
+                    return True, "OK"
 
     def get_info(self, session_key):
 	"""
@@ -168,22 +213,3 @@ class MemberManager(object):
 	    1. 성공시: True, "OK"
 	    2. 실패시: False, "NOT LOGGEDIN"
 	"""
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

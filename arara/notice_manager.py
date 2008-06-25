@@ -1,11 +1,10 @@
 # -*- code: utf-8 -*-
 
-
 class NoticeManager(object):
     """
     배너 및 환영 페이지 처리 관련 클래스
     """
-    
+
     def __init__(self):
         pass
 
