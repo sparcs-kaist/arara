@@ -2,18 +2,82 @@
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
     <head>
+	<style>form{ display : inline ; }</style>
     </head>
     <body>
-	{% block message_top_menu %}
-	    <div id=message_top_menu>
+        <div id=message_top_menu>
+	    {% block message_top_menu %}
+	    |
 		{% for item in mtm_item %}
-			<a href="/message/{{item}}"> {{item}} </a>
+			<a href="/message/{{item.url}}"> {{item.name}} </a>
 			|
 		{% endfor %}
-	    </div>
-	{% endblock %}
-	{% block message_content %}
-	    message_content
-	{% endblock %}
+	    {% endblock %}
+	</div>
+	
+	<div id="message_content">
+	    {% block message_content %}
+	    <div id="m_list">
+		{% block m_list %}
+		    <form action="">
+			<select name="nmespp">   <!-- Number of message show per 1page -->
+			    {% for n in nmespp %}
+			    <option value="{{n}}">{{n}}</option>
+			    {% endfor %}
+			</select>
+		    </form>
+
+		    <form action="">
+			<select name="m_opse"> <!-- message option of search -->
+			    {% for op in m_opse %}
+			    <option value="m_se_{{op}}">{{op}}</option>
+			    {% endfor %}
+			</select>
+
+			<input type="text" name="m_se_keyword"></input>
+			<input type="submit" name="m_se_submit" value="search"></input>
+
+		    </form>
+
+		    <table border="1">
+			<tr>
+			    {% for th in m_list_key %}
+			    <th>
+				{% ifequal th 'checkbox' %}
+				<form action="">
+				    <input type="checkbox" name="th_cb"> <!--th_checkbox-->
+				    </input>
+				</form>
+				{% else %}
+				{{th}}
+				{% endifequal %}
+			    </th>
+			    {% endfor %}
+			</tr>
+			{% for message in m_list_value %}
+			<tr>
+			    {% for value in message %}
+			    <td>
+				{% ifequal value 'checkbox' %}
+				<form action="">
+				    <input type="checkbox" name="{{ forloop.counter0 }}"></input>
+				</form>
+				{% else %}
+				{{ value }}
+				{% endifequal %}
+			    </td>
+			    {% endfor %}
+			</tr>
+			{% endfor %}
+		    </table>
+
+		    <form action="">
+			<input type="button" value="delete"></input>
+		    </form>
+
+		    {% endblock m_list %}
+		</div>
+	    {% endblock message_content %}
+	</div>
     </body>
 </html>
