@@ -51,13 +51,71 @@ def write(request, bbs):
 	        'article_content':'글내용'}) 
     return HttpResponse(rendered)
 
-mtm_item={'mtm_item':['inbox', 'outbox', 'send', 'search user']}
+import copy
+class m: #message
+    mtm_item={'mtm_item':[  #message top menu item
+	{'name':'inbox', 'url':'inbox'},
+	{'name':'outbox', 'url':'outbox'},
+	{'name':'send', 'url':'send'},
+	{'name':'search user', 'url':'msu'}]} 
+    mtm_item['nmespp']=[20, 30, 50]
+    mtm_item['m_opse']=['content', 'sender']
+    mtm_item['num_new_m']=0
+    mtm_item['num_m']=0
+    
+    m_list=[{'checkbox':'checkbox', 'sender':'ssaljalu', 'text':'Who are you', 'time':'08.06.26 18:51'}]
+    m_list_key=['checkbox', 'sender', 'text', 'time']
+    m_list_value=[]
+
+    mtm_item['m_list']=m_list
+    mtm_item['m_list_key']=m_list_key
+    mtm_item['m_list_value']=m_list_value
+
+    def mdl(mtm_item): #make data to list
+	cm=copy.deepcopy(mtm_item) #copy of mtm_item
+
+	for list in cm['m_list']:
+	    cm['m_list_value'].insert(0,[])
+	    for key in cm['m_list_key']:
+		cm['m_list_value'][0].append(list.get(key))
+	return cm
+    mdl=staticmethod(mdl)
+
+    def write():
+	mtm_item=copy.deepcopy(m.mtm_item)
+	return render_to_string('write_message.html', mtm_item)
+    write = staticmethod(write)
+
+    def inbox_list():
+	mtm_item=copy.deepcopy(m.mtm_item)
+	mtm_item=m.mdl(mtm_item)
+	return render_to_string('inbox_list.html', mtm_item)
+    inbox_list = staticmethod(inbox_list)
+
+    def outbox_list():
+	mtm_item=copy.deepcopy(m.mtm_item)
+	mtm_item['m_list_key']=['checkbox', 'receiver', 'text', 'time']
+	mtm_item=m.mdl(mtm_item)
+	return render_to_string('outbox_list.html', mtm_item)
+    outbox_list=staticmethod(outbox_list)
+
+    def msu():
+	mtm_item=copy.deepcopy(m.mtm_item)
+	return render_to_string('m_s_user.html', mtm_item)
+    msu=staticmethod(msu)
 
 def write_message(request):
-    rendered = render_to_string('write_message.html', mtm_item)
+    rendered = m.write()
     return HttpResponse(rendered)
 
 def inbox_list(request):
-    mtm_item['m_list']=[]
-    rendered = render_to_string('inbox_list.html', mtm_item)
+    rendered = m.inbox_list()
+    return HttpResponse(rendered)
+
+def outbox_list(request):
+    rendered = m.outbox_list()
+    return HttpResponse(rendered)
+
+def msu(request): #message search user
+    rendered = m.msu()
     return HttpResponse(rendered)
