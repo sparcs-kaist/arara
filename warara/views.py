@@ -18,26 +18,37 @@ def main(request):
 def modify(request, bbs, article_num):
     rendered = render_to_string('modify.html',
 	       {'browser_title':'WebARAra',
-		   'arara_login':'login',
-		   'bbs_list': ['KAIST', 'garbage'],
-		   'widget':'widget',
-		   'bbs_header':bbs,
-		   'article_number':article_num,
-		   'article_subject':'글제목',
-		   'article_content':'글내용'})
+	        'arara_login':'login',
+	        'bbs_list': ['KAIST', 'garbage'],
+	        'widget':'widget',
+	        'bbs_header':bbs,
+	        'article_number':article_num,
+	        'article_subject':'글제목',
+	        'article_content':'글내용'})
     return HttpResponse(rendered)
 
 def list(request, bbs):
     articles = [{'no':1,'read_status':'N','title':'가나다','author':'조준희','date':'2008/06/24','hit':11,'vote':2,'content':'글내용'}]
     rendered = render_to_string('list.html',
-               {'browser_title':'WebARAra',
-                   'arara_login':'로그인',
-                   'bbs_list': ['KAIST', 'garbage'],
-                   'widget':'위젯',
-                   'bbs_header':bbs,
-                   'article_list':articles,
-                   'menu':'글쓰기',
-                   'pages':range(1, 11)})
+	       {'browser_title':'WebARAra',
+                'arara_login':'로그인',
+	        'bbs_list': ['KAIST', 'garbage'],
+                'widget':'위젯',
+                'bbs_header':bbs,
+                'article_list':articles,
+                'menu':'글쓰기',
+                'pages':range(1, 11)})
+    return HttpResponse(rendered)
+
+def write(request, bbs):
+    rendered = render_to_string('write.html',
+	       {'browser_title':'WebARAra',
+		'arara_login':'로그인',
+	        'bbs_list': ['KAIST', 'garbage'],
+	        'widget':'widget',
+	        'bbs_header':bbs,
+	        'article_subject':'글제목',
+	        'article_content':'글내용'}) 
     return HttpResponse(rendered)
 
 mtm_item={'mtm_item':['inbox', 'outbox', 'send', 'search user']}

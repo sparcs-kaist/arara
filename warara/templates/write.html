@@ -1,0 +1,39 @@
+{% extends "mainframe.html" %}
+
+{% block arara_content %}
+<div id="header">
+    {{bbs_header}}
+</div>
+<form method="post">
+    <div id="article_header">
+	<br>subject
+	<input type="text" name="art_subject" value="{{article_subject}}">
+	<select name="board">
+	<option>--게시판--</option>
+	<option value="Kaist">KAIST</option>
+	<option value="Garbages">garbages</option>
+	<option value="Food">food</option>
+	<option value="Abrod">abroad</option>
+	<option value="Love">love</option>
+	<option value="Foreigner">foreigner</option>
+	<option value="Filmspecial">filmspecial</option>
+    </div>
+    <br>
+    <div id="writer_content">
+	<textarea name="art_con">{{article_contentt}}
+	내용을 입력하세요
+	</textarea>
+    </div>
+    <div id="writer_attachment">
+	place for attachments
+    </div>
+    <div id="writer_check">
+	<input type="checkbox" name="option" value="ch_sh_se">
+    </div>
+    <div id="commands">
+	<input type="submit" name="sub_wri" value="Write">
+	<input type="button" name="bu_canc" value="Cancel">
+	<input type="button" name="bu_list" value="&nbsp;List&nbsp;">
+    </div>
+</form>
+{% endblock %}
