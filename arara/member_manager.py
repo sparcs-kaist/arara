@@ -2,9 +2,6 @@
 
 import hashlib
 
-global member_dic
-global member_no
-member_dic = {}
 
 class WrongDictionary(Exception):
     pass
@@ -12,12 +9,25 @@ class WrongDictionary(Exception):
 class MemberManager(object):
     """
     회원 가입, 회원정보 수정, 회원정보 조회, 이메일 인증등을 담당하는 클래스
+
+
+    >>> self.login_manager = self.login_managerManger()
+    >>> self.login_manager.login("test", "test", "143.248.234.145")
+    (True, '05a671c66aefea124cc08b76ea6d30bb')
+    >>> member = MemberManger()
+    >>> session_key = "05a671c66aefea124cc08b76ea6d30bb"
+    >>> user_reg_dic = { "id":"mikkang", "password":"mikkang", "nickname":"mikkang", "email":"mikkang", "sig":"mikkang", "self_introduce":"mikkang", "default_language":"mikkang" }
+    >>> member.register(user_reg_dic)
+    (True, 'OK')
+
     """
 
-    def __init__(self):
-        global member_no
-        member_no = len(member_dic)
-        pass
+    def __init__(self, login_manager):
+        #monk data
+        self.member_no 
+        self.member_dic = {} #DB에서 member table를 read해오는 부분
+        self.member_no = len(member_dic)
+        self.login_manager = login_manager
 
     def register(self, user_reg_dic):
         """
@@ -26,7 +36,7 @@ class MemberManager(object):
         >>> member.register(user_reg_dic)
         True, "OK"
 
-        - Current User Dictionary { ID, password, nickname, email, sig, self_introduce, default_language }
+        - Current User Dictionary { id, password, nickname, email, sig, self_introduce, default_language }
 
         @type  user_reg_dic: dictionary
         @param user_reg_dic: User Dictionary
@@ -37,8 +47,6 @@ class MemberManager(object):
                 1. 양식이 맞지 않음(부적절한 NULL값 등): "WRONG_DICTIONARY"
                 2. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
-
-        global member_no
 
         user_reg_keys = ["id", "password", "nickname", "email", "sig", "self_introduce", "default_language"]
         tmp_user_dic = {}
@@ -56,12 +64,12 @@ class MemberManager(object):
                 tmp_user_dic['password']+tmp_user_dic['nickname']).hexdigest()
         
         try:
-            member_no += 1
-            member_dic[member_no] = tmp_user_dic
+            self.member_no += 1
+            member_dic[self.member_no] = tmp_user_dic
         except Exception:
             return False, "THIS_EXCEPTION_SHOULD_NEVER_HAPPEN_DURING_DUMMY_CODE"
 
-        return True, member_dic[member_no]['activate_code']
+        return True, member_dic[self.member_no]['activate_code']
 
 
     def confirm(self, id_to_confirm, confirm_key):
@@ -213,3 +221,10 @@ class MemberManager(object):
             1. 성공시: True, "OK"
             2. 실패시: False, "NOT LOGGEDIN"
         """
+
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == "__main__":
+    _test()
