@@ -34,14 +34,14 @@ class ArticleManager(object):
         #monk data
         self.articles = {'garbages': {} }
         global article_no
-	self.login_manager = login_manager
+        self.login_manager = login_manager
         article_no = 0
 
     def read(self, session_key, board_name, no):
         """
         DB로부터 게시글 하나를 읽어옴
 
-	Current Article Dictionary { no, read_status, title, author, date, hit, vote }
+        Current Article Dictionary { no, read_status, title, author, date, hit, vote }
 
         @type  session_key: string
         @param session_key: User Key

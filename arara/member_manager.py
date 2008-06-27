@@ -24,9 +24,9 @@ class MemberManager(object):
         DB에 회원 정보 추가
 
         >>> member.register(user_reg_dic)
-	True, "OK"
+        True, "OK"
 
-	    - Current User Dictionary { ID, password, nickname, email, sig, self_introduce, default_language }
+        - Current User Dictionary { ID, password, nickname, email, sig, self_introduce, default_language }
 
         @type  user_reg_dic: dictionary
         @param user_reg_dic: User Dictionary
@@ -34,8 +34,8 @@ class MemberManager(object):
         @return:
             1. register 성공: True, "OK"
             2. register 실패:
-		1. 양식이 맞지 않음(부적절한 NULL값 등): "WRONG_DICTIONARY"
-		2. 데이터베이스 오류: False, "DATABASE_ERROR"
+                1. 양식이 맞지 않음(부적절한 NULL값 등): "WRONG_DICTIONARY"
+                2. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
 
         global member_no
@@ -69,16 +69,16 @@ class MemberManager(object):
         인증코드 확인
 
         >>> member.confirm( id_to_confirm, confirm_session_key)
-	True, "OK"
+        True, "OK"
 
         @type  confirm_key: integer
         @param confirm_key: Confirm Key
         @rtype: string
         @return:
             1. 인증 성공: True, "OK"
-	    2. 인증 실패:
-		1. 잘못된 인증코드: False, "WRONG_CONFIRM_KEY"
-		2. 데이터베이스 오류: False, "DATABASE_ERROR"
+            2. 인증 실패:
+                1. 잘못된 인증코드: False, "WRONG_CONFIRM_KEY"
+                2. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
 
     def is_registered(self, user_id, password):
@@ -90,33 +90,33 @@ class MemberManager(object):
                     return True, "OK"
 
     def get_info(self, session_key):
-	"""
-	회원 정보 수정을 위한 회원 정보를 가져오는 함수, 쿼리와 다름
+        """
+        회원 정보 수정을 위한 회원 정보를 가져오는 함수, 쿼리와 다름
 
-	>>> member.get_info(logged_in_session_key)
-	True, {"id": "serialx", "name": "홍성진", "nickname": "PolarBear", ...}
-	>>> member.get_info(NOT_logged_in_session_key)
-	False, "NOT_LOGGEDIN"
+        >>> member.get_info(logged_in_session_key)
+        True, {"id": "serialx", "name": "홍성진", "nickname": "PolarBear", ...}
+        >>> member.get_info(NOT_logged_in_session_key)
+        False, "NOT_LOGGEDIN"
 
-	@type  session_key: string
-	@param session_key: User Key
-	@rtype: dictionary
-	@return:
-	    1. 가져오기 성공: True, user_dic
-	    2. 가져오기 실패:
-		1. 로그인되지 않은 유저: False, "NOT_LOGGEDIN"
-		2. 존재하지 않는 회원: False, "MEMBER_NOT_EXIST"
-		3. 데이터베이스 오류: False, "DATABASE_ERROR"
-	"""
+        @type  session_key: string
+        @param session_key: User Key
+        @rtype: dictionary
+        @return:
+            1. 가져오기 성공: True, user_dic
+            2. 가져오기 실패:
+                1. 로그인되지 않은 유저: False, "NOT_LOGGEDIN"
+                2. 존재하지 않는 회원: False, "MEMBER_NOT_EXIST"
+                3. 데이터베이스 오류: False, "DATABASE_ERROR"
+        """
         
     def modify_password(self, session_key, user_password_dic):
         """
         DB에 회원 정보 수정
 
         >>> member.modify(session_key, user_password_dic)
-	True, "OK"
+        True, "OK"
 
-	---user_password_dic {id, current_password, new_password}
+        ---user_password_dic {id, current_password, new_password}
 
         @type  session_key: string
         @param session_key: User Key
@@ -126,10 +126,10 @@ class MemberManager(object):
         @return:
             1. modify 성공: True, "OK"
             2. modify 실패:
-		1. 수정 권한 없음: "NO_PERMISSION"
-		2. 잘못된 현재 패스워드: "WRONG_PASSWORD"
-		3. 로그인되지 않은 유저: False, "NOT_LOGGEDIN"
-		4. 데이터베이스 오류: False, "DATABASE_ERROR"
+                1. 수정 권한 없음: "NO_PERMISSION"
+                2. 잘못된 현재 패스워드: "WRONG_PASSWORD"
+                3. 로그인되지 않은 유저: False, "NOT_LOGGEDIN"
+                4. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
 
     def modify(self, session_key, user_reg_dic):
@@ -137,7 +137,7 @@ class MemberManager(object):
         DB에 회원 정보 수정
 
         >>> member.modify(session_key, user_reg_dic)
-	True, "OK"
+        True, "OK"
 
         @type  session_key: string
         @param session_key: User Key
@@ -147,69 +147,69 @@ class MemberManager(object):
         @return:
             1. modify 성공: True, "OK"
             2. modify 실패:
-		1. 로그인되지 않은 유저: False, "NOT_LOGGEDIN"
-		2. 데이터베이스 오류: False, "DATABASE_ERROR"
+                1. 로그인되지 않은 유저: False, "NOT_LOGGEDIN"
+                2. 데이터베이스 오류: False, "DATABASE_ERROR"
         """
 
     def query_by_id(self, session_key, query_id):
-	"""
-	쿼리 함수
+        """
+        쿼리 함수
 
-	>>> member.querybyid(session_key, "pv457")
-	True, {'user_id': 'pv457', 'user_nickname': '심영준',
-	'self_introduce': '...', 'user_ip': '143.248.234.111'}
+        >>> member.querybyid(session_key, "pv457")
+        True, {'user_id': 'pv457', 'user_nickname': '심영준',
+        'self_introduce': '...', 'user_ip': '143.248.234.111'}
 
-	---query_dic { user_id, user_nickname, self_introduce, user_ip }
+        ---query_dic { user_id, user_nickname, self_introduce, user_ip }
 
-	@type  session_key: string
-	@param session_key: User Key
-	@type  query_id: string
-	@param query_id: User ID to send Query
-	@rtype: dictionary
-	@return:
-	    1. 쿼리 성공: True, query_dic
-	    2. 쿼리 실패:
-		1. 존재하지 않는 아이디: False, "QUERY_ID_NOT_EXIST"
-		2. 로그인되지 않은 유저: False, "NOT_LOGGEDIN"
-		3. 데이터베이스 오류: False, "DATABASE_ERROR"
-	"""
+        @type  session_key: string
+        @param session_key: User Key
+        @type  query_id: string
+        @param query_id: User ID to send Query
+        @rtype: dictionary
+        @return:
+            1. 쿼리 성공: True, query_dic
+            2. 쿼리 실패:
+                1. 존재하지 않는 아이디: False, "QUERY_ID_NOT_EXIST"
+                2. 로그인되지 않은 유저: False, "NOT_LOGGEDIN"
+                3. 데이터베이스 오류: False, "DATABASE_ERROR"
+        """
 
     def query_by_nick(self, session_key, query_nickname):
-	"""
-	쿼리 함수
+        """
+        쿼리 함수
 
-	>>> member.querybynick(session_key, "심영준")
-	True, {'user_id': 'pv457', 'user_nickname': '심영준',
-	'self_introduce': '...', 'user_ip': '143.248.234.111'}
+        >>> member.querybynick(session_key, "심영준")
+        True, {'user_id': 'pv457', 'user_nickname': '심영준',
+        'self_introduce': '...', 'user_ip': '143.248.234.111'}
 
-	---query_dic { user_id, user_nickname, self_introduce, user_ip }
+        ---query_dic { user_id, user_nickname, self_introduce, user_ip }
 
-	@type  session_key: string
-	@param session_key: User Key
-	@type  query_nickname: string
-	@param query_nickname: User Nickname to send Query
-	@rtype: dictionary
-	@return:
-	    1. 쿼리 성공: True, query_dic
-	    2. 쿼리 실패:
-		1. 존재하지 않는 닉네임: False, "QUERY_NICK_NOT_EXIST"
-		2. 로그인되지 않은 유저: False, "NOT_LOGGEDIN"
-		3. 데이터베이스 오류: False, "DATABASE_ERROR"
-	"""
+        @type  session_key: string
+        @param session_key: User Key
+        @type  query_nickname: string
+        @param query_nickname: User Nickname to send Query
+        @rtype: dictionary
+        @return:
+            1. 쿼리 성공: True, query_dic
+            2. 쿼리 실패:
+                1. 존재하지 않는 닉네임: False, "QUERY_NICK_NOT_EXIST"
+                2. 로그인되지 않은 유저: False, "NOT_LOGGEDIN"
+                3. 데이터베이스 오류: False, "DATABASE_ERROR"
+        """
        
     def remove_user(self, session_key):
-	"""
-	session key로 로그인된 사용자를 등록된 사용자에서 제거한다" - 회원탈퇴
+        """
+        session key로 로그인된 사용자를 등록된 사용자에서 제거한다" - 회원탈퇴
 
-	>>> member.remove_user(logged_session_key)
-	True, "OK"
-	>>> member.remove_user(not_logged_session_key)
-	False, "NOT LOGGEDIN"
-	
-	@type  session_key: string
-	@param session_key: User Key
-	@rtype: String
-	@return:
-	    1. 성공시: True, "OK"
-	    2. 실패시: False, "NOT LOGGEDIN"
-	"""
+        >>> member.remove_user(logged_session_key)
+        True, "OK"
+        >>> member.remove_user(not_logged_session_key)
+        False, "NOT LOGGEDIN"
+        
+        @type  session_key: string
+        @param session_key: User Key
+        @rtype: String
+        @return:
+            1. 성공시: True, "OK"
+            2. 실패시: False, "NOT LOGGEDIN"
+        """
