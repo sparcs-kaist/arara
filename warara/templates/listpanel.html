@@ -1,0 +1,19 @@
+<h4>{{listname}}</h4>
+<div id="{{listname}}column">
+<table border="1">
+    <tr>
+        <td>제목</td>
+        <td>작성자</td>
+    </tr>
+</table>
+</div>
+<div id="{{listname}}list">
+<table border="1">
+    {% for article in articles %}
+    <tr>
+        <td>{{article.title}}</td>
+        <td>{{article.author}}</td>
+    </tr>
+    {% endfor %}
+</table>
+</div>

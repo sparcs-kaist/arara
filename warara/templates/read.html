@@ -1,0 +1,26 @@
+{% extends "mainframe.html" %}
+
+{% block arara_content %}
+<div id="header">
+    {{bbsname}}
+    {{bbs_header}}
+</div>
+{% article = articles[0] %}
+<div id="view">
+    <div>{{article.title}}</div>
+    <div>{{article.author}}</div>
+    <div>{{article.content}}</div>
+    <div><a href="/modify/{{bbsname}}/{{article.no}}/">글수정</a></div>
+</div>
+{% for article in articles[1:] %}
+<div id="reply">
+    <div>{{article.title}}</div>
+    <div>{{article.author}}</div>
+    <div>{{article.content}}</div>
+    <div><a href="/modify/{{bbsname}}/{{article.no}}/">글수정</a></div>
+</div>
+{% endfor %}
+<div id="footer">
+    ---
+</div>
+{% endblock %}

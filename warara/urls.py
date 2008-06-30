@@ -6,8 +6,10 @@ urlpatterns = patterns('',
 
     # Uncomment this for admin:
 #     (r'^admin/', include('django.contrib.admin.urls')),
+    (r'^/$', 'warara.views.intro'),    
     (r'^main/$', 'warara.views.main'),
     (r'^list/([^/]+)/$', 'warara.views.list'),
+    (r'^read/([^/]+)/(\d)+/$', 'warara.views.read'),
     (r'^modify/([^/]+)/(\d)+/$', 'warara.views.modify'),
     (r'^write/([^/]+)/$', 'warara.views.write'),
     (r'^message/send/$', 'warara.views.write_message'),

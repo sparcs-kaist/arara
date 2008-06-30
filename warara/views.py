@@ -2,38 +2,77 @@
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 
+bbslist = ['KAIST', 'garbage']
+widget = 'widget'
+arara_login = 'login'
+
+def intro(request):
+    rendered = render_to_string('intro.html', {})
+    return HttpResponse(rendered)
+
 def main(request):
+    todaybestlist = [{'title':'투베1', 'author':'쌀'},
+            {'title':'투베2', 'author':'쌀'}]
+    todaybest = render_to_string('listpanel.html',
+            {'listname':'todaybest',
+                'articles':todaybestlist})
+
+    weekbestlist = [{'title':'윅베1', 'author':'쌀'},
+            {'title':'윅베2', 'author':'쌀'}]
+    weekbest = render_to_string('listpanel.html',
+            {'listname':'weekbest',
+                'articles':weekbestlist})
+
+    portallist = [{'title':'포탈1', 'author':'쌀'},
+            {'title':'포탈2', 'author':'쌀'}]
+    portal = render_to_string('listpanel.html',
+            {'listname':'portal',
+                'articles':portallist})
+
+
+    newslist = [{'title':'NEWS1', 'author':'쌀'},
+            {'title':'NEWS2', 'author':'쌀'}]
+    news = render_to_string('listpanel.html',
+            {'listname':'news',
+                'articles':newslist})
+
     rendered = render_to_string('main.html',
-               {'browser_title':'WebARAra',
-                'arara_login':'로그인',
-                'bbs_list': ['KAIST', 'garbage'],
-                'widget':'위젯',
-                'today_best':'투베',
-                'kaist_news':'카이스트 뉴스',
-                'week_best':'윅베',
-                'portal':'포탈공지',
+            {'today_best':todaybest,
+                'kaist_news':news,
+                'week_best':weekbest,
+                'portal':portal,
                 'banner':'배너'})
     return HttpResponse(rendered)
 
 def modify(request, bbs, article_num):
     rendered = render_to_string('modify.html',
-	       {'browser_title':'WebARAra',
-	        'arara_login':'login',
-	        'bbs_list': ['KAIST', 'garbage'],
-	        'widget':'widget',
-	        'bbs_header':bbs,
+            {'bbs_list':bbslist,
+                'widget':widget,
+                'arara_login':arara_login,
+                'bbs_header':bbs,
 	        'article_number':article_num,
 	        'article_subject':'글제목',
 	        'article_content':'글내용'})
     return HttpResponse(rendered)
 
+def read(request, bbs, no):
+    rendered = render_to_string('read.html',
+            {'bbs_list':bbslist,
+                'widget':widget,
+                'arara_login':arara_login,
+                'bbsname':bbs,
+                'bbs_header':'bbs_header',
+                'articles':[{'no':'1', 'title':'title1', 'author':'author1', 'content':'content1'},
+                    {'no':'2', 'title':'reply1', 'author':'author2', 'content':'content2'},
+                    {'no':'3', 'title':'reply2', 'author':'author3', 'content':'content2'}]})
+    return HttpResponse(rendered)
+
 def list(request, bbs):
     articles = [{'no':1,'read_status':'N','title':'가나다','author':'조준희','date':'2008/06/24','hit':11,'vote':2,'content':'글내용'}]
     rendered = render_to_string('list.html',
-	       {'browser_title':'WebARAra',
-                'arara_login':'로그인',
-	        'bbs_list': ['KAIST', 'garbage'],
-                'widget':'위젯',
+            {'bbs_list':bbslist,
+                'widget':widget,
+                'arara_login':arara_login,
                 'bbs_header':bbs,
                 'article_list':articles,
                 'menu':'글쓰기',
@@ -42,11 +81,10 @@ def list(request, bbs):
 
 def write(request, bbs):
     rendered = render_to_string('write.html',
-	       {'browser_title':'WebARAra',
-		'arara_login':'로그인',
-	        'bbs_list': ['KAIST', 'garbage'],
-	        'widget':'widget',
-	        'bbs_header':bbs,
+            {'bbs_list':bbslist,
+                'widget':widget,
+                'arara_login':arar_login,
+                'bbs_header':bbs,
 	        'article_subject':'글제목',
 	        'article_content':'글내용'}) 
     return HttpResponse(rendered)
