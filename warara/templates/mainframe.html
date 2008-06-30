@@ -2,36 +2,72 @@
     <head>
         <title>{{brower_title}}</title>
         <style type="text/css">
-div#header{position:relative}
-div#container{width:1024px;margin:0 auto; background-color: #fdd}
-div#content{float:right;width:500px}
-div#navigation{float:left;width:200px; background-color: #dfd}
+	    #header{
+		position:relative;
+		width:1024px;
+		height:154px;
+		background-color:#00ff78
+	    }
+	    #header_left { 
+		float:left
+	    }
+	    #header_right {
+		float:right
+	    }
+	    #container{
+		width:1024px;
+		margin:0 auto;
+		background-color: #fdd
+	    }
+	    #content{
+		float:right;
+		width:500px
+	    }
+	    #navigation{
+		float:left;
+		width:200px; 
+		background-color: #dfd
+	    }
+	    #main_title{
+		position:absolute;
+		bottom:5%;
+		left:1%;
+		font-family:sans-serif; 
+		border:medium double black;
+		font-size:200%
+	    }
+	    #main_ksearch{
+		position:absolute;
+		right:5%;
+		top:20%
+	    }
+	    #main_inventory{
+		position:absolute;
+		right:5%;
+		bottom:20%
+	    }
         </style>
     </head>
     <body>
         <div id="container">
-        <div id="header">
-            <table border = "1">
-                <tr>
-                    <td rowspan = "2">
-                        <h1>WebARARA!</h1>
-                    </td>
-                    <td>
-                        <form name = "ksearch" method = "GET" action = "http://sparcs40.kaist.ac.kr:8000/search">
-                            <input type = "text" name = "q">
-                            <input type = "submit" value = "KSearch">
-                        </form>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {{arara_login}}
-			<a href="/help">도움말</a>
-			<a href=# onclick="window.open('/message/inbox', '_blank', 'width=400px height=200')">
-			    message</a>
-                    </td>
-                </tr>
-            </table>
+	<div id="header">
+	    <div id="header_left">
+		<span id="main_title">WebARra</span>
+	    </div>
+	    <div id="header_right">
+		<span id="main_ksearch">
+		    <form name = "ksearch" method = "GET" action = "http://sparcs40.kaist.ac.kr:8000/search">
+			<input type = "text" name ="q">
+			<input type = "submit" value = "KSearch">
+		    </form>
+		</span>
+		<span id="main_inventory">
+		    {{arara_login}}
+		    <a href="/help">Help</a>
+		    <a href=# onclick="window.open('/message/inbox', '_blank', 'width=400px height=200px')">
+		    message</a>
+		</span>
+	    </div>
         </div>
         <div id="navigation">
             {% for bbs in bbs_list %}
@@ -44,6 +80,6 @@ div#navigation{float:left;width:200px; background-color: #dfd}
             Content
             {% endblock %}
         </div>
-        </div>
+	</div>
     </body>
 </html>
