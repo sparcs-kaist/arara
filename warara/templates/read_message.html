@@ -1,0 +1,36 @@
+{% extends "message_frame.html" %}
+
+{% block message_content %}
+<div id="m_info"> <!-- message information -->
+    <div id="m_user"> <!-- message user information -->
+	{{m_who}} : {{read_message.receiver}}
+    </div>
+    <div id="m_time"> <!-- message time information -->
+	{{read_message.time}}
+    </div>
+</div>
+<div id="m_text">
+    {{read_message.text}}
+</div>
+<div id="m_r_om"> <!-- message read option menu -->
+    <div id="mrom_np"> <!-- message read option menu_next/prev -->
+	<form action="">
+	    <input type="button" name="mr_prev" value="prev"></input>
+	    <input type="button" name="mr_next" value="next"></input>
+	</form>
+    </div>
+    <div id="mrom_rd"> <!-- message read option menu_reply/delete -->
+	<form action="">
+	    <input type="button" name="mr_deliever" value="deliever"></input>
+	    {% if mr_reply %}
+	    <input type="button" name="mr_reply" value="{{mr_reply}}"></input>
+	    {% endif %}
+	    <input type="button" name="mr_delete" value="delete"></input>
+	</form>
+    </div>
+</div>
+<div id="mr_page"> <!-- message read page view -->
+    {% block m_page %}
+    {% endblock m_page %}
+</div>
+{% endblock message_content %}

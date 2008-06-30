@@ -75,7 +75,7 @@ def list(request, bbs):
                 'arara_login':arara_login,
                 'bbs_header':bbs,
                 'article_list':articles,
-                'menu':'글쓰기',
+                'menu':'write',
                 'pages':range(1, 11)})
     return HttpResponse(rendered)
 
@@ -85,8 +85,8 @@ def write(request, bbs):
                 'widget':widget,
                 'arara_login':arar_login,
                 'bbs_header':bbs,
-	        'article_subject':'글제목',
-	        'article_content':'글내용'}) 
+	        'article_subject':'article_subject',
+	        'article_content':'article_content'}) 
     return HttpResponse(rendered)
 
 import copy
@@ -100,10 +100,15 @@ class m: #message
     mtm_item['m_opse']=['content', 'sender']
     mtm_item['num_new_m']=0
     mtm_item['num_m']=0
+    mtm_item['m_who']="sender"
     
-    m_list=[{'checkbox':'checkbox', 'sender':'ssaljalu', 'text':'Who are you', 'time':'08.06.26 18:51'}]
+    m_list=[]
+    m_list.append({'checkbox':'checkbox', 'sender':'ssaljalu', 'msg_no':1,
+	'receiver':'jacob', 'text':'Who are you', 'time':'08.06.26 18:51'})
     m_list_key=['checkbox', 'sender', 'text', 'time']
     m_list_value=[]
+    m_list.append({'checkbox':'checkbox', "msg_no":2, "sender":"pipoket", 
+	"receiver":"serialx","text": "polabear hsj", "time":"2008.02.13. 12:17:34"})
 
     mtm_item['m_list']=m_list
     mtm_item['m_list_key']=m_list_key
@@ -142,6 +147,22 @@ class m: #message
 	return render_to_string('m_s_user.html', mtm_item)
     msu=staticmethod(msu)
 
+    def rim(m_num):
+	mtm_item=copy.deepcopy(m.mtm_item)
+	mtm_item['m_who']="sender"
+	mtm_item['mr_reply']="reply"
+	mtm_item['read_message']=mtm_item['m_list'][m_num]
+	return render_to_string('read_message.html', mtm_item)
+    rim=staticmethod(rim)
+
+    def rom(m_num):
+	mtm_item=copy.deepcopy(m.mtm_item)
+	mtm_item['mr_reply']=""
+	mtm_item['m_who']="receiver"
+	mtm_item['read_message']=mtm_item['m_list'][m_num]
+	return render_to_string('read_message.html', mtm_item)
+    rom=staticmethod(rom)
+
 def write_message(request):
     rendered = m.write()
     return HttpResponse(rendered)
@@ -156,4 +177,14 @@ def outbox_list(request):
 
 def msu(request): #message search user
     rendered = m.msu()
+    return HttpResponse(rendered)
+
+def rim(request, m_num): #read_inbox_message
+    m_num = int(m_num)
+    rendered = m.rim(m_num)
+    return HttpResponse(rendered)
+
+def rom(request, m_num): #read_outbox_message
+    m_num = int(m_num)
+    rendered = m.rom(m_num)
     return HttpResponse(rendered)
