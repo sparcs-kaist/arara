@@ -6,6 +6,14 @@ import hashlib
 class WrongDictionary(Exception):
     pass
 
+class NoPermission(Exception):
+    pass
+class WrongPassword(Exception):
+    pass
+class NotLoggedIn(Exception):
+    pass
+
+
 class MemberManager(object):
     '''
     회원 가입, 회원정보 수정, 회원정보 조회, 이메일 인증등을 담당하는 클래스
@@ -24,9 +32,7 @@ class MemberManager(object):
 
     def __init__(self, login_manager):
         #monk data
-        self.member_no 
         self.member_dic = {} #DB에서 member table를 read해오는 부분
-        self.member_no = len(member_dic)
         self.login_manager = login_manager
 
     def register(self, user_reg_dic):
@@ -42,7 +48,7 @@ class MemberManager(object):
         @param user_reg_dic: User Dictionary
         @rtype: string
         @return:
-            1. register 성공: True, 'OK'
+            1. register 성공: True, member_dic[user_reg_dic['id']]['activate_code']
             2. register 실패:
                 1. 양식이 맞지 않음(부적절한 NULL값 등): 'WRONG_DICTIONARY'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
@@ -64,21 +70,23 @@ class MemberManager(object):
                 tmp_user_dic['password']+tmp_user_dic['nickname']).hexdigest()
         
         try:
-            self.member_no += 1
-            member_dic[self.member_no] = tmp_user_dic
+            member_dic[user_reg_dic['id']] = tmp_user_dic
         except Exception:
             return False, 'THIS_EXCEPTION_SHOULD_NEVER_HAPPEN_DURING_DUMMY_CODE'
 
-        return True, member_dic[self.member_no]['activate_code']
+        return True, member_dic[user_reg_dic['id']]['activate_code']
 
 
     def confirm(self, id_to_confirm, confirm_key):
         '''
         인증코드 확인
 
-        >>> member.confirm( id_to_confirm, confirm_session_key)
+        >>> member.confirm( member_no, confirm_session_key)
         True, 'OK'
 
+        
+        @type  id_to_confirm: string
+        @param id_to_confirm: Confirm ID
         @type  confirm_key: integer
         @param confirm_key: Confirm Key
         @rtype: string
@@ -88,14 +96,18 @@ class MemberManager(object):
                 1. 잘못된 인증코드: False, 'WRONG_CONFIRM_KEY'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+        try:
+            if member_dic[id_to_confirm]['activate_code'] == confirm_key:
+                return True, 'OK'
+        except KeyError:
+            return False, 'WRONG_CONFIRM_KEY'
+        
 
-    def is_registered(self, user_id, password):
+
+    def is_registered(self, user_id):
         #remove quote when MD5 hash for UI is available
         #
-        for keys in member_dic:
-            if user_id == member_dic[keys]['id']:
-                if password = member_dic[keys]['password']:
-                    return True, 'OK'
+        return member_dic.has_key(user_id)
 
     def get_info(self, session_key):
         '''
@@ -116,6 +128,12 @@ class MemberManager(object):
                 2. 존재하지 않는 회원: False, 'MEMBER_NOT_EXIST'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+        try:
+            return member_dic[login_manager.session_dic[session_key]['id']]
+
+        except KeyError:
+            return False, "MEMBER_NOT_EXIST"
+
         
     def modify_password(self, session_key, user_password_dic):
         '''
@@ -139,6 +157,22 @@ class MemberManager(object):
                 3. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 4. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+        try:
+            if not login_manager.session_dic[session_key]['id'] == user_password_dic['id']:
+                raise NoPermission()
+            if not member_dic[login_manager.session_dic[session_key]['id']]['password'] == user_password_dic['current_password']:
+                raise WrongPassword()
+            member_dic[login_manager.session_dic[session_key]['id']]['password'] = user_password_dic['new_password']:
+            
+        except NoPermission:
+            return False, "NO_PERMISSION"
+
+        except WrongPassword:
+            return False, "WRONG_PASSWORD"
+
+        except KeyError:
+            return False, "NOT_LOGGEDIN"
+
 
     def modify(self, session_key, user_reg_dic):
         '''
@@ -157,7 +191,24 @@ class MemberManager(object):
             2. modify 실패:
                 1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                3. 양식이 맞지 않음(부적절한 NULL값 등): 'WRONG_DICTIONARY'
         '''
+        try:
+            if not login_manager.session_dic.has_key(session_key):
+                raise NotLoggedIn()
+
+            user_reg_keys = ['id', 'password', 'nickname', 'email', 'sig', 'self_introduce', 'default_language']
+            tmp_user_dic = {}
+            try:
+                for key in user_reg_keys:
+                    if not key in user_reg_dic:
+                        raise WrongDictionary()
+                    tmp_user_dic[key] = user_reg_dic[key]
+            except WrongDictionary:
+                return False, 'WRONG_DICTIONARY'
+            member_dic[user_reg_dic['id']] = tmp_user_dic
+        except NotLoggedIn:
+            return False, 'NOT_LOGGEDIN'
 
     def query_by_id(self, session_key, query_id):
         '''
@@ -219,8 +270,15 @@ class MemberManager(object):
         @rtype: String
         @return:
             1. 성공시: True, 'OK'
-            2. 실패시: False, 'NOT LOGGEDIN'
+            2. 실패시: False, 'NOT_LOGGEDIN'
         '''
+        try:
+            member_dic.pop(login_manager.session_dic[session_key]['id'])
+            return True, 'OK'
+
+        except KeyError:
+            return False, "NOT_LOGGEDIN"
+        
 
 def _test():
     import doctest
