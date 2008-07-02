@@ -79,14 +79,22 @@ def list(request, bbs):
                 'pages':range(1, 11)})
     return HttpResponse(rendered)
 
-def write(request, bbs):
+def write(request, bbs, no):
     rendered = render_to_string('write.html',
             {'bbs_list':bbslist,
                 'widget':widget,
                 'arara_login':arar_login,
                 'bbs_header':bbs,
-	        'article_subject':'article_subject',
-	        'article_content':'article_content'}) 
+	        'article_subject':'article subject',
+	        'article_content':'article content',
+		'boardname':[{'name':'--board--'},
+		    {'name':'KAIST'},
+		    {'name':'garbages'},
+		    {'name':'food'},
+		    {'name':'abroad'},
+		    {'name':'love'},
+		    {'name':'foreigner'},
+		    {'name':'filmspecial'}]}) 
     return HttpResponse(rendered)
 
 import copy
@@ -187,4 +195,33 @@ def rim(request, m_num): #read_inbox_message
 def rom(request, m_num): #read_outbox_message
     m_num = int(m_num)
     rendered = m.rom(m_num)
+    return HttpResponse(rendered)
+
+class b: #blacklist
+    btm_item={'btm_item':[
+	{'name':'My page', 'url':'mypage'},
+	{'name':'Add blacklist', 'url':'add'}]}
+    b_list_h=['ID','block_article','block_message']
+    b_list=[]
+    b_list.append({'ID':'MyungBakLee','block_article':'hi','block_message':'hi'})
+    b_list.append({'ID':'SerialxIsPolarBear','block_article':'hi','block_message':'hi'})
+    btm_item['b_list_h']=b_list_h
+    btm_item['b_list']=b_list
+    
+    def black():
+	btm_item=copy.deepcopy(b.btm_item)
+	return render_to_string('blacklist.html', btm_item)
+    black=staticmethod(black)
+
+    def add():
+	btm_item=copy.deepcopy(b.btm_item)
+	return render_to_string('add_blacklist.html', btm_item)
+    add=staticmethod(add)
+
+def blacklist(request):
+    rendered = b.black()
+    return HttpResponse(rendered)
+
+def add_black(request):
+    rendered = b.add()
     return HttpResponse(rendered)

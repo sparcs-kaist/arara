@@ -18,4 +18,6 @@ urlpatterns = patterns('',
     (r'^message/msu/$', 'warara.views.msu'),
     (r'^message/rim/(\d)+/$', 'warara.views.rim'),
     (r'^message/rom/(\d)+/$', 'warara.views.rom'),
-)
+    (r'^blacklist/mypage$', 'warara.views.blacklist'),
+    (r'^blacklist/add$', 'warara.views.add_black')
+    )

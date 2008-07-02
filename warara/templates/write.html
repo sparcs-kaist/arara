@@ -7,16 +7,12 @@
 <form method="post">
     <div id="article_header">
 	<br>subject
-	<input type="text" name="art_subject" value="{{article_subject}}">
+	<input type="text" name="art_subject" value="{{article_subject}}"></input>
 	<select name="board">
-	<option>--게시판--</option>
-	<option value="Kaist">KAIST</option>
-	<option value="Garbages">garbages</option>
-	<option value="Food">food</option>
-	<option value="Abrod">abroad</option>
-	<option value="Love">love</option>
-	<option value="Foreigner">foreigner</option>
-	<option value="Filmspecial">filmspecial</option>
+	    {% for item in boardname %}
+	    <option value="{{item.name}}">{{item.name}}</option>
+	    {% endfor %}
+	</select>
     </div>
     <br>
     <div id="writer_content">
