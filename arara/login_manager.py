@@ -6,6 +6,35 @@ import datetime
 class LoginManager(object):
     '''
     로그인 처리 관련 클래스
+
+    >>> login_manager = LoginManager()
+    >>> login_manager.login('test', 'not_test', '143.248.234.145')
+    (False, 'WRONG_PASSWORD')
+    >>> login_manager.login('not_test', 'test', '143.248.234.145')
+    (False, 'WRONG_ID')
+    >>> login_manager.login('test', 'test', '143.248.234.145')
+    (True, '05a671c66aefea124cc08b76ea6d30bb')
+
+    >>> session_key = '05a671c66aefea124cc08b76ea6d30bb'
+    >>> session_bee = 'thisisnotaprpoermd5sessionkey...'
+
+    >>> login_manager.is_logged_in(session_bee)
+    (False, 'NOT_LOGGEDIN')
+    >>> returned, result = login_manager.is_logged_in(session_key)
+    >>> returned
+    True
+    >>> result['ip']
+    '143.248.234.145'
+    >>> result['id']
+    'test'
+
+    >>> login_manager.logout(session_bee)
+    (False, 'NOT_LOGGEDIN')
+    >>> login_manager.logout(session_key)
+    (True, 'OK')
+    >>> login_manager.logout(session_key)
+    (False, 'NOT_LOGGEDIN')
+        
     '''
     
     def __init__(self):
@@ -15,11 +44,6 @@ class LoginManager(object):
         '''
         로그인 처리를 담당하는 함수.
         아이디와 패스워드를 받은 뒤 User Key를 리턴.
-
-        >>> session_key = login_manager.login(id, pw, '143.248.234.143')
-        True, '6bd89dab95356'
-        >>> session_key = login_manager.login(id, wrong_pw, '143.248.234.143')
-        False, 'WRONG_PASSWORD'
 
         @type  id: string
         @param id: User ID
@@ -34,9 +58,7 @@ class LoginManager(object):
                 1. 아이디 존재하지 않음: False, 'WRONG_ID'
                 2. 패스워드 불일치: False, 'WRONG_PASSWORD'
                 3. 데이터베이스 관련 에러: False, 'DATABASE_ERROR'
-
         '''
-        
 
         if(id == 'test'):
             if(password == 'test'):
@@ -54,11 +76,6 @@ class LoginManager(object):
         '''
         로그아웃 처리를 담당하는 함수.
 
-        >>> login_manager.logout(logged_in_session_key)
-        True, 'OK'
-        >>> login_manager.logout(NOT_logged_in_session_key)
-        False, 'NOT_LOGGEDIN'
-
         @type  session_key: string
         @param session_key: User Key
         @rtype: string
@@ -69,8 +86,6 @@ class LoginManager(object):
                 2. 데이터베이스 관련 에러: False, 'DATABASE_ERROR'
         '''
 
-        
-
         try:
             self.session_dic.pop(session_key)
             return True, 'OK'
@@ -80,11 +95,6 @@ class LoginManager(object):
     def update_session(self, session_key):
         '''
         세션 expire시간을 연장해주는 함수
-
-        >>> login_manager.update_session(logged_in_session_key)
-        True, 'OK'
-        >>> login_manager.update_session(NOT_logged_in_session_key)
-        False, 'NOT_LOGGEDIN'
 
         @type  session_key: string
         @param session_key: User Key
@@ -115,3 +125,10 @@ class LoginManager(object):
             return True, session_info
         except KeyError:
             return False, 'NOT_LOGGEDIN'
+
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == "__main__":
+    _test()
