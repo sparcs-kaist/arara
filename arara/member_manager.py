@@ -20,7 +20,6 @@ class MemberManager(object):
     '''
     회원 가입, 회원정보 수정, 회원정보 조회, 이메일 인증등을 담당하는 클래스
 
-
     >>> import login_manager
     >>> login_manager = login_manager.LoginManger()
     >>> login_manager.login('test', 'test', '143.248.234.145')
