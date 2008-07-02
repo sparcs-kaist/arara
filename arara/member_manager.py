@@ -8,8 +8,10 @@ class WrongDictionary(Exception):
 
 class NoPermission(Exception):
     pass
+
 class WrongPassword(Exception):
     pass
+
 class NotLoggedIn(Exception):
     pass
 
@@ -19,15 +21,29 @@ class MemberManager(object):
     회원 가입, 회원정보 수정, 회원정보 조회, 이메일 인증등을 담당하는 클래스
 
 
-    >>> self.login_manager = self.login_managerManger()
-    >>> self.login_manager.login('test', 'test', '143.248.234.145')
+    >>> import login_manager
+    >>> login_manager = login_manager.LoginManger()
+    >>> login_manager.login('test', 'test', '143.248.234.145')
     (True, '05a671c66aefea124cc08b76ea6d30bb')
-    >>> member = MemberManger()
+    >>> member = MemberManger(login_manager)
     >>> session_key = '05a671c66aefea124cc08b76ea6d30bb'
     >>> user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'mikkang' }
     >>> member.register(user_reg_dic)
+    (True, 'd49cf5955c13a6589ca1b2149f015e4d')
+    >>> member.confirm('mikkang' , 'd49cf5955c13a6589ca1b2149f015e4d')
     (True, 'OK')
-
+    >>> member.is_registered('mikkang')
+    (True)
+    >>> memeber.get_info('05a671c66aefea124cc08b76ea6d30bb')
+    (True, {'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'mikkang'})
+    >>> user_password_dic = {'id':'mikkang', 'current_password':'mikkang', 'new_password':'ggingkkang'}
+    >>> memeber.modify_password('05a671c66aefea124cc08b76ea6d30bb', user_password_dic)
+    (True, 'OK')
+    >>> modify_user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang@sparcs.org', 'sig':'KAIST07 && JSH07 && SPARCS07', 'self_introduce':'i am Munbeom', 'default_language':'korean' }
+    >>> memeber.modify('05a671c66aefea124cc08b76ea6d30bb', modify_user_reg_dic)
+    (True, 'OK')
+    >>> member.remove_user('05a671c66aefea124cc08b76ea6d30bb')
+    (True, 'OK')
     '''
 
     def __init__(self, login_manager):
@@ -38,9 +54,6 @@ class MemberManager(object):
     def register(self, user_reg_dic):
         '''
         DB에 회원 정보 추가
-
-        >>> member.register(user_reg_dic)
-        True, 'OK'
 
         - Current User Dictionary { id, password, nickname, email, sig, self_introduce, default_language }
 
@@ -81,10 +94,6 @@ class MemberManager(object):
         '''
         인증코드 확인
 
-        >>> member.confirm( member_no, confirm_session_key)
-        True, 'OK'
-
-        
         @type  id_to_confirm: string
         @param id_to_confirm: Confirm ID
         @type  confirm_key: integer
@@ -113,11 +122,6 @@ class MemberManager(object):
         '''
         회원 정보 수정을 위한 회원 정보를 가져오는 함수, 쿼리와 다름
 
-        >>> member.get_info(logged_in_session_key)
-        True, {'id': 'serialx', 'name': '홍성진', 'nickname': 'PolarBear', ...}
-        >>> member.get_info(NOT_logged_in_session_key)
-        False, 'NOT_LOGGEDIN'
-
         @type  session_key: string
         @param session_key: User Key
         @rtype: dictionary
@@ -129,7 +133,7 @@ class MemberManager(object):
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         try:
-            return member_dic[login_manager.session_dic[session_key]['id']]
+            return True, member_dic[login_manager.session_dic[session_key]['id']]
 
         except KeyError:
             return False, "MEMBER_NOT_EXIST"
@@ -138,9 +142,6 @@ class MemberManager(object):
     def modify_password(self, session_key, user_password_dic):
         '''
         DB에 회원 정보 수정
-
-        >>> member.modify(session_key, user_password_dic)
-        True, 'OK'
 
         ---user_password_dic {id, current_password, new_password}
 
@@ -162,24 +163,22 @@ class MemberManager(object):
                 raise NoPermission()
             if not member_dic[login_manager.session_dic[session_key]['id']]['password'] == user_password_dic['current_password']:
                 raise WrongPassword()
-            member_dic[login_manager.session_dic[session_key]['id']]['password'] = user_password_dic['new_password']:
+            member_dic[login_manager.session_dic[session_key]['id']]['password'] = user_password_dic['new_password']
+            return True, 'OK'
             
         except NoPermission:
-            return False, "NO_PERMISSION"
+            return False, 'NO_PERMISSION'
 
         except WrongPassword:
-            return False, "WRONG_PASSWORD"
+            return False, 'WRONG_PASSWORD'
 
         except KeyError:
-            return False, "NOT_LOGGEDIN"
+            return False, 'NOT_LOGGEDIN'
 
 
     def modify(self, session_key, user_reg_dic):
         '''
         DB에 회원 정보 수정
-
-        >>> member.modify(session_key, user_reg_dic)
-        True, 'OK'
 
         @type  session_key: string
         @param session_key: User Key
@@ -207,6 +206,7 @@ class MemberManager(object):
             except WrongDictionary:
                 return False, 'WRONG_DICTIONARY'
             member_dic[user_reg_dic['id']] = tmp_user_dic
+            return True, 'OK'
         except NotLoggedIn:
             return False, 'NOT_LOGGEDIN'
 
@@ -214,7 +214,7 @@ class MemberManager(object):
         '''
         쿼리 함수
 
-        >>> member.querybyid(session_key, 'pv457')
+        member.querybyid(session_key, 'pv457')
         True, {'user_id': 'pv457', 'user_nickname': '심영준',
         'self_introduce': '...', 'user_ip': '143.248.234.111'}
 
@@ -237,7 +237,7 @@ class MemberManager(object):
         '''
         쿼리 함수
 
-        >>> member.querybynick(session_key, '심영준')
+        member.querybynick(session_key, '심영준')
         True, {'user_id': 'pv457', 'user_nickname': '심영준',
         'self_introduce': '...', 'user_ip': '143.248.234.111'}
 
@@ -260,11 +260,6 @@ class MemberManager(object):
         '''
         session key로 로그인된 사용자를 등록된 사용자에서 제거한다' - 회원탈퇴
 
-        >>> member.remove_user(logged_session_key)
-        True, 'OK'
-        >>> member.remove_user(not_logged_session_key)
-        False, 'NOT LOGGEDIN'
-        
         @type  session_key: string
         @param session_key: User Key
         @rtype: String
@@ -277,7 +272,7 @@ class MemberManager(object):
             return True, 'OK'
 
         except KeyError:
-            return False, "NOT_LOGGEDIN"
+            return False, 'NOT_LOGGEDIN'
         
 
 def _test():
