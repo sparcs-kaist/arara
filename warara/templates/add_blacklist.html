@@ -1,0 +1,22 @@
+{% extends "blacklist.html" %}
+
+{% block blacklist_contents %}
+<div id="b_search_user">
+    <h3> USER SEARCH </h3>
+    <form>
+	<input type="text" name="search_user_bar">
+	<input type="button" value="Search">
+	<br />
+	searching sphere : USER ID : 
+	<input type="checkbox" name="b_s_include_name">
+	USER NICKNAME : 
+	<input type="checkbox" name="b_S_include_nickname">
+    </form>
+</div>
+
+<hr />
+
+<div id="b_search_result">
+
+</div>
+{% endblock %}

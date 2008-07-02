@@ -1,0 +1,67 @@
+<html>
+<head>
+</head>
+    <body>
+	<div id="blacklist_top_menu">
+		|
+		{% for item in btm_item %}
+		    <a href="/blacklist/{{item.url}}"> {{item.name}} </a>
+		    |
+		{% endfor %}
+	</div>
+
+	<div id="blacklist_content">
+	    {% block blacklist_contents %}
+	    <br />
+	    <div id="user_b_list">
+		<table border="1">
+		<tr>
+		    {% for list_head in b_list_h %}
+		    <th>
+		    {% ifequal list_head 'ID' %}
+		    {{list_head}}
+		    {% else %}
+		    <form action="">
+			{{list_head}}
+			<input type="checkbox" name=checkbox_{{list_head}}></input>
+		    </form>
+		    {% endifequal %}
+		    </th>
+		    {% endfor %}
+		</tr>
+		{% for object in b_list %}
+		<tr>
+		    {% for inventory in b_list_h %}
+		    {% ifequal inventory 'ID' %} 
+		    <td>		  
+		    	{{object.ID}}
+		    </td>
+		    {% endifequal %}
+		    {% ifequal inventory 'block_article' %}
+		    <td>
+			<form action="">
+			    <input type="checkbox"></input>
+		    </td>
+		    {% endifequal %}
+		    {% ifequal inventory 'block_message' %}
+		    <td>
+			<form action="">
+			    <input type="checkbox"></input>
+		    </td>
+		    {% endifequal %}
+		    {% endfor %}
+		</tr>
+		{% endfor %}
+	    </table>
+	    </div>
+	
+	    <div id="b_button">
+		<form action="">
+		    <input type="button" value="remove"></input>
+		</form>
+	    </div>
+	    {% endblock %}
+	</div>
+	
+    </body>
+</html>
