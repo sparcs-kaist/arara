@@ -8,11 +8,11 @@ from arara.blacklist_manager import BlacklistManager
 from arara.login_manager import LoginManager
 
 class Namespace(object):
-    article_manager = ArticleManager()
-    blacklist_manager = BlacklistManager()
     login_manager = LoginManager()
+    article_manager = ArticleManager(login_manager)
+    blacklist_manager = BlacklistManager()
 
-server = SimpleXMLRPCServer(("",3939))
+server = SimpleXMLRPCServer(("",4949))
 server.register_introspection_functions()
 
 server.register_instance(Namespace(), allow_dotted_names=True)
