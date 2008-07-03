@@ -8,13 +8,25 @@
 		background-color:#ffaa00
 	    }
 	</style>
+	<style type="text/css">
+	    #m_text textarea{
+		font-size: 9pt;
+		background-color:#99ccff; 
+		border:0 solid #6699ff;
+		height:165px;
+		width:324px;
+		overflow-y:auto;
+		scrollbar-face-color:#99ccff;
+		scrollbar-highlight-color:#99ccff;
+		scrollbar-3dlight-color:#99ccff;
+		scrollbar-shadow-color:#99ccff;
+		scrollbar-darkshadow-color:#99ccff;
+		scrollbar-track-color:#99ccff;
+		scrollbar-arrow-color:#99ccff;
+	    }
+	</style>
     </head>
     <body>
-				<div id=form_checkbox style=display:none>
-				    <form action="">
-					<input type="checkbox" name="{{ forloop.parentloop.counter0 }}"></input>
-				    </form>
-				</div>
         <div id=message_top_menu>
 	    {% block message_top_menu %}
 	    |

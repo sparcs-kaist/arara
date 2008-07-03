@@ -3,27 +3,18 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 import copy
 import xmlrpclib
+import sys
 
 #server = xmlrpclib.Server("xmlrpcserver")
 
-'''<<<<<<< .mine
-
-# Get board list
-=======
-
+'''
 #Get board list
->>>>>>> .r72
 suc, ret = board_list(request.session['arara_session'])
 if suc == True:
     bbslist = ret
 else:
     bbslist = "게시판 목록 읽기 실패/ 데이터베이스 오류"
-<<<<<<< .mine
-=======
 '''
-
-bbslist = ['KAIST', 'garbage']
->>>>>>> .r72
 
 bbslist = ['KAIST', 'garbage']
 
@@ -180,12 +171,27 @@ class m: #message
     mtm_item['nemli']="》 " #next message list
     
     m_list=[]
-    m_list.append({'checkbox':'checkbox', 'sender':'ssaljalu', 'msg_no':0,
+    m_list.append({'checkbox':'checkbox', 'sender':'ssaljalu', 'msg_no':10,
         'receiver':'jacob', 'text':'Who are you', 'time':'08.06.26 18:51'})
     m_list_key=['checkbox', 'sender', 'text', 'time']
     m_list_value=[]
-    m_list.append({'checkbox':'checkbox', "msg_no":1, "sender":"pipoket", 
+    m_list.append({'checkbox':'checkbox', "msg_no":7, "sender":"pipoket", 
         "receiver":"serialx","text": "polabear hsj", "time":"2008.02.13. 12:17:34"})
+    m_list.append({'checkbox':'checkbox', 'msg_no':int(9482), 'sender':'peremen',
+	'receiver':'pv457', 'time':'08.07.03 14:35', 'text':'''
+	you spin me right round
+	you spin me right round
+	you spin me right round
+	you spin me right round
+	you spin me right round
+	you spin me right round
+	you spin me right round
+	you spin me right round
+	you spin me right round
+	you spin me right round
+	you spin me right round
+	you spin me right roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright round
+	'''})
 
     mtm_item['m_list']=m_list
     mtm_item['m_list_key']=m_list_key
@@ -198,7 +204,7 @@ class m: #message
             return m['msg_no']
         cm.sort(key=get_no)
         return cm
-    m_sort=staticmethod(m_sort)
+    mtm_item['m_list']=m_sort(mtm_item['m_list'])
 
     def mdl(m_list): #make data to list
         cm=copy.deepcopy(m_list) #copy of mtm_item
@@ -217,10 +223,10 @@ class m: #message
     mdl=staticmethod(mdl)
 
     def indexof(m_list, m_num): #search the index of the m_numth article in m_list
-        for i, arti in enumerate(m_list):
-            if arti['msg_no']==m_num:
-                return i
-        return None
+	for i, arti in enumerate(m_list):
+	    if arti['msg_no']==int(m_num):
+		return i
+	return 0
     indexof=staticmethod(indexof)
 
     def write():
@@ -230,14 +236,12 @@ class m: #message
 
     def inbox_list():
         mtm_item=copy.deepcopy(m.mtm_item)
-        mtm_item['m_list']=m.m_sort(mtm_item['m_list'])
         mtm_item=m.mdl(mtm_item)
         return render_to_string('inbox_list.html', mtm_item)
     inbox_list = staticmethod(inbox_list)
 
     def outbox_list():
         mtm_item=copy.deepcopy(m.mtm_item)
-        mtm_item['m_list']=m.m_sort(mtm_item['m_list'])
         mtm_item['m_list_key']=['checkbox', 'receiver', 'text', 'time']
         mtm_item=m.mdl(mtm_item)
         return render_to_string('outbox_list.html', mtm_item)
