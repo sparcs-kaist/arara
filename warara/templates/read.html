@@ -1,23 +1,22 @@
 {% extends "mainframe.html" %}
 
 {% block arara_content %}
-<div id="header">
+<div id="bbs_header">
     {{bbsname}}
     {{bbs_header}}
 </div>
-{% article = articles[0] %}
 <div id="view">
     <div>{{article.title}}</div>
     <div>{{article.author}}</div>
     <div>{{article.content}}</div>
     <div><a href="/modify/{{bbsname}}/{{article.no}}/">글수정</a></div>
 </div>
-{% for article in articles[1:] %}
+{% for reply in replies %}
 <div id="reply">
-    <div>{{article.title}}</div>
-    <div>{{article.author}}</div>
-    <div>{{article.content}}</div>
-    <div><a href="/modify/{{bbsname}}/{{article.no}}/">글수정</a></div>
+    <div>{{reply.title}}</div>
+    <div>{{reply.author}}</div>
+    <div>{{reply.content}}</div>
+    <div><a href="/modify/{{bbsname}}/{{reply.no}}/">글수정</a></div>
 </div>
 {% endfor %}
 <div id="footer">

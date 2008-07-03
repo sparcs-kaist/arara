@@ -1,16 +1,64 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpResponse
 from django.template.loader import render_to_string
+import copy
+import xmlrpclib
 
-bbslist = ['KAIST', 'garbage']
+server = xmlrpclib.Server("xmlrpcserver")
+
+# Get board list
+suc, ret = board_list(request.session['arara_session'])
+if suc == True:
+    bbslist = ret
+else:
+    bbslist = "게시판 목록 읽기 실패/ 데이터베이스 오류"
+
 widget = 'widget'
 arara_login = 'login'
 
+def errormsg(e):
+    if e == "WRONG_ID":
+        msg = "그런 아이디 없어요"
+    elif e == "WRONG_PASSWORD":
+        msg = "비밀번호 틀렸어요"
+    elif e == "DATABASE_ERROR":
+        msg = "데이터베이스 에러"
+    elif e == "NOT_LOGGEDIN":
+        msg = "이미 로그아웃되었습니다"
+    else:
+        msg = ""
+    return msg
+    
 def intro(request):
-    rendered = render_to_string('intro.html', {})
+    msg = errormsg(request.GET.get('e', ""))
+    rendered = render_to_string('intro.html', {'msg':msg})
     return HttpResponse(rendered)
 
+def login(request):
+    id = request.POST['id']
+    passwd = request.POST['passwd']
+    ip = request.META['REMOTE_ADDR']
+    suc, ret = server.login_manager.login(id, passwd, ip)
+    if suc == True:
+        request.session['arara_session'] = ret
+        redirect_url = "/main/"
+    else:
+        redirect_url = "/?e=" + ret
+    rendered = render_to_string('redirect.html', {'url':redirect_url})
+    return HttpResponse(rendered)
+
+def logout(request):
+    suc, ret = xmlrpclib.Server(xmlrpcserver)
+    if suc == True:
+        del request.session['arara_session']
+        redirect_url = request.META['REFERER']
+    else:
+        redirect_url = request.META['REFERER'] + "/?e=" + ret
+    return HttpResponse(request.session['arara_session'])
+
 def main(request):
+    msg = errormsg(request.GET.get('e', ""))
+
     todaybestlist = [{'title':'투베1', 'author':'쌀'},
             {'title':'투베2', 'author':'쌀'}]
     todaybest = render_to_string('listpanel.html',
@@ -37,11 +85,15 @@ def main(request):
                 'articles':newslist})
 
     rendered = render_to_string('main.html',
-            {'today_best':todaybest,
+            {'bbs_list':bbslist,
+                'widget':widget,
+                'arara_login':arara_login,
+                'today_best':todaybest,
                 'kaist_news':news,
                 'week_best':weekbest,
                 'portal':portal,
-                'banner':'배너'})
+                'banner':'배너',
+                'msg':msg})
     return HttpResponse(rendered)
 
 def modify(request, bbs, article_num):
@@ -62,8 +114,8 @@ def read(request, bbs, no):
                 'arara_login':arara_login,
                 'bbsname':bbs,
                 'bbs_header':'bbs_header',
-                'articles':[{'no':'1', 'title':'title1', 'author':'author1', 'content':'content1'},
-                    {'no':'2', 'title':'reply1', 'author':'author2', 'content':'content2'},
+                'article':{'no':'1', 'title':'title1', 'author':'author1', 'content':'content1'},
+                'replies':[{'no':'2', 'title':'reply1', 'author':'author2', 'content':'content2'},
                     {'no':'3', 'title':'reply2', 'author':'author3', 'content':'content2'}]})
     return HttpResponse(rendered)
 
@@ -79,11 +131,11 @@ def list(request, bbs):
                 'pages':range(1, 11)})
     return HttpResponse(rendered)
 
-def write(request, bbs, no):
+def write(request, bbs):
     rendered = render_to_string('write.html',
             {'bbs_list':bbslist,
                 'widget':widget,
-                'arara_login':arar_login,
+                'arara_login':arara_login,
                 'bbs_header':bbs,
 	        'article_subject':'article subject',
 	        'article_content':'article content',
@@ -97,7 +149,6 @@ def write(request, bbs, no):
 		    {'name':'filmspecial'}]}) 
     return HttpResponse(rendered)
 
-import copy
 class m: #message
     mtm_item={'mtm_item':[  #message top menu item
 	{'name':'inbox', 'url':'inbox'},

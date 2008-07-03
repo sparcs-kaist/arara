@@ -83,3 +83,5 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
 )
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.file'
