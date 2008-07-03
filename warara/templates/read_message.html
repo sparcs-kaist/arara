@@ -2,24 +2,24 @@
 
 {% block message_content %}
 <div id="m_info"> <!-- message information -->
-    <div id="m_user"> <!-- message user information -->
+    <span id="m_user"> <!-- message user information -->
 	{{m_who}} : {{read_message.receiver}}
-    </div>
-    <div id="m_time"> <!-- message time information -->
+    </span>
+    <span id="m_time"> <!-- message time information -->
 	{{read_message.time}}
-    </div>
+    </span>
 </div>
 <div id="m_text">
     {{read_message.text}}
 </div>
 <div id="m_r_om"> <!-- message read option menu -->
-    <div id="mrom_np"> <!-- message read option menu_next/prev -->
+    <span id="mrom_np"> <!-- message read option menu_next/prev -->
 	<form action="">
 	    <input type="button" name="mr_prev" value="prev"></input>
 	    <input type="button" name="mr_next" value="next"></input>
 	</form>
-    </div>
-    <div id="mrom_rd"> <!-- message read option menu_reply/delete -->
+    </span>
+    <span id="mrom_rd"> <!-- message read option menu_reply/delete -->
 	<form action="">
 	    <input type="button" name="mr_deliever" value="deliever"></input>
 	    {% if mr_reply %}
@@ -27,7 +27,7 @@
 	    {% endif %}
 	    <input type="button" name="mr_delete" value="delete"></input>
 	</form>
-    </div>
+    </span>
 </div>
 <div id="mr_page"> <!-- message read page view -->
     {% block m_page %}

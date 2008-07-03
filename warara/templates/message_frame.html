@@ -5,11 +5,16 @@
 	<style>form{ display : inline ; }</style>
 	<style type="text/css">
 	    #message_top_menu{
-		background-color:blue
+		background-color:#ffaa00
 	    }
 	</style>
     </head>
     <body>
+				<div id=form_checkbox style=display:none>
+				    <form action="">
+					<input type="checkbox" name="{{ forloop.parentloop.counter0 }}"></input>
+				    </form>
+				</div>
         <div id=message_top_menu>
 	    {% block message_top_menu %}
 	    |
@@ -65,10 +70,14 @@
 			    <td>
 				{% ifequal value 'checkbox' %}
 				<form action="">
-				    <input type="checkbox" name="{{ forloop.counter0 }}"></input>
+				    <input type="checkbox" name="{{forloop.parentloop.counter0}}"></input>
 				</form>
 				{% else %}
+				{% ifequal value.key 'text' %}
+				<a href="/message/rim/{{value.msg_no}}">{{value.value}}</a>
+				{% else %}
 				{{ value }}
+				{% endifequal %}
 				{% endifequal %}
 			    </td>
 			    {% endfor %}

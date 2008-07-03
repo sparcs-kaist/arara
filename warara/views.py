@@ -4,14 +4,17 @@ from django.template.loader import render_to_string
 import copy
 import xmlrpclib
 
-server = xmlrpclib.Server("xmlrpcserver")
+#server = xmlrpclib.Server("xmlrpcserver")
 
-# Get board list
+'''
+#Get board list
 suc, ret = board_list(request.session['arara_session'])
 if suc == True:
     bbslist = ret
 else:
     bbslist = "게시판 목록 읽기 실패/ 데이터베이스 오류"
+'''
+bbslist = ['KAIST', 'garbage']
 
 widget = 'widget'
 arara_login = 'login'
@@ -162,26 +165,48 @@ class m: #message
     mtm_item['m_who']="sender"
     
     m_list=[]
-    m_list.append({'checkbox':'checkbox', 'sender':'ssaljalu', 'msg_no':1,
+    m_list.append({'checkbox':'checkbox', 'sender':'ssaljalu', 'msg_no':0,
 	'receiver':'jacob', 'text':'Who are you', 'time':'08.06.26 18:51'})
     m_list_key=['checkbox', 'sender', 'text', 'time']
     m_list_value=[]
-    m_list.append({'checkbox':'checkbox', "msg_no":2, "sender":"pipoket", 
+    m_list.append({'checkbox':'checkbox', "msg_no":1, "sender":"pipoket", 
 	"receiver":"serialx","text": "polabear hsj", "time":"2008.02.13. 12:17:34"})
 
     mtm_item['m_list']=m_list
     mtm_item['m_list_key']=m_list_key
     mtm_item['m_list_value']=m_list_value
 
-    def mdl(mtm_item): #make data to list
-	cm=copy.deepcopy(mtm_item) #copy of mtm_item
+    def m_sort(mtm_item): #message sort
+	cm=copy.deepcopy(mtm_item)
+
+	def get_no(m):
+	    return m['msg_no']
+	cm.sort(key=get_no)
+	return cm
+    m_sort=staticmethod(m_sort)
+
+    def mdl(m_list): #make data to list
+	cm=copy.deepcopy(m_list) #copy of mtm_item
 
 	for list in cm['m_list']:
 	    cm['m_list_value'].insert(0,[])
 	    for key in cm['m_list_key']:
+		if key=='text':
+		    lm=10 #length limit
+		    if len(list.get(key))>lm:
+			list[key]=''.join([list.get(key)[0:lm], '...'])
+			cm['m_list_value'][0].append({ 'key':key, 'value':list[key], 'msg_no':list.get('msg_no')})
+			continue
 		cm['m_list_value'][0].append(list.get(key))
 	return cm
     mdl=staticmethod(mdl)
+
+    def indexof(m_list, m_num): #search the index of the m_numth article in m_list
+	for i, arti in enumerate(m_list):
+	    if arti['msg_no']==m_num:
+		return i
+	return None
+    indexof=staticmethod(indexof)
 
     def write():
 	mtm_item=copy.deepcopy(m.mtm_item)
@@ -190,12 +215,14 @@ class m: #message
 
     def inbox_list():
 	mtm_item=copy.deepcopy(m.mtm_item)
+	mtm_item['m_list']=m.m_sort(mtm_item['m_list'])
 	mtm_item=m.mdl(mtm_item)
 	return render_to_string('inbox_list.html', mtm_item)
     inbox_list = staticmethod(inbox_list)
 
     def outbox_list():
 	mtm_item=copy.deepcopy(m.mtm_item)
+	mtm_item['m_list']=m.m_sort(mtm_item['m_list'])
 	mtm_item['m_list_key']=['checkbox', 'receiver', 'text', 'time']
 	mtm_item=m.mdl(mtm_item)
 	return render_to_string('outbox_list.html', mtm_item)
@@ -210,7 +237,7 @@ class m: #message
 	mtm_item=copy.deepcopy(m.mtm_item)
 	mtm_item['m_who']="sender"
 	mtm_item['mr_reply']="reply"
-	mtm_item['read_message']=mtm_item['m_list'][m_num]
+	mtm_item['read_message']=mtm_item['m_list'][m.indexof(mtm_item['m_list'], m_num)]
 	return render_to_string('read_message.html', mtm_item)
     rim=staticmethod(rim)
 
@@ -218,7 +245,7 @@ class m: #message
 	mtm_item=copy.deepcopy(m.mtm_item)
 	mtm_item['mr_reply']=""
 	mtm_item['m_who']="receiver"
-	mtm_item['read_message']=mtm_item['m_list'][m_num]
+	mtm_item['read_message']=mtm_item['m_list'][m.indexof(mtm_item['m_list', m_num)]
 	return render_to_string('read_message.html', mtm_item)
     rom=staticmethod(rom)
 
