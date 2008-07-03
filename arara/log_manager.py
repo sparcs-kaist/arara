@@ -1,8 +1,8 @@
-# -*- code: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 class LogManager(object):
     '''
-    ·Î±×¸¦ °ü¸®ÇÏ´Â Å¬·¡½º
+    ë¡œê·¸ë¥¼ ê´€ë¦¬í•˜ëŠ” í´ëž˜ìŠ¤
     '''
 
     def __init___(self):
@@ -10,7 +10,7 @@ class LogManager(object):
 
     def add_log(self, log_dic):
         '''
-        ·Î±×¸¦ Ãß°¡ÇÏ´Â ÇÔ¼ö
+        ë¡œê·¸ë¥¼ ì¶”ê°€í•˜ëŠ” í•¨ìˆ˜
         
         >>> log.add_log(log_dic)
         True, 'OK'
@@ -23,7 +23,7 @@ class LogManager(object):
 
     def remove_log(self, log_dic):
         '''
-        ·Î±×¸¦ »èÁ¦ÇÏ´Â ÇÔ¼ö
+        ë¡œê·¸ë¥¼ ì‚­ì œí•˜ëŠ” í•¨ìˆ˜
         
         >>> log.remove_log(log_dic)
         True, 'OK'
