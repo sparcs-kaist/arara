@@ -12,36 +12,32 @@ keymap = {
 }
 
 class ara_toc(object):
-    def get_login_message(self):
+    def get_banner(self):
 	basedir = os.path.dirname(__file__)
-	banner = os.path.join(basedir, 'login.txt')
+	banner = os.path.join(basedir, 'banner.txt')
 	f = open(banner, 'r')
 	return f.read().decode('utf-8')
+    def get_ip(self):
+	return "127.0.0.1"
+    def get_location(self):
+	return "Web"
+    def get_date(self):
+	return "Today"
+
     def __init__(self):
 	utf8decode = urwid.escape.utf8decode
 	dash = urwid.SolidFill(utf8decode('─'))
 	blank = urwid.SolidFill(u" ")
 	blanktext = urwid.Filler(urwid.Text(' '))
-	self.message = urwid.Filler(urwid.Text(self.get_login_message(), align="center"))
-	self.message_ko = urwid.Filler(urwid.Text(u"[Tab] 키를 누르면 항목간을 전환할 수 있습니다", align='center'))
-	self.message_en = urwid.Filler(urwid.Text(u"Press [Tab] key to jump between each items", align='center'))
-	#idedit = urwid.Filler(urwid.Padding(urwid.Edit(caption="ID:", wrap='clip'), 'left', 25))
-	#pwedit = urwid.Filler(urwid.Padding(urwid.Edit(caption="Password:", wrap='clip'), 'left', 25))
-	idedit = urwid.Filler(urwid.Edit(caption="ID:", wrap='clip'))
-	pwedit = urwid.Filler(urwid.Edit(caption="Password:", wrap='clip'))
-	self.idpwpile = urwid.Pile([idedit, pwedit])
+	self.banner = urwid.Filler(urwid.Text(self.get_banner()))
 
-        langitems = [urwid.Text('Korean'), urwid.Text('English'), urwid.Text('Chinese')]
-        self.langlist = Border(urwid.ListBox(urwid.SimpleListWalker(langitems)))
+	logintext = "Last login: %(IP)s/%(location)s at %(date)s"
+	logindata = {"IP": self.get_ip(), "location": self.get_location(), "date":self.get_date()}
+	self.logininfo = urwid.Filler(urwid.Text(logintext % logindata))
 
-        joinitems = [urwid.Text('Join'), urwid.Text('Guest')]
-        self.joinlist = Border(urwid.ListBox(urwid.SimpleListWalker(joinitems)))
+	self.entertext = urwid.Filler(urwid.Text("Press [Enter] key to continue"))
 
-	#self.bottomcolumn = urwid.Columns([('fixed', 5, blanktext),('fixed',28,self.idpwpile), ('fixed', 1, blanktext),('fixed', 15,self.langlist),('fixed',1,blanktext), ('fixed', 15, self.joinlist)])
-	#self.bottomcolumn = urwid.Columns([urwid.Padding(self.idpwpile,('relative', 40), ('relative', 20),20), urwid.Padding(self.langlist, ('relative', 40), ('relative', 10),15), urwid.Padding(self.joinlist, ('relative', 70),('relative', 10),15)])
-	self.bottomcolumn = urwid.Columns([urwid.Padding(self.idpwpile,'left', ('relative', 40)), urwid.Padding(self.langlist, 'center', ('relative', 30)), urwid.Padding(self.joinlist, 'right',('relative', 30))])
-
-	content = [self.message,('fixed',1, dash), ("fixed", 1, self.message_ko), ('fixed',1,self.message_en), ('fixed',1,blank), ('fixed',4,self.bottomcolumn)]
+	content = [self.banner,('fixed',1, self.logininfo),('fixed',1,blank), ("fixed", 1, self.entertext)]
 	self.mainpile = urwid.Pile(content)
 
 	self.frame = self.mainpile
@@ -57,7 +53,7 @@ class ara_toc(object):
             self.draw_screen(size)
             keys = self.ui.get_input()
             for key in keys:
-                if key == 'tab':
+                if key == 'enter':
                     quit = True
                     break
 	        if key in keymap:
