@@ -1,3 +1,4 @@
+#!/bin/usr/python
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 import os
 import sys

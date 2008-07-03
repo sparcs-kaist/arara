@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import xmlrpclib
 
 s = xmlrpclib.Server('http://localhost:4949')
