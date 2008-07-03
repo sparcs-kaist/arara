@@ -2,7 +2,7 @@
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 import os
 import sys
-PROJECT_PATH=os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
 sys.path.append(PROJECT_PATH)
 from arara.article_manager import ArticleManager
 from arara.blacklist_manager import BlacklistManager
