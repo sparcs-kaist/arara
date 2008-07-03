@@ -1,4 +1,4 @@
-#!/bin/usr/python
+#!/usr/bin/python
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 import os
 import sys
