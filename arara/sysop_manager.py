@@ -1,4 +1,4 @@
-# -*- code: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 class SysopManager(object):
     '''
@@ -11,9 +11,9 @@ class SysopManager(object):
         '''
         새 보드를 추가하는 함수
 
-        >>>sysop.add_borad(logged_session_key, boardname)
+        >>> sysop.add_borad(logged_session_key, boardname)
         True, 'OK'
-        >>>sysop.add_board(not_logged_session_key, boardname)
+        >>> sysop.add_board(not_logged_session_key, boardname)
         False, 'NOT_LOGGEDIN'
 
         @type  session_key: string
@@ -30,9 +30,9 @@ class SysopManager(object):
         '''
         기존의 보드를 없애는 함수
 
-        >>>sysop.remove_borad(logged_session_key, boardname)
+        >>> sysop.remove_board(logged_session_key, boardname)
         True, 'OK'
-        >>>sysop.remove_board(not_logged_session_key, boardname)
+        >>> sysop.remove_board(not_logged_session_key, boardname)
         False, 'NOT_LOGGEDIN'
 
         @type  session_key: string
@@ -49,9 +49,9 @@ class SysopManager(object):
         '''
         입력된 유저의 모든 log를 보여주는 함수
 
-        >>>sysop.view_user_log(logged_session_key, user_id)
+        >>> sysop.view_user_log(logged_session_key, user_id)
         True, 'LOG_LIST'
-        >>>sysop.view_user_log(not_logged_session_key, user_id)
+        >>> sysop.view_user_log(not_logged_session_key, user_id)
         False, 'NOT_LOGGEDIN'
 
         @type  session_key: string
@@ -69,9 +69,9 @@ class SysopManager(object):
         '''
         입력된 ip의 모든 log를 보여주는 함수
 
-        >>>sysop.view_ip_log(logged_session_key, ip_address)
+        >>> sysop.view_ip_log(logged_session_key, ip_address)
         True, 'LOG_LIST'
-        >>>sysop.view_ip_log(not_logged_session_key, ip_address)
+        >>> sysop.view_ip_log(not_logged_session_key, ip_address)
         False, 'NOT_LOGGEDIN'
 
         @type  session_key: string
@@ -89,9 +89,9 @@ class SysopManager(object):
         '''
         입력된 date 모든 log를 보여주는 함수
 
-        >>>sysop.view_user_log(logged_session_key, date)
+        >>> sysop.view_user_log(logged_session_key, date)
         True, 'LOG_LIST'
-        >>>sysop.view_date_log(not_logged_session_key, date)
+        >>> sysop.view_date_log(not_logged_session_key, date)
         False, 'NOT_LOGGEDIN'
 
         @type  session_key: string
@@ -108,9 +108,9 @@ class SysopManager(object):
         '''
         입력된 id의 패스워드를 설정한 값으로 초기화화는 함수
 
-        >>>sysop.set_password(logged_session_key, user_id, password)
+        >>> sysop.set_password(logged_session_key, user_id, password)
         True, 'OK'
-        >>>sysop.set_password(not_logged_session_key, user_id, password)
+        >>> sysop.set_password(not_logged_session_key, user_id, password)
         False, 'NOT_LOGGEDIN'
 
         @type  session_key: string
@@ -129,9 +129,9 @@ class SysopManager(object):
         '''
         입력된 id의 유저를 정식 등록된 유저로 설정하는 함수 
 
-        >>>sysop.conform_id_validation(logged_session_key, user_id)
+        >>> sysop.conform_id_validation(logged_session_key, user_id)
         True, 'OK'
-        >>>sysop.conform_id_validation(not_logged_session_key, user_id)
+        >>> sysop.conform_id_validation(not_logged_session_key, user_id)
         False, 'NOT_LOGGEDIN'
 
         @type  session_key: string
@@ -148,9 +148,9 @@ class SysopManager(object):
         '''
         글 수정 로그를 지우는 함수 
 
-        >>>sysop.remove_modify_log(logged_session_key, board_name, article_no)
+        >>> sysop.remove_modify_log(logged_session_key, board_name, article_no)
         True, 'OK'
-        >>>sysop.remove_modify_log(not_logged_session_key, boaord_name, artircle_no)
+        >>> sysop.remove_modify_log(not_logged_session_key, boaord_name, artircle_no)
         False, 'NOT_LOGGEDIN'
 
         @type  session_key: string
@@ -170,9 +170,9 @@ class SysopManager(object):
         '''
         session_key가 SYSOP일때 한하여 user_id 사용자를 등록된 사용자에서 제거하는 함수
 
-        >>>sysop.remove_user(logged_session_key, user_id)
+        >>> sysop.remove_user(logged_session_key, user_id)
         True, 'OK'
-        >>>sysop.remove_user(not_logged_session_key, user_id)
+        >>> sysop.remove_user(not_logged_session_key, user_id)
         False, 'NOT_LOGGEDIN'
 
         @type  session_key: string

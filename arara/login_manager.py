@@ -12,12 +12,10 @@ class LoginManager(object):
     (False, 'WRONG_PASSWORD')
     >>> login_manager.login('not_test', 'test', '143.248.234.145')
     (False, 'WRONG_ID')
-    >>> login_manager.login('test', 'test', '143.248.234.145')
-    (True, '05a671c66aefea124cc08b76ea6d30bb')
-
-    >>> session_key = '05a671c66aefea124cc08b76ea6d30bb'
+    >>> ret, session_key = login_manager.login('test', 'test', '143.248.234.145')
+    >>> ret
+    True
     >>> session_bee = 'thisisnotaprpoermd5sessionkey...'
-
     >>> login_manager.is_logged_in(session_bee)
     (False, 'NOT_LOGGEDIN')
     >>> returned, result = login_manager.is_logged_in(session_key)

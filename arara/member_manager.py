@@ -22,26 +22,27 @@ class MemberManager(object):
 
     >>> import login_manager
     >>> login_manager = login_manager.LoginManager()
-    >>> login_manager.login('test', 'test', '143.248.234.145')
-    (True, '05a671c66aefea124cc08b76ea6d30bb')
+    >>> ret, session_key = login_manager.login('test', 'test', '143.248.234.145')
+    >>> ret
+    True
     >>> member = MemberManager(login_manager)
-    >>> session_key = '05a671c66aefea124cc08b76ea6d30bb'
     >>> user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'mikkang' }
-    >>> member.register(user_reg_dic)
-    (True, 'd49cf5955c13a6589ca1b2149f015e4d')
-    >>> member.confirm('mikkang' , 'd49cf5955c13a6589ca1b2149f015e4d')
+    >>> ret, register_key = member.register(user_reg_dic)
+    >>> ret
+    True
+    >>> member.confirm('mikkang', register_key)
     (True, 'OK')
     >>> member.is_registered('mikkang')
     True
-    >>> member.get_info('05a671c66aefea124cc08b76ea6d30bb')
+    >>> member.get_info(session_key)
     (True, {'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'mikkang'})
     >>> user_password_dic = {'id':'mikkang', 'current_password':'mikkang', 'new_password':'ggingkkang'}
-    >>> member.modify_password('05a671c66aefea124cc08b76ea6d30bb', user_password_dic)
+    >>> member.modify_password(session_key, user_password_dic)
     (True, 'OK')
     >>> modify_user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang@sparcs.org', 'sig':'KAIST07 && JSH07 && SPARCS07', 'self_introduce':'i am Munbeom', 'default_language':'korean' }
-    >>> member.modify('05a671c66aefea124cc08b76ea6d30bb', modify_user_reg_dic)
+    >>> member.modify(session_key, modify_user_reg_dic)
     (True, 'OK')
-    >>> member.remove_user('05a671c66aefea124cc08b76ea6d30bb')
+    >>> member.remove_user(session_key)
     (True, 'OK')
     '''
 
