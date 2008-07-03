@@ -163,6 +163,10 @@ class m: #message
     mtm_item['num_new_m']=0
     mtm_item['num_m']=0
     mtm_item['m_who']="sender"
+    mtm_item['pvmli']="《 " #prev message list
+    mtm_item['pvmte']="〈 " #prev message text
+    mtm_item['nemte']="〉 " #next message text
+    mtm_item['nemli']="》 " #next message list
     
     m_list=[]
     m_list.append({'checkbox':'checkbox', 'sender':'ssaljalu', 'msg_no':0,
@@ -245,7 +249,7 @@ class m: #message
 	mtm_item=copy.deepcopy(m.mtm_item)
 	mtm_item['mr_reply']=""
 	mtm_item['m_who']="receiver"
-	mtm_item['read_message']=mtm_item['m_list'][m.indexof(mtm_item['m_list', m_num)]
+	mtm_item['read_message']=mtm_item['m_list'][m.indexof(mtm_item['m_list'], m_num)]
 	return render_to_string('read_message.html', mtm_item)
     rom=staticmethod(rom)
 

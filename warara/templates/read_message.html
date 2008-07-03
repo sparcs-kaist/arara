@@ -8,6 +8,12 @@
     <span id="m_time"> <!-- message time information -->
 	{{read_message.time}}
     </span>
+    <span>
+	{{pvmli}}
+	{{pvmte}}
+	{{nemte}}
+	{{nemli}}
+    </span>
 </div>
 <div id="m_text">
     {{read_message.text}}
@@ -15,8 +21,7 @@
 <div id="m_r_om"> <!-- message read option menu -->
     <span id="mrom_np"> <!-- message read option menu_next/prev -->
 	<form action="">
-	    <input type="button" name="mr_prev" value="prev"></input>
-	    <input type="button" name="mr_next" value="next"></input>
+	    <input type="button" name="m_list" value="list"></input>
 	</form>
     </span>
     <span id="mrom_rd"> <!-- message read option menu_reply/delete -->
