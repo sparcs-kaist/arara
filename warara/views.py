@@ -6,14 +6,25 @@ import xmlrpclib
 
 #server = xmlrpclib.Server("xmlrpcserver")
 
-'''
+'''<<<<<<< .mine
+
+# Get board list
+=======
+
 #Get board list
+>>>>>>> .r72
 suc, ret = board_list(request.session['arara_session'])
 if suc == True:
     bbslist = ret
 else:
     bbslist = "게시판 목록 읽기 실패/ 데이터베이스 오류"
+<<<<<<< .mine
+=======
 '''
+
+bbslist = ['KAIST', 'garbage']
+>>>>>>> .r72
+
 bbslist = ['KAIST', 'garbage']
 
 widget = 'widget'
@@ -306,4 +317,27 @@ def blacklist(request):
 
 def add_black(request):
     rendered = b.add()
+    return HttpResponse(rendered)
+
+class h: #help
+    htm_item={'htm_item':[
+	{'name':'shortcut key', 'url':'shortcutkey'},
+	{'name':'user agreement', 'url':'agreement'}]}
+    
+    def fast():
+	htm_item=copy.deepcopy(h.htm_item)
+	return render_to_string('help_frame.html', htm_item)
+    fast=staticmethod(fast)
+    
+    def agree():
+	htm_item=copy.deepcopy(h.htm_item)
+	return render_to_string('help_agreement.html', htm_item)
+    agree=staticmethod(agree)
+    
+def fastkey(request):
+    rendered = h.fast()
+    return HttpResponse(rendered)
+
+def agreement(request):
+    rendered = h.agree()
     return HttpResponse(rendered)

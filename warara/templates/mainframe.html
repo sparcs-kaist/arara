@@ -31,16 +31,16 @@
 	    }
 	    #main_title{
 		position:absolute;
-		bottom:5%;
-		left:1%;
+		bottom:10px;
+		left:10px;
 		font-family:sans-serif; 
 		border:medium double black;
 		font-size:200%
 	    }
 	    #main_inventory{
-		position:absolute;
-		right:5%;
-		bottom:20%
+		position:relative;
+		top:60px;
+		right:10px
 	    }
         </style>
     </head>
@@ -48,7 +48,7 @@
         <div id="container">
 	<div id="header">
 	    <div id="header_left">
-		<span id="main_title">WebARra</span>
+		<span id="main_title"><a href=# onclick="window.open('/main')">WebARra</a></span>
 	    </div>
 	    <div id="header_right">
 		<span id="main_ksearch">
@@ -59,7 +59,8 @@
 		</span>
 		<span id="main_inventory">
 		    {{arara_login}}
-		    <a href="/help">Help</a>
+		    <a href=# onclick="window.open('/help/shortcutkey', '_blank', 'width=400px height=600px')">
+			Help</a>
 		    <a href=# onclick="window.open('/message/inbox', '_blank', 'width=400px height=600px')">
 			message</a>
 		    <a href=# onclick="window.open('/blacklist/mypage', '_blank', 'width=400px height=600px')">
