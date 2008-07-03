@@ -8,10 +8,12 @@ class ArticleManager(object):
     게시글 및 검색 처리 클래스
     현재 게시글 표시방식이 절묘하기 때문에 read 메소드에 관한 논의가 필요.
 
-    >>> self.login_manager = self.login_managerManager()
-    >>> self.login_manager.login('test', 'test', '143.248.234.145')
+
+    >>> import login_manager
+    >>> login_manager = login_manager.LoginManager()
+    >>> login_manager.login('test', 'test', '143.248.234.145')
     (True, '05a671c66aefea124cc08b76ea6d30bb')
-    >>> article = ArticleManager()
+    >>> article = ArticleManager(login_manager)
     >>> session_key = '05a671c66aefea124cc08b76ea6d30bb'
     >>> article_dic = {'author':'serialx', 'title': 'serialx is...',
     ... 'content': 'polarbear', 'method': 'web'}
@@ -26,7 +28,7 @@ class ArticleManager(object):
     (True, 'OK')
     >>> article.read(session_key, 'garbages', 1)
     (True, {'title': 'serialx is...', 'ip': '143.248.234.240', 'author': 'serialx', 'content': 'polarbear', 'time': '2008.06.16 23:34:34', 'reply': [{'ip': '143.248.234.140', 'time': '2008.06.16 23:59:43', 'context': 'asdf', 'author': 'pv457'}], 'method': 'web'})
-    >>> self.login_manager.logout('05a671c66aefea124cc08b76ea6d30bb')
+    >>> login_manager.logout('05a671c66aefea124cc08b76ea6d30bb')
     (True, 'OK')
     '''
 
