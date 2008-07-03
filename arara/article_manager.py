@@ -111,8 +111,9 @@ class ArticleManager(object):
         except KeyError:
             return False, 'BOARD_NOT_EXIST'
 
+	import datetime
         article_dic['ip'] = '143.248.234.240'
-        article_dic['time'] = '2008.06.16 23:34:34'
+        article_dic['time'] = datetime.datetime.today().__str__()[-7] 
 
         article_no += 1
         self.articles[board_name][article_no] = article_dic
