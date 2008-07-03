@@ -22,34 +22,53 @@ class MemberManager(object):
 
     >>> import login_manager
     >>> login_manager = login_manager.LoginManager()
-    >>> ret, session_key = login_manager.login('test', 'test', '143.248.234.145')
+    >>> member_manager = MemberManager()
+    >>> member_manager._set_login_manager(login_manager)
+    >>> login_manager._set_member_manager(member_manager)
+    >>> user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
+    >>> ret, register_key = member_manager.register(user_reg_dic)
     >>> ret
     True
-    >>> member = MemberManager(login_manager)
-    >>> user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'mikkang' }
-    >>> ret, register_key = member.register(user_reg_dic)
-    >>> ret
-    True
-    >>> member.confirm('mikkang', register_key)
+    >>> member_manager.confirm('mikkang', register_key)
     (True, 'OK')
-    >>> member.is_registered('mikkang')
+    >>> member_manager.is_registered('mikkang')
     True
-    >>> member.get_info(session_key)
-    (True, {'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'mikkang'})
+    >>> ret, session_key = login_manager.login('mikkang', 'mikkang', '143.248.234.145')
+    >>> ret
+    True
+    >>> ret, member = member_manager.get_info(session_key)
+    >>> member['activate']
+    True
+    >>> member['email']
+    'mikkang'
+    >>> member['nickname']
+    'mikkang'
     >>> user_password_dic = {'id':'mikkang', 'current_password':'mikkang', 'new_password':'ggingkkang'}
-    >>> member.modify_password(session_key, user_password_dic)
+    >>> member_manager.modify_password(session_key, user_password_dic)
     (True, 'OK')
     >>> modify_user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang@sparcs.org', 'sig':'KAIST07 && JSH07 && SPARCS07', 'self_introduce':'i am Munbeom', 'default_language':'korean' }
-    >>> member.modify(session_key, modify_user_reg_dic)
+    >>> member_manager.modify(session_key, modify_user_reg_dic)
     (True, 'OK')
-    >>> member.remove_user(session_key)
+    >>> member_manager.remove_user(session_key)
     (True, 'OK')
     '''
 
-    def __init__(self, login_manager):
-        #monk data
-        self.member_dic = {} #DB에서 member table를 read해오는 부분
+    def __init__(self):
+        # mock data
+        self.member_dic = {}  # DB에서 member table를 read해오는 부분
+
+    def _set_login_manager(self, login_manager):
         self.login_manager = login_manager
+
+    def _authenticate(self, id, pw):
+        try:
+            if self.member_dic[id]['password'] == pw:
+                return True, None
+            else:
+                return False, 'WRONG_PASSWORD'
+        except KeyError:
+            return False, 'WRONG_ID'
+
 
     def register(self, user_reg_dic):
         '''
@@ -107,6 +126,7 @@ class MemberManager(object):
         '''
         try:
             if self.member_dic[id_to_confirm]['activate_code'] == confirm_key:
+                self.member_dic[id_to_confirm]['activate'] = True
                 return True, 'OK'
         except KeyError:
             return False, 'WRONG_CONFIRM_KEY'
@@ -133,8 +153,8 @@ class MemberManager(object):
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         try:
-            return True, self.member_dic[self.login_manager.session_dic[session_key]['id']]
-
+            import sys
+            return True, self.member_dic[self.login_manager.get_session(session_key)[1]['id']]
         except KeyError:
             return False, "MEMBER_NOT_EXIST"
 
@@ -158,12 +178,13 @@ class MemberManager(object):
                 3. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 4. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+        session_info = self.login_manager.get_session(session_key)[1]
         try:
-            if not self.login_manager.session_dic[session_key]['id'] == user_password_dic['id']:
+            if not session_info['id'] == user_password_dic['id']:
                 raise NoPermission()
-            if not self.member_dic[login_manager.session_dic[session_key]['id']]['password'] == user_password_dic['current_password']:
+            if not self.member_dic[session_info['id']]['password'] == user_password_dic['current_password']:
                 raise WrongPassword()
-            self.member_dic[login_manager.session_dic[session_key]['id']]['password'] = user_password_dic['new_password']
+            self.member_dic[session_info['id']]['password'] = user_password_dic['new_password']
             return True, 'OK'
             
         except NoPermission:

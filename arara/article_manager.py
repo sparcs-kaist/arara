@@ -11,8 +11,18 @@ class ArticleManager(object):
     현재 게시글 표시방식이 절묘하기 때문에 read 메소드에 관한 논의가 필요.
 
     >>> from arara import login_manager
+    >>> from arara import member_manager
     >>> login_manager = login_manager.LoginManager()
-    >>> ret, session_key = login_manager.login('test', 'test', '143.248.234.145')
+    >>> member_manager = member_manager.MemberManager()
+    >>> member_manager._set_login_manager(login_manager)
+    >>> login_manager._set_member_manager(member_manager)
+    >>> user_reg_dic = {'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
+    >>> ret, register_key = member_manager.register(user_reg_dic)
+    >>> ret
+    True
+    >>> member_manager.confirm('mikkang', register_key)
+    (True, 'OK')
+    >>> ret, session_key = login_manager.login('mikkang', 'mikkang', '143.248.234.145')
     >>> ret
     True
     >>> article_manager = ArticleManager(login_manager)
@@ -39,6 +49,15 @@ class ArticleManager(object):
         self.login_manager = login_manager
         self.article_no = 0
 
+    def _require_login(function):
+        def wrapper(self, session_key, *args):
+            if not self.login_manager.is_logged_in(session_key):
+                return False, 'NOT_LOGGEDIN'
+            else:
+                return function(self, session_key, *args)
+        return wrapper
+
+    @_require_login
     def read(self, session_key, board_name, no):
         '''
         DB로부터 게시글 하나를 읽어옴
@@ -60,13 +79,6 @@ class ArticleManager(object):
                 3. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 4. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        
-
-        try:
-            if not self.login_manager.is_logged_in(session_key)[0]:
-                raise NotLoggedIn()
-        except NotLoggedIn:
-            return False, 'NOT_LOGGEDIN'
 
         try:
             board = self.articles[board_name]
@@ -79,7 +91,7 @@ class ArticleManager(object):
         except KeyError:
             return False, 'ARTICLE_NOT_EXIST'
 
-
+    @_require_login
     def write_article(self, session_key, board_name, article_dic):
         '''
         DB에 게시글 하나를 작성함
@@ -98,15 +110,6 @@ class ArticleManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        
-
-        try:
-            if not self.login_manager.is_logged_in(session_key)[0]:
-                raise NotLoggedIn()
-        except NotLoggedIn:
-            return False, 'NOT_LOGGEDIN'
-
-        
 
         try:
             board = self.articles[board_name]
@@ -114,15 +117,17 @@ class ArticleManager(object):
             return False, 'BOARD_NOT_EXIST'
 
         import datetime
-        article_dic['ip'] = '143.248.234.240'
+
+        ip = self.login_manager.get_session(session_key)[1]['ip']
+        article_dic['ip'] = ip
         article_dic['time'] = str(datetime.datetime.fromtimestamp(time.time()))
 
         self.article_no += 1
         self.articles[board_name][self.article_no] = article_dic
         self.articles[board_name][self.article_no]['reply'] = []
         return True, self.article_no
-        
 
+    @_require_login
     def write_reply(self, session_key, board_name, article_no, reply_dic):
         '''
         댓글 하나를 해당하는 글에 추가
@@ -144,13 +149,6 @@ class ArticleManager(object):
                 3. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 4. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        
-
-        try:
-            if not self.login_manager.is_logged_in(session_key)[0]:
-                raise NotLoggedIn()
-        except NotLoggedIn:
-            return False, 'NOT_LOGGEDIN'
 
         try:
             board = self.articles[board_name]
@@ -161,7 +159,8 @@ class ArticleManager(object):
             article = board[article_no]
             #reply_no = len(board[self.article_no]['reply']) + 1
             #board[self.article_no]['reply'][reply_no] = reply_dic
-            reply_dic['ip'] = '143.248.234.140'
+            ip = self.login_manager.get_session(session_key)[1]['ip']
+            reply_dic['ip'] = ip
             reply_dic['time'] = str(datetime.datetime.fromtimestamp(time.time()))
 
             board[article_no]['reply'].append(reply_dic)
@@ -170,7 +169,8 @@ class ArticleManager(object):
             return False, 'ARTICLE_NOT_EXIST'
 
 
-    def modify(self,session_key, board_name, no, article_dic):
+    @_require_login
+    def modify(self, session_key, board_name, no, article_dic):
         '''
         DB의 해당하는 게시글 수정
 
@@ -192,14 +192,6 @@ class ArticleManager(object):
                 4. 수정 권한이 없음: False, 'NO_PERMISSION'
                 5. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        
-
-        try:
-            if not self.login_manager.is_logged_in(session_key)[0]:
-                raise NotLoggedIn()
-        except NotLoggedIn:
-            return False, 'NOT_LOGGEDIN'
-
 
         try:
             board = self.articles[board_name]
@@ -220,6 +212,7 @@ class ArticleManager(object):
         return True, no
 
 
+    @_require_login
     def delete(self, session_key, board_name, no):
         '''
         DB에 해당하는 글 삭제
@@ -241,13 +234,6 @@ class ArticleManager(object):
                 5. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         
-        
-        try:
-            if not self.login_manager.is_logged_in(session_key)[0]:
-                raise NotLoggedIn()
-        except NotLoggedIn:
-            return False, 'NOT_LOGGEDIN'
-
         try:
             board = self.articles[board_name]
         except KeyError:
@@ -262,7 +248,6 @@ class ArticleManager(object):
         return True, no
         
 
-        
     def article_list(self, session_key, board_name, page=1, page_length=20):
         '''
         게시판의 게시글 목록 읽어오기
@@ -319,7 +304,7 @@ class ArticleManager(object):
             return False, 'NOT_IMPLEMENTED'
                 
 
-
+    @_require_login
     def search(self, session_key, board_name, query_text, search_type, page=1, page_length=20):
         '''
         게시물 검색
@@ -347,12 +332,6 @@ class ArticleManager(object):
                 5. 데이터베이스 오류: False, 'DATABASE_ERROR'
 
         '''
-        try:
-            if not self.login_manager.is_logged_in(session_key)[0]:
-                raise NotLoggedIn()
-        except NotLoggedIn:
-            return False, 'NOT_LOGGEDIN'
-
         return False, 'NOT_IMPLEMENTED'
 
 def _test():

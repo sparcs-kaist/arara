@@ -7,24 +7,35 @@ class LoginManager(object):
     '''
     로그인 처리 관련 클래스
 
-    >>> login_manager = LoginManager()
-    >>> login_manager.login('test', 'not_test', '143.248.234.145')
+    >>> from arara import login_manager
+    >>> from arara import member_manager
+    >>> login_manager = login_manager.LoginManager()
+    >>> member_manager = member_manager.MemberManager()
+    >>> member_manager._set_login_manager(login_manager)
+    >>> login_manager._set_member_manager(member_manager)
+    >>> user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
+    >>> ret, register_key = member_manager.register(user_reg_dic)
+    >>> ret
+    True
+    >>> member_manager.confirm('mikkang', register_key)
+    (True, 'OK')
+    >>> login_manager.login('mikkang', 'not_test', '143.248.234.145')
     (False, 'WRONG_PASSWORD')
     >>> login_manager.login('not_test', 'test', '143.248.234.145')
     (False, 'WRONG_ID')
-    >>> ret, session_key = login_manager.login('test', 'test', '143.248.234.145')
+    >>> ret, session_key = login_manager.login('mikkang', 'mikkang', '143.248.234.145')
     >>> ret
     True
-    >>> session_bee = 'thisisnotaprpoermd5sessionkey...'
+    >>> session_bee = 'thisisnotapropermd5sessionkey...'
     >>> login_manager.is_logged_in(session_bee)
-    (False, 'NOT_LOGGEDIN')
-    >>> returned, result = login_manager.is_logged_in(session_key)
-    >>> returned
+    False
+    >>> login_manager.is_logged_in(session_key)
     True
+    >>> _, result = login_manager.get_session(session_key)
     >>> result['ip']
     '143.248.234.145'
     >>> result['id']
-    'test'
+    'mikkang'
 
     >>> login_manager.logout(session_bee)
     (False, 'NOT_LOGGEDIN')
@@ -58,17 +69,13 @@ class LoginManager(object):
                 3. 데이터베이스 관련 에러: False, 'DATABASE_ERROR'
         '''
 
-        if(id == 'test'):
-            if(password == 'test'):
-                hash = hashlib.md5(id+password+datetime.datetime.today().__str__()).hexdigest()
-                timestamp = datetime.datetime.isoformat(datetime.datetime.now())
-                self.session_dic[hash] = {'id': id, 'ip': user_ip, 'logintime': timestamp}
-                return True, hash
-            else:
-                return False, 'WRONG_PASSWORD'
-        else:
-            return False, 'WRONG_ID'
-
+        success, msg = self.member_manager._authenticate(id, password)
+        if success:
+            hash = hashlib.md5(id+password+datetime.datetime.today().__str__()).hexdigest()
+            timestamp = datetime.datetime.isoformat(datetime.datetime.now())
+            self.session_dic[hash] = {'id': id, 'ip': user_ip, 'logintime': timestamp}
+            return True, hash
+        return success, msg
 
     def logout(self, session_key):
         '''
@@ -90,6 +97,9 @@ class LoginManager(object):
         except KeyError:
             return False, 'NOT_LOGGEDIN'
 
+    def _set_member_manager(self, member_manager):
+        self.member_manager = member_manager
+
     def update_session(self, session_key):
         '''
         세션 expire시간을 연장해주는 함수
@@ -106,9 +116,9 @@ class LoginManager(object):
 
         return False, 'NOT_IMPLEMENTED'
 
-    def is_logged_in(self, session_key):
+    def get_session(self, session_key):
         '''
-        로그인 여부를 체크하는 함수
+        세션 정보를 반환하는 함수
 
         @type  session_key: string
         @param session_key: User Key
@@ -117,12 +127,28 @@ class LoginManager(object):
             1. 로그인 되어있을 경우: True, self.session_dic {id, user_ip, login_time}
             2. 로그인 되어있지 않을 경우: False, 'NOT_LOGGEDIN'
         '''
-
         try:
             session_info = self.session_dic[session_key]
             return True, session_info
         except KeyError:
             return False, 'NOT_LOGGEDIN'
+
+    def is_logged_in(self, session_key):
+        '''
+        로그인 여부를 체크하는 함수
+
+        @type  session_key: string
+        @param session_key: User Key
+        @rtype: string
+        @return:
+            1. 로그인 되어있을 경우: True
+            2. 로그인 되어있지 않을 경우: False
+        '''
+
+        if session_key in self.session_dic:
+            return True
+        else:
+            return False
 
 def _test():
     import doctest
