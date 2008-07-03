@@ -1,0 +1,28 @@
+>>> from arara import login_manager
+>>> from arara import article_manager
+>>> login_manager = login_manager.LoginManager()
+>>> ret, session_key = login_manager.login('test', 'test', '143.248.234.145')
+>>> ret
+True
+>>> article = article_manager.ArticleManager(login_manager)
+>>> article_dic = {'author':'serialx', 'title': 'serialx is...',
+... 'content': 'polarbear', 'method': 'web'}
+>>> import time
+>>> def stub_time():
+...     return 0
+>>> org_time = time.time
+>>> time.time = stub_time
+>>> article.write_article(session_key, 'garbages', article_dic)
+(True, 1)
+>>> article.read(session_key, 'garbages', 1)
+(True, {'title': 'serialx is...', 'ip': '143.248.234.240', 'author': 'serialx', 'content': 'polarbear', 'time': '1970-01-01 09:00:00', 'reply': [], 'method': 'web'})
+>>> reply_dic = {'author': 'pv457','context': 'asdf'}
+>>> article.write_reply(session_key, 'garbages', 24, reply_dic)
+(False, 'ARTICLE_NOT_EXIST')
+>>> article.write_reply(session_key, 'garbages', 1, reply_dic)
+(True, 'OK')
+>>> article.read(session_key, 'garbages', 1)
+(True, {'title': 'serialx is...', 'ip': '143.248.234.240', 'author': 'serialx', 'content': 'polarbear', 'time': '1970-01-01 09:00:00', 'reply': [{'ip': '143.248.234.140', 'time': '1970-01-01 09:00:00', 'context': 'asdf', 'author': 'pv457'}], 'method': 'web'})
+>>> login_manager.logout(session_key)
+(True, 'OK')
+>>> time.time = org_time

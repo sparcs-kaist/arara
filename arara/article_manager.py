@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import datetime
+import time
 
 class NotLoggedIn(Exception):
     pass
@@ -8,36 +10,34 @@ class ArticleManager(object):
     게시글 및 검색 처리 클래스
     현재 게시글 표시방식이 절묘하기 때문에 read 메소드에 관한 논의가 필요.
 
-
-    >>> import login_manager
+    >>> from arara import login_manager
     >>> login_manager = login_manager.LoginManager()
-    >>> login_manager.login('test', 'test', '143.248.234.145')
-    (True, '05a671c66aefea124cc08b76ea6d30bb')
-    >>> article = ArticleManager(login_manager)
-    >>> session_key = '05a671c66aefea124cc08b76ea6d30bb'
+    >>> ret, session_key = login_manager.login('test', 'test', '143.248.234.145')
+    >>> ret
+    True
+    >>> article_manager = ArticleManager(login_manager)
     >>> article_dic = {'author':'serialx', 'title': 'serialx is...',
     ... 'content': 'polarbear', 'method': 'web'}
-    >>> article.write_article(session_key, 'garbages', article_dic)
+    >>> article_manager.write_article(session_key, 'garbages', article_dic)
     (True, 1)
-    >>> article.read(session_key, 'garbages', 1)
-    (True, {'title': 'serialx is...', 'ip': '143.248.234.240', 'author': 'serialx', 'content': 'polarbear', 'time': '2008.06.16 23:34:34', 'reply': [], 'method': 'web'})
+    >>> ret, article = article_manager.read(session_key, 'garbages', 1)
+    >>> article['title'], article['content'], article['author']
+    ('serialx is...', 'polarbear', 'serialx')
     >>> reply_dic = {'author': 'pv457','context': 'asdf'}
-    >>> article.write_reply(session_key,'garbages', reply_dic, 24)
-    (False, 'ARTICLE_NOT_EXIST')
-    >>> article.write_reply(session_key,'garbages', reply_dic, 1)
+    >>> article_manager.write_reply(session_key, 'garbages', 1, reply_dic)
     (True, 'OK')
-    >>> article.read(session_key, 'garbages', 1)
-    (True, {'title': 'serialx is...', 'ip': '143.248.234.240', 'author': 'serialx', 'content': 'polarbear', 'time': '2008.06.16 23:34:34', 'reply': [{'ip': '143.248.234.140', 'time': '2008.06.16 23:59:43', 'context': 'asdf', 'author': 'pv457'}], 'method': 'web'})
-    >>> login_manager.logout('05a671c66aefea124cc08b76ea6d30bb')
+    >>> ret, article = article_manager.read(session_key, 'garbages', 1)
+    >>> article['reply'][0]['author'], article['reply'][0]['context']
+    ('pv457', 'asdf')
+    >>> login_manager.logout(session_key)
     (True, 'OK')
     '''
 
     def __init__(self, login_manager):
         #monk data
         self.articles = {'garbages': {} }
-        global article_no
         self.login_manager = login_manager
-        article_no = 0
+        self.article_no = 0
 
     def read(self, session_key, board_name, no):
         '''
@@ -106,24 +106,24 @@ class ArticleManager(object):
         except NotLoggedIn:
             return False, 'NOT_LOGGEDIN'
 
-        global article_no
+        
 
         try:
             board = self.articles[board_name]
         except KeyError:
             return False, 'BOARD_NOT_EXIST'
 
-	import datetime
+        import datetime
         article_dic['ip'] = '143.248.234.240'
-        article_dic['time'] = datetime.datetime.today().__str__()[-7] 
+        article_dic['time'] = str(datetime.datetime.fromtimestamp(time.time()))
 
-        article_no += 1
-        self.articles[board_name][article_no] = article_dic
-        self.articles[board_name][article_no]['reply'] = []
-        return True, article_no
+        self.article_no += 1
+        self.articles[board_name][self.article_no] = article_dic
+        self.articles[board_name][self.article_no]['reply'] = []
+        return True, self.article_no
         
 
-    def write_reply(self, session_key, board_name, reply_dic, article_no):
+    def write_reply(self, session_key, board_name, article_no, reply_dic):
         '''
         댓글 하나를 해당하는 글에 추가
 
@@ -159,20 +159,15 @@ class ArticleManager(object):
 
         try:
             article = board[article_no]
-            #reply_no = len(board[article_no]['reply']) + 1
-            #board[article_no]['reply'][reply_no] = reply_dic
+            #reply_no = len(board[self.article_no]['reply']) + 1
+            #board[self.article_no]['reply'][reply_no] = reply_dic
             reply_dic['ip'] = '143.248.234.140'
-            reply_dic['time'] = '2008.06.16 23:59:43'
+            reply_dic['time'] = str(datetime.datetime.fromtimestamp(time.time()))
 
             board[article_no]['reply'].append(reply_dic)
             return True, 'OK'
         except KeyError:
             return False, 'ARTICLE_NOT_EXIST'
-
-        except KeyError:
-            return False, 'BOARD_NOT_EXIST'
-            return False, 'ARTICLE_NOT_EXIST'
-
 
 
     def modify(self,session_key, board_name, no, article_dic):
@@ -361,8 +356,13 @@ class ArticleManager(object):
         return False, 'NOT_IMPLEMENTED'
 
 def _test():
+    import os
+    import sys
     import doctest
+    PROJECT_PATH = os.path.join(os.path.dirname(__file__), '../')
+    sys.path.append(PROJECT_PATH)
     doctest.testmod()
+    doctest.testfile(os.path.join(os.path.dirname(__file__), 'test/article_manager.txt'))
 
 if __name__ == '__main__':
     _test()

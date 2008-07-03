@@ -1,7 +1,11 @@
 import unittest
 import doctest
 import sys
-sys.path.append('../')
+import os
+
+PROJECT_PATH = os.path.join(os.path.dirname(__file__), '../')
+DOCTEST_PATH = os.path.join(PROJECT_PATH, 'arara/test')
+sys.path.append(PROJECT_PATH)
 
 from arara import article_manager
 from arara import blacklist_manager
@@ -17,6 +21,8 @@ from arara import sysop_manager
 def suite():
     return unittest.TestSuite([
                                doctest.DocTestSuite(article_manager),
+                               doctest.DocFileSuite(os.path.join(DOCTEST_PATH,
+                                   'article_manager.txt')),
                                #doctest.DocTestSuite(blacklist_manager),
                                #doctest.DocTestSuite(logging_manager),
                                doctest.DocTestSuite(login_manager),
