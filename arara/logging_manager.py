@@ -27,3 +27,5 @@ class LoggingManager(object):
             1. 검색 성공: Log Dictionary List
             2. 검색 실패: False
         '''
+
+# vim: set et ts=8 sw=4 sts=4

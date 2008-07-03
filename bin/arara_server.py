@@ -32,3 +32,5 @@ if __name__ == '__main__':
     server.register_instance(Namespace(), allow_dotted_names=True)
 
     server.serve_forever()
+
+# vim: set et ts=8 sw=4 sts=4

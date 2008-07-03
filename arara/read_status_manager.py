@@ -102,3 +102,5 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+
+# vim: set et ts=8 sw=4 sts=4

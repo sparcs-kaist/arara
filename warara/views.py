@@ -116,9 +116,9 @@ def modify(request, bbs, article_num):
                 'widget':widget,
                 'arara_login':arara_login,
                 'bbs_header':bbs,
-	        'article_number':article_num,
-	        'article_subject':'글제목',
-	        'article_content':'글내용'})
+                'article_number':article_num,
+                'article_subject':'글제목',
+                'article_content':'글내용'})
     return HttpResponse(rendered)
 
 def read(request, bbs, no):
@@ -151,24 +151,24 @@ def write(request, bbs):
                 'widget':widget,
                 'arara_login':arara_login,
                 'bbs_header':bbs,
-	        'article_subject':'article subject',
-	        'article_content':'article content',
-		'boardname':[{'name':'--board--'},
-		    {'name':'KAIST'},
-		    {'name':'garbages'},
-		    {'name':'food'},
-		    {'name':'abroad'},
-		    {'name':'love'},
-		    {'name':'foreigner'},
-		    {'name':'filmspecial'}]}) 
+                'article_subject':'article subject',
+                'article_content':'article content',
+                'boardname':[{'name':'--board--'},
+                    {'name':'KAIST'},
+                    {'name':'garbages'},
+                    {'name':'food'},
+                    {'name':'abroad'},
+                    {'name':'love'},
+                    {'name':'foreigner'},
+                    {'name':'filmspecial'}]}) 
     return HttpResponse(rendered)
 
 class m: #message
     mtm_item={'mtm_item':[  #message top menu item
-	{'name':'inbox', 'url':'inbox'},
-	{'name':'outbox', 'url':'outbox'},
-	{'name':'send', 'url':'send'},
-	{'name':'search user', 'url':'msu'}]} 
+        {'name':'inbox', 'url':'inbox'},
+        {'name':'outbox', 'url':'outbox'},
+        {'name':'send', 'url':'send'},
+        {'name':'search user', 'url':'msu'}]} 
     mtm_item['nmespp']=[20, 30, 50]
     mtm_item['m_opse']=['content', 'sender']
     mtm_item['num_new_m']=0
@@ -181,87 +181,87 @@ class m: #message
     
     m_list=[]
     m_list.append({'checkbox':'checkbox', 'sender':'ssaljalu', 'msg_no':0,
-	'receiver':'jacob', 'text':'Who are you', 'time':'08.06.26 18:51'})
+        'receiver':'jacob', 'text':'Who are you', 'time':'08.06.26 18:51'})
     m_list_key=['checkbox', 'sender', 'text', 'time']
     m_list_value=[]
     m_list.append({'checkbox':'checkbox', "msg_no":1, "sender":"pipoket", 
-	"receiver":"serialx","text": "polabear hsj", "time":"2008.02.13. 12:17:34"})
+        "receiver":"serialx","text": "polabear hsj", "time":"2008.02.13. 12:17:34"})
 
     mtm_item['m_list']=m_list
     mtm_item['m_list_key']=m_list_key
     mtm_item['m_list_value']=m_list_value
 
     def m_sort(mtm_item): #message sort
-	cm=copy.deepcopy(mtm_item)
+        cm=copy.deepcopy(mtm_item)
 
-	def get_no(m):
-	    return m['msg_no']
-	cm.sort(key=get_no)
-	return cm
+        def get_no(m):
+            return m['msg_no']
+        cm.sort(key=get_no)
+        return cm
     m_sort=staticmethod(m_sort)
 
     def mdl(m_list): #make data to list
-	cm=copy.deepcopy(m_list) #copy of mtm_item
+        cm=copy.deepcopy(m_list) #copy of mtm_item
 
-	for list in cm['m_list']:
-	    cm['m_list_value'].insert(0,[])
-	    for key in cm['m_list_key']:
-		if key=='text':
-		    lm=10 #length limit
-		    if len(list.get(key))>lm:
-			list[key]=''.join([list.get(key)[0:lm], '...'])
-			cm['m_list_value'][0].append({ 'key':key, 'value':list[key], 'msg_no':list.get('msg_no')})
-			continue
-		cm['m_list_value'][0].append(list.get(key))
-	return cm
+        for list in cm['m_list']:
+            cm['m_list_value'].insert(0,[])
+            for key in cm['m_list_key']:
+                if key=='text':
+                    lm=10 #length limit
+                    if len(list.get(key))>lm:
+                        list[key]=''.join([list.get(key)[0:lm], '...'])
+                        cm['m_list_value'][0].append({ 'key':key, 'value':list[key], 'msg_no':list.get('msg_no')})
+                        continue
+                cm['m_list_value'][0].append(list.get(key))
+        return cm
     mdl=staticmethod(mdl)
 
     def indexof(m_list, m_num): #search the index of the m_numth article in m_list
-	for i, arti in enumerate(m_list):
-	    if arti['msg_no']==m_num:
-		return i
-	return None
+        for i, arti in enumerate(m_list):
+            if arti['msg_no']==m_num:
+                return i
+        return None
     indexof=staticmethod(indexof)
 
     def write():
-	mtm_item=copy.deepcopy(m.mtm_item)
-	return render_to_string('write_message.html', mtm_item)
+        mtm_item=copy.deepcopy(m.mtm_item)
+        return render_to_string('write_message.html', mtm_item)
     write = staticmethod(write)
 
     def inbox_list():
-	mtm_item=copy.deepcopy(m.mtm_item)
-	mtm_item['m_list']=m.m_sort(mtm_item['m_list'])
-	mtm_item=m.mdl(mtm_item)
-	return render_to_string('inbox_list.html', mtm_item)
+        mtm_item=copy.deepcopy(m.mtm_item)
+        mtm_item['m_list']=m.m_sort(mtm_item['m_list'])
+        mtm_item=m.mdl(mtm_item)
+        return render_to_string('inbox_list.html', mtm_item)
     inbox_list = staticmethod(inbox_list)
 
     def outbox_list():
-	mtm_item=copy.deepcopy(m.mtm_item)
-	mtm_item['m_list']=m.m_sort(mtm_item['m_list'])
-	mtm_item['m_list_key']=['checkbox', 'receiver', 'text', 'time']
-	mtm_item=m.mdl(mtm_item)
-	return render_to_string('outbox_list.html', mtm_item)
+        mtm_item=copy.deepcopy(m.mtm_item)
+        mtm_item['m_list']=m.m_sort(mtm_item['m_list'])
+        mtm_item['m_list_key']=['checkbox', 'receiver', 'text', 'time']
+        mtm_item=m.mdl(mtm_item)
+        return render_to_string('outbox_list.html', mtm_item)
     outbox_list=staticmethod(outbox_list)
 
     def msu():
-	mtm_item=copy.deepcopy(m.mtm_item)
-	return render_to_string('m_s_user.html', mtm_item)
+        mtm_item=copy.deepcopy(m.mtm_item)
+        return render_to_string('m_s_user.html', mtm_item)
     msu=staticmethod(msu)
 
     def rim(m_num):
-	mtm_item=copy.deepcopy(m.mtm_item)
-	mtm_item['m_who']="sender"
-	mtm_item['mr_reply']="reply"
-	mtm_item['read_message']=mtm_item['m_list'][m.indexof(mtm_item['m_list'], m_num)]
-	return render_to_string('read_message.html', mtm_item)
+        mtm_item=copy.deepcopy(m.mtm_item)
+        mtm_item['m_who']="sender"
+        mtm_item['mr_reply']="reply"
+        mtm_item['read_message']=mtm_item['m_list'][m.indexof(mtm_item['m_list'], m_num)]
+        return render_to_string('read_message.html', mtm_item)
     rim=staticmethod(rim)
 
     def rom(m_num):
-	mtm_item=copy.deepcopy(m.mtm_item)
-	mtm_item['mr_reply']=""
-	mtm_item['m_who']="receiver"
-	mtm_item['read_message']=mtm_item['m_list'][m.indexof(mtm_item['m_list'], m_num)]
-	return render_to_string('read_message.html', mtm_item)
+        mtm_item=copy.deepcopy(m.mtm_item)
+        mtm_item['mr_reply']=""
+        mtm_item['m_who']="receiver"
+        mtm_item['read_message']=mtm_item['m_list'][m.indexof(mtm_item['m_list'], m_num)]
+        return render_to_string('read_message.html', mtm_item)
     rom=staticmethod(rom)
 
 def write_message(request):
@@ -292,8 +292,8 @@ def rom(request, m_num): #read_outbox_message
 
 class b: #blacklist
     btm_item={'btm_item':[
-	{'name':'My page', 'url':'mypage'},
-	{'name':'Add blacklist', 'url':'add'}]}
+        {'name':'My page', 'url':'mypage'},
+        {'name':'Add blacklist', 'url':'add'}]}
     b_list_h=['ID','block_article','block_message']
     b_list=[]
     b_list.append({'ID':'MyungBakLee','block_article':'hi','block_message':'hi'})
@@ -302,13 +302,13 @@ class b: #blacklist
     btm_item['b_list']=b_list
     
     def black():
-	btm_item=copy.deepcopy(b.btm_item)
-	return render_to_string('blacklist.html', btm_item)
+        btm_item=copy.deepcopy(b.btm_item)
+        return render_to_string('blacklist.html', btm_item)
     black=staticmethod(black)
 
     def add():
-	btm_item=copy.deepcopy(b.btm_item)
-	return render_to_string('add_blacklist.html', btm_item)
+        btm_item=copy.deepcopy(b.btm_item)
+        return render_to_string('add_blacklist.html', btm_item)
     add=staticmethod(add)
 
 def blacklist(request):
@@ -321,17 +321,17 @@ def add_black(request):
 
 class h: #help
     htm_item={'htm_item':[
-	{'name':'shortcut key', 'url':'shortcutkey'},
-	{'name':'user agreement', 'url':'agreement'}]}
+        {'name':'shortcut key', 'url':'shortcutkey'},
+        {'name':'user agreement', 'url':'agreement'}]}
     
     def fast():
-	htm_item=copy.deepcopy(h.htm_item)
-	return render_to_string('help_frame.html', htm_item)
+        htm_item=copy.deepcopy(h.htm_item)
+        return render_to_string('help_frame.html', htm_item)
     fast=staticmethod(fast)
     
     def agree():
-	htm_item=copy.deepcopy(h.htm_item)
-	return render_to_string('help_agreement.html', htm_item)
+        htm_item=copy.deepcopy(h.htm_item)
+        return render_to_string('help_agreement.html', htm_item)
     agree=staticmethod(agree)
     
 def fastkey(request):
@@ -341,3 +341,5 @@ def fastkey(request):
 def agreement(request):
     rendered = h.agree()
     return HttpResponse(rendered)
+
+# vim: set et ts=8 sw=4 sts=4

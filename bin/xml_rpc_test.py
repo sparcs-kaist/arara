@@ -8,3 +8,5 @@ print s.article_manager.write_article(test[1], 'garbages', {'title':'123', 'cont
 print s.article_manager.write_reply(test[1], 'garbages', {'context':'222'}, 1)
 print s.article_manager.read(test[1], 'garbages', 1)
 
+
+# vim: set et ts=8 sw=4 sts=4

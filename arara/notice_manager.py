@@ -267,3 +267,5 @@ class NoticeManager(object):
             return False, 'DATABASE_ERROR'
     
 
+
+# vim: set et ts=8 sw=4 sts=4

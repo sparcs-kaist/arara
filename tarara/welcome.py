@@ -68,3 +68,5 @@ class ara_toc(object):
         self.ui.draw_screen(size, canvas)
 
 ara_toc().main()
+
+# vim: set et ts=8 sw=4 sts=4

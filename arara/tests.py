@@ -37,3 +37,5 @@ def suite():
 
 if __name__ == "__main__":
     unittest.TextTestRunner(verbosity=2).run(suite())
+
+# vim: set et ts=8 sw=4 sts=4
