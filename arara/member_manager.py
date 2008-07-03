@@ -21,10 +21,10 @@ class MemberManager(object):
     회원 가입, 회원정보 수정, 회원정보 조회, 이메일 인증등을 담당하는 클래스
 
     >>> import login_manager
-    >>> login_manager = login_manager.LoginManger()
+    >>> login_manager = login_manager.LoginManager()
     >>> login_manager.login('test', 'test', '143.248.234.145')
     (True, '05a671c66aefea124cc08b76ea6d30bb')
-    >>> member = MemberManger(login_manager)
+    >>> member = MemberManager(login_manager)
     >>> session_key = '05a671c66aefea124cc08b76ea6d30bb'
     >>> user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'mikkang' }
     >>> member.register(user_reg_dic)
@@ -32,14 +32,14 @@ class MemberManager(object):
     >>> member.confirm('mikkang' , 'd49cf5955c13a6589ca1b2149f015e4d')
     (True, 'OK')
     >>> member.is_registered('mikkang')
-    (True)
-    >>> memeber.get_info('05a671c66aefea124cc08b76ea6d30bb')
+    True
+    >>> member.get_info('05a671c66aefea124cc08b76ea6d30bb')
     (True, {'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'mikkang'})
     >>> user_password_dic = {'id':'mikkang', 'current_password':'mikkang', 'new_password':'ggingkkang'}
-    >>> memeber.modify_password('05a671c66aefea124cc08b76ea6d30bb', user_password_dic)
+    >>> member.modify_password('05a671c66aefea124cc08b76ea6d30bb', user_password_dic)
     (True, 'OK')
     >>> modify_user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang@sparcs.org', 'sig':'KAIST07 && JSH07 && SPARCS07', 'self_introduce':'i am Munbeom', 'default_language':'korean' }
-    >>> memeber.modify('05a671c66aefea124cc08b76ea6d30bb', modify_user_reg_dic)
+    >>> member.modify('05a671c66aefea124cc08b76ea6d30bb', modify_user_reg_dic)
     (True, 'OK')
     >>> member.remove_user('05a671c66aefea124cc08b76ea6d30bb')
     (True, 'OK')
@@ -60,7 +60,7 @@ class MemberManager(object):
         @param user_reg_dic: User Dictionary
         @rtype: string
         @return:
-            1. register 성공: True, member_dic[user_reg_dic['id']]['activate_code']
+            1. register 성공: True, self.member_dic[user_reg_dic['id']]['activate_code']
             2. register 실패:
                 1. 양식이 맞지 않음(부적절한 NULL값 등): 'WRONG_DICTIONARY'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
@@ -82,11 +82,11 @@ class MemberManager(object):
                 tmp_user_dic['password']+tmp_user_dic['nickname']).hexdigest()
         
         try:
-            member_dic[user_reg_dic['id']] = tmp_user_dic
+            self.member_dic[user_reg_dic['id']] = tmp_user_dic
         except Exception:
             return False, 'THIS_EXCEPTION_SHOULD_NEVER_HAPPEN_DURING_DUMMY_CODE'
 
-        return True, member_dic[user_reg_dic['id']]['activate_code']
+        return True, self.member_dic[user_reg_dic['id']]['activate_code']
 
 
     def confirm(self, id_to_confirm, confirm_key):
@@ -105,7 +105,7 @@ class MemberManager(object):
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         try:
-            if member_dic[id_to_confirm]['activate_code'] == confirm_key:
+            if self.member_dic[id_to_confirm]['activate_code'] == confirm_key:
                 return True, 'OK'
         except KeyError:
             return False, 'WRONG_CONFIRM_KEY'
@@ -115,7 +115,7 @@ class MemberManager(object):
     def is_registered(self, user_id):
         #remove quote when MD5 hash for UI is available
         #
-        return member_dic.has_key(user_id)
+        return self.member_dic.has_key(user_id)
 
     def get_info(self, session_key):
         '''
@@ -132,7 +132,7 @@ class MemberManager(object):
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         try:
-            return True, member_dic[login_manager.session_dic[session_key]['id']]
+            return True, self.member_dic[self.login_manager.session_dic[session_key]['id']]
 
         except KeyError:
             return False, "MEMBER_NOT_EXIST"
@@ -158,11 +158,11 @@ class MemberManager(object):
                 4. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         try:
-            if not login_manager.session_dic[session_key]['id'] == user_password_dic['id']:
+            if not self.login_manager.session_dic[session_key]['id'] == user_password_dic['id']:
                 raise NoPermission()
-            if not member_dic[login_manager.session_dic[session_key]['id']]['password'] == user_password_dic['current_password']:
+            if not self.member_dic[login_manager.session_dic[session_key]['id']]['password'] == user_password_dic['current_password']:
                 raise WrongPassword()
-            member_dic[login_manager.session_dic[session_key]['id']]['password'] = user_password_dic['new_password']
+            self.member_dic[login_manager.session_dic[session_key]['id']]['password'] = user_password_dic['new_password']
             return True, 'OK'
             
         except NoPermission:
@@ -192,7 +192,7 @@ class MemberManager(object):
                 3. 양식이 맞지 않음(부적절한 NULL값 등): 'WRONG_DICTIONARY'
         '''
         try:
-            if not login_manager.session_dic.has_key(session_key):
+            if not self.login_manager.session_dic.has_key(session_key):
                 raise NotLoggedIn()
 
             user_reg_keys = ['id', 'password', 'nickname', 'email', 'sig', 'self_introduce', 'default_language']
@@ -204,7 +204,7 @@ class MemberManager(object):
                     tmp_user_dic[key] = user_reg_dic[key]
             except WrongDictionary:
                 return False, 'WRONG_DICTIONARY'
-            member_dic[user_reg_dic['id']] = tmp_user_dic
+            self.member_dic[user_reg_dic['id']] = tmp_user_dic
             return True, 'OK'
         except NotLoggedIn:
             return False, 'NOT_LOGGEDIN'
@@ -267,7 +267,7 @@ class MemberManager(object):
             2. 실패시: False, 'NOT_LOGGEDIN'
         '''
         try:
-            member_dic.pop(login_manager.session_dic[session_key]['id'])
+            self.member_dic.pop(self.login_manager.session_dic[session_key]['id'])
             return True, 'OK'
 
         except KeyError:
