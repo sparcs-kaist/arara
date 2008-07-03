@@ -62,7 +62,7 @@ class LoginManager(object):
 
         if(id == 'test'):
             if(password == 'test'):
-                hash = hashlib.md5(id+password).hexdigest()
+                hash = hashlib.md5(id+password+datetime.datetime.today().__str__()).hexdigest()
                 timestamp = datetime.datetime.isoformat(datetime.datetime.now())
                 self.session_dic[hash] = {'id': id, 'ip': user_ip, 'logintime': timestamp}
                 return True, hash
