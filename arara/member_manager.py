@@ -57,6 +57,15 @@ class MemberManager(object):
         # mock data
         self.member_dic = {}  # DB에서 member table를 read해오는 부분
 
+
+    def _require_login(function):
+        def wrapper(self, session_key, *args):
+            if not self.login_manager.is_logged_in(session_key):
+                return False, 'NOT_LOGGEDIN'
+            else:
+                return function(self, session_key, *args)
+        return wrapper
+
     def _set_login_manager(self, login_manager):
         self.login_manager = login_manager
 
@@ -197,6 +206,7 @@ class MemberManager(object):
             return False, 'NOT_LOGGEDIN'
 
 
+    @_require_login
     def modify(self, session_key, user_reg_dic):
         '''
         DB에 회원 정보 수정
@@ -213,23 +223,18 @@ class MemberManager(object):
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
                 3. 양식이 맞지 않음(부적절한 NULL값 등): 'WRONG_DICTIONARY'
         '''
-        try:
-            if not self.login_manager.session_dic.has_key(session_key):
-                raise NotLoggedIn()
 
-            user_reg_keys = ['id', 'password', 'nickname', 'email', 'sig', 'self_introduce', 'default_language']
-            tmp_user_dic = {}
-            try:
-                for key in user_reg_keys:
-                    if not key in user_reg_dic:
-                        raise WrongDictionary()
-                    tmp_user_dic[key] = user_reg_dic[key]
-            except WrongDictionary:
-                return False, 'WRONG_DICTIONARY'
-            self.member_dic[user_reg_dic['id']] = tmp_user_dic
-            return True, 'OK'
-        except NotLoggedIn:
-            return False, 'NOT_LOGGEDIN'
+        user_reg_keys = ['id', 'password', 'nickname', 'email', 'sig', 'self_introduce', 'default_language']
+        tmp_user_dic = {}
+        try:
+            for key in user_reg_keys:
+                if not key in user_reg_dic:
+                    raise WrongDictionary()
+                tmp_user_dic[key] = user_reg_dic[key]
+        except WrongDictionary:
+            return False, 'WRONG_DICTIONARY'
+        self.member_dic[user_reg_dic['id']] = tmp_user_dic
+        return True, 'OK'
 
     def query_by_id(self, session_key, query_id):
         '''
