@@ -272,7 +272,7 @@ class ArticleManager(object):
         try:
             for no in len(self.articles[board_name]):
                 article_list.append(self.articles[board_name][no])
-            return article_list 
+            return True, article_list 
         except KeyError: 
             return False, 'BOARD_NOT_EXIST'
              
