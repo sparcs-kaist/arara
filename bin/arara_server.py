@@ -10,6 +10,7 @@ sys.path.append(PROJECT_PATH)
 from arara.article_manager import ArticleManager
 from arara.blacklist_manager import BlacklistManager
 from arara.member_manager import MemberManager
+from arara.login_manager import LoginManager
 
 class Namespace(object):
     login_manager = LoginManager()
