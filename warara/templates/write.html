@@ -4,15 +4,10 @@
 <div id="bbs_header">
     {{bbs_header}}
 </div>
-<form method="post" action="/write/">
+<form method="post" action="/write/{{bbs}}/">
     <div id="article_header">
 	<br>subject
 	<input type="text" name="article_subject" value="{{article_subject}}"></input>
-	<select name="board">
-	    {% for item in boardname %}
-	    <option value="{{item.name}}">{{item.name}}</option>
-	    {% endfor %}
-	</select>
     </div>
     <br>
     <div id="writer_content">

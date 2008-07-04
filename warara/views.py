@@ -19,8 +19,35 @@ def getBoardList(request):
     boardList = ['KAIST', 'garbage']
     return boardList
 
+def getLoginPanel(request):
+    if request.session.has_key('arara_session'):
+        loginPanel = render_to_string('loggedin.html', {'nickname':getNickname(request)})
+    else:
+        loginPanel = render_to_string('loggedout.html', {})
+    return loginPanel
+
+def getMemberInfo(request):
+    suc, ret = server.member_manager.get_info(request.session['arara_session'])
+    if suc == True:
+        request.session['info'] = ret
+
+def getID(request):
+    if request.session.has_key('info') == False:
+        getMemberInfo(request)
+    return request.session['info']['id']
+
+def getNickname(request):
+    if request.session.has_key('info') == False:
+        getMemberInfo(request)
+    return request.session['info']['nickname']
+
+def delSession(request):
+    if request.session.has_key('arara_session') == True:
+        del request.session['arara_session']
+    if request.session.has_key('info') == True:
+        del request.session['info']
+
 widget = 'widget'
-arara_login = 'login'
 
 def errormsg(e):
     if e == "WRONG_ID":
@@ -41,8 +68,8 @@ def intro(request):
     return HttpResponse(rendered)
 
 def login(request):
-    request.session['id'] = id = request.POST['id']
-    passwd = request.POST['passwd']
+    id = request.POST['id']
+    passwd = request.POST['password']
     ip = request.META['REMOTE_ADDR']
     suc, ret = server.login_manager.login(id, passwd, ip)
     if suc == True:
@@ -55,15 +82,18 @@ def login(request):
 
 def logout(request):
     suc, ret = server.login_manager.logout(request.session['arara_session'])
+    delSession(request)
     if suc == True:
-        del request.session['arara_session']
-        redirectURL = request.META['REFERER']
+        delSession(request)
+        redirectURL = request.META['HTTP_REFERER']
     else:
-        redirectURL = request.META['REFERER'] + "/?e=" + ret
-    return HttpResponse(request.session['arara_session'])
+        redirectURL = request.META['HTTP_REFERER'] + "?e=" + ret
+    rendered = render_to_string('redirect.html', {'url':redirectURL})
+    return HttpResponse(rendered)
 
 def main(request):
     boardList = getBoardList(request)
+    loginPanel = getLoginPanel(request)
 
     msg = errormsg(request.GET.get('e', ""))
 
@@ -95,7 +125,7 @@ def main(request):
     rendered = render_to_string('main.html',
             {'bbs_list':boardList,
                 'widget':widget,
-                'arara_login':arara_login,
+                'arara_login':loginPanel,
                 'today_best':todaybest,
                 'kaist_news':news,
                 'week_best':weekbest,
@@ -106,11 +136,12 @@ def main(request):
 
 def modify(request, bbs, article_num):
     boardList = getBoardList(request)
+    loginPanel = getLoginPanel(request)
 
     rendered = render_to_string('modify.html',
             {'bbs_list':boardList,
                 'widget':widget,
-                'arara_login':arara_login,
+                'arara_login':loginPanel,
                 'bbs_header':bbs,
                 'article_number':article_num,
                 'article_subject':'글제목',
@@ -138,11 +169,12 @@ def register(request):
 
 def read(request, bbs, no):
     boardList = getBoardList(request)
+    loginPanel = getLoginPanel(request)
 
     rendered = render_to_string('read.html',
             {'bbs_list':boardList,
                 'widget':widget,
-                'arara_login':arara_login,
+                'arara_login':loginPanel,
                 'bbsname':bbs,
                 'bbs_header':'bbs_header',
                 'article':{'no':'1', 'title':'title1', 'author':'author1', 'content':'content1'},
@@ -152,12 +184,13 @@ def read(request, bbs, no):
 
 def list(request, bbs):
     boardList = getBoardList(request)
+    loginPanel = getLoginPanel(request)
 
     articles = [{'no':1,'read_status':'N','title':'가나다','author':'조준희','date':'2008/06/24','hit':11,'vote':2,'content':'글내용'}]
     rendered = render_to_string('list.html',
             {'bbs_list':boardList,
                 'widget':widget,
-                'arara_login':arara_login,
+                'arara_login':loginPanel,
                 'bbs_header':bbs,
                 'article_list':articles,
                 'menu':'write',
@@ -166,19 +199,25 @@ def list(request, bbs):
 
 def write(request, bbs):
     boardList = getBoardList(request)
+    loginPanel = getLoginPanel(request)
 
-    if request.POST.has_key():
+    if request.POST.has_key('article_subject'):
         article = {'title':request.POST['article_subject'],
-                   'author':request.session['id'],
-                   'content':request.POST['article_content']}
-        suc, ret = write_article(request.session['arara_session'], bbs, article)
-        redirectURL = '/list/' + bbs + '/'
+                   'author':getID(request),
+                   'content':request.POST['article_content'],
+                   'method':'web'}
+        suc, ret = server.article_manager.write_article(request.session['arara_session'], bbs, article)
+        if suc == True:
+            redirectURL = '/read/' + bbs + '/' + ret + '/'
+        else:
+            redirectURL = '/write/' + bbs + '/?e=' + ret
         rendered = render_to_string('redirect.html', {'url':redirectURL})
     else:
         rendered = render_to_string('write.html',
             {'bbs_list':boardList,
                 'widget':widget,
-                'arara_login':arara_login,
+                'arara_login':loginPanel,
+                'bbs':bbs,
                 'bbs_header':bbs,
                 'article_subject':'article subject',
                 'article_content':'article content',
