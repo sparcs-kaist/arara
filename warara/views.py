@@ -5,18 +5,19 @@ import copy
 import xmlrpclib
 import sys
 
-#server = xmlrpclib.Server("xmlrpcserver")
+server = xmlrpclib.Server("http://localhost:8000")
 
-'''
-#Get board list
-suc, ret = board_list(request.session['arara_session'])
-if suc == True:
-    bbslist = ret
-else:
-    bbslist = "게시판 목록 읽기 실패/ 데이터베이스 오류"
-'''
-
-bbslist = ['KAIST', 'garbage']
+def getBoardList(request):
+    #Get board list
+    '''
+    suc, ret = server.article_manager.board_list(request.session['arara_session'])
+    if suc == True:
+        boardList = ret
+    else:
+        boardList = "게시판 목록 읽기 실패/ 데이터베이스 오류"
+    '''
+    boardList = ['KAIST', 'garbage']
+    return boardList
 
 widget = 'widget'
 arara_login = 'login'
@@ -40,28 +41,30 @@ def intro(request):
     return HttpResponse(rendered)
 
 def login(request):
-    id = request.POST['id']
+    request.session['id'] = id = request.POST['id']
     passwd = request.POST['passwd']
     ip = request.META['REMOTE_ADDR']
     suc, ret = server.login_manager.login(id, passwd, ip)
     if suc == True:
         request.session['arara_session'] = ret
-        redirect_url = "/main/"
+        redirectURL = "/main/"
     else:
-        redirect_url = "/?e=" + ret
-    rendered = render_to_string('redirect.html', {'url':redirect_url})
+        redirectURL = "/?e=" + ret
+    rendered = render_to_string('redirect.html', {'url':redirectURL})
     return HttpResponse(rendered)
 
 def logout(request):
-    suc, ret = xmlrpclib.Server(xmlrpcserver)
+    suc, ret = server.login_manager.logout(request.session['arara_session'])
     if suc == True:
         del request.session['arara_session']
-        redirect_url = request.META['REFERER']
+        redirectURL = request.META['REFERER']
     else:
-        redirect_url = request.META['REFERER'] + "/?e=" + ret
+        redirectURL = request.META['REFERER'] + "/?e=" + ret
     return HttpResponse(request.session['arara_session'])
 
 def main(request):
+    boardList = getBoardList(request)
+
     msg = errormsg(request.GET.get('e', ""))
 
     todaybestlist = [{'title':'투베1', 'author':'쌀'},
@@ -90,7 +93,7 @@ def main(request):
                 'articles':newslist})
 
     rendered = render_to_string('main.html',
-            {'bbs_list':bbslist,
+            {'bbs_list':boardList,
                 'widget':widget,
                 'arara_login':arara_login,
                 'today_best':todaybest,
@@ -102,8 +105,10 @@ def main(request):
     return HttpResponse(rendered)
 
 def modify(request, bbs, article_num):
+    boardList = getBoardList(request)
+
     rendered = render_to_string('modify.html',
-            {'bbs_list':bbslist,
+            {'bbs_list':boardList,
                 'widget':widget,
                 'arara_login':arara_login,
                 'bbs_header':bbs,
@@ -112,9 +117,30 @@ def modify(request, bbs, article_num):
                 'article_content':'글내용'})
     return HttpResponse(rendered)
 
+def register(request):
+    if request.POST.has_key('id') == True:
+        suc, ret = server.member_manager.register(
+                   {'id':request.POST['id'],
+                    'password':request.POST['passwordFirst'],
+                    'nickname':request.POST['nickname'],
+                    'email':request.POST['email'],
+                    'sig':request.POST['signature'],
+                    'self_introduce':request.POST['self-introduction'],
+                    'default_language':request.POST['language']})
+        if suc == True:
+            redirectURL = '/'
+        else:
+            redirectURL = '/?e=' + ret
+        rendered = render_to_string('redirect.html', {'url':redirectURL})
+    else:
+        rendered = render_to_string('register.html', {})
+    return HttpResponse(rendered)
+
 def read(request, bbs, no):
+    boardList = getBoardList(request)
+
     rendered = render_to_string('read.html',
-            {'bbs_list':bbslist,
+            {'bbs_list':boardList,
                 'widget':widget,
                 'arara_login':arara_login,
                 'bbsname':bbs,
@@ -125,9 +151,11 @@ def read(request, bbs, no):
     return HttpResponse(rendered)
 
 def list(request, bbs):
+    boardList = getBoardList(request)
+
     articles = [{'no':1,'read_status':'N','title':'가나다','author':'조준희','date':'2008/06/24','hit':11,'vote':2,'content':'글내용'}]
     rendered = render_to_string('list.html',
-            {'bbs_list':bbslist,
+            {'bbs_list':boardList,
                 'widget':widget,
                 'arara_login':arara_login,
                 'bbs_header':bbs,
@@ -137,8 +165,18 @@ def list(request, bbs):
     return HttpResponse(rendered)
 
 def write(request, bbs):
-    rendered = render_to_string('write.html',
-            {'bbs_list':bbslist,
+    boardList = getBoardList(request)
+
+    if request.POST.has_key():
+        article = {'title':request.POST['article_subject'],
+                   'author':request.session['id'],
+                   'content':request.POST['article_content']}
+        suc, ret = write_article(request.session['arara_session'], bbs, article)
+        redirectURL = '/list/' + bbs + '/'
+        rendered = render_to_string('redirect.html', {'url':redirectURL})
+    else:
+        rendered = render_to_string('write.html',
+            {'bbs_list':boardList,
                 'widget':widget,
                 'arara_login':arara_login,
                 'bbs_header':bbs,

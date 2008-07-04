@@ -4,10 +4,10 @@
 <div id="bbs_header">
     {{bbs_header}}
 </div>
-<form method="post">
+<form method="post" action="/write/">
     <div id="article_header">
 	<br>subject
-	<input type="text" name="art_subject" value="{{article_subject}}"></input>
+	<input type="text" name="article_subject" value="{{article_subject}}"></input>
 	<select name="board">
 	    {% for item in boardname %}
 	    <option value="{{item.name}}">{{item.name}}</option>
@@ -16,7 +16,7 @@
     </div>
     <br>
     <div id="writer_content">
-	<textarea name="art_con">{{article_contentt}}
+	<textarea name="article_content">{{article_content}}
 	내용을 입력하세요
 	</textarea>
     </div>
