@@ -4,3 +4,12 @@
 <br>
 {{ block.super }}
 {% endblock %}
+{% block page_no_view %}
+{{p_init}}
+{{p_prev}}
+{% for no in p_list %}
+{{no}}
+{% endfor %}
+{{p_next}}
+{{p_end}}
+{% endblock page_no_view %}

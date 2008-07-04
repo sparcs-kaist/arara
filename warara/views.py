@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 import copy
 import xmlrpclib
 import sys
+from math import *
 
 server = xmlrpclib.Server("http://localhost:8000")
 
@@ -233,8 +234,8 @@ def write(request, bbs):
 
 class m: #message
     mtm_item={'mtm_item':[  #message top menu item
-        {'name':'inbox', 'url':'inbox'},
-        {'name':'outbox', 'url':'outbox'},
+        {'name':'inbox', 'url':'inbox/1/'},
+        {'name':'outbox', 'url':'outbox/1/'},
         {'name':'send', 'url':'send'},
         {'name':'search user', 'url':'msu'}]} 
     mtm_item['nmespp']=[20, 30, 50]
@@ -246,6 +247,10 @@ class m: #message
     mtm_item['pvmte']="〈 " #prev message text
     mtm_item['nemte']="〉 " #next message text
     mtm_item['nemli']="》 " #next message list
+    mtm_item['p_init']=mtm_item['pvmli'] #page_initial
+    mtm_item['p_prev']=mtm_item['pvmte']
+    mtm_item['p_next']=mtm_item['nemte']
+    mtm_item['p_end']=mtm_item['nemli']
     
     m_list=[]
     m_list.append({'checkbox':'checkbox', 'sender':'ssaljalu', 'msg_no':10,
@@ -273,6 +278,39 @@ class m: #message
     mtm_item['m_list']=m_list
     mtm_item['m_list_key']=m_list_key
     mtm_item['m_list_value']=m_list_value
+    mtm_item['num_m']=len(mtm_item['m_list']) #number of message
+    mtm_item['e']=''
+
+    def pa_con(p_no, mtm_item): #page_control page_numbe
+	p_no=int(p_no)
+	cm=copy.deepcopy(mtm_item)
+	nmpp=20 #number of message per page
+	mppp=10 #number of page per page
+	m_num=len(cm['m_list']) #message number
+        p_num = ceil(float(m_num) / nmpp) #number of page
+	p_list=[] #page list
+	if p_num==0:
+	    p_num+=1
+	pg_no = ceil(float(p_no)/mppp) #page group no
+	pg_num = ceil(float(p_num)/mppp)
+	p_list=range((pg_no - 1) * mppp + 1, pg_no * mppp + 1)
+	if p_no>p_num:
+	    raise IndexError
+	if pg_no==1:
+	    cm['p_init']=''
+	    if p_no==1:
+		cm['p_prev']=''
+	if pg_no==pg_num:
+	    cm['p_end']=''
+	    if p_no==p_num:
+		cm['p_next']=''
+	    p_list = range((pg_no-1)*mppp+1, p_num+1)
+
+	cm['m_list'] = cm['m_list'][(p_no - 1) * nmpp:p_no * nmpp]
+	cm['p_list'] = p_list
+	cm['p_no'] = p_no
+	return cm
+    pa_con=staticmethod(pa_con)
 
     def m_sort(mtm_item): #message sort
         cm=copy.deepcopy(mtm_item)
@@ -299,11 +337,11 @@ class m: #message
         return cm
     mdl=staticmethod(mdl)
 
-    def indexof(m_list, m_num): #search the index of the m_numth article in m_list
+    def indexof(m_list, m_no): #search the index of the m_numth article in m_list
 	for i, arti in enumerate(m_list):
-	    if arti['msg_no']==int(m_num):
+	    if arti['msg_no']==int(m_no):
 		return i
-	return 0
+	return 'e'
     indexof=staticmethod(indexof)
 
     def write():
@@ -311,13 +349,18 @@ class m: #message
         return render_to_string('write_message.html', mtm_item)
     write = staticmethod(write)
 
-    def inbox_list():
+    def inbox_list(num_page):
         mtm_item=copy.deepcopy(m.mtm_item)
         mtm_item=m.mdl(mtm_item)
+	try:
+	    mtm_item=m.pa_con(p_no=num_page, mtm_item=mtm_item)
+	except:
+	    mtm_item['e']='그런페이지없어'
+	    return render_to_string('error.html', mtm_item)
         return render_to_string('inbox_list.html', mtm_item)
     inbox_list = staticmethod(inbox_list)
 
-    def outbox_list():
+    def outbox_list(num_page):
         mtm_item=copy.deepcopy(m.mtm_item)
         mtm_item['m_list_key']=['checkbox', 'receiver', 'text', 'time']
         mtm_item=m.mdl(mtm_item)
@@ -329,19 +372,23 @@ class m: #message
         return render_to_string('m_s_user.html', mtm_item)
     msu=staticmethod(msu)
 
-    def rim(m_num):
+    def rim(m_no):
         mtm_item=copy.deepcopy(m.mtm_item)
         mtm_item['m_who']="sender"
         mtm_item['mr_reply']="reply"
-        mtm_item['read_message']=mtm_item['m_list'][m.indexof(mtm_item['m_list'], m_num)]
+	try:
+            mtm_item['read_message']=mtm_item['m_list'][m.indexof(mtm_item['m_list'], m_no)]
+	except TypeError:
+	    mtm_item['e']='그런메세지없어'
+	    return render_to_string('error.html', mtm_item)
         return render_to_string('read_message.html', mtm_item)
     rim=staticmethod(rim)
 
-    def rom(m_num):
+    def rom(m_no):
         mtm_item=copy.deepcopy(m.mtm_item)
         mtm_item['mr_reply']=""
         mtm_item['m_who']="receiver"
-        mtm_item['read_message']=mtm_item['m_list'][m.indexof(mtm_item['m_list'], m_num)]
+        mtm_item['read_message']=mtm_item['m_list'][m.indexof(mtm_item['m_list'], m_no)]
         return render_to_string('read_message.html', mtm_item)
     rom=staticmethod(rom)
 
@@ -349,12 +396,12 @@ def write_message(request):
     rendered = m.write()
     return HttpResponse(rendered)
 
-def inbox_list(request):
-    rendered = m.inbox_list()
+def inbox_list(request, num_page):
+    rendered = m.inbox_list(num_page)
     return HttpResponse(rendered)
 
-def outbox_list(request):
-    rendered = m.outbox_list()
+def outbox_list(request, num_page):
+    rendered = m.outbox_list(num_page)
     return HttpResponse(rendered)
 
 def msu(request): #message search user
