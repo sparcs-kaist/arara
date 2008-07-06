@@ -29,7 +29,7 @@ class BlacklistManager(object):
         self.login_manager = login_manager
 
     @_require_login
-    def add(self, session_key, blacklist_id)
+    def add(self, session_key, blacklist_id):
         '''
         블랙리스트 id 추가
 
@@ -58,7 +58,7 @@ class BlacklistManager(object):
         try:
             if blacklist_id in member_dic[session_info['id']]['blacklist']:
                 raise AlreadyAddedException()
-            member_dic[sesseion_infor['id']['blacklist'][blacklist_id] = {'article': 'True', 'message': 'True'}
+            member_dic[sesseion_infor['id']]['blacklist'][blacklist_id] = {'article': 'True', 'message': 'True'}
             return True, 'OK'
         except AlreadyAddedException:
             return False, 'ALREADY_ADDED_ID'        
@@ -89,7 +89,7 @@ class BlacklistManager(object):
         try:
             if blacklist_id not in member_dic[session_info['id']]['blacklist']:
                 raise NotExistIDException()
-            del member_dic[sesseion_infor['id']['blacklist'][blacklist_id] 
+            del member_dic[sesseion_infor['id']]['blacklist'][blacklist_id] 
             return True, 'OK'
         except NotExistIDException:
             return False, 'ID_NOT_IN_BLACKLIST'        
@@ -121,7 +121,7 @@ class BlacklistManager(object):
         try:
             if blacklist_id not in member_dic[session_info['id']]['blacklist']:
                 raise NotExistIDException()
-            member_dic[sesseion_infor['id']['blacklist'][blacklist_id] = {'article': blacklist_dic['article'], 'message': blacklist_dic['message']}
+            member_dic[sesseion_infor['id']]['blacklist'][blacklist_id] = {'article': blacklist_dic['article'], 'message': blacklist_dic['message']}
             return True, 'OK'
         except NotExistIDException:
             return False, 'ID_NOT_IN_BLACKLIST'        
@@ -144,6 +144,6 @@ class BlacklistManager(object):
                 1. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        return True, member_dic[sesseion_infor['id']['blacklist'][
+        return True, member_dic[sesseion_infor['id']]['blacklist']
 
 # vim: set et ts=8 sw=4 sts=4
