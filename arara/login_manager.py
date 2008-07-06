@@ -6,6 +6,9 @@ import datetime
 class LoginManager(object):
     '''
     로그인 처리 관련 클래스
+    MemberManager와 함께 쓰여야 한다.
+
+    Preparation - Initialization
 
     >>> from arara import login_manager
     >>> from arara import member_manager
@@ -13,12 +16,18 @@ class LoginManager(object):
     >>> member_manager = member_manager.MemberManager()
     >>> member_manager._set_login_manager(login_manager)
     >>> login_manager._set_member_manager(member_manager)
+
+    Preparation - User registeration
+
     >>> user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
     >>> ret, register_key = member_manager.register(user_reg_dic)
     >>> ret
     True
     >>> member_manager.confirm('mikkang', register_key)
     (True, 'OK')
+
+    Login Manager Test!
+
     >>> login_manager.login('mikkang', 'not_test', '143.248.234.145')
     (False, 'WRONG_PASSWORD')
     >>> login_manager.login('not_test', 'test', '143.248.234.145')
@@ -36,7 +45,6 @@ class LoginManager(object):
     '143.248.234.145'
     >>> result['id']
     'mikkang'
-
     >>> login_manager.logout(session_bee)
     (False, 'NOT_LOGGEDIN')
     >>> login_manager.logout(session_key)
@@ -71,7 +79,8 @@ class LoginManager(object):
 
         success, msg = self.member_manager._authenticate(id, password)
         if success:
-            hash = hashlib.md5(id+password+datetime.datetime.today().__str__()).hexdigest()
+            user_str = id + password + datetime.datetime.today().__str()
+            hash = hashlib.md5(user_str).hexdigest()
             timestamp = datetime.datetime.isoformat(datetime.datetime.now())
             self.session_dic[hash] = {'id': id, 'ip': user_ip, 'logintime': timestamp}
             return True, hash
