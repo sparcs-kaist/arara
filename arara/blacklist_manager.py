@@ -12,37 +12,6 @@ class NotLoggedIn(Exception):
 class BlacklistManager(object):
     '''
     블랙리스트 처리 관련 클래스
-
-    >>> from arara import login_manager
-    >>> from arara import member_manager
-    >>> login_manager = login_manager.LoginManager()
-    >>> member_manager = member_manager.MemberManager()
-    >>> member_manager._set_login_manager(login_manager)
-    >>> login_manager._set_member_manager(member_manager)
-    >>> user_reg_dic1 = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
-    >>> ret, register_key1 = member_manager.register(user_reg_dic1)
-    >>> ret
-    True
-    >>> member_manager.confirm('mikkang', register_key1)
-    (True, 'OK')
-    >>> user_reg_dic2 = { 'id':'combacsa', 'password':'combacsa', 'nickname':'combacsa', 'email':'combacsa', 'sig':'combacsa', 'self_introduce':'combacsa', 'default_language':'english' }
-    >>> ret, register_key2 = member_manager.register(user_reg_dic2)
-    >>> ret
-    True
-    >>> member_manager.confirm('combacsa', register_key2)
-    (True, 'OK')
-    >>> ret, session_key1 = login_manager.login('mikkang', 'mikkang', '143.248.234.145')
-    >>> ret
-    True
-    >>> ret, session_key2 = login_manager.login('combacsa', 'combacsa', '143.248.234.146')
-    >>> ret
-    True
-
-    최소한 두 명의 유저가 있어야 블랙리스트 메니저를 쓸 수 있다.
-
-    >>> blacklist_manager = BlacklistManager()
-    >>> blacklist_manager._set_login_manager(login_manager)
-
     '''
     def __init__(self):
         # will make list for blacklist member in member_dic, key value is blacklist ex)59
@@ -60,7 +29,7 @@ class BlacklistManager(object):
         self.login_manager = login_manager
 
     @_require_login
-    def add(self, session_key, blacklist_id):
+    def add(self, session_key, blacklist_id)
         '''
         블랙리스트 id 추가
 
@@ -68,7 +37,7 @@ class BlacklistManager(object):
 
         저장 형태: { 'pv457': {'article': 'True', 'message': 'False'}} 
 
-        #>>> blacklist.add(session_key,'pv457')
+        >>> blacklist.add(session_key,'pv457')
         True, 'OK'
 
         @type  session_key: string
@@ -89,7 +58,7 @@ class BlacklistManager(object):
         try:
             if blacklist_id in member_dic[session_info['id']]['blacklist']:
                 raise AlreadyAddedException()
-            member_dic[sesseion_info['id']['blacklist']][blacklist_id] = {'article': 'True', 'message': 'True'}
+            member_dic[sesseion_infor['id']['blacklist'][blacklist_id] = {'article': 'True', 'message': 'True'}
             return True, 'OK'
         except AlreadyAddedException:
             return False, 'ALREADY_ADDED_ID'        
@@ -99,7 +68,7 @@ class BlacklistManager(object):
         '''
         블랙리스트 id 삭제 
 
-        #>>> blacklist.delete(session_key, 'pv457')
+        >>> blacklist.delete(session_key, 'pv457')
         True, 'OK'
 
         @type  session_key: string
@@ -120,7 +89,7 @@ class BlacklistManager(object):
         try:
             if blacklist_id not in member_dic[session_info['id']]['blacklist']:
                 raise NotExistIDException()
-            del member_dic[sesseion_infor['id']['blacklist']][blacklist_id] 
+            del member_dic[sesseion_infor['id']['blacklist'][blacklist_id] 
             return True, 'OK'
         except NotExistIDException:
             return False, 'ID_NOT_IN_BLACKLIST'        
@@ -131,7 +100,7 @@ class BlacklistManager(object):
         '''
         블랙리스트 id 수정 
 
-        #>>> blacklist.modify(session_key, {'id': 'pv457', 
+        >>> blacklist.modify(session_key, {'id': 'pv457', 
         'article': 'False', 'message': 'True'})
         True, 'OK'
 
@@ -152,7 +121,7 @@ class BlacklistManager(object):
         try:
             if blacklist_id not in member_dic[session_info['id']]['blacklist']:
                 raise NotExistIDException()
-            member_dic[sesseion_infor['id']['blacklist']][blacklist_id] = {'article': blacklist_dic['article'], 'message': blacklist_dic['message']}
+            member_dic[sesseion_infor['id']['blacklist'][blacklist_id] = {'article': blacklist_dic['article'], 'message': blacklist_dic['message']}
             return True, 'OK'
         except NotExistIDException:
             return False, 'ID_NOT_IN_BLACKLIST'        
@@ -162,7 +131,7 @@ class BlacklistManager(object):
         '''
         블랙리스트로 설정한 사람의 목록을 보여줌
 
-        #>>> blacklist.list_show(session_key)
+        >>> blacklist.list_show(session_key)
         True, [{'id': 'pv457', 'article': 'True', 'message' False'},
         {'id': 'serialx', 'article': 'False', 'message', 'True'}, ...]
 
@@ -175,13 +144,6 @@ class BlacklistManager(object):
                 1. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        return True, member_dic[sesseion_infor['id']['blacklist']]
-
-def _test():
-    import doctest
-    doctest.testmod()
-
-if __name__ == "__main__":
-    _test()
+        return True, member_dic[sesseion_infor['id']['blacklist'][
 
 # vim: set et ts=8 sw=4 sts=4

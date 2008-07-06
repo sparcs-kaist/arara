@@ -162,6 +162,7 @@ class MemberManager(object):
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         try:
+            import sys
             return True, self.member_dic[self.login_manager.get_session(session_key)[1]['id']]
         except KeyError:
             return False, "MEMBER_NOT_EXIST"

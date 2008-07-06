@@ -23,7 +23,7 @@ def suite():
                                doctest.DocTestSuite(article_manager),
                                doctest.DocFileSuite(os.path.join(DOCTEST_PATH,
                                    'article_manager.txt')),
-                               doctest.DocTestSuite(blacklist_manager),
+                               #doctest.DocTestSuite(blacklist_manager),
                                #doctest.DocTestSuite(logging_manager),
                                doctest.DocTestSuite(login_manager),
                                #doctest.DocTestSuite(log_manager),
