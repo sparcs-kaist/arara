@@ -10,7 +10,7 @@ keymap = {
     'k': 'up',
 }
 
-class ara_toc(object):
+class ara_welcome(object):
     def get_banner(self):
         basedir = os.path.dirname(__file__)
         banner = os.path.join(basedir, 'banner.txt')
@@ -66,6 +66,6 @@ class ara_toc(object):
         canvas = self.frame.render(size, focus=True)
         self.ui.draw_screen(size, canvas)
 
-ara_toc().main()
+ara_welcome().main()
 
 # vim: set et ts=8 sw=4 sts=4

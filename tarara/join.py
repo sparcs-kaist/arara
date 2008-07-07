@@ -5,7 +5,7 @@ import os
 import urwid.curses_display
 import urwid
 
-class ara_toc(object):
+class ara_join(object):
     def get_login_message(self):
         basedir = os.path.dirname(__file__)
         banner = os.path.join(basedir, 'login.txt')
@@ -86,6 +86,6 @@ class ara_toc(object):
         canvas = self.frame.render(size, focus=True)
         self.ui.draw_screen(size, canvas)
 
-ara_toc().main()
+ara_join().main()
 
 # vim: set et ts=8 sw=4 sts=4
