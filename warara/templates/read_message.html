@@ -8,12 +8,15 @@
     <span id="m_time"> <!-- message time information -->
 	{{read_message.time}}
     </span>
+    {% for mrpv in mrpv %}
     <span>
-	{{pvmli}}
-	{{pvmte}}
-	{{nemte}}
-	{{nemli}}
+	{% if mrpv.urln %}
+	<a href="/message/{{readtype}}/{{mrpv.urln}}">{{mrpv.mark}}</a>
+	{% else %}
+	{{mrpv.mark}}
+	{% endif %}
     </span>
+    {% endfor %}
 </div>
 <div id="m_text">
     <textarea readonly="readonly" scrolling="no" class="tarmt">{{read_message.text}}</textarea>

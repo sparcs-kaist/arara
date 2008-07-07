@@ -229,10 +229,14 @@ def write(request, bbs):
                     {'name':'abroad'},
                     {'name':'love'},
                     {'name':'foreigner'},
-                    {'name':'filmspecial'}]}) 
+		    {'name':'filmspecial'}]}) 
     return HttpResponse(rendered)
 
 class m: #message
+    
+    nmpp=10 #number of message per page
+    mppp=10 #number of page per page
+    
     mtm_item={'mtm_item':[  #message top menu item
         {'name':'inbox', 'url':'inbox/1/'},
         {'name':'outbox', 'url':'outbox/1/'},
@@ -274,43 +278,16 @@ class m: #message
 	you spin me right round
 	you spin me right roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright round
 	'''})
+    for k in range(700,1000):
+	m_list.append({'checkbox':'checkbox', 'sender':'breadfish',
+	    'receiver':'breadfish', 'time':'08.07.05 14:00',
+	    'msg_no':k, 'text':''.join([str(k)]*20)})
 
     mtm_item['m_list']=m_list
     mtm_item['m_list_key']=m_list_key
     mtm_item['m_list_value']=m_list_value
     mtm_item['num_m']=len(mtm_item['m_list']) #number of message
     mtm_item['e']=''
-
-    def pa_con(p_no, mtm_item): #page_control page_numbe
-	p_no=int(p_no)
-	cm=copy.deepcopy(mtm_item)
-	nmpp=20 #number of message per page
-	mppp=10 #number of page per page
-	m_num=len(cm['m_list']) #message number
-        p_num = ceil(float(m_num) / nmpp) #number of page
-	p_list=[] #page list
-	if p_num==0:
-	    p_num+=1
-	pg_no = ceil(float(p_no)/mppp) #page group no
-	pg_num = ceil(float(p_num)/mppp)
-	p_list=range((pg_no - 1) * mppp + 1, pg_no * mppp + 1)
-	if p_no>p_num:
-	    raise IndexError
-	if pg_no==1:
-	    cm['p_init']=''
-	    if p_no==1:
-		cm['p_prev']=''
-	if pg_no==pg_num:
-	    cm['p_end']=''
-	    if p_no==p_num:
-		cm['p_next']=''
-	    p_list = range((pg_no-1)*mppp+1, p_num+1)
-
-	cm['m_list'] = cm['m_list'][(p_no - 1) * nmpp:p_no * nmpp]
-	cm['p_list'] = p_list
-	cm['p_no'] = p_no
-	return cm
-    pa_con=staticmethod(pa_con)
 
     def m_sort(mtm_item): #message sort
         cm=copy.deepcopy(mtm_item)
@@ -320,6 +297,46 @@ class m: #message
         cm.sort(key=get_no)
         return cm
     mtm_item['m_list']=m_sort(mtm_item['m_list'])
+
+    @classmethod
+    def pa_con(cls, p_no, mtm_item): #page_control page_no
+	p_no=int(p_no)
+	cm=copy.deepcopy(mtm_item)
+
+	nmpp=cls.nmpp
+	mppp=cls.mppp
+	m_num=len(cm['m_list']) #message number
+        p_num = ceil(float(m_num) / nmpp) #number of page
+	p_list=[] #page list
+
+	if p_num==0:
+	    p_num+=1
+	pg_no = ceil(float(p_no)/mppp) #page group no
+	pg_num = ceil(float(p_num)/mppp)
+	p_list=range(int(pg_no - 1) * mppp + 1, int(pg_no) * mppp + 1)
+	if p_no>p_num:
+	    raise IndexError
+	if pg_no<=2:
+	    cm['p_init']=''
+	    if pg_no==1:
+		cm['p_prev']=''
+	if pg_no>=pg_num-1:
+	    cm['p_end']=''
+	    if pg_no==pg_num:
+		cm['p_next']=''
+		p_list = range(int(pg_no-1)*mppp+1, int(p_num+1))
+
+	if m_num-(p_no*nmpp)<0 :
+	    cm['m_list']=cm['m_list'][0:m_num-((p_no-1)*nmpp)]
+	else:
+	    cm['m_list'] = cm['m_list'][m_num-(p_no*nmpp):m_num-((p_no-1)*nmpp)]
+
+	cm['p_list'] = p_list
+	cm['p_no'] = p_no
+	cm['un_p_prev'] = int(pg_no-2) * mppp + 1 #urllink number of p_prev mark
+	cm['un_p_next'] = int(pg_no) * mppp + 1
+	cm['un_p_end'] = int(p_num)
+	return cm
 
     def mdl(m_list): #make data to list
         cm=copy.deepcopy(m_list) #copy of mtm_item
@@ -331,8 +348,8 @@ class m: #message
                     lm=10 #length limit
                     if len(list.get(key))>lm:
                         list[key]=''.join([list.get(key)[0:lm], '...'])
-                        cm['m_list_value'][0].append({ 'key':key, 'value':list[key], 'msg_no':list.get('msg_no')})
-                        continue
+		    cm['m_list_value'][0].append({ 'key':key, 'value':list[key], 'msg_no':list.get('msg_no')})
+		    continue
                 cm['m_list_value'][0].append(list.get(key))
         return cm
     mdl=staticmethod(mdl)
@@ -344,6 +361,34 @@ class m: #message
 	return 'e'
     indexof=staticmethod(indexof)
 
+    @classmethod
+    def message_read_page_move(cls, m_no):
+	cm=m.mtm_item
+	nmpp=cls.nmpp
+	m_ino = m.indexof(cm['m_list'], m_no) #message_indexno
+	cm['mrpv']={}
+
+	cm['mrpv']['pvmli']={'mark':cm['pvmli'], 'no':0, 'urln':''}
+	cm['mrpv']['pvmte']={'mark':cm['pvmte'], 'no':1, 'urln':''}
+	cm['mrpv']['nemte']={'mark':cm['nemte'], 'no':2, 'urln':''}
+	cm['mrpv']['nemli']={'mark':cm['nemli'], 'no':3, 'urln':''}
+
+	if m_ino>0:
+	    cm['mrpv']['pvmte']['urln']=cm['m_list'][m_ino-1]['msg_no']
+	    cm['mrpv']['pvmli']['urln']=cm['m_list'][0]['msg_no']
+	    if m_ino>=nmpp:
+		cm['mrpv']['pvmli']['urln']=cm['m_list'][m_ino-nmpp]['msg_no']
+	if m_ino<cm['num_m']-1 :
+	    cm['mrpv']['nemte']['urln']=cm['m_list'][m_ino+1]['msg_no']
+	    cm['mrpv']['nemli']['urln']=cm['m_list'][cm['num_m']-1]['msg_no']
+	    if m_ino<cm['num_m']-nmpp:
+		cm['mrpv']['nemli']['urln']=cm['m_list'][m_ino+nmpp]['msg_no']
+	
+	def get_no(mrpv):
+	    return mrpv['no']
+	cm['mrpv']=cm['mrpv'].values()
+	cm['mrpv'].sort(key=get_no)
+
     def write():
         mtm_item=copy.deepcopy(m.mtm_item)
         return render_to_string('write_message.html', mtm_item)
@@ -351,18 +396,27 @@ class m: #message
 
     def inbox_list(num_page):
         mtm_item=copy.deepcopy(m.mtm_item)
-        mtm_item=m.mdl(mtm_item)
+	mtm_item['readtype']="rim"
+	mtm_item['listtype']='inbox'
 	try:
 	    mtm_item=m.pa_con(p_no=num_page, mtm_item=mtm_item)
-	except:
+	except IndexError:
 	    mtm_item['e']='그런페이지없어'
 	    return render_to_string('error.html', mtm_item)
+        mtm_item=m.mdl(mtm_item)
         return render_to_string('inbox_list.html', mtm_item)
     inbox_list = staticmethod(inbox_list)
 
     def outbox_list(num_page):
         mtm_item=copy.deepcopy(m.mtm_item)
         mtm_item['m_list_key']=['checkbox', 'receiver', 'text', 'time']
+	mtm_item['readtype']="rom"
+	mtm_item['listtype']='outbox'
+	try:
+	    mtm_item=m.pa_con(p_no=num_page, mtm_item=mtm_item)
+	except IndexError:
+	    mtm_item['e']='그런페이지없어'
+	    return render_to_string('error.html', mtm_item)
         mtm_item=m.mdl(mtm_item)
         return render_to_string('outbox_list.html', mtm_item)
     outbox_list=staticmethod(outbox_list)
@@ -373,9 +427,20 @@ class m: #message
     msu=staticmethod(msu)
 
     def rim(m_no):
+	try:
+	    m.message_read_page_move(m_no)
+	except TypeError:
+	    mtm_item['e']='메세지가 ㅇ벗습니다'
+	except IndexError:
+	    mtm_item['e']='없는 인덱스 참조'
+	except:
+	    mtm_item['e']='unknown error'
+
         mtm_item=copy.deepcopy(m.mtm_item)
         mtm_item['m_who']="sender"
         mtm_item['mr_reply']="reply"
+	mtm_item['readtype']="rim"
+
 	try:
             mtm_item['read_message']=mtm_item['m_list'][m.indexof(mtm_item['m_list'], m_no)]
 	except TypeError:
@@ -385,10 +450,24 @@ class m: #message
     rim=staticmethod(rim)
 
     def rom(m_no):
-        mtm_item=copy.deepcopy(m.mtm_item)
+	try:
+	    m.message_read_page_move(m_no)
+	except TypeError:
+	    mtm_item['e']='메세지가 ㅇ벗습니다'
+	except IndexError:
+	    mtm_item['e']='없는 인덱스 참조'
+	except:
+	    mtm_item['e']='unknown error'
+
+	mtm_item=copy.deepcopy(m.mtm_item)
         mtm_item['mr_reply']=""
         mtm_item['m_who']="receiver"
-        mtm_item['read_message']=mtm_item['m_list'][m.indexof(mtm_item['m_list'], m_no)]
+	mtm_item['readtype']="rom"
+
+	try:
+	    mtm_item['read_message']=mtm_item['m_list'][m.indexof(mtm_item['m_list'], m_no)]
+	except TypeError:
+	    return render_to_string('error.html', mtm_item)
         return render_to_string('read_message.html', mtm_item)
     rom=staticmethod(rom)
 

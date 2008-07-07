@@ -24,6 +24,20 @@
 		scrollbar-track-color:#99ccff;
 		scrollbar-arrow-color:#99ccff;
 	    }
+	    #page_no_view{
+		position:relative;
+		left:10%;
+	    }
+	    #m_list{
+		font-size:15px;
+	    }
+	    #m_list table,tr,td,th{
+		border:0;
+	    }
+	    A:visited, A:link{
+		text-decoration:none;
+		color:#000000;
+	    }
 	</style>
     </head>
     <body>
@@ -31,7 +45,7 @@
 	    {% block message_top_menu %}
 	    |
 		{% for item in mtm_item %}
-			<a href="/message/{{item.url}}"> {{item.name}} </a>
+		<a href="/message/{{item.url}}"> {{item.name}} </a>
 			|
 		{% endfor %}
 	    {% endblock %}
@@ -86,7 +100,7 @@
 				</form>
 				{% else %}
 				{% ifequal value.key 'text' %}
-				<a href="/message/rim/{{value.msg_no}}">{{value.value}}</a>
+				<a href="/message/{{readtype}}/{{value.msg_no}}">{{value.value}}</a>
 				{% else %}
 				{{ value }}
 				{% endifequal %}
