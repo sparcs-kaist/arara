@@ -4,7 +4,6 @@
 import os
 import urwid.curses_display
 import urwid
-from border import Border
 
 keymap = {
     'j': 'down',

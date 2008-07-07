@@ -4,7 +4,6 @@
 import os
 import urwid.curses_display
 import urwid
-from border import Border
 
 class ara_toc(object):
     def get_login_message(self):
@@ -53,7 +52,7 @@ class ara_toc(object):
         buttoncolumn = self._make_column(joinbutton, cancelbutton, 50, 50)
 
         langitems = [urwid.Text('Korean'), urwid.Text('English'), urwid.Text('Chinese')]
-        self.langlist = Border(urwid.ListBox(urwid.SimpleListWalker(langitems)))
+        self.langlist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(langitems)))
 
         infotext = urwid.Filler(urwid.Text("""  * Press [Enter] to proceed to the next item, [Shift+Enter] - previous item
   * Press [Tab] to directly jump to Join or Cancel button
