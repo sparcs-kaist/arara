@@ -10,37 +10,7 @@ class ArticleManager(object):
     게시글 및 검색 처리 클래스
     현재 게시글 표시방식이 절묘하기 때문에 read 메소드에 관한 논의가 필요.
 
-    >>> from arara import login_manager
-    >>> from arara import member_manager
-    >>> login_manager = login_manager.LoginManager()
-    >>> member_manager = member_manager.MemberManager()
-    >>> member_manager._set_login_manager(login_manager)
-    >>> login_manager._set_member_manager(member_manager)
-    >>> user_reg_dic = {'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
-    >>> ret, register_key = member_manager.register(user_reg_dic)
-    >>> ret
-    True
-    >>> member_manager.confirm('mikkang', register_key)
-    (True, 'OK')
-    >>> ret, session_key = login_manager.login('mikkang', 'mikkang', '143.248.234.145')
-    >>> ret
-    True
-    >>> article_manager = ArticleManager(login_manager)
-    >>> article_dic = {'author':'serialx', 'title': 'serialx is...',
-    ... 'content': 'polarbear', 'method': 'web'}
-    >>> article_manager.write_article(session_key, 'garbages', article_dic)
-    (True, 1)
-    >>> ret, article = article_manager.read(session_key, 'garbages', 1)
-    >>> article['title'], article['content'], article['author']
-    ('serialx is...', 'polarbear', 'serialx')
-    >>> reply_dic = {'author': 'pv457','context': 'asdf'}
-    >>> article_manager.write_reply(session_key, 'garbages', 1, reply_dic)
-    (True, 'OK')
-    >>> ret, article = article_manager.read(session_key, 'garbages', 1)
-    >>> article['reply'][0]['author'], article['reply'][0]['context']
-    ('pv457', 'asdf')
-    >>> login_manager.logout(session_key)
-    (True, 'OK')
+    용법 : arara/test/article_manager.txt
     '''
 
     def __init__(self, login_manager):
@@ -333,17 +303,5 @@ class ArticleManager(object):
 
         '''
         return False, 'NOT_IMPLEMENTED'
-
-def _test():
-    import os
-    import sys
-    import doctest
-    PROJECT_PATH = os.path.join(os.path.dirname(__file__), '../')
-    sys.path.append(PROJECT_PATH)
-    doctest.testmod()
-    doctest.testfile(os.path.join(os.path.dirname(__file__), 'test/article_manager.txt'))
-
-if __name__ == '__main__':
-    _test()
 
 # vim: set et ts=8 sw=4 sts=4

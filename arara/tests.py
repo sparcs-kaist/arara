@@ -20,7 +20,6 @@ from arara import sysop_manager
 
 def suite():
     return unittest.TestSuite([
-                               doctest.DocTestSuite(article_manager),
                                doctest.DocFileSuite(os.path.join(DOCTEST_PATH,
                                    'article_manager.txt')),
                                #doctest.DocTestSuite(blacklist_manager),
