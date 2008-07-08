@@ -247,6 +247,7 @@ class ArticleManager(object):
             return False, 'BOARD_NOT_EXIST'
              
 
+    @_require_login
     def board_list(self, session_key):
         '''
         게시판 목록 읽어오기
@@ -259,11 +260,6 @@ class ArticleManager(object):
             2. 리스트 읽어오기 실패: False 
                 1. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        try:
-            if not self.login_manager.is_logged_in(session_key)[0]:
-                raise NotLoggedIn()
-        except NotLoggedIn:
-            return False, 'NOT_LOGGEDIN'
 
         board = []
         try:
