@@ -300,6 +300,32 @@ class MemberManager(object):
         except KeyError:
             return False, 'NOT_LOGGEDIN'
         
+    @_require_login
+    def search_user(self, session_key, search_user_info):
+        '''
+        member_dic 에서 찾고자 하는 id와 nickname에 해당하는 user를 찾아주는 함수
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type  search_user_info: dictionary
+        @param search_user_info: User Info(id or nickname)
+        @rtype: String
+        @return:
+            1. 성공시: True, USER_ID 
+            2. 실패시: False, 'NOT_EXIST_USER'
+        '''
+
+        try:
+            assert len(search_user_info.keys()) == 1
+            key = search_user_info.keys()[0]
+            value = search_user_info.values()[0]
+            assert key == 'id' or key == 'nickname'
+            for id, info in self.member_dic.items():
+                if info[key] == value: return True, id
+            return False, 'NOT_EXIST_USER'
+        except AssertionError:
+            pass
+
 
 def _test():
     import doctest

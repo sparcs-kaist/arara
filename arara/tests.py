@@ -22,6 +22,8 @@ def suite():
     return unittest.TestSuite([
                                doctest.DocFileSuite(os.path.join(DOCTEST_PATH,
                                    'article_manager.txt')),
+                               doctest.DocFileSuite(os.path.join(DOCTEST_PATH,
+                                   'member_manager.txt')),
                                #doctest.DocTestSuite(blacklist_manager),
                                #doctest.DocTestSuite(logging_manager),
                                doctest.DocTestSuite(login_manager),
