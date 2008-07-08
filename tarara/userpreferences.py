@@ -5,7 +5,7 @@ import os
 import urwid.curses_display
 import urwid
 
-class ara_join(object):
+class ara_userpreferences(object):
     def get_login_message(self):
         basedir = os.path.dirname(__file__)
         banner = os.path.join(basedir, 'login.txt')
@@ -23,28 +23,16 @@ class ara_join(object):
         dash = urwid.SolidFill(utf8decode('─'))
         blank = urwid.SolidFill(u" ")
         blanktext = urwid.Filler(urwid.Text(' '))
-	header = urwid.Filler(urwid.Text("ARA: Join", align='center'))
+	header = urwid.Filler(urwid.Text("ARA: User Preferences", align='center'))
 
-        idedit = urwid.Filler(urwid.Edit(caption="ID:", wrap='clip'))
-        iddesc = urwid.Filler(urwid.Text("ID's length should be\nbetween 4 and 10 chars"))
+	idedit = urwid.Filler(urwid.Text("ID: %(id)s\nE-Mail: %(email)s" % {"id":"peremen","email":"ara@peremen.name"}))
+	iddesc = urwid.Filler(urwid.Text("You can't change ID\nand E-Mail"))
         idcolumn = self._make_column(idedit, iddesc)
 
         nickedit = urwid.Filler(urwid.Edit(caption="Nickname:", wrap='clip'))
-        nickdesc=urwid.Filler(urwid.Text("You can't use duplicated\nnickname or other's ID"))
+        nickdesc=urwid.Filler(urwid.Text("You can't use duplicated\nnickname"))
         nickcolumn = self._make_column(nickedit, nickdesc)
         
-        pwedit = urwid.Filler(urwid.Edit(caption="Password:", wrap='clip'))
-        pwdesc = urwid.Filler(urwid.Text("Minimum password length\nis 4 characters"))
-        pwcolumn = self._make_column(pwedit, pwdesc)
-
-        confirmedit = urwid.Filler(urwid.Edit(caption="Confirm\nPassword:", wrap='clip'))
-        confirmdesc = urwid.Filler(urwid.Text("Type password here\nonce again"))
-        confirmcolumn = self._make_column(confirmedit, confirmdesc)
-
-        emailedit = urwid.Filler(urwid.Edit(caption="E-Mail:", wrap='clip'))
-        emaildesc = urwid.Filler(urwid.Text("We'll send confirmation\nmail to this address"))
-        emailcolumn = self._make_column(emailedit, emaildesc)
-
 	langtext = urwid.Filler(urwid.Text("Language:"))
         langitems = [urwid.Text('Korean'), urwid.Text('English'), urwid.Text('Chinese')]
         self.langlist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(langitems)))
@@ -52,19 +40,21 @@ class ara_join(object):
         langdesc = urwid.Filler(urwid.Text("Select your favorite\ninterface language"))
 	langcolumn = self._make_column(self.lang, langdesc)
 
-        self.joinpile = urwid.Pile([idcolumn, nickcolumn,pwcolumn,confirmcolumn,langcolumn])
+	actiontext = urwid.Filler(urwid.Text("Actions"))
+	actions = ["Change password","View/edit blacklist","Change Introduction/Signature","Zap board","Set terminal encoding"]
+        actionitems = [urwid.Text(text) for text in actions]
+        self.actionlist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(actionitems)))
+	actioncolumn = self._make_column(self.actionlist, blanktext)
 
-        joinbutton = urwid.Filler(urwid.Button("Join"))
+        self.joinpile = urwid.Pile([idcolumn, nickcolumn,langcolumn,('fixed',1,actiontext),actioncolumn])
+
+        okbutton = urwid.Filler(urwid.Button("OK"))
         cancelbutton = urwid.Filler(urwid.Button("Cancel"))
-        buttoncolumn = self._make_column(joinbutton, cancelbutton, 50, 50)
+        buttoncolumn = self._make_column(okbutton, cancelbutton, 50, 50)
 
+        infotext = urwid.Filler(urwid.Text("  * Use [Tab] or arrow key to move each items"))
 
-        infotext = urwid.Filler(urwid.Text("""  * Press [Enter] to proceed to the next item, [Shift+Enter] - previous item
-  * Press [Tab] to directly jump to Join or Cancel button
-  * We'll send confirmation mail to your address.
-  * To activate your ID, click the link on the mail."""))
-
-        content = [('fixed',1,header),self.joinpile,('fixed',4,infotext),('fixed',1,blank),('fixed',1,buttoncolumn)]
+        content = [('fixed',1,header),self.joinpile,('fixed',1,infotext),('fixed',1,blank),('fixed',1,buttoncolumn)]
         self.mainpile = urwid.Pile(content)
 
         self.frame = self.mainpile
@@ -91,6 +81,6 @@ class ara_join(object):
         canvas = self.frame.render(size, focus=True)
         self.ui.draw_screen(size, canvas)
 
-ara_join().main()
+ara_userpreferences().main()
 
 # vim: set et ts=8 sw=4 sts=4
