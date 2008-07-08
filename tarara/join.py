@@ -23,7 +23,7 @@ class ara_join(object):
         dash = urwid.SolidFill(utf8decode('─'))
         blank = urwid.SolidFill(u" ")
         blanktext = urwid.Filler(urwid.Text(' '))
-        header = urwid.Filler(urwid.Text("ARA: Join"))
+	header = urwid.Filler(urwid.Text("ARA: Join", align='center'))
 
         idedit = urwid.Filler(urwid.Edit(caption="ID:", wrap='clip'))
         iddesc = urwid.Filler(urwid.Text("ID's length should be\nbetween 4 and 10 chars"))
@@ -59,7 +59,7 @@ class ara_join(object):
   * We'll send confirmation mail to your address.
   * To activate your ID, click the link on the mail."""))
 
-        content = [header,self.joinpile,infotext,buttoncolumn]
+        content = [('fixed',1,header),self.joinpile,('fixed',4,infotext),('fixed',1,blank),('fixed',1,buttoncolumn)]
         self.mainpile = urwid.Pile(content)
 
         self.frame = self.mainpile
