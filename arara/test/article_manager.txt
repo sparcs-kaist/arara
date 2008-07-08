@@ -19,7 +19,7 @@ Faking time.time (to check time field)
 
 >>> import time
 >>> def stub_time():
-...     return 0
+...     return 1.1
 >>> org_time = time.time
 >>> time.time = stub_time
 
@@ -31,14 +31,14 @@ now Testing Article Manager!
 >>> server.article_manager.write_article(session_key, 'garbages', article_dic)
 (True, 1)
 >>> server.article_manager.read(session_key, 'garbages', 1)
-(True, {'title': 'serialx is...', 'ip': '143.248.234.140', 'author': 'serialx', 'content': 'polarbear', 'time': '1970-01-01 09:00:00', 'reply': [], 'method': 'web'})
+(True, {'title': 'serialx is...', 'ip': '143.248.234.140', 'author': 'serialx', 'content': 'polarbear', 'time': '1970-01-01 09:00:01.100000', 'reply': [], 'method': 'web'})
 >>> reply_dic = {'author': 'pv457','context': 'asdf'}
 >>> server.article_manager.write_reply(session_key, 'garbages', 24, reply_dic)
 (False, 'ARTICLE_NOT_EXIST')
 >>> server.article_manager.write_reply(session_key, 'garbages', 1, reply_dic)
 (True, 'OK')
 >>> server.article_manager.read(session_key, 'garbages', 1)
-(True, {'title': 'serialx is...', 'ip': '143.248.234.140', 'author': 'serialx', 'content': 'polarbear', 'time': '1970-01-01 09:00:00', 'reply': [{'ip': '143.248.234.140', 'time': '1970-01-01 09:00:00', 'context': 'asdf', 'author': 'pv457'}], 'method': 'web'})
+(True, {'title': 'serialx is...', 'ip': '143.248.234.140', 'author': 'serialx', 'content': 'polarbear', 'time': '1970-01-01 09:00:01.100000', 'reply': [{'ip': '143.248.234.140', 'time': '1970-01-01 09:00:01.100000', 'context': 'asdf', 'author': 'pv457'}], 'method': 'web'})
 >>> server.article_manager.board_list(session_key)
 (True, {'garbages': 1})
 >>> server.login_manager.logout(session_key)

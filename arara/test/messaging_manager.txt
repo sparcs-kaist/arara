@@ -1,4 +1,12 @@
 
+Fake time
+
+>>> import time
+>>> def stub_time():
+...     return 1.1
+>>> org_time = time.time
+>>> time.time = stub_time
+
 Bootstrap test
 
 >>> import arara
@@ -34,6 +42,31 @@ True
 
 >>> server.messaging_manager.receive_list(mikkang_session_key)
 (True, [])
+
 >>> server.messaging_manager.send_message(serialx_session_key, 'mikkang', 'hello')
 (True, 'OK')
 >>> server.messaging_manager.receive_list(mikkang_session_key)
+(True, [{'to': 'mikkang', 'message': 'hello', 'from': 'serialx', 'msg_no': 1, 'sent_time': '1970-01-01 09:00:01.100000'}])
+
+>>> server.messaging_manager.send_message(serialx_session_key, 'mikkang', 'hello2')
+(True, 'OK')
+>>> server.messaging_manager.receive_list(mikkang_session_key)
+(True, [{'to': 'mikkang', 'message': 'hello', 'from': 'serialx', 'msg_no': 1, 'sent_time': '1970-01-01 09:00:01.100000'}, {'to': 'mikkang', 'message': 'hello2', 'from': 'serialx', 'msg_no': 2, 'sent_time': '1970-01-01 09:00:01.100000'}])
+
+>>> server.messaging_manager.read_message(mikkang_session_key, 1)
+(True, {'to': 'mikkang', 'message': 'hello', 'from': 'serialx', 'msg_no': 1, 'sent_time': '1970-01-01 09:00:01.100000'})
+>>> server.messaging_manager.read_message(mikkang_session_key, 2)
+(True, {'to': 'mikkang', 'message': 'hello2', 'from': 'serialx', 'msg_no': 2, 'sent_time': '1970-01-01 09:00:01.100000'})
+
+Test Errors
+
+>>> server.messaging_manager.send_message('asdf', 'mikkang', 'hello')
+(False, 'NOT_LOGGEDIN')
+>>> server.messaging_manager.send_message(serialx_session_key, 'asdf', 'hello')
+(False, 'USER_NOT_EXIST')
+>>> server.messaging_manager.read_message(mikkang_session_key, 3)
+(False, 'MSG_NOT_EXIST')
+>>> server.messaging_manager.read_message('asdf', 2)
+(False, 'NOT_LOGGEDIN')
+
+>>> time.time = org_time

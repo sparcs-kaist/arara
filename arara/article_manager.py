@@ -2,6 +2,8 @@
 import datetime
 import time
 
+from arara.util import require_login
+
 class NotLoggedIn(Exception):
     pass
 
@@ -19,15 +21,7 @@ class ArticleManager(object):
         self.login_manager = login_manager
         self.article_no = 0
 
-    def _require_login(function):
-        def wrapper(self, session_key, *args):
-            if not self.login_manager.is_logged_in(session_key):
-                return False, 'NOT_LOGGEDIN'
-            else:
-                return function(self, session_key, *args)
-        return wrapper
-
-    @_require_login
+    @require_login
     def read(self, session_key, board_name, no):
         '''
         DB로부터 게시글 하나를 읽어옴
@@ -61,7 +55,7 @@ class ArticleManager(object):
         except KeyError:
             return False, 'ARTICLE_NOT_EXIST'
 
-    @_require_login
+    @require_login
     def write_article(self, session_key, board_name, article_dic):
         '''
         DB에 게시글 하나를 작성함
@@ -97,7 +91,7 @@ class ArticleManager(object):
         self.articles[board_name][self.article_no]['reply'] = []
         return True, self.article_no
 
-    @_require_login
+    @require_login
     def write_reply(self, session_key, board_name, article_no, reply_dic):
         '''
         댓글 하나를 해당하는 글에 추가
@@ -139,7 +133,7 @@ class ArticleManager(object):
             return False, 'ARTICLE_NOT_EXIST'
 
 
-    @_require_login
+    @require_login
     def modify(self, session_key, board_name, no, article_dic):
         '''
         DB의 해당하는 게시글 수정
@@ -182,7 +176,7 @@ class ArticleManager(object):
         return True, no
 
 
-    @_require_login
+    @require_login
     def delete(self, session_key, board_name, no):
         '''
         DB에 해당하는 글 삭제
@@ -246,7 +240,7 @@ class ArticleManager(object):
         except KeyError: 
             return False, 'BOARD_NOT_EXIST'
              
-    @_require_login
+    @require_login
     def board_list(self, session_key):
         '''
         게시판 목록 읽어오기
@@ -264,7 +258,7 @@ class ArticleManager(object):
             board[boardname] = len(self.articles[boardname])
         return True, board
 
-    @_require_login
+    @require_login
     def search(self, session_key, board_name, query_text, search_type, page=1, page_length=20):
         '''
         게시물 검색
