@@ -32,4 +32,8 @@ True
 >>> ret
 True
 
->>> 
+>>> server.messaging_manager.receive_list(mikkang_session_key)
+(True, [])
+>>> server.messaging_manager.send_message(serialx_session_key, 'mikkang', 'hello')
+(True, 'OK')
+>>> server.messaging_manager.receive_list(mikkang_session_key)

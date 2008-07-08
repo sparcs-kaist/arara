@@ -2,6 +2,7 @@ from arara.article_manager import ArticleManager
 from arara.blacklist_manager import BlacklistManager
 from arara.member_manager import MemberManager
 from arara.login_manager import LoginManager
+from arara.messaging_manager import MessagingManager
 
 
 class Namespace(object):
@@ -12,6 +13,7 @@ class Namespace(object):
         self.member_manager._set_login_manager(self.login_manager)
         self.article_manager = ArticleManager(self.login_manager)
         self.blacklist_manager = BlacklistManager()
+        self.messaging_manager = MessagingManager()
 
 namespace = None
 

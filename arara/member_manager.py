@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import hashlib
-
+import md5
 
 class WrongDictionary(Exception):
     pass
@@ -107,7 +106,7 @@ class MemberManager(object):
             return False, 'WRONG_DICTIONARY'
 
         tmp_user_dic['activate'] = 'False'
-        tmp_user_dic['activate_code'] = hashlib.md5(tmp_user_dic['id']+
+        tmp_user_dic['activate_code'] = md5.md5(tmp_user_dic['id']+
                 tmp_user_dic['password']+tmp_user_dic['nickname']).hexdigest()
         
         try:
