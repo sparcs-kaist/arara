@@ -18,52 +18,11 @@ class NotLoggedIn(Exception):
 class MemberManager(object):
     '''
     회원 가입, 회원정보 수정, 회원정보 조회, 이메일 인증등을 담당하는 클래스
-
-    >>> import login_manager
-    >>> login_manager = login_manager.LoginManager()
-    >>> member_manager = MemberManager()
-    >>> member_manager._set_login_manager(login_manager)
-    >>> login_manager._set_member_manager(member_manager)
-    >>> user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
-    >>> ret, register_key = member_manager.register(user_reg_dic)
-    >>> ret
-    True
-    >>> member_manager.confirm('mikkang', register_key)
-    (True, 'OK')
-    >>> member_manager.is_registered('mikkang')
-    True
-    >>> ret, session_key = login_manager.login('mikkang', 'mikkang', '143.248.234.145')
-    >>> ret
-    True
-    >>> ret, member = member_manager.get_info(session_key)
-    >>> member['activate']
-    True
-    >>> member['email']
-    'mikkang'
-    >>> member['nickname']
-    'mikkang'
-    >>> user_password_dic = {'id':'mikkang', 'current_password':'mikkang', 'new_password':'ggingkkang'}
-    >>> member_manager.modify_password(session_key, user_password_dic)
-    (True, 'OK')
-    >>> modify_user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang@sparcs.org', 'sig':'KAIST07 && JSH07 && SPARCS07', 'self_introduce':'i am Munbeom', 'default_language':'korean' }
-    >>> member_manager.modify(session_key, modify_user_reg_dic)
-    (True, 'OK')
-    >>> member_manager.remove_user(session_key)
-    (True, 'OK')
     '''
 
     def __init__(self):
         # mock data
         self.member_dic = {}  # DB에서 member table를 read해오는 부분
-
-
-    def _require_login(function):
-        def wrapper(self, session_key, *args):
-            if not self.login_manager.is_logged_in(session_key):
-                return False, 'NOT_LOGGEDIN'
-            else:
-                return function(self, session_key, *args)
-        return wrapper
 
     def _set_login_manager(self, login_manager):
         self.login_manager = login_manager
@@ -81,6 +40,10 @@ class MemberManager(object):
     def register(self, user_reg_dic):
         '''
         DB에 회원 정보 추가
+
+        >>> user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
+        >>> member_manager.register(user_reg_dic)
+        (True, '12tge8r9ytu23oytw8')
 
         - Current User Dictionary { id, password, nickname, email, sig, self_introduce, default_language }
 
@@ -121,6 +84,11 @@ class MemberManager(object):
         '''
         인증코드 확인
 
+        >>> member_manager.confirm('mikkang', register_key)
+        (True, 'OK')
+        >>> member_manager.confirm('mikkang', 'asdfasdfasdfsd')
+        (False, 'WRONG_CONFIRM_KEY')
+
         @type  id_to_confirm: string
         @param id_to_confirm: Confirm ID
         @type  confirm_key: integer
@@ -142,6 +110,10 @@ class MemberManager(object):
 
 
     def is_registered(self, user_id):
+        '''
+        >>> member_manager.is_registered('mikkang')
+        True
+        '''
         #remove quote when MD5 hash for UI is available
         #
         return self.member_dic.has_key(user_id)
