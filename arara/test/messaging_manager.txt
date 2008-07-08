@@ -1,0 +1,35 @@
+
+Bootstrap test
+
+>>> import arara
+>>> server = arara.get_namespace()
+
+Add user mikkang
+
+>>> user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang@sparcs.org', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+>>> server.member_manager.confirm('mikkang', register_key)
+(True, 'OK')
+>>> server.member_manager.is_registered('mikkang')
+True
+>>> ret, mikkang_session_key = server.login_manager.login('mikkang', 'mikkang', '143.248.234.145')
+>>> ret
+True
+
+Add user serialx
+
+>>> user_reg_dic = { 'id':'serialx', 'password':'serialx', 'nickname':'serialx', 'email':'serialx@serialx.net', 'sig':'serialx', 'self_introduce':'serialx', 'default_language':'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+>>> server.member_manager.confirm('serialx', register_key)
+(True, 'OK')
+>>> server.member_manager.is_registered('serialx')
+True
+>>> ret, serialx_session_key = server.login_manager.login('serialx', 'serialx', '143.248.234.140')
+>>> ret
+True
+
+>>> 

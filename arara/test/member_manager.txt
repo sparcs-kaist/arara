@@ -1,21 +1,18 @@
->>> from arara import login_manager
->>> from arara import member_manager
->>> login_manager = login_manager.LoginManager()
->>> member_manager = member_manager.MemberManager()
->>> member_manager._set_login_manager(login_manager)
->>> login_manager._set_member_manager(member_manager)
+>>> import arara
+>>> server = arara.get_namespace()
+
 >>> user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
->>> ret, register_key = member_manager.register(user_reg_dic)
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
->>> member_manager.confirm('mikkang', register_key)
+>>> server.member_manager.confirm('mikkang', register_key)
 (True, 'OK')
->>> member_manager.is_registered('mikkang')
+>>> server.member_manager.is_registered('mikkang')
 True
->>> ret, session_key = login_manager.login('mikkang', 'mikkang', '143.248.234.145')
+>>> ret, session_key = server.login_manager.login('mikkang', 'mikkang', '143.248.234.145')
 >>> ret
 True
->>> ret, member = member_manager.get_info(session_key)
+>>> ret, member = server.member_manager.get_info(session_key)
 >>> member['activate']
 True
 >>> member['email']
@@ -23,14 +20,14 @@ True
 >>> member['nickname']
 'mikkang'
 >>> user_password_dic = {'id':'mikkang', 'current_password':'mikkang', 'new_password':'ggingkkang'}
->>> member_manager.modify_password(session_key, user_password_dic)
+>>> server.member_manager.modify_password(session_key, user_password_dic)
 (True, 'OK')
 >>> modify_user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang@sparcs.org', 'sig':'KAIST07 && JSH07 && SPARCS07', 'self_introduce':'i am Munbeom', 'default_language':'korean' }
->>> member_manager.modify(session_key, modify_user_reg_dic)
+>>> server.member_manager.modify(session_key, modify_user_reg_dic)
 (True, 'OK')
 >>> search_user_info ={}
 >>> search_user_info['id'] = 'mikkang'
->>> member_manager.search_user(session_key, search_user_info)
+>>> server.member_manager.search_user(session_key, search_user_info)
 (True, 'mikkang')
->>> member_manager.remove_user(session_key)
+>>> server.member_manager.remove_user(session_key)
 (True, 'OK')

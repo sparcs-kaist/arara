@@ -1,22 +1,17 @@
 load LoginManager & MemberManager
 
->>> from arara import login_manager
->>> from arara import member_manager
->>> login_manager = login_manager.LoginManager()
->>> member_manager = member_manager.MemberManager()
->>> member_manager._set_login_manager(login_manager)
->>> login_manager._set_member_manager(member_manager)
+>>> import arara
+>>> server = arara.get_namespace()
 
 Register one user, mikkang
 
 >>> user_reg_dic = {'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
->>> ret, register_key = member_manager.register(user_reg_dic)
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
->>> member_manager.confirm('mikkang', register_key)
+>>> server.member_manager.confirm('mikkang', register_key)
 (True, 'OK')
->>> from arara import article_manager
->>> ret, session_key = login_manager.login('mikkang', 'mikkang', '143.248.234.140')
+>>> ret, session_key = server.login_manager.login('mikkang', 'mikkang', '143.248.234.140')
 >>> ret
 True
 
@@ -30,24 +25,23 @@ Faking time.time (to check time field)
 
 now Testing Article Manager!
 
->>> article_manager = article_manager.ArticleManager(login_manager)
->>> article_manager.board_list(session_key)
+>>> server.article_manager.board_list(session_key)
 (True, {'garbages': 0})
 >>> article_dic = {'author':'serialx', 'title': 'serialx is...', 'content': 'polarbear', 'method': 'web'}
->>> article_manager.write_article(session_key, 'garbages', article_dic)
+>>> server.article_manager.write_article(session_key, 'garbages', article_dic)
 (True, 1)
->>> article_manager.read(session_key, 'garbages', 1)
+>>> server.article_manager.read(session_key, 'garbages', 1)
 (True, {'title': 'serialx is...', 'ip': '143.248.234.140', 'author': 'serialx', 'content': 'polarbear', 'time': '1970-01-01 09:00:00', 'reply': [], 'method': 'web'})
 >>> reply_dic = {'author': 'pv457','context': 'asdf'}
->>> article_manager.write_reply(session_key, 'garbages', 24, reply_dic)
+>>> server.article_manager.write_reply(session_key, 'garbages', 24, reply_dic)
 (False, 'ARTICLE_NOT_EXIST')
->>> article_manager.write_reply(session_key, 'garbages', 1, reply_dic)
+>>> server.article_manager.write_reply(session_key, 'garbages', 1, reply_dic)
 (True, 'OK')
->>> article_manager.read(session_key, 'garbages', 1)
+>>> server.article_manager.read(session_key, 'garbages', 1)
 (True, {'title': 'serialx is...', 'ip': '143.248.234.140', 'author': 'serialx', 'content': 'polarbear', 'time': '1970-01-01 09:00:00', 'reply': [{'ip': '143.248.234.140', 'time': '1970-01-01 09:00:00', 'context': 'asdf', 'author': 'pv457'}], 'method': 'web'})
->>> article_manager.board_list(session_key)
+>>> server.article_manager.board_list(session_key)
 (True, {'garbages': 1})
->>> login_manager.logout(session_key)
+>>> server.login_manager.logout(session_key)
 (True, 'OK')
 
 Fin!
