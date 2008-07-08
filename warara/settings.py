@@ -45,7 +45,7 @@ MEDIA_URL = ''
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/admin_media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'm+k6a(t0&&3z6aiej1!7g@c4yrp=!d*=x241s+i4_6($yopp=%'
@@ -68,7 +68,6 @@ ROOT_URLCONF = 'warara.urls'
 
 import os
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
-print PROJECT_PATH
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".

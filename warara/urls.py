@@ -1,3 +1,5 @@
+import os
+PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
@@ -24,8 +26,10 @@ urlpatterns = patterns('',
     (r'^blacklist/mypage/$', 'warara.views.blacklist'),
     (r'^blacklist/add/$', 'warara.views.add_black'),
     (r'^help/shortcutkey/$','warara.views.fastkey'),
-    (r'^help/agreement/$','warara.views.agreement')
-    
+    (r'^help/agreement/$','warara.views.agreement'),
+     
+    (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.join(PROJECT_PATH, 'media/'), 'show_indexes': True}),
+
     )
 
 # vim: set et ts=8 sw=4 sts=4
