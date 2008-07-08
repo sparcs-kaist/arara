@@ -246,7 +246,6 @@ class ArticleManager(object):
         except KeyError: 
             return False, 'BOARD_NOT_EXIST'
              
-
     @_require_login
     def board_list(self, session_key):
         '''
@@ -260,15 +259,10 @@ class ArticleManager(object):
             2. 리스트 읽어오기 실패: False 
                 1. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-
-        board = []
-        try:
-            for no in len(self.article):
-                board.append(article[no])        
-            return True, board
-        except:
-            return False, 'NOT_IMPLEMENTED'
-                
+        board = {}
+        for boardname in self.articles:
+            board[boardname] = len(self.articles[boardname])
+        return True, board
 
     @_require_login
     def search(self, session_key, board_name, query_text, search_type, page=1, page_length=20):
