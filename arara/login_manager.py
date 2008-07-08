@@ -6,44 +6,6 @@ import datetime
 class LoginManager(object):
     '''
     로그인 처리 관련 클래스
-
-    >>> from arara import login_manager
-    >>> from arara import member_manager
-    >>> login_manager = login_manager.LoginManager()
-    >>> member_manager = member_manager.MemberManager()
-    >>> member_manager._set_login_manager(login_manager)
-    >>> login_manager._set_member_manager(member_manager)
-    >>> user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
-    >>> ret, register_key = member_manager.register(user_reg_dic)
-    >>> ret
-    True
-    >>> member_manager.confirm('mikkang', register_key)
-    (True, 'OK')
-    >>> login_manager.login('mikkang', 'not_test', '143.248.234.145')
-    (False, 'WRONG_PASSWORD')
-    >>> login_manager.login('not_test', 'test', '143.248.234.145')
-    (False, 'WRONG_ID')
-    >>> ret, session_key = login_manager.login('mikkang', 'mikkang', '143.248.234.145')
-    >>> ret
-    True
-    >>> session_bee = 'thisisnotapropermd5sessionkey...'
-    >>> login_manager.is_logged_in(session_bee)
-    False
-    >>> login_manager.is_logged_in(session_key)
-    True
-    >>> _, result = login_manager.get_session(session_key)
-    >>> result['ip']
-    '143.248.234.145'
-    >>> result['id']
-    'mikkang'
-
-    >>> login_manager.logout(session_bee)
-    (False, 'NOT_LOGGEDIN')
-    >>> login_manager.logout(session_key)
-    (True, 'OK')
-    >>> login_manager.logout(session_key)
-    (False, 'NOT_LOGGEDIN')
-        
     '''
     
     def __init__(self):

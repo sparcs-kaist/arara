@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import md5
+from arara.database_factory import get_database_connection
+from arara.util import require_login
 
 class WrongDictionary(Exception):
     pass
@@ -15,12 +17,27 @@ class NotLoggedIn(Exception):
     pass
 
 
+MEMBER_TABLE_SQL = '''
+CREATE TABLE members (id varchar(50),
+                      password varchar(50),
+                      nickname varchar(50),
+                      email varchar(50),
+                      sig varchar(255),
+                      self_introduce varchar(255),
+                      default_language varchar(10)
+                      )
+'''
+
+
 class MemberManager(object):
     '''
     회원 가입, 회원정보 수정, 회원정보 조회, 이메일 인증등을 담당하는 클래스
     '''
 
     def __init__(self):
+        conn = get_database_connection()
+        c = conn.cursor()
+        ret = c.execute(MEMBER_TABLE_SQL)
         # mock data
         self.member_dic = {}  # DB에서 member table를 read해오는 부분
 
@@ -177,7 +194,7 @@ class MemberManager(object):
             return False, 'NOT_LOGGEDIN'
 
 
-    @_require_login
+    @require_login
     def modify(self, session_key, user_reg_dic):
         '''
         DB에 회원 정보 수정
@@ -271,7 +288,7 @@ class MemberManager(object):
         except KeyError:
             return False, 'NOT_LOGGEDIN'
         
-    @_require_login
+    @require_login
     def search_user(self, session_key, search_user_info):
         '''
         member_dic 에서 찾고자 하는 id와 nickname에 해당하는 user를 찾아주는 함수
