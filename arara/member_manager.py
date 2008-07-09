@@ -314,6 +314,24 @@ class MemberManager(object):
         except AssertionError:
             pass
 
+    @require_login
+    def is_SYSOP(self, session_key):
+        '''
+        로그인한 user가 SYSOP인지 아닌지를 확인하는 함수
+        
+        @type  session_key: string
+        @param session_key: User Key
+        @rtype: String
+        @return:
+            1. SYSOP일시: True
+            2. SYSOP이 아닐시: False
+        '''
+
+        if self.login_manager.get_session(session_key)[1]['id'] == 'SYSOP':
+            return True
+        else:
+            return False
+
 
 def _test():
     import doctest

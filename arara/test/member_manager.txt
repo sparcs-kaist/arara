@@ -31,3 +31,22 @@ True
 (True, 'mikkang')
 >>> server.member_manager.remove_user(session_key)
 (True, 'OK')
+>>> server.member_manager.is_SYSOP(session_key)
+False
+
+Add SYSOP
+>>> user_reg_dic = { 'id':'SYSOP', 'password':'SYSOP', 'nickname':'SYSOP', 'email':'SYSOP@sparcs.org', 'sig':'', 'self_introduce':'i am mikkang', 'default_language':'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+>>> server.member_manager.confirm('SYSOP', register_key)
+(True, 'OK')
+>>> server.member_manager.is_registered('SYSOP')
+True
+>>> ret, SYSOP_session_key = server.login_manager.login('SYSOP', 'SYSOP', '143.248.234.145')
+>>> ret
+True
+
+>>> server.member_manager.is_SYSOP(SYSOP_session_key)
+True
+
