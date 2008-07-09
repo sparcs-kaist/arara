@@ -31,7 +31,7 @@ True
 (True, 'mikkang')
 >>> server.member_manager.remove_user(session_key)
 (True, 'OK')
->>> server.member_manager.is_SYSOP(session_key)
+>>> server.member_manager.is_sysop(session_key)
 False
 
 Add SYSOP
@@ -47,6 +47,6 @@ True
 >>> ret
 True
 
->>> server.member_manager.is_SYSOP(SYSOP_session_key)
+>>> server.member_manager.is_sysop(SYSOP_session_key)
 True
 

@@ -325,7 +325,7 @@ class MemberManager(object):
             pass
 
     @require_login
-    def is_SYSOP(self, session_key):
+    def is_sysop(self, session_key):
         '''
         로그인한 user가 SYSOP인지 아닌지를 확인하는 함수
         
