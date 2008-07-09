@@ -25,11 +25,11 @@ class ara_join(object):
         blanktext = urwid.Filler(urwid.Text(' '))
 	header = urwid.Filler(urwid.Text("ARA: Change Password", align='center'))
 
-        oldpwedit = urwid.Filler(urwid.Edit(caption="ID:", wrap='clip'))
+        oldpwedit = urwid.Filler(urwid.Edit(caption="Old password:", wrap='clip'))
         oldpwdesc = urwid.Filler(urwid.Text("Please enter your\nold password"))
         oldpwcolumn = self._make_column(oldpwedit, oldpwdesc)
 
-        newpwedit = urwid.Filler(urwid.Edit(caption="Password:", wrap='clip'))
+        newpwedit = urwid.Filler(urwid.Edit(caption="New password:", wrap='clip'))
         newpwdesc = urwid.Filler(urwid.Text("Minimum password length\nis 4 characters"))
         newpwcolumn = self._make_column(newpwedit, newpwdesc)
 
@@ -39,7 +39,7 @@ class ara_join(object):
 
         self.joinpile = urwid.Pile([oldpwcolumn, newpwcolumn,confirmcolumn])
 
-        joinbutton = urwid.Filler(urwid.Button("Join"))
+        joinbutton = urwid.Filler(urwid.Button("OK"))
         cancelbutton = urwid.Filler(urwid.Button("Cancel"))
         buttoncolumn = self._make_column(joinbutton, cancelbutton, 50, 50)
 

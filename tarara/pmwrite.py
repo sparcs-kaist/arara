@@ -14,30 +14,31 @@ class ara_post(object):
     def get_current_board(self):
 	return "garbages"
 
-    def __init__(self, modify = False):
+    def __init__(self):
         utf8decode = urwid.escape.utf8decode
         dash = urwid.SolidFill(utf8decode('─'))
         blank = urwid.SolidFill(u" ")
         blanktext = urwid.Filler(urwid.Text(' '))
 
-        if modify:
-            self.header = urwid.Filler(urwid.Text(u"ARA: Modify Article  Current board: %s" % self.get_current_board(), align='center'))
-	else:
-            self.header = urwid.Filler(urwid.Text(u"ARA: Post Article  Current board: %s" % self.get_current_board(), align='center'))
+	self.header = urwid.Filler(urwid.Text(u"ARA: Write private message", align='center'))
 
         titleedit = urwid.Filler(urwid.Edit(caption="Title: ", wrap='clip'))
+        idedit = urwid.Edit(caption="To (Enter ID): ", wrap='clip')
+	self.btnsearch = urwid.Button("Search by nickname")
+        self.idcolumn = urwid.Filler(urwid.Columns([('weight',60,idedit),('weight',40,self.btnsearch)]))
+	self.info = urwid.Filler(urwid.Text(u"* You can use semicolon(;) to send two or more person."))
+
         bodytext = urwid.Filler(urwid.Text('Body'))
         self.bodyedit = urwid.Filler(urwid.Edit(multiline = True, wrap='clip'))
 
-	self.chkinclude = urwid.CheckBox("Include in search")
 	self.btnhelp = urwid.Button("Help")
 	self.btnpreview = urwid.Button("Preview")
-	self.btnokay = urwid.Button("OK")
+	self.btnokay = urwid.Button("Send")
 	self.btncancel = urwid.Button("Cancel")
 
-        self.bottomcolumn = urwid.Filler(urwid.Columns([('weight',40,self.chkinclude),('weight',15,self.btnhelp),('weight',15,self.btnpreview),('weight',15,self.btnokay),('weight',15,self.btncancel)]))
+        self.bottomcolumn = urwid.Filler(urwid.Columns([('weight',40,urwid.Text(' ')),('weight',15,self.btnhelp),('weight',15,self.btnpreview),('weight',15,self.btnokay),('weight',15,self.btncancel)]))
 
-        content = [('fixed',1, self.header),('fixed',1,titleedit),('fixed',1,bodytext),('fixed',1,dash),self.bodyedit,('fixed',1,dash),('fixed',1,self.bottomcolumn)]
+        content = [('fixed',1, self.header),('fixed',1,titleedit),('fixed',1,self.idcolumn),('fixed',1,self.info),('fixed',1,bodytext),('fixed',1,dash),self.bodyedit,('fixed',1,dash),('fixed',1,self.bottomcolumn)]
         self.mainpile = urwid.Pile(content)
 
         self.frame = self.mainpile
