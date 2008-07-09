@@ -1,5 +1,32 @@
 <html>
 <head>
+<script type="text/javascript">
+function sbmt()
+{
+    alert("submit will be done");
+}
+function remov()
+{
+    alert("They will be elimininated");
+}
+var d = new Date();
+var time = d.getHours();
+
+if (time<10)
+{
+    document.write("<b>Good morning</b>");
+}
+var n_member=0;
+</script>
+<style type="text/css">
+#cautious{
+float:right;
+font-size:80%
+}
+#blacklist_top_menu{
+background-color:339999
+}
+</style>
 </head>
     <body>
 	<div id="blacklist_top_menu">
@@ -13,6 +40,7 @@
 	<div id="blacklist_content">
 	    {% block blacklist_contents %}
 	    <br />
+	    <span>
 	    <div id="user_b_list">
 		<table border="1">
 		<tr>
@@ -51,17 +79,26 @@
 		    {% endifequal %}
 		    {% endfor %}
 		</tr>
+		<script type="text/javascript">
+		n_member+=1;
+		</script>
 		{% endfor %}
+		    <script type="text/javascript">
+			document.write("<b>"+n_member+"</b>"+"<span> members in blacklist</span>");
+		    </script>
 	    </table>
 	    </div>
-	
-	    <div id="b_button">
+	    <br />	
+	    <span id="b_button">
 		<form action="">
-		    <input type="button" value="remove"></input>
+		    <input type="button" onclick="remov()" value="remove"></input>
+		    <input type="button" onclick="sbmt()" value="submit"></input>
 		</form>
-	    </div>
+	    </span>
+	    <div id="cautious">The limit number of blacklist members is 100.
+	    </div>	
 	    {% endblock %}
 	</div>
-	
+
     </body>
 </html>

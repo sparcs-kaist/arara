@@ -1,6 +1,7 @@
 <html>
     <head>
 	<title>{{brower_title}}</title>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<style>form{ display : inline ; }</style>
         <style type="text/css">
 	    #header{
@@ -10,7 +11,7 @@
 		background-color:#00ff78
 	    }
 	    #header_left { 
-	float:left
+		float:left
 	    }
 	    #header_right {
 		float:right
@@ -42,9 +43,42 @@
 		top:60px;
 		right:10px
 	    }
+	    
         </style>
+	<script type="text/javascript">
+	    function clock()
+	    {
+		var today=new Date();
+		var h=today.getHours();
+		var m=today.getMinutes();
+		var s=today.getSeconds();
+		m=addzero(m);
+		s=addzero(s);
+		document.getElementById('clock').innerHTML=h+" : "+ m+" : "+s;
+		t=setTimeout('clock()', 500);
+	    }
+	    function addzero(i)
+	    {
+		if(i<10)
+		{
+		    i="0"+i;
+		}
+		return i;
+	    }
+
+	    $(document).ready(function(){
+		$("clock").hover(
+		    function(){
+			 $("widgetclock").slideDown();
+		    },
+		    function(){
+			 $("widgetclock").slideUp();
+		    });
+	    });
+	</script>
+    
     </head>
-    <body>
+    <body onload="clock()">
         <div id="container">
 	<div id="header">
 	    <div id="header_left">
@@ -71,9 +105,14 @@
         <div id="navigation">
             {% for bbs in bbs_list %}
             <a href="/list/{{bbs}}/">{{bbs}}</a><br/>
-            {% endfor %}
-            {{widget}}
-        </div>
+	    {% endfor %}
+	    <hr />
+	    {{widget}}
+	    <div id="widget_clock">
+		<clock>CLOCK</clock>
+	    </div>
+	    <widgetclock><div id="clock"></div></widgetclock>
+	</div>
         <div id="content">
             {% block arara_content %}
             Content

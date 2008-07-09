@@ -232,6 +232,7 @@ def write(request, bbs):
 		    {'name':'filmspecial'}]}) 
     return HttpResponse(rendered)
 
+
 class m: #message
     
     nmpp=10 #number of message per page
