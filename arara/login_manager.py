@@ -112,11 +112,4 @@ class LoginManager(object):
         else:
             return False
 
-def _test():
-    import doctest
-    doctest.testmod()
-
-if __name__ == "__main__":
-    _test()
-
 # vim: set et ts=8 sw=4 sts=4
