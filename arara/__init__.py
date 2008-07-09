@@ -12,6 +12,8 @@ class Namespace(object):
         self.member_manager._set_login_manager(self.login_manager)
         self.article_manager = ArticleManager(self.login_manager)
         self.blacklist_manager = BlacklistManager()
+        self.blacklist_manager._set_member_manager(self.member_manager)
+        self.blacklist_manager._set_login_manager(self.login_manager)
         self.messaging_manager = MessagingManager()
         self.messaging_manager._set_login_manager(self.login_manager)
         self.messaging_manager._set_member_manager(self.member_manager)

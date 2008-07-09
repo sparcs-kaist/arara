@@ -25,9 +25,21 @@ class BlacklistManager(object):
                 return function(self, session_key, *args)
         return wrapper
 
+    def _prepare_session_id(function):
+        # Internal member_dic에 사용자 id를 강제 등록한다.
+        def wrapper(self, session_key, *args):
+            if not self.member_dic.has_key(self.login_manager.get_session(session_key)[1]['id']):
+                self.member_dic[self.login_manager.get_session(session_key)[1]['id']] = {}
+            return function(self, session_key, *args)
+        return wrapper
+
     def _set_login_manager(self, login_manager):
         self.login_manager = login_manager
 
+    def _set_member_manager(self, member_manager):
+        self.member_manager = member_manager
+
+    @_prepare_session_id
     @_require_login
     def add(self, session_key, blacklist_id):
         '''
@@ -54,15 +66,20 @@ class BlacklistManager(object):
                 4. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         
-        session_info =  self.login_manager.get_session(session_key)[1]
+        session_id = self.login_manager.get_session(session_key)[1]['id']
         try:
-            if blacklist_id in member_dic[session_info['id']]['blacklist']:
+            if self.member_manager.is_registered(blacklist_id) == False:
+                raise NotExistIDException()
+            if blacklist_id in self.member_dic[session_id]:
                 raise AlreadyAddedException()
-            member_dic[sesseion_infor['id']]['blacklist'][blacklist_id] = {'article': 'True', 'message': 'True'}
+            self.member_dic[session_id][blacklist_id] = {'article': 'True', 'message': 'True'}
             return True, 'OK'
         except AlreadyAddedException:
-            return False, 'ALREADY_ADDED_ID'        
+            return False, 'ALREADY_ADDED'
+        except NotExistIDException:
+            return False, 'ID_NOT_EXIST'
        
+    @_prepare_session_id
     @_require_login
     def delete(self,session_key, blacklist_id):
         '''
@@ -79,22 +96,22 @@ class BlacklistManager(object):
         @return:
             1. 삭제 성공: True, 'OK'
             2. 삭제 실패:
-                1. 존재하지 않는 아이디: False, 'ID_NOT_EXIST'
-                2. 블랙리스트에 존재하지 않는 아이디: False, 'ID_NOT_IN_BLACKLIST'
-                3. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
-                4. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 블랙리스트에 존재하지 않는 아이디: False, 'ID_NOT_IN_BLACKLIST'
+                2. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
+                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         
-        session_info =  self.login_manager.get_session(session_key)[1]
+        session_id =  self.login_manager.get_session(session_key)[1]['id']
         try:
-            if blacklist_id not in member_dic[session_info['id']]['blacklist']:
+            if blacklist_id not in self.member_dic[session_id]:
                 raise NotExistIDException()
-            del member_dic[sesseion_infor['id']]['blacklist'][blacklist_id] 
+            del self.member_dic[session_id][blacklist_id] 
             return True, 'OK'
         except NotExistIDException:
             return False, 'ID_NOT_IN_BLACKLIST'        
 
 
+    @_prepare_session_id
     @_require_login
     def modify(self,session_key, blacklist_dic):
         '''
@@ -110,22 +127,23 @@ class BlacklistManager(object):
         @param blacklist_dic: Blacklist Dictionary
         @rtype: boolean, string
         @return:
-            1. 삭제 성공: True, 'OK'
-            2. 삭제 실패:
+            1. 수정 성공: True, 'OK'
+            2. 수정 실패:
                 1. 블랙리스트에 존재하지 않는 아이디: False, 'ID_NOT_IN_BLACKLIST'
                 2. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         
-        session_info =  self.login_manager.get_session(session_key)[1]
+        session_id =  self.login_manager.get_session(session_key)[1]['id']
         try:
-            if blacklist_id not in member_dic[session_info['id']]['blacklist']:
+            if blacklist_dic['id'] not in self.member_dic[session_id]:
                 raise NotExistIDException()
-            member_dic[sesseion_infor['id']]['blacklist'][blacklist_id] = {'article': blacklist_dic['article'], 'message': blacklist_dic['message']}
+            self.member_dic[session_id][blacklist_dic['id']] = {'article': blacklist_dic['article'], 'message': blacklist_dic['message']}
             return True, 'OK'
         except NotExistIDException:
             return False, 'ID_NOT_IN_BLACKLIST'        
 
+    @_prepare_session_id
     @_require_login
     def list(self,session_key):
         '''
@@ -144,6 +162,7 @@ class BlacklistManager(object):
                 1. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        return True, member_dic[sesseion_infor['id']]['blacklist']
+        session_id =  self.login_manager.get_session(session_key)[1]['id']
+        return True, self.member_dic[session_id]
 
 # vim: set et ts=8 sw=4 sts=4

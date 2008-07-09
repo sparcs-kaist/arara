@@ -25,6 +25,8 @@ def suite():
                                doctest.DocFileSuite(os.path.join(DOCTEST_PATH,
                                    'member_manager.txt')),
                                doctest.DocFileSuite(os.path.join(DOCTEST_PATH,
+                                   'blacklist_manager.txt')),
+                               doctest.DocFileSuite(os.path.join(DOCTEST_PATH,
                                    'messaging_manager.txt')),
                                doctest.DocFileSuite(os.path.join(DOCTEST_PATH,
                                    'login_manager.txt')),
