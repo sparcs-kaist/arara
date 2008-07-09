@@ -185,18 +185,4 @@ class SysopManager(object):
             2.실패시: False, 'NOT_LOGGEDIN'
         '''
 
-
-    
-
-
-
-
-
-
-        
-
-
-
-
-
 # vim: set et ts=8 sw=4 sts=4
