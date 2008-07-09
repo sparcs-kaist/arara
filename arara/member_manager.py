@@ -56,7 +56,7 @@ class MemberManager(object):
 
     def register(self, user_reg_dic):
         '''
-        DB에 회원 정보 추가
+        DB에 회원 정보 추가. activation code를 발급한다.
 
         >>> user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
         >>> member_manager.register(user_reg_dic)
@@ -99,7 +99,7 @@ class MemberManager(object):
 
     def confirm(self, id_to_confirm, confirm_key):
         '''
-        인증코드 확인
+        인증코드(activation code) 확인.
 
         >>> member_manager.confirm('mikkang', register_key)
         (True, 'OK')
@@ -125,9 +125,18 @@ class MemberManager(object):
             return False, 'WRONG_CONFIRM_KEY'
         
 
-
     def is_registered(self, user_id):
         '''
+        등록된 사용자인지의 여부를 알려준다.
+        Confirm은 하지 않았더라도 등록되어있으면 True를 리턴한다.
+
+        @type  user_id: string
+        @param user_id: ID to check whether is registered or not
+        @rtype: bool
+        @return:
+            1. 존재하는 사용자: True
+            2. 존재하지 않는 사용자: False
+
         >>> member_manager.is_registered('mikkang')
         True
         '''
@@ -137,7 +146,8 @@ class MemberManager(object):
 
     def get_info(self, session_key):
         '''
-        회원 정보 수정을 위한 회원 정보를 가져오는 함수, 쿼리와 다름
+        회원 정보 수정을 위해 현재 로그인된 회원의 정보를 가져오는 함수.
+        다른 사용자의 정보를 열람하는 query와 다름.
 
         @type  session_key: string
         @param session_key: User Key
@@ -158,7 +168,7 @@ class MemberManager(object):
         
     def modify_password(self, session_key, user_password_dic):
         '''
-        DB에 회원 정보 수정
+        회원의 password를 수정.
 
         ---user_password_dic {id, current_password, new_password}
 
@@ -197,7 +207,7 @@ class MemberManager(object):
     @require_login
     def modify(self, session_key, user_reg_dic):
         '''
-        DB에 회원 정보 수정
+        password를 제외한 회원 정보 수정
 
         @type  session_key: string
         @param session_key: User Key
@@ -228,7 +238,7 @@ class MemberManager(object):
         '''
         쿼리 함수
 
-        member.querybyid(session_key, 'pv457')
+        member.query_by_id(session_key, 'pv457')
         True, {'user_id': 'pv457', 'user_nickname': '심영준',
         'self_introduce': '...', 'user_ip': '143.248.234.111'}
 
@@ -251,7 +261,7 @@ class MemberManager(object):
         '''
         쿼리 함수
 
-        member.querybynick(session_key, '심영준')
+        member.query_by_nick(session_key, '심영준')
         True, {'user_id': 'pv457', 'user_nickname': '심영준',
         'self_introduce': '...', 'user_ip': '143.248.234.111'}
 
