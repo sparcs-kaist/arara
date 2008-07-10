@@ -4,8 +4,9 @@
 import os
 import urwid.curses_display
 import urwid
+from common import *
 
-class ara_userpreferences(object):
+class ara_userpreferences(ara_forms):
     def get_login_message(self):
         basedir = os.path.dirname(__file__)
         banner = os.path.join(basedir, 'login.txt')
@@ -18,11 +19,7 @@ class ara_userpreferences(object):
             ('weight', ratio2, widget2),
             ])
 
-    def __init__(self):
-        utf8decode = urwid.escape.utf8decode
-        dash = urwid.SolidFill(utf8decode('─'))
-        blank = urwid.SolidFill(u" ")
-        blanktext = urwid.Filler(urwid.Text(' '))
+    def __initwidgets__(self):
 	header = urwid.Filler(urwid.Text("ARA: User Preferences", align='center'))
 
 	idedit = urwid.Filler(urwid.Text("ID: %(id)s\nE-Mail: %(email)s" % {"id":"peremen","email":"ara@peremen.name"}))
@@ -44,7 +41,7 @@ class ara_userpreferences(object):
 	actions = ["Change password","View/edit blacklist","Change Introduction/Signature","Zap board","Set terminal encoding"]
         actionitems = [urwid.Text(text) for text in actions]
         self.actionlist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(actionitems)))
-	actioncolumn = self._make_column(self.actionlist, blanktext)
+	actioncolumn = self._make_column(self.actionlist, self.blanktext)
 
         self.joinpile = urwid.Pile([idcolumn, nickcolumn,langcolumn,('fixed',1,actiontext),actioncolumn])
 
@@ -54,32 +51,10 @@ class ara_userpreferences(object):
 
         infotext = urwid.Filler(urwid.Text("  * Use [Tab] or arrow key to move each items"))
 
-        content = [('fixed',1,header),self.joinpile,('fixed',1,infotext),('fixed',1,blank),('fixed',1,buttoncolumn)]
+        content = [('fixed',1,header),self.joinpile,('fixed',1,infotext),('fixed',1,self.blank),('fixed',1,buttoncolumn)]
         self.mainpile = urwid.Pile(content)
 
-        self.frame = self.mainpile
-
-    def main(self):
-        self.ui = urwid.curses_display.Screen()
-        self.ui.run_wrapper(self.run)
-
-    def run(self):
-        size = self.ui.get_cols_rows()
-        quit = False
-        while not quit:
-            self.draw_screen(size)
-            keys = self.ui.get_input()
-            for key in keys:
-                if key == 'tab':
-                    quit = True
-                    break
-#                if key in keymap:
-#                    key = keymap[key]
-                self.frame.keypress(size, key)
-   
-    def draw_screen(self, size):
-        canvas = self.frame.render(size, focus=True)
-        self.ui.draw_screen(size, canvas)
+        return self.mainpile
 
 ara_userpreferences().main()
 

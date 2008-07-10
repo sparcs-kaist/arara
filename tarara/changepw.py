@@ -4,8 +4,9 @@
 import os
 import urwid.curses_display
 import urwid
+from common import *
 
-class ara_join(object):
+class ara_changepw(ara_forms):
     def get_login_message(self):
         basedir = os.path.dirname(__file__)
         banner = os.path.join(basedir, 'login.txt')
@@ -18,11 +19,7 @@ class ara_join(object):
             ('weight', ratio2, widget2),
             ])
 
-    def __init__(self):
-        utf8decode = urwid.escape.utf8decode
-        dash = urwid.SolidFill(utf8decode('─'))
-        blank = urwid.SolidFill(u" ")
-        blanktext = urwid.Filler(urwid.Text(' '))
+    def __initwidgets__(self):
 	header = urwid.Filler(urwid.Text("ARA: Change Password", align='center'))
 
         oldpwedit = urwid.Filler(urwid.Edit(caption="Old password:", wrap='clip'))
@@ -49,33 +46,11 @@ class ara_join(object):
         infotext = urwid.Filler(urwid.Text("""  * Press [Enter] to proceed to the next item, [Shift+Enter] - previous item
   * Press [Tab] to directly jump to OK or Cancel button"""))
 
-        content = [('fixed',1,header),self.joinpile,('fixed',2,infotext),('fixed',1,blank),('fixed',1,buttoncolumn)]
+        content = [('fixed',1,header),self.joinpile,('fixed',2,infotext),('fixed',1,self.blank),('fixed',1,buttoncolumn)]
         self.mainpile = urwid.Pile(content)
 
-        self.frame = self.mainpile
+        return self.mainpile
 
-    def main(self):
-        self.ui = urwid.curses_display.Screen()
-        self.ui.run_wrapper(self.run)
-
-    def run(self):
-        size = self.ui.get_cols_rows()
-        quit = False
-        while not quit:
-            self.draw_screen(size)
-            keys = self.ui.get_input()
-            for key in keys:
-                if key == 'tab':
-                    quit = True
-                    break
-#                if key in keymap:
-#                    key = keymap[key]
-                self.frame.keypress(size, key)
-   
-    def draw_screen(self, size):
-        canvas = self.frame.render(size, focus=True)
-        self.ui.draw_screen(size, canvas)
-
-ara_join().main()
+ara_changepw().main()
 
 # vim: set et ts=8 sw=4 sts=4

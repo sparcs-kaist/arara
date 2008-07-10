@@ -4,13 +4,14 @@
 import os
 import urwid.curses_display
 import urwid
+from common import *
 
 keymap = {
     'j': 'down',
     'k': 'up',
 }
 
-class ara_welcome(object):
+class ara_welcome(ara_forms):
     def get_banner(self):
         basedir = os.path.dirname(__file__)
         banner = os.path.join(basedir, 'banner.txt')
@@ -26,11 +27,7 @@ class ara_welcome(object):
     def get_date(self):
         return "Today"
 
-    def __init__(self):
-        utf8decode = urwid.escape.utf8decode
-        dash = urwid.SolidFill(utf8decode('─'))
-        blank = urwid.SolidFill(u" ")
-        blanktext = urwid.Filler(urwid.Text(' '))
+    def __initwidgets__(self):
         self.banner = urwid.Filler(urwid.Text(self.get_banner()))
 
         logintext = "Last login: %(IP)s/%(location)s at %(date)s"
@@ -39,32 +36,10 @@ class ara_welcome(object):
 
         self.entertext = urwid.Filler(urwid.Text("Press [Enter] key to continue"))
 
-        content = [self.banner,('fixed',1, self.logininfo),('fixed',1,blank), ("fixed", 1, self.entertext)]
+        content = [self.banner,('fixed',1, self.logininfo),('fixed',1,self.blank), ("fixed", 1, self.entertext)]
         self.mainpile = urwid.Pile(content)
 
-        self.frame = self.mainpile
-
-    def main(self):
-        self.ui = urwid.curses_display.Screen()
-        self.ui.run_wrapper(self.run)
-
-    def run(self):
-        size = self.ui.get_cols_rows()
-        quit = False
-        while not quit:
-            self.draw_screen(size)
-            keys = self.ui.get_input()
-            for key in keys:
-                if key == 'enter':
-                    quit = True
-                    break
-                if key in keymap:
-                    key = keymap[key]
-                self.frame.keypress(size, key)
-   
-    def draw_screen(self, size):
-        canvas = self.frame.render(size, focus=True)
-        self.ui.draw_screen(size, canvas)
+        return self.mainpile
 
 ara_welcome().main()
 

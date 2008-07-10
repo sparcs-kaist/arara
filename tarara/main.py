@@ -4,6 +4,7 @@
 import os
 import urwid.curses_display
 import urwid
+from common import *
 
 keymap = {
     'j': 'down',
@@ -20,7 +21,7 @@ menu = [
     "(Q)uit",
 ]
 
-class ara_main(object):
+class ara_main(ara_forms):
     def get_today_best(self):
         return [
             ["투베갑시다", "peremen"],
@@ -41,12 +42,7 @@ class ara_main(object):
 	    ["랄라","kkhsoft"],
 	]
 
-    def __init__(self):
-        utf8decode = urwid.escape.utf8decode
-        dash = urwid.SolidFill(utf8decode('─'))
-        blank = urwid.SolidFill(u" ")
-        blanktext = urwid.Filler(urwid.Text(' '))
-
+    def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Main Menu", align='center'))
 
         menuitems = [urwid.Text(' * '+ text) for text in menu]
@@ -73,29 +69,7 @@ u"""  * Press [Tab] to jump between menu, today best, weekly best
         content = [('fixed',1, self.header),self.maincolumn,('fixed',2,self.copyrightnotice)]
         self.mainpile = urwid.Pile(content)
 
-        self.frame = self.mainpile
-
-    def main(self):
-        self.ui = urwid.curses_display.Screen()
-        self.ui.run_wrapper(self.run)
-
-    def run(self):
-        size = self.ui.get_cols_rows()
-        quit = False
-        while not quit:
-            self.draw_screen(size)
-            keys = self.ui.get_input()
-            for key in keys:
-                if key == 'tab':
-                    quit = True
-                    break
-                if key in keymap:
-                    key = keymap[key]
-                self.frame.keypress(size, key)
-   
-    def draw_screen(self, size):
-        canvas = self.frame.render(size, focus=True)
-        self.ui.draw_screen(size, canvas)
+        return self.mainpile
 
 ara_main().main()
 
