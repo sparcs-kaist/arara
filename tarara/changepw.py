@@ -13,12 +13,6 @@ class ara_changepw(ara_forms):
         f = open(banner, 'r')
         return f.read().decode('utf-8')
 
-    def _make_column(self,widget1, widget2,ratio1=60, ratio2=40):
-        return urwid.Columns([
-            ('weight', ratio1, widget1),
-            ('weight', ratio2, widget2),
-            ])
-
     def __initwidgets__(self):
 	header = urwid.Filler(urwid.Text("ARA: Change Password", align='center'))
 

@@ -5,19 +5,18 @@ import os
 import urwid.curses_display
 import urwid
 
-keymap = {
-    'j': 'down',
-    'k': 'up',
-}
-
 class ara_forms(object):
     def __init__(self):
         self.utf8decode = urwid.escape.utf8decode
         self.dash = urwid.SolidFill(self.utf8decode('─'))
         self.blank = urwid.SolidFill(u" ")
         self.blanktext = urwid.Filler(urwid.Text(' '))
+        self.keymap = {}
 
 	self.frame = self.__initwidgets__()
+
+    def __keypress__(self, size, key):
+	self.frame.keypress(size, key)
 
     def main(self):
         self.ui = urwid.curses_display.Screen()
@@ -30,17 +29,20 @@ class ara_forms(object):
             self.draw_screen(size)
             keys = self.ui.get_input()
             for key in keys:
-                if key == 'tab':
-                    quit = True
-                    break
-                if key in keymap:
+                if key in self.keymap:
                     key = keymap[key]
 		if "window resize" in keys:
                     size = self.ui.get_cols_rows()
-                self.frame.keypress(size, key)
+                self.__keypress__(size, key)
    
     def draw_screen(self, size):
         canvas = self.frame.render(size, focus=True)
         self.ui.draw_screen(size, canvas)
+
+    def _make_column(self,widget1, widget2,ratio1=60, ratio2=40):
+        return urwid.Columns([
+            ('weight', ratio1, widget1),
+            ('weight', ratio2, widget2),
+            ])
 
 # vim: set et ts=8 sw=4 sts=4
