@@ -96,7 +96,7 @@ class MessagingManager(object):
         time_str = str(datetime.datetime.fromtimestamp(time.time()))
 
         msg_dict = {'from': from_id, 'to': to, 'message': msg,
-                'sent_time': time_str, 'msg_no': len(self.message_list) + 1}
+                'sent_time': time_str, 'msg_no': len(self.message_list) + 1, 'read_status':'N'}
 
         self.message_list.append(msg_dict)
 
@@ -125,6 +125,7 @@ class MessagingManager(object):
         '''
         for message in self.message_list:
             if message['msg_no'] == msg_no:
+                message['read_status'] = 'R'
                 return True, message
         return False, 'MSG_NOT_EXIST'
 
