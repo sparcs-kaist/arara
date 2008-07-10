@@ -8,20 +8,22 @@ from math import *
 
 server = xmlrpclib.Server("http://localhost:8000")
 
+guestSession = "00000000000000000000000000000000"
+
 def getBoardList(request):
     #Get board list
-    '''
     suc, ret = server.article_manager.board_list(request.session['arara_session'])
     if suc == True:
-        boardList = ret
+        boardList = ret.keys()
+        boardList += ['ssaljalu', request.session['arara_session']]
     else:
-        boardList = "게시판 목록 읽기 실패/ 데이터베이스 오류"
-    '''
-    boardList = ['KAIST', 'garbage']
+        boardList = ["게시판 목록 읽기 실패/ 데이터베이스 오류", 'ssaljalu', ret, request.session['arara_session']]
+    
+    #boardList = ['KAIST', 'garbage']
     return boardList
 
 def getLoginPanel(request):
-    if request.session.has_key('arara_session'):
+    if request.session['arara_session'] != guestSession:
         loginPanel = render_to_string('loggedin.html', {'nickname':getNickname(request)})
     else:
         loginPanel = render_to_string('loggedout.html', {})
@@ -45,6 +47,7 @@ def getNickname(request):
 def delSession(request):
     if request.session.has_key('arara_session') == True:
         del request.session['arara_session']
+        request.session['arara_session'] = guestSession
     if request.session.has_key('info') == True:
         del request.session['info']
 
@@ -92,46 +95,66 @@ def logout(request):
     rendered = render_to_string('redirect.html', {'url':redirectURL})
     return HttpResponse(rendered)
 
-def main(request):
-    boardList = getBoardList(request)
-    loginPanel = getLoginPanel(request)
-
-    msg = errormsg(request.GET.get('e', ""))
-
+def getTodayBest(request):
     todaybestlist = [{'title':'투베1', 'author':'쌀'},
             {'title':'투베2', 'author':'쌀'}]
     todaybest = render_to_string('listpanel.html',
             {'listname':'todaybest',
                 'articles':todaybestlist})
+    return todaybest
 
-    weekbestlist = [{'title':'윅베1', 'author':'쌀'},
+def getWeeklyBest(request):
+    weeklybestlist = [{'title':'윅베1', 'author':'쌀'},
             {'title':'윅베2', 'author':'쌀'}]
-    weekbest = render_to_string('listpanel.html',
-            {'listname':'weekbest',
-                'articles':weekbestlist})
+    weeklybest = render_to_string('listpanel.html',
+            {'listname':'weeklybest',
+                'articles':weeklybestlist})
+    return weeklybest
 
-    portallist = [{'title':'포탈1', 'author':'쌀'},
-            {'title':'포탈2', 'author':'쌀'}]
-    portal = render_to_string('listpanel.html',
-            {'listname':'portal',
-                'articles':portallist})
-
-
+def getKAISTNews(request):
     newslist = [{'title':'NEWS1', 'author':'쌀'},
             {'title':'NEWS2', 'author':'쌀'}]
     news = render_to_string('listpanel.html',
             {'listname':'news',
                 'articles':newslist})
+    return news
+
+def getKAISTPortal(request):
+    portallist = [{'title':'포탈1', 'author':'쌀'},
+            {'title':'포탈2', 'author':'쌀'}]
+    portal = render_to_string('listpanel.html',
+            {'listname':'portal',
+                'articles':portallist})
+    return portal
+
+def getBannerURL(request):
+    bannerURL = "/media/images/banner.png"
+    return bannerURL
+
+def main(request):
+    if request.session.has_key('arara_session') == False:
+        request.session['arara_session'] = guestSession
+
+    boardList = getBoardList(request)
+    loginPanel = getLoginPanel(request)
+
+    msg = errormsg(request.GET.get('e', ""))
+
+    todayBest = getTodayBest(request)
+    weeklyBest = getWeeklyBest(request)
+    kaistNews = getKAISTNews(request)
+    kaistPortal = getKAISTPortal(request)
+    bannerURL = getBannerURL(request)
 
     rendered = render_to_string('main.html',
             {'bbs_list':boardList,
                 'widget':widget,
                 'arara_login':loginPanel,
-                'today_best':todaybest,
-                'kaist_news':news,
-                'week_best':weekbest,
-                'portal':portal,
-                'banner':'배너',
+                'today_best':todayBest,
+                'kaist_news':kaistNews,
+                'week_best':weeklyBest,
+                'portal':kaistPortal,
+                'bannerURL':bannerURL,
                 'msg':msg})
     return HttpResponse(rendered)
 

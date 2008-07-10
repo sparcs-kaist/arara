@@ -1,19 +1,21 @@
 <html>
     <head>
         <title>This is ARA!</title>
+        <link rel="stylesheet" type="text/css" href="intro.css">
     </head>
     <body>
         <div id="postcard">
+            <img src="/media/images/postcard.png">
         </div>
-        <div id="loginpanel">
+        <div id="loginPanel">
             <form name="login" method="post" action="/login/">
-            <div id="id">아이디</div>
-            <div id="idinput"><input type="text" name="id"></div>
-            <div id="password">비밀번호</div>
-            <div id="passwordinput"><input type="password" name="password"></div>
-            <div id="login"><input type="submit" value="로그인"></div>
-            <div id="guest"><a href="/main/">손님</a></div>
-            <div id="register"><a href="/register/">회원가입</a></div>
+            <div id="id" class="key">아이디</div>
+            <div id="idinput" class="form"><input type="text" name="id"></div>
+            <div id="password" class="key">비밀번호</div>
+            <div id="passwordinput" class="form"><input type="password" name="password"></div>
+            <div id="login" class="button"><input type="image" src="/media/images/login.png"></div>
+            <div id="guest" class="button"><a href="/main/"><img src="/media/images/guest.png" border="0"></a></div>
+            <div id="register" class="button"><a href="/register/"><img src="/media/images/register.png" border="0"></a></div>
             </form>
         </div>
         <div>
