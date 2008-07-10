@@ -1,5 +1,6 @@
 <html>
 <head>
+<title> User's blacklist </title>
 <script type="text/javascript">
 function sbmt()
 {
@@ -46,14 +47,10 @@ background-color:339999
 		<tr>
 		    {% for list_head in b_list_h %}
 		    <th>
-		    {% ifequal list_head 'ID' %}
-		    {{list_head}}
-		    {% else %}
 		    <form action="">
 			{{list_head}}
 			<input type="checkbox" name=checkbox_{{list_head}}></input>
 		    </form>
-		    {% endifequal %}
 		    </th>
 		    {% endfor %}
 		</tr>
@@ -63,18 +60,20 @@ background-color:339999
 		    {% ifequal inventory 'ID' %} 
 		    <td>		  
 		    	{{object.ID}}
+			<form action="">
+			    <input type="checkbox" name=checkbox_{{object.ID}}_article></input>
 		    </td>
 		    {% endifequal %}
 		    {% ifequal inventory 'block_article' %}
 		    <td>
 			<form action="">
-			    <input type="checkbox"></input>
+			    <input type="checkbox" name=checkbox_{{object.ID}}_article></input>
 		    </td>
 		    {% endifequal %}
 		    {% ifequal inventory 'block_message' %}
 		    <td>
 			<form action="">
-			    <input type="checkbox"></input>
+			    <input type="checkbox" name=checkbox_{{object.ID}}_message safari=1></input>
 		    </td>
 		    {% endifequal %}
 		    {% endfor %}
@@ -95,6 +94,8 @@ background-color:339999
 		    <input type="button" onclick="sbmt()" value="submit"></input>
 		</form>
 	    </span>
+	    <br />
+	    <br />
 	    <div id="cautious">The limit number of blacklist members is 100.
 	    </div>	
 	    {% endblock %}

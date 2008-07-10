@@ -529,21 +529,21 @@ def add_black(request):
 
 class h: #help
     htm_item={'htm_item':[
-        {'name':'shortcut key', 'url':'shortcutkey'},
+        {'name':'shortcut', 'url':'shortcut'},
         {'name':'user agreement', 'url':'agreement'}]}
     
-    def fast():
+    def short():
         htm_item=copy.deepcopy(h.htm_item)
         return render_to_string('help_frame.html', htm_item)
-    fast=staticmethod(fast)
+    short=staticmethod(short)
     
     def agree():
         htm_item=copy.deepcopy(h.htm_item)
         return render_to_string('help_agreement.html', htm_item)
     agree=staticmethod(agree)
     
-def fastkey(request):
-    rendered = h.fast()
+def shortcut(request):
+    rendered = h.short()
     return HttpResponse(rendered)
 
 def agreement(request):

@@ -25,7 +25,7 @@ urlpatterns = patterns('',
     (r'^message/rom/(\d+)/$', 'warara.views.rom'),
     (r'^blacklist/mypage/$', 'warara.views.blacklist'),
     (r'^blacklist/add/$', 'warara.views.add_black'),
-    (r'^help/shortcutkey/$','warara.views.fastkey'),
+    (r'^help/shortcut/$','warara.views.shortcut'),
     (r'^help/agreement/$','warara.views.agreement'),
      
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.join(PROJECT_PATH, 'media/'), 'show_indexes': True}),
