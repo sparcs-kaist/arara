@@ -1,0 +1,51 @@
+Bootstrap test
+
+>>> import arara
+>>> server = arara.get_namespace()
+
+Register one user, mikkang
+
+>>> user_reg_dic = {'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+>>> server.member_manager.confirm('mikkang', register_key)
+(True, 'OK')
+>>> ret, session_key = server.login_manager.login('mikkang', 'mikkang', '143.248.234.140')
+>>> ret
+True
+
+Read_Status_Manager check!
+
+>>> server.read_status_manager.check_stat(session_key, 'garbages', 1)
+(True, 'R')
+>>> server.read_status_manager.check_stats(session_key, 'garbages', [1,2])
+(True, ['R', 'V'])
+>>> server.read_status_manager.mark_as_read(session_key, 'garbages', 1)
+(True, 'OK')
+>>> server.read_status_manager.mark_as_viewed(session_key, 'garbages', 1)
+(True, 'OK')
+
+Error Test
+
+>>> server.read_status_manager.check_stat(session_key, 'garbages', 3)
+(False, 'ARTICLE_NOT_EXIST')
+>>> server.read_status_manager.check_stat('asdfasdf', 'garbages', 1)
+(False, 'NOT_LOGGEDIN')
+
+>>> server.read_status_manager.check_stats(session_key, 'garbages', [1,2,3])
+(False, 'ARTICLE_NOT_EXIST')
+>>> server.read_status_manager.check_stats('asdfasdf', 'garbages', [1,2])
+(False, 'NOT_LOGGEDIN')
+
+>>> server.read_status_manager.mark_as_read(session_key, 'garbages', 3)
+(False, 'ARTICLE_NOT_EXIST')
+>>> server.read_status_manager.mark_as_read('asdfasdf', 'garbages', 1)
+(False, 'NOT_LOGGEDIN')
+
+>>> server.read_status_manager.mark_as_viewed(session_key, 'garbages', 3)
+(False, 'ARTICLE_NOT_EXIST')
+>>> server.read_status_manager.mark_as_viewed('asdfasdf', 'garbages', 2)
+(False, 'NOT_LOGGEDIN')
+
+

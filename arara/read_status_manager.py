@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from login_manager import *
-
-class NotLoggedln(Exception):
-    pass
+from arara.util import require_login
 
 class ReadStatusManager(object):
     '''
@@ -11,10 +8,16 @@ class ReadStatusManager(object):
     '''
 
     def __init__(self):
-        self.articles = {'garbages' : {}}
+        self.articles = {'garbages' : {1:{'read_status':'R'}, 2:{'read_status':'V'}}}
         
+    def _set_login_manager(self, login_manager):
+        self.login_manager = login_manager
 
-    def check_stat(self, session_key, bbs_name, no):
+    def _set_member_manager(self, member_manager):
+        self.member_manager = member_manager
+
+    @require_login
+    def check_stat(self, session_key, board_name, no):
         '''
         읽은 글인지의 여부를 체크
 
@@ -23,8 +26,8 @@ class ReadStatusManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @type  bbs_name: string
-        @param bbs_name: BBS Name
+        @type  board_name: string
+        @param board_name: board Name
         @type  no: integer
         @param no: Article Number
         @rtype: string
@@ -38,9 +41,15 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-                
+        try:
+            board = self.articles[board_name]
+            status = self.articles[board_name][no]['read_status'] 
+            return True, status
+        except KeyError:
+            return False, 'ARTICLE_NOT_EXIST'
 
-    def check_stats(self, session_key, bbs_name, no_list):
+    @require_login
+    def check_stats(self, session_key, board_name, no_list):
         '''
         복수개의 글의 읽은 여부를 체크
 
@@ -49,8 +58,8 @@ class ReadStatusManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @type  bbs_name: string
-        @param bbs_name: BBS Name
+        @type  board_name: string
+        @param board_name: board Name
         @type  no_list: list
         @param no_list: Article Numbers
         @rtype: list
@@ -61,8 +70,19 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+        try:
+            board = self.articles[board_name]
+            status = []
+            for index in no_list:
+                status.append(self.articles[board_name][index]['read_status']) 
+            return True, status
+        except KeyError:
+            return False, 'ARTICLE_NOT_EXIST'
 
-    def mark_as_read(self, session_key, bbs_name, no):
+
+
+    @require_login
+    def mark_as_read(self, session_key, board_name, no):
         '''
         읽은 글로 등록하기
 
@@ -71,8 +91,8 @@ class ReadStatusManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @type  bbs_name: string
-        @param bbs_name: BBS Name
+        @type  board_name: string
+        @param board_name: board Name
         @type  no : integer
         @param no : Article Number
         @rtype: string
@@ -83,15 +103,22 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+        try:
+            board = self.articles[board_name]
+            self.articles[board_name][no]['read_status'] = 'R' 
+            return True, 'OK'
+        except KeyError:
+            return False, 'ARTICLE_NOT_EXIST'
 
-    def mark_as_viewed(self, session_key, bbs_name, no):
+    @require_login
+    def mark_as_viewed(self, session_key, board_name, no):
         '''
         통과한 글로 등록하기
 
         @type  session_key: string
         @param session_key: User Key
-        @type  bbs_name: string
-        @param bbs_name: BBS Name
+        @type  board_name: string
+        @param board_name: board Name
         @type  no : integer
         @param no : Article Number
         @rtype: string
@@ -102,5 +129,12 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+        
+        try:
+            board = self.articles[board_name]
+            self.articles[board_name][no]['read_status'] = 'V' 
+            return True, 'OK'
+        except KeyError:
+            return False, 'ARTICLE_NOT_EXIST'
 
 # vim: set et ts=8 sw=4 sts=4
