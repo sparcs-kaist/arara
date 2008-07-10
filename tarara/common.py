@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # coding: utf-8
 
+import xmlrpclib
 import os
 import urwid.curses_display
 import urwid
@@ -12,6 +13,7 @@ class ara_forms(object):
         self.blank = urwid.SolidFill(u" ")
         self.blanktext = urwid.Filler(urwid.Text(' '))
         self.keymap = {}
+	self.server = xmlrpclib.Server("http://localhost:8000")
 
 	self.frame = self.__initwidgets__()
 

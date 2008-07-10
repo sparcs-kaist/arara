@@ -6,17 +6,13 @@ import urwid.curses_display
 import urwid
 from common import *
 
-keymap = {
-    'j': 'down',
-    'k': 'up',
-}
-
 class ara_welcome(ara_forms):
     def get_banner(self):
-        basedir = os.path.dirname(__file__)
-        banner = os.path.join(basedir, 'banner.txt')
-        f = open(banner, 'r')
-        return f.read().decode('utf-8')
+	banner = self.server.notice_manager.get_welcome()
+	if banner[0] == False:
+            return "오늘의 환영 인사는 없습니다."
+        else:
+            return banner[1]
 
     def get_ip(self):
         return "127.0.0.1"
