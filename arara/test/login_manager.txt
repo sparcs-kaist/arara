@@ -4,6 +4,8 @@ load LoginManager & MemberManager
 >>> import arara
 >>> server = arara.get_namespace()
 
+mikkang Login Test
+
 >>> user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
@@ -34,3 +36,16 @@ True
 (True, 'OK')
 >>> server.login_manager.logout(session_key)
 (False, 'NOT_LOGGEDIN')
+
+Guest Login Test
+
+>>> ret, guest_session_key = server.login_manager.guest_login('143.248.234.1')
+>>> ret
+True
+>>> server.login_manager.is_logged_in(guest_session_key)
+True
+>>> _, result = server.login_manager.get_session(guest_session_key)
+>>> result['ip']
+'143.248.234.1'
+>>> result['id']
+'guest'

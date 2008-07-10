@@ -10,6 +10,23 @@ class LoginManager(object):
     
     def __init__(self):
         self.session_dic = {}
+        
+    
+    def guest_login(self, guest_ip):
+        '''
+        guest 로그인 처리를 담당하는 함수
+        guest 의 ip를 받은 뒤 guest key를 리턴
+
+        @type  guest_ip: string
+        @param guest_ip: Guest IP
+        @rtype: string
+        @return: True, guest_key
+        '''
+        hash = hashlib.md5('guest'+''+datetime.datetime.today().__str__()).hexdigest()
+        timestamp = datetime.datetime.isoformat(datetime.datetime.now())
+        self.session_dic[hash] = {'id': 'guest', 'ip': guest_ip, 'logintime': timestamp}
+        return True, hash
+    
 
     def login(self, id, password, user_ip):
         '''
