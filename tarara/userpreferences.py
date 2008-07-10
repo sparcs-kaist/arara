@@ -39,11 +39,11 @@ class ara_userpreferences(ara_forms):
 
 	actiontext = urwid.Filler(urwid.Text("Actions"))
 	actions = ["Change password","View/edit blacklist","Change Introduction/Signature","Zap board","Set terminal encoding"]
-        actionitems = [urwid.Text(text) for text in actions]
+        actionitems = [urwid.Text(' * '+text) for text in actions]
         self.actionlist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(actionitems)))
 	actioncolumn = self._make_column(self.actionlist, self.blanktext)
 
-        self.joinpile = urwid.Pile([idcolumn, nickcolumn,langcolumn,('fixed',1,actiontext),actioncolumn])
+        self.joinpile = urwid.Pile([('fixed',2,idcolumn), ('fixed',2,nickcolumn),langcolumn,('fixed',1,actiontext),actioncolumn])
 
         okbutton = urwid.Filler(urwid.Button("OK"))
         cancelbutton = urwid.Filler(urwid.Button("Cancel"))
@@ -51,7 +51,7 @@ class ara_userpreferences(ara_forms):
 
         infotext = urwid.Filler(urwid.Text("  * Use [Tab] or arrow key to move each items"))
 
-        content = [('fixed',1,header),self.joinpile,('fixed',1,infotext),('fixed',1,self.blank),('fixed',1,buttoncolumn)]
+        content = [('fixed',1,header),self.joinpile,('fixed',1,self.dash),('fixed',1,infotext),('fixed',1,self.blank),('fixed',1,buttoncolumn)]
         self.mainpile = urwid.Pile(content)
 
         return self.mainpile

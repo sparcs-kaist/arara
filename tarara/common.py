@@ -25,8 +25,8 @@ class ara_forms(object):
 
     def run(self):
         size = self.ui.get_cols_rows()
-        quit = False
-        while not quit:
+        self.quit = False
+        while not self.quit:
             self.draw_screen(size)
             keys = self.ui.get_input()
             for key in keys:

@@ -45,7 +45,7 @@ class ara_main(ara_forms):
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Main Menu", align='center'))
 
-        menuitems = [urwid.Text(' * '+ text) for text in menu]
+        menuitems = [urwid.Text(' * '+ text + '\n') for text in menu]
         self.menulist = urwid.ListBox(urwid.SimpleListWalker(menuitems))
 
 	self.tbtext = urwid.Filler(urwid.Text(u"Today Best", align='center'))
@@ -66,7 +66,7 @@ u"""  * Press [Tab] to jump between menu, today best, weekly best
 
         self.maincolumn = urwid.Columns([('weight',40,self.menulist),('weight',60,self.bests)])
 
-        content = [('fixed',1, self.header),self.maincolumn,('fixed',2,self.copyrightnotice)]
+        content = [('fixed',1, self.header),('fixed',1,self.dash),self.maincolumn,('fixed',1,self.dash),('fixed',2,self.copyrightnotice)]
         self.mainpile = urwid.Pile(content)
 
         return self.mainpile
