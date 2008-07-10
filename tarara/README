@@ -1,3 +1,5 @@
+* common.py : Common forms
+
 * login.py : Login screen
 * welcome.py : Welcome screen
 * join.py : join screen
