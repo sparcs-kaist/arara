@@ -31,7 +31,7 @@ class MessagingManager(object):
         @param session_key: User Key
         @rtype: list
         @return:
-            1. 리스트 읽어오기 성공: True, Message List
+            1. 리스트 읽어오기 성공: True, Message List(보낸쪽지가 없을 경우 [] return)
             2. 리스트 읽어오기 실패:
                 1. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
