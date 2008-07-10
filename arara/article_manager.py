@@ -59,6 +59,7 @@ class ArticleManager(object):
     def write_article(self, session_key, board_name, article_dic):
         '''
         DB에 게시글 하나를 작성함
+        Article Dictionary { no, read_status, title, content, author, date, hit, vote }
 
         @type  session_key: string
         @param session_key: User Key
