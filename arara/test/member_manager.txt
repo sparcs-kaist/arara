@@ -26,7 +26,7 @@ True
 >>> server.member_manager.modify(session_key, modify_user_reg_dic)
 (True, 'OK')
 >>> search_user_info ={}
->>> search_user_info['id'] = 'mikkang'
+>>> search_user_info['id'] = 'mikka'
 >>> server.member_manager.search_user(session_key, search_user_info)
 (True, 'mikkang')
 >>> server.member_manager.remove_user(session_key)

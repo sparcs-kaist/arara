@@ -319,7 +319,8 @@ class MemberManager(object):
             value = search_user_info.values()[0]
             assert key == 'id' or key == 'nickname'
             for id, info in self.member_dic.items():
-                if info[key] == value: return True, id
+                if value in info[key]:
+                    return True, id
             return False, 'NOT_EXIST_USER'
         except AssertionError:
             pass
