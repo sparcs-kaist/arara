@@ -53,6 +53,12 @@ True
 >>> server.messaging_manager.receive_list(mikkang_session_key)
 (True, [{'to': 'mikkang', 'message': 'hello', 'from': 'serialx', 'msg_no': 1, 'sent_time': '1970-01-01 09:00:01.100000'}, {'to': 'mikkang', 'message': 'hello2', 'from': 'serialx', 'msg_no': 2, 'sent_time': '1970-01-01 09:00:01.100000'}])
 
+>>> server.messaging_manager.sent_list(serialx_session_key)
+(True, [{'to': 'mikkang', 'message': 'hello', 'from': 'serialx', 'msg_no': 1, 'sent_time': '1970-01-01 09:00:01.100000'}, {'to': 'mikkang', 'message': 'hello2', 'from': 'serialx', 'msg_no': 2, 'sent_time': '1970-01-01 09:00:01.100000'}])
+
+>>> server.messaging_manager.sent_list(mikkang_session_key)
+(True, [])
+
 >>> server.messaging_manager.read_message(mikkang_session_key, 1)
 (True, {'to': 'mikkang', 'message': 'hello', 'from': 'serialx', 'msg_no': 1, 'sent_time': '1970-01-01 09:00:01.100000'})
 >>> server.messaging_manager.read_message(mikkang_session_key, 2)

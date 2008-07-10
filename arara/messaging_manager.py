@@ -36,6 +36,12 @@ class MessagingManager(object):
                 1. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+        ret, user_info = self.login_manager.get_session(session_key)
+        assert ret
+        user_id = user_info['id']
+        sent_messages = filter(lambda x: x['from'] == user_id, self.message_list)
+        return True, sent_messages
+
 
     @require_login
     def receive_list(self, session_key):
@@ -58,8 +64,8 @@ class MessagingManager(object):
         ret, user_info = self.login_manager.get_session(session_key)
         assert ret
         user_id = user_info['id']
-        messages = filter(lambda x: x['to'] == user_id, self.message_list)
-        return True, messages
+        receive_messages = filter(lambda x: x['to'] == user_id, self.message_list)
+        return True, receive_messages
 
     @require_login
     def send_message(self, session_key, to, msg):
