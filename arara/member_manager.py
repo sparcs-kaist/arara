@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import md5
-from arara.database_factory import get_database_connection
 from arara.util import require_login
 
 class WrongDictionary(Exception):
@@ -17,27 +16,12 @@ class NotLoggedIn(Exception):
     pass
 
 
-MEMBER_TABLE_SQL = '''
-CREATE TABLE members (id varchar(50),
-                      password varchar(50),
-                      nickname varchar(50),
-                      email varchar(50),
-                      sig varchar(255),
-                      self_introduce varchar(255),
-                      default_language varchar(10)
-                      )
-'''
-
-
 class MemberManager(object):
     '''
     회원 가입, 회원정보 수정, 회원정보 조회, 이메일 인증등을 담당하는 클래스
     '''
 
     def __init__(self):
-        conn = get_database_connection()
-        c = conn.cursor()
-        ret = c.execute(MEMBER_TABLE_SQL)
         # mock data
         self.member_dic = {}  # DB에서 member table를 read해오는 부분
 
