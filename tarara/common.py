@@ -32,7 +32,7 @@ class ara_forms(object):
             keys = self.ui.get_input()
             for key in keys:
                 if key in self.keymap:
-                    key = keymap[key]
+                    key = self.keymap[key]
 		if "window resize" in keys:
                     size = self.ui.get_cols_rows()
                 self.__keypress__(size, key)
