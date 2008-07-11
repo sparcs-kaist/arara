@@ -26,6 +26,9 @@ class ara_login(ara_forms):
                 self.errormessage.body.set_text(u"데이터베이스 오류가 발생했습니다.")
             else:
                 assert(False)
+            self.idedit.body.set_edit_text("")
+            self.pwedit.body.set_edit_text("")
+            self.idpwpile.set_focus(0)
 
     def __keypress__(self, size, key):
         curfocus = self.bottomcolumn.get_focus_column()
