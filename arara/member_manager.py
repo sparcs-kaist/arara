@@ -2,6 +2,7 @@
 
 import md5
 from arara.util import require_login
+>>>>>>> .r151
 
 class WrongDictionary(Exception):
     pass

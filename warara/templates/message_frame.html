@@ -4,41 +4,45 @@
     <head>
 	<style>form{ display : inline ; }</style>
 	<style type="text/css">
-	    #message_top_menu{
-		background-color:#ffaa00
+	    #message_top_menu {
+		background-color: #ffaa00
 	    }
-	</style>
-	<style type="text/css">
-	    #m_text textarea{
+	    #m_text textarea {
 		font-size: 9pt;
 		background-color:#99ccff; 
-		border:0 solid #6699ff;
-		height:165px;
-		width:324px;
-		overflow-y:auto;
-		scrollbar-face-color:#99ccff;
-		scrollbar-highlight-color:#99ccff;
-		scrollbar-3dlight-color:#99ccff;
-		scrollbar-shadow-color:#99ccff;
-		scrollbar-darkshadow-color:#99ccff;
-		scrollbar-track-color:#99ccff;
-		scrollbar-arrow-color:#99ccff;
+		border: 0 solid #6699ff;
+		height: 165px;
+		width: 324px;
+		overflow-y: auto;
+		overflow-x: hidden;
+		scrollbar-face-color: #99ccff;
+		scrollbar-highlight-color: #99ccff;
+		scrollbar-3dlight-color: #99ccff;
+		scrollbar-shadow-color: #99ccff;
+		scrollbar-darkshadow-color: #99ccff;
+		scrollbar-track-color: #99ccff;
+		scrollbar-arrow-color: #99ccff;
 	    }
-	    #page_no_view{
-		position:relative;
-		left:10%;
+	    #page_no_view {
+		position: relative;
+		left: 10%;
 	    }
-	    #m_list{
+	    #m_list {
 		font-size:15px;
 	    }
-	    #m_list table,tr,td,th{
-		border:0;
+	    #m_list table,tr,td,th {
+		border: 0;
 	    }
-	    A:visited, A:link{
-		text-decoration:none;
-		color:#000000;
+	    A:visited, A:link {
+		text-decoration: none;
+		color: #000000;
+	    }
+	    span.help_message_title {
+		font-size: 9pt;
+		background-color: #9cf;
 	    }
 	</style>
+
     </head>
     <body>
         <div id=message_top_menu>
@@ -55,14 +59,19 @@
 	    {% block message_content %}
 	    <div id="m_list">
 		{% block m_list %}
-		    <form action="">
-			<select name="nmespp">   <!-- Number of message show per 1page -->
-			    {% for n in nmespp %}
+		    <form method="post" action="/message/inbox/1/">
+			<select name="nmpp" onChange="submit()">   <!-- Number of message show per 1page -->
+			    {% for n in nmppsl %}
+			    {% ifequal n nmpp %}
+			    <option value="{{n}}" selected="selected">{{n}}</option>
+			    {% else %}
 			    <option value="{{n}}">{{n}}</option>
+			    {% endifequal %}
 			    {% endfor %}
 			</select>
 		    </form>
 
+		    <!--
 		    <form action="">
 			<select name="m_opse"> <!-- message option of search -->
 			    {% for op in m_opse %}
@@ -74,8 +83,9 @@
 			<input type="submit" name="m_se_submit" value="search"></input>
 
 		    </form>
+		    -->
 
-		    <table border="1">
+		    <table>
 			<tr>
 			    {% for th in m_list_key %}
 			    <th>

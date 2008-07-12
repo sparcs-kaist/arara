@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 import copy
 import xmlrpclib
 import sys
+import pickle
 from math import *
 
 server = xmlrpclib.Server("http://localhost:8000")
@@ -257,8 +258,26 @@ def write(request, bbs):
 
 
 class m: #message
+    @staticmethod
+    def dbread(key):
+	fp = open('dbfile.txt')
+	dbdict = pickle.load(fp)
+	value = dbdict.get(key, None)
+	fp.close()
+	return value
+
+    @staticmethod
+    def dbwrite(key, value):
+	fp = open('dbfile.txt')
+	dbdict = pickle.load(fp)
+	fp.close()
+	dbdict[key] = value
+
+	fp = open('dbfile.txt', 'w')
+	pickle.dump(dbdict, fp)
+	fp.close()
+	return
     
-    nmpp=10 #number of message per page
     mppp=10 #number of page per page
     
     mtm_item={'mtm_item':[  #message top menu item
@@ -266,7 +285,7 @@ class m: #message
         {'name':'outbox', 'url':'outbox/1/'},
         {'name':'send', 'url':'send'},
         {'name':'search user', 'url':'msu'}]} 
-    mtm_item['nmespp']=[20, 30, 50]
+    mtm_item['nmppsl']=[5, 10, 20] #number of message per page select list
     mtm_item['m_opse']=['content', 'sender']
     mtm_item['num_new_m']=0
     mtm_item['num_m']=0
@@ -279,14 +298,17 @@ class m: #message
     mtm_item['p_prev']=mtm_item['pvmte']
     mtm_item['p_next']=mtm_item['nemte']
     mtm_item['p_end']=mtm_item['nemli']
+    mtm_item['nmpp'] = 7 
     
     m_list=[]
     m_list.append({'checkbox':'checkbox', 'sender':'ssaljalu', 'msg_no':10,
-        'receiver':'jacob', 'text':'Who are you', 'time':'08.06.26 18:51'})
+        'receiver':'jacob', 'text':'Who are you', 'time':'08.06.26 18:51',
+	'new':'old'})
     m_list_key=['checkbox', 'sender', 'text', 'time']
     m_list_value=[]
     m_list.append({'checkbox':'checkbox', "msg_no":7, "sender":"pipoket", 
-        "receiver":"serialx","text": "polabear hsj", "time":"2008.02.13. 12:17:34"})
+        "receiver":"serialx","text": "polabear hsj", 
+	"time":"2008.02.13. 12:17:34", 'new':'old'})
     m_list.append({'checkbox':'checkbox', 'msg_no':int(9482), 'sender':'peremen',
 	'receiver':'pv457', 'time':'08.07.03 14:35', 'text':'''
 	you spin me right round
@@ -301,11 +323,11 @@ class m: #message
 	you spin me right round
 	you spin me right round
 	you spin me right roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright roundright round
-	'''})
+	''', 'new':'new'})
     for k in range(700,1000):
 	m_list.append({'checkbox':'checkbox', 'sender':'breadfish',
 	    'receiver':'breadfish', 'time':'08.07.05 14:00',
-	    'msg_no':k, 'text':''.join([str(k)]*20)})
+	    'msg_no':k, 'text':''.join([str(k)]*20), 'new':'old'})
 
     mtm_item['m_list']=m_list
     mtm_item['m_list_key']=m_list_key
@@ -327,7 +349,7 @@ class m: #message
 	p_no=int(p_no)
 	cm=copy.deepcopy(mtm_item)
 
-	nmpp=cls.nmpp
+	nmpp=cm['nmpp']
 	mppp=cls.mppp
 	m_num=len(cm['m_list']) #message number
         p_num = ceil(float(m_num) / nmpp) #number of page
@@ -372,7 +394,8 @@ class m: #message
                     lm=10 #length limit
                     if len(list.get(key))>lm:
                         list[key]=''.join([list.get(key)[0:lm], '...'])
-		    cm['m_list_value'][0].append({ 'key':key, 'value':list[key], 'msg_no':list.get('msg_no')})
+		    cm['m_list_value'][0].append({ 'key':key, 'new':list.get('new'),
+			'value':list[key], 'msg_no':list.get('msg_no')})
 		    continue
                 cm['m_list_value'][0].append(list.get(key))
         return cm
@@ -388,25 +411,25 @@ class m: #message
     @classmethod
     def message_read_page_move(cls, m_no):
 	cm=m.mtm_item
-	nmpp=cls.nmpp
+	nmpp=cm['nmpp']
 	m_ino = m.indexof(cm['m_list'], m_no) #message_indexno
 	cm['mrpv']={}
 
-	cm['mrpv']['pvmli']={'mark':cm['pvmli'], 'no':0, 'urln':''}
+	cm['mrpv']['pvmli']={'mark':'', 'no':0, 'urln':''}
 	cm['mrpv']['pvmte']={'mark':cm['pvmte'], 'no':1, 'urln':''}
 	cm['mrpv']['nemte']={'mark':cm['nemte'], 'no':2, 'urln':''}
-	cm['mrpv']['nemli']={'mark':cm['nemli'], 'no':3, 'urln':''}
+	cm['mrpv']['nemli']={'mark':'', 'no':3, 'urln':''}
 
 	if m_ino>0:
-	    cm['mrpv']['pvmte']['urln']=cm['m_list'][m_ino-1]['msg_no']
-	    cm['mrpv']['pvmli']['urln']=cm['m_list'][0]['msg_no']
+	    cm['mrpv']['nemte']['urln']=cm['m_list'][m_ino-1]['msg_no']
+	    cm['mrpv']['nemli']['urln']=cm['m_list'][0]['msg_no']
 	    if m_ino>=nmpp:
-		cm['mrpv']['pvmli']['urln']=cm['m_list'][m_ino-nmpp]['msg_no']
+		cm['mrpv']['nemli']['urln']=cm['m_list'][m_ino-nmpp]['msg_no']
 	if m_ino<cm['num_m']-1 :
-	    cm['mrpv']['nemte']['urln']=cm['m_list'][m_ino+1]['msg_no']
-	    cm['mrpv']['nemli']['urln']=cm['m_list'][cm['num_m']-1]['msg_no']
+	    cm['mrpv']['pvmte']['urln']=cm['m_list'][m_ino+1]['msg_no']
+	    cm['mrpv']['pvmli']['urln']=cm['m_list'][cm['num_m']-1]['msg_no']
 	    if m_ino<cm['num_m']-nmpp:
-		cm['mrpv']['nemli']['urln']=cm['m_list'][m_ino+nmpp]['msg_no']
+		cm['mrpv']['pvmli']['urln']=cm['m_list'][m_ino+nmpp]['msg_no']
 	
 	def get_no(mrpv):
 	    return mrpv['no']
@@ -418,10 +441,13 @@ class m: #message
         return render_to_string('write_message.html', mtm_item)
     write = staticmethod(write)
 
-    def inbox_list(num_page):
+    def inbox_list(request, num_page):
         mtm_item=copy.deepcopy(m.mtm_item)
 	mtm_item['readtype']="rim"
 	mtm_item['listtype']='inbox'
+	
+	mtm_item['nmpp'] = int(request.POST.get('nmpp', m.dbread('nmpp')))
+	m.dbwrite('nmpp', mtm_item['nmpp'])
 	try:
 	    mtm_item=m.pa_con(p_no=num_page, mtm_item=mtm_item)
 	except IndexError:
@@ -431,11 +457,13 @@ class m: #message
         return render_to_string('inbox_list.html', mtm_item)
     inbox_list = staticmethod(inbox_list)
 
-    def outbox_list(num_page):
+    def outbox_list(request, num_page):
         mtm_item=copy.deepcopy(m.mtm_item)
         mtm_item['m_list_key']=['checkbox', 'receiver', 'text', 'time']
 	mtm_item['readtype']="rom"
 	mtm_item['listtype']='outbox'
+	mtm_item['nmpp'] = int(request.POST.get('nmpp', m.dbread('nmpp')))
+	m.dbwrite('nmpp', mtm_item['nmpp'])
 	try:
 	    mtm_item=m.pa_con(p_no=num_page, mtm_item=mtm_item)
 	except IndexError:
@@ -500,11 +528,11 @@ def write_message(request):
     return HttpResponse(rendered)
 
 def inbox_list(request, num_page):
-    rendered = m.inbox_list(num_page)
+    rendered = m.inbox_list(request, num_page)
     return HttpResponse(rendered)
 
 def outbox_list(request, num_page):
-    rendered = m.outbox_list(num_page)
+    rendered = m.outbox_list(request, num_page)
     return HttpResponse(rendered)
 
 def msu(request): #message search user
