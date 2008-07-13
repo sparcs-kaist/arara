@@ -1,50 +1,8 @@
 <html>
     <head>
-	<title>{{brower_title}}</title>
+        <title>ARA</title>
+        <link rel="stylesheet" type="text/css" href="/media/style/mainframe.css">
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-	<style>form{ display : inline ; }</style>
-        <style type="text/css">
-	    #header{
-		position:relative;
-		width:1024px;
-		height:154px;
-		background-color:#00ff78
-	    }
-	    #header_left { 
-		float:left
-	    }
-	    #header_right {
-		float:right
-	    }
-	    #container{
-		width:1024px;
-		margin:0 auto;
-		background-color: #fdd
-	    }
-	    #content{
-		float:right;
-		width:500px
-	    }
-	    #navigation{
-		float:left;
-		width:200px; 
-		background-color: #dfd
-	    }
-	    #main_title{
-		position:absolute;
-		bottom:10px;
-		left:10px;
-		font-family:sans-serif; 
-		border:medium double black;
-		font-size:200%
-	    }
-	    #main_inventory{
-		position:relative;
-		top:60px;
-		right:10px
-	    }
-	    
-        </style>
 	<script type="text/javascript">
 	    function clock()
 	    {
@@ -82,24 +40,19 @@
         <div id="container">
 	<div id="header">
 	    <div id="header_left">
-		<span id="main_title"><a href="/main/">WebARra</a></span>
+		<a href="/main/">WebARra</a>
 	    </div>
 	    <div id="header_right">
-		<span id="main_ksearch">
+		<div id="ksearchPanel">
 		    <form name = "ksearch" method = "GET" action = "http://sparcs40.kaist.ac.kr:8000/search">
 			<input type = "text" name ="q">
 			<input type = "submit" value = "KSearch">
 		    </form>
-		</span>
-		<span id="main_inventory">
-		    {{arara_login}}
-		    <a href=# onclick="window.open('/help/shortcut', '_blank', 'width=400px height=600px')">
-			Help</a>
-		    <a href=# onclick="window.open('/message/inbox/1/', '_blank', 'width=380px, height=500px')">
-			message</a>
-		    <a href=# onclick="window.open('/blacklist/mypage', '_blank', 'width=400px, height=500px')">
-			blacklist</a>
-		</span>
+		</div>
+		<div id="main_inventory">
+                    {{arara_login}}
+		    <a id="helpPanel" href=# onclick="window.open('/help/shortcut', '_blank', 'width=400px height=600px')">Help</a>
+		</div>
 	    </div>
         </div>
         <div id="navigation">

@@ -1,16 +1,16 @@
 {% extends "mainframe.html" %}
 
 {% block arara_content %}
-<div id="today_best">
+<div id="today_best" class="mainLeftListPanel">
     {{today_best}}
 </div>
-<div id="week_best">
-    {{week_best}}
-</div>
-<div id="kaist_news">
+<div id="kaist_news" class="mainRightListPanel">
     {{kaist_news}}
 </div>
-<div id="portal">
+<div id="week_best" class="mainLeftListPanel">
+    {{week_best}}
+</div>
+<div id="portal" class="mainRightListPanel">
     {{portal}}
 </div>
 <div id="banner">
