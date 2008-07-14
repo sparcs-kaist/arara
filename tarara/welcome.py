@@ -5,6 +5,7 @@ import os
 import urwid.curses_display
 import urwid
 from common import *
+from main import *
 
 class ara_welcome(ara_forms):
     def get_banner(self):
@@ -22,6 +23,10 @@ class ara_welcome(ara_forms):
 
     def get_date(self):
         return "Today"
+
+    def __keypress__(self, size, key):
+        if "enter" in key:
+            ara_main(self.session_key).main()
 
     def __initwidgets__(self):
         self.banner = urwid.Filler(urwid.Text(self.get_banner()))

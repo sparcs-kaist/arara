@@ -52,6 +52,11 @@ class ara_forms(object):
         canvas = self.frame.render(size, focus=True)
         self.ui.draw_screen(size, canvas)
 
+    def update_session(self):
+        if self.session_key != None:
+            retvalue = self.server.update_session(self.session_key)
+        return retvalue[0]
+
     def _make_column(self,widget1, widget2,ratio1=60, ratio2=40):
         return urwid.Columns([
             ('weight', ratio1, widget1),

@@ -6,6 +6,7 @@ import urwid.curses_display
 import urwid
 from common import *
 from join import *
+from welcome import *
 
 class ara_login(ara_forms):
     def get_login_message(self):
@@ -40,7 +41,8 @@ class ara_login(ara_forms):
                 if self.idpwpile.get_focus() == self.idedit:
                     self.idpwpile.set_focus(1)
                 elif self.idpwpile.get_focus() == self.pwedit:
-                    print self.login(self.idedit.body.get_edit_text(), self.pwedit.body.get_edit_text(), "127.0.0.1")
+                    session_key = self.login(self.idedit.body.get_edit_text(), self.pwedit.body.get_edit_text(), "127.0.0.1")
+                    ara_welcome(session_key).main()
                 else:
                     assert(False)
             elif curfocus == 1:
@@ -50,8 +52,8 @@ class ara_login(ara_forms):
                 if row ==0:
                     ara_join().main()
                 elif row == 1:
-                    # TODO: 메인 페이지로 넘어가기
-                    print self.server.login_manager.guest_login("127.0.0.1")[1]
+                    session_key = self.server.login_manager.guest_login("127.0.0.1")[1]
+                    ara_welcome(session_key).main()
         else:
             self.bottomcolumn.keypress(size, key)
 
