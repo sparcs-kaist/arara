@@ -44,10 +44,9 @@ class ara_join(ara_forms):
                 self.mainpile.set_focus(self.buttoncolumn)
             else:
                 pass
-        elif key.strip() == 'up':
-            pass
-        elif key.strip() == 'down':
-            pass
+        elif key.strip() == 'up' or key.strip() == 'down':
+            if curfocus == self.langcolumn:
+                self.frame.keypress(size, key)
         else:
             self.frame.keypress(size, key)
 
@@ -83,7 +82,7 @@ class ara_join(ara_forms):
 
 	langtext = urwid.Filler(urwid.Text("Language:"))
         langitems = ['Korean','English','Chinese']
-        langitems = [urwid.AttrWrap(urwid.Text(w),None,'selected') for w in langitems]
+        langitems = [Item(w,None,'selected') for w in langitems]
         self.langlist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(langitems)))
 	self.lang = urwid.Columns([langtext, self.langlist])
         langdesc = urwid.Filler(urwid.Text("Select your favorite\ninterface language"))

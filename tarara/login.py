@@ -47,7 +47,12 @@ class ara_login(ara_forms):
             elif curfocus == 2:
                 pass
         else:
-            self.frame.keypress(size, key)
+            if curfocus == 1:
+                self.langlist.keypress(size, key)
+            elif curfocus == 2:
+                self.joinlist.keypress(size, key)
+            else:
+                self.bottomcolumn.keypress(size, key)
 
     def __initwidgets__(self):
         self.message = urwid.Filler(urwid.Text(self.get_login_message(), align="center"))
@@ -61,11 +66,11 @@ class ara_login(ara_forms):
 
 
         langitems = ['Korean','English','Chinese']
-        langitems = [urwid.AttrWrap(urwid.Text(w), None, 'selected') for w in langitems]
+        langitems = [Item(w, None, 'selected') for w in langitems]
         self.langlist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(langitems)))
 
         joinitems = ['Join','Guest']
-        joinitems = [urwid.AttrWrap(urwid.Text(w), None, 'selected') for w in joinitems]
+        joinitems = [Item(w, None, 'selected') for w in joinitems]
         self.joinlist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(joinitems)))
 
         self.bottomcolumn = urwid.Columns([('weight',40,self.idpwpile),('weight',30,self.langlist),('weight',30,self.joinlist)])
