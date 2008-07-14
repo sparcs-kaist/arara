@@ -56,7 +56,7 @@ class ara_login(ara_forms):
                     session_key = self.server.login_manager.guest_login("127.0.0.1")
                     ara_welcome(session_key[1]).main()
         else:
-            self.bottomcolumn.keypress(size, key)
+            self.frame.keypress(size, key)
 
     def __initwidgets__(self):
         self.message = urwid.Filler(urwid.Text(self.get_login_message(), align="center"))

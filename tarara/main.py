@@ -27,6 +27,16 @@ class ara_main(ara_forms):
 	    [u"랄라","kkhsoft"],
 	]
 
+    def __keypress__(self, size, key):
+        key = key.strip().lower()
+        if key == "tab":
+            if self.maincolumn.get_focus() == self.menulist:
+                self.maincolumn.set_focus(self.bests)
+            elif self.maincolumn.get_focus() == self.bests:
+                self.maincolumn.set_focus(self.menulist)
+        else:
+            self.frame.keypress(size, key)
+
     def get_weekly_best(self):
         return [
             [u"투베갑시다", "peremen"],
@@ -41,16 +51,17 @@ class ara_main(ara_forms):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Main Menu", align='center'))
 
         menuitems = [Item(" * "+w+"\n", None, 'selected') for w in self.menu]
-#        menuitems = [urwid.Text(' * '+ text + '\n') for text in self.menu]
         self.menulist = urwid.ListBox(urwid.SimpleListWalker(menuitems))
 
 	self.tbtext = urwid.Filler(urwid.Text(u"Today Best", align='center'))
-	tbitems = [urwid.Text("%(name)s (%(date)s)" % {"name":text[0], "date":text[1]}) for text in self.get_today_best()]
+	tbitems = ["%(name)s (%(date)s)" % {"name":text[0], "date":text[1]} for text in self.get_today_best()]
+        tbitems = [Item(w, None, 'selected') for w in tbitems]
         self.tblist = urwid.ListBox(urwid.SimpleListWalker(tbitems))
 	self.todaybest = urwid.Pile([('fixed',1,self.tbtext), self.tblist])
 
 	self.wbtext = urwid.Filler(urwid.Text(u"Weekly Best", align='center'))
-	wbitems = [urwid.Text("%(name)s (%(date)s)" % {"name":text[0], "date":text[1]}) for text in self.get_weekly_best()]
+	wbitems = ["%(name)s (%(date)s)" % {"name":text[0], "date":text[1]} for text in self.get_today_best()]
+        wbitems = [Item(w, None, 'selected') for w in wbitems]
         self.wblist = urwid.ListBox(urwid.SimpleListWalker(wbitems))
 	self.weeklybest = urwid.Pile([('fixed',1,self.wbtext), self.wblist])
 
@@ -64,6 +75,13 @@ u"""  * Press [Tab] to jump between menu, today best, weekly best
 
         content = [('fixed',1, self.header),('fixed',1,self.dash),self.maincolumn,('fixed',1,self.dash),('fixed',2,self.copyrightnotice)]
         self.mainpile = urwid.Pile(content)
+
+        self.keymap = {
+            "left":"",
+            "right":"",
+            "j":"down",
+            "k":"up",
+            }
 
         return self.mainpile
 
