@@ -47,12 +47,7 @@ class ara_login(ara_forms):
             elif curfocus == 2:
                 pass
         else:
-            if curfocus == 1:
-                self.langlist.keypress(size, key)
-            elif curfocus == 2:
-                self.joinlist.keypress(size, key)
-            else:
-                self.bottomcolumn.keypress(size, key)
+            self.bottomcolumn.keypress(size, key)
 
     def __initwidgets__(self):
         self.message = urwid.Filler(urwid.Text(self.get_login_message(), align="center"))

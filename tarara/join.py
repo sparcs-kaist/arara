@@ -44,7 +44,7 @@ class ara_join(ara_forms):
                 self.mainpile.set_focus(self.buttoncolumn)
             else:
                 pass
-        elif key.strip() == 'up' or key.strip() == 'down':
+        elif key.strip() in ('up','down'):
             if curfocus == self.langcolumn:
                 self.frame.keypress(size, key)
         else:
