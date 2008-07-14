@@ -50,7 +50,8 @@ class ara_login(ara_forms):
                 if row ==0:
                     ara_join().main()
                 elif row == 1:
-                    print "guest"
+                    # TODO: 메인 페이지로 넘어가기
+                    print self.server.login_manager.guest_login("127.0.0.1")
         else:
             self.bottomcolumn.keypress(size, key)
 
