@@ -6,46 +6,42 @@ import urwid.curses_display
 import urwid
 from common import *
 
-keymap = {
-    'j': 'down',
-    'k': 'up',
-}
-menu = [
-    "(N)ew article",
-    "(S)elect board",
-    "(P)rivate message",
-    "(U)ser preferences",
-    "(H)elp",
-    "(A)bout ARA",
-    "(W)elcome screen",
-    "(Q)uit",
-]
-
 class ara_main(ara_forms):
+    menu = [
+        "(N)ew article",
+        "(S)elect board",
+        "(P)rivate message",
+        "(U)ser preferences",
+        "(H)elp",
+        "(A)bout ARA",
+        "(W)elcome screen",
+        "(Q)uit",
+    ]
     def get_today_best(self):
         return [
-            ["투베갑시다", "peremen"],
-	    ["나도 투베가자","pipoket"],
-	    ["꺼져라 내가 투베간다","ssaljalu"],
-	    ["같이가요","jacob"],
-	    ["메롱 약오르지","combacsa"],
-	    ["랄라","kkhsoft"],
+            [u"투베갑시다", "peremen"],
+	    [u"나도 투베가자","pipoket"],
+	    [u"꺼져라 내가 투베간다","ssaljalu"],
+	    [u"같이가요","jacob"],
+	    [u"메롱 약오르지","combacsa"],
+	    [u"랄라","kkhsoft"],
 	]
 
     def get_weekly_best(self):
         return [
-            ["투베갑시다", "peremen"],
-	    ["나도 투베가자","pipoket"],
-	    ["꺼져라 내가 투베간다","ssaljalu"],
-	    ["같이가요","jacob"],
-	    ["메롱 약오르지","combacsa"],
-	    ["랄라","kkhsoft"],
+            [u"투베갑시다", "peremen"],
+	    [u"나도 투베가자","pipoket"],
+	    [u"꺼져라 내가 투베간다","ssaljalu"],
+	    [u"같이가요","jacob"],
+	    [u"메롱 약오르지","combacsa"],
+	    [u"랄라","kkhsoft"],
 	]
 
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Main Menu", align='center'))
 
-        menuitems = [urwid.Text(' * '+ text + '\n') for text in menu]
+        menuitems = [Item(" * "+w+"\n", None, 'selected') for w in self.menu]
+#        menuitems = [urwid.Text(' * '+ text + '\n') for text in self.menu]
         self.menulist = urwid.ListBox(urwid.SimpleListWalker(menuitems))
 
 	self.tbtext = urwid.Filler(urwid.Text(u"Today Best", align='center'))
@@ -61,7 +57,7 @@ class ara_main(ara_forms):
 	self.bests = urwid.Pile([self.todaybest, self.weeklybest])
 	self.copyrightnotice = urwid.Filler(urwid.Text(
 u"""  * Press [Tab] to jump between menu, today best, weekly best
- ARAra Release 1.0                                  Copyright © 2008, SPARCS"""))
+ ARAra Release 1.0                                Copyright (C) 2008, SPARCS"""))
 
 
         self.maincolumn = urwid.Columns([('weight',40,self.menulist),('weight',60,self.bests)])

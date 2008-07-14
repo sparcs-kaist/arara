@@ -11,7 +11,7 @@ class ara_welcome(ara_forms):
     def get_banner(self):
 	banner = self.server.notice_manager.get_welcome()
 	if banner[0] == False:
-            return "오늘의 환영 인사는 없습니다."
+            return u"오늘의 환영 인사는 없습니다."
         else:
             return banner[1]
 

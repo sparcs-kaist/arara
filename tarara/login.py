@@ -18,7 +18,7 @@ class ara_login(ara_forms):
     def login(self, id, password, ip):
         retvalue = self.server.login_manager.login(id, password, ip)
         if retvalue[0] == True:
-            return retvalue[1]
+            pass
         else:
             if retvalue[1] == 'WRONG_ID':
                 self.errormessage.body.set_text(u"ID가 ㅇ벗습니다.")
@@ -31,6 +31,7 @@ class ara_login(ara_forms):
             self.idedit.body.set_edit_text("")
             self.pwedit.body.set_edit_text("")
             self.idpwpile.set_focus(0)
+        return retvalue
 
     def __keypress__(self, size, key):
         curfocus = self.bottomcolumn.get_focus_column()
@@ -38,13 +39,13 @@ class ara_login(ara_forms):
             self.bottomcolumn.set_focus_column((curfocus + 1) % 3)
         elif key.strip() == 'enter':
             if curfocus == 0:
-                if self.idpwpile.get_focus() == self.idedit:
+                curpos = self.idpwpile.get_focus()
+                if (curpos == self.idedit) & (self.idedit.body.get_edit_text().strip() != ""):
                     self.idpwpile.set_focus(1)
-                elif self.idpwpile.get_focus() == self.pwedit:
+                elif (curpos == self.pwedit) & (self.pwedit.body.get_edit_text().strip() != ""):
                     session_key = self.login(self.idedit.body.get_edit_text(), self.pwedit.body.get_edit_text(), "127.0.0.1")
-                    ara_welcome(session_key).main()
-                else:
-                    assert(False)
+                    if session_key[0] != False:
+                        ara_welcome(session_key[1]).main()
             elif curfocus == 1:
                 langindex = self.langlist.w.get_focus().get_focus().get_focus()[1]
             elif curfocus == 2:
@@ -52,8 +53,8 @@ class ara_login(ara_forms):
                 if row ==0:
                     ara_join().main()
                 elif row == 1:
-                    session_key = self.server.login_manager.guest_login("127.0.0.1")[1]
-                    ara_welcome(session_key).main()
+                    session_key = self.server.login_manager.guest_login("127.0.0.1")
+                    ara_welcome(session_key[1]).main()
         else:
             self.bottomcolumn.keypress(size, key)
 
