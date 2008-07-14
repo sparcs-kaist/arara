@@ -104,6 +104,7 @@ class ara_join(ara_forms):
 
 	return self.mainpile
 
-ara_join().main()
+if __name__=="__main__":
+    ara_join().main()
 
 # vim: set et ts=8 sw=4 sts=4:

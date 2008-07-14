@@ -5,6 +5,7 @@ import os
 import urwid.curses_display
 import urwid
 from common import *
+from join import *
 
 class ara_login(ara_forms):
     def get_login_message(self):
@@ -43,9 +44,13 @@ class ara_login(ara_forms):
                 else:
                     assert(False)
             elif curfocus == 1:
-                pass
+                langindex = self.langlist.w.get_focus().get_focus().get_focus()[1]
             elif curfocus == 2:
-                pass
+                row = self.joinlist.w.get_focus().get_focus().get_focus()[1]
+                if row ==0:
+                    ara_join().main()
+                elif row == 1:
+                    print "guest"
         else:
             self.bottomcolumn.keypress(size, key)
 
@@ -58,7 +63,6 @@ class ara_login(ara_forms):
         self.idedit = urwid.Filler(urwid.Edit(caption="ID:", wrap='clip'))
         self.pwedit = urwid.Filler(urwid.Edit(caption="Password:", wrap='clip'))
         self.idpwpile = urwid.Pile([self.idedit, self.pwedit])
-
 
         langitems = ['Korean','English','Chinese']
         langitems = [Item(w, None, 'selected') for w in langitems]
