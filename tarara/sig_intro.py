@@ -11,7 +11,7 @@ keymap = {
     'k': 'up',
 }
 
-class ara_post(ara_forms):
+class ara_sig_intro(ara_forms):
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Change Introduction & Signature", align='center'))
 
@@ -30,6 +30,7 @@ class ara_post(ara_forms):
 
         return self.mainpile
 
-ara_post().main()
+if __name__=="__main__":
+    ara_sig_intro().main()
 
-# vim: set et ts=8 sw=4 sts=4
+# vim: set et ts=8 sw=4 sts=4:

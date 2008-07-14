@@ -37,6 +37,7 @@ class ara_welcome(ara_forms):
 
         return self.mainpile
 
-ara_welcome().main()
+if __name__=="__main__":
+    ara_welcome().main()
 
-# vim: set et ts=8 sw=4 sts=4
+# vim: set et ts=8 sw=4 sts=4:

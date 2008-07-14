@@ -6,7 +6,7 @@ import urwid.curses_display
 import urwid
 from common import *
 
-class ara_userpreferences(ara_forms):
+class ara_user_preferences(ara_forms):
     def get_login_message(self):
         basedir = os.path.dirname(__file__)
         banner = os.path.join(basedir, 'login.txt')
@@ -50,6 +50,7 @@ class ara_userpreferences(ara_forms):
 
         return self.mainpile
 
-ara_userpreferences().main()
+if __name__=="__main__":
+    ara_user_preferences().main()
 
-# vim: set et ts=8 sw=4 sts=4
+# vim: set et ts=8 sw=4 sts=4:

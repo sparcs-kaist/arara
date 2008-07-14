@@ -11,7 +11,7 @@ keymap = {
     'k': 'up',
 }
 
-class ara_pm_read(ara_forms):
+class ara_read_pm(ara_forms):
     def get_current_board(self):
 	return "garbages"
 
@@ -26,6 +26,7 @@ class ara_pm_read(ara_forms):
 
         return self.mainpile
 
-ara_pm_read().main()
+if __name__ == "__main__":
+    ara_pm_read().main()
 
-# vim: set et ts=8 sw=4 sts=4
+# vim: set et ts=8 sw=4 sts=4:

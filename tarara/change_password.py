@@ -45,6 +45,7 @@ class ara_changepw(ara_forms):
 
         return self.mainpile
 
-ara_changepw().main()
+if __name__=="__main__":
+    ara_changepw().main()
 
-# vim: set et ts=8 sw=4 sts=4
+# vim: set et ts=8 sw=4 sts=4:

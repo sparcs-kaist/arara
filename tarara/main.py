@@ -71,6 +71,7 @@ u"""  * Press [Tab] to jump between menu, today best, weekly best
 
         return self.mainpile
 
-ara_main().main()
+if __name__=="__main__":
+    ara_main().main()
 
-# vim: set et ts=8 sw=4 sts=4
+# vim: set et ts=8 sw=4 sts=4:

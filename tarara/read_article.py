@@ -6,7 +6,7 @@ import urwid.curses_display
 import urwid
 from common import *
 
-class ara_article_read(ara_forms):
+class ara_read_article(ara_forms):
     def get_current_board(self):
 	return "garbages"
 
@@ -25,6 +25,7 @@ class ara_article_read(ara_forms):
 
         return self.mainpile
 
-ara_article_read().main()
+if __name__=="__main__":
+    ara_read_article().main()
 
-# vim: set et ts=8 sw=4 sts=4
+# vim: set et ts=8 sw=4 sts=4:
