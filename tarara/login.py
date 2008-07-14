@@ -43,9 +43,9 @@ class ara_login(ara_forms):
                 else:
                     assert(False)
             elif curfocus == 1:
-                return
+                pass
             elif curfocus == 2:
-                return
+                pass
         else:
             self.frame.keypress(size, key)
 
@@ -59,15 +59,18 @@ class ara_login(ara_forms):
         self.pwedit = urwid.Filler(urwid.Edit(caption="Password:", wrap='clip'))
         self.idpwpile = urwid.Pile([self.idedit, self.pwedit])
 
-        langitems = [urwid.Text('Korean'), urwid.Text('English'), urwid.Text('Chinese')]
+
+        langitems = ['Korean','English','Chinese']
+        langitems = [urwid.AttrWrap(urwid.Text(w), None, 'selected') for w in langitems]
         self.langlist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(langitems)))
 
-        joinitems = [urwid.Text('Join'), urwid.Text('Guest')]
+        joinitems = ['Join','Guest']
+        joinitems = [urwid.AttrWrap(urwid.Text(w), None, 'selected') for w in joinitems]
         self.joinlist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(joinitems)))
 
         self.bottomcolumn = urwid.Columns([('weight',40,self.idpwpile),('weight',30,self.langlist),('weight',30,self.joinlist)])
 
-        content = [self.message,('fixed',1,self.errormessage),('fixed',1, self.dash), ("fixed", 1, self.message_ko), ('fixed',1,self.message_en), ('fixed',1,self.blank), ('fixed',4,self.bottomcolumn)]
+        content = [self.message,('fixed',1,self.errormessage),('fixed',1, self.dash), ("fixed", 1, self.message_ko), ('fixed',1,self.message_en), ('fixed',1,self.blank), ('fixed',5,self.bottomcolumn)]
         self.mainpile = urwid.Pile(content)
 
         self.keymap = {'left':'', 'right':''}

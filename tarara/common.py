@@ -22,6 +22,10 @@ class ara_forms(object):
 
     def main(self):
         self.ui = urwid.curses_display.Screen()
+        self.ui.register_palette([
+            ('header', 'black', 'dark cyan', 'standout'),
+            ('selected', 'default', 'light gray', 'bold'),
+            ])
         self.ui.run_wrapper(self.run)
 
     def run(self):
@@ -47,4 +51,4 @@ class ara_forms(object):
             ('weight', ratio2, widget2),
             ])
 
-# vim: set et ts=8 sw=4 sts=4
+# vim: set et ts=8 sw=4 sts=4:
