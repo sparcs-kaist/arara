@@ -13,13 +13,14 @@ class Item(widget.Selectable, urwid.AttrWrap):
         urwid.AttrWrap.__init__(self, w, attr, focus_attr)
 
 class ara_forms(object):
-    def __init__(self):
+    def __init__(self, session_key = None):
         self.utf8decode = urwid.escape.utf8decode
         self.dash = urwid.SolidFill(self.utf8decode('─'))
         self.blank = urwid.SolidFill(u" ")
         self.blanktext = urwid.Filler(urwid.Text(' '))
         self.keymap = {}
 	self.server = xmlrpclib.Server("http://localhost:8000")
+        self.session_key = session_key
 
 	self.frame = self.__initwidgets__()
 
