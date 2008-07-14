@@ -17,7 +17,7 @@ class ara_login(ara_forms):
     def login(self, id, password, ip):
         retvalue = self.server.login_manager.login(id, password, ip)
         if retvalue[0] == True:
-            return
+            return retvalue[1]
         else:
             if retvalue[1] == 'WRONG_ID':
                 self.errormessage.body.set_text(u"ID가 ㅇ벗습니다.")
@@ -40,7 +40,7 @@ class ara_login(ara_forms):
                 if self.idpwpile.get_focus() == self.idedit:
                     self.idpwpile.set_focus(1)
                 elif self.idpwpile.get_focus() == self.pwedit:
-                    self.login(self.idedit.body.get_edit_text(), self.pwedit.body.get_edit_text(), "127.0.0.1")
+                    print self.login(self.idedit.body.get_edit_text(), self.pwedit.body.get_edit_text(), "127.0.0.1")
                 else:
                     assert(False)
             elif curfocus == 1:
@@ -51,7 +51,7 @@ class ara_login(ara_forms):
                     ara_join().main()
                 elif row == 1:
                     # TODO: 메인 페이지로 넘어가기
-                    print self.server.login_manager.guest_login("127.0.0.1")
+                    print self.server.login_manager.guest_login("127.0.0.1")[1]
         else:
             self.bottomcolumn.keypress(size, key)
 

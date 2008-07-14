@@ -46,12 +46,25 @@ class ara_join(ara_forms):
                 pass
         elif key.strip() in ('up','down'):
             if curfocus == self.langcolumn:
-                self.frame.keypress(size, key)
+                press = False
+                curcolumn = self.langlist.w.get_focus().get_focus().get_focus()[1]
+                if curcolumn in range(1,2):
+                    press = True
+                elif curcolumn == 0:
+                    if key.strip() == 'down':
+                        press = True
+                elif curcolumn == 2:
+                    if key.strip() == 'up':
+                        press = True
+                if press:
+                    self.frame.keypress(size, key)
+            else:
+                pass
         else:
             self.frame.keypress(size, key)
 
     def on_button_clicked(self, button):
-        if button == self.joinbutton:
+        if button == self.joinbutton.body:
             reg_dic = {'id':self.idedit.body.get_edit_text(), 'password':self.pwedit.body.get_edit_text(), 'nickname':self.nickedit.body.get_edit_text(), 'email':self.emailedit.body.get_edit_text(), 'sig':'', 'self_introduce':'','default_language':'ko'}
             print self.server.member_manager.register(reg_dic)
         elif button == self.cancelbutton:
