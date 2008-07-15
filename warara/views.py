@@ -258,6 +258,11 @@ def write(request, bbs):
 
 
 class m: #message
+    def __init__(self):
+	fp = open('dbfile.txt', 'w')
+	pickle.cump({'nmpp':5})
+	fp.close()
+
     @staticmethod
     def dbread(key):
 	fp = open('dbfile.txt')
