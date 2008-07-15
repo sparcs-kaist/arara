@@ -39,6 +39,8 @@ now Testing Article Manager!
 (True, 'OK')
 >>> server.article_manager.read(session_key, 'garbages', 1)
 (True, {'title': 'serialx is...', 'ip': '143.248.234.140', 'author': 'serialx', 'content': 'polarbear', 'time': '1970-01-01 09:00:01.100000', 'reply': [{'ip': '143.248.234.140', 'time': '1970-01-01 09:00:01.100000', 'context': 'asdf', 'author': 'pv457'}], 'method': 'web'})
+>>> server.article_manager.article_list(session_key, 'garbages')
+(True, [{'title': 'serialx is...', 'ip': '143.248.234.140', 'author': 'serialx', 'content': 'polarbear', 'time': '1970-01-01 09:00:01.100000', 'reply': [{'ip': '143.248.234.140', 'time': '1970-01-01 09:00:01.100000', 'context': 'asdf', 'author': 'pv457'}], 'method': 'web'}])
 >>> server.article_manager.board_list(session_key)
 (True, {'garbages': 1})
 >>> server.login_manager.logout(session_key)
