@@ -4,23 +4,10 @@
 import os
 import urwid.curses_display
 import urwid
-from widget import *
 from ara_forms import *
+from widget import *
 
 class ara_user_preferences(ara_forms):
-    menu = [
-        "(L)ist all users",
-        "List (c)onnected users",
-        "(M)onitor connected users",
-        "(Q)uery user",
-    ]
-    menudesc = [
-        "Show all registered users\n",
-        "Show information about\ncurrent users",
-        "Monitor current users\n",
-        "Query about user's last used\nIP, introduction, etc.",
-    ]
-
     def get_login_message(self):
         basedir = os.path.dirname(__file__)
         banner = os.path.join(basedir, 'login.txt')
@@ -30,21 +17,37 @@ class ara_user_preferences(ara_forms):
     def __initwidgets__(self):
 	header = urwid.Filler(urwid.Text("ARA: User Preferences", align='center'))
 
-        menuitems = [Item(" * "+w+"\n", None, 'selected') for w in self.menu]
-        self.menulist = urwid.ListBox(urwid.SimpleListWalker(menuitems))
+	idedit = urwid.Filler(urwid.Text("ID: %(id)s\nE-Mail: %(email)s" % {"id":"peremen","email":"ara@peremen.name"}))
+	iddesc = urwid.Filler(urwid.Text("You can't change ID\nand E-Mail"))
+        idcolumn = self._make_column(idedit, iddesc)
 
-        menudescs = [Item(w, None, 'selected') for w in self.menudesc]
-        self.menudesc = urwid.ListBox(urwid.SimpleListWalker(menudescs))
+        nickedit = urwid.Filler(urwid.Edit(caption="Nickname:", wrap='clip'))
+        nickdesc=urwid.Filler(urwid.Text("You can't use duplicated\nnickname"))
+        nickcolumn = self._make_column(nickedit, nickdesc)
+        
+	langtext = urwid.Filler(urwid.Text("Language:"))
+        langitems = ['Korean', 'English','Chinese']
+        langitems = [Item(text, None, 'selected') for text in langitems]
+        self.langlist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(langitems)))
+	self.lang = urwid.Columns([langtext, self.langlist])
+        langdesc = urwid.Filler(urwid.Text("Select your favorite\ninterface language"))
+	langcolumn = self._make_column(self.lang, langdesc)
 
-        menucolumn = self._make_column(self.menulist, self.menudesc)
+	actiontext = urwid.Filler(urwid.Text("Actions"))
+	actions = ["Change password","View/edit blacklist","Change Introduction/Signature","Zap board","Set terminal encoding"]
+        actionitems = [Item(' * '+text, None, 'selected') for text in actions]
+        self.actionlist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(actionitems)))
+	actioncolumn = self._make_column(self.actionlist, self.blanktext)
 
-        infotext = urwid.Filler(urwid.Text("  * Use [Tab] or arrow key to move each items"))
+        self.joinpile = urwid.Pile([('fixed',2,idcolumn), ('fixed',2,nickcolumn),langcolumn,('fixed',1,actiontext),actioncolumn])
 
         okbutton = urwid.Filler(urwid.Button("OK"))
         cancelbutton = urwid.Filler(urwid.Button("Cancel"))
         buttoncolumn = self._make_column(okbutton, cancelbutton, 50, 50)
 
-        content = [('fixed',1,header),menucolumn,('fixed',1,self.dash),('fixed',1,infotext),('fixed',1,self.blank),('fixed',1,buttoncolumn)]
+        infotext = urwid.Filler(urwid.Text("  * Use [Tab] or arrow key to move each items"))
+
+        content = [('fixed',1,header),self.joinpile,('fixed',1,self.dash),('fixed',1,infotext),('fixed',1,self.blank),('fixed',1,buttoncolumn)]
         self.mainpile = urwid.Pile(content)
 
         return self.mainpile
