@@ -6,6 +6,7 @@ import urwid.curses_display
 import urwid
 import re
 from common import *
+from widget import *
 
 class ara_join(ara_forms):
     def get_login_message(self):

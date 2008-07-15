@@ -5,12 +5,6 @@ import xmlrpclib
 import os
 import urwid.curses_display
 import urwid
-import widget
-
-class Item(widget.Selectable, urwid.AttrWrap):
-    def __init__(self, text, attr, focus_attr=None):
-        w = urwid.Text(text)
-        urwid.AttrWrap.__init__(self, w, attr, focus_attr)
 
 class ara_forms(object):
     def __init__(self, session_key = None):

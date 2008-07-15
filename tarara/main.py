@@ -5,6 +5,7 @@ import os
 import urwid.curses_display
 import urwid
 from common import *
+from widget import *
 
 class ara_main(ara_forms):
     menu = [

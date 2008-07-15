@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# coding: utf-8
+
 import urwid
 
 class Selectable:
@@ -34,3 +37,8 @@ class FieldRow(urwid.WidgetWrap):
             else:
                 widgets.append(('fixed', width, widget))
         return urwid.Columns(widgets, dividechars=1)
+
+class Item(Selectable, urwid.AttrWrap):
+    def __init__(self, text, attr, focus_attr=None):
+        w = urwid.Text(text)
+        urwid.AttrWrap.__init__(self, w, attr, focus_attr)
