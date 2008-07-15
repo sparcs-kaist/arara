@@ -6,6 +6,7 @@ import urwid.curses_display
 import urwid
 from ara_forms import *
 from widget import *
+from list_boards import *
 
 class ara_main(ara_forms):
     menu = [
@@ -28,16 +29,6 @@ class ara_main(ara_forms):
 	    [u"랄라","kkhsoft"],
 	]
 
-    def __keypress__(self, size, key):
-        key = key.strip().lower()
-        if key == "tab":
-            if self.maincolumn.get_focus() == self.menulist:
-                self.maincolumn.set_focus(self.bests)
-            elif self.maincolumn.get_focus() == self.bests:
-                self.maincolumn.set_focus(self.menulist)
-        else:
-            self.frame.keypress(size, key)
-
     def get_weekly_best(self):
         return [
             [u"투베갑시다", "peremen"],
@@ -48,10 +39,28 @@ class ara_main(ara_forms):
 	    [u"랄라","kkhsoft"],
 	]
 
+    def __keypress__(self, size, key):
+        key = key.strip().lower()
+        if key == "tab":
+            if self.maincolumn.get_focus() == self.menulist:
+                self.maincolumn.set_focus(self.bests)
+            elif self.maincolumn.get_focus() == self.bests:
+                self.maincolumn.set_focus(self.menulist)
+        elif key == "enter":
+            if self.maincolumn.get_focus() == self.menulist:
+                pos = self.menulist.get_focus()[1]
+                if pos == 1:
+                    # TODO: 새 글 읽기로 가기
+                    pass
+                elif pos == 2:
+                    ara_list_boards(self.session_key).main()
+        else:
+            self.frame.keypress(size, key)
+
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Main Menu", align='center'))
-
-        menuitems = [Item(" * "+w+"\n", None, 'selected') for w in self.menu]
+        menuitems = [urwid.Text('\n')]
+        menuitems +=[Item(" * "+w+"\n", None, 'selected') for w in self.menu]
         self.menulist = urwid.ListBox(urwid.SimpleListWalker(menuitems))
 
 	self.tbtext = urwid.Filler(urwid.Text(u"Today Best", align='center'))
@@ -70,7 +79,6 @@ class ara_main(ara_forms):
 	self.copyrightnotice = urwid.Filler(urwid.Text(
 u"""  * Press [Tab] to jump between menu, today best, weekly best
  ARAra Release 1.0                                Copyright (C) 2008, SPARCS"""))
-
 
         self.maincolumn = urwid.Columns([('weight',40,self.menulist),('weight',60,self.bests)])
 
