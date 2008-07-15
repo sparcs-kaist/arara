@@ -4,7 +4,7 @@
 import os
 import urwid.curses_display
 import urwid
-from common import *
+from ara_forms import *
 from widget import *
 
 class ara_main(ara_forms):

@@ -4,7 +4,7 @@
 import os
 import urwid.curses_display
 import urwid
-from common import *
+from ara_forms import *
 
 class ara_changepw(ara_forms):
     def get_login_message(self):
