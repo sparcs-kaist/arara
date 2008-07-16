@@ -28,7 +28,11 @@ class ara_list_pm(ara_forms):
 
         boardlist = listview.get_view(itemlist, header, pmlist_rowitem)
 
-        content = [('fixed',1, self.header),('fixed',1,self.infotext),boardlist,]
+        self.inboxbutton = urwid.Filler(urwid.Button("Inbox"))
+        self.outboxbutton = urwid.Filler(urwid.Button("Outbox"))
+        self.buttoncolumn = self._make_column(self.inboxbutton, self.outboxbutton, 50, 50)
+
+        content = [('fixed',1, self.header),('fixed',1,self.infotext),('fixed',1,self.buttoncolumn),boardlist,]
         self.mainpile = urwid.Pile(content)
 
         return self.mainpile
