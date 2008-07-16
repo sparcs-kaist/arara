@@ -6,6 +6,14 @@ import urwid.curses_display
 import urwid
 from ara_forms import *
 from widget import *
+import listview
+
+class boardlist_rowitem(FieldRow):
+    fields = [
+        ('new', 1, 'right'),
+        ('name',12, 'left'),
+        ('desc',0, 'left'),
+    ]
 
 class ara_list_boards(ara_forms):
     def __initwidgets__(self):
@@ -21,7 +29,14 @@ class ara_list_boards(ara_forms):
         self.boardnameedit = urwid.Filler(urwid.Edit(caption=" * Enter board name: ", wrap='clip'))
         boardcounttext = urwid.Filler(urwid.Text(' * There are %s boards.' % len(boardlist[1].keys())))
 
-        content = [('fixed',1, self.header),('fixed',1,self.boardnameedit),('fixed',1,boardcounttext),self.blanktext]
+        itemlist = []
+        for data in boardlist[1].keys():
+            itemlist += [{'new':'N', 'name':data, 'desc':u'설명'}]
+        header = {'new':'N', 'name':'Name', 'desc':'Description'}
+
+        boardlist = listview.get_view(itemlist, header, boardlist_rowitem)
+
+        content = [('fixed',1, self.header),('fixed',1,self.boardnameedit),('fixed',1,boardcounttext),boardlist]
         self.mainpile = urwid.Pile(content)
 
         return self.mainpile

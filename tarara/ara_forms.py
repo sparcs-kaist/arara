@@ -26,6 +26,7 @@ class ara_forms(object):
         self.ui.register_palette([
             ('header', 'black', 'dark cyan', 'standout'),
             ('selected', 'default', 'light gray', 'bold'),
+            ('reversed', 'white', 'black', 'bold'),
             ])
         self.ui.run_wrapper(self.run)
 

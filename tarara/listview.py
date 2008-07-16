@@ -36,9 +36,9 @@ def make_widget(data, rowitem):
     @rtype: widget.MarkerSelect
     @return: 위젯 rowitem.
     '''
-    return widget.MarkerSelect('>', rowitem(data))
+    return widget.MarkedItem('>', rowitem(data))
 
-def make_header(data):
+def make_header(data, rowitem):
     '''
     헤더 데이터를 받아서 rowitem을 만들어 주는 함수.
 
@@ -46,12 +46,14 @@ def make_header(data):
 
     @type data: dict
     @param data: 헤더 데이터
+    @type rowitem: widget.FieldRow
+    @param rowitem: 열 정보를 담고 있는 FieldRow의 자식 클래스.
     @rtype: urwid.AttrWrap
     @return: 헤더 rowitem.
     '''
-    return urwid.AttrWrap(make_widget(data), 'reversed')
+    return urwid.AttrWrap(make_widget(data, rowitem), 'reversed')
 
-def get_view(datalist):
+def get_view(datalist, header, rowitem):
     '''
     헤더와 데이터를 합쳐서 완성된 리스트 뷰를 만들어 주는 함수.
 
@@ -59,13 +61,15 @@ def get_view(datalist):
 
     @type datalist: list
     @param data: 각 열에 해당하는 데이터를 담고 있는 dictionary의 목록.
+    @type rowitem: widget.FieldRow
+    @param rowitem: 열 정보를 담고 있는 FieldRow의 자식 클래스.
     @rtype: urwid.Frame
     @return: 리스트 뷰 프레임.
     '''
-    walker = urwid.SimpleListWalker([make_widget(datum) for datum in datalist])
+    walker = urwid.SimpleListWalker([make_widget(datum, rowitem) for datum in datalist])
 
     body = urwid.ListBox(walker)
-    header = make_header()
+    header = make_header(header, rowitem)
     return urwid.Frame(body, header)
 
 # vim: set et ts=8 sw=4 sts=4:
