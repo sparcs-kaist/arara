@@ -27,6 +27,6 @@ class ara_read_pm(ara_forms):
         return self.mainpile
 
 if __name__ == "__main__":
-    ara_pm_read().main()
+    ara_read_pm().main()
 
 # vim: set et ts=8 sw=4 sts=4:

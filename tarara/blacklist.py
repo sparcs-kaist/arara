@@ -21,6 +21,6 @@ class ara_blacklist(ara_forms):
         return self.mainpile
 
 if __name__=="__main__":
-    ara_blacklist(session_key = "e00bc932cc2d375075f443133ae0fa44").main()
+    ara_blacklist().main()
 
 # vim: set et ts=8 sw=4 sts=4:

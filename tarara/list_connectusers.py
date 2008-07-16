@@ -23,6 +23,6 @@ class ara_list_connectusers(ara_forms):
         return self.mainpile
 
 if __name__=="__main__":
-    ara_list_connectusers(session_key = "e00bc932cc2d375075f443133ae0fa44").main()
+    ara_list_connectusers().main()
 
 # vim: set et ts=8 sw=4 sts=4:
