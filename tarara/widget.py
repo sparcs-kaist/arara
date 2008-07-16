@@ -43,26 +43,5 @@ class FieldRow(urwid.WidgetWrap):
                 widgets.append(('fixed', width, widget))
         return urwid.Columns(widgets, dividechars=1)
 
-class RowItem(FieldRow):
-    fields = [
-        ('number', 5, 'right'),
-        ('id', 8, 'left'),
-        ('name', 10, 'left'),
-        ('date', 5, 'right'),
-        ('subject', 0, 'left'),
-    ]
+# vim: set et ts=8 sw=4 sts=4:
 
-class ListView(object):
-    def make_widget(data):
-        return widget.MarkerSelect('>', RowItem(data))
-
-    def make_header():
-        data = {'number': u'번호', 'id': u'글쓴이', 'name': u'이름', 'date': u'날짜', 'subject': u'제목'}
-        return urwid.AttrWrap(make_widget(data), 'reversed')
-
-    def get_view():
-        walker = urwid.SimpleListWalker([make_widget({'number': '1', 'id': '2', 'name': 'peremen', 'date': 'today', 'subject': 'good article'})])
-
-        body = urwid.ListBox(walker)
-        header = make_header()
-        return urwid.Frame(body, header)
