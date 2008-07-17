@@ -3,7 +3,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-    <link rel="stylesheet" href="style.css" />
+    {% block script %}{% endblock %}
+    {% block style %}{% endblock %}
+    <link rel="stylesheet" href="/media/style/style.css" />
     <title>{% block title %}아라{% endblock %}</title>
 </head>
 

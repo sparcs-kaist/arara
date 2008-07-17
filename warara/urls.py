@@ -1,3 +1,7 @@
+import os
+import settings
+PROJECT_PATH = settings.PROJECT_PATH
+
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
@@ -9,4 +13,6 @@ urlpatterns = patterns('',
 
     # Uncomment this for admin:
 #     (r'^admin/', include('django.contrib.admin.urls')),
+    (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.join(PROJECT_PATH, 'media')}),
+
 )
