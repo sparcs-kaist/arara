@@ -1,5 +1,35 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+<div id="todays_best" class="best_articles">
+    <table id="todays_best_table" class="best_articles_table">
+        <tr>
+            <th>제목</th>
+            <th>답글수</th>
+            <th>날짜</th>
+        </tr>
+        {% for todays_best in todays_best_list %}
+        <tr>
+            <td>{{todays_best.title}}</td>
+            <td>{{todays_best.reply_count}}</td>
+            <td>{{todays_best.date|date:"m.d H:i"}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+<div id="weekly_best" class="best_articles">
+    <table id="weekly_best_table" class="best_articles_table">
+        <tr>
+            <th>제목</th>
+            <th>날짜</th>
+        </tr>
+        {% for weekly_best in weekly_best_list %}
+        <tr>
+            <td>{{weekly_best.title}}</td>
+            <td>{{weekly_best.reply_count}}</td>
+            <td>{{weekly_best.date|date:"m.d H:i"}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
 {% endblock %}
