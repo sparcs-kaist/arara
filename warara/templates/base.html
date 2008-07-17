@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <link rel="stylesheet" href="style.css" />
+    <title>{% block title %}아라{% endblock %}</title>
+</head>
+
+<body>
+    <div id="menu">
+        {% block menu %}
+        <ul>
+            <li><a href="/board/KAIST">KAIST</a></li>
+            <li><a href="/board/garbages">garbages</a></li>
+            <li><a href="/board/InfoWorld">InfoWorld</a></li>
+        </ul>
+        {% endblock %}
+    </div>
+
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
+
