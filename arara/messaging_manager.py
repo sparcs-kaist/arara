@@ -72,7 +72,7 @@ class MessagingManager(object):
         '''
         쪽지 전송하기
 
-        >>> messaging.send_message(session_key, 'pv457', 'hello, world')
+        >>> server.messaging_manager.send_message(session_key, 'pv457', 'hello, world')
         True, 'OK'
 
         @type  session_key: string

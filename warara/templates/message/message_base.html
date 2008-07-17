@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block style %}
+<link rel="stylesheet" href="/media/style/message_base.css"></link>
+{% endblock style %}
+
+{% block content %}
+<div id="message_menu">
+    {% block message_menu %}
+    <span>
+	<a href="inbox/">inbox</a>
+	<a href="outbox/">outbox</a>
+	<a href="send/">send</a>
+    </span>
+    {% endblock %}
+</div>
+<div id="message_content">
+    {% block message_content %}
+    {% endblock message_content %}
+</div>
+{% endblock content %}

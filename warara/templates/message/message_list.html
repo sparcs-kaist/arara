@@ -1,0 +1,49 @@
+{% extends "message/message_base.html" %}
+
+{% block message_content %}
+<div>
+{% if message_list_type %}
+{{num_new_message}} new message(s) / {{num_message}} message(s)
+{% endif %}
+</div>
+
+<div id="message_list_table">
+    <table border="1">
+        <tr>
+            <th>
+                <form>
+                    <input type="checkbox"></input>
+                </form>
+            </th>
+            {% for key in m_list_key %}
+            <th>
+                {{key.th}}
+            </th>
+            {% endfor %}
+        </tr>
+        {% for message in m_list %}
+        <tr>
+            <td>
+                <form>
+                    <input type="checkbox"></input>
+                </form>
+            </td>
+            {% for key in m_list_key %}
+            {% for m_ui_key, m_ui_value in message.items %}
+            {% ifequal m_ui_key key.internal %}
+            <td>
+                {% ifequal key.internal 'message' %}
+                <a href="read/">{{m_ui_value}}</a>
+                {% else %}
+                {{m_ui_value}}
+                {% endifequal %}
+            </td>
+            {% endifequal %}
+            {% endfor %}
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock message_content %}
