@@ -6,5 +6,14 @@ $(document).ready(function(){
         function(event) {
             $(this).removeClass("highlight");
         }
-    )
+    );
+    $("tr.best_articles_table_content").click(
+        function(event) {
+            $.post("/", {aaa: "asdf"},
+                function(data, textStatus) {
+                    alert(data);
+                }
+            );
+        }
+    );
 });
