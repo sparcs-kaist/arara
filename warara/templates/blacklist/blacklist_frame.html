@@ -1,0 +1,29 @@
+<html>
+<head>
+    <title> {% block title %} blacklist {% endblock title %} </title>
+</head>
+<body>
+    <div id="mypage">
+        {% block my_blacklist %}
+        {% endblock my_blacklist %}
+        <form id="">
+            <input type="submit" name="delete" value="Delete" />
+            <input type="submit" name="done" value="Done" />
+        </form>
+    </div>
+    <div id="search_user">
+        {% block add_blacklist %}
+        {% endblock add_blacklist %}
+        <form id="search_sphere">
+            <input type="checkbox" />
+            <input type="checkbox" />
+            <input type="submit" />
+        </form>
+    </div>
+    <div id="searching_results">
+        {% block results_search %}
+        {% endblock results_search %}
+    </div>
+</body>
+</html>
+    
