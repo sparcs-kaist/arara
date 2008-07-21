@@ -15,35 +15,52 @@
                     <input type="checkbox"></input>
                 </form>
             </th>
-            {% for key in m_list_key %}
+            {% for th in m_list_th %}
             <th>
-                {{key.th}}
+                {{th}}
             </th>
             {% endfor %}
         </tr>
-        {% for message in m_list %}
+        {% for message in message_list %}
         <tr>
             <td>
                 <form>
                     <input type="checkbox"></input>
                 </form>
             </td>
-            {% for key in m_list_key %}
-            {% for m_ui_key, m_ui_value in message.items %}
-            {% ifequal m_ui_key key.internal %}
+            {% for message_info in message %}
             <td>
-                {% ifequal key.internal 'message' %}
-                <a href="read/">{{m_ui_value}}</a>
+                {% if message_info.msg_no %}
+                <a href="read/">{{message_info.text}}</a>
                 {% else %}
-                {{m_ui_value}}
-                {% endifequal %}
+                {% if message_info.time %}
+                {{message_info.time}}
+                {% else %}
+                {{message_info}}
+                {% endif %}
+                {% endif %}
             </td>
-            {% endifequal %}
-            {% endfor %}
             {% endfor %}
         </tr>
         {% endfor %}
     </table>
+    <div id="page_list">
+        {% if first_page.no %}
+        {{ first_page.mark %}
+        {% endif %}
+        {% if prev_page_group.no %}
+        {{ prev_page_group.mark }}
+        {% endif %}
+        {% for page in page_list %}
+        {{page}}
+        {% endfor %}
+        {% if next_page_group.no %}
+        {{ next_page_group.mark }}
+        {% endif %}
+        {% if last_page.no %}
+        {{ last_page.mark }}
+        {% endif %}
+    </div>
 </div>
 
 {% endblock message_content %}
