@@ -7,6 +7,7 @@ import urwid
 from ara_forms import *
 from join import *
 from welcome import *
+import widget
 
 class ara_login(ara_forms):
     def get_login_message(self):
@@ -70,11 +71,11 @@ class ara_login(ara_forms):
 
         langitems = ['Korean','English','Chinese']
         langitems = [Item(w, None, 'selected') for w in langitems]
-        self.langlist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(langitems)))
+        self.langlist = widget.Border(urwid.ListBox(urwid.SimpleListWalker(langitems)))
 
         joinitems = ['Join','Guest']
         joinitems = [Item(w, None, 'selected') for w in joinitems]
-        self.joinlist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(joinitems)))
+        self.joinlist = widget.Border(urwid.ListBox(urwid.SimpleListWalker(joinitems)))
 
         self.bottomcolumn = urwid.Columns([('weight',40,self.idpwpile),('weight',30,self.langlist),('weight',30,self.joinlist)])
 

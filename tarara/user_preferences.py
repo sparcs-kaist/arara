@@ -28,7 +28,7 @@ class ara_user_preferences(ara_forms):
 	langtext = urwid.Filler(urwid.Text("Language:"))
         langitems = ['Korean', 'English','Chinese']
         langitems = [Item(text, None, 'selected') for text in langitems]
-        self.langlist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(langitems)))
+        self.langlist = Border(urwid.ListBox(urwid.SimpleListWalker(langitems)))
 	self.lang = urwid.Columns([langtext, self.langlist])
         langdesc = urwid.Filler(urwid.Text("Select your favorite\ninterface language"))
 	langcolumn = self._make_column(self.lang, langdesc)
@@ -36,7 +36,7 @@ class ara_user_preferences(ara_forms):
 	actiontext = urwid.Filler(urwid.Text("Actions"))
 	actions = ["Change password","View/edit blacklist","Change Introduction/Signature","Zap board","Set terminal encoding"]
         actionitems = [Item(' * '+text, None, 'selected') for text in actions]
-        self.actionlist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(actionitems)))
+        self.actionlist = Border(urwid.ListBox(urwid.SimpleListWalker(actionitems)))
 	actioncolumn = self._make_column(self.actionlist, self.blanktext)
 
         self.joinpile = urwid.Pile([('fixed',2,idcolumn), ('fixed',2,nickcolumn),langcolumn,('fixed',1,actiontext),actioncolumn])

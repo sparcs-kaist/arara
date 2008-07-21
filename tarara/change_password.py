@@ -5,6 +5,7 @@ import os
 import urwid.curses_display
 import urwid
 from ara_forms import *
+import widget
 
 class ara_changepw(ara_forms):
     def get_login_message(self):
@@ -35,7 +36,7 @@ class ara_changepw(ara_forms):
         buttoncolumn = self._make_column(joinbutton, cancelbutton, 50, 50)
 
         langitems = [urwid.Text('Korean'), urwid.Text('English'), urwid.Text('Chinese')]
-        self.langlist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(langitems)))
+        self.langlist = widget.Border(urwid.ListBox(urwid.SimpleListWalker(langitems)))
 
         infotext = urwid.Filler(urwid.Text("""  * Press [Enter] to proceed to the next item, [Shift+Enter] - previous item
   * Press [Tab] to directly jump to OK or Cancel button"""))

@@ -19,7 +19,7 @@ class ara_set_encoding(ara_forms):
 
         encitems = ['CP949 (Default for Korean Windows)','UTF-8 (Default for most Linux)','Big5 (Default for Chinese Windows)']
         encitems = [Item(w, None, 'selected') for w in encitems]
-        self.enclist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(encitems)))
+        self.enclist = Border(urwid.ListBox(urwid.SimpleListWalker(encitems)))
 
         okbutton = urwid.Filler(urwid.Button("OK"))
         cancelbutton = urwid.Filler(urwid.Button("Cancel"))

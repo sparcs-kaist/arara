@@ -97,7 +97,7 @@ class ara_join(ara_forms):
 	langtext = urwid.Filler(urwid.Text("Language:"))
         langitems = ['Korean','English','Chinese']
         langitems = [Item(w,None,'selected') for w in langitems]
-        self.langlist = urwid.LineBox(urwid.ListBox(urwid.SimpleListWalker(langitems)))
+        self.langlist = Border(urwid.ListBox(urwid.SimpleListWalker(langitems)))
 	self.lang = urwid.Columns([langtext, self.langlist])
         langdesc = urwid.Filler(urwid.Text("Select your favorite\ninterface language"))
 	self.langcolumn = self._make_column(self.lang, langdesc)
