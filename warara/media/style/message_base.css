@@ -1,6 +1,12 @@
 #message_menu span{
     background-color: #ff8;
 }
+
+#page_list span{
+    background-color: #8ff;
+}
+
 form{
     display: inline;
 }
+
