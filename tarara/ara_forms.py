@@ -9,7 +9,7 @@ import urwid
 class ara_forms(object):
     def __init__(self, session_key = None):
         self.utf8decode = urwid.escape.utf8decode
-        self.dash = urwid.SolidFill(self.utf8decode('─'))
+        self.dash = urwid.SolidFill(self.utf8decode('-'))
         self.blank = urwid.SolidFill(u" ")
         self.blanktext = urwid.Filler(urwid.Text(' '))
         self.keymap = {}
