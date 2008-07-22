@@ -117,7 +117,7 @@ class BlacklistManager(object):
         '''
         블랙리스트 id 수정 
 
-        >>> blacklist.modify(session_key, {'id': 'pv457', 
+        >>> blacklist.modify(session_key, {'username': 'pv457', 
         'article': 'False', 'message': 'True'})
         True, 'OK'
 
@@ -136,9 +136,9 @@ class BlacklistManager(object):
         
         session_id =  self.login_manager.get_session(session_key)[1]['id']
         try:
-            if blacklist_dic['id'] not in self.member_dic[session_id]:
+            if blacklist_dic['username'] not in self.member_dic[session_id]:
                 raise NotExistIDException()
-            self.member_dic[session_id][blacklist_dic['id']] = {'article': blacklist_dic['article'], 'message': blacklist_dic['message']}
+            self.member_dic[session_id][blacklist_dic['username']] = {'article': blacklist_dic['article'], 'message': blacklist_dic['message']}
             return True, 'OK'
         except NotExistIDException:
             return False, 'ID_NOT_IN_BLACKLIST'        
@@ -150,8 +150,8 @@ class BlacklistManager(object):
         블랙리스트로 설정한 사람의 목록을 보여줌
 
         >>> blacklist.list_show(session_key)
-        True, [{'id': 'pv457', 'article': 'True', 'message' False'},
-        {'id': 'serialx', 'article': 'False', 'message', 'True'}, ...]
+        True, [{'username': 'pv457', 'article': 'True', 'message' False'},
+        {'username': 'serialx', 'article': 'False', 'message', 'True'}, ...]
 
         @type  session_key: string
         @param session_key: User Key
