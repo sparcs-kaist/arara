@@ -11,40 +11,75 @@
 </head>
 
 <body>
-    <div id="user_popup">
-        <ul>
-            <li id="user_popup_username"></li>
-            <li><a id="user_popup_send_message" href="#">Send Message</a></li>
-            <li>User Information</li>
-            <li>Add Blacklist</li>
-        </ul>
-    </div>
+    <div id="wrapper">
+        <div id="header">
+            Header<br/>
+            Header<br/>
+            Header<br/>
+        </div>
+        <div id="menu">
+            {% block menu %}
+            <ul>
+                <li><a href="/board/KAIST">KAIST</a></li>
+                <li><a href="/board/garbages">garbages</a></li>
+                <li><a href="/board/food">food</a></li>
+                <li><a href="/board/abroad">abroad</a></li>
+                <li><a href="/board/Love">Love</a></li>
+                <li><a href="/board/Foreigner">Foreigner</a></li>
+                <li><a href="/board/Filmspecial">Filmspecial</a></li>
+                <li><a href="/board/Wanted">Wanted</a></li>
+                <li><a href="/board/research">research</a></li>
+                <li><a href="/board/Infoworld">Infoworld</a></li>
+                <li><a href="/board/Lecture">Lecture</a></li>
+                <li><a href="/board/buySell[Etc]">buySell[Etc]</a></li>
+                <li><a href="/board/BuySell[Com]">BuySell[Com]</a></li>
+                <li><a href="/board/moneyTechs">moneyTechs</a></li>
+                <li><a href="/board/qandA[Etc]">qandA[Etc]</a></li>
+                <li><a href="/board/QandA[Com]">QandA[Com]</a></li>
+                <li><a href="/board/lostfound">lostfound</a></li>
+                <li><a href="/board/whitePaper">whitePaper</a></li>
+                <li><a href="/board/welfare">welfare</a></li>
+                <li><a href="/board/imgEffect">imgEffect</a></li>
+                <li><a href="/board/sportsEvent">sportsEvent</a></li>
+                <li><a href="/board/bookshelf">bookshelf</a></li>
+                <li><a href="/board/AniMania">AniMania</a></li>
+                <li><a href="/board/MusicLand">MusicLand</a></li>
+                <li><a href="/board/tripTour">tripTour</a></li>
+                <li><a href="/board/vehicle">vehicle</a></li>
+                <li><a href="/board/Hangul">Hangul</a></li>
+                <li><a href="/board/hobby">hobby</a></li>
+                <li><a href="/board/Siggame">Siggame</a></li>
+                <li><a href="/board/Siggame.star">Siggame.star</a></li>
+                <li><a href="/board/Siggame.dia2">Siggame.dia2</a></li>
+                <li><a href="/board/Siggame.war">Siggame.war</a></li>
+                <li><a href="/board/dormUni">dormUni</a></li>
+                <li><a href="/board/Times">Times</a></li>
+                <li><a href="/board/test">test</a></li>
+                <li><a href="/board/ToSysop">ToSysop</a></li>
+            </ul>
+            {% endblock %}
+        </div>
 
-    <div id="menu">
-        {% block menu %}
-        <ul>
-            <li><a href="/board/KAIST">KAIST</a></li>
-            <li><a href="/board/garbages">garbages</a></li>
-            <li><a href="/board/InfoWorld">InfoWorld</a></li>
-            <li><a href="/board/InfoWorld">InfoWorld</a></li>
-            <li><a href="/board/InfoWorld">InfoWorld</a></li>
-            <li><a href="/board/InfoWorld">InfoWorld</a></li>
-            <li><a href="/board/InfoWorld">InfoWorld</a></li>
-            <li><a href="/board/InfoWorld">InfoWorld</a></li>
-            <li><a href="/board/InfoWorld">InfoWorld</a></li>
-            <li><a href="/board/InfoWorld">InfoWorld</a></li>
-            <li><a href="/board/InfoWorld">InfoWorld</a></li>
-            <li><a href="/board/InfoWorld">InfoWorld</a></li>
-            <li><a href="/board/InfoWorld">InfoWorld</a></li>
-        </ul>
+        <div id="content">
+            {% block content %}{% endblock %}
+        </div>
+
+        <div id="footer">
+            All copyrights reserved by SPARCS
+        </div>
+
         <div id="widget">
             Widget
         </div>
-        {% endblock %}
-    </div>
 
-    <div id="content">
-        {% block content %}{% endblock %}
+        <div id="user_popup">
+            <ul>
+                <li id="user_popup_username"></li>
+                <li><a id="user_popup_send_message" href="#">Send Message</a></li>
+                <li>User Information</li>
+                <li>Add Blacklist</li>
+            </ul>
+        </div>
     </div>
 </body>
 </html>

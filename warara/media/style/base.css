@@ -1,0 +1,79 @@
+/* Base page layout */
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#wrapper {
+    width: 1200px;
+    margin: 0 auto;
+}
+
+#header {
+    padding: 20px;
+    background-color: #999;
+}
+
+#menu {
+    float: left;
+    padding: 20px;
+    width: 100px;
+    background-color: #ddd;
+}
+
+#content {
+    float: right;
+    width: 1000px;
+    padding: 20px;
+}
+
+#footer {
+    clear: both;
+    background-color: #eee;
+    padding: 20px;
+}
+
+#menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    font-size: 80%;
+}
+
+/* IE hack */
+body {
+    text-align: center;
+}
+#wrapper {
+    text-align: left;
+}
+
+/* Popup menu styles */
+#user_popup {
+    width: 180px;
+    border: 1px solid #333;
+    border-top: 1px solid #999;
+    border-bottom: 0;
+    background-color: white;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.user_popup_menu_hover {
+    background-color: #ddf;
+}
+
+#user_popup ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+#user_popup li {
+    border-bottom: 1px solid #999;
+    padding: 2px;
+}
+    
