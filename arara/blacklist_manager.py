@@ -1,13 +1,20 @@
 # -*- coding: utf-8 -*-
 
+from arara.util import require_login, is_keys_in_dict
+from arara import model
+from sqlalchemy.exceptions import InvalidRequestError
+
 class AlreadyAddedException(Exception):
     pass
 
-class NotExistusernameException(Exception):
+class NotExistIDException(Exception):
     pass
 
 class NotLoggedIn(Exception):
     pass
+
+BLACKLIST_DICT = ['blacklist_id', 'block_article', 'block_message']
+BLACKLIST_LIST_DICT = ['id', 'username', 'blacklisted_user_username', 'blacklisted_date', 'last_modified_date', 'block_article', 'block_message']
 
 class BlacklistManager(object):
     '''
@@ -16,32 +23,43 @@ class BlacklistManager(object):
     def __init__(self):
         # will make list for blacklist member in member_dic, key value is blacklist ex)59
         self.member_dic = {}
-
-    def _require_login(function):
-        def wrapper(self, session_key, *args):
-            if not self.login_manager.is_logged_in(session_key):
-                return False, 'NOT_LOGGEDIN'
-            else:
-                return function(self, session_key, *args)
-        return wrapper
-
-    def _prepare_session_username(function):
-        # Internal member_dic에 사용자 username를 강제 등록한다.
-        def wrapper(self, session_key, *args):
-            if not self.member_dic.has_key(self.login_manager.get_session(session_key)[1]['username']):
-                self.member_dic[self.login_manager.get_session(session_key)[1]['username']] = {}
-            return function(self, session_key, *args)
-        return wrapper
+        
+    #def _prepare_session_username(function):
+    #     # Internal member_dic에 사용자 username를 강제 등록한다.
+    #    def wrapper(self, session_key, *args):
+    #        if not self.member_dic.has_key(self.login_manager.get_session(session_key)[1]['username']):
+    #            self.member_dic[self.login_manager.get_session(session_key)[1]['username']] = {}
+    #        return function(self, session_key, *args)
+    #    return wrapper
 
     def _set_login_manager(self, login_manager):
         self.login_manager = login_manager
 
     def _set_member_manager(self, member_manager):
         self.member_manager = member_manager
+    
+    def _get_dict(self, item, whitelist):
+        item_dict = item.__dict__
+        session = model.Session()
+        if item_dict['user_id']:
+            item_dict['username'] = item.user.username
+            del item_dict['user_id']
+        if item_dict['blacklisted_user_id']:
+            item_dict['blacklisted_user_username'] = item.target_user.username
+            del item_dict['blacklisted_user_id']
+        filtered_dict = filter_dict(item_dict, whitelist)
 
-    @_prepare_session_username
-    @_require_login
-    def add(self, session_key, blacklist_username):
+        return filtered_dict
+
+    def _get_dict_list(self, raw_list, whitelist):
+        return_list = []
+        for item in raw_list:
+            filtered_dict = self._get_dict(item, whitelist)
+            return_list.append(filtered_dict)
+        return return_list
+
+    @require_login
+    def add(self, session_key, blacklist_dict):
         '''
         블랙리스트 username 추가
 
@@ -55,33 +73,42 @@ class BlacklistManager(object):
         @type  session_key: string
         @param session_key: User Key
         @type  blacklist_username: stirng
-        @param blacklist_username: Blacklist username 
+        @param blacklist_username: Blacklist Username
+        @type  blacklist_dic: dictionary
+        @param blacklist_dic: Blacklist Dictionary
         @rtype: boolean, string
         @return:
             1. 추가 성공: True, 'OK'
             2. 추가 실패:
-                1. 존재하지 않는 아이디: False, 'USERNAME_NOT_EXIST'
-                2. 이미 추가되어있는 아이디: False, 'ALREADY_ADDED'
-                3. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
-                4. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. Wrong Dictionary: False, 'WRONG_DICTIONARY'
+                2. 존재하지 않는 아이디: False, 'ID_NOT_EXIST'
+                3. 이미 추가되어있는 아이디: False, 'ALREADY_ADDED'
+                4. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
+                5. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        
-        session_username = self.login_manager.get_session(session_key)[1]['username']
+        if not is_keys_in_dict(blacklist_dict, BLACKLIST_DICT):
+            return False, 'WRONG_DICTIONARY'
+
+        ret, user_info = self.login_manager.get_session(session_key)
+
+        session = model.Session()
+        user = session.query(model.User).filter_by(username=user_info['username']).one()
         try:
-            if self.member_manager.is_registered(blacklist_username) == False:
-                raise NotExistusernameException()
-            if blacklist_username in self.member_dic[session_username]:
-                raise AlreadyAddedException()
-            self.member_dic[session_username][blacklist_username] = {'article': 'True', 'message': 'True'}
-            return True, 'OK'
-        except AlreadyAddedException:
+            target_user = session.query(model.User).filter_by(username=blacklist_dict['blacklist_id']).one()
+        except InvalidRequestError:
+            return False, 'ID_NOT_EXIST'
+            
+        new_blacklist = model.Message(user, target_user, blacklist_dict['block_article'], blacklist_dict['block_message'])
+        session.save(new_blacklist)
+        try:
+            session.commit()
+        except InvalidRequestError:
             return False, 'ALREADY_ADDED'
-        except NotExistusernameException:
-            return False, 'USERNAME_NOT_EXIST'
+
+        return True, 'OK'
        
-    @_prepare_session_username
-    @_require_login
-    def delete(self,session_key, blacklist_username):
+    @require_login
+    def delete(self, session_key, blacklist_username):
         '''
         블랙리스트 username 삭제 
 
@@ -91,33 +118,36 @@ class BlacklistManager(object):
         @type  session_key: string
         @param session_key: User Key
         @type  blacklist_username: string
-        @param blacklist_username: Blacklist username
+        @param blacklist_id: Blacklist ID
         @rtype: boolean, string
         @return:
             1. 삭제 성공: True, 'OK'
             2. 삭제 실패:
-                1. 블랙리스트에 존재하지 않는 아이디: False, 'USERNAME_NOT_IN_BLACKLIST'
+                1. 블랙리스트에 존재하지 않는 아이디: False, 'ID_NOT_IN_BLACKLIST'
                 2. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         
-        session_username =  self.login_manager.get_session(session_key)[1]['username']
+        ret, user_info =  self.login_manager.get_session(session_key)
+
+        session = model.Session()
+        user = session.query(model.User).filter_by(username=user_info['username']).one()
+        blacklisted_user = session.query(model.User).filter_by(username=user_info['username']).one()
         try:
-            if blacklist_username not in self.member_dic[session_username]:
-                raise NotExistusernameException()
-            del self.member_dic[session_username][blacklist_username] 
-            return True, 'OK'
-        except NotExistusernameException:
-            return False, 'USERNAME_NOT_IN_BLACKLIST'        
+            blacklist_to_del = session.query(model.Blacklist).filter_by(user_id=user.id,
+                                blacklisted_user_id=blacklisted_user.id).one()
+        except InvalidRequestError:
+            return False, 'ID_NOT_IN_BLACKLIST'
+        session.delete(blacklist_to_del)
+        session.commit()
+        return True, 'OK'
 
-
-    @_prepare_session_username
-    @_require_login
-    def modify(self,session_key, blacklist_dic):
+    @require_login
+    def modify(self, session_key, blacklist_dict):
         '''
-        블랙리스트 username 수정 
+        블랙리스트 id 수정 
 
-        >>> blacklist.modify(session_key, {'username': 'pv457', 
+        >>> blacklist.modify(session_key, {'id': 'pv457', 
         'article': 'False', 'message': 'True'})
         True, 'OK'
 
@@ -129,29 +159,37 @@ class BlacklistManager(object):
         @return:
             1. 수정 성공: True, 'OK'
             2. 수정 실패:
-                1. 블랙리스트에 존재하지 않는 아이디: False, 'USERNAME_NOT_IN_BLACKLIST'
+                1. 블랙리스트에 존재하지 않는 아이디: False, 'ID_NOT_IN_BLACKLIST'
                 2. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         
-        session_username =  self.login_manager.get_session(session_key)[1]['username']
-        try:
-            if blacklist_dic['username'] not in self.member_dic[session_username]:
-                raise NotExistusernameException()
-            self.member_dic[session_username][blacklist_dic['username']] = {'article': blacklist_dic['article'], 'message': blacklist_dic['message']}
-            return True, 'OK'
-        except NotExistusernameException:
-            return False, 'USERNAME_NOT_IN_BLACKLIST'        
+        if not is_keys_in_dict(blacklist_dict, BLACKLIST_DICT):
+            return False, 'WRONG_DICTIONARY'
 
-    @_prepare_session_username
-    @_require_login
+        ret, user_info = self.login_manager.get_session(session_key)
+
+        session = model.Session()
+        user = session.query(model.User).filter_by(username=user_info['username']).one()
+        target_user = session.query(model.User).filter_by(username=blacklist_dict['blacklist_id']).one()
+        try:
+            blacklist_to_modify = session.query(model.Blacklist).filter_by(user_id=user.id,
+                                    blacklisted_user_id=target_user.id).one()
+        except InvalidRequestError:
+            return False, 'ID_NOT_IN_BLACKLIST'
+        blacklist_to_modify.block_article = blacklist_dict['block_article']
+        blacklist_to_modify.block_message = blacklist_dict['block_message']
+        session.commit()
+        return True, 'OK'
+
+    @require_login
     def list(self,session_key):
         '''
         블랙리스트로 설정한 사람의 목록을 보여줌
 
         >>> blacklist.list_show(session_key)
-        True, [{'username': 'pv457', 'article': 'True', 'message' False'},
-        {'username': 'serialx', 'article': 'False', 'message', 'True'}, ...]
+        True, [{'id': 'pv457', 'article': 'True', 'message' False'},
+        {'id': 'serialx', 'article': 'False', 'message', 'True'}, ...]
 
         @type  session_key: string
         @param session_key: User Key
@@ -162,13 +200,14 @@ class BlacklistManager(object):
                 1. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        session_username =  self.login_manager.get_session(session_key)[1]['username']
-        ret = []
-        for username, values in self.member_dic[session_username].items():
-            r = {'username': username}
-            r.update(values)
-            ret.append(r)
-            
-        return True, ret
+
+        ret, user_info = self.login_manager.get_session(session_key)
+
+        session = model.Session()
+        user = session.query(model.User).filter_by(username=user_info['username']).one()
+        blacklist_list = session.query(model.Blacklist).filter_by(user_id=user.id).all()
+        blacklist_dict_list = _get_dict_list(blacklist_list, BLACKLIST_LIST_DICT)
+        return True, blacklist_dict_list
+
 
 # vim: set et ts=8 sw=4 sts=4

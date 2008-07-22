@@ -19,13 +19,13 @@ get_engine()
 Session = sessionmaker(bind=engine, autoflush=True, transactional=True)
 
 class User(object):
-    def __init__(self, username, password, nickname, email, signiture,
+    def __init__(self, username, password, nickname, email, signature,
                  self_introduction, default_language):
         self.username = username
         self.set_password(password)
         self.nickname = nickname
         self.email = email
-        self.signiture = signiture
+        self.signature = signature
         self.self_introduction = self_introduction
         self.default_language = default_language
         self.activated = 'False'
@@ -126,7 +126,7 @@ users_table = Table('users', metadata,
     Column('password', String(50)),
     Column('nickname', String(20), unique=True),
     Column('email', String(40)),
-    Column('signiture', String(50)),
+    Column('signature', String(50)),
     Column('self_introduction', String(100)),
     Column('default_language', String(5)),  # ko_KR, en_US
     Column('activated', Boolean),

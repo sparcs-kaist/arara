@@ -5,7 +5,7 @@ load LoginManager & MemberManager
 
 # Register one user, mikkang
 
->>> user_reg_dic = {'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'signiture':'mikkang', 'self_introduction':'mikkang', 'default_language':'english' }
+>>> user_reg_dic = {'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'signature':'mikkang', 'self_introduction':'mikkang', 'default_language':'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
@@ -17,7 +17,7 @@ True
 
 # Register one user, serialx
 
->>> user_reg_dic = {'username':'serialx', 'password':'serialx', 'nickname':'serialx', 'email':'serialx', 'signiture':'serialx', 'self_introduction':'serialx', 'default_language':'english' }
+>>> user_reg_dic = {'username':'serialx', 'password':'serialx', 'nickname':'serialx', 'email':'serialx', 'signature':'serialx', 'self_introduction':'serialx', 'default_language':'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True

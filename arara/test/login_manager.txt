@@ -6,7 +6,7 @@ load LoginManager & MemberManager
 
 pipoket Login Test
 
->>> user_reg_dic = {'username':'pipoket', 'password':'pipoket', 'nickname':'pipoket', 'email':'pipoket', 'signiture':'pipoket', 'self_introduction':'pipoket', 'default_language':'english' }
+>>> user_reg_dic = {'username':'pipoket', 'password':'pipoket', 'nickname':'pipoket', 'email':'pipoket', 'signature':'pipoket', 'self_introduction':'pipoket', 'default_language':'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
