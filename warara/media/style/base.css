@@ -71,6 +71,18 @@ body {
     text-align: left;
 }
 
+/* top menu style */
+#top_menu {
+    float: right;
+    font-size: 120%;
+    font-weight: bold;
+    margin-top: -15px;
+}
+#top_menu a {
+    margin-left: 10px;
+}
+
+
 /* Popup menu styles */
 .username {
     cursor: help;
