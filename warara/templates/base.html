@@ -3,13 +3,22 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script type="text/javascript" src="/media/js/base.js"></script>
     {% block script %}{% endblock %}
+    <link rel="stylesheet" href="/media/style/base.css" />
     {% block style %}{% endblock %}
-    <link rel="stylesheet" href="/media/style/style.css" />
     <title>{% block title %}아라{% endblock %}</title>
 </head>
 
 <body>
+    <div id="user_popup">
+        <ul>
+            <li id="user_popup_username"></li>
+            <li><a id="user_popup_send_message" href="#">Send Message</a></li>
+            <li>User Information</li>
+            <li>Add Blacklist</li>
+        </ul>
+    </div>
 
     <div id="menu">
         {% block menu %}
