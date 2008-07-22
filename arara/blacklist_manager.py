@@ -163,6 +163,12 @@ class BlacklistManager(object):
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         session_id =  self.login_manager.get_session(session_key)[1]['id']
-        return True, self.member_dic[session_id]
+        ret = []
+        for username, values in self.member_dic[session_id].items():
+            r = {'username': username}
+            r.update(values)
+            ret.append(r)
+            
+        return True, ret
 
 # vim: set et ts=8 sw=4 sts=4
