@@ -1,5 +1,6 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
-    (r'^mypage', 'warara.blacklist.views.blacklist'),
+    (r'^add$', 'warara.blacklist.views.add'),
+    (r'^$', 'warara.blacklist.views.index'),
 )

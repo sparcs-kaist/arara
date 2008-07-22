@@ -1,11 +1,13 @@
-<html>
-<head>
-    <title> {% block title %} blacklist {% endblock title %} </title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block style %}
+<link rel="stylesheet" href="/media/style/blacklist_base.css" />
+{% endblock %}
+{% block content %}
+    <div id="blacklist">
     <div id="mypage">
         {% block my_blacklist %}
-        {% endblock my_blacklist %}
+        {% endblock %}
         <form id="">
             <input type="submit" name="delete" value="Delete" />
             <input type="submit" name="done" value="Done" />
@@ -13,7 +15,7 @@
     </div>
     <div id="search_user">
         {% block add_blacklist %}
-        {% endblock add_blacklist %}
+        {% endblock %}
         <form id="search_sphere">
             <input type="checkbox" />
             <input type="checkbox" />
@@ -22,8 +24,7 @@
     </div>
     <div id="searching_results">
         {% block results_search %}
-        {% endblock results_search %}
+        {% endblock %}
     </div>
-</body>
-</html>
-    
+    </div>
+{% endblock %}
