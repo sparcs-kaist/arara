@@ -63,6 +63,11 @@ body {
     padding: 0;
 }
 
+#header h1 a {
+    text-decoration: none;
+    color: black;
+}
+
 /* IE hack */
 body {
     text-align: center;
