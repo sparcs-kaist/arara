@@ -7,7 +7,7 @@ import arara
 def test_login():
     server = arara.get_server()
     ret, sess = server.login_manager.login('breadfish', 'breadfish', '127.0.0.1')
-    assert ret, sess
+    assert ret == True
     return sess
 
 def index(request):
@@ -29,6 +29,10 @@ def list(request, board_name):
     return HttpResponse(rendered)
 
 def write(request, board_name):
+    
+    if request.POST:
+        return write_(request, board_name)
+
     r = {}
     r['t_submit'] = 'write' #template_submit
     r['t_cancel'] = 'cancel'
@@ -55,4 +59,15 @@ def write_(request, board_name):
         rendered = render_to_string('board/error.html', r)
         return HttpResponse(rendered)
 
-    return HttpResponseRedirect('/board/%s/' % board_name)
+    return HttpResponseRedirect('/board/%s' % board_name)
+
+def read(request, board_name, article_no):
+    server = arara.get_server()
+    sess = test_login()
+    ret, article = server.article_manager.read(sess, board_name, int(article_no))
+
+    r = {}
+    r['article'] = article
+
+    rendered = render_to_string('board/read.html', r)
+    return HttpResponse(rendered)

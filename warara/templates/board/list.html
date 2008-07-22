@@ -16,20 +16,32 @@
             <th>
                 time
             </th>
+            <th>
+                hit
+            </th>
+            <th>
+                vote
+            </th>
         </tr>
         {% for article in article_list %}
         <tr>
             <th>
-                {{article.no}}
+                {{article.id}}
             </th>
             <th>
                 <span class="username">{{article.author_username}}</span>
             </th>
             <th>
-                {{article.title}}
+                <a href="/board/{{board_name}}/{{article.id}}">{{article.title}}</a>
             </th>
             <th>
-                {{article.time}}
+                {{article.date}}
+            </th>
+            <th>
+                {{article.hit}}
+            </th>
+            <th>
+                {{article.vote}}
             </th>
         </tr>
         {% endfor %}

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.template.loader import render_to_string
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.paginator import Paginator
 
 import arara
@@ -96,6 +96,9 @@ def outbox(request):
     return HttpResponse(rendered)
 
 def send(request):
+    if request.POST:
+        return send_(request)
+
     r = {}
     r['default_receiver'] = ''
     r['default_text'] = ''
@@ -118,8 +121,7 @@ def send_(request):
 
     server.messaging_manager.send_message(sess, receiver, text)
 
-    rendered = render_to_string('message/redirect.html', r)
-    return HttpResponse(rendered)
+    return HttpResponseRedirect(r['url'])
 
 def read(request):
     server = arara.get_server()
