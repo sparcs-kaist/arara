@@ -1,17 +1,54 @@
-{% extends "blacklist/blacklist_frame.html" %}
+{% extends "base.html" %}
 
+{% block style %}
+<link rel="stylesheet" href="/media/style/blacklist_base.css" />
+{% endblock %}
 {% block script %}
-<script type="text/javascript" src="/media/js/index.js"></script>
+<script type="text/javascript" src="/media/js/blacklist.js"></script>
 {% endblock %}
-
-{% block my_blacklist %}
-<p> glad to see you! </p>
-{% endblock %}
-
-{% block add_blacklist %}
-<p>User Search!!</p>
-{% endblock %}
-
-{% block results_search %}
-<p>User's </p>
+{% block content %}
+    <div id="blacklist">
+    <div id="mypage">
+        <form id="blacklist_delete_form" action="/blacklist/delete/" method="post">
+            <input type="hidden" id="username" name="username" />
+        </form>
+        <form action="/blacklist/update/" method="post">
+            <table>
+                <tr>
+                    <th>Username</th>
+                    <th>Article</th>
+                    <th>Message</th>
+                    <th></th>
+                </tr>
+                {% for b in blacklist %}
+                <tr>
+                    <td>{{b.username}}</td>
+                    <td><input type="checkbox" name="blacklist_article_{{b.username}}" {% if b.article %}checked="{{b.article}}"{% else %}{% endif %}/></td>
+                    <td><input type="checkbox" name="blacklist_message_{{b.username}}" {% if b.message%}checked="{{b.message}}"{% else %}{% endif %}/></td>
+                    <td><input type="button" class="delete_user" value="delete" name="{{b.username}}"/></td>
+                </tr>
+                {% endfor %}
+            </table>
+            <input type="submit" name="done" value="Done" />
+        </form>
+        <form action="/blacklist/add/" method="post">
+            <input type="text" name="blacklist_id" />
+            <input type="submit" value="추가" />
+        </form>
+    </div>
+    <div id="search_user">
+        <p>User Search!!</p>
+        <form id="search_form" action="/blacklist/" method="get">
+            <input type="text" name="search" />
+            <label for="search_username">username</label>
+            <input id="search_username" name="search_type" type="radio" value="username" checked="on" />
+            <label for="search_nickname">nickname</label>
+            <input id="search_nickname" name="search_type" type="radio" value="nickname" />
+            <input type="submit" />
+        </form>
+    </div>
+    <div id="searching_results">
+        {{search_result}}
+    </div>
+    </div>
 {% endblock %}
