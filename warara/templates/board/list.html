@@ -36,9 +36,6 @@
     </table>
 </div>
 <div id="board_buttons">
-    <form action="/board/{{board_name}}/write/" method="POST" name="board">
-        <input type="submit" name="write" value="{{t_write}}"></input>
-        <input type="button" name="list" value="{{t_list}}"></input>
-    </form>
+    <a href="/board/{{board_name}}/write/">write</a>
 </div>
 {% endblock board_content %}
