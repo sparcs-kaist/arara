@@ -16,13 +16,13 @@ class NotLoggedIn(Exception):
     pass
 
 USER_PUBLIC_KEYS = ['username', 'password', 'nickname', 'email',
-        'signiture', 'self_introduction', 'default_language']
+        'signature', 'self_introduction', 'default_language']
 USER_QUERY_WHITELIST = ('username', 'nickname', 'email',
-        'signiture', 'self_introduction')
+        'signature', 'self_introduction')
 USER_PUBLIC_WHITELIST= ('username', 'password', 'nickname', 'email',
-        'signiture', 'self_introduction', 'default_language', 'activated')
+        'signature', 'self_introduction', 'default_language', 'activated')
 USER_PUBLIC_MODIFIABLE_WHITELIST= ('nickname', 'email',
-        'signiture', 'self_introduction', 'default_language')
+        'signature', 'self_introduction', 'default_language')
 
 class MemberManager(object):
     '''
@@ -144,6 +144,7 @@ class MemberManager(object):
         '''
         #remove quote when MD5 hash for UI is available
         #
+
         session = model.Session()
         query = session.query(model.User).filter_by(username=user_username)
         try:
@@ -267,7 +268,7 @@ class MemberManager(object):
         @return:
             1. 쿼리 성공: True, query_dic
             2. 쿼리 실패:
-                1. 존재하지 않는 아이디: False, 'QUERY_USERNAME_NOT_EXIST'
+                1. 존재하지 않는 아이디: False, 'QUERY_ID_NOT_EXIST'
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
