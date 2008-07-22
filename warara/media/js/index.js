@@ -9,11 +9,11 @@ $(document).ready(function(){
     );
     $("tr.best_articles_table_content").click(
         function(event) {
-            $.post("/", {aaa: "asdf"},
+            /*$.post("/", {aaa: "asdf"},
                 function(data, textStatus) {
                     alert(data);
                 }
-            );
+            );*/
         }
     );
 });

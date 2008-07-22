@@ -3,34 +3,50 @@
 body {
     margin: 0;
     padding: 0;
+    font-size: 75%;
+    background-color: #bbb;
 }
 
 #wrapper {
-    width: 1200px;
+    width: 85em;
+    max-width: 100%;
+    min-width: 980px;
     margin: 0 auto;
+    background-color: #fff;
+}
+
+#header_wrapper {
+    background-color: #999;
+}
+
+#menu_wrapper {
+    float: left;
+    width: 12em;
+    max-width: 14%;
+    background-color: #ddd;
+}
+
+#content_wrapper {
+    float: right;
+    width: 73em;
+    max-width: 86%;
+}
+
+#footer_wrapper {
+    clear: both;
+    background-color: #eee;
+    padding: 20px;
 }
 
 #header {
     padding: 20px;
-    background-color: #999;
 }
 
 #menu {
-    float: left;
     padding: 20px;
-    width: 100px;
-    background-color: #ddd;
 }
 
 #content {
-    float: right;
-    width: 1000px;
-    padding: 20px;
-}
-
-#footer {
-    clear: both;
-    background-color: #eee;
     padding: 20px;
 }
 
@@ -38,7 +54,13 @@ body {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    font-size: 80%;
+    font-size: 100%;
+}
+
+#header h1 {
+    font-size: 3em;
+    margin: 0;
+    padding: 0;
 }
 
 /* IE hack */
@@ -56,6 +78,7 @@ body {
     border-top: 1px solid #999;
     border-bottom: 0;
     background-color: white;
+    cursor: default;
 }
 
 .absolute {

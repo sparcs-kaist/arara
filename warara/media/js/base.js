@@ -12,8 +12,9 @@ $(document).ready(function(){
         $(this).removeClass("user_popup_menu_hover");
     });
 
+    var username;
     $(".username").click(function(event) {
-        var username = $(this).text();
+        username = $(this).text();
         $("#user_popup #user_popup_username").text("User: " + username);
 
         $("#user_popup").css("top", $(this).offset()["top"] + $(this).height())
@@ -25,6 +26,21 @@ $(document).ready(function(){
 
     $("#user_popup_send_message").click(function(event) {
         alert("hello, world!");
+        event.preventDefault();
+    });
+
+    $("#user_popup_user_information").click(function(event) {
+        alert("hello, world!");
+        event.preventDefault();
+    });
+
+    $("#user_popup_add_blacklist").click(function(event) {
+        $.post("/blacklist/add/", {blacklist_id: username},
+            function(data) {
+                alert("Added " + username + " to blacklist.");
+            }
+        );
+        event.preventDefault();
     });
 
     $("html").click(function(event) {

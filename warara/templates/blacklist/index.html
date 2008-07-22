@@ -22,7 +22,7 @@
                 </tr>
                 {% for b in blacklist %}
                 <tr>
-                    <td>{{b.username}}</td>
+                    <td><span class="username">{{b.username}}</span></td>
                     <td><input type="checkbox" name="blacklist_article_{{b.username}}" {% if b.article %}checked="{{b.article}}"{% else %}{% endif %}/></td>
                     <td><input type="checkbox" name="blacklist_message_{{b.username}}" {% if b.message%}checked="{{b.message}}"{% else %}{% endif %}/></td>
                     <td><input type="button" class="delete_user" value="delete" name="{{b.username}}"/></td>
