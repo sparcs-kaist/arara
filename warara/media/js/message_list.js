@@ -6,4 +6,14 @@ $(document).ready(function(){
             read_message.submit();
         }
     }
+
+    var page_anchors = document.getElementsByName('page_anchor');
+    for(var i=0; i<page_anchors.length; i++){
+        page_anchors[i].onclick = function(){
+            move_list.page_no.value = this.value;
+            move_list.submit();
+        }
+    }
+    thispage = page_info.thispage.value;
+    $("a[name='page_anchor']").addClass("makered");
 })

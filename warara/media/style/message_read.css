@@ -1,0 +1,9 @@
+#message_read_text textarea {
+    font-size: small;
+    background-color: #9cf;
+    border: 0 solid #69f;
+    height: 165px;
+    width: 324px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}

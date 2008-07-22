@@ -1,12 +1,17 @@
-#message_menu span{
+form {
+    display: inline;
+}
+
+#message_menu span {
     background-color: #ff8;
 }
 
-#page_list span{
+#page_list span {
     background-color: #8ff;
 }
 
-form{
-    display: inline;
+#content A:visited, #content A:link {
+    text-decoration: none;
+    color: #055;
 }
 

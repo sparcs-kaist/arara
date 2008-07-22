@@ -25,10 +25,10 @@ def make_message_list(request, r):
     thispagegroup = page_list.page(pagegroup_no)
     r['message_list'] = message_list.page(r['page_no']).object_list
     r['page_list'] = page_list.page(pagegroup_no).object_list
-    r['prev_page_group'] = {}
-    r['first_page'] = {}
-    r['next_page_group'] = {}
-    r['last_page'] = {}
+    r['prev_page_group'] = {'mark':r['prev'], 'no':0}
+    r['first_page'] = {'mark':r['prev_group'], 'no':0}
+    r['next_page_group'] = {'mark':r['next'], 'no':0}
+    r['last_page'] = {'mark':r['next_group'], 'no':0}
     
     if thispagegroup.has_previous():
         r['prev_page_group'] = {'mark':r['prev'], 'no':

@@ -1,5 +1,10 @@
 {% extends "message/message_base.html" %}
 
+{% block style %}
+<link rel="stylesheet" type="text/css" href="/media/style/message_read.css">
+{{ block.super }}
+{% endblock style %}
+
 {% block message_content %}
 <div id="message_info">
     <span id="message_person">

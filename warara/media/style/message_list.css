@@ -1,0 +1,19 @@
+#message_list_table table {
+    border:1px solid #000;
+    background: #fff;
+    border-collapse: collapse;
+}
+
+#message_list_tablee table td, table th {
+    margin: 0;
+    padding: 2px 4px;
+    border-bottom: 1px solid #b5b5b5;
+}
+
+#message_list_table table tr {
+    border:0 ;
+}
+
+.makered {
+    color: red;
+}
