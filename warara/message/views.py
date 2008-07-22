@@ -77,11 +77,9 @@ def inbox(request):
     server = arara.get_server()
     sess = test_login()
     r = get_various_info(request)
-    r['m_list_th'] = ['sender', 'text', 'time']
-    r['m_list_key'] = ['from', 'message', 'sent_time']
     r['message_list_type'] = 'inbox'
+    r['person_type'] = 'sender'
     ret, r['message_list'] = server.messaging_manager.receive_list(sess)
-    make_message_list(request, r)
 
     rendered = render_to_string('message/message_list.html', r)
     return HttpResponse(rendered)
@@ -90,11 +88,9 @@ def outbox(request):
     server = arara.get_server()
     sess = test_login()
     r = get_various_info(request)
-    r['m_list_th'] = ['receiver', 'text', 'time']
-    r['m_list_key'] = ['to', 'message', 'sent_time']
     r['message_list_type'] = 'outbox'
+    r['person_type'] = 'receiver'
     ret, r['message_list'] = server.messaging_manager.sent_list(sess)
-    make_message_list(request, r)
     
     rendered = render_to_string('message/message_list.html', r)
     return HttpResponse(rendered)

@@ -25,11 +25,15 @@
                     <input type="checkbox"></input>
                 </form>
             </th>
-            {% for th in m_list_th %}
             <th>
-                {{th}}
+                {{person_type}}
             </th>
-            {% endfor %}
+            <th>
+                text
+            </th>
+            <th>
+                time
+            </th>
         </tr>
         {% for message in message_list %}
         <tr>
@@ -38,49 +42,22 @@
                     <input type="checkbox"></input>
                 </form>
             </td>
-            {% for message_info in message %}
             <td>
-                {% if message_info.msg_no %}
-                <a href="#" value="{{message_info.msg_no}}" name="message_read_anchor">{{message_info.text}}</a>
+                {% ifequal message_list_type 'inbox' %}
+                <span class="username">{{message.from}}</span>
                 {% else %}
-                {% if message_info.time %}
-                {{message_info.time}}
-                {% else %}
-                {{message_info}}
-                {% endif %}
-                {% endif %}
+                <span class="username">{{message.to}}</span>
+                {% endifequal %}
             </td>
-            {% endfor %}
+            <td>
+                <a href="#" name="message_read_anchor" value="{{message.msg_no}}">{{message.message}}</a>
+            </td>
+            <td>
+                {{message.sent_time}}
+            </td>
         </tr>
         {% endfor %}
     </table>
-    <div id="page_list">
-        <span>
-            {% if first_page.no %}
-            <a href="#" value="{{first_page.no}}" name="page_anchor">{{first_page.mark}}</a>
-            {% else %}
-            {{ first_page.mark }}
-            {% endif %}
-            {% if prev_page_group.no %}
-            <a href="#" value="{{prev_page_group.no}}" name="page_anchor">{{prev_page_group.mark}}</a>
-            {% else %}
-            {{ prev_page_group.mark }}
-            {% endif %}
-            {% for page in page_list %}
-            <a href="#" value="{{page}}" name="page_anchor">{{page}}</a>
-            {% endfor %}
-            {% if next_page_group.no %}
-            <a href="#" value="{{next_page_group.no}}" name="page_anchor">{{next_page_group.mark}}</a>
-            {% else %}
-            {{ next_page_group.mark }}
-            {% endif %}
-            {% if last_page.no %}
-            <a href="#" value="{{last_page.no}}" name="page_anchor">{{last_page.mark}}</a>
-            {% else %}
-            {{ last_page.mark }}
-            {% endif %}
-        </span>
-    </div>
     <form action="/message/read/" method="POST" name="read_message">
         <input type="hidden" name="msg_no" value=""></input>
         <input type="hidden" name="list_type" value="{{message_list_type}}"></input>

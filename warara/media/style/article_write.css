@@ -1,0 +1,9 @@
+#article_write_text textarea {
+    font-size: small;
+    background-color: #fef;
+    border: 1px solid #69f;
+    height: 165px;
+    width: 324px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}

@@ -1,0 +1,23 @@
+{% extends "board/board_base.html" %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="/media/style/article_write.css"></link>
+{{block.super}}
+{% endblock style %}
+
+{% block board_content %}
+<form name="article_write" action="/board/{{board_name}}/write_/" method="POST">
+    <div id="article_write_title">
+        title : 
+        <input type="text" value="{{default_title}}" name="title"></input>
+    </div>
+    <div id="article_write_text">
+        <textarea name="text">{{default_text}}</textarea>
+    </div>
+    <div id="article_write_buttons">
+        <input type="submit" value="{{t_submit}}"></input>
+        <input type="button" value="{{t_cancel}}" name="cancel"></input>
+        <input type="button" value="{{t_preview}}" name="preview"></input>
+    </div>
+</form>
+{% endblock board_content %}
