@@ -7,7 +7,7 @@ import arara
 def test_login():
     server = arara.get_server()
     ret, sess = server.login_manager.login('breadfish', 'breadfish', '127.0.0.1')
-    assert ret == True
+    assert ret, sess
     return sess
 
 def index(request):
