@@ -12,6 +12,14 @@ $(document).ready(function(){
         $(this).removeClass("user_popup_menu_hover");
     });
 
+    $(".username").hover(
+    function(event) {
+        $(this).addClass("username_highlight");
+    },
+    function(event) {
+        $(this).removeClass("username_highlight");
+    });
+
     var username;
     $(".username").click(function(event) {
         username = $(this).text();

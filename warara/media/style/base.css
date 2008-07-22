@@ -72,6 +72,15 @@ body {
 }
 
 /* Popup menu styles */
+.username {
+    cursor: help;
+}
+
+.username_highlight {
+    background-color: #ddf;
+    text-decoration: underline;
+}
+
 #user_popup {
     width: 180px;
     border: 1px solid #333;
