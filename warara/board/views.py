@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.template.loader import render_to_string
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 
 import arara
 
@@ -55,5 +55,4 @@ def write_(request, board_name):
         rendered = render_to_string('board/error.html', r)
         return HttpResponse(rendered)
 
-    rendered = render_to_string('board/redirect.html', r)
-    return HttpResponse(rendered)
+    return HttpResponseRedirect('/board/%s/' % board_name)
