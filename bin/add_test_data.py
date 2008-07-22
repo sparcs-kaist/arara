@@ -17,7 +17,7 @@ server.member_manager.confirm('breadfish', reg_key)
 ret_breadfish, sess_breadfish = server.login_manager.login('breadfish', 'breadfish', '127.0.0.1')
 
 # jacob
-user_reg_dic = {'username':'jacob', 'password':'jacob', 'nickname':'jacob', 'email':'jacob', 'signautre':'jacob', 'self_introduction':'jacob', 'default_language':'english' }
+user_reg_dic = {'username':'jacob', 'password':'jacob', 'nickname':'jacob', 'email':'jacob', 'signature':'jacob', 'self_introduction':'jacob', 'default_language':'english' }
 _, reg_key = server.member_manager.register(user_reg_dic)
 server.member_manager.confirm('jacob', reg_key)
 ret_jacob, sess_jacob = server.login_manager.login('jacob', 'jacob', '127.0.0.1')
