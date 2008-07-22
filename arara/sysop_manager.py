@@ -45,19 +45,19 @@ class SysopManager(object):
             2.보드 삭제 실패시: False, 'NOT_LOGGEDIN'
         '''
 
-    def view_user_log(self, session_key, user_id):
+    def view_user_log(self, session_key, username):
         '''
         입력된 유저의 모든 log를 보여주는 함수
 
-        >>> sysop.view_user_log(logged_session_key, user_id)
+        >>> sysop.view_user_log(logged_session_key, username)
         True, 'LOG_LIST'
-        >>> sysop.view_user_log(not_logged_session_key, user_id)
+        >>> sysop.view_user_log(not_logged_session_key, username)
         False, 'NOT_LOGGEDIN'
 
         @type  session_key: string
         @param session_key: User Key
-        @type  user_id: string
-        @param user_id: User_id 
+        @type  username: string
+        @param username: username 
         @rtype: String
         @return:
             1.성공시: True, 'LOG_LIST'
@@ -104,19 +104,19 @@ class SysopManager(object):
             2.실패시: False, 'NOT_LOGGEDIN'
         '''
 
-    def set_password(self, session_key, user_id, password):
+    def set_password(self, session_key, username, password):
         '''
-        입력된 id의 패스워드를 설정한 값으로 초기화화는 함수
+        입력된 username의 패스워드를 설정한 값으로 초기화화는 함수
 
-        >>> sysop.set_password(logged_session_key, user_id, password)
+        >>> sysop.set_password(logged_session_key, username, password)
         True, 'OK'
-        >>> sysop.set_password(not_logged_session_key, user_id, password)
+        >>> sysop.set_password(not_logged_session_key, username, password)
         False, 'NOT_LOGGEDIN'
 
         @type  session_key: string
         @param session_key: User Key
-        @type  user_id: string
-        @param user_id: User ID 
+        @type  username: string
+        @param username: User username 
         @type  password: string
         @param password: New Password
         @rtype: string
@@ -125,19 +125,19 @@ class SysopManager(object):
             2.실패시: False, 'NOT_LOGGEDIN'
         '''
 
-    def conform_id_validation(self, session_key, user_id):
+    def conform_username_valusernameation(self, session_key, username):
         '''
-        입력된 id의 유저를 정식 등록된 유저로 설정하는 함수 
+        입력된 username의 유저를 정식 등록된 유저로 설정하는 함수 
 
-        >>> sysop.conform_id_validation(logged_session_key, user_id)
+        >>> sysop.conform_username_valusernameation(logged_session_key, username)
         True, 'OK'
-        >>> sysop.conform_id_validation(not_logged_session_key, user_id)
+        >>> sysop.conform_username_valusernameation(not_logged_session_key, username)
         False, 'NOT_LOGGEDIN'
 
         @type  session_key: string
         @param session_key: User Key
-        @type  user_id: string
-        @param user_id: User ID 
+        @type  username: string
+        @param username: User username 
         @rtype: string
         @return:
             1.성공시: True, 'OK'
@@ -166,19 +166,19 @@ class SysopManager(object):
         '''
 
 
-    def remove_user(self, session_key, user_id):
+    def remove_user(self, session_key, username):
         '''
-        session_key가 SYSOP일때 한하여 user_id 사용자를 등록된 사용자에서 제거하는 함수
+        session_key가 SYSOP일때 한하여 username 사용자를 등록된 사용자에서 제거하는 함수
 
-        >>> sysop.remove_user(logged_session_key, user_id)
+        >>> sysop.remove_user(logged_session_key, username)
         True, 'OK'
-        >>> sysop.remove_user(not_logged_session_key, user_id)
+        >>> sysop.remove_user(not_logged_session_key, username)
         False, 'NOT_LOGGEDIN'
 
         @type  session_key: string
         @param session_key: User Key
-        @type  user_id: string 
-        @param user_id: User ID 
+        @type  username: string 
+        @param username: User username 
         @rtype: string
         @return:
             1.성공시: True, 'OK'

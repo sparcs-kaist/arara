@@ -38,8 +38,8 @@ class MessagingManager(object):
         '''
         ret, user_info = self.login_manager.get_session(session_key)
         assert ret
-        user_id = user_info['id']
-        sent_messages = filter(lambda x: x['from'] == user_id, self.message_list)
+        username = user_info['username']
+        sent_messages = filter(lambda x: x['from'] == username, self.message_list)
         return True, sent_messages
 
 
@@ -63,8 +63,8 @@ class MessagingManager(object):
         '''
         ret, user_info = self.login_manager.get_session(session_key)
         assert ret
-        user_id = user_info['id']
-        receive_messages = filter(lambda x: x['to'] == user_id, self.message_list)
+        username = user_info['username']
+        receive_messages = filter(lambda x: x['to'] == username, self.message_list)
         return True, receive_messages
 
     @require_login
@@ -78,7 +78,7 @@ class MessagingManager(object):
         @type  session_key: string
         @param session_key: User Key
         @type  to: string
-        @param to: Destination ID
+        @param to: Destination username
         @type  msg: string
         @param msg: Message string
         @rtype: string
@@ -92,10 +92,10 @@ class MessagingManager(object):
         ret, user_info = self.login_manager.get_session(session_key)
         if not self.member_manager.is_registered(to):
             return False, 'USER_NOT_EXIST'
-        from_id = user_info['id']
+        from_username = user_info['username']
         time_str = str(datetime.datetime.fromtimestamp(time.time()))
 
-        msg_dict = {'from': from_id, 'to': to, 'message': msg,
+        msg_dict = {'from': from_username, 'to': to, 'message': msg,
                 'sent_time': time_str, 'msg_no': len(self.message_list) + 1, 'read_status':'N'}
 
         self.message_list.append(msg_dict)

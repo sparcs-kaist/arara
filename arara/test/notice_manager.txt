@@ -6,7 +6,7 @@ Bootstrap test
 
 Add SYSOP 
 
->>> user_reg_dic = { 'id':'SYSOP', 'password':'SYSOP', 'nickname':'SYSOP', 'email':'SYSOP@sparcs.org', 'sig':'', 'self_introduce':'i am mikkang', 'default_language':'english' }
+>>> user_reg_dic = { 'username':'SYSOP', 'password':'SYSOP', 'nickname':'SYSOP', 'email':'SYSOP@sparcs.org', 'signature':'', 'self_introduction':'i am mikkang', 'default_language':'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True

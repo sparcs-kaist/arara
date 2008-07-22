@@ -3,13 +3,13 @@
 
 Register two user, mikkang and combacsa. then login as mikkang
 
->>> user_reg_dic = {'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
+>>> user_reg_dic = {'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'signature':'mikkang', 'self_introduction':'mikkang', 'default_language':'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
 >>> server.member_manager.confirm('mikkang', register_key)
 (True, 'OK')
->>> user_reg_dic = {'id':'combacsa', 'password':'combacsa', 'nickname':'combacsa', 'email':'combacsa', 'sig':'combacsa', 'self_introduce':'combacsa', 'default_language':'english' }
+>>> user_reg_dic = {'username':'combacsa', 'password':'combacsa', 'nickname':'combacsa', 'email':'combacsa', 'signature':'combacsa', 'self_introduction':'combacsa', 'default_language':'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
@@ -24,7 +24,7 @@ now Test BlacklistManager!
 >>> server.blacklist_manager.add(session_key, 'combacsa')
 (True, 'OK')
 >>> server.blacklist_manager.add(session_key, 'pv457')
-(False, 'ID_NOT_EXIST')
+(False, 'USERNAME_NOT_EXIST')
 >>> server.blacklist_manager.add(session_key, 'combacsa')
 (False, 'ALREADY_ADDED')
 >>> server.blacklist_manager.list(session_key)
@@ -34,10 +34,10 @@ now Test BlacklistManager!
 >>> server.blacklist_manager.list(session_key)
 (True, [{'username': 'combacsa', 'article': 'False', 'message': 'True'}])
 >>> server.blacklist_manager.modify(session_key, {'username': 'pv457', 'article': 'False', 'message': 'True'})
-(False, 'ID_NOT_IN_BLACKLIST')
+(False, 'USERNAME_NOT_IN_BLACKLIST')
 >>> server.blacklist_manager.delete(session_key, 'combacsa')
 (True, 'OK')
 >>> server.blacklist_manager.delete(session_key, 'pv457')
-(False, 'ID_NOT_IN_BLACKLIST')
+(False, 'USERNAME_NOT_IN_BLACKLIST')
 >>> server.login_manager.logout(session_key)
 (True, 'OK')

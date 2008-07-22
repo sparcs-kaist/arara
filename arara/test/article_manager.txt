@@ -5,7 +5,7 @@ load LoginManager & MemberManager
 
 Register one user, mikkang
 
->>> user_reg_dic = {'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
+>>> user_reg_dic = {'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'signature':'mikkang', 'self_introduction':'mikkang', 'default_language':'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
@@ -40,7 +40,7 @@ now Testing Article Manager!
 >>> server.article_manager.read(session_key, 'garbages', 1)
 (True, {'title': 'serialx is...', 'ip': '143.248.234.140', 'author': 'serialx', 'content': 'polarbear', 'time': '1970-01-01 09:00:01.100000', 'reply': [{'ip': '143.248.234.140', 'time': '1970-01-01 09:00:01.100000', 'context': 'asdf', 'author': 'pv457'}], 'method': 'web'})
 >>> server.article_manager.article_list(session_key, 'garbages')
-(True, [{'title': 'serialx is...', 'ip': '143.248.234.140', 'author': 'serialx', 'content': 'polarbear', 'time': '1970-01-01 09:00:01.100000', 'reply': [{'ip': '143.248.234.140', 'time': '1970-01-01 09:00:01.100000', 'context': 'asdf', 'author': 'pv457'}], 'method': 'web'}])
+(True, [{'title': 'serialx is...', 'ip': '143.248.234.140', 'author': 'serialx', 'content': 'polarbear', 'no': 1, 'time': '1970-01-01 09:00:01.100000', 'reply': [{'ip': '143.248.234.140', 'time': '1970-01-01 09:00:01.100000', 'context': 'asdf', 'author': 'pv457'}], 'method': 'web'}])
 >>> server.article_manager.board_list(session_key)
 (True, {'garbages': 1})
 >>> server.login_manager.logout(session_key)

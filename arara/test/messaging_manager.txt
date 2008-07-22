@@ -14,7 +14,7 @@ Bootstrap test
 
 Add user mikkang
 
->>> user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang@sparcs.org', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
+>>> user_reg_dic = { 'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang@sparcs.org', 'signature':'mikkang', 'self_introduction':'mikkang', 'default_language':'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
@@ -28,7 +28,7 @@ True
 
 Add user serialx
 
->>> user_reg_dic = { 'id':'serialx', 'password':'serialx', 'nickname':'serialx', 'email':'serialx@serialx.net', 'sig':'serialx', 'self_introduce':'serialx', 'default_language':'english' }
+>>> user_reg_dic = { 'username':'serialx', 'password':'serialx', 'nickname':'serialx', 'email':'serialx@serialx.net', 'signature':'serialx', 'self_introduction':'serialx', 'default_language':'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True

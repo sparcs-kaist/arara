@@ -24,17 +24,17 @@ class LoginManager(object):
         '''
         hash = hashlib.md5('guest'+''+datetime.datetime.today().__str__()).hexdigest()
         timestamp = datetime.datetime.isoformat(datetime.datetime.now())
-        self.session_dic[hash] = {'id': 'guest', 'ip': guest_ip, 'logintime': timestamp}
+        self.session_dic[hash] = {'username': 'guest', 'ip': guest_ip, 'logintime': timestamp}
         return True, hash
     
 
-    def login(self, id, password, user_ip):
+    def login(self, username, password, user_ip):
         '''
         로그인 처리를 담당하는 함수.
         아이디와 패스워드를 받은 뒤 User Key를 리턴.
 
-        @type  id: string
-        @param id: User ID
+        @type  username: string
+        @param username: User username
         @type  password: string
         @param password: User Passwordi
         @type  user_ip: string
@@ -43,16 +43,16 @@ class LoginManager(object):
         @return: 
             1. 로그인 성공 시: True, user_key
             2. 로그인 실패 시
-                1. 아이디 존재하지 않음: False, 'WRONG_ID'
+                1. 아이디 존재하지 않음: False, 'WRONG_username'
                 2. 패스워드 불일치: False, 'WRONG_PASSWORD'
                 3. 데이터베이스 관련 에러: False, 'DATABASE_ERROR'
         '''
 
-        success, msg = self.member_manager._authenticate(id, password)
+        success, msg = self.member_manager._authenticate(username, password)
         if success:
-            hash = hashlib.md5(id+password+datetime.datetime.today().__str__()).hexdigest()
+            hash = hashlib.md5(username+password+datetime.datetime.today().__str__()).hexdigest()
             timestamp = datetime.datetime.isoformat(datetime.datetime.now())
-            self.session_dic[hash] = {'id': id, 'ip': user_ip, 'logintime': timestamp}
+            self.session_dic[hash] = {'username': username, 'ip': user_ip, 'logintime': timestamp}
             return True, hash
         return success, msg
 
@@ -103,7 +103,7 @@ class LoginManager(object):
         @param session_key: User Key
         @rtype: string
         @return:
-            1. 로그인 되어있을 경우: True, self.session_dic {id, user_ip, login_time}
+            1. 로그인 되어있을 경우: True, self.session_dic {username, user_ip, login_time}
             2. 로그인 되어있지 않을 경우: False, 'NOT_LOGGEDIN'
         '''
         try:

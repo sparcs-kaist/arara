@@ -6,7 +6,7 @@ load LoginManager & MemberManager
 
 mikkang Login Test
 
->>> user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
+>>> user_reg_dic = { 'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'signature':'mikkang', 'self_introduction':'mikkang', 'default_language':'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
@@ -15,7 +15,7 @@ True
 >>> server.login_manager.login('mikkang', 'not_test', '143.248.234.145')
 (False, 'WRONG_PASSWORD')
 >>> server.login_manager.login('not_test', 'test', '143.248.234.145')
-(False, 'WRONG_ID')
+(False, 'WRONG_USERNAME')
 >>> ret, session_key = server.login_manager.login('mikkang', 'mikkang', '143.248.234.145')
 >>> ret
 True
@@ -27,7 +27,7 @@ True
 >>> _, result = server.login_manager.get_session(session_key)
 >>> result['ip']
 '143.248.234.145'
->>> result['id']
+>>> result['username']
 'mikkang'
 
 >>> server.login_manager.logout(session_bee)
@@ -47,5 +47,5 @@ True
 >>> _, result = server.login_manager.get_session(guest_session_key)
 >>> result['ip']
 '143.248.234.1'
->>> result['id']
+>>> result['username']
 'guest'

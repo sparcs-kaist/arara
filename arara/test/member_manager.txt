@@ -1,7 +1,7 @@
 >>> import arara
 >>> server = arara.get_namespace()
 
->>> user_reg_dic = { 'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'signiture':'mikkang', 'self_introduction':'mikkang', 'default_language':'english' }
+>>> user_reg_dic = { 'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'signature':'mikkang', 'self_introduction':'mikkang', 'default_language':'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
@@ -22,7 +22,7 @@ True
 >>> user_password_dic = {'username':'mikkang', 'current_password':'mikkang', 'new_password':'ggingkkang'}
 >>> server.member_manager.modify_password(session_key, user_password_dic)
 (True, 'OK')
->>> modify_user_reg_dic = { 'id':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang@sparcs.org', 'sig':'KAIST07 && JSH07 && SPARCS07', 'self_introduce':'i am Munbeom', 'default_language':'korean' }
+>>> modify_user_reg_dic = { 'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang@sparcs.org', 'sig':'KAIST07 && JSH07 && SPARCS07', 'self_introduce':'i am Munbeom', 'default_language':'korean' }
 >>> server.member_manager.modify(session_key, modify_user_reg_dic)
 (True, 'OK')
 >>> search_user_info ={}
@@ -35,7 +35,7 @@ True
 False
 
 Add SYSOP
->>> user_reg_dic = { 'username':'SYSOP', 'password':'SYSOP', 'nickname':'SYSOP', 'email':'SYSOP@sparcs.org', 'signiture':'', 'self_introduction':'i am mikkang', 'default_language':'english' }
+>>> user_reg_dic = { 'username':'SYSOP', 'password':'SYSOP', 'nickname':'SYSOP', 'email':'SYSOP@sparcs.org', 'signature':'', 'self_introduction':'i am mikkang', 'default_language':'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
