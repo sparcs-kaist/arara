@@ -301,6 +301,7 @@ class MemberManager(object):
             assert len(search_user_info.keys()) == 1
             key = search_user_info.keys()[0]
             value = search_user_info.values()[0]
+            if key == 'username': key = 'id'
             assert key == 'id' or key == 'nickname'
             for id, info in self.member_dic.items():
                 if value in info[key]:
