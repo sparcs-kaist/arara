@@ -64,10 +64,29 @@ def write_(request, board_name):
 def read(request, board_name, article_no):
     server = arara.get_server()
     sess = test_login()
-    ret, article = server.article_manager.read(sess, board_name, int(article_no))
-
+    ret, article_list = server.article_manager.read(sess, board_name, int(article_no))
     r = {}
-    r['article'] = article
+    if not ret:
+        r['e'] = article_list
+        rendered = render_to_string('board/error.html', r)
+        return HttpResponse(rendered)
+
+    r['article_list'] = article_list
+    r['t_reply_write'] = 'reply'
+    r['board_name'] = board_name
 
     rendered = render_to_string('board/read.html', r)
     return HttpResponse(rendered)
+
+
+def reply(request, board_name, article_no):
+    server = arara.get_server()
+    sess = test_login()
+    text = request.POST.get('textarea_reply', '')
+    reply_dic = {}
+    reply_dic['content'] = text
+    reply_dic['title'] = 'title???'
+
+    ret, no = server.article_manager.write_reply(sess, board_name, int(article_no), reply_dic)
+
+    return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(article_no)))

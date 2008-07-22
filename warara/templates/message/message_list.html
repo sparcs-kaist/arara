@@ -50,7 +50,7 @@
                 {% endifequal %}
             </td>
             <td>
-                <a href="#" name="message_read_anchor" value="{{message.msg_no}}">{{message.message}}</a>
+                <a href="#" name="message_read_anchor" value="{{message.id}}">{{message.message}}</a>
             </td>
             <td>
                 {{message.sent_time}}
@@ -58,7 +58,7 @@
         </tr>
         {% endfor %}
     </table>
-    <form action="/message/read/" method="POST" name="read_message">
+    <form action="/message/read/" method="GET" name="read_message">
         <input type="hidden" name="msg_no" value=""></input>
         <input type="hidden" name="list_type" value="{{message_list_type}}"></input>
     </form>

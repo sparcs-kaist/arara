@@ -1,6 +1,61 @@
 {% extends "board/board_base.html" %}
 
+{% block style %}
+<link rel="stylesheet" type="text/css" href="/media/style/article_read.css"></link>
+{{block.super}}
+{% endblock style %}
+
 {% block board_content %}
+
+{% for article in article_list %}
+<div id="article_read">
+    <div id="article_title">
+        <span>
+            {{article.title}}
+        </span>
+    </div>
+    <div id="article_author">
+        <span class="username">
+            {{article.author_username}}
+        </span>
+    </div>
+    <div id="article_time">
+        <span>
+            {{article.author}}
+        </span>
+    </div>
+    <div id="article_time">
+        <span>
+            {{article.date}}
+        </span>
+    </div>
+    <div id="article_move">
+        <span>
+            aa
+        </span>
+    </div>
+
+    <div id="article_text">
+        <p>
+        <table><tr><td>{{article.content}}</td></tr></table>
+        </p>
+    </div>
+    <div id="reply">
+        <form action="/board/{{board_name}}/{{article.id}}/reply/" method="POST">
+            <span>
+                <textarea name="textarea_reply"></textarea>
+            </span>
+            <span>
+                <input type="submit" name="submit" value="{{t_reply_write}}"></input>
+            </span>
+        </form>
+    </div>
+</div>
+{% endfor %}
+<div id="article_read_buttons">
+    <a href="/board/{{board_name}}">list</a>
+    <a href="/board/{{board_name}}/write">write</a>
+</div>
 
 {{article}}
 

@@ -128,7 +128,7 @@ def read(request):
     sess = test_login()
 
     r = get_various_info(request)
-    msg_no = request.POST.get('msg_no', 3)
+    msg_no = request.GET.get('msg_no', 3)
     msg_no = int(msg_no)
     list_type = request.POST.get('list_type', 'inbox')
     ret, r['message'] = server.messaging_manager.read_message(sess, msg_no)
