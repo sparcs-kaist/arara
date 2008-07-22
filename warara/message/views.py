@@ -18,37 +18,6 @@ def make_message_list(request, r):
     r['max_message_list_text_length'] = 10
     r['message_list'].reverse()
     r['message_num'] = len(r['message_list'])
-    '''
-    r['page_no'] = float(r['page_no'])
-    r['mppp'] = float(r['mppp'])
-    r['pagegroup_no'] = math.ceil(r['page_no'] / r['mppp'])
-    r['page_num'] = math.ceil(float(r['message_num']) / r['nmpp'])
-    r['pagegroup_num'] = math.ceil(r['page_num'] / r['mppp'])
-    r['next_page_group'] = {'mark':r['next'], 'no':int(r['pagegroup_no'] * r['mppp'] + 1)}
-    r['prev_page_group'] = {'mark':r['prev'], 'no':int((r['pagegroup_no']-1) * r['mppp'])}
-    r['first_page'] = {'mark':r['prev_group'], 'no':1}
-    r['last_page'] = {'mark':r['next_group'], 'no':r['message_num']}
-
-    if r['page_no']==r['page_num']:
-        r['message_list'] = r['message_list'][int((r['page_no'] - 1) * r['nmpp']) 
-            : int(r['message_num'] - 1)]
-    else:
-        r['message_list'] = r['message_list'][int((r['page_no'] - 1) * r['nmpp']) 
-            : int(r['page_no'] * r['nmpp'])]
-
-    if r['pagegroup_no'] == r['pagegroup_num']:
-        r['page_list'] = range(int((r['pagegroup_no'] - 1) * r['nmpp'] + 1) 
-            , int(r['page_num'] + 1))
-        r['next_page_group']['no'] = 0
-        r['last_page']['no'] = 0
-    else:
-        r['page_list'] = range(int((r['pagegroup_no'] - 1) * r['nmpp'] + 1)
-            , int(r['pagegroup_no'] * r['nmpp'] + 1))
-
-    if r['pagegroup_no'] == 1 :
-        r['prev_page_group']['no'] = 0
-        r['first_page']['no'] = 0
-    '''
 
     message_list = Paginator(r['message_list'], r['nmpp'])
     page_list = Paginator(message_list.page_range, r['mppp'])
@@ -154,4 +123,32 @@ def send_(request):
     server.messaging_manager.send_message(sess, receiver, text)
 
     rendered = render_to_string('message/redirect.html', r)
+    return HttpResponse(rendered)
+
+def read(request):
+    server = arara.get_server()
+    sess = test_login()
+
+    r = get_various_info(request)
+    msg_no = request.POST.get('msg_no', 3)
+    msg_no = int(msg_no)
+    list_type = request.POST.get('list_type', 'inbox')
+    ret, r['message'] = server.messaging_manager.read_message(sess, msg_no)
+    r['prev_message'] = {'mark':r['prev'], 'msg_no':''}
+    r['next_message'] = {'mark':r['next'], 'msg_no':''}
+    r['t_delete'] = 'delete'
+    r['t_reply'] = ''
+    r['t_list'] = 'list'
+    r['t_deliever'] = 'deliever'
+
+    if list_type == 'inbox':
+        r['person_type'] = 'sender'
+        r['person'] = r['message']['from']
+        r['t_reply'] = 'reply'
+    elif list_type == 'outbox':
+        r['person_type'] = 'receiver'
+        r['person'] = r['message']['to']
+        r['t_reply'] = ''
+
+    rendered = render_to_string('message/message_read.html', r)
     return HttpResponse(rendered)

@@ -1,5 +1,10 @@
 {% extends "message/message_base.html" %}
 
+{% block script %}
+<script type="text/javascript" src="/media/js/message_list.js"></script>
+{{block.super}}
+{% endblock script %}
+
 {% block message_content %}
 <div>
 {% ifequal message_list_type  'inbox'%}
@@ -31,7 +36,7 @@
             {% for message_info in message %}
             <td>
                 {% if message_info.msg_no %}
-                <a href="read/">{{message_info.text}}</a>
+                <a href="#" value= "{{message_info.msg_no}}" name="message_read_anchor">{{message_info.text}}</a>
                 {% else %}
                 {% if message_info.time %}
                 {{message_info.time}}
@@ -61,8 +66,12 @@
             {% if last_page.no %}
             {{ last_page.mark }}
             {% endif %}
-        <span>
+        </span>
     </div>
+    <form action="/message/read/" method="POST" name="read_message">
+        <input type="hidden" name="msg_no" value=""></input>
+        <input type="hidden" name="list_type" value="{{message_list_type}}"></input>
+    </form>
 </div>
 
 {% endblock message_content %}

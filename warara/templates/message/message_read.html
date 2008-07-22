@@ -1,0 +1,30 @@
+{% extends "message/message_base.html" %}
+
+{% block message_content %}
+<div id="message_info">
+    <span id="message_person">
+        {{person_type}} : {{person}}
+    </span>
+    <span id="message_time">
+        {{message.sent_time}}
+    </span>
+    <span id="message_move">
+        {{prev_message.mark}}
+        {{next_message.mark}}
+    </span>
+</div>
+<div id="message_read_text">
+    <textarea name="text" readonly="readonly">{{message.message}}</textarea>
+</div>
+<div id="message_read_buttons">
+    <form action="">
+        <input type="button" name="message_delete" value="{{t_delete}}"></input>
+        {% if t_reply %}
+        <input type="button" name="message_reply" value="{{t_reply}}"></input>
+        {% endif %}
+        <input type="button" name="message_deliever" value="{{t_deliever}}"></input>
+        <input type="button" name="message_list" value="{{t_list}}"></input>
+    </form>
+</div>
+
+{% endblock message_content %}
