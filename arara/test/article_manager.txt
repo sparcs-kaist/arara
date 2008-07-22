@@ -1,0 +1,124 @@
+load LoginManager & MemberManager
+
+>>> import arara
+>>> server = arara.get_namespace()
+
+# Register one user, mikkang
+
+>>> user_reg_dic = {'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'signiture':'mikkang', 'self_introduction':'mikkang', 'default_language':'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+>>> server.member_manager.confirm('mikkang', register_key)
+(True, 'OK')
+>>> ret, session_key = server.login_manager.login('mikkang', 'mikkang', '143.248.234.140')
+>>> ret
+True
+
+# Register one user, serialx
+
+>>> user_reg_dic = {'username':'serialx', 'password':'serialx', 'nickname':'serialx', 'email':'serialx', 'signiture':'serialx', 'self_introduction':'serialx', 'default_language':'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+>>> server.member_manager.confirm('serialx', register_key)
+(True, 'OK')
+>>> ret, session_key_serialx = server.login_manager.login('serialx', 'serialx', '143.248.234.140')
+>>> ret
+True
+
+# Faking time.time (to check time field)
+
+>>> import time
+>>> def stub_time():
+...     return 1.1
+>>> org_time = time.time
+>>> time.time = stub_time
+
+# now Testing Article Manager!
+
+>>> server.article_manager.board_list(session_key)
+(True, ['garbages'])
+
+# Write an article
+
+>>> article_dic = {'title': 'serialx is...', 'content': 'polarbear'}
+>>> server.article_manager.write_article(session_key, 'garbages', article_dic)
+(True, 1)
+
+# Read the article
+
+>>> server.article_manager.read(session_key, 'garbages', 1)
+(True, [{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_ip': u'143.248.234.140', 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}])
+
+# Reply to the article
+
+>>> reply_dic = {'title':'dummy', 'content': 'asdf'}
+>>> server.article_manager.write_reply(session_key, 'garbages', 24, reply_dic)
+(False, 'ARTICLE_NOT_EXIST')
+>>> server.article_manager.write_reply(session_key, 'garbages', 1, reply_dic)
+(True, 2)
+
+# Read the article again
+
+>>> server.article_manager.read(session_key, 'garbages', 1)
+(True, [{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_ip': u'143.248.234.140', 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'author_username': u'mikkang', 'hit': 0, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_ip': u'143.248.234.140', 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
+
+# List the article (should only be one article in the list
+
+>>> server.article_manager.article_list(session_key, 'garbages')
+(True, [{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'vote': 0, 'id': 1}])
+
+
+# Test for pagination
+
+>>> for i in range(100):
+...     article_dic = {'title': 'serialx is... ' + str(i), 'content': 'polarbear'}
+...     _ = server.article_manager.write_article(session_key, 'garbages', article_dic)
+>>> ret, l = server.article_manager.article_list(session_key, 'garbages')
+>>> len(l)
+20
+>>> l[0]
+{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'vote': 0, 'id': 102}
+>>> l[1]
+{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 98', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'vote': 0, 'id': 101}
+>>> l[19]
+{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 80', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'vote': 0, 'id': 83}
+
+>>> ret, l = server.article_manager.article_list(session_key, 'garbages', page=2)
+>>> len(l)
+20
+
+# Test for deletion
+
+>>> server.article_manager.delete(session_key, 'garbages', 3)
+(True, 3)
+>>> server.article_manager.read(session_key, 'garbages', 3)
+(True, [{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 0', 'deleted': True, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_ip': u'143.248.234.140', 'content': 'This article has been removed by user or moderator.', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 3}])
+>>> server.article_manager.delete(session_key, 'garbages', 1241252)
+(False, 'ARTICLE_NOT_EXIST')
+>>> server.article_manager.delete(session_key_serialx, 'garbages', 2)
+(False, 'NO_PERMISSION')
+
+
+# Test for modification
+
+>>> server.article_manager.read(session_key, 'garbages', 1)
+(True, [{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_ip': u'143.248.234.140', 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'author_username': u'mikkang', 'hit': 0, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_ip': u'143.248.234.140', 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
+>>> article_dic = {'title': 'pipoket is...', 'content': 'woodori'}
+>>> server.article_manager.modify(session_key, 'garbages', 1, article_dic)
+(True, 1)
+>>> server.article_manager.read(session_key, 'garbages', 1)
+(True, [{'author_username': u'mikkang', 'hit': 0, 'title': u'pipoket is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_ip': u'143.248.234.140', 'content': u'woodori', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'author_username': u'mikkang', 'hit': 0, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_ip': u'143.248.234.140', 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
+
+
+# Board list
+
+>>> server.article_manager.board_list(session_key)
+(True, ['garbages'])
+>>> server.login_manager.logout(session_key)
+(True, 'OK')
+
+Fin!
+
+>>> time.time = org_time

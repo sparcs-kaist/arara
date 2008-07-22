@@ -1,0 +1,33 @@
+>>> import arara
+>>> server = arara.get_namespace()
+
+>>> ret, session_key = server.login_manager.login('mikkang', 'mikkang', '143.248.234.145')
+>>> ret
+True
+>>> ret, member = server.member_manager.get_info(session_key)
+>>> print member['activated']
+True
+>>> print member['email']
+mikkang
+>>> print member['nickname']
+mikkang
+>>> user_password_dic = {'username':'mikkang', 'current_password':'mikkang', 'new_password':'ggingkkang'}
+>>> server.member_manager.modify_password(session_key, user_password_dic)
+(True, 'OK')
+>>> modify_user_reg_dic = { 'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang@sparcs.org', 'signiture':'KAIST07 && JSH07 && SPARCS07', 'self_introduction':'i am Munbeom', 'default_language':'korean' }
+>>> server.member_manager.modify(session_key, modify_user_reg_dic)
+(True, 'OK')
+>>> search_user_info ={}
+>>> search_user_info['username'] = 'mikkang'
+>>> server.member_manager.search_user(session_key, search_user_info)
+(True, u'mikkang')
+>>> server.member_manager.remove_user(session_key)
+(True, 'OK')
+>>> server.member_manager.is_sysop(session_key)
+False
+
+Add SYSOP
+>>> user_reg_dic = { 'username':'SYSOP', 'password':'SYSOP', 'nickname':'SYSOP', 'email':'SYSOP@sparcs.org', 'signiture':'', 'self_introduction':'i am mikkang', 'default_language':'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret, register_key
+(False, 'PERMISSION_DENIED')
