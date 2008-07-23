@@ -10,7 +10,8 @@ $(document).ready(function(){
         switch (event.which) {
             case 108:  // list
                 var list_link = $("#list_link").attr("href");
-                location.href = list_link;
+                //location.href = list_link;
+                history.go(-1);
                 break;
         }
     });
