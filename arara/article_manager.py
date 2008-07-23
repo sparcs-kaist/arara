@@ -11,7 +11,7 @@ BOARDS = {'garbages': 'Garbage board'}
 WRITE_ARTICLE_DICT = ['title', 'content']
 READ_ARTICLE_WHITELIST = ['id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted'
                     'author_ip', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id']
-LIST_ARTICLE_WHITELIST = ['id', 'title', 'date', 'last_modified_date', 'no_reply',
+LIST_ARTICLE_WHITELIST = ['id', 'title', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'vote', 'hit']
 
 class NotLoggedIn(Exception):
@@ -68,7 +68,7 @@ class ArticleManager(object):
             del item_dict['author_id']
         if item_dict.has_key('root_id'):
             if not item_dict['root_id']:
-                item_dict['no_reply'] = len(item.descendants)
+                item_dict['reply_count'] = len(item.descendants)
                 item_dict['root_id'] = item_dict['id']
         if whitelist:
             filtered_dict = filter_dict(item_dict, whitelist)

@@ -204,16 +204,16 @@ mapper(UserActivation, user_activation_table, properties={
 
 mapper(Article, articles_table, properties={
     'author':relation(User, backref='articles', lazy=False),
-    'board':relation(Board, backref='articles'),
+    'board':relation(Board, backref='articles', lazy=True),
 
     'children':relation(Article,
         primaryjoin=articles_table.c.parent_id==articles_table.c.id,
-        backref=backref('parent',
+        backref=backref('parent', lazy=True,
             remote_side=[articles_table.c.id],
             primaryjoin=articles_table.c.parent_id==articles_table.c.id,
             )
         ),
-    'descendants':relation(Article,
+    'descendants':relation(Article, lazy=True,
         primaryjoin=articles_table.c.root_id==articles_table.c.id,
         backref=backref('root',
             remote_side=[articles_table.c.id],
@@ -248,7 +248,8 @@ mapper(Blacklist, blacklist_table, properties={
 })
 
 TEST_DATABASE_FILENAME = 'test.db'
-CONNECTION_STRING = 'sqlite:///%s' % TEST_DATABASE_FILENAME
+#CONNECTION_STRING = 'sqlite:///%s' % TEST_DATABASE_FILENAME
+CONNECTION_STRING = 'mysql://s20060735:s20060735@localhost/s20060735'
 
 engine = None
 
