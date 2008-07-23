@@ -22,6 +22,9 @@ class MessagingManager(object):
     def _set_member_manager(self, member_manager):
         self.member_manager = member_manager
 
+    def _set_blacklist_manager(self, blacklist_manager):
+        self.blacklist_manager = blacklist_manager
+
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
         if item_dict.has_key('from_id'):
@@ -96,8 +99,7 @@ class MessagingManager(object):
         ret, user_info = self.login_manager.get_session(session_key)
         session = model.Session()
         to_user = session.query(model.User).filter_by(username=user_info['username']).one()
-        blacklist = session.query(model.Blacklist).filter_by(user_id=to_user.id).all()
-        blacklist_dict_list = self._get_dict_list(blacklist)
+        _, blacklist_dict_list = self.blacklist_manager.list(session_key)
         blacklist_users = set()
         for blacklist_item in blacklist_dict_list:
             blacklist_users.add(blacklist_item['blacklisted_user_username'])

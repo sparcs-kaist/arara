@@ -24,11 +24,12 @@ class ArticleManager(object):
 
     용법 : arara/test/article_manager.txt
     '''
-    def __init__(self, login_manager):
+    def __init__(self, login_manager, blacklist_manager):
         #monk data
         #self.articles = {'garbages': {} }
         self._create_boards()
         self.login_manager = login_manager
+        self.blacklist_manager = blacklist_manager
         #self.article_no = 0
     
     def _create_boards(self):
@@ -69,9 +70,6 @@ class ArticleManager(object):
             if not item_dict['root_id']:
                 item_dict['no_reply'] = len(item.descendants)
                 item_dict['root_id'] = item_dict['id']
-        if item_dict.has_key('blacklisted_user_id'):
-            item_dict['blacklisted_user_username'] = item.target_user.username
-            del item_dict['blacklisted_user_id']
         if whitelist:
             filtered_dict = filter_dict(item_dict, whitelist)
         else:
@@ -120,8 +118,7 @@ class ArticleManager(object):
             session = model.Session()
             board = session.query(model.Board).filter_by(board_name=board_name)
             user = session.query(model.User).filter_by(username=user_info['username']).one()
-            blacklist = session.query(model.Blacklist).filter_by(user_id=user.id).all()
-            blacklist_dict_list = self._get_dict_list(blacklist)
+            _, blacklist_dict_list = self.blacklist_manager.list(session_key)
             blacklist_users = set()
             for blacklist_item in blacklist_dict_list:
                 blacklist_users.add(blacklist_item['blacklisted_user_username'])

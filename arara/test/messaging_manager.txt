@@ -77,6 +77,22 @@ True
 >>> server.messaging_manager.receive_list(mikkang_session_key)
 (True, [{'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello2', 'id': 2}, {'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello', 'id': 1}])
 
+# now add serialx to blacklist to check blacklist function
+>>> server.blacklist_manager.add(mikkang_session_key, 'serialx')
+(True, 'OK')
+
+# check blacklist function
+>>> server.messaging_manager.receive_list(mikkang_session_key)
+(True, [{'from': u'serialx', 'blacklisted': True, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello2', 'id': 2}, {'from': u'serialx', 'blacklisted': True, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello', 'id': 1}])
+
+# because it's too poor to keep serialx rot in blacklist, delete serialx from blacklist
+>>> server.blacklist_manager.delete(mikkang_session_key, 'serialx')
+(True, 'OK')
+
+# re-receive list to check blacklist function
+>>> server.messaging_manager.receive_list(mikkang_session_key)
+(True, [{'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello2', 'id': 2}, {'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello', 'id': 1}])
+
 >>> server.messaging_manager.sent_list(serialx_session_key)
 (True, [{'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello2', 'id': 2}, {'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello', 'id': 1}])
 
