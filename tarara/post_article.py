@@ -15,6 +15,22 @@ class ara_post_article(ara_forms):
     def get_current_board(self):
 	return "garbages"
 
+    def on_button_clicked(self, button):
+        if button == self.btnokay:
+            # TODO: 서버와 통신하기
+            pass
+        elif button == self.btncancel:
+            # TODO: 이전 화면으로 돌아가기
+            pass
+        elif button == self.btnhelp:
+            # TODO: 편집 도움말
+            pass
+        elif button == self.btnpreview:
+            # TODO: 미리보기
+            pass
+        else:
+            assert("Call for undefined button")
+
     def __initwidgets__(self, modify = False):
         if modify:
             self.header = urwid.Filler(urwid.Text(u"ARA: Modify Article  Current board: %s" % self.get_current_board(), align='center'))
@@ -26,10 +42,10 @@ class ara_post_article(ara_forms):
         self.bodyedit = urwid.Filler(urwid.Edit(multiline = True, wrap='clip'))
 
 	self.chkinclude = urwid.CheckBox("Include in search")
-	self.btnhelp = urwid.Button("Help")
-	self.btnpreview = urwid.Button("Preview")
-	self.btnokay = urwid.Button("OK")
-	self.btncancel = urwid.Button("Cancel")
+	self.btnhelp = urwid.Button("Help", self.on_button_clicked)
+	self.btnpreview = urwid.Button("Preview", self.on_button_clicked)
+	self.btnokay = urwid.Button("OK", self.on_button_clicked)
+	self.btncancel = urwid.Button("Cancel", self.on_button_clicked)
 
         self.bottomcolumn = urwid.Filler(urwid.Columns([('weight',40,self.chkinclude),('weight',15,self.btnhelp),('weight',15,self.btnpreview),('weight',15,self.btnokay),('weight',15,self.btncancel)]))
 
