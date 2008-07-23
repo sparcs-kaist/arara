@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
-        (r'^$', 'warara.account.views.index'),
+        (r'^register/$', 'warara.account.views.register'),
 )

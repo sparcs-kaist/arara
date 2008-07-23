@@ -3,6 +3,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 #import arara
 
-def index(request):
-    rendered = render_to_string('account/index.html')
+def register(request):
+    rendered = render_to_string('account/register.html')
     return HttpResponse(rendered)
