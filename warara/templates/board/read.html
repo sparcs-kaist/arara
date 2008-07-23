@@ -19,9 +19,11 @@
         <span class="username">{{article.author_username}}</span>
         <span class="article_date">{{article.date}}</span>
         <div class="article_text">
-            <p>
+            {% if not article.blacklisted %}
             {{article.content|linebreaks}}
-            </p>
+            {% else %}
+            BLACKLISTED
+            {% endif %}
         </div>
         <a class="article_reply_show" href="#">reply</a>
         <div class="article_reply">
