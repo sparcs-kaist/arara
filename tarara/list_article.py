@@ -21,8 +21,8 @@ class articlelist_rowitem(FieldRow):
 
 class ara_list_article(ara_forms):
     def __init__(self, session_key = None, board_name = None):
-        ara_forms.__init__(self, session_key)
         self.board_name = board_name
+        ara_forms.__init__(self, session_key)
 
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Article list",align='center'))

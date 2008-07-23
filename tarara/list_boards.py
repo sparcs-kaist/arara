@@ -6,6 +6,7 @@ import urwid.curses_display
 import urwid
 from ara_forms import *
 from widget import *
+from list_article import *
 import listview
 
 class boardlist_rowitem(FieldRow):
@@ -16,6 +17,19 @@ class boardlist_rowitem(FieldRow):
     ]
 
 class ara_list_boards(ara_forms):
+    def __keypress__(self, size, key):
+        key = key.strip().lower()
+        mainpile_focus = self.mainpile.get_focus()
+        if mainpile_focus == self.boardlist:
+            if key == "enter":
+                # self.boardlist.get_body().get_focus()[0].w.w.widget_list : 현재 활성화된 항목
+                boardname = self.boardlist.get_body().get_focus()[0].w.w.widget_list[1].get_text()[0]
+                ara_list_article(session_key = self.session_key, board_name = boardname).main()
+            else:
+                self.frame.keypress(size, key)
+        else:
+            self.frame.keypress(size, key)
+
     def __initwidgets__(self):
         self.keymap = {
             'j': 'down',
@@ -37,9 +51,9 @@ class ara_list_boards(ara_forms):
             itemlist = [{'new':' ','name':'', 'desc':u'No boards found. Have a nice day.'}]
 
         header = {'new':'N', 'name':'Name', 'desc':'Description'}
-        boardlist = listview.get_view(itemlist, header, boardlist_rowitem)
+        self.boardlist = listview.get_view(itemlist, header, boardlist_rowitem)
 
-        content = [('fixed',1, self.header),('fixed',1,self.boardnameedit),('fixed',1,boardcounttext),boardlist]
+        content = [('fixed',1, self.header),('fixed',1,self.boardnameedit),('fixed',1,boardcounttext),self.boardlist]
         self.mainpile = urwid.Pile(content)
 
         return self.mainpile
