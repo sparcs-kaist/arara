@@ -5,70 +5,74 @@
 {% endblock %}
 {% block content %}
 <div id="account">
-<fieldset id="agreement">
-	<legend>User Agreement</legend>
-	<p>
-	<textarea name="agreement" id="agreement" cols="50" rows="10"/>
--- User Agreement --
-Glad to see you
-<!--It will be modified-->
-	</textarea>	
-	</p>
-	<p>
-	<label for="agree" class="radio">Agree</label>
-	<input name="agree" id="agree" type="radio" value="yes" class="radio"/>
-	<label for="not_agree" class="agree">Don't agree</label>
-	<input name="agree" id="not_agree" type="radio" value="no" class="radio" />
-	</p>
-</fieldset>
-<fieldset id="information">
-	<legend>User information</legend>
-	<p>
-	<label for="id">ID:</label>
-	<input name="id" id="id" type="text" />
-	</p>
-	<p>
-	<label for="nickname">Nickname:</label>
-	<input name="nickname" id="nickname" type="text" />
-	</p>
-	<p>
-	<label for="email">E-mail address:
-	<span class="feedback">hi</span></label>
-	<input name="email" id="email" type="text" />
-	<br />
-	<em class="required">(We will send you user registration confirmation to here)</em>
-	</p>
-</fieldset>
-<fieldset id="password">
-	<legend>Password</legend>
-	<p>
-	<label for="password">Password:</label>
-	<input name="password" id="password" type="password" />
-	</p>
-	<p>
-	<label for="re_password">Re-enter password:</label>
-	<input name="re_password" id="re_password" type="password" />
-	</p>
-</fieldset>
-<fieldset id="setting">
-	<legend>ARA Setting</legend>
-	<p>
-	<label for="sig">Signature:</label>
-	<textarea name="introduce" id="introduce" cols="50" rows="10"></textarea>
-	</p>
-	<p>
-	<label for="introduce">Introduce:</label>
-	<textarea name="introduce" id="introduce" cols="50" rows="10"></textarea>
-	</p>
-	<p>
-	<label for="language">Language:</label>
-	<select name="language" id="laguage" />
-	<option value="eng">English</option>
-	<option value="kor">Korean</option>
-	</select>
-	</p>
-</fieldset>
-<input value="Done" class="submit" type="submit">
+    <form action="/account/register/" method="post">
+        <h1>User Registration</h1>
+        <fieldset id="agreement">
+            <legend>User Agreement</legend>
+            <p>
+            <textarea name="agreement" id="agreement" cols="50" rows="10"/>
+                -- User Agreement --
+                Glad to see you
+                <!--It will be modified-->
+            </textarea>    
+            </p>
+            <p>
+            <input name="agree" id="agree" type="radio" value="yes" class="radio"/>
+            <label for="agree" class="radio">Agree</label>
+            <input name="agree" id="not_agree" type="radio" value="no" class="radio" />
+            <label for="not_agree" class="agree">Don't agree</label>
+            </p>
+        </fieldset>
+        <fieldset id="information">
+            <legend>User information</legend>
+            <p>
+            <label for="id">ID:</label>
+            <input name="id" id="id" type="text" />
+            </p>
+            <p>
+            <label for="nickname">Nickname:</label>
+            <input name="nickname" id="nickname" type="text" />
+            </p>
+            <p>
+            <label for="email">E-mail address:
+                <span class="feedback">hi</span></label>
+            <input name="email" id="email" type="text" />
+            <br />
+            <em class="required">(We will send you user registration confirmation to here)</em>
+            </p>
+        </fieldset>
+        <fieldset id="password">
+            <legend>Password</legend>
+            <p>
+            <label for="password">Password:</label>
+            <input name="password" id="password" type="password" />
+            </p>
+            <p>
+            <label for="re_password">Re-enter password:</label>
+            <input name="re_password" id="re_password" type="password" />
+            </p>
+        </fieldset>
+        <fieldset id="setting">
+            <legend>ARA Setting</legend>
+            <p>
+            <label for="sig">Signature:</label>
+            <textarea name="introduce" id="introduce" cols="50" rows="10"></textarea>
+            </p>
+            <p>
+            <label for="introduce">Introduce:</label>
+            <textarea name="introduce" id="introduce" cols="50" rows="10"></textarea>
+            </p>
+            <p>
+            <label for="language">Language:</label>
+            <select name="language" id="laguage" />
+                <option value="eng">English</option>
+                <option value="kor">Korean</option>
+            </select>
+            </p>
+        </fieldset>
+        <input value="Done" class="submit" type="submit">
+    </form>
+</div>
 {% endblock %}
 <!--
 id
