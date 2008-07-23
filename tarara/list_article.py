@@ -34,7 +34,7 @@ class ara_list_article(ara_forms):
             article_id  = int(self.articlelist.get_body().get_focus()[0].w.w.widget_list[1].get_text()[0])
             ara_read_article(session_key = self.session_key, board_name = self.board_name, article_id = article_id).main()
         elif key == 'w':
-            ara_post_article(self.session_key, self.board_name).main()
+            ara_post_article(self.session_key, self.board_name, 'post').main()
         else:
             self.frame.keypress(size, key)
 

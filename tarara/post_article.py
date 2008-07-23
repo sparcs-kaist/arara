@@ -12,20 +12,24 @@ keymap = {
 }
 
 class ara_post_article(ara_forms):
-    def __init__(self, session_key = None, board_name = None):
+    def __init__(self, session_key = None, board_name = None, mode='post', article_id = 0):
         self.board_name = board_name
+        self.mode= mode
+        self.article_id = article_id
         ara_forms.__init__(self, session_key)
-
-    def get_current_board(self):
-	return "garbages"
 
     def on_button_clicked(self, button):
         if button == self.btnokay:
             title = self.titleedit.body.get_edit_text()
             body = self.bodyedit.body.get_edit_text()
-            print self.server.article_manager.write_article(self.session_key, self.board_name, {'title':title, 'content':body})
-            # TODO: 서버와 통신하기
-            pass
+            if self.mode == 'modify':
+                print self.server.article_manager.modify(self.session_key, self.board_name, self.article_id, {'title':title, 'content':body})
+            elif self.mode == 'reply':
+                print self.server.article_manager.write_reply(self.session_key, self.board_name, self.article_id, {'title':title, 'content':body})
+            elif self.mode == 'post':
+                print self.server.article_manager.write_article(self.session_key, self.board_name, {'title':title, 'content':body})
+            else:
+                pass
         elif button == self.btncancel:
             # TODO: 이전 화면으로 돌아가기
             pass
@@ -38,11 +42,13 @@ class ara_post_article(ara_forms):
         else:
             assert("Call for undefined button")
 
-    def __initwidgets__(self, modify = False):
-        if modify:
-            self.header = urwid.Filler(urwid.Text(u"ARA: Modify Article  Current board: %s" % self.get_current_board(), align='center'))
+    def __initwidgets__(self):
+        if self.mode == 'modify':
+            self.header = urwid.Filler(urwid.Text(u"ARA: Modify Article  Current board: %s" % self.board_name, align='center'))
+        elif self.mode == 'reply':
+            self.header = urwid.Filler(urwid.Text(u"ARA: Reply Article  Current board: %s" % self.board_name, align='center'))
 	else:
-            self.header = urwid.Filler(urwid.Text(u"ARA: Post Article  Current board: %s" % self.get_current_board(), align='center'))
+            self.header = urwid.Filler(urwid.Text(u"ARA: Post Article  Current board: %s" % self.board_name, align='center'))
 
         self.titleedit = urwid.Filler(urwid.Edit(caption="Title: ", wrap='clip'))
         bodytext = urwid.Filler(urwid.Text('Body'))

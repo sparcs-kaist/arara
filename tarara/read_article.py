@@ -5,11 +5,22 @@ import os
 import urwid.curses_display
 import urwid
 from ara_forms import *
+from post_article import *
 from string import Template
 
 class ara_read_article(ara_forms):
     def get_current_board(self):
 	return "garbages"
+
+    def __keypress__(self, size, key):
+        key = key.strip()
+        mainpile_focus = self.mainpile.get_focus()
+        if key == 'e':
+            ara_post_article(self.session_key, self.board_name, 'modify', self.article_id).main()
+        elif key == 'r':
+            ara_post_article(self.session_key, self.board_name, 'reply', self.article_id).main()
+        else:
+            self.frame.keypress(size, key)
 
     def __init__(self, session_key = None, board_name = None, article_id = None):
         self.board_name = board_name
