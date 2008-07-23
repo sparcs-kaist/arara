@@ -1,14 +1,8 @@
 >>> import arara
 >>> server = arara.get_namespace()
 
-Register two user, mikkang and combacsa. then login as mikkang
+Register one user, combacsa. then login as existing user mikkang
 
->>> user_reg_dic = {'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'signature':'mikkang', 'self_introduction':'mikkang', 'default_language':'english' }
->>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
->>> server.member_manager.confirm('mikkang', register_key)
-(True, 'OK')
 >>> user_reg_dic = {'username':'combacsa', 'password':'combacsa', 'nickname':'combacsa', 'email':'combacsa', 'signature':'combacsa', 'self_introduction':'combacsa', 'default_language':'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
@@ -19,25 +13,35 @@ True
 >>> ret
 True
 
+# Faking time.time (to check time field)
+
+>>> import time
+>>> def stub_time():
+...     return 1.1
+>>> org_time = time.time
+>>> time.time = stub_time
+
 now Test BlacklistManager!
 
->>> server.blacklist_manager.add(session_key, 'combacsa')
+>>> server.blacklist_manager.add(session_key, {'blacklist_username': 'combacsa', 'block_article': 'True', 'block_message': 'True'})
 (True, 'OK')
->>> server.blacklist_manager.add(session_key, 'pv457')
+>>> server.blacklist_manager.add(session_key, {'blacklist_username': 'pv457', 'block_article': 'True', 'block_message': 'True'})
 (False, 'USERNAME_NOT_EXIST')
->>> server.blacklist_manager.add(session_key, 'combacsa')
+>>> server.blacklist_manager.add(session_key, {'blacklist_username': 'combacsa', 'block_article': 'True', 'block_message': 'True'})
 (False, 'ALREADY_ADDED')
 >>> server.blacklist_manager.list(session_key)
-(True, [{'username': 'combacsa', 'article': 'True', 'message': 'True'}])
->>> server.blacklist_manager.modify(session_key, {'username': 'combacsa', 'article': 'False', 'message': 'True'})
+(True, [{'username': u'mikkang', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'block_article': True, 'blacklisted_user_username': u'combacsa', 'block_message': True, 'blacklisted_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}])
+>>> server.blacklist_manager.modify(session_key, {'blacklist_username': 'combacsa', 'block_article': 'False', 'block_message': 'True'})
 (True, 'OK')
 >>> server.blacklist_manager.list(session_key)
-(True, [{'username': 'combacsa', 'article': 'False', 'message': 'True'}])
->>> server.blacklist_manager.modify(session_key, {'username': 'pv457', 'article': 'False', 'message': 'True'})
-(False, 'USERNAME_NOT_IN_BLACKLIST')
+(True, [{'username': u'mikkang', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'block_article': True, 'blacklisted_user_username': u'combacsa', 'block_message': True, 'blacklisted_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}])
+>>> server.blacklist_manager.modify(session_key, {'blacklist_username': 'pv457', 'block_article': 'False', 'block_message': 'True'})
+(False, 'USERNAME_NOT_EXIST')
 >>> server.blacklist_manager.delete(session_key, 'combacsa')
 (True, 'OK')
->>> server.blacklist_manager.delete(session_key, 'pv457')
+>>> server.blacklist_manager.delete(session_key, 'combacsa')
 (False, 'USERNAME_NOT_IN_BLACKLIST')
+>>> server.blacklist_manager.delete(session_key, 'pv457')
+(False, 'USERNAME_NOT_EXIST')
 >>> server.login_manager.logout(session_key)
 (True, 'OK')
