@@ -1,0 +1,35 @@
+>>> from arara.model import *
+>>> session = Session()
+>>> board = session.query(Board).filter_by(board_name='garbages').one()
+>>> serialx = session.query(User).filter_by(username='serialx').one()
+>>> a = Article(board, 'title1', 'content', serialx, '0.0.0.0', None)
+>>> b = Article(board, 'title2', 'content', serialx, '0.0.0.0', a)
+>>> c = Article(board, 'title3', 'content', serialx, '0.0.0.0', b)
+>>> d = Article(board, 'title4', 'content', serialx, '0.0.0.0', c)
+>>> session.save(a)
+>>> session.save(b)
+>>> session.save(c)
+>>> session.save(d)
+>>> session.commit()
+>>> d.root
+<Article('title1', 'serialx', 1970-01-01 09:00:01.100000)>
+>>> d.parent
+<Article('title3', 'serialx', 1970-01-01 09:00:01.100000)>
+>>> c.children
+[<Article('title4', 'serialx', 1970-01-01 09:00:01.100000)>]
+>>> a.descendants
+[<Article('title2', 'serialx', 1970-01-01 09:00:01.100000)>, <Article('title3', 'serialx', 1970-01-01 09:00:01.100000)>, <Article('title4', 'serialx', 1970-01-01 09:00:01.100000)>]
+
+
+>>> session = Session()
+>>> a = session.query(Article).filter_by(title='title1').one()
+>>> c = session.query(Article).filter_by(title='title3').one()
+>>> d = session.query(Article).filter_by(title='title4').one()
+>>> d.root
+<Article('title1', 'serialx', 1970-01-01 09:00:01.100000)>
+>>> d.parent
+<Article('title3', 'serialx', 1970-01-01 09:00:01.100000)>
+>>> c.children
+[<Article('title4', 'serialx', 1970-01-01 09:00:01.100000)>]
+>>> a.descendants
+[<Article('title2', 'serialx', 1970-01-01 09:00:01.100000)>, <Article('title3', 'serialx', 1970-01-01 09:00:01.100000)>, <Article('title4', 'serialx', 1970-01-01 09:00:01.100000)>]

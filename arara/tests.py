@@ -30,6 +30,8 @@ def suite():
                                    'messaging_manager.txt')),
                                doctest.DocFileSuite(os.path.join(DOCTEST_PATH,
                                    'login_manager.txt')),
+                               doctest.DocFileSuite(os.path.join(DOCTEST_PATH,
+                                   'model.txt')),
                                #doctest.DocFileSuite(os.path.join(DOCTEST_PATH,
                                #    'notice_manager.txt')),
                                #doctest.DocFileSuite(os.path.join(DOCTEST_PATH,

@@ -81,11 +81,13 @@ class Article(object):
                 self.root = parent.root
             else:
                 self.root = parent
+        else:
+            self.root = None
         self.parent = parent
         self.last_modified_date = self.date
 
     def __repr__(self):
-        return "<Article('%s', '%s', %s)>" % (self.title, self.author_id, str(self.date))
+        return "<Article('%s', '%s', %s)>" % (self.title, self.author.username, str(self.date))
 
 class Blacklist(object):
     def __init__(self, user, target_user, block_article, block_message):
@@ -215,25 +217,21 @@ mapper(UserActivation, user_activation_table, properties={
 mapper(Article, articles_table, properties={
     'author':relation(User, backref='articles'),
     'board':relation(Board, backref='articles'),
-    'root':relation(Article, lazy=None,
-                    primaryjoin=articles_table.c.root_id==articles_table.c.id,
-                    remote_side=articles_table.c.id,
-                    backref=backref('descendants', lazy=False, join_depth=1,
-                                    primaryjoin=articles_table.c.root_id==articles_table.c.id,
-                                    viewonly=True)),
-    'parent':relation(Article, lazy=None,
-                    primaryjoin=articles_table.c.parent_id==articles_table.c.id,
-                    remote_side=articles_table.c.id,
-                    backref=backref('children', lazy=False, join_depth=1,
-                                    primaryjoin=articles_table.c.parent_id==articles_table.c.id,
-                                    viewonly=False)),
 
-    #'children':relation(Article, cascade='all', lazy=None,
-    #                    primaryjoin=articles_table.c.parent_id==articles_table.c.id,
-    #                    backref=backref('parent',
-    #                                    primaryjoin=articles_table.c.parent_id==articles_table.c.id,
-    #                                    remote_side=articles_table.c.id
-    #                                    )),
+    'children':relation(Article,
+        primaryjoin=articles_table.c.parent_id==articles_table.c.id,
+        backref=backref('parent',
+            remote_side=[articles_table.c.id],
+            primaryjoin=articles_table.c.parent_id==articles_table.c.id,
+            )
+        ),
+    'descendants':relation(Article,
+        primaryjoin=articles_table.c.root_id==articles_table.c.id,
+        backref=backref('root',
+            remote_side=[articles_table.c.id],
+            primaryjoin=articles_table.c.root_id==articles_table.c.id,
+            )
+        )
 })
 
 mapper(Board, board_table)

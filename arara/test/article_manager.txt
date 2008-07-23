@@ -139,6 +139,14 @@ True
 # Read the article
 
 >>> ret, article = server.article_manager.read(session_key, 'garbages', article_id)
+>>> article[0]['root_id'] == article_id
+True
+>>> article[1]['root_id'] == article_id
+True
+>>> article[2]['root_id'] == article_id
+True
+>>> article[3]['root_id'] == article_id
+True
 >>> article[4]['root_id'] == article_id
 True
 
