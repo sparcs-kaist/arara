@@ -12,8 +12,7 @@ class LoginManager(object):
     
     def __init__(self):
         self.session_dic = {}
-        
-    
+
     def guest_login(self, guest_ip):
         '''
         guest 로그인 처리를 담당하는 함수
@@ -52,8 +51,6 @@ class LoginManager(object):
 
         success, msg = self.member_manager._authenticate(username, password)
         if success:
-            session = model.Session()
-            blacklist_info = session.query(model.Blacklist).filter_by(
             hash = hashlib.md5(username+password+datetime.datetime.today().__str__()).hexdigest()
             timestamp = datetime.datetime.isoformat(datetime.datetime.now())
             self.session_dic[hash] = {'username': username, 'ip': user_ip, 'logintime': timestamp}

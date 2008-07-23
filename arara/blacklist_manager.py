@@ -40,7 +40,6 @@ class BlacklistManager(object):
     
     def _get_dict(self, item, whitelist):
         item_dict = item.__dict__
-        session = model.Session()
         if item_dict['user_id']:
             item_dict['username'] = item.user.username
             del item_dict['user_id']
@@ -59,23 +58,16 @@ class BlacklistManager(object):
         return return_list
 
     @require_login
-    def add(self, session_key, blacklist_dict):
+    def add(self, session_key, blacklist_username, block_article=True, block_message=True):
         '''
         블랙리스트 username 추가
 
         default 값: article과 message 모두 True
 
-        저장 형태: { 'pv457': {'article': 'True', 'message': 'False'}} 
-
-        >>> blacklist.add(session_key,'pv457')
-        True, 'OK'
-
         @type  session_key: string
         @param session_key: User Key
         @type  blacklist_username: stirng
         @param blacklist_username: Blacklist Username
-        @type  blacklist_dic: dictionary
-        @param blacklist_dic: Blacklist Dictionary
         @rtype: boolean, string
         @return:
             1. 추가 성공: True, 'OK'
@@ -86,25 +78,21 @@ class BlacklistManager(object):
                 4. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
                 5. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        if not is_keys_in_dict(blacklist_dict, BLACKLIST_DICT):
-            return False, 'WRONG_DICTIONARY'
-
         ret, user_info = self.login_manager.get_session(session_key)
 
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info['username']).one()
         try:
-            target_user = session.query(model.User).filter_by(username=blacklist_dict['blacklist_username']).one()
+            target_user = session.query(model.User).filter_by(username=blacklist_username).one()
         except InvalidRequestError:
             return False, 'USERNAME_NOT_EXIST'
             
-        new_blacklist = model.Blacklist(user, target_user, blacklist_dict['block_article'], blacklist_dict['block_message'])
+        new_blacklist = model.Blacklist(user, target_user, True, True)
         session.save(new_blacklist)
         try:
             session.commit()
         except IntegrityError:
             return False, 'ALREADY_ADDED'
-
         return True, 'OK'
        
     @require_login

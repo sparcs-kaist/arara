@@ -23,11 +23,11 @@ True
 
 now Test BlacklistManager!
 
->>> server.blacklist_manager.add(session_key, {'blacklist_username': 'combacsa', 'block_article': 'True', 'block_message': 'True'})
+>>> server.blacklist_manager.add(session_key, 'combacsa')
 (True, 'OK')
->>> server.blacklist_manager.add(session_key, {'blacklist_username': 'pv457', 'block_article': 'True', 'block_message': 'True'})
+>>> server.blacklist_manager.add(session_key, 'pv457')
 (False, 'USERNAME_NOT_EXIST')
->>> server.blacklist_manager.add(session_key, {'blacklist_username': 'combacsa', 'block_article': 'True', 'block_message': 'True'})
+>>> server.blacklist_manager.add(session_key, 'combacsa')
 (False, 'ALREADY_ADDED')
 >>> server.blacklist_manager.list(session_key)
 (True, [{'username': u'mikkang', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'block_article': True, 'blacklisted_user_username': u'combacsa', 'block_message': True, 'blacklisted_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}])
