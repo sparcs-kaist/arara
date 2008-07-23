@@ -121,7 +121,8 @@ class ArticleManager(object):
             _, blacklist_dict_list = self.blacklist_manager.list(session_key)
             blacklist_users = set()
             for blacklist_item in blacklist_dict_list:
-                blacklist_users.add(blacklist_item['blacklisted_user_username'])
+                if blacklist_item['block_article']:
+                    blacklist_users.add(blacklist_item['blacklisted_user_username'])
             try:
                 article = session.query(model.Article).filter_by(id=no).one()
                 article.hit += 1

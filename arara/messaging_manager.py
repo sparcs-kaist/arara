@@ -102,7 +102,8 @@ class MessagingManager(object):
         _, blacklist_dict_list = self.blacklist_manager.list(session_key)
         blacklist_users = set()
         for blacklist_item in blacklist_dict_list:
-            blacklist_users.add(blacklist_item['blacklisted_user_username'])
+            if blacklist_item['block_message']:
+                blacklist_users.add(blacklist_item['blacklisted_user_username'])
         offset = page_length * (page - 1)
         last = offset + page_length
         received_messages = to_user.received_messages[::-1][offset:last]

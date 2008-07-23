@@ -85,6 +85,22 @@ True
 >>> server.messaging_manager.receive_list(mikkang_session_key)
 (True, [{'from': u'serialx', 'blacklisted': True, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello2', 'id': 2}, {'from': u'serialx', 'blacklisted': True, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello', 'id': 1}])
 
+# now change blacklist status of serialx (block article only)
+>>> server.blacklist_manager.modify(mikkang_session_key, {'blacklisted_user_username': 'serialx', 'block_article': True, 'block_message': False})
+(True, 'OK')
+
+# check whether message is blocked or not. at this time, nothing should be blocked.
+>>> server.messaging_manager.receive_list(mikkang_session_key)
+(True, [{'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello2', 'id': 2}, {'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello', 'id': 1}])
+
+# now change blacklist status of serialx again (block message only)
+>>> server.blacklist_manager.modify(mikkang_session_key, {'blacklisted_user_username': 'serialx', 'block_article': False, 'block_message': True})
+(True, 'OK')
+
+# check whether message is blocked or not. now, it should be blocked.
+>>> server.messaging_manager.receive_list(mikkang_session_key)
+(True, [{'from': u'serialx', 'blacklisted': True, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello2', 'id': 2}, {'from': u'serialx', 'blacklisted': True, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello', 'id': 1}])
+
 # because it's too poor to keep serialx rot in blacklist, delete serialx from blacklist
 >>> server.blacklist_manager.delete(mikkang_session_key, 'serialx')
 (True, 'OK')
