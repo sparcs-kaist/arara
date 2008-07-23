@@ -248,8 +248,8 @@ mapper(Blacklist, blacklist_table, properties={
 })
 
 TEST_DATABASE_FILENAME = 'test.db'
-#CONNECTION_STRING = 'sqlite:///%s' % TEST_DATABASE_FILENAME
-CONNECTION_STRING = 'mysql://s20060735:s20060735@localhost/s20060735'
+CONNECTION_STRING = 'sqlite:///%s' % TEST_DATABASE_FILENAME
+#CONNECTION_STRING = 'mysql://s20060735:s20060735@localhost/s20060735'
 
 engine = None
 
