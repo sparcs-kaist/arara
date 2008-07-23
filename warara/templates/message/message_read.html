@@ -22,14 +22,9 @@
     <textarea name="text" readonly="readonly">{{message.message}}</textarea>
 </div>
 <div id="message_read_buttons">
-    <form action="">
-        <input type="button" name="message_delete" value="{{t_delete}}"></input>
-        {% if t_reply %}
-        <input type="button" name="message_reply" value="{{t_reply}}"></input>
-        {% endif %}
-        <input type="button" name="message_deliever" value="{{t_deliever}}"></input>
-        <input type="button" name="message_list" value="{{t_list}}"></input>
-    </form>
+    <a href="/message/delete/{{message_id}}">delete</a>
+    <a href="/message/reply/{{message_id}}">reply</a>
+    <a href="../">list</a>
 </div>
 
 {% endblock message_content %}

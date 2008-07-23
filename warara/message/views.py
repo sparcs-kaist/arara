@@ -95,13 +95,23 @@ def outbox(request):
     rendered = render_to_string('message/message_list.html', r)
     return HttpResponse(rendered)
 
-def send(request):
+def send(request, msg_no=0):
     if request.POST:
         return send_(request)
 
     r = {}
     r['default_receiver'] = ''
     r['default_text'] = ''
+
+    server = arara.get_server()
+    sess = test_login()
+    msg_no = int(msg_no)
+    ret, message = server.messaging_manager.read_message(sess, msg_no)
+
+    if msg_no:
+        r['default_receiver'] = message['from']
+        r['default_text'] = message['message']
+
     r['t_receiver'] = 'receiver' #template_receiver
     r['t_send'] = 'send'
     r['t_cancel'] = 'cancel'
@@ -123,30 +133,28 @@ def send_(request):
 
     return HttpResponseRedirect(r['url'])
 
-def read(request):
+def read(request, message_list_type, message_id):
     server = arara.get_server()
     sess = test_login()
 
     r = get_various_info(request)
-    msg_no = request.GET.get('msg_no', 3)
-    msg_no = int(msg_no)
-    list_type = request.POST.get('list_type', 'inbox')
-    ret, r['message'] = server.messaging_manager.read_message(sess, msg_no)
+    message_id = int(message_id)
+    ret, r['message'] = server.messaging_manager.read_message(sess, message_id)
     r['prev_message'] = {'mark':r['prev'], 'msg_no':''}
     r['next_message'] = {'mark':r['next'], 'msg_no':''}
-    r['t_delete'] = 'delete'
-    r['t_reply'] = ''
-    r['t_list'] = 'list'
-    r['t_deliever'] = 'deliever'
+    r['message_id'] = message_id
 
-    if list_type == 'inbox':
+    if message_list_type == 'inbox':
         r['person_type'] = 'sender'
         r['person'] = r['message']['from']
-        r['t_reply'] = 'reply'
-    elif list_type == 'outbox':
+    elif message_list_type == 'outbox':
         r['person_type'] = 'receiver'
         r['person'] = r['message']['to']
-        r['t_reply'] = ''
 
     rendered = render_to_string('message/message_read.html', r)
     return HttpResponse(rendered)
+"""
+def delete(request, message_id):
+    server = arara.get_server()
+    sess = test_login()
+"""
