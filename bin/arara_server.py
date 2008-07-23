@@ -8,6 +8,7 @@ PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
 sys.path.append(PROJECT_PATH)
 
 import arara
+import arara.model
 
 from thirdparty import wsgiserver
 
@@ -20,6 +21,7 @@ if __name__ == '__main__':
     options, args = parser.parse_args()
     print "Opening ARAra XMLRPC middleware on port", options.port, "..."
     dispatcher = SimpleXMLRPCDispatcher(allow_none=False, encoding=None)
+    arara.model.init_database()
     namespace = arara.get_namespace()
     dispatcher.register_instance(namespace, allow_dotted_names=True)
     
