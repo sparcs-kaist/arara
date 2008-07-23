@@ -12,11 +12,18 @@ keymap = {
 }
 
 class ara_post_article(ara_forms):
+    def __init__(self, session_key = None, board_name = None):
+        self.board_name = board_name
+        ara_forms.__init__(self, session_key)
+
     def get_current_board(self):
 	return "garbages"
 
     def on_button_clicked(self, button):
         if button == self.btnokay:
+            title = self.titleedit.body.get_edit_text()
+            body = self.bodyedit.body.get_edit_text()
+            print self.server.article_manager.write_article(self.session_key, self.board_name, {'title':title, 'content':body})
             # TODO: 서버와 통신하기
             pass
         elif button == self.btncancel:
@@ -37,7 +44,7 @@ class ara_post_article(ara_forms):
 	else:
             self.header = urwid.Filler(urwid.Text(u"ARA: Post Article  Current board: %s" % self.get_current_board(), align='center'))
 
-        titleedit = urwid.Filler(urwid.Edit(caption="Title: ", wrap='clip'))
+        self.titleedit = urwid.Filler(urwid.Edit(caption="Title: ", wrap='clip'))
         bodytext = urwid.Filler(urwid.Text('Body'))
         self.bodyedit = urwid.Filler(urwid.Edit(multiline = True, wrap='clip'))
 
@@ -49,7 +56,7 @@ class ara_post_article(ara_forms):
 
         self.bottomcolumn = urwid.Filler(urwid.Columns([('weight',40,self.chkinclude),('weight',15,self.btnhelp),('weight',15,self.btnpreview),('weight',15,self.btnokay),('weight',15,self.btncancel)]))
 
-        content = [('fixed',1, self.header),('fixed',1,titleedit),('fixed',1,bodytext),('fixed',1,self.dash),self.bodyedit,('fixed',1,self.dash),('fixed',1,self.bottomcolumn)]
+        content = [('fixed',1, self.header),('fixed',1,self.titleedit),('fixed',1,bodytext),('fixed',1,self.dash),self.bodyedit,('fixed',1,self.dash),('fixed',1,self.bottomcolumn)]
         self.mainpile = urwid.Pile(content)
 
         return self.mainpile
