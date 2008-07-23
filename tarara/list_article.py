@@ -6,6 +6,7 @@ import urwid.curses_display
 import urwid
 from ara_forms import *
 from widget import *
+from read_article import *
 import listview
 
 class articlelist_rowitem(FieldRow):
@@ -24,6 +25,19 @@ class ara_list_article(ara_forms):
         self.board_name = board_name
         ara_forms.__init__(self, session_key)
 
+    def __keypress__(self, size, key):
+        key = key.strip().lower()
+        mainpile_focus = self.mainpile.get_focus()
+        if mainpile_focus == self.articlelist:
+            if key == "enter":
+                # self.boardlist.get_body().get_focus()[0].w.w.widget_list : 현재 활성화된 항목
+                article_id  = int(self.articlelist.get_body().get_focus()[0].w.w.widget_list[1].get_text()[0])
+                ara_read_article(session_key = self.session_key, board_name = self.board_name, article_id = article_id).main()
+            else:
+                self.frame.keypress(size, key)
+        else:
+            self.frame.keypress(size, key)
+
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Article list",align='center'))
         self.infotext1 = urwid.Filler(urwid.Text("(N)ext/(P)revious Page (n)ext/(p)revious article (Number+Enter) Jump to article"))
@@ -41,9 +55,9 @@ class ara_list_article(ara_forms):
                     'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), 'vote':str(article['vote'])}]
         header = {'new':'N', 'number':'#', 'author':'Author', 'title':'Title', 'date':'Date', 'hit':'Hit', 'vote':'Vote'}
 
-        articlelist = listview.get_view(itemlist, header, articlelist_rowitem)
+        self.articlelist = listview.get_view(itemlist, header, articlelist_rowitem)
 
-        content = [('fixed',1, self.header),('fixed',1,self.infotext1),('fixed',1,self.infotext2),articlelist,]
+        content = [('fixed',1, self.header),('fixed',1,self.infotext1),('fixed',1,self.infotext2),self.articlelist,]
         self.mainpile = urwid.Pile(content)
 
         return self.mainpile
