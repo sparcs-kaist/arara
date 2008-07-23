@@ -23,17 +23,20 @@ class ara_list_boards(ara_forms):
         }
         boardlist = self.server.article_manager.board_list(self.session_key)
         if boardlist[0] == False:
-            # TODO: 폴백 위젯 구현
-            return
+            assert("Not logged in")
+        boards = boardlist[1]#.keys()
 	self.header = urwid.Filler(urwid.Text(u"ARA: List boards",align='center'))
         self.boardnameedit = urwid.Filler(urwid.Edit(caption=" * Enter board name: ", wrap='clip'))
-        boardcounttext = urwid.Filler(urwid.Text(' * There are %s boards.' % len(boardlist[1].keys())))
-
         itemlist = []
-        for data in boardlist[1].keys():
-            itemlist += [{'new':'N', 'name':data, 'desc':u'설명'}]
-        header = {'new':'N', 'name':'Name', 'desc':'Description'}
+        if len(boards) > 0:
+            boardcounttext = urwid.Filler(urwid.Text(' * There are %s boards.' % len(boards)))
+            for data in boards:
+                itemlist += [{'new':'N', 'name':data, 'desc':u'설명'}]
+        else:
+            boardcounttext = urwid.Filler(urwid.Text(' * No boards found. Have a nice day.'))
+            itemlist = [{'new':' ','name':'', 'desc':u'No boards found. Have a nice day.'}]
 
+        header = {'new':'N', 'name':'Name', 'desc':'Description'}
         boardlist = listview.get_view(itemlist, header, boardlist_rowitem)
 
         content = [('fixed',1, self.header),('fixed',1,self.boardnameedit),('fixed',1,boardcounttext),boardlist]

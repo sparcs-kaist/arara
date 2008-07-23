@@ -4,9 +4,13 @@
 import os
 import urwid.curses_display
 import urwid
+import sys
 from ara_forms import *
 from widget import *
 from list_boards import *
+from user_preferences import *
+from welcome import *
+from list_pm import *
 
 class ara_main(ara_forms):
     menu = [
@@ -54,6 +58,20 @@ class ara_main(ara_forms):
                     pass
                 elif pos == 2:
                     ara_list_boards(self.session_key).main()
+                elif pos == 3:
+                    ara_list_pm(self.session_key).main()
+                elif pos==4:
+                    ara_user_preferences(self.session_key).main()
+                elif pos==5:
+                    # TODO: 도움말로 가기
+                    pass
+                elif pos==6:
+                    # TODO: 아라 정보 보이기
+                    pass
+                elif pos==7:
+                    ara_welcome(self.session_key).main()
+                elif pos==8:
+                    sys.exit(0)
         else:
             self.frame.keypress(size, key)
 

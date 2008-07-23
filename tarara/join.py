@@ -66,7 +66,7 @@ class ara_join(ara_forms):
 
     def on_button_clicked(self, button):
         if button == self.joinbutton.body:
-            reg_dic = {'id':self.idedit.body.get_edit_text(), 'password':self.pwedit.body.get_edit_text(), 'nickname':self.nickedit.body.get_edit_text(), 'email':self.emailedit.body.get_edit_text(), 'sig':'', 'self_introduce':'','default_language':'ko'}
+            reg_dic = {'username':self.idedit.body.get_edit_text(), 'password':self.pwedit.body.get_edit_text(), 'nickname':self.nickedit.body.get_edit_text(), 'email':self.emailedit.body.get_edit_text(), 'signature':'', 'self_introduction':'','default_language':'ko'}
             print self.server.member_manager.register(reg_dic)
         elif button == self.cancelbutton:
             pass
