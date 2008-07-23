@@ -58,17 +58,21 @@ class ArticleManager(object):
                 stack.append((child, depth+1))
         return ret
 
-    def _get_dict(self, item, whitelist):
+    def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
         session = model.Session()
         if item_dict['author_id']:
             item_dict['author_username'] = item.author.username
             del item_dict['author_id']
-        filtered_dict = filter_dict(item_dict, whitelist)
-
+        if not item_dict['root_id']:
+            item_dict['root_id'] = item.id
+        if whitelist:
+            filtered_dict = filter_dict(item_dict, whitelist)
+        else:
+            filtered_dict = item_dict
         return filtered_dict
 
-    def _get_dict_list(self, raw_list, whitelist):
+    def _get_dict_list(self, raw_list, whitelist=None):
         return_list = []
         for item in raw_list:
             filtered_dict = self._get_dict(item, whitelist)
@@ -103,12 +107,16 @@ class ArticleManager(object):
                 4. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
 
+        _, user_info = self.login_manager.get_session(session_key)
         ret, message = self._is_board_exist(board_name)
-
+        
         if ret:
             session = model.Session()
             board = session.query(model.Board).filter_by(board_name=board_name)
-            #blacklist = session.query(model.Blacklist).filter_by(
+            #user = session.query(model.User).filter_by(username=user_info['username']).one()
+            #blacklist = session.query(model.Blacklist).filter_by(user_id=user.id).all()
+            #blacklist_dict_list = self._get_dict_list(blacklist)
+            #print blacklist_dict_list
             try:
                 article = session.query(model.Article).filter_by(id=no).one()
                 article.hit += 1
