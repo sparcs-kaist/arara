@@ -5,6 +5,7 @@ import os
 import urwid.curses_display
 import urwid
 from ara_forms import *
+from string import Template
 
 class ara_read_article(ara_forms):
     def get_current_board(self):
@@ -13,26 +14,32 @@ class ara_read_article(ara_forms):
     def __init__(self, session_key = None, board_name = None, article_id = None):
         self.board_name = board_name
         self.article_id = article_id
+        self.title_template = Template("Title: ${TITLE}")
+        self.info_template = Template("Author: ${AUTHOR}(${NICKNAME})    Hit: ${HIT} Reply: ${REPLY} ${DATE}")
+        self.reply_template = Template("Reply by ${AUTHOR}(${NICKNAME}) on ${DATE} ${NEW}")
         ara_forms.__init__(self, session_key)
+
+    def set_article(self, board_name, article_id):
+        thread = self.server.article_manager.read(self.session_key, board_name, article_id)
+        if thread[0]:
+            body = thread[1][0]
+            self.titletext.body.set_text(self.title_template.safe_substitute(TITLE=body['title']))
+            self.infotext.body.set_text(self.info_template.safe_substitute(AUTHOR=body['author_username'],
+                NICKNAME='blahblah', HIT=body['hit'], REPLY=str(len(thread[1])-1),
+                DATE=body['date'].strftime("%Y/%m/%d %H:%M")))
 
     def __initwidgets__(self):
         self.keymap = {
             'j': 'down',
             'k': 'up',
         }
-        thread = self.server.article_manager.read(self.session_key, self.board_name, self.article_id)
-        if thread[0]:
-            body = thread[1][0]
-            titletext = urwid.Filler(urwid.Text('Title: %s' % thread[1][0]['title']))
-            infotext = urwid.Filler(urwid.Text('Author: %(id)s (%(nickname)s)    Hit: %(hit)s Reply: %(reply)s %(date)s' % {
-                'id':thread[1][0]['author_username'], 'nickname':'peremen','hit':thread[1][0]['hit'],
-                'reply':str(len(thread[1])-1),'date':thread[1][0]['date'].strftime("%Y/%m/%d %H:%M")}))
-        else:
-            pass
+        self.titletext = urwid.Filler(urwid.Text(''))
+        self.infotext = urwid.Filler(urwid.Text(''))
+        self.set_article(self.board_name, self.article_id)
 	self.header = urwid.Filler(urwid.Text(u"ARA: Read article",align='center'))
         functext = urwid.Filler(urwid.Text('(n)ext/(p)revious (b)lock (e)dit (d)elete (f)old/retract (r)eply (h)elp (q)uit'))
 
-        content = [('fixed',1, self.header),('fixed',1,functext),('fixed',1,titletext),('fixed',1,infotext),('fixed',1,self.dash),self.blanktext]
+        content = [('fixed',1, self.header),('fixed',1,functext),('fixed',1,self.titletext),('fixed',1,self.infotext),('fixed',1,self.dash),self.blanktext]
         self.mainpile = urwid.Pile(content)
 
         return self.mainpile
