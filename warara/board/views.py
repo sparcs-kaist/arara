@@ -82,10 +82,11 @@ def read(request, board_name, article_no):
 def reply(request, board_name, article_no):
     server = arara.get_server()
     sess = test_login()
-    text = request.POST.get('textarea_reply', '')
+    content = request.POST.get('content', '')
+    title = request.POST.get('title', '')
     reply_dic = {}
-    reply_dic['content'] = text
-    reply_dic['title'] = 'title???'
+    reply_dic['content'] = content
+    reply_dic['title'] = title
 
     ret, no = server.article_manager.write_reply(sess, board_name, int(article_no), reply_dic)
 

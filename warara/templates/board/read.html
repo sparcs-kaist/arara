@@ -1,53 +1,35 @@
 {% extends "board/board_base.html" %}
 
 {% block style %}
-<link rel="stylesheet" type="text/css" href="/media/style/article_read.css"></link>
 {{block.super}}
+<link rel="stylesheet" type="text/css" href="/media/style/board_read.css"></link>
 {% endblock style %}
+
+{% block script %}
+{{block.super}}
+<script type="text/javascript" src="/media/js/board_read.js"></script>
+{% endblock script %}
 
 {% block board_content %}
 
 {% for article in article_list %}
-<div id="article_read">
-    <div id="article_title">
-        <span>
-            {{article.title}}
-        </span>
-    </div>
-    <div id="article_author">
-        <span class="username">
-            {{article.author_username}}
-        </span>
-    </div>
-    <div id="article_time">
-        <span>
-            {{article.author}}
-        </span>
-    </div>
-    <div id="article_time">
-        <span>
-            {{article.date}}
-        </span>
-    </div>
-    <div id="article_move">
-        <span>
-            aa
-        </span>
-    </div>
-
-    <div id="article_text">
+<div id="article_read" class="article_depth_{{article.depth}}">
+    <h1>{{article.title}}</h1>
+    <span class="username">{{article.author_username}}</span>
+    <span class="article_date">{{article.date}}</span>
+    <div class="article_text">
         <p>
-        <table><tr><td>{{article.content}}</td></tr></table>
+        {{article.content|linebreaks}}
         </p>
     </div>
-    <div id="reply">
-        <form action="/board/{{board_name}}/{{article.id}}/reply/" method="POST">
-            <span>
-                <textarea name="textarea_reply"></textarea>
-            </span>
-            <span>
-                <input type="submit" name="submit" value="{{t_reply_write}}"></input>
-            </span>
+    <a class="article_reply_show" href="#">reply</a>
+    <div class="article_reply">
+        <form class="article_reply_form" action="/board/{{board_name}}/{{article.id}}/reply/" method="POST">
+            <ul>
+                <li><input type="text" name="title" value="Re: {{article.title}}" /></li>
+                <li><textarea name="content"></textarea></li>
+                <li><input type="submit" name="submit" value="{{t_reply_write}}" /></li>
+            </ul>
         </form>
     </div>
 </div>

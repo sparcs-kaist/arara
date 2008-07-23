@@ -1,0 +1,51 @@
+.article_read {
+}
+
+.article_read span {
+}
+
+.article_text table{ 
+    font-size: small;
+    border: 1px solid #69f;
+    width: 600px;
+}
+
+.article_reply textarea {
+    font-size: small;
+    border: 1 solid #69f;
+    height: 80px;
+    width: 600px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+div.article_depth_2 {
+    margin-left: 3em;
+}
+
+div.article_depth_3 {
+    margin-left: 6em;
+}
+
+div.article_depth_4 {
+    margin-left: 8em;
+}
+
+
+.article_depth_2 h1 {
+    font-size: 1.5em;
+}
+.article_depth_3 h1 {
+    font-size: 1.5em;
+}
+.article_depth_4 h1 {
+    font-size: 1.5em;
+}
+
+form {
+    /*display: inline;*/
+}
+
+.article_read_buttons {
+    font-size: large;
+}
