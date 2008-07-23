@@ -110,6 +110,8 @@ class ArticleManager(object):
             board = session.query(model.Board).filter_by(board_name=board_name)
             try:
                 article = session.query(model.Article).filter_by(id=no).one()
+                article.hit += 1
+                session.commit()
             except InvalidRequestError:
                 return False, 'ARTICLE_NOT_EXIST'
             article_dict_list = self._article_thread_to_list(article)
@@ -119,6 +121,33 @@ class ArticleManager(object):
                 return True, article_dict_list
         else:
             return ret, message
+
+    @require_login
+    def vote_article(self, session_key, board_name, article_no):
+        '''
+        DB의 게시물 하나의 추천수를 증가시킴
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type  board_name: string
+        @param board_name: BBS Name
+        @type  article_no: integer
+        @param article_no: Article No
+        @rtype: boolean, string
+        @return:
+            1. 추천 성공: True, 'OK'
+            2. 추천 실패:
+                1. 존재하지 않는 게시판: False, 'BOARD_NOT_EXIST'
+                2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
+                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        '''
+
+        ret, user_info = self.login_manager.get_session(session_key)
+        ret, message = self._is_board_exist(board_name)
+        if ret:
+            session = model.Session()
+            #TODO: 어떻게 하면 중복추천을 막을 수 있을까?
+        pass
 
     @require_login
     def write_article(self, session_key, board_name, article_dic):
@@ -353,7 +382,7 @@ class ArticleManager(object):
         '''
         ret = {}
         for key in BOARDS:
-            ret['key'] = 0
+            ret[key] = 0
         return True, ret
 
     @require_login
