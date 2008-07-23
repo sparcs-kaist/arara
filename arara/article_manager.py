@@ -14,6 +14,7 @@ READ_ARTICLE_WHITELIST = ['id', 'title', 'content', 'last_modified_date', 'delet
 LIST_ARTICLE_WHITELIST = ['id', 'title', 'date', 'last_modified_date', 
                     'deleted', 'author_username', 'vote', 'hit']
 DELETED_MESSAGE = "This article has been removed by user or moderator."
+BLACKLISTED_MESSAGE = "This article is written by blacklisted user."
 
 class NotLoggedIn(Exception):
     pass
@@ -107,7 +108,10 @@ class ArticleManager(object):
         if ret:
             session = model.Session()
             board = session.query(model.Board).filter_by(board_name=board_name)
-            article = session.query(model.Article).filter_by(id=no).one()
+            try:
+                article = session.query(model.Article).filter_by(id=no).one()
+            except InvalidRequestError:
+                return False, 'ARTICLE_NOT_EXIST'
             article_dict_list = self._article_thread_to_list(article)
             for item in article_dict_list:
                 if item['deleted'] == True:
@@ -120,7 +124,9 @@ class ArticleManager(object):
     def write_article(self, session_key, board_name, article_dic):
         '''
         DB에 게시글 하나를 작성함
+
         Article Dictionary { title, content, attach1, attach2 }
+        attach1, attach2는 아직 구현되지 않음
 
         @type  session_key: string
         @param session_key: User Key
@@ -159,6 +165,8 @@ class ArticleManager(object):
     def write_reply(self, session_key, board_name, article_no, reply_dic):
         '''
         댓글 하나를 해당하는 글에 추가
+
+        Reply Dictionary { title, content }
 
         @type  session_key: string
         @param session_key: User Key
@@ -205,6 +213,9 @@ class ArticleManager(object):
     def modify(self, session_key, board_name, no, article_dic):
         '''
         DB의 해당하는 게시글 수정
+
+        Article Dictionary { title, content, attach1, attach2 }
+        attach1, attach2는 아직 구현되지 않음.
 
         @type  session_key: string
         @param session_key: User Key
@@ -334,15 +345,15 @@ class ArticleManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @rtype: boolean, list
+        @rtype: boolean, dictionary
         @return:
-            1. 리스트 읽어오기 성공: True, Dictionary of boards with new article num
+            1. 리스트 읽어오기 성공: True, Dictionary of boards with new article num(not implemented)
             2. 리스트 읽어오기 실패: False 
                 1. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        ret = []
+        ret = {}
         for key in BOARDS:
-            ret.append(key)
+            ret['key'] = 0
         return True, ret
 
     @require_login

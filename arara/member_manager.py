@@ -18,7 +18,7 @@ class NotLoggedIn(Exception):
 USER_PUBLIC_KEYS = ['username', 'password', 'nickname', 'email',
         'signature', 'self_introduction', 'default_language']
 USER_QUERY_WHITELIST = ('username', 'nickname', 'email',
-        'signature', 'self_introduction')
+        'signature', 'self_introduction', 'last_login_ip')
 USER_PUBLIC_WHITELIST= ('username', 'password', 'nickname', 'email',
         'signature', 'self_introduction', 'default_language', 'activated')
 USER_PUBLIC_MODIFIABLE_WHITELIST= ('nickname', 'email',
@@ -52,11 +52,8 @@ class MemberManager(object):
         '''
         DB에 회원 정보 추가. activation code를 발급한다.
 
-        >>> user_reg_dic = { 'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'sig':'mikkang', 'self_introduce':'mikkang', 'default_language':'english' }
-        >>> member_manager.register(user_reg_dic)
-        (True, '12tge8r9ytu23oytw8')
-
-        - Current User Dictionary { username, password, nickname, email, sig, self_introduce, default_language }
+        - Current User Dictionary { username, password, nickname, email, 
+                                    signiture, self_introduction, default_language }
 
         @type  user_reg_dic: dictionary
         @param user_reg_dic: User Dictionary
@@ -96,15 +93,10 @@ class MemberManager(object):
     def confirm(self, username_to_confirm, confirm_key):
         '''
         인증코드(activation code) 확인.
-
-        >>> member_manager.confirm('mikkang', register_key)
-        (True, 'OK')
-        >>> member_manager.confirm('mikkang', 'asdfasdfasdfsd')
-        (False, 'WRONG_CONFIRM_KEY')
-
+        
         @type  username_to_confirm: string
-        @param username_to_confirm: Confirm ID
-        @type  confirm_key: integer
+        @param username_to_confirm: Confirm Username
+        @type  confirm_key: string
         @param confirm_key: Confirm Key
         @rtype: string
         @return:
@@ -133,7 +125,7 @@ class MemberManager(object):
         Confirm은 하지 않았더라도 등록되어있으면 True를 리턴한다.
 
         @type  user_username: string
-        @param user_username: ID to check whether is registered or not
+        @param user_username: Username to check whether is registered or not
         @rtype: bool
         @return:
             1. 존재하는 사용자: True
@@ -153,6 +145,7 @@ class MemberManager(object):
         except InvalidRequestError:
             return False
 
+    @require_login
     def get_info(self, session_key):
         '''
         회원 정보 수정을 위해 현재 로그인된 회원의 정보를 가져오는 함수.
@@ -177,7 +170,7 @@ class MemberManager(object):
         except InvalidRequestError:
             return False, "MEMBER_NOT_EXIST"
 
-        
+    @require_login    
     def modify_password(self, session_key, user_password_dict):
         '''
         회원의 password를 수정.
@@ -253,12 +246,8 @@ class MemberManager(object):
     def query_by_username(self, session_key, query_username):
         '''
         쿼리 함수
-
-        member.query_by_username(session_key, 'pv457')
-        True, {'user_username': 'pv457', 'user_nickname': '심영준',
-        'self_introduce': '...', 'user_ip': '143.248.234.111'}
-
-        ---query_dic { user_username, user_nickname, self_introduce, user_ip }
+        
+        ---query_dic { username, nickname, signature, self_introduction, last_login_ip }
 
         @type  session_key: string
         @param session_key: User Key
@@ -284,12 +273,8 @@ class MemberManager(object):
     def query_by_nick(self, session_key, query_nickname):
         '''
         쿼리 함수
-
-        member.query_by_nick(session_key, '심영준')
-        True, {'user_username': 'pv457', 'user_nickname': '심영준',
-        'self_introduce': '...', 'user_ip': '143.248.234.111'}
-
-        ---query_dic { user_username, user_nickname, self_introduce, user_ip }
+        
+        ---query_dic { username, nickname, signature, self_introduction, last_login_ip }
 
         @type  session_key: string
         @param session_key: User Key
@@ -355,7 +340,6 @@ class MemberManager(object):
             assert len(search_user_info.keys()) == 1
             key = search_user_info.keys()[0]
             assert key == 'username' or key == 'nickname'
-            import sys
             user = session.query(model.User).filter_by(**search_user_info).one()
             return True, user.username
         except InvalidRequestError:

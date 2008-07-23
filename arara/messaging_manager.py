@@ -47,12 +47,12 @@ class MessagingManager(object):
         '''
         보낸 쪽지 리스트 읽어오기
 
-        >>> messaging.sent_list(session_key)
-        True, [{'msg_no': 1, 'from': 'pv457', 'to': 'serialx',
-        'message': '야! 너 북극곰이라며?', 'sent_time': '2008.02.13 12:13:43'}, ...]
-
         @type  session_key: string
         @param session_key: User Key
+        @type  page: integer
+        @param page: Page Number
+        @type  page_length: integer
+        @param page_length: Number of Messages to get in one page
         @rtype: list
         @return:
             1. 리스트 읽어오기 성공: True, Message List(보낸쪽지가 없을 경우 [] return)
@@ -77,12 +77,12 @@ class MessagingManager(object):
         '''
         받은 쪽지 리스트 읽어오기
 
-        >>> messaging.receive_list(session_key)
-        True, [{'msg_no': 2, 'from': 'serialx', 'to_id': 'pv457',
-        'message': '장난? 아니거등?', 'sent_time': '2008.02.13 12:15:32'}, ...]
-
         @type  session_key: string
         @param session_key: User Key
+        @type  page: integer
+        @param page: Page Number
+        @type  page_langth: integer
+        @param page_length: Number of Messages to get in one page
         @rtype: list
         @return:
             1. 리스트 읽어오기 성공: True, Message List
@@ -105,9 +105,6 @@ class MessagingManager(object):
     def send_message(self, session_key, to, msg):
         '''
         쪽지 전송하기
-
-        >>> server.messaging_manager.send_message(session_key, 'pv457', 'hello, world')
-        True, 'OK'
 
         @type  session_key: string
         @param session_key: User Key
@@ -143,10 +140,6 @@ class MessagingManager(object):
     def read_message(self, session_key, msg_no):
         '''
         쪽지 하나 읽어오기
-
-        >>> messaging.read_message(session_key, 34)
-        True, {'msg_no': 3, 'from': 'pipoket', 'to': 'serialx',
-        'message': '북극곰 ㅇㅅㅇ', 'sent_time': '2008.02.13. 12:17:34'}
 
         @type  session_key: string
         @param session_key: User Key

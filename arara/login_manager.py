@@ -52,6 +52,8 @@ class LoginManager(object):
 
         success, msg = self.member_manager._authenticate(username, password)
         if success:
+            session = model.Session()
+            blacklist_info = session.query(model.Blacklist).filter_by(
             hash = hashlib.md5(username+password+datetime.datetime.today().__str__()).hexdigest()
             timestamp = datetime.datetime.isoformat(datetime.datetime.now())
             self.session_dic[hash] = {'username': username, 'ip': user_ip, 'logintime': timestamp}
@@ -103,7 +105,7 @@ class LoginManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @rtype: string
+        @rtype: dictionary
         @return:
             1. 로그인 되어있을 경우: True, self.session_dic {username, user_ip, login_time}
             2. 로그인 되어있지 않을 경우: False, 'NOT_LOGGEDIN'
@@ -120,7 +122,7 @@ class LoginManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @rtype: string
+        @rtype: boolean
         @return:
             1. 로그인 되어있을 경우: True
             2. 로그인 되어있지 않을 경우: False
