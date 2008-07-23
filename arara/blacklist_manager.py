@@ -89,13 +89,13 @@ class BlacklistManager(object):
             target_user = session.query(model.User).filter_by(username=blacklist_username).one()
         except InvalidRequestError:
             return False, 'USERNAME_NOT_EXIST'
-            
+        integrity_chk = session.query(model.Blacklist).filter_by(user_id=user.id, 
+                        blacklisted_user_id=target_user.id).all()
+        if integrity_chk:
+            return False, 'ALREADY_ADDED'
         new_blacklist = model.Blacklist(user, target_user, block_article, block_message)
         session.save(new_blacklist)
-        try:
-            session.commit()
-        except IntegrityError:
-            return False, 'ALREADY_ADDED'
+        session.commit()
         return True, 'OK'
        
     @require_login
@@ -166,7 +166,7 @@ class BlacklistManager(object):
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info['username']).one()
         try:
-            target_user = session.query(model.User).filter_by(username=blacklist_dict['blacklist_username']).one()
+            target_user = session.query(model.User).filter_by(username=blacklist_dict['blacklist_user_username']).one()
         except InvalidRequestError:
             return False, 'USERNAME_NOT_EXIST'
         try:
