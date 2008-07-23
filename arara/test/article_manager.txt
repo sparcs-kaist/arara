@@ -49,7 +49,7 @@ True
 # Read the article
 
 >>> server.article_manager.read(session_key, 'garbages', 1)
-(True, [{'author_username': u'mikkang', 'hit': 1, 'root_id': 1, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_ip': u'143.248.234.140', 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'serialx is...', 'id': 1}])
+(True, [{'root_id': 1, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}])
 
 # Reply to the article
 
@@ -62,12 +62,12 @@ True
 # Read the article again
 
 >>> server.article_manager.read(session_key, 'garbages', 1)
-(True, [{'author_username': u'mikkang', 'hit': 2, 'root_id': 1, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_ip': u'143.248.234.140', 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'serialx is...', 'id': 1}, {'author_username': u'mikkang', 'hit': 0, 'root_id': 1, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_ip': u'143.248.234.140', 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'dummy', 'id': 2}])
+(True, [{'root_id': 1, 'author_username': u'mikkang', 'hit': 2, 'blacklisted': False, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'root_id': 1, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
 
 # List the article (should only be one article in the list
 
 >>> server.article_manager.article_list(session_key, 'garbages')
-(True, [{'author_username': u'mikkang', 'hit': 2, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'vote': 0, 'id': 1}])
+(True, [{'author_username': u'mikkang', 'no_reply': 1, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'vote': 0, 'hit': 2, 'id': 1}])
 
 
 # Test for pagination
@@ -79,11 +79,11 @@ True
 >>> len(l)
 20
 >>> l[0]
-{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'vote': 0, 'id': 102}
+{'author_username': u'mikkang', 'no_reply': 0, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'vote': 0, 'hit': 0, 'id': 102}
 >>> l[1]
-{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 98', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'vote': 0, 'id': 101}
+{'author_username': u'mikkang', 'no_reply': 0, 'title': u'serialx is... 98', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'vote': 0, 'hit': 0, 'id': 101}
 >>> l[19]
-{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 80', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'vote': 0, 'id': 83}
+{'author_username': u'mikkang', 'no_reply': 0, 'title': u'serialx is... 80', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'vote': 0, 'hit': 0, 'id': 83}
 
 >>> ret, l = server.article_manager.article_list(session_key, 'garbages', page=2)
 >>> len(l)
@@ -94,7 +94,7 @@ True
 >>> server.article_manager.delete(session_key, 'garbages', 3)
 (True, 3)
 >>> server.article_manager.read(session_key, 'garbages', 3)
-(True, [{'author_username': u'mikkang', 'hit': 1, 'root_id': 3, 'deleted': True, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_ip': u'143.248.234.140', 'content': 'This article has been removed by user or moderator.', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'serialx is... 0', 'id': 3}])
+(True, [{'root_id': 3, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'serialx is... 0', 'deleted': True, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 3}])
 >>> server.article_manager.delete(session_key, 'garbages', 1241252)
 (False, 'ARTICLE_NOT_EXIST')
 >>> server.article_manager.delete(session_key_serialx, 'garbages', 2)
@@ -104,12 +104,12 @@ True
 # Test for modification
 
 >>> server.article_manager.read(session_key, 'garbages', 1)
-(True, [{'author_username': u'mikkang', 'hit': 3, 'root_id': 1, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_ip': u'143.248.234.140', 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'serialx is...', 'id': 1}, {'author_username': u'mikkang', 'hit': 0, 'root_id': 1, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_ip': u'143.248.234.140', 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'dummy', 'id': 2}])
+(True, [{'root_id': 1, 'author_username': u'mikkang', 'hit': 3, 'blacklisted': False, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'root_id': 1, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
 >>> article_dic = {'title': 'pipoket is...', 'content': 'woodori'}
 >>> server.article_manager.modify(session_key, 'garbages', 1, article_dic)
 (True, 1)
 >>> server.article_manager.read(session_key, 'garbages', 1)
-(True, [{'author_username': u'mikkang', 'hit': 4, 'root_id': 1, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_ip': u'143.248.234.140', 'content': u'woodori', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'pipoket is...', 'id': 1}, {'author_username': u'mikkang', 'hit': 0, 'root_id': 1, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_ip': u'143.248.234.140', 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'dummy', 'id': 2}])
+(True, [{'root_id': 1, 'author_username': u'mikkang', 'hit': 4, 'blacklisted': False, 'title': u'pipoket is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'woodori', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'root_id': 1, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
 
 
 # Board list
@@ -156,7 +156,12 @@ True
 >>> ret, article_id = server.article_manager.write_article(session_key_serialx, 'garbages', article_dic)
 
 >>> server.article_manager.read(session_key, 'garbages', article_id)
-(True, [{'author_username': u'serialx', 'hit': 1, 'root_id': 108, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_ip': u'143.248.234.140', 'content': 'This article is written by blacklisted user.', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'woodori is...', 'id': 108}])
+(True, [{'root_id': 108, 'author_username': u'serialx', 'hit': 1, 'blacklisted': True, 'title': u'woodori is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'KIN', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 108}])
+
+# delete polarbear from blacklist
+
+>>> server.blacklist_manager.delete(session_key, 'serialx')
+(True, 'OK')
 
 >>> server.login_manager.logout(session_key)
 (True, 'OK')

@@ -53,7 +53,7 @@ class MemberManager(object):
         DB에 회원 정보 추가. activation code를 발급한다.
 
         - Current User Dictionary { username, password, nickname, email, 
-                                    signiture, self_introduction, default_language }
+                                    signature, self_introduction, default_language }
 
         @type  user_reg_dic: dictionary
         @param user_reg_dic: User Dictionary

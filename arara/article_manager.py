@@ -9,12 +9,10 @@ from sqlalchemy import and_, or_
 
 BOARDS = {'garbages': 'Garbage board'}
 WRITE_ARTICLE_DICT = ['title', 'content']
-READ_ARTICLE_WHITELIST = ['id', 'title', 'content', 'last_modified_date', 'deleted',
+READ_ARTICLE_WHITELIST = ['id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted'
                     'author_ip', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id']
-LIST_ARTICLE_WHITELIST = ['id', 'title', 'date', 'last_modified_date', 
+LIST_ARTICLE_WHITELIST = ['id', 'title', 'date', 'last_modified_date', 'no_reply',
                     'deleted', 'author_username', 'vote', 'hit']
-DELETED_MESSAGE = "This article has been removed by user or moderator."
-BLACKLISTED_MESSAGE = "This article is written by blacklisted user."
 
 class NotLoggedIn(Exception):
     pass
@@ -69,6 +67,7 @@ class ArticleManager(object):
             del item_dict['author_id']
         if item_dict.has_key('root_id'):
             if not item_dict['root_id']:
+                item_dict['no_reply'] = len(item.descendants)
                 item_dict['root_id'] = item_dict['id']
         if item_dict.has_key('blacklisted_user_id'):
             item_dict['blacklisted_user_username'] = item.target_user.username
@@ -134,10 +133,10 @@ class ArticleManager(object):
                 return False, 'ARTICLE_NOT_EXIST'
             article_dict_list = self._article_thread_to_list(article)
             for item in article_dict_list:
-                if item['deleted'] == True:
-                    item['content'] = DELETED_MESSAGE
                 if item['author_username'] in blacklist_users:
-                    item['content'] = BLACKLISTED_MESSAGE
+                    item['blacklisted'] = True
+                else:
+                    item['blacklisted'] = False
             return True, article_dict_list
         else:
             return ret, message
