@@ -11,9 +11,7 @@ def get_engine():
     global engine
     if not engine:
         from sqlalchemy import create_engine
-        #engine = create_engine('sqlite:///a.db', echo=False)
-        engine = create_engine('mysql://s20060735:s20060735@localhost/s20060735', echo=False)
-        #engine = create_engine('sqlite://')
+        engine = create_engine('sqlite:///a.db', echo=False)
     return engine
 get_engine()
 
