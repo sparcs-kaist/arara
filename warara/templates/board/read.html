@@ -14,23 +14,25 @@
 
 {% for article in article_list %}
 <div class="article article_depth_{{article.depth}}">
-    <h1>{{article.title}}</h1>
-    <span class="username">{{article.author_username}}</span>
-    <span class="article_date">{{article.date}}</span>
-    <div class="article_text">
-        <p>
-        {{article.content|linebreaks}}
-        </p>
-    </div>
-    <a class="article_reply_show" href="#">reply</a>
-    <div class="article_reply">
-        <form class="article_reply_form" action="/board/{{board_name}}/{{article.id}}/reply/" method="POST">
-            <ul>
-                <li><input type="text" name="title" value="Re: {{article.title}}" /></li>
-                <li><textarea name="content"></textarea></li>
-                <li><input type="submit" name="submit" value="{{t_reply_write}}" /></li>
-            </ul>
-        </form>
+    <h1><a href="#">{{article.title}}</a></h1>
+    <div class="article_content{%ifequal article.read_status "R" %} previously_read{% endifequal %}">
+        <span class="username">{{article.author_username}}</span>
+        <span class="article_date">{{article.date}}</span>
+        <div class="article_text">
+            <p>
+            {{article.content|linebreaks}}
+            </p>
+        </div>
+        <a class="article_reply_show" href="#">reply</a>
+        <div class="article_reply">
+            <form class="article_reply_form" action="/board/{{board_name}}/{{article.id}}/reply/" method="POST">
+                <ul>
+                    <li><input type="text" name="title" value="Re: {{article.title}}" /></li>
+                    <li><textarea name="content"></textarea></li>
+                    <li><input type="submit" name="submit" value="{{t_reply_write}}" /></li>
+                </ul>
+            </form>
+        </div>
     </div>
 </div>
 {% endfor %}

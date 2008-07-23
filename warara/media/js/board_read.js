@@ -15,4 +15,11 @@ $(document).ready(function(){
                 break;
         }
     });
+
+    $(".article div.article_content.previously_read").hide();
+
+    $(".article h1 a").click(function(event) {
+        $(this).parent().parent().children("div.article_content").toggle("fast");
+        event.preventDefault();
+    });
 });

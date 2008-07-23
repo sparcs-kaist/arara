@@ -29,7 +29,7 @@ $(document).ready(function(){
         $("#user_popup").css("left", $(this).offset()["left"])
 
         $("#user_popup").show("fast");
-        event.stopPropagation( ) 
+        event.stopPropagation(); 
     });
 
     $("#user_popup_send_message").click(function(event) {
