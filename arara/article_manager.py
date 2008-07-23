@@ -61,11 +61,15 @@ class ArticleManager(object):
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
         session = model.Session()
-        if item_dict['author_id']:
+        if item_dict.has_key('author_id'):
             item_dict['author_username'] = item.author.username
             del item_dict['author_id']
-        if not item_dict['root_id']:
-            item_dict['root_id'] = item.id
+        if item_dict.has_key('root_id'):
+            if not item_dict['root_id']:
+                item_dict['root_id'] = item_dict['id']
+        if item_dict.has_key('blacklisted_user_id'):
+            item_dict['blacklisted_user_username'] = item.target_user.username
+            del item_dict['blacklisted_user_id']
         if whitelist:
             filtered_dict = filter_dict(item_dict, whitelist)
         else:
@@ -113,10 +117,9 @@ class ArticleManager(object):
         if ret:
             session = model.Session()
             board = session.query(model.Board).filter_by(board_name=board_name)
-            #user = session.query(model.User).filter_by(username=user_info['username']).one()
-            #blacklist = session.query(model.Blacklist).filter_by(user_id=user.id).all()
-            #blacklist_dict_list = self._get_dict_list(blacklist)
-            #print blacklist_dict_list
+            user = session.query(model.User).filter_by(username=user_info['username']).one()
+            blacklist = session.query(model.Blacklist).filter_by(user_id=user.id).all()
+            blacklist_dict_list = self._get_dict_list(blacklist)
             try:
                 article = session.query(model.Article).filter_by(id=no).one()
                 article.hit += 1
@@ -127,6 +130,9 @@ class ArticleManager(object):
             for item in article_dict_list:
                 if item['deleted'] == True:
                     item['content'] = DELETED_MESSAGE
+                for blacklist_item in blacklist_dict_list:
+                    if item['author_username'] == blacklist_item['blacklisted_user_username']:
+                        item['content'] = BLACKLISTED_MESSAGE
                 return True, article_dict_list
         else:
             return ret, message
