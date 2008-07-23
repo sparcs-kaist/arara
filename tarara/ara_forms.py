@@ -3,8 +3,13 @@
 
 import xmlrpclib
 import os
-import urwid.curses_display
+import sys
 import urwid
+
+PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
+sys.path.append(PROJECT_PATH)
+
+import arara
 
 class ara_forms(object):
     def __init__(self, session_key = None):
@@ -13,7 +18,8 @@ class ara_forms(object):
         self.blank = urwid.SolidFill(u" ")
         self.blanktext = urwid.Filler(urwid.Text(' '))
         self.keymap = {}
-	self.server = xmlrpclib.Server("http://localhost:8000")
+        #self.server = arara.get_server()
+	self.server = xmlrpclib.Server("http://localhost:8000", use_datetime = True)
         self.session_key = session_key
 
 	self.frame = self.__initwidgets__()

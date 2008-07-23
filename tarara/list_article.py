@@ -38,7 +38,7 @@ class ara_list_article(ara_forms):
             for article in articles:
                 #print article
                 itemlist += [{'new':'N', 'number':str(article['id']), 'author':article['author_username'], 'title':article['title'],
-                    'date':str(article['date']), 'hit':str(article['hit']), 'vote':str(article['vote'])}]
+                    'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), 'vote':str(article['vote'])}]
         header = {'new':'N', 'number':'#', 'author':'Author', 'title':'Title', 'date':'Date', 'hit':'Hit', 'vote':'Vote'}
 
         articlelist = listview.get_view(itemlist, header, articlelist_rowitem)
