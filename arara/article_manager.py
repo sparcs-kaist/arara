@@ -10,7 +10,7 @@ from sqlalchemy import and_, or_
 BOARDS = {'garbages': 'Garbage board'}
 WRITE_ARTICLE_DICT = ['title', 'content']
 READ_ARTICLE_WHITELIST = ['id', 'title', 'content', 'last_modified_date', 'deleted',
-                    'author_ip', 'author_username', 'vote', 'date', 'hit', 'depth']
+                    'author_ip', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id']
 LIST_ARTICLE_WHITELIST = ['id', 'title', 'date', 'last_modified_date', 
                     'deleted', 'author_username', 'vote', 'hit']
 DELETED_MESSAGE = "This article has been removed by user or moderator."
@@ -108,6 +108,7 @@ class ArticleManager(object):
         if ret:
             session = model.Session()
             board = session.query(model.Board).filter_by(board_name=board_name)
+            #blacklist = session.query(model.Blacklist).filter_by(
             try:
                 article = session.query(model.Article).filter_by(id=no).one()
                 article.hit += 1
