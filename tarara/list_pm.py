@@ -51,6 +51,8 @@ class ara_list_pm(ara_forms):
             ara_post_article(self.session_key, self.board_name, 'modify', self.article_id).main()
         elif key == 'r':
             ara_post_article(self.session_key, self.board_name, 'reply', self.article_id).main()
+        elif mainpile_focus == self.pmlist and key=='enter':
+            pm_id = int(self.pmlist.get_body().get_focus()[0].w.w.widget_list[1].get_text()[0])
         else:
             self.frame.keypress(size, key)
 
