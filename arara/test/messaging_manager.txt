@@ -1,4 +1,47 @@
 
+Bootstrap test
+
+>>> import arara.model
+>>> arara.model.init_test_database()
+>>> import arara
+>>> server = arara.get_namespace()
+
+Register one user, combacsa. then login as existing user mikkang
+
+>>> user_reg_dic = {'username':'combacsa', 'password':'combacsa', 'nickname':'combacsa', 'email':'combacsa', 'signature':'combacsa', 'self_introduction':'combacsa', 'default_language':'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+>>> server.member_manager.confirm('combacsa', register_key)
+(True, 'OK')
+>>> ret, session_key_combacsa = server.login_manager.login('combacsa', 'combacsa', '143.248.234.140')
+>>> ret
+True
+
+# Register one user, mikkang
+
+>>> user_reg_dic = {'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'signature':'mikkang', 'self_introduction':'mikkang', 'default_language':'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+>>> server.member_manager.confirm('mikkang', register_key)
+(True, 'OK')
+>>> ret, session_key = server.login_manager.login('mikkang', 'mikkang', '143.248.234.140')
+>>> ret
+True
+
+# Register one user, serialx
+
+>>> user_reg_dic = {'username':'serialx', 'password':'serialx', 'nickname':'serialx', 'email':'serialx', 'signature':'serialx', 'self_introduction':'serialx', 'default_language':'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+>>> server.member_manager.confirm('serialx', register_key)
+(True, 'OK')
+>>> ret, session_key_serialx = server.login_manager.login('serialx', 'serialx', '143.248.234.140')
+>>> ret
+True
+
 Fake time
 
 >>> import time
@@ -6,11 +49,6 @@ Fake time
 ...     return 1.1
 >>> org_time = time.time
 >>> time.time = stub_time
-
-Bootstrap test
-
->>> import arara
->>> server = arara.get_namespace()
 
 Login existing user mikkang
 
@@ -63,3 +101,7 @@ Test Errors
 (False, 'NOT_LOGGEDIN')
 
 >>> time.time = org_time
+
+# Reset the database
+>>> import arara.model
+>>> arara.model.clear_test_database()

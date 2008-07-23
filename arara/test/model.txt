@@ -1,3 +1,8 @@
+>>> import arara.model
+>>> arara.model.init_test_database()
+>>> import arara
+>>> server = arara.get_namespace()
+
 # Faking time.time (to check time field)
 
 >>> import time
@@ -7,6 +12,18 @@
 >>> time.time = stub_time
 
 >>> from arara.model import *
+
+# Register one user, serialx
+>>> user_reg_dic = {'username':'serialx', 'password':'serialx', 'nickname':'serialx', 'email':'serialx', 'signature':'serialx', 'self_introduction':'serialx', 'default_language':'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+>>> server.member_manager.confirm('serialx', register_key)
+(True, 'OK')
+>>> ret, session_key_serialx = server.login_manager.login('serialx', 'serialx', '143.248.234.140')
+>>> ret
+True
+
 >>> session = Session()
 >>> board = session.query(Board).filter_by(board_name='garbages').one()
 >>> serialx = session.query(User).filter_by(username='serialx').one()
@@ -44,3 +61,7 @@
 
 
 >>> time.time = org_time
+
+# Reset the database
+>>> import arara.model
+>>> arara.model.clear_test_database()

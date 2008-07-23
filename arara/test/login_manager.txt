@@ -1,6 +1,8 @@
 
 load LoginManager & MemberManager
 
+>>> import arara.model
+>>> arara.model.init_test_database()
 >>> import arara
 >>> server = arara.get_namespace()
 
@@ -48,3 +50,7 @@ True
 '143.248.234.1'
 >>> result['username']
 'guest'
+
+# Reset the database
+>>> import arara.model
+>>> arara.model.clear_test_database()

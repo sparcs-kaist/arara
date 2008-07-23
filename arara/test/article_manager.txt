@@ -1,7 +1,21 @@
 load LoginManager & MemberManager
 
+>>> import arara.model
+>>> arara.model.init_test_database()
 >>> import arara
 >>> server = arara.get_namespace()
+
+Register one user, combacsa. then login as existing user mikkang
+
+>>> user_reg_dic = {'username':'combacsa', 'password':'combacsa', 'nickname':'combacsa', 'email':'combacsa', 'signature':'combacsa', 'self_introduction':'combacsa', 'default_language':'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+>>> server.member_manager.confirm('combacsa', register_key)
+(True, 'OK')
+>>> ret, session_key_combacsa = server.login_manager.login('combacsa', 'combacsa', '143.248.234.140')
+>>> ret
+True
 
 # Register one user, mikkang
 
@@ -169,3 +183,7 @@ True
 Fin!
 
 >>> time.time = org_time
+
+# Reset the database
+>>> import arara.model
+>>> arara.model.clear_test_database()

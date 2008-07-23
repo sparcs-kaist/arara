@@ -1,21 +1,10 @@
+# -*- coding: utf-8 -*-
 import datetime
 import time
 import md5
 
 from sqlalchemy import *
 from sqlalchemy.orm import *
-
-engine = None
-def get_engine():
-    '''Factory method to create database connection.'''
-    global engine
-    if not engine:
-        from sqlalchemy import create_engine
-        engine = create_engine('sqlite:///a.db', echo=False)
-    return engine
-get_engine()
-
-Session = sessionmaker(bind=engine, autoflush=True, transactional=True)
 
 class User(object):
     def __init__(self, username, password, nickname, email, signature,
@@ -258,4 +247,41 @@ mapper(Blacklist, blacklist_table, properties={
                                     viewonly=True)),
 })
 
-metadata.create_all(engine)
+TEST_DATABASE_FILENAME = 'test.db'
+CONNECTION_STRING = 'sqlite:///%s' % TEST_DATABASE_FILENAME
+
+engine = None
+
+def get_engine():
+    '''Factory method to create database connection.'''
+    global engine
+    if not engine:
+        from sqlalchemy import create_engine
+        engine = create_engine(CONNECTION_STRING, echo=False)
+    return engine
+
+Session = None
+
+def init_database():
+    global Session
+    get_engine()
+    metadata.create_all(engine)
+    Session = sessionmaker(bind=engine, autoflush=True, transactional=True)
+
+def init_test_database():
+    """Test database must reset the database."""
+    global engine, Session, namespace
+    # 데이터베이스를 억지로 새로 만든다.
+    from sqlalchemy import create_engine
+    engine = create_engine('sqlite://', echo=False)
+    Session = sessionmaker(bind=engine, autoflush=True, transactional=True)
+    metadata.create_all(engine)
+
+    # 네임스페이스 객체를 새로 만든다. (억지로)
+    import arara
+    arara.namespace = None
+    arara.get_namespace()
+
+def clear_test_database():
+    """테스트 이후의 흔적을 지운다."""
+    pass
