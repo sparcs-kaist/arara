@@ -3,6 +3,9 @@
 {% block style %}
 <link rel="stylesheet" href="/media/style/account_register.css" />
 {% endblock %}
+{% block script %}
+<script type="text/javascript" src="/media/js/account.js"></script>
+{% endblock %}
 {% block content %}
 <div id="account">
     <form action="/account/register/" method="post">
@@ -56,10 +59,10 @@ Glad to see you
             <legend>ARA Setting</legend>
             <p>
             <label for="sig">Signature:</label>
-            <textarea name="introduce" id="introduce" cols="50" rows="10"></textarea>
+            <textarea name="sig" id="sig" cols="50" rows="10"></textarea>
             </p>
             <p>
-            <label for="introduce">Introduce:</label>
+            <label for="introduce">Introduction:</label>
             <textarea name="introduce" id="introduce" cols="50" rows="10"></textarea>
             </p>
             <p>
@@ -70,7 +73,7 @@ Glad to see you
             </select>
             </p>
         </fieldset>
-        <input value="Done" class="submit" type="submit">
+        <input value="Done" name="done" class="submit" type="submit" />
     </form>
 </div>
 {% endblock %}
