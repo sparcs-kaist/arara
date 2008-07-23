@@ -43,18 +43,19 @@ def update(request):
     for b in blacklist:
         article_bl_key = 'blacklist_article_%s' % b['username']
         if article_bl_key in request.POST:
-            b['article'] = True
+            b['block_article'] = True
         else:
-            b['article'] = False
+            b['block_article'] = False
         message_bl_key = 'blacklist_message_%s' % b['username']
         if message_bl_key in request.POST:
-            b['message'] = True
+            b['block_message'] = True
         else:
-            b['message'] = False
+            b['block_message'] = False
 
-        server.blacklist_manager.modify(sess, b)
+        ret, msg = server.blacklist_manager.modify(sess, b)
+        assert ret, msg
 
-    return HttpResponse(repr(request))
+    return HttpResponseRedirect("/blacklist/")
 
 
 def index(request):
