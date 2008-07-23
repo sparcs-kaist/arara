@@ -1,0 +1,59 @@
+fieldset {
+    margin: 1em 0;
+    padding: 1em;
+    border: 1px solid;
+}
+
+legend {
+    font-weight: bold;
+}
+
+label {
+    float: left;
+    width: 10em;
+    display: block;
+}
+
+input {
+    width: 200px;
+}
+
+input.radio, input.submit {
+    width: auto;
+}
+
+input.radio {
+    float: left;
+    margin-right: 1em;
+}
+
+textarea {
+    width: 300px;
+    height: 100px;
+}
+
+input:focus, textarea:focus {
+    background: #BBBDCC;
+}
+
+.required {
+    font-size: 0.75em;
+    color: #760000;
+}
+
+p {
+    position: relative;
+}
+
+.feedback {
+    position: absolute;
+    margin-left: 11em;
+    left: 200px;
+    font-weight: bold;
+    color: #760000;
+    padding-left: 18px;
+}
+
+* html .feedback {
+    width: 10em;
+}
