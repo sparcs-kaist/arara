@@ -13,7 +13,7 @@
 {% block board_content %}
 
 {% for article in article_list %}
-<div id="article_read" class="article_depth_{{article.depth}}">
+<div class="article article_depth_{{article.depth}}">
     <h1>{{article.title}}</h1>
     <span class="username">{{article.author_username}}</span>
     <span class="article_date">{{article.date}}</span>
@@ -34,9 +34,9 @@
     </div>
 </div>
 {% endfor %}
-<div id="article_read_buttons">
-    <a href="/board/{{board_name}}">list</a>
-    <a href="/board/{{board_name}}/write">write</a>
+<div id="article_nav_buttons">
+    <a id="list_link" href="/board/{{board_name}}">list</a>
+    <a id="write_link" href="/board/{{board_name}}/write">write</a>
 </div>
 
 {{article}}

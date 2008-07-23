@@ -10,21 +10,25 @@ $(document).ready(function(){
         var article_link = $("#article_table tr").eq(cursor_pos).children(".title_col").children("a").attr("href");
         location.href = article_link;
     }
-    $(document).keydown(function(event) {
-        switch (event.keyCode) {
+    
+    $(document).keypress(function(event) {
+        switch (event.which) {
             case 13:  // enter
+            case 32:  // space
                 read_article();
                 break;
-            case 74:  // down
+            case 106:  // j
                 cursor_pos += 1;
                 if (cursor_pos > row_count) cursor_pos = row_count;
                 update_table();
                 break;
-            case 75:  // up
+            case 107:  // k
                 cursor_pos -= 1;
                 if (cursor_pos < 1) cursor_pos = 1;
                 update_table();
                 break;
+            default:
+                //alert(event.which);
         }
     });
 });
