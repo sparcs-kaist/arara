@@ -6,7 +6,7 @@ from arara.util import require_login, filter_dict
 from arara import model
 from sqlalchemy.exceptions import InvalidRequestError
 
-MESSAGE_WHITELIST = ['id', 'from', 'to', 'message', 'sent_time', 'read_status']
+MESSAGE_WHITELIST = ['id', 'from', 'to', 'message', 'sent_time', 'read_status', 'blacklisted']
 
 class MessagingManager(object):
     '''
@@ -22,22 +22,24 @@ class MessagingManager(object):
     def _set_member_manager(self, member_manager):
         self.member_manager = member_manager
 
-    def _get_dict(self, item):
+    def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
-        if item_dict['from_id']:
+        if item_dict.has_key('from_id'):
             item_dict['from'] = item.from_user.username
             del item_dict['from_id']
-        if item_dict['to_id']:
+        if item_dict.has_key('to_id'):
             item_dict['to'] = item.to_user.username
             del item_dict['to_id']
-        filtered_dict = filter_dict(item_dict, MESSAGE_WHITELIST)
-
+        if whitelist:
+            filtered_dict = filter_dict(item_dict, whitelist)
+        else:
+            filtered_dict = item_dict
         return filtered_dict
 
-    def _get_dict_list(self, raw_list):
+    def _get_dict_list(self, raw_list, whitelist=None):
         return_list = []
         for item in raw_list:
-            filtered_dict = self._get_dict(item)
+            filtered_dict = self._get_dict(item, whitelist)
             return_list.append(filtered_dict)
         return return_list
 
@@ -68,7 +70,7 @@ class MessagingManager(object):
         offset = page_length * (page - 1)
         last = offset + page_length
         sent_messages = sent_user.send_messages[::-1][offset:last]
-        sent_messages_dict_list = self._get_dict_list(sent_messages)
+        sent_messages_dict_list = self._get_dict_list(sent_messages, MESSAGE_WHITELIST)
         return True, sent_messages_dict_list
 
 
@@ -94,11 +96,20 @@ class MessagingManager(object):
         ret, user_info = self.login_manager.get_session(session_key)
         session = model.Session()
         to_user = session.query(model.User).filter_by(username=user_info['username']).one()
-        
+        blacklist = session.query(model.Blacklist).filter_by(user_id=to_user.id).all()
+        blacklist_dict_list = self._get_dict_list(blacklist)
+        blacklist_users = set()
+        for blacklist_item in blacklist_dict_list:
+            blacklist_users.add(blacklist_item['blacklisted_user_username'])
         offset = page_length * (page - 1)
         last = offset + page_length
         received_messages = to_user.received_messages[::-1][offset:last]
-        received_messages_dict_list = self._get_dict_list(received_messages)
+        received_messages_dict_list = self._get_dict_list(received_messages, MESSAGE_WHITELIST)
+        for item in received_messages_dict_list:
+            if item['from'] in blacklist_users:
+                item['blacklisted'] = True
+            else:
+                item['blacklisted'] = False
         return True, received_messages_dict_list
 
     @require_login
@@ -161,7 +172,7 @@ class MessagingManager(object):
             message = session.query(model.Message).filter_by(to_id=to_user.id, id=msg_no).one()
         except InvalidRequestError:
             return False, "MSG_NOT_EXIST"
-        message_dict = self._get_dict(message)
+        message_dict = self._get_dict(message, MESSAGE_WHITELIST)
         message.read_status = 'R'
         session.commit()
         return True, message_dict
