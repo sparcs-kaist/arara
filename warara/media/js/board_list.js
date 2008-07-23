@@ -25,6 +25,7 @@ $(document).ready(function(){
         switch (event.which) {
             case 13:  // enter
             case 32:  // space
+                event.preventDefault();
                 read_article();
                 break;
             case 106:  // j
