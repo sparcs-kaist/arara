@@ -1,3 +1,11 @@
+# Faking time.time (to check time field)
+
+>>> import time
+>>> def stub_time():
+...     return 1.1
+>>> org_time = time.time
+>>> time.time = stub_time
+
 >>> from arara.model import *
 >>> session = Session()
 >>> board = session.query(Board).filter_by(board_name='garbages').one()
@@ -33,3 +41,6 @@
 [<Article('title4', 'serialx', 1970-01-01 09:00:01.100000)>]
 >>> a.descendants
 [<Article('title2', 'serialx', 1970-01-01 09:00:01.100000)>, <Article('title3', 'serialx', 1970-01-01 09:00:01.100000)>, <Article('title4', 'serialx', 1970-01-01 09:00:01.100000)>]
+
+
+>>> time.time = org_time

@@ -45,3 +45,5 @@ now Test BlacklistManager!
 (False, 'USERNAME_NOT_EXIST')
 >>> server.login_manager.logout(session_key)
 (True, 'OK')
+
+>>> time.time = org_time
