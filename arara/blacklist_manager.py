@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import datetime
+import time
+
 from arara.util import filter_dict, require_login, is_keys_in_dict
 from arara import model
 from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
@@ -87,7 +90,7 @@ class BlacklistManager(object):
         except InvalidRequestError:
             return False, 'USERNAME_NOT_EXIST'
             
-        new_blacklist = model.Blacklist(user, target_user, True, True)
+        new_blacklist = model.Blacklist(user, target_user, block_article, block_message)
         session.save(new_blacklist)
         try:
             session.commit()
@@ -155,8 +158,8 @@ class BlacklistManager(object):
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         
-        if not is_keys_in_dict(blacklist_dict, BLACKLIST_DICT):
-            return False, 'WRONG_DICTIONARY'
+        #if not is_keys_in_dict(blacklist_dict, BLACKLIST_DICT):
+        #    return False, 'WRONG_DICTIONARY'
 
         ret, user_info = self.login_manager.get_session(session_key)
 
@@ -173,6 +176,7 @@ class BlacklistManager(object):
             return False, 'USERNAME_NOT_IN_BLACKLIST'
         blacklist_to_modify.block_article = blacklist_dict['block_article']
         blacklist_to_modify.block_message = blacklist_dict['block_message']
+        blacklist_to_modify.last_modified_date = datetime.datetime.fromtimestamp(time.time())
         session.commit()
         return True, 'OK'
 
