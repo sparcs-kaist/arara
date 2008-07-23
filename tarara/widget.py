@@ -36,7 +36,10 @@ class FieldRow(urwid.WidgetWrap):
         for field in self.fields:
             key, width, align = field
             value = data[key]
-            widget = urwid.Text(value, align, 'clip')
+            if type(value) in ['int','bool','date']:
+                widget = urwid.Text(str(value), align, 'clip')
+            else:
+                widget = urwid.Text(value, align, 'clip')
             if not width:
                 widgets.append(widget)
             else:

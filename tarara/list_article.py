@@ -26,20 +26,24 @@ class ara_list_article(ara_forms):
 
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Article list",align='center'))
-        self.infotext1 = "(N)ext/(P)revious Page (n)ext/(p)revious article (Number+Enter) Jump to article"
-        self.infotext2 = "(Enter,space) Read (w)rite (f)ind (/)Find next (?) Find previous (h)elp (q)uit"
+        self.infotext1 = urwid.Filler(urwid.Text("(N)ext/(P)revious Page (n)ext/(p)revious article (Number+Enter) Jump to article"))
+        self.infotext2 = urwid.Filler(urwid.Text("(Enter,space) Read (w)rite (f)ind (/)Find next (?) Find previous (h)elp (q)uit"))
 
-        self.infotext1 = urwid.Filler(urwid.Text(self.infotext1))
-        self.infotext2 = urwid.Filler(urwid.Text(self.infotext2))
-
-        articlelist = self.server.article_manager.article_list(self.session_key, self.board_name)
+        articles = self.server.article_manager.article_list(self.session_key, self.board_name)
+        articles = articles[1]
         itemlist = []
-        itemlist += [{'new':'N', 'number':'1', 'author':'peremen','title':'text','date':'1/1','hit':'100000','vote':'100'}]
+        if len(articles) == 0:
+            itemlist += [{'new':'', 'number':'', 'author':'','title':'No article found. Have a nice day.','date':'','hit':'','vote':''}]
+        else:
+            for article in articles:
+                #print article
+                itemlist += [{'new':'N', 'number':str(article['id']), 'author':article['author_username'], 'title':article['title'],
+                    'date':str(article['date']), 'hit':str(article['hit']), 'vote':str(article['vote'])}]
         header = {'new':'N', 'number':'#', 'author':'Author', 'title':'Title', 'date':'Date', 'hit':'Hit', 'vote':'Vote'}
 
-        boardlist = listview.get_view(itemlist, header, articlelist_rowitem)
+        articlelist = listview.get_view(itemlist, header, articlelist_rowitem)
 
-        content = [('fixed',1, self.header),('fixed',1,self.infotext1),('fixed',1,self.infotext2),boardlist,]
+        content = [('fixed',1, self.header),('fixed',1,self.infotext1),('fixed',1,self.infotext2),articlelist,]
         self.mainpile = urwid.Pile(content)
 
         return self.mainpile

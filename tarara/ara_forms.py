@@ -13,7 +13,7 @@ class ara_forms(object):
         self.blank = urwid.SolidFill(u" ")
         self.blanktext = urwid.Filler(urwid.Text(' '))
         self.keymap = {}
-	self.server = xmlrpclib.Server("http://sparcs40:8000")
+	self.server = xmlrpclib.Server("http://localhost:8000")
         self.session_key = session_key
 
 	self.frame = self.__initwidgets__()
