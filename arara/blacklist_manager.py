@@ -166,7 +166,7 @@ class BlacklistManager(object):
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info['username']).one()
         try:
-            target_user = session.query(model.User).filter_by(username=blacklist_dict['blacklist_user_username']).one()
+            target_user = session.query(model.User).filter_by(username=blacklist_dict['blacklisted_user_username']).one()
         except InvalidRequestError:
             return False, 'USERNAME_NOT_EXIST'
         try:
