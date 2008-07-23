@@ -66,11 +66,16 @@ def get_view(datalist, header, rowitem):
     @rtype: urwid.Frame
     @return: 리스트 뷰 프레임.
     '''
-    walker = urwid.SimpleListWalker([make_widget(datum, rowitem) for datum in datalist])
+    #walker = urwid.SimpleListWalker([make_widget(datum, rowitem) for datum in datalist])
 
-    body = urwid.ListBox(walker)
+    #body = urwid.ListBox(walker)
+    body = make_body(datalist, rowitem)
     header = make_header(header, rowitem)
     return urwid.Frame(body, header)
+
+def make_body(datalist, rowitem):
+    walker = urwid.SimpleListWalker([make_widget(datum, rowitem) for datum in datalist])
+    return urwid.ListBox(walker)
 
 # vim: set et ts=8 sw=4 sts=4:
 
