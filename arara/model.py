@@ -11,7 +11,8 @@ def get_engine():
     global engine
     if not engine:
         from sqlalchemy import create_engine
-        engine = create_engine('sqlite://', echo=False)
+        #engine = create_engine('sqlite:///a.db', echo=False)
+        engine = create_engine('mysql://s20060735:s20060735@localhost/s20060735', echo=False)
         #engine = create_engine('sqlite://')
     return engine
 get_engine()
@@ -99,7 +100,7 @@ class Blacklist(object):
         self.last_modified_date = self.blacklisted_date
 
     def __repr__(self):
-        return "<Blacklist('%s','%s')>" % (self.user.username, self.blacklist_id) 
+        return "<Blacklist('%s','%s')>" % (self.user.username, self.target_user.username) 
 
 class Message(object):
     def __init__(self, from_user, from_user_ip, to_user, message):
@@ -150,7 +151,7 @@ user_activation_table = Table('user_activation', metadata,
 board_table = Table('boards', metadata,
     Column('id', Integer, primary_key=True),
     Column('board_name', String(30), unique=True),
-    Column('board_description', Text, unique=True),
+    Column('board_description', Text),
 )
 
 articles_table = Table('articles', metadata,
@@ -215,7 +216,7 @@ mapper(UserActivation, user_activation_table, properties={
 #}
 
 mapper(Article, articles_table, properties={
-    'author':relation(User, backref='articles'),
+    'author':relation(User, backref='articles', lazy=False),
     'board':relation(Board, backref='articles'),
 
     'children':relation(Article,
@@ -238,23 +239,23 @@ mapper(Board, board_table)
 
 mapper(Message, message_table, properties={
     'from_user': relation(User, primaryjoin=message_table.c.from_id==users_table.c.id,
-                    backref=backref('send_messages', lazy=False, join_depth=1,
+                    backref=backref('send_messages', lazy=True, join_depth=1,
                                     primaryjoin=message_table.c.from_id==users_table.c.id,
                                     viewonly=False)
         ),
     'to_user': relation(User, primaryjoin=message_table.c.to_id==users_table.c.id,
-                    backref=backref('received_messages', lazy=False, join_depth=1,
+                    backref=backref('received_messages', lazy=True, join_depth=1,
                                     primaryjoin=message_table.c.to_id==users_table.c.id,
                                     viewonly=False)
         ),
 })
 mapper(Blacklist, blacklist_table, properties={
     'user':relation(User, primaryjoin=blacklist_table.c.user_id==users_table.c.id,
-                    backref=backref('blacklist', lazy=False, join_depth=1,
+                    backref=backref('blacklist', lazy=True, join_depth=1,
                                     primaryjoin=blacklist_table.c.user_id==users_table.c.id,
                                     viewonly=True)),
     'target_user':relation(User, primaryjoin=blacklist_table.c.blacklisted_user_id==users_table.c.id,
-                    backref=backref('blacklisted', lazy=False, join_depth=1,
+                    backref=backref('blacklisted', lazy=True, join_depth=1,
                                     primaryjoin=blacklist_table.c.blacklisted_user_id==users_table.c.id,
                                     viewonly=True)),
 })

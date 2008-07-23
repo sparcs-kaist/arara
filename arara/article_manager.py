@@ -123,6 +123,9 @@ class ArticleManager(object):
             user = session.query(model.User).filter_by(username=user_info['username']).one()
             blacklist = session.query(model.Blacklist).filter_by(user_id=user.id).all()
             blacklist_dict_list = self._get_dict_list(blacklist)
+            blacklist_users = set()
+            for blacklist_item in blacklist_dict_list:
+                blacklist_users.add(blacklist_item['blacklisted_user_username'])
             try:
                 article = session.query(model.Article).filter_by(id=no).one()
                 article.hit += 1
@@ -133,10 +136,9 @@ class ArticleManager(object):
             for item in article_dict_list:
                 if item['deleted'] == True:
                     item['content'] = DELETED_MESSAGE
-                for blacklist_item in blacklist_dict_list:
-                    if item['author_username'] == blacklist_item['blacklisted_user_username']:
-                        item['content'] = BLACKLISTED_MESSAGE
-                return True, article_dict_list
+                if item['author_username'] in blacklist_users:
+                    item['content'] = BLACKLISTED_MESSAGE
+            return True, article_dict_list
         else:
             return ret, message
 
