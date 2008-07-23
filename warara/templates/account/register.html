@@ -29,30 +29,29 @@ Glad to see you
         <fieldset id="information">
             <legend>User information</legend>
             <p>
-            <label for="id">ID:</label>
-            <input name="id" id="id" type="text" />
+            <label for="id">ID:<span class="feedback"></span></label>
+            <input name="id" id="id" type="text" class="required_field" />
             </p>
             <p>
-            <label for="nickname">Nickname:</label>
-            <input name="nickname" id="nickname" type="text" />
+            <label for="nickname">Nickname:<span class="feedback"></span></label>
+            <input name="nickname" id="nickname" type="text" class="required_field" />
             </p>
             <p>
-            <label for="email">E-mail address:
-                <span class="feedback">hi</span></label>
-            <input name="email" id="email" type="text" />
+            <label for="email">E-mail address:<span class="feedback"></span></label>
+            <input name="email" id="email" type="text" class="required_field" />
             <br />
             <em class="required">(We will send you user registration confirmation to here)</em>
             </p>
         </fieldset>
-        <fieldset id="password">
+        <fieldset id="password_fieldset">
             <legend>Password</legend>
             <p>
-            <label for="password">Password:</label>
-            <input name="password" id="password" type="password" />
+	    <label for="password_field">Password:<span class="feedback"></span></label>
+            <input name="password" id="password_field" type="password" class="required_field" />
             </p>
             <p>
-            <label for="re_password">Re-enter password:</label>
-            <input name="re_password" id="re_password" type="password" />
+            <label for="re_password_field">Re-enter password:<span class="feedback"></span></label>
+            <input name="re_password" id="re_password_field" type="password" class="required_field" />
             </p>
         </fieldset>
         <fieldset id="setting">
@@ -73,7 +72,7 @@ Glad to see you
             </select>
             </p>
         </fieldset>
-        <input value="Done" name="done" class="submit" type="submit" />
+        <input value="Done" name="done" id="register_submit" class="submit" type="submit" />
     </form>
 </div>
 {% endblock %}
