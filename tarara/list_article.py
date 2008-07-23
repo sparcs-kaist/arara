@@ -7,6 +7,7 @@ import urwid
 from ara_forms import *
 from widget import *
 from read_article import *
+from post_article import *
 import listview
 
 class articlelist_rowitem(FieldRow):
@@ -26,15 +27,14 @@ class ara_list_article(ara_forms):
         ara_forms.__init__(self, session_key)
 
     def __keypress__(self, size, key):
-        key = key.strip().lower()
+        key = key.strip()
         mainpile_focus = self.mainpile.get_focus()
-        if mainpile_focus == self.articlelist:
-            if key == "enter":
-                # self.boardlist.get_body().get_focus()[0].w.w.widget_list : 현재 활성화된 항목
-                article_id  = int(self.articlelist.get_body().get_focus()[0].w.w.widget_list[1].get_text()[0])
-                ara_read_article(session_key = self.session_key, board_name = self.board_name, article_id = article_id).main()
-            else:
-                self.frame.keypress(size, key)
+        if key == "enter":
+            # self.boardlist.get_body().get_focus()[0].w.w.widget_list : 현재 활성화된 항목
+            article_id  = int(self.articlelist.get_body().get_focus()[0].w.w.widget_list[1].get_text()[0])
+            ara_read_article(session_key = self.session_key, board_name = self.board_name, article_id = article_id).main()
+        elif key == 'w':
+            ara_post_article(self.session_key).main()
         else:
             self.frame.keypress(size, key)
 
