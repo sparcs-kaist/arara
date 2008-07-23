@@ -1,50 +1,50 @@
 {% extends "board/board_base.html" %}
 
+{% block style %}
+<link rel="stylesheet" type="text/css" href="/media/style/board_list.css"></link>
+{{block.super}}
+{% endblock style %}
+
+{% block script %}
+<script type="text/javascript" src="/media/js/board_list.js"></script>
+{{block.super}}
+{% endblock script %}
+
 {% block board_content %}
 <div id="article_table">
-    <table>
-        <tr>
-            <th>
-                no
-            </th>
-            <th>
-                author
-            </th>
-            <th>
-                title
-            </th>
-            <th>
-                time
-            </th>
-            <th>
-                hit
-            </th>
-            <th>
-                vote
-            </th>
-        </tr>
-        {% for article in article_list %}
-        <tr>
-            <th>
-                {{article.id}}
-            </th>
-            <th>
-                <span class="username">{{article.author_username}}</span>
-            </th>
-            <th>
-                <a href="/board/{{board_name}}/{{article.id}}">{{article.title}}</a>
-            </th>
-            <th>
-                {{article.date}}
-            </th>
-            <th>
-                {{article.hit}}
-            </th>
-            <th>
-                {{article.vote}}
-            </th>
-        </tr>
-        {% endfor %}
+    <table cellspacing="0" id="board_table" summary="{{board_description}}">
+        <caption>{{board_name}}</caption>
+        <colgroup>
+            <col id="board_cursor_col" />
+            <col id="board_id_col" />
+            <col id="board_title_col" />
+            <col id="board_author_col" />
+            <col id="board_date_col" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th class="column" scope="col"></th>
+                <th class="column" scope="col">id</th>
+                <th class="column" scope="col">title</th>
+                <th class="column" scope="col">author</th>
+                <th class="column" scope="col">date</th>
+                <th class="column" scope="col">vote</th>
+                <th class="column last_column" scope="col">hit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for article in article_list %}
+            <tr>
+                <td class="column cursor_col"></td>
+                <td class="column id_col">{{article.id}}</td>
+                <td class="column title_col"><a href="/board/{{board_name}}/{{article.id}}">{{article.title}}</a></td>
+                <td class="column autdor_col"><span class="username">{{article.author_username}}</span></td>
+                <td class="column date_col">{{article.date|date:"Y/m/d H:i"}}</td>
+                <td class="column vote_col">{{article.vote}}</td>
+                <td class="column last_column hit_col">{{article.hit}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
 </div>
 <div id="board_buttons">

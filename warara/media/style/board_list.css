@@ -1,0 +1,50 @@
+table {
+    border-collapse: collapse;
+    width: 50em;
+    border: 1px solid #666;
+}
+
+th, td {
+    padding: 0.1em 1em;
+}
+
+caption {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 1em 0;
+}
+
+.column.cursor_col{
+    width: 0.3em;
+}
+.column.id_col{
+    width: 1em;
+}
+.column.author_col{
+    width: 6em;
+}
+.column.date_col{
+    width: 10em;
+}
+.column.vote_col{
+    width: 1em;
+}
+.column.hit_col{
+    width: 1em;
+}
+
+.column {
+    border-right: 1px solid #ccc;
+}
+
+.last_column {
+    border-right: 1px solid #666;
+}
+
+col#board_title_col {
+    border: none;
+}
+
+.row_highlight {
+    background-color: #ddf;
+}
