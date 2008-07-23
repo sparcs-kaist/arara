@@ -35,11 +35,6 @@ True
 >>> org_time = time.time
 >>> time.time = stub_time
 
-# adding blacklist to test blacklist function
-
->>> server.blacklist_manager.add(session_key, 'serialx')
-(True, 'OK')
-
 # now Testing Article Manager!
 
 >>> server.article_manager.board_list(session_key)
@@ -150,6 +145,18 @@ True
 >>> article[4]['root_id'] == article_id
 True
 
+# adding blacklist to test blacklist function
+
+>>> server.blacklist_manager.add(session_key, 'serialx')
+(True, 'OK')
+
+# Testing blacklist function
+
+>>> article_dic = {'title': 'woodori is...', 'content': 'KIN'}
+>>> ret, article_id = server.article_manager.write_article(session_key_serialx, 'garbages', article_dic)
+
+>>> server.article_manager.read(session_key, 'garbages', article_id)
+(True, [{'author_username': u'serialx', 'hit': 1, 'root_id': 108, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_ip': u'143.248.234.140', 'content': 'This article is written by blacklisted user.', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'woodori is...', 'id': 108}])
 
 >>> server.login_manager.logout(session_key)
 (True, 'OK')

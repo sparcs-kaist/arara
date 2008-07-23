@@ -36,6 +36,9 @@ class ArticleManager(object):
     def _create_boards(self):
         session = model.Session()
         for board_name, board_description in BOARDS.items():
+            integrity_chk = session.query(model.Board).filter_by(board_name=board_name).all()
+            if integrity_chk:
+                return False, 'BOARD_ALREADY_EXIST'
             board = model.Board(board_name, board_description)
             session.save(board)
             session.commit()
