@@ -52,19 +52,19 @@ def write_(request, board_name):
     r['url'] = ''.join(['/board/', board_name, '/'])
     article_dic['content'] = request.POST.get('text', '')
     article_dic['title'] = request.POST.get('title', '')
-    ret, article_no = server.article_manager.write_article(sess, board_name, article_dic)
+    ret, article_id = server.article_manager.write_article(sess, board_name, article_dic)
 
     if not ret:
-        r['e'] = article_no
+        r['e'] = article_id
         rendered = render_to_string('board/error.html', r)
         return HttpResponse(rendered)
 
     return HttpResponseRedirect('/board/%s' % board_name)
 
-def read(request, board_name, article_no):
+def read(request, board_name, article_id):
     server = arara.get_server()
     sess = test_login()
-    ret, article_list = server.article_manager.read(sess, board_name, int(article_no))
+    ret, article_list = server.article_manager.read(sess, board_name, int(article_id))
     r = {}
     if not ret:
         r['e'] = article_list
@@ -79,15 +79,14 @@ def read(request, board_name, article_no):
     return HttpResponse(rendered)
 
 
-def reply(request, board_name, article_no):
+def reply(request, board_name, article_id):
     server = arara.get_server()
     sess = test_login()
-    content = request.POST.get('content', '')
-    title = request.POST.get('title', '')
     reply_dic = {}
-    reply_dic['content'] = content
-    reply_dic['title'] = title
+    reply_dic['content'] = request.POST.get('content', '')
+    reply_dic['title'] = request.POST.get('title', '')
+    root_id = request.POST.get('root_id', '')
 
-    ret, no = server.article_manager.write_reply(sess, board_name, int(article_no), reply_dic)
+    ret, no = server.article_manager.write_reply(sess, board_name, int(article_id), reply_dic)
 
-    return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(article_no)))
+    return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(root_id)))

@@ -26,6 +26,7 @@
         <a class="article_reply_show" href="#">reply</a>
         <div class="article_reply">
             <form class="article_reply_form" action="/board/{{board_name}}/{{article.id}}/reply/" method="POST">
+                <input type="hidden" name="root_id" value="{{article.root_id}}" />
                 <ul>
                     <li><input type="text" name="title" value="Re: {{article.title}}" /></li>
                     <li><textarea name="content"></textarea></li>
