@@ -52,10 +52,9 @@ def make_message_list(request, r):
         for key in r['m_list_key']:
             r['message_list'][i].append(message[key])
 
-def get_various_info(request):
+def get_various_info(request, r):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
-    r = {}  # render_item
     r['num_new_message'] = 0
     r['num_message'] = 0
     r['next'] = 'a'
@@ -65,6 +64,8 @@ def get_various_info(request):
     r['nmpp'] = 10 #number of message per page
     r['mppp'] = 10 #number of pagegroup per page
 
+    r['page_num'] = r['message_list'].pop()
+
     return r
 
 def index(request):
@@ -73,25 +74,27 @@ def index(request):
 def inbox(request):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
-    r = get_various_info(request)
-    r['message_list_type'] = 'inbox'
-    r['person_type'] = 'sender'
+    r={} #render item
     ret, r['message_list'] = server.messaging_manager.receive_list(sess)
     assert ret, r['message_list']
+    r = get_various_info(request, r)
+    r['message_list_type'] = 'inbox'
+    r['person_type'] = 'sender'
 
-    rendered = render_to_string('message/message_list.html', r)
+    rendered = render_to_string('message/list.html', r)
     return HttpResponse(rendered)
 
 def outbox(request):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
-    r = get_various_info(request)
-    r['message_list_type'] = 'outbox'
-    r['person_type'] = 'receiver'
+    r={}
     ret, r['message_list'] = server.messaging_manager.sent_list(sess)
     assert ret, r['message_list']
+    r = get_various_info(request, r)
+    r['message_list_type'] = 'outbox'
+    r['person_type'] = 'receiver'
     
-    rendered = render_to_string('message/message_list.html', r)
+    rendered = render_to_string('message/list.html', r)
     return HttpResponse(rendered)
 
 def send(request, msg_no=0):
@@ -105,19 +108,14 @@ def send(request, msg_no=0):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
     msg_no = int(msg_no)
-    ret, message = server.messaging_manager.read_message(sess, msg_no)
-    assert ret, message
 
     if msg_no:
+        ret, message = server.messaging_manager.read_message(sess, msg_no)
+        assert ret, message
         r['default_receiver'] = message['from']
         r['default_text'] = message['message']
 
-    r['t_receiver'] = 'receiver' #template_receiver
-    r['t_send'] = 'send'
-    r['t_cancel'] = 'cancel'
-    r['t_receiver_info'] = 'distinguish receiver by space up to 10 people'
-
-    rendered = render_to_string('message/message_send.html', r)
+    rendered = render_to_string('message/send.html', r)
     return HttpResponse(rendered)
 
 def send_(request):
@@ -131,6 +129,11 @@ def send_(request):
 
     ret, message = server.messaging_manager.send_message(sess, receiver, text)
     assert ret, message
+
+    if not ret:
+        r['e'] = mes
+        rendered = render_to_string('message/error.html', r)
+        return HttpResponse(rendered)
 
     return HttpResponseRedirect(r['url'])
 
@@ -154,5 +157,5 @@ def read(request, message_list_type, message_id):
         r['person_type'] = 'receiver'
         r['person'] = r['message']['to']
 
-    rendered = render_to_string('message/message_read.html', r)
+    rendered = render_to_string('message/read.html', r)
     return HttpResponse(rendered)

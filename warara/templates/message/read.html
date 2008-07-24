@@ -1,0 +1,30 @@
+{% extends "message/base.html" %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="/media/style/message_read.css">
+{{ block.super }}
+{% endblock style %}
+
+{% block message_content %}
+<div id="message_info">
+    <span id="message_person">
+        {{person_type}} : {{person}}
+    </span>
+    <span id="message_time">
+        {{message.sent_time}}
+    </span>
+    <span id="message_move">
+        {{prev_message.mark}}
+        {{next_message.mark}}
+    </span>
+</div>
+<div id="message_read_text">
+    <textarea name="text" readonly="readonly">{{message.message}}</textarea>
+</div>
+<div id="message_read_buttons">
+    <a href="/message/delete/{{message_id}}">delete</a>
+    <a href="/message/reply/{{message_id}}">reply</a>
+    <a href="../">list</a>
+</div>
+
+{% endblock message_content %}

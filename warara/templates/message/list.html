@@ -1,0 +1,63 @@
+{% extends "message/base.html" %}
+
+{% block script %}
+<script type="text/javascript" src="/media/js/message_list.js"></script>
+{{block.super}}
+{% endblock script %}
+
+{% block style %}
+<link rel="stylesheet" href="/media/style/message_list.css"></link>
+{{block.super}}
+{% endblock %}
+
+{% block message_content %}
+<div>
+{% ifequal message_list_type  'inbox'%}
+{{num_new_message}} new message(s) / {{message_num}} message(s)
+{% endifequal %}
+</div>
+
+<div id="message_list_table">
+    <table border="1">
+        <tr>
+            <th>
+                <form>
+                    <input type="checkbox"></input>
+                </form>
+            </th>
+            <th>
+                {{person_type}}
+            </th>
+            <th>
+                text
+            </th>
+            <th>
+                time
+            </th>
+        </tr>
+        {% for message in message_list %}
+        <tr>
+            <td>
+                <form>
+                    <input type="checkbox"></input>
+                </form>
+            </td>
+            <td>
+                {% ifequal message_list_type 'inbox' %}
+                <span class="username">{{message.from}}</span>
+                {% else %}
+                <span class="username">{{message.to}}</span>
+                {% endifequal %}
+            </td>
+            <td>
+                <a href="/message/{{message_list_type}}/{{message.id}}">{{message.message}}</a>
+            </td>
+            <td>
+                {{message.sent_time}}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock message_content %}

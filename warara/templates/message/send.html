@@ -1,0 +1,16 @@
+{% extends "message/base.html" %}
+
+{% block message_content %}
+<form action="/message/send/" method="POST">
+    <div id="message_send_receiver">
+        <input type="text" name="receiver" value="{{default_receiver}}"></input>
+    </div>
+    <div id="message_send_text">
+        <textarea name="text">{{default_text}}</textarea>
+    </div>
+    <div id="message_send_buttons">
+        <input type="submit" name="submit" value="send"></input>
+        <input type="button" name="cancel" value="cancel"></input>
+    </div>
+</form>
+{% endblock message_content %}
