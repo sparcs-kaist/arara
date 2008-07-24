@@ -70,10 +70,15 @@ class MessagingManager(object):
         session = model.Session()
         sent_user = session.query(model.User).filter_by(username=user_info['username']).one()
 
+        sent_messages_count = sent_user.send_messages.count('*')
+        last_page = int(sent_messages_count / page_length) + 1
+        if page > last_page:
+            return False, 'WRONT_PAGENUM'
         offset = page_length * (page - 1)
         last = offset + page_length
         sent_messages = sent_user.send_messages[::-1][offset:last]
         sent_messages_dict_list = self._get_dict_list(sent_messages, MESSAGE_WHITELIST)
+        sent_messages_dict_list.append({'last_page': last_page})
         return True, sent_messages_dict_list
 
 
@@ -104,6 +109,10 @@ class MessagingManager(object):
         for blacklist_item in blacklist_dict_list:
             if blacklist_item['block_message']:
                 blacklist_users.add(blacklist_item['blacklisted_user_username'])
+        received_messages_count = to_user.received_messages.count('*')
+        last_page = int(received_messages_count / page_length) + 1
+        if page > last_page:
+            return False, 'WRONG_PAGENUM'
         offset = page_length * (page - 1)
         last = offset + page_length
         received_messages = to_user.received_messages[::-1][offset:last]
@@ -113,6 +122,7 @@ class MessagingManager(object):
                 item['blacklisted'] = True
             else:
                 item['blacklisted'] = False
+        received_messages_dict_list.append({'last_page': last_page})
         return True, received_messages_dict_list
 
     @require_login

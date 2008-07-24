@@ -81,7 +81,7 @@ True
 # List the article (should only be one article in the list
 
 >>> server.article_manager.article_list(session_key, 'garbages')
-(True, [{'author_username': u'mikkang', 'hit': 2, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 1}])
+(True, [{'author_username': u'mikkang', 'hit': 2, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 1}, {'last_page': 1}])
 
 
 # Test for pagination
@@ -91,7 +91,7 @@ True
 ...     _ = server.article_manager.write_article(session_key, 'garbages', article_dic)
 >>> ret, l = server.article_manager.article_list(session_key, 'garbages')
 >>> len(l)
-20
+21
 >>> l[0]['title']
 u'serialx is... 99'
 >>> l[1]['title']
@@ -101,7 +101,9 @@ u'serialx is... 80'
 
 >>> ret, l = server.article_manager.article_list(session_key, 'garbages', page=2)
 >>> len(l)
-20
+21
+>>> l[20]
+{'last_page': 6}
 
 # Test for deletion
 

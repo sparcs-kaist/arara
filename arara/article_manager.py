@@ -12,7 +12,7 @@ WRITE_ARTICLE_DICT = ['title', 'content']
 READ_ARTICLE_WHITELIST = ['id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted'
                     'author_ip', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id']
 LIST_ARTICLE_WHITELIST = ['id', 'title', 'date', 'last_modified_date', 'reply_count',
-                    'deleted', 'author_username', 'vote', 'hit']
+                    'deleted', 'author_username', 'vote', 'hit', 'last_page']
 
 class NotLoggedIn(Exception):
     pass
@@ -120,10 +120,15 @@ class ArticleManager(object):
             ret, _ = self._is_board_exist(board_name)
             if ret:
                 board = session.query(model.Board).filter_by(board_name=board_name).one()
+                article_count = session.query(model.Article).filter_by(board_id=board.id, root_id=None).count()
+                last_page = int(article_count / page_length) + 1
+                if page > last_page:
+                    return False, 'WRONG_PAGENUM'
                 offset = page_length * (page - 1)
                 last = offset + page_length
                 article_list = session.query(model.Article).filter_by(board_id=board.id, root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
                 article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
+                article_dict_list.append({'last_page': last_page})
                 return True, article_dict_list
             else:
                 return ret, 'BOARD_NOT_EXIST'
