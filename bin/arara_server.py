@@ -1,5 +1,4 @@
 #!/usr/bin/python
-from SimpleXMLRPCServer import SimpleXMLRPCServer
 import os
 import sys
 import optparse
@@ -38,8 +37,8 @@ if __name__ == '__main__':
     
     server = wsgiserver.CherryPyWSGIServer(
                 ('0.0.0.0', options.port), arara_app,
-                numthreads=1,
-                server_name='www.cherrypy.example')
+                numthreads=20,
+                server_name='www.arara')
 
     try:
         server.start()

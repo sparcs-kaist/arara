@@ -12,7 +12,10 @@ def index(request):
 
 def list(request, board_name):
     server = arara.get_server()
-    sess = request.session["arara_session_key"]
+    if "arara_session_key" in request.session:
+        sess = request.session["arara_session_key"]
+    else:
+        sess = ""
     ret, article_list = server.article_manager.article_list(sess, board_name)
     r = {}
     r['article_list'] = article_list

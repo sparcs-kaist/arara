@@ -271,7 +271,9 @@ def get_engine():
     global engine
     if not engine:
         from sqlalchemy import create_engine
-        engine = create_engine(CONNECTION_STRING, convert_unicode=True, encoding='utf-8', echo=False)
+        engine = create_engine(CONNECTION_STRING,
+                               convert_unicode=True,
+                               encoding='utf-8', echo=False)
     return engine
 
 Session = None

@@ -41,9 +41,10 @@ def get_namespace():
         namespace = Namespace()
     return namespace
 
+import xmlrpclib
+server = xmlrpclib.Server('http://localhost:8000', use_datetime=True)
 def get_server():
-    import xmlrpclib
-    server = xmlrpclib.Server('http://localhost:8000', use_datetime=True)
+    global server
     return server
 
 # vim: set et ts=8 sw=4 sts=4
