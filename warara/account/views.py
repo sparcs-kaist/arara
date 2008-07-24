@@ -48,3 +48,11 @@ def login(request):
 
             rendered = render_to_string('account/already_logged_in.html')
             return HttpResponse(rendered)
+
+
+def logout(request):
+    session_key = request.session['arara_session_key']
+    server = arara.get_server()
+    ret, message = server.login_manager.logout(session_key)
+    assert ret, message
+    return HttpResponseRedirect("/")
