@@ -6,11 +6,6 @@ from django.core.paginator import Paginator
 import arara
 import math
 
-def test_login():
-    server = arara.get_server()
-    ret, sess = server.login_manager.login('breadfish', 'breadfish', '127.0.0.1')
-    assert ret == True
-    return sess
 
 def make_message_list(request, r):
     r['page_no'] = request.POST.get('page_no', 1)
@@ -59,7 +54,7 @@ def make_message_list(request, r):
 
 def get_various_info(request):
     server = arara.get_server()
-    sess = test_login()
+    sess = request.session["arara_session_key"]
     r = {}  # render_item
     r['num_new_message'] = 0
     r['num_message'] = 0
@@ -72,25 +67,29 @@ def get_various_info(request):
 
     return r
 
+def index(request):
+    return HttpResponseRedirect("/message/inbox/")
 
 def inbox(request):
     server = arara.get_server()
-    sess = test_login()
+    sess = request.session["arara_session_key"]
     r = get_various_info(request)
     r['message_list_type'] = 'inbox'
     r['person_type'] = 'sender'
     ret, r['message_list'] = server.messaging_manager.receive_list(sess)
+    assert ret, r['message_list']
 
     rendered = render_to_string('message/message_list.html', r)
     return HttpResponse(rendered)
 
 def outbox(request):
     server = arara.get_server()
-    sess = test_login()
+    sess = request.session["arara_session_key"]
     r = get_various_info(request)
     r['message_list_type'] = 'outbox'
     r['person_type'] = 'receiver'
     ret, r['message_list'] = server.messaging_manager.sent_list(sess)
+    assert ret, r['message_list']
     
     rendered = render_to_string('message/message_list.html', r)
     return HttpResponse(rendered)
@@ -104,9 +103,10 @@ def send(request, msg_no=0):
     r['default_text'] = ''
 
     server = arara.get_server()
-    sess = test_login()
+    sess = request.session["arara_session_key"]
     msg_no = int(msg_no)
     ret, message = server.messaging_manager.read_message(sess, msg_no)
+    assert ret, message
 
     if msg_no:
         r['default_receiver'] = message['from']
@@ -122,24 +122,27 @@ def send(request, msg_no=0):
 
 def send_(request):
     server = arara.get_server()
-    sess = test_login()
+    sess = request.session["arara_session_key"]
     r = {}
     r['url'] = '/message/send'
     
     receiver = request.POST.get('receiver', '')
     text = request.POST.get('text', '')
 
-    server.messaging_manager.send_message(sess, receiver, text)
+    ret, message = server.messaging_manager.send_message(sess, receiver, text)
+    assert ret, message
 
     return HttpResponseRedirect(r['url'])
 
 def read(request, message_list_type, message_id):
     server = arara.get_server()
-    sess = test_login()
+    sess = request.session["arara_session_key"]
 
     r = get_various_info(request)
     message_id = int(message_id)
     ret, r['message'] = server.messaging_manager.read_message(sess, message_id)
+    assert ret, r['message']
+
     r['prev_message'] = {'mark':r['prev'], 'msg_no':''}
     r['next_message'] = {'mark':r['next'], 'msg_no':''}
     r['message_id'] = message_id
@@ -153,8 +156,3 @@ def read(request, message_list_type, message_id):
 
     rendered = render_to_string('message/message_read.html', r)
     return HttpResponse(rendered)
-"""
-def delete(request, message_id):
-    server = arara.get_server()
-    sess = test_login()
-"""

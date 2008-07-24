@@ -3,11 +3,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 import arara
 
-def test_login():
-    server = arara.get_server()
-    ret, sess = server.login_manager.login('breadfish', 'breadfish', '127.0.0.1')
-    assert ret == True, sess
-    return sess
 
 def get_various_info(request):
     server = arara.get_server()
@@ -19,7 +14,7 @@ def add(request):
     if request.method == 'POST':
         blacklist_id = request.POST['blacklist_id']
         server = arara.get_server()
-        sess = test_login()
+        sess = request.session["arara_session_key"]
         ret, message = server.blacklist_manager.add(sess, blacklist_id)
         assert ret, message
         return HttpResponseRedirect("/blacklist/")
@@ -30,7 +25,7 @@ def delete(request):
     if request.method == 'POST':
         username = request.POST['username']
         server = arara.get_server()
-        sess = test_login()
+        sess = request.session["arara_session_key"]
         ret, message = server.blacklist_manager.delete(sess, username)
         assert ret, message
         return HttpResponseRedirect("/blacklist/")
@@ -38,7 +33,7 @@ def delete(request):
 
 def update(request):
     server = arara.get_server()
-    sess = test_login()
+    sess = request.session["arara_session_key"]
     ret, blacklist = server.blacklist_manager.list(sess)
     for b in blacklist:
         article_bl_key = 'blacklist_article_%s' % b['blacklisted_user_username']
@@ -60,7 +55,7 @@ def update(request):
 
 def index(request):
     server = arara.get_server()
-    sess = test_login()
+    sess = request.session["arara_session_key"]
     r = {}
     ret, blacklist = server.blacklist_manager.list(sess)
     r['blacklist'] = blacklist

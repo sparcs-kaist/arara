@@ -4,11 +4,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 import arara
 
-def test_login():
-    server = arara.get_server()
-    ret, sess = server.login_manager.login('breadfish', 'breadfish', '127.0.0.1')
-    assert ret == True
-    return sess
 
 def index(request):
     rendered = render_to_string('board/index.html', {})
@@ -17,7 +12,7 @@ def index(request):
 
 def list(request, board_name):
     server = arara.get_server()
-    sess = test_login()
+    sess = request.session["arara_session_key"]
     ret, article_list = server.article_manager.article_list(sess, board_name)
     r = {}
     r['article_list'] = article_list
@@ -46,7 +41,7 @@ def write(request, board_name):
 
 def write_(request, board_name):
     server = arara.get_server()
-    sess = test_login()
+    sess = request.session["arara_session_key"]
     article_dic = {}
     r = {}
     r['url'] = ''.join(['/board/', board_name, '/'])
@@ -63,7 +58,7 @@ def write_(request, board_name):
 
 def read(request, board_name, article_id):
     server = arara.get_server()
-    sess = test_login()
+    sess = request.session["arara_session_key"]
     ret, article_list = server.article_manager.read(sess, board_name, int(article_id))
     r = {}
     if not ret:
@@ -81,7 +76,7 @@ def read(request, board_name, article_id):
 
 def reply(request, board_name, article_id):
     server = arara.get_server()
-    sess = test_login()
+    sess = request.session["arara_session_key"]
     reply_dic = {}
     reply_dic['content'] = request.POST.get('content', '')
     reply_dic['title'] = request.POST.get('title', '')
