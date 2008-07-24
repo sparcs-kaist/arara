@@ -124,42 +124,42 @@ class Notice(object):
 metadata = MetaData()
 users_table = Table('users', metadata,
     Column('id', Integer, primary_key=True),
-    Column('username', String(40), unique=True),
-    Column('password', String(50)),
-    Column('nickname', String(20), unique=True),
-    Column('email', String(40)),
-    Column('signature', String(50)),
-    Column('self_introduction', String(100)),
-    Column('default_language', String(5)),  # ko_KR, en_US
+    Column('username', Unicode(40), unique=True),
+    Column('password', Unicode(50)),
+    Column('nickname', Unicode(20), unique=True),
+    Column('email', Unicode(40)),
+    Column('signature', Unicode(50)),
+    Column('self_introduction', Unicode(100)),
+    Column('default_language', Unicode(5)),  # ko_KR, en_US
     Column('activated', Boolean),
     Column('widget', Integer),
-    Column('layout', String(50)),
+    Column('layout', Unicode(50)),
     Column('join_time', DateTime),
     Column('last_login_time', DateTime),
     Column('last_logout_time', DateTime),
-    Column('last_login_ip', String(15)),
+    Column('last_login_ip', Unicode(15)),
     Column('is_sysop', Boolean),
 )
 
 user_activation_table = Table('user_activation', metadata,
-    Column('user_id', String(40), ForeignKey('users.id'), primary_key=True),
-    Column('activation_code', String(50), unique=True),
+    Column('user_id', Unicode(40), ForeignKey('users.id'), primary_key=True),
+    Column('activation_code', Unicode(50), unique=True),
     Column('issued_date', DateTime),
 )
 
 board_table = Table('boards', metadata,
     Column('id', Integer, primary_key=True),
-    Column('board_name', String(30), unique=True),
-    Column('board_description', Text),
+    Column('board_name', Unicode(30), unique=True),
+    Column('board_description', UnicodeText),
 )
 
 articles_table = Table('articles', metadata,
     Column('id', Integer, primary_key=True),
-    Column('title', String(30)),
+    Column('title', Unicode(30)),
     Column('board_id', Integer, ForeignKey('boards.id')),
-    Column('content', Text),
+    Column('content', UnicodeText),
     Column('author_id', Integer, ForeignKey('users.id')),
-    Column('author_ip', String(15)),
+    Column('author_ip', Unicode(15)),
     Column('date', DateTime),
     Column('hit', Integer),
     Column('vote', Integer),
@@ -189,16 +189,16 @@ blacklist_table = Table('blacklists' , metadata,
 message_table = Table('messages', metadata,
     Column('id', Integer, primary_key=True),
     Column('from_id', Integer, ForeignKey('users.id'), nullable=False),
-    Column('from_ip', String(15)),
+    Column('from_ip', Unicode(15)),
     Column('to_id', Integer, ForeignKey('users.id'), nullable=False),
     Column('sent_time', DateTime),
-    Column('message', String(200)),
-    Column('read_status', String(1)),
+    Column('message', Unicode(200)),
+    Column('read_status', Unicode(1)),
 )
 
 notice_table = Table('notices' , metadata,
     Column('id', Integer, primary_key=True),
-    Column('content', Text),
+    Column('content', UnicodeText),
     Column('issued_date', DateTime),
     Column('due_date', DateTime),
     Column('valid', Boolean),
@@ -262,7 +262,7 @@ mapper(Blacklist, blacklist_table, properties={
 
 TEST_DATABASE_FILENAME = 'test.db'
 CONNECTION_STRING = 'sqlite:///%s' % TEST_DATABASE_FILENAME
-#CONNECTION_STRING = 'mysql://s20060735:s20060735@localhost/s20060735'
+#CONNECTION_STRING = 'mysql://s20060735:s20060735@localhost/s20060735?charset=utf8&use_unicode=1'
 
 engine = None
 
@@ -271,7 +271,7 @@ def get_engine():
     global engine
     if not engine:
         from sqlalchemy import create_engine
-        engine = create_engine(CONNECTION_STRING, echo=False)
+        engine = create_engine(CONNECTION_STRING, convert_unicode=True, encoding='utf-8', echo=False)
     return engine
 
 Session = None
@@ -287,7 +287,7 @@ def init_test_database():
     global engine, Session, namespace
     # 데이터베이스를 억지로 새로 만든다.
     from sqlalchemy import create_engine
-    engine = create_engine('sqlite://', echo=False)
+    engine = create_engine('sqlite://', convert_unicode=True, encoding='utf-8', echo=False)
     Session = sessionmaker(bind=engine, autoflush=True, transactional=True)
     metadata.create_all(engine)
 

@@ -7,7 +7,7 @@ from arara import model
 from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy import and_, or_
 
-BOARDS = {'garbages': 'Garbage board'}
+BOARDS = {u'garbages': u'Garbage board'}
 WRITE_ARTICLE_DICT = ['title', 'content']
 READ_ARTICLE_WHITELIST = ['id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted'
                     'author_ip', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id']
