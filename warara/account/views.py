@@ -56,3 +56,15 @@ def logout(request):
     ret, message = server.login_manager.logout(session_key)
     assert ret, message
     return HttpResponseRedirect("/")
+
+def account(request):
+    rendered = render_to_string('account/myaccount_frame.html')
+    return HttpResponse(rendered)
+
+def account_modify(request):
+    rendered = render_to_string('account/myaccount_modify.html')
+    return HttpResponse(rendered)
+
+def password_modify(request):
+    rendered = render_to_string('account/myacc_pw_modify.html')
+    return HttpResponse(rendered)

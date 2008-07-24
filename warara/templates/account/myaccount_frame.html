@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% block myaccount_content %}
+    <div id="myaccount_content">
+        <h1>My Account</h1>
+        <fieldset id="myaccount">
+            <legend>My information</legend>
+            <dl>
+                <dt>ID</dt>
+                <dd></dd>
+            </dl>
+            <dl>
+                <dt>Nickname</dt>
+                <dd></dd>
+            </dl>
+        </fieldset>
+        <fieldset id="mysetting">
+            <legend>My ARA setting </legend>
+            <dl>
+                <dt>Signature</dt>
+                <dd></dd>
+            </dl>
+            <dl>
+                <dt>Introduction</dt>
+                <dd></dd>
+            </dl>
+            <dl>
+                <dt>Language</dt>
+                <dd></dd>
+            </dl>
+        </fieldset>
+        <p>
+        <a href="/account/account_modify/">
+            <input value="Account Modify" type="button" />
+        </a>
+        <a href="/account/password_modify/">
+            <input value="Password Modify" type="button" />
+        </a>
+        </p>
+    </div>
+    {% endblock %}
+{% endblock %}
+<!--
+
+-->

@@ -1,0 +1,32 @@
+{% extends "account/myaccount_modify.html" %}
+
+{% block style %}
+<link rel="stylesheet" href="/media/style/account_register.css" />
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript" src="/media/js/account.js"></script>
+{% endblock %}
+
+{% block myaccount_modify_content %}
+<div id="myacc_pw_modify_content">
+    <form action="/account/password_modify/" method="post">
+        <h1>My Password Modify</h1>
+        <fieldset id="mypassword_fieldset">
+            <legend>Password</legend>
+            <p>
+	    <label for="password_field">Password:<span class="feedback"></span></label>
+            <input name="password" id="password_field" type="password" class="required_field" />
+            </p>
+            <p>
+            <label for="re_password_field">Re-enter password:<span class="feedback"></span></label>
+            <input name="re_password" id="re_password_field" type="password" class="required_field" />
+            </p>
+        </fieldset>
+	<p>
+	<label for="password_modify_submit"><span class="feedback"></span></label>
+	<input value="Done" name="done" id="password_modify_submit" class="submit" type="submit" />
+	</p>
+    </form>
+</div>
+{% endblock %}

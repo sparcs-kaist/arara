@@ -26,12 +26,12 @@ $(document).ready(function(){
             $("#password_field").parent().children("label").children("span.feedback").text("");
     });
     
-    $("#register_submit").click(function(event) {
+    $(".submit").click(function(event) {
         $("input.required_field").each(function(i) {
             if (!$(this).val()) {
                 $(this).parent().children("label").children("span.feedback")
                     .text("The field is empty");
-                $("#register_submit").parent().children("label").children("span.feedback").text("Please confirm your form and agreement");
+                $(".submit").parent().children("label").children("span.feedback").text("Please confirm your form and agreement");
                 event.preventDefault();
             }
         }); 
