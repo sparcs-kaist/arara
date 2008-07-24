@@ -53,6 +53,9 @@ class Board(object):
         self.board_name = board_name
         self.board_description = board_description
 
+    def __repr__(self):
+        return "<Board('%s', '%s')>" % (self.board_name, self.board_description)
+
 class Article(object):
     def __init__(self, board, title, content, author, author_ip, parent):
         self.board = board
@@ -64,6 +67,7 @@ class Article(object):
         self.date = datetime.datetime.fromtimestamp(time.time())
         self.hit = 0
         self.vote = 0
+        self.reply_count = 0
         if parent:
             if parent.root:
                 self.root = parent.root
@@ -76,6 +80,14 @@ class Article(object):
 
     def __repr__(self):
         return "<Article('%s', '%s', %s)>" % (self.title, self.author.username, str(self.date))
+
+class ReadStatus(object):
+    def __init__(self, user, read_status_data):
+        self.user = user
+        self.read_status_data = read_status_data
+
+    def __repr__(self):
+        return "<ReadStatus('%s', '%s')>" % (self.user.username, self.read_status_data)
 
 class Blacklist(object):
     def __init__(self, user, target_user, block_article, block_message):
@@ -154,7 +166,14 @@ articles_table = Table('articles', metadata,
     Column('deleted', Boolean),
     Column('root_id', Integer, ForeignKey('articles.id'), nullable=True),
     Column('parent_id', Integer, ForeignKey('articles.id'), nullable=True),
+    Column('reply_count', Integer, nullable=False),
     Column('last_modified_date', DateTime),
+)
+
+read_status_table = Table('read_status', metadata,
+    Column('id', Integer, primary_key=True),
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('read_status_data', PickleType),
 )
 
 blacklist_table = Table('blacklists' , metadata,
@@ -177,13 +196,6 @@ message_table = Table('messages', metadata,
     Column('read_status', String(1)),
 )
 
-'''
-article_read_status_table = Table('article_read_status', metadata,
-    Column('article_no', Integer, primary_key=True, ForeignKey('article.id')),
-    Column('reader_id', String(40), primary_key=True, ForeignKey('users.username')),
-)
-'''
-
 notice_table = Table('notices' , metadata,
     Column('id', Integer, primary_key=True),
     Column('content', Text),
@@ -197,10 +209,6 @@ mapper(User, users_table)
 mapper(UserActivation, user_activation_table, properties={
     'user':relation(User, backref='activation', uselist=False)
 })
-#properties={
-#    'read_articles':relation(Article, secondary=article_read_status_table,
-#        backref='read_users')
-#}
 
 mapper(Article, articles_table, properties={
     'author':relation(User, backref='articles', lazy=False),
@@ -222,6 +230,10 @@ mapper(Article, articles_table, properties={
         )
 })
 
+mapper(ReadStatus, read_status_table, properties={
+    'user': relation(User, backref='read_status')
+})
+
 mapper(Board, board_table)
 
 mapper(Message, message_table, properties={
@@ -236,6 +248,7 @@ mapper(Message, message_table, properties={
                                     viewonly=False)
         ),
 })
+
 mapper(Blacklist, blacklist_table, properties={
     'user':relation(User, primaryjoin=blacklist_table.c.user_id==users_table.c.id,
                     backref=backref('blacklist', lazy=True, join_depth=1,

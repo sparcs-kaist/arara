@@ -24,13 +24,20 @@ class ArticleManager(object):
 
     용법 : arara/test/article_manager.txt
     '''
-    def __init__(self, login_manager, blacklist_manager):
+    def __init__(self):
         #monk data
         #self.articles = {'garbages': {} }
         self._create_boards()
-        self.login_manager = login_manager
-        self.blacklist_manager = blacklist_manager
         #self.article_no = 0
+
+    def _set_login_manager(self, login_manager):
+        self.login_manager = login_manager
+
+    def _set_blacklist_manager(self, blacklist_manager):
+        self.blacklist_manager = blacklist_manager
+
+    def _set_read_status_manager(self, read_status_manager):
+        self.read_status_manager = read_status_manager
     
     def _create_boards(self):
         session = model.Session()
@@ -68,7 +75,6 @@ class ArticleManager(object):
             del item_dict['author_id']
         if item_dict.has_key('root_id'):
             if not item_dict['root_id']:
-                item_dict['reply_count'] = len(item.descendants)
                 item_dict['root_id'] = item_dict['id']
         if whitelist:
             filtered_dict = filter_dict(item_dict, whitelist)
@@ -88,6 +94,43 @@ class ArticleManager(object):
 #       if not board_name in BOARDS:
 #           return False, "BOARD_NOT_EXIST"
 
+    def article_list(self, session_key, board_name, page=1, page_length=20):
+        '''
+        게시판의 게시글 목록 읽어오기
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type board_name: string
+        @param board_name : BBS Name
+        @type  page: integer
+        @param page: Page Number to Request
+        @type  page_length: integer
+        @param page_length: Count of Article on a Page
+        @rtype: boolean, list
+        @return:
+            1. 리스트 읽어오기 성공: True, Article List
+            2. 리스트 읽어오기 실패:
+                1. 존재하지 않는 게시판: False, 'BOARD_NOT_EXIST'
+                2. 페이지 번호 오류: False, 'WRONG_PAGENUM' 
+                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        '''
+        article_list = []
+        try:
+            session = model.Session()
+            ret, _ = self._is_board_exist(board_name)
+            if ret:
+                board = session.query(model.Board).filter_by(board_name=board_name).one()
+                offset = page_length * (page - 1)
+                last = offset + page_length
+                article_list = session.query(model.Article).filter_by(board_id=board.id, root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
+                article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
+                return True, article_dict_list
+            else:
+                return ret, 'BOARD_NOT_EXIST'
+        except InvalidRequestError:
+            raise
+            return False, 'DATABASE_ERROR'
+             
     @require_login
     def read(self, session_key, board_name, no):
         '''
@@ -247,6 +290,7 @@ class ArticleManager(object):
                                         author,
                                         user_info['ip'],
                                         article)
+                article.reply_count += 1
                 session.save(new_reply)
                 session.commit()
             except InvalidRequestError:
@@ -338,6 +382,8 @@ class ArticleManager(object):
                 if article.author_id == author.id:
                     article.deleted = True
                     article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
+                    if article.root:
+                        article.root.reply_count -= 1
                     session.commit()
                 else:
                     return False, "NO_PERMISSION"
@@ -347,43 +393,6 @@ class ArticleManager(object):
             return ret, message
         return True, article.id
         
-    def article_list(self, session_key, board_name, page=1, page_length=20):
-        '''
-        게시판의 게시글 목록 읽어오기
-
-        @type  session_key: string
-        @param session_key: User Key
-        @type board_name: string
-        @param board_name : BBS Name
-        @type  page: integer
-        @param page: Page Number to Request
-        @type  page_length: integer
-        @param page_length: Count of Article on a Page
-        @rtype: boolean, list
-        @return:
-            1. 리스트 읽어오기 성공: True, Article List
-            2. 리스트 읽어오기 실패:
-                1. 존재하지 않는 게시판: False, 'BOARD_NOT_EXIST'
-                2. 페이지 번호 오류: False, 'WRONG_PAGENUM' 
-                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
-        '''
-        article_list = []
-        try:
-            session = model.Session()
-            ret, _ = self._is_board_exist(board_name)
-            if ret:
-                board = session.query(model.Board).filter_by(board_name=board_name).one()
-                offset = page_length * (page - 1)
-                last = offset + page_length
-                article_list = session.query(model.Article).filter_by(board_id=board.id, root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
-                article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
-                return True, article_dict_list
-            else:
-                return ret, 'BOARD_NOT_EXIST'
-        except InvalidRequestError:
-            raise
-            return False, 'DATABASE_ERROR'
-             
     @require_login
     def board_list(self, session_key):
         '''
