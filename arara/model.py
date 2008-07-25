@@ -26,9 +26,12 @@ class User(object):
         self.is_sysop = False
 
     def set_password(self, password):
-        self.password = md5.md5(password).hexdigest()
+        self._password = md5.md5(password).hexdigest()
 
-    password = property(fset=set_password)
+    def get_password(self):
+        return self._password
+
+    password = property(fget=get_password, fset=set_password)
 
     def compare_password(self, password):
         if md5.md5(password).hexdigest() == self.password:
