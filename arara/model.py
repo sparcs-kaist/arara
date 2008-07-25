@@ -113,13 +113,29 @@ class Message(object):
     def __repr__(self):
         return "<Message('%s','%s','%s')>" % (self.from_user, self.to_user, self.message)
 
-class Notice(object):
-    def __init__(self, content):
+class Banner(object): 
+    def __init__(self, content, weight, due_date): 
         self.content = content
         self.valid = True
+        self.weight = weight
+        self.issued_date = datetime.datetime.fromtimestamp(time.time()) 
+ 	self.due_date = datetime.datetime(due_date) 
+ 	#due_date_sample = 2007,7,14, 
 
     def __repr__(self):
-        return "<Notice('%s','%s')>" % (self.content, self.valid)
+        return "<Banner('%s','%s')>" % (self.content, self.valid)
+
+class Welcome(object): 
+    def __init__(self, content, weight, due_date): 
+        self.content = content
+        self.valid = True
+        self.weight = weight
+        self.issued_date = datetime.datetime.fromtimestamp(time.time()) 
+ 	self.due_date = datetime.datetime(due_date) 
+ 	#due_date_sample = 2007,7,14, 
+
+    def __repr__(self):
+        return "<Welcome('%s','%s')>" % (self.content, self.valid)
 
 metadata = MetaData()
 users_table = Table('users', metadata,
@@ -196,13 +212,27 @@ message_table = Table('messages', metadata,
     Column('read_status', Unicode(1)),
 )
 
-notice_table = Table('notices' , metadata,
+banner_table = Table('banners' , metadata,
     Column('id', Integer, primary_key=True),
     Column('content', UnicodeText),
     Column('issued_date', DateTime),
     Column('due_date', DateTime),
     Column('valid', Boolean),
+    Column('weight', Integer),
 )
+
+welcome_table = Table('welcomes' , metadata,
+    Column('id', Integer, primary_key=True),
+    Column('content', UnicodeText),
+    Column('issued_date', DateTime),
+    Column('due_date', DateTime),
+    Column('valid', Boolean),
+    Column('weight', Integer),
+)
+
+mapper(Banner, banner_table)
+
+mapper(Welcome, welcome_table)
 
 mapper(User, users_table)
 

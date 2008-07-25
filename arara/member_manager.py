@@ -200,6 +200,7 @@ class MemberManager(object):
             if not user.compare_password(user_password_dict['current_password']):
                 raise WrongPassword()
             user.password = user_password_dict['new_password']
+            session.commt()
             return True, 'OK'
             
         except NoPermission:
