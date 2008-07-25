@@ -65,5 +65,8 @@ class Border(urwid.WidgetWrap):
         pile = urwid.Pile([('flow',top),middle,('flow',bottom)], focus_item = 1)
         urwid.WidgetWrap.__init__(self, pile)
 
+class PasswordEdit(urwid.Edit):
+    def get_text(self):
+        return self.caption + "*"*len(self.edit_text), self.attrib
 # vim: set et ts=8 sw=4 sts=4:
 

@@ -66,7 +66,7 @@ class ara_login(ara_forms):
         self.message_en = urwid.Filler(urwid.Text(u"Press [Tab] key to jump between each items", align='center'))
 
         self.idedit = urwid.Filler(urwid.Edit(caption="ID:", wrap='clip'))
-        self.pwedit = urwid.Filler(urwid.Edit(caption="Password:", wrap='clip'))
+        self.pwedit = urwid.Filler(widget.PasswordEdit(caption="Password:", wrap='clip'))
         self.idpwpile = urwid.Pile([self.idedit, self.pwedit])
 
         langitems = ['Korean','English','Chinese']

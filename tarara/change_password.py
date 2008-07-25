@@ -17,15 +17,15 @@ class ara_changepw(ara_forms):
     def __initwidgets__(self):
 	header = urwid.Filler(urwid.Text("ARA: Change Password", align='center'))
 
-        oldpwedit = urwid.Filler(urwid.Edit(caption="Old password:", wrap='clip'))
+        oldpwedit = urwid.Filler(widget.PasswordEdit(caption="Old password:", wrap='clip'))
         oldpwdesc = urwid.Filler(urwid.Text("Please enter your\nold password"))
         oldpwcolumn = self._make_column(oldpwedit, oldpwdesc)
 
-        newpwedit = urwid.Filler(urwid.Edit(caption="New password:", wrap='clip'))
+        newpwedit = urwid.Filler(widget.PasswordEdit(caption="New password:", wrap='clip'))
         newpwdesc = urwid.Filler(urwid.Text("Minimum password length\nis 4 characters"))
         newpwcolumn = self._make_column(newpwedit, newpwdesc)
 
-        confirmedit = urwid.Filler(urwid.Edit(caption="Confirm\nnew password:", wrap='clip'))
+        confirmedit = urwid.Filler(widget.PasswordEdit(caption="Confirm\nnew password:", wrap='clip'))
         confirmdesc = urwid.Filler(urwid.Text("Re-enter your new\npassword"))
         confirmcolumn = self._make_column(confirmedit, confirmdesc)
 
