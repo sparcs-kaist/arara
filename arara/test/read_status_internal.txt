@@ -1,0 +1,19 @@
+>>> from arara import read_status_manager
+
+>>> rs = read_status_manager.ReadStatus()
+
+>>> rs.get_data(2)
+'N'
+>>> rs.set_data(21, 'N')
+(True, 'OK')
+
+>>> rs.set_data(14, 'R')
+(True, 'OK')
+
+>>rs.set_data(26, 'V')
+(True, 'OK')
+
+rs.set_data(24, 'R')
+(True, 'OK')
+
+>>> rs.data

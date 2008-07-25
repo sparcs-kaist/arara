@@ -2,6 +2,69 @@
 
 from arara.util import require_login
 
+class ReadStatus(object):
+    def __init__(self):
+        self.default = 'N'
+        self.data = [(0, 'N'), (15, 'R'), (20, 'V'), (25, 'N')]
+
+    def _search(self, value, data_to_search, start=0, large=-1):
+        #TODO: NOT COMPLETED, NEED TO COMPLETE AND CHECK IF THIS WORKS
+        if start == 0:
+            half = int(len(data_to_search) / 2)
+        else:
+            if large == 1:
+                half = start + int(len(data_to_search[start:]) / 2)
+            elif large == 0:
+                half = start - int(len(data_to_search[0:start]) / 2)
+        no, data = data_to_search[half]
+
+        print half, start
+        print no, data
+        if half == start:
+            return no, data
+
+        if value > no:
+            self._search(value, data_to_search, half, 1)
+        elif value < no:
+            self._search(value, data_to_search, half, 0)
+        else:
+            return no, data
+        #TODO: NOT COMPLETED, NEED TO COMPLETE AND CHECK IF THIS WORKS
+
+    def get_data(self, article_no):
+        if article_no < 0:
+            return False, 'WRONG_ARTICLE_NO'
+        for no, status in self.data:
+            if article_no > no:
+                ret_status = status
+            elif article_no < no:
+                return ret_status
+        return ret_status
+
+    def set_data(self, article_no, status):
+        for index, (no, data_status) in enumerate(self.data):
+            if article_no > no:
+                left = self.data[index-1]
+                right = self.data[index+1]
+                if article_no < right[0]:
+                    if self.data[index+1][0] == article_no + 1:
+                        if self.data[index+1][1] == status:
+                            del self.data[index+1]
+                            self.data.insert(index+1, (article_no, status))
+                            return True, 'OK'
+                    else:
+                        self.data.insert(index+1, (article_no+1, data_status))
+                        self.data.insert(index+1, (article_no, status))
+                        return True, 'OK'
+                else:
+                    if self.data[index][0] == article_no - 1:
+                        print 2
+                        if not self.data[index][1] == status:
+                            print 3
+                            self.data.append((article_no, status))
+                            return True, 'OK'
+
+
 class ReadStatusManager(object):
     '''
     읽은 글, 통과한글 처리관련 클래스
