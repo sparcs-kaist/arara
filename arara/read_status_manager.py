@@ -7,7 +7,8 @@ class ReadStatus(object):
         self.default = default
         self.data = [(0, default)]
 
-    def _rec_find(self, n):
+    def _find(self, n):
+        '''적당한 터플을 찾는다'''
         low = 0
         high = len(self.data) - 1
         while True:
@@ -23,14 +24,6 @@ class ReadStatus(object):
                 low = middle + 1
             else:
                 high = middle - 1
-
-    def _find(self, n):
-        '''적당한 터플을 찾는다'''
-        #return self._rec_find(n)
-        for i, (lower_bound, value) in reversed(list(enumerate(self.data))):
-            if lower_bound <= n:
-                return i
-        assert False
 
     def get(self, n):
         idx = self._find(n)
