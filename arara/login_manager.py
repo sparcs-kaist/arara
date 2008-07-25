@@ -23,10 +23,12 @@ class LoginManager(object):
         @rtype: string
         @return: True, guest_key
         '''
-        hash = hashlib.md5('guest'+''+datetime.datetime.today().__str__()).hexdigest()
-        timestamp = datetime.datetime.isoformat(datetime.datetime.now())
-        self.session_dic[hash] = {'username': 'guest', 'ip': guest_ip, 'logintime': timestamp}
-        return True, hash
+
+        return False, 'TEMPORARILY_DISABLED'
+        #hash = hashlib.md5('guest'+''+datetime.datetime.today().__str__()).hexdigest()
+        #timestamp = datetime.datetime.isoformat(datetime.datetime.now())
+        #self.session_dic[hash] = {'username': 'guest', 'ip': guest_ip, 'logintime': timestamp}
+        #return True, hash
     
 
     def login(self, username, password, user_ip):
