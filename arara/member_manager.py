@@ -226,7 +226,7 @@ class MemberManager(object):
 
 
     @require_login
-    def modify(self, session_key, user_reg_dict):
+    def modify(self, session_key, user_modify_dict):
         '''
         password를 제외한 회원 정보 수정
 
@@ -245,9 +245,8 @@ class MemberManager(object):
         session_info = self.login_manager.get_session(session_key)[1]
         username = session_info['username']
 
-        if not is_keys_in_dict(user_reg_dict, USER_PUBLIC_KEYS):
+        if not is_keys_in_dict(user_modify_dict, USER_PUBLIC_MODIFIABLE_WHITELIST):
             return False, 'WRONG_DICTIONARY'
-        user_modify_dict = filter_dict(user_reg_dict, USER_PUBLIC_MODIFIABLE_WHITELIST)
         session = model.Session()
         user = session.query(model.User).filter_by(username=username).one()
         for key, value in user_modify_dict.items():
