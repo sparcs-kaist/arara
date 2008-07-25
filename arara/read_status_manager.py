@@ -3,66 +3,98 @@
 from arara.util import require_login
 
 class ReadStatus(object):
-    def __init__(self):
-        self.default = 'N'
-        self.data = [(0, 'N'), (15, 'R'), (20, 'V'), (25, 'N')]
+    def __init__(self, default='N'):
+        self.default = default
+        self.data = [(0, default)]
 
-    def _search(self, value, data_to_search, start=0, large=-1):
-        #TODO: NOT COMPLETED, NEED TO COMPLETE AND CHECK IF THIS WORKS
-        if start == 0:
-            half = int(len(data_to_search) / 2)
+    def _rec_find(self, n):
+        low = 0
+        high = len(self.data) - 1
+        while True:
+            middle = (high - low) / 2 + low
+            assert low <= middle <= high
+            if self.data[middle][0] <= n:
+                try:
+                    if n < self.data[middle+1][0]:
+                        return middle
+                except IndexError:
+                    return middle
+            if self.data[middle][0] <= n:
+                low = middle + 1
+            else:
+                high = middle - 1
+
+    def _find(self, n):
+        '''적당한 터플을 찾는다'''
+        #return self._rec_find(n)
+        for i, (lower_bound, value) in reversed(list(enumerate(self.data))):
+            if lower_bound <= n:
+                return i
+        assert False
+
+    def get(self, n):
+        idx = self._find(n)
+        return self.data[idx][1]
+
+    def get_range(self, lower_bound, upper_bound):
+        ret = []
+        for i in range(lower_bound, upper_bound + 1):
+            ret.append(self.get(i))
+        return ret
+
+    def _merge_right(self, idx):
+        if self.data[idx][1] == self.data[idx + 1][1]:
+            del self.data[idx + 1]
+
+    def _merge_left(self, idx):
+        self._merge_right(idx - 1)
+
+    def _merge(self, idx):
+        #print idx
+        if idx == 0:
+            self._merge_right(idx)
+        elif idx == len(self.data) - 1:
+            self._merge_left(idx)
         else:
-            if large == 1:
-                half = start + int(len(data_to_search[start:]) / 2)
-            elif large == 0:
-                half = start - int(len(data_to_search[0:start]) / 2)
-        no, data = data_to_search[half]
+            self._merge_right(idx)
+            self._merge_left(idx)
 
-        print half, start
-        print no, data
-        if half == start:
-            return no, data
+    def set(self, n, value):
+        found_idx = self._find(n)
+        found_lower_bound = self.data[found_idx][0]
+        found_value = self.data[found_idx][1]
+        if found_value == value: return
 
-        if value > no:
-            self._search(value, data_to_search, half, 1)
-        elif value < no:
-            self._search(value, data_to_search, half, 0)
-        else:
-            return no, data
-        #TODO: NOT COMPLETED, NEED TO COMPLETE AND CHECK IF THIS WORKS
+        # 맨 앞일경우
+        if n == 0:
+            self.data[0] = (0, value)
+            if len(self.data) == 1:
+                self.data.append((1, self.default))
+                self._merge(0)
+            elif self.data[1][0] != 1:
+                self.data.insert(1, (1, self.default))
+                self._merge(1)
+            return
 
-    def get_data(self, article_no):
-        if article_no < 0:
-            return False, 'WRONG_ARTICLE_NO'
-        for no, status in self.data:
-            if article_no > no:
-                ret_status = status
-            elif article_no < no:
-                return ret_status
-        return ret_status
+        if found_lower_bound == n:
+            self.data[found_idx] = (n, value)
+            if len(self.data) == found_idx + 1:
+                self.data.append((n + 1, self.default))
+            elif self.data[found_idx + 1][0] != n + 1:
+                assert self.data[found_idx + 1][0] != n
+                self.data.insert(found_idx + 1, (n + 1, self.default))
+                self._merge(found_idx)
+            self._merge(found_idx - 1)
+            return
 
-    def set_data(self, article_no, status):
-        for index, (no, data_status) in enumerate(self.data):
-            if article_no > no:
-                left = self.data[index-1]
-                right = self.data[index+1]
-                if article_no < right[0]:
-                    if self.data[index+1][0] == article_no + 1:
-                        if self.data[index+1][1] == status:
-                            del self.data[index+1]
-                            self.data.insert(index+1, (article_no, status))
-                            return True, 'OK'
-                    else:
-                        self.data.insert(index+1, (article_no+1, data_status))
-                        self.data.insert(index+1, (article_no, status))
-                        return True, 'OK'
-                else:
-                    if self.data[index][0] == article_no - 1:
-                        print 2
-                        if not self.data[index][1] == status:
-                            print 3
-                            self.data.append((article_no, status))
-                            return True, 'OK'
+        # 찾은 터플의 값이 셋팅 하려는 값과 다르므로 새로 맹근다.
+        self.data.insert(found_idx + 1, (n, value))
+        if len(self.data) == found_idx + 2:
+            self.data.append((n + 1, self.default))
+        elif self.data[found_idx + 2][0] != n + 1:
+            self.data.insert(found_idx + 2, (n+1, self.default))
+        self._merge(found_idx)
+        self._merge(found_idx + 1)
 
 
 class ReadStatusManager(object):
