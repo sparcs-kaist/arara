@@ -38,19 +38,6 @@ True
 >>> server.login_manager.logout(session_key)
 (False, 'NOT_LOGGEDIN')
 
-Guest Login Test
-
->>> ret, guest_session_key = server.login_manager.guest_login('143.248.234.1')
->>> ret
-True
->>> server.login_manager.is_logged_in(guest_session_key)
-True
->>> _, result = server.login_manager.get_session(guest_session_key)
->>> result['ip']
-'143.248.234.1'
->>> result['username']
-'guest'
-
 # Reset the database
 >>> import arara.model
 >>> arara.model.clear_test_database()

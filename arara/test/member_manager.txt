@@ -53,6 +53,9 @@ mikkang
 >>> user_password_dic = {'username':'mikkang', 'current_password':'mikkang', 'new_password':'ggingkkang'}
 >>> server.member_manager.modify_password(session_key, user_password_dic)
 (True, 'OK')
+>>> user_password_dic = {'username':'mikkang', 'current_password':'ggingkkang', 'new_password':'mikkang'}
+>>> server.member_manager.modify_password(session_key, user_password_dic)
+(True, 'OK')
 >>> modify_user_reg_dic = { 'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang@sparcs.org', 'signature':'KAIST07 && JSH07 && SPARCS07', 'self_introduction':'i am Munbeom', 'default_language':'korean' }
 >>> server.member_manager.modify(session_key, modify_user_reg_dic)
 (True, 'OK')

@@ -52,7 +52,7 @@ True
 # now Testing Article Manager!
 
 >>> server.article_manager.board_list(session_key)
-(True, {'garbages': 0})
+(True, {u'garbages': 0})
 
 # Write an article
 
@@ -87,9 +87,9 @@ True
 # Test for pagination
 
 >>> for i in range(100):
-...     article_dic = {'title': 'serialx is... ' + str(i), 'content': 'polarbear'}
-...     _ = server.article_manager.write_article(session_key, 'garbages', article_dic)
->>> ret, l = server.article_manager.article_list(session_key, 'garbages')
+...     article_dic = {u'title': u'serialx is... ' + unicode(i), u'content': u'polarbear'}
+...     _ = server.article_manager.write_article(session_key, u'garbages', article_dic)
+>>> ret, l = server.article_manager.article_list(session_key, u'garbages')
 >>> len(l)
 21
 >>> l[0]['title']
@@ -131,7 +131,7 @@ u'serialx is... 80'
 # Board list
 
 >>> server.article_manager.board_list(session_key)
-(True, {'garbages': 0})
+(True, {u'garbages': 0})
 
 
 # Write an article with many replies

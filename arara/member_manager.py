@@ -199,7 +199,7 @@ class MemberManager(object):
                 raise NoPermission()
             if not user.compare_password(user_password_dict['current_password']):
                 raise WrongPassword()
-            user.password = user_password_dict['new_password']
+            user.set_password(user_password_dict['new_password'])
             session.commit()
             return True, 'OK'
             
