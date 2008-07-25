@@ -11,6 +11,7 @@ from list_boards import *
 from user_preferences import *
 from welcome import *
 from list_pm import *
+from user_information import *
 
 class ara_main(ara_forms):
     menu = [
@@ -18,6 +19,7 @@ class ara_main(ara_forms):
         "(S)elect board",
         "(P)rivate message",
         "(U)ser preferences",
+        "User (I)nformation",
         "(H)elp",
         "(A)bout ARA",
         "(W)elcome screen",
@@ -63,14 +65,16 @@ class ara_main(ara_forms):
                 elif pos==4:
                     ara_user_preferences(self.session_key).main()
                 elif pos==5:
+                    ara_user_information(self.session_key).main()
+                elif pos==6:
                     # TODO: 도움말로 가기
                     pass
-                elif pos==6:
+                elif pos==7:
                     # TODO: 아라 정보 보이기
                     pass
-                elif pos==7:
-                    ara_welcome(self.session_key).main()
                 elif pos==8:
+                    ara_welcome(self.session_key).main()
+                elif pos==9:
                     sys.exit(0)
         else:
             self.frame.keypress(size, key)
