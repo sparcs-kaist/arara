@@ -15,11 +15,15 @@
         <fieldset id="mypassword_fieldset">
             <legend>Password</legend>
             <p>
-	    <label for="password_field">Password:<span class="feedback"></span></label>
+	    <label for="last_password_field">Current password:<span class="feedback"></span></label>
+            <input name="last_password" id="last_password_field" type="password" class="required_field" />
+            </p>
+            <p>
+	    <label for="password_field">New password:<span class="feedback"></span></label>
             <input name="password" id="password_field" type="password" class="required_field" />
             </p>
             <p>
-            <label for="re_password_field">Re-enter password:<span class="feedback"></span></label>
+            <label for="re_password_field">Re-enter new password:<span class="feedback"></span></label>
             <input name="re_password" id="re_password_field" type="password" class="required_field" />
             </p>
         </fieldset>

@@ -53,18 +53,46 @@ def login(request):
 def logout(request):
     session_key = request.session['arara_session_key']
     server = arara.get_server()
-    ret, message = server.login_manager.logout(session_key)
+    ret, account = server.login_manager.logout(session_key)
     assert ret, message
     return HttpResponseRedirect("/")
 
 def account(request):
-    rendered = render_to_string('account/myaccount_frame.html')
+    session_key = request.session['arara_session_key']
+    server = arara.get_server()
+    ret, account = server.member_manager.get_info(session_key)
+    assert ret, account
+
+    rendered = render_to_string('account/myaccount_frame.html', account)
     return HttpResponse(rendered)
 
 def account_modify(request):
-    rendered = render_to_string('account/myaccount_modify.html')
-    return HttpResponse(rendered)
+    session_key = request.session['arara_session_key']
+    server = arara.get_server()
+    ret, account = server.member_manager.get_info(session_key)
+    if request.method == 'POST':
+        nickname = request.POST['mynickname']
+        signature = request.POST['mysig']
+        introduction = request.POST['myintroduce']
+        language = request.POST['mylanguage']
+        modified_information_dic = {'nickname':nickname, 'signature':signature, 'self_introduction':introduction, 'default_language':language}
+        ret, message = server.member_manager.modify(session_key, modified_information_dic)
+        assert ret, message
+        return HttpResponseRedirect("/account/")
+    else:
+        rendered = render_to_string('account/myaccount_modify.html', account)
+        return HttpResponse(rendered)
 
 def password_modify(request):
-    rendered = render_to_string('account/myacc_pw_modify.html')
-    return HttpResponse(rendered)
+    session_key = request.session['arara_session_key']
+    server = arara.get_server()
+    if request.method == 'POST':
+        last_password = request.POST['last_password']
+        password = request.POST['password']
+        user_information_dic = {'current_password':last_password, 'new_password':password}
+        ret, message = server.member_manager.modify(session_key, user_information_dic)
+        assert ret, message
+        return HttpResponseRedirect("/")
+    else:
+        rendered = render_to_string('account/myacc_pw_modify.html')
+        return HttpResponse(rendered)

@@ -4,9 +4,6 @@
 <link rel="stylesheet" href="/media/style/account_register.css" />
 {% endblock %}
 
-{% block script %}
-<script type="text/javascript" src="/media/js/account.js"></script>
-{% endblock %}
 
 {% block myaccount_content %}
 <a href="/account/account_modify/">Account Modify</a>
@@ -19,22 +16,22 @@
                     <legend>My information</legend>
                     <p>
                     <label for="mynickname">Nickname:<span class="feedback"></span></label>
-                    <input name="mynickname" id="mynickname" type="text" class="required_field" />
+		    <input name="mynickname" id="mynickname" type="text" class="required_field" value={{nickname}} />
                     </p>
                 </fieldset>
                 <fieldset id="mysetting">
                     <legend>My ARA Setting</legend>
                     <p>
                     <label for="mysig">Signature:</label>
-                    <textarea name="mysig" id="mysig" cols="50" rows="10"></textarea>
+		    <textarea name="mysig" id="mysig" cols="50" rows="10">{{signature}}</textarea>
                     </p>
                     <p>
                     <label for="myintroduce">Introduction:</label>
-                    <textarea name="myintroduce" id="myintroduce" cols="50" rows="10"></textarea>
+		    <textarea name="myintroduce" id="myintroduce" cols="50" rows="10">{{self_introduction}}</textarea>
                     </p>
                     <p>
                     <label for="mylanguage">Language:</label>
-                    <select name="mylanguage" id="mylaguage" />
+                    <select name="mylanguage" id="mylanguage" />
                         <option value="eng">English</option>
                         <option value="kor">Korean</option>
                     </select>

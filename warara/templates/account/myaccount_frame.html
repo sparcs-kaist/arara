@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block style %}
+<link rel="stylesheet" href="/media/style/account_register.css" />
+{% endblock %}
+
 {% block content %}
     {% block myaccount_content %}
     <div id="myaccount_content">
@@ -7,27 +11,27 @@
         <fieldset id="myaccount">
             <legend>My information</legend>
             <dl>
-                <dt>ID</dt>
-                <dd></dd>
+                <dt>ID:</dt>
+		<dd>{{username}}</dd>
             </dl>
             <dl>
-                <dt>Nickname</dt>
-                <dd></dd>
+                <dt>Nickname:</dt>
+		<dd>{{nickname}}</dd>
             </dl>
         </fieldset>
         <fieldset id="mysetting">
             <legend>My ARA setting </legend>
             <dl>
-                <dt>Signature</dt>
-                <dd></dd>
+                <dt>Signature:</dt>
+		<dd>{{signature}}</dd>
             </dl>
             <dl>
-                <dt>Introduction</dt>
-                <dd></dd>
+                <dt>Introduction:</dt>
+		<dd>{{self_introduction}}</dd>
             </dl>
             <dl>
-                <dt>Language</dt>
-                <dd></dd>
+                <dt>Language:</dt>
+		<dd>{{default_language}}</dd>
             </dl>
         </fieldset>
         <p>
