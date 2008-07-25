@@ -7,6 +7,7 @@ import urwid
 from ara_forms import *
 from widget import *
 import listview
+from write_pm import *
 
 class pmlist_rowitem(FieldRow):
     fields = [
@@ -52,9 +53,9 @@ class ara_list_pm(ara_forms):
         key = key.strip()
         mainpile_focus = self.mainpile.get_focus()
         if key == 'w':
-            ara_post_article(self.session_key, self.board_name, 'modify', self.article_id).main()
+            ara_write_pm(self.session_key, 'write').main()
         elif key == 'r':
-            ara_post_article(self.session_key, self.board_name, 'reply', self.article_id).main()
+            ara_write_pm(self.session_key, 'reply', 'me').main()
         elif mainpile_focus == self.pmlist and key=='enter':
             pm_id = int(self.pmlist.get_body().get_focus()[0].w.w.widget_list[1].get_text()[0])
         else:

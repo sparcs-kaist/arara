@@ -6,11 +6,6 @@ import urwid.curses_display
 import urwid
 from ara_forms import *
 
-keymap = {
-    'j': 'down',
-    'k': 'up',
-}
-
 class ara_post_article(ara_forms):
     def __init__(self, session_key = None, board_name = None, mode='post', article_id = 0):
         self.board_name = board_name
@@ -60,9 +55,20 @@ class ara_post_article(ara_forms):
 	self.btnokay = urwid.Button("OK", self.on_button_clicked)
 	self.btncancel = urwid.Button("Cancel", self.on_button_clicked)
 
-        self.bottomcolumn = urwid.Filler(urwid.Columns([('weight',40,self.chkinclude),('weight',15,self.btnhelp),('weight',15,self.btnpreview),('weight',15,self.btnokay),('weight',15,self.btncancel)]))
+        self.bottomcolumn = urwid.Filler(urwid.Columns([
+            ('weight',40,self.chkinclude),
+            ('weight',15,self.btnhelp),
+            ('weight',15,self.btnpreview),
+            ('weight',15,self.btnokay),
+            ('weight',15,self.btncancel)]))
 
-        content = [('fixed',1, self.header),('fixed',1,self.titleedit),('fixed',1,bodytext),('fixed',1,self.dash),self.bodyedit,('fixed',1,self.dash),('fixed',1,self.bottomcolumn)]
+        content = [('fixed',1, self.header),
+                ('fixed',1,self.titleedit),
+                ('fixed',1,bodytext),
+                ('fixed',1,self.dash),
+                self.bodyedit,
+                ('fixed',1,self.dash),
+                ('fixed',1,self.bottomcolumn)]
         self.mainpile = urwid.Pile(content)
 
         return self.mainpile
