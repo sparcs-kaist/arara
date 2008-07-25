@@ -32,6 +32,18 @@ class MemberManager(object):
     def __init__(self):
         # mock data
         self.member_dic = {}  # DB에서 member table를 read해오는 부분
+        # 초기 시샵 생성
+        #if not self.is_registered('SYSOP'):
+        self._register_sysop()
+
+    def _register_sysop(self):
+        sysop_reg_dic = {'username':u'SYSOP', 'password':u'SYSOP', 'nickname':u'SYSOP', 'email':u'SYSOP@sparcs.org', 'signature':u'', 'self_introduction':u'i am mikkang', 'default_language':u'ko_KR'}
+        user = model.User(**sysop_reg_dic)
+        session = model.Session()
+        session.save(user)
+        user.activated = True
+        session.commit()
+        
 
     def _set_login_manager(self, login_manager):
         self.login_manager = login_manager
@@ -74,10 +86,10 @@ class MemberManager(object):
         activation_code = md5.md5(user_reg_dic['username']+
                 user_reg_dic['password']+user_reg_dic['nickname']).hexdigest()
         
+        session = model.Session()
         try:
             # Register user to db
             user = model.User(**user_reg_dic)
-            session = model.Session()
             session.save(user)
             # Register activate code to db
             user_activation = model.UserActivation(user, activation_code)
