@@ -1,7 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from arara.util import require_login
+from arara.util import require_login, is_keys_in_dict
+from arara import model
+from sqlalchemy.exceptions import InvalidRequestError
+
+NOTICE_PUBLIC_KEYS = ('id', 'content', 'issued_date', 'due_date', 'valid', 'weight')
+NOTICE_QUERY_WHITELIST = ('id', 'content', 'issued_date', 'due_date', 'valid', 'weight')
+NOTICE_PUBLIC_WHITELIST= ('id', 'content', 'issued_date', 'due_date', 'valid', 'weight')
+NOTICE_ADD_WHITELIST = ('content','due_date','weight')
 
 class NoticeManager(object):
     '''
@@ -115,19 +122,20 @@ class NoticeManager(object):
         
 
     @require_login    
-    def add_banner(self, session_key, content):
+    def add_banner(self, session_key, notice_reg_dic):
         '''
         관리자용 배너 추가 함수
 
-        >>> notice.add_banner(SYSOP_session_key, content)
+        >>> notice_reg_dic = { 'content':'hahahah', 'due_date':'2008,7,14', 'weight':'1' }
+        >>> notice.add_banner(SYSOP_session_key, notice_reg_dic)
         True, 'OK'
-        >>> notice.add_banner(user_session_key, content)
+        >>> notice.add_banner(user_session_key, notice_reg_dic)
         False, 'NOT_SYSOP'
         
         @type  session_key: string
         @param session_key: User Key
-        @type  content: string 
-        @param content: Banner Content(html tag)
+        @type  notice_reg_dic: dictionary
+        @param notice_reg_dic: Notice Dictionary
         @rtype: string
         @return:
             1. 배너 페이지 추가에 성공하였을 때: True, 'OK'
@@ -135,31 +143,40 @@ class NoticeManager(object):
                 1. 시삽이 아닐 때: False, 'NOT_SYSOP'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+
+        if not is_keys_in_dict(notice_reg_dic, NOTICE_ADD_WHITELIST):
+            return False, 'WRONG_DICTIONARY'
+
         if not self.member_manager.is_sysop(session_key):
             return False, 'NOT_SYSOP'
+
+        session = model.Session()
         try:
-            # DB에서 banner 관련 해서 데이터 받아오는 부분 추가
-            banner_dict = {'no': len(self.banner_list) + 1, 'content': content, 'availability': 'True'} 
-            self.banner_list.append(banner_dict)
+            # Register welcome to db
+            welcome= model.Welcome(**notice_reg_dic)
+            session.save(welcome)
+            session.commit()
             return True, 'OK' 
-        except:
-            return False, 'DATABASE_ERROR'
-    
+        except Exception, e:
+            raise
+            session.rollback()
+            return False, e
 
     @require_login    
-    def add_welcome(self, session_key, content):
+    def add_welcome(self, session_key, notice_reg_dic):
         '''
         관리자용 welcome 추가 함수
 
-        >>> notice.add_welcome(SYSOP_session_key, content)
+        >>> notice_reg_dic = { 'content':'hahahah', 'due_date':'2008,7,14', 'weight':'1' }
+        >>> notice.add_welcome(SYSOP_session_key, notice_reg_dic)
         True, 'OK'
-        >>> notice.add_welcome(user_session_key, content)
+        >>> notice.add_welcome(user_session_key, notice_reg_dic)
         False, 'NOT_SYSOP'
         
         @type  session_key: string
         @param session_key: User Key
-        @type  content: string 
-        @param content: Welcome Content(html tag)
+        @type  notice_reg_dic: dictionary
+        @param notice_reg_dic: Notice Dictionary
         @rtype: string
         @return:
             1. welcome 페이지 추가에 성공하였을 때: True, 'OK'
@@ -167,16 +184,24 @@ class NoticeManager(object):
                 1. 시삽이 아닐 때: False, 'NOT_SYSOP'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+
+        if not is_keys_in_dict(notice_reg_dic, NOTICE_ADD_WHITELIST):
+            return False, 'WRONG_DICTIONARY'
+
         if not self.member_manager.is_sysop(session_key):
             return False, 'NOT_SYSOP'
-        try:
-            # DB에서 welcome 관련 해서 데이터 받아오는 부분 추가
-            welcome_dict= {'no': len(self.welcome_list) + 1, 'content': content, 'availability': 'True'} 
-            self.welcome_list.append(welcome_dict)
-            return True, 'OK' 
-        except:
-            return False, 'DATABASE_ERROR'
 
+        session = model.Session()
+        try:
+            # Register welcome to db
+            welcome= model.Welcome(**notice_reg_dic)
+            session.save(welcome)
+            session.commit()
+            return True, 'OK' 
+        except Exception, e:
+            raise
+            session.rollback()
+            return False, e
 
     @require_login 
     def remove_banner(self, session_key, no):

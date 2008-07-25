@@ -129,8 +129,7 @@ class Welcome(object):
         self.valid = True
         self.weight = weight
         self.issued_date = datetime.datetime.fromtimestamp(time.time()) 
- 	self.due_date = datetime.datetime(due_date) 
- 	#due_date_sample = 2007,7,14, 
+ 	self.due_date = due_date 
 
     def __repr__(self):
         return "<Welcome('%s','%s')>" % (self.content, self.valid)

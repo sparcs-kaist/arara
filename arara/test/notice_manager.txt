@@ -4,27 +4,20 @@ Bootstrap test
 >>> import arara
 >>> server = arara.get_namespace()
 
-Add SYSOP 
-
->>> user_reg_dic = { 'username':'SYSOP', 'password':'SYSOP', 'nickname':'SYSOP', 'email':'SYSOP@sparcs.org', 'signature':'', 'self_introduction':'i am mikkang', 'default_language':'english' }
->>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
->>> server.member_manager.confirm('SYSOP', register_key)
-(True, 'OK')
 >>> server.member_manager.is_registered('SYSOP')
 True
 >>> ret, SYSOP_session_key = server.login_manager.login('SYSOP', 'SYSOP', '143.248.234.145')
 >>> ret
 True
 
+>>> import datetime
+>>> import time
+>>> notice_reg_dic = { 'content':'hahahah', 'due_date':datetime.datetime.fromtimestamp(time.time()), 'weight':'1' }
+>>> server.notice_manager.add_welcome(SYSOP_session_key, notice_reg_dic)
+(True, 'OK')
+>>> server.notice_manager.add_banner(SYSOP_session_key, notice_reg_dic)
+(True, 'OK')
 
->>> banner_content = "temp banner"
->>> welcome_content = "temp welcome"
->>> server.notice_manager.add_banner(SYSOP_session_key, banner_content)
-(True, 'OK')
->>> server.notice_manager.add_welcome(SYSOP_session_key, welcome_content)
-(True, 'OK')
 >>> server.notice_manager.get_banner()
 (True, 'temp banner')
 >>> server.notice_manager.get_welcome()
