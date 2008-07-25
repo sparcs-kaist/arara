@@ -50,7 +50,9 @@ class ara_list_article(ara_forms):
             itemlist += [{'new':'', 'number':'', 'author':'','title':'No article found. Have a nice day.','date':'','hit':'','vote':''}]
         else:
             for article in articles:
-                #print article
+                if article.has_key('last_page'):
+                    self.last_page = article['last_page']
+                    continue
                 itemlist += [{'new':'N', 'number':str(article['id']), 'author':article['author_username'], 'title':article['title'],
                     'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), 'vote':str(article['vote'])}]
         header = {'new':'N', 'number':'#', 'author':'Author', 'title':'Title', 'date':'Date', 'hit':'Hit', 'vote':'Vote'}
