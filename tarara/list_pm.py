@@ -24,10 +24,12 @@ class ara_list_pm(ara_forms):
 
         message_list = self.server.messaging_manager.receive_list(self.session_key, 1, 10)
         message_item = []
-        if len(message_list[1]) == 0:
+        if len(message_list[1]) == 1:
             message_item = [{'new':'', 'number':'', 'author':'','title':'No private messages. Have a nice day.','date':''}]
         else:
             for msg in message_list[1]:
+                if msg.has_key("last_page"):
+                    continue
                 message_item += [{'new':str(msg['read_status']), 'number':str(msg['id']), 'author':msg['from'], 'title':msg['message'], 'date':msg['sent_time'].strftime("%m/%d")}]
         self.pmlist.set_body(listview.make_body(message_item, pmlist_rowitem))
 
@@ -37,10 +39,12 @@ class ara_list_pm(ara_forms):
 
         message_list = self.server.messaging_manager.sent_list(self.session_key, 1, 10)
         message_item = []
-        if len(message_list[1]) == 0:
+        if len(message_list[1]) == 1:
             message_item = [{'new':'', 'number':'', 'author':'','title':'No private messages. Have a nice day.','date':''}]
         else:
             for msg in message_list[1]:
+                if msg.has_key("last_page"):
+                    continue
                 message_item += [{'new':str(msg['read_status']), 'number':str(msg['id']), 'author':msg['to'], 'title':msg['message'], 'date':msg['sent_time'].strftime("%m/%d")}]
         self.pmlist.set_body(listview.make_body(message_item, pmlist_rowitem))
 

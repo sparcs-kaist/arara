@@ -9,9 +9,6 @@ from post_article import *
 from string import Template
 
 class ara_read_article(ara_forms):
-    def get_current_board(self):
-	return "garbages"
-
     def __keypress__(self, size, key):
         key = key.strip()
         mainpile_focus = self.mainpile.get_focus()
@@ -38,6 +35,7 @@ class ara_read_article(ara_forms):
             self.infotext.body.set_text(self.info_template.safe_substitute(AUTHOR=body['author_username'],
                 NICKNAME='blahblah', HIT=body['hit'], REPLY=str(len(thread[1])-1),
                 DATE=body['date'].strftime("%Y/%m/%d %H:%M")))
+            self.articletext.body.set_text(body['content'])
 
     def __initwidgets__(self):
         self.keymap = {
@@ -46,11 +44,12 @@ class ara_read_article(ara_forms):
         }
         self.titletext = urwid.Filler(urwid.Text(''))
         self.infotext = urwid.Filler(urwid.Text(''))
+        self.articletext = urwid.Filler(urwid.Text(''))
         self.set_article(self.board_name, self.article_id)
 	self.header = urwid.Filler(urwid.Text(u"ARA: Read article",align='center'))
         functext = urwid.Filler(urwid.Text('(n)ext/(p)revious (b)lock (e)dit (d)elete (f)old/retract (r)eply (h)elp (q)uit'))
 
-        content = [('fixed',1, self.header),('fixed',1,functext),('fixed',1,self.titletext),('fixed',1,self.infotext),('fixed',1,self.dash),self.blanktext]
+        content = [('fixed',1, self.header),('fixed',1,functext),('fixed',1,self.titletext),('fixed',1,self.infotext),('fixed',1,self.dash),self.articletext]
         self.mainpile = urwid.Pile(content)
 
         return self.mainpile
