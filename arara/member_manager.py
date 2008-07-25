@@ -19,7 +19,7 @@ USER_PUBLIC_KEYS = ['username', 'password', 'nickname', 'email',
         'signature', 'self_introduction', 'default_language']
 USER_QUERY_WHITELIST = ('username', 'nickname', 'email',
         'signature', 'self_introduction', 'last_login_ip')
-USER_PUBLIC_WHITELIST= ('username', 'password', 'nickname', 'email',
+USER_PUBLIC_WHITELIST= ('username', 'nickname', 'email',
         'signature', 'self_introduction', 'default_language', 'activated')
 USER_PUBLIC_MODIFIABLE_WHITELIST= ('nickname', 'signature', 'self_introduction', 
         'default_language')
