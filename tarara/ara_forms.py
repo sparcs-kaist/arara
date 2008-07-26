@@ -10,6 +10,7 @@ PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
 sys.path.append(PROJECT_PATH)
 
 import arara
+from configuration import *
 
 class ara_forms(object):
     def __init__(self, session_key = None):
@@ -19,7 +20,7 @@ class ara_forms(object):
         self.blanktext = urwid.Filler(urwid.Text(' '))
         self.keymap = {}
         #self.server = arara.get_server()
-	self.server = xmlrpclib.Server("http://localhost:8000", use_datetime = True)
+	self.server = xmlrpclib.Server("http://%s:%s" % (XMLRPC_HOST, XMLRPC_PORT), use_datetime = True)
         self.session_key = session_key
 
 	self.frame = self.__initwidgets__()

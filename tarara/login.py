@@ -21,7 +21,7 @@ class ara_login(ara_forms):
         if retvalue[0] == True:
             pass
         else:
-            if retvalue[1] == 'WRONG_ID':
+            if retvalue[1] == 'WRONG_USERNAME':
                 self.errormessage.body.set_text(u"ID가 ㅇ벗습니다.")
             elif retvalue[1] == 'WRONG_PASSWORD':
                 self.errormessage.body.set_text(u"비밀번호가 틀렸습니다.")
