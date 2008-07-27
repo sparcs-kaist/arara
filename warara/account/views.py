@@ -21,6 +21,9 @@ def register(request):
         rendered = render_to_string('account/register.html')
         return HttpResponse(rendered)
 
+def agreement(request):
+    rendered = render_to_string('account/register_agreement.html')
+    return HttpResponse(rendered)
 
 def login(request):
     if request.method == 'POST':

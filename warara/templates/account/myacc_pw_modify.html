@@ -1,4 +1,4 @@
-{% extends "account/myaccount_modify.html" %}
+{% extends "account/myaccount_frame.html" %}
 
 {% block style %}
 <link rel="stylesheet" href="/media/style/account_register.css" />
@@ -8,7 +8,7 @@
 <script type="text/javascript" src="/media/js/account.js"></script>
 {% endblock %}
 
-{% block myaccount_modify_content %}
+{% block myaccount_content %}
 <div id="myacc_pw_modify_content">
     <form action="/account/password_modify/" method="post">
         <h1>My Password Modify</h1>

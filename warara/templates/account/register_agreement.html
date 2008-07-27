@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block style %}
+<link rel="stylesheet" href="/media/style/account_register.css" />
+{% endblock %}
+
+{% block content %}
+<div id="register_content">
+    <h1>User Registration Agreement</h1>
+    <fieldset id="agreement">
+        <legend>User Agreement</legend>
+        <p>
+        <textarea name="agreement" id="agreement" cols="50" rows="10"/>
+-- User Agreement --
+Glad to see you
+<!--It will be modified-->
+	</textarea>
+	<p>
+	Want you create an account, you should check Agree.
+	</p>
+        </p>
+	<p>
+	<a href="/account/register/">
+        <input name="agree" id="agree" type="button" value="agree" />
+	</a>
+	<a href="/">
+	<input name="agree" id="disagree" type="button" value="disagree" />
+	</a>   
+	</p>
+    </fieldset>
+</div>
+{% endblock %}

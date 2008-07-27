@@ -2,6 +2,7 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
     (r'^register/$','warara.account.views.register'),    
+    (r'^register/agreement$','warara.account.views.agreement'),
     (r'^login/$','warara.account.views.login'),    
     (r'^logout/$','warara.account.views.logout'),
     (r'^$','warara.account.views.account'),
