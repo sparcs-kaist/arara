@@ -69,8 +69,7 @@ class MessagingManager(object):
         ret, user_info = self.login_manager.get_session(session_key)
         session = model.Session()
         sent_user = session.query(model.User).filter_by(username=user_info['username']).one()
-
-        sent_messages_count = sent_user.send_messages.count('*')
+        sent_messages_count = session.query(model.Message).filter_by(from_id=sent_user.id).count()
         last_page = int(sent_messages_count / page_length) + 1
         if page > last_page:
             return False, 'WRONT_PAGENUM'
@@ -109,7 +108,7 @@ class MessagingManager(object):
         for blacklist_item in blacklist_dict_list:
             if blacklist_item['block_message']:
                 blacklist_users.add(blacklist_item['blacklisted_user_username'])
-        received_messages_count = to_user.received_messages.count('*')
+        received_messages_count = session.query(model.Message).filter_by(to_id=to_user.id).count()
         last_page = int(received_messages_count / page_length) + 1
         if page > last_page:
             return False, 'WRONG_PAGENUM'
