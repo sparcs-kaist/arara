@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 import datetime
+import warara
 
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
 def index(request):
+    r = {}
+    sess = warara.check_logged_in(request, r)
     SAMPLE_BEST = {
             'todays_best_list': [
                 {'title': '아라가 새로 바뀌었다!', 'date': datetime.datetime.now(), 'reply_count': 213},
@@ -17,5 +20,6 @@ def index(request):
                 {'title': '우왕ㅋ국ㅋ', 'date': datetime.datetime.now(), 'reply_count':44},
                 ],
             }
+    SAMPLE_BEST['logged_in'] = r['logged_in']
     rendered = render_to_string('index.html', SAMPLE_BEST)
     return HttpResponse(rendered)

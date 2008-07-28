@@ -5,22 +5,17 @@ from django.core.paginator import Paginator
 
 import arara
 import math
+import warara
 
 
 def index(request):
     rendered = render_to_string('board/index.html', {})
     return HttpResponse(rendered)
 
-
 def list(request, board_name):
     r = {}
     server = arara.get_server()
-    if "arara_session_key" in request.session:
-        sess = request.session["arara_session_key"]
-        r['logged_in'] = True
-    else:
-        sess = ""
-        r['logged_in'] = False
+    sess = warara.check_logged_in(request, r)
     page_no = request.GET.get('page_no', 1)
     page_no = int(page_no)
     page_range_length = 10
