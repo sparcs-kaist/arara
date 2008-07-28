@@ -17,10 +17,9 @@ def list(request, board_name):
     else:
         sess = ""
     ret, article_list = server.article_manager.article_list(sess, board_name)
+    assert ret, article_list
     r = {}
     r['article_list'] = article_list
-    r['t_write'] = 'write'
-    r['t_list'] = 'list'
     r['board_name'] = board_name
 
     rendered = render_to_string('board/list.html', r)
@@ -32,9 +31,6 @@ def write(request, board_name):
         return write_(request, board_name)
 
     r = {}
-    r['t_submit'] = 'write' #template_submit
-    r['t_cancel'] = 'cancel'
-    r['t_preview'] = 'preview'
     r['default_title'] = ''
     r['default_text'] = ''
     r['board_name'] = board_name
@@ -51,6 +47,7 @@ def write_(request, board_name):
     article_dic['content'] = request.POST.get('text', '')
     article_dic['title'] = request.POST.get('title', '')
     ret, article_id = server.article_manager.write_article(sess, board_name, article_dic)
+    assert ret, article_id
 
     if not ret:
         r['e'] = article_id
@@ -63,6 +60,7 @@ def read(request, board_name, article_id):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
     ret, article_list = server.article_manager.read(sess, board_name, int(article_id))
+    assert ret, article_list
     r = {}
     if not ret:
         r['e'] = article_list
@@ -70,7 +68,6 @@ def read(request, board_name, article_id):
         return HttpResponse(rendered)
 
     r['article_list'] = article_list
-    r['t_reply_write'] = 'reply'
     r['board_name'] = board_name
 
     rendered = render_to_string('board/read.html', r)
@@ -86,5 +83,6 @@ def reply(request, board_name, article_id):
     root_id = request.POST.get('root_id', '')
 
     ret, no = server.article_manager.write_reply(sess, board_name, int(article_id), reply_dic)
+    assert ret, article_list
 
     return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(root_id)))

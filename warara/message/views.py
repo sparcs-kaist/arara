@@ -7,54 +7,10 @@ import arara
 import math
 
 
-def make_message_list(request, r):
-    r['page_no'] = request.POST.get('page_no', 1)
-    r['page_no'] = int(r['page_no'])
-    r['max_message_list_text_length'] = 10
-    r['message_list'].reverse()
-    r['message_num'] = len(r['message_list'])
-
-    message_list = Paginator(r['message_list'], r['nmpp'])
-    page_list = Paginator(message_list.page_range, r['mppp'])
-    pagegroup_no = math.ceil(float(r['page_no']) / r['mppp'])
-    thispagegroup = page_list.page(pagegroup_no)
-    r['message_list'] = message_list.page(r['page_no']).object_list
-    r['page_list'] = page_list.page(pagegroup_no).object_list
-    r['prev_page_group'] = {'mark':r['prev'], 'no':0}
-    r['first_page'] = {'mark':r['prev_group'], 'no':0}
-    r['next_page_group'] = {'mark':r['next'], 'no':0}
-    r['last_page'] = {'mark':r['next_group'], 'no':0}
-    
-    if thispagegroup.has_previous():
-        r['prev_page_group'] = {'mark':r['prev'], 'no':
-                page_list.page(thispagegroup.previous_page_number()).end_index()}
-        r['first_page'] = {'mark':r['prev_group'], 'no':1}
-    if thispagegroup.has_next():
-        r['next_page_group'] = {'mark':r['next'], 'no':
-                page_list.page(thispagegroup.next_page_number()).start_index()}
-        r['last_page'] = {'mark':r['next_group'], 'no':
-                page_list.page(page_list.num_pages).end_index()}
-
-    for i, message in enumerate(r['message_list']):
-        if len(message['message'])>r['max_message_list_text_length'] :
-            message['message'] = {
-                    'read_status':message['read_status'],
-                    'text': ''.join([message['message'][0:r['max_message_list_text_length']],'...']),
-                    'msg_no':message['msg_no']}
-        else:
-            message['message'] = {
-                    'read_status':message['read_status'],
-                    'text':message['message'],
-                    'msg_no':message['msg_no']}
-        message['sent_time'] = {'time':message['sent_time']}
-        
-        r['message_list'][i] = []
-        for key in r['m_list_key']:
-            r['message_list'][i].append(message[key])
-
 def get_various_info(request, r):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
+    page_no = request.GET.get('page_no', 1)
     r['num_new_message'] = 0
     r['num_message'] = 0
     r['next'] = 'a'
@@ -64,8 +20,17 @@ def get_various_info(request, r):
     r['nmpp'] = 10 #number of message per page
     r['mppp'] = 10 #number of pagegroup per page
 
-    r['page_num'] = r['message_list'].pop()
+    r['page_num'] = r['message_list'].pop()['last_page']
+    r['message_num'] = len(r['message_list'])
+    page_o = Paginator([x+1 for x in range(r['page_num'])],10)
+    r['page_list'] = page_o.page(page_no).object_list
 
+    if page_o.page(page_no).has_next():
+        r['next_page_group'] = {'mark':r['next'], 'no':page_o.page(page_o.next_page_number()).start_index()}
+        r['last_page'] = {'mark':r['next_group'], 'no':r['page_num']}
+    if page_o.page(page_no).has_previous():
+        r['prev_page_group'] = {'mark':r['prev'], 'no':page_o.page(page_o.previous_page_number()).end_index()}
+        r['first_page'] = {'mark':r['prev_group'], 'no':1}
     return r
 
 def index(request):
@@ -113,7 +78,6 @@ def send(request, msg_no=0):
         ret, message = server.messaging_manager.read_message(sess, msg_no)
         assert ret, message
         r['default_receiver'] = message['from']
-        r['default_text'] = message['message']
 
     rendered = render_to_string('message/send.html', r)
     return HttpResponse(rendered)
@@ -141,7 +105,9 @@ def read(request, message_list_type, message_id):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
 
-    r = get_various_info(request)
+    r = {}
+    r['next'] = 'a'
+    r['prev'] = 'a'
     message_id = int(message_id)
     ret, r['message'] = server.messaging_manager.read_message(sess, message_id)
     assert ret, r['message']
