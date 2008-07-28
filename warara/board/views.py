@@ -47,13 +47,20 @@ def list(request, board_name):
     return HttpResponse(rendered)
 
 def write(request, board_name):
-    
     if request.POST:
         return write_(request, board_name)
 
     r = {}
-    r['default_title'] = ''
-    r['default_text'] = ''
+    article_id = request.GET.get('article_id', 0)
+    r['t_write'] = 'write'
+
+    if article_id:
+        server = arara.get_server()
+        sess = request.session["arara_session_key"]
+        ret, article_list = server.article_manager.read(sess, board_name, int(article_id))
+        r['default_title'] = article_list[0]['title']
+        r['default_text'] = article_list[0]['content']
+        r['t_write'] = 'modify'
     r['board_name'] = board_name
 
     rendered = render_to_string('board/write.html', r)
@@ -83,13 +90,22 @@ def read(request, board_name, article_id):
     ret, article_list = server.article_manager.read(sess, board_name, int(article_id))
     assert ret, article_list
     r = {}
+    """
     if not ret:
         r['e'] = article_list
         rendered = render_to_string('board/error.html', r)
         return HttpResponse(rendered)
+        """
 
     r['article_list'] = article_list
     r['board_name'] = board_name
+    username = request.session['arara_username']
+
+    for article in article_list:
+        if article['author_username'] == username:
+            article['flag_modify'] = 1
+        else:
+            article['flag_modify'] = 0
 
     rendered = render_to_string('board/read.html', r)
     return HttpResponse(rendered)
@@ -107,3 +123,10 @@ def reply(request, board_name, article_id):
     assert ret, article_list
 
     return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(root_id)))
+
+def vote(request, board_name, root_id, article_no):
+    server = arara.get_server()
+    sess = request.session['arara_session_key']
+    server.vote_article(sess, board_name, int(article_no))
+
+    return HttpResponseRedirect('/board/%s/%s' % (board_name, root_id))

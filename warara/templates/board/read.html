@@ -26,6 +26,10 @@
             {% endif %}
         </div>
         <a class="article_reply_show" href="#">reply</a>
+        {% if article.flag_modify %}
+        <a class="article_modify" href="/board/{{board_name}}/write?article_id={{article.id}}">modify</a>
+        {% endif %}
+        <a class="article_vote" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/vote">vote</a>
         <div class="article_reply">
             <form class="article_reply_form" action="/board/{{board_name}}/{{article.id}}/reply/" method="POST">
                 <input type="hidden" name="root_id" value="{{article.root_id}}" />
@@ -36,7 +40,6 @@
                 </ul>
             </form>
         </div>
-        <a class="article_modify" href="/board/write"></a>
     </div>
 </div>
 {% endfor %}
@@ -44,7 +47,5 @@
     <a id="list_link" href="/board/{{board_name}}">list</a>
     <a id="write_link" href="/board/{{board_name}}/write">write</a>
 </div>
-
-{{article}}
 
 {% endblock board_content %}
