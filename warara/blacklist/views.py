@@ -55,8 +55,9 @@ def update(request):
 
 def index(request):
     server = arara.get_server()
-    sess = request.session["arara_session_key"]
     r = {}
+    sess = request.session["arara_session_key"]
+    r['logged_in'] = True
     ret, blacklist = server.blacklist_manager.list(sess)
     r['blacklist'] = blacklist
 

@@ -17,12 +17,12 @@
         <div id="header">
             <h1><a href="/">아라</a></h1>
             <div id="top_menu">
-		<a href="/account/login/">Login</a>
-		<a href="/account/logout/">Logout</a>
-		<a href="/account/">Account</a>
-		<a href="/account/register/agreement">Register</a>
-                <a href="/message/inbox/">Message</a>
-                <a href="/blacklist/">Blacklist</a>
+		<a href="/account/login/" class="{% if logged_in %}hidden{% endif %}">Login</a>
+                <a href="/account/logout/" class="{% if not logged_in %}hidden{% endif %}">Logout</a>
+		<a href="/account/" class="{% if not logged_in %}hidden{% endif %}">Account</a>
+		<a href="/account/register/agreement" class="{% if logged_in %}hidden{% endif %}">Register</a>
+                <a href="/message/inbox/" class="{% if not logged_in %}hidden{% endif %}">Message</a>
+                <a href="/blacklist/" class="{% if not logged_in %}hidden{% endif %}">Blacklist</a>
             </div>
         </div>
         </div>

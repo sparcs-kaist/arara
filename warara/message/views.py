@@ -41,8 +41,9 @@ def index(request):
 
 def inbox(request):
     server = arara.get_server()
+    r = {}
     sess = request.session["arara_session_key"]
-    r={} #render item
+    r['logged_in'] = True
     ret, r['message_list'] = server.messaging_manager.receive_list(sess)
     assert ret, r['message_list']
     r = get_various_info(request, r)
@@ -54,8 +55,9 @@ def inbox(request):
 
 def outbox(request):
     server = arara.get_server()
+    r = {}
     sess = request.session["arara_session_key"]
-    r={}
+    r['logged_in'] = True
     ret, r['message_list'] = server.messaging_manager.sent_list(sess)
     assert ret, r['message_list']
     r = get_various_info(request, r)
@@ -70,6 +72,7 @@ def send(request, msg_no=0):
         return send_(request)
 
     r = {}
+    r['logged_in'] = True
     r['default_receiver'] = ''
     r['default_text'] = ''
 
@@ -113,6 +116,7 @@ def read(request, message_list_type, message_id):
     sess = request.session["arara_session_key"]
 
     r = {}
+    r['logged_in'] = True
     r['next'] = 'a'
     r['prev'] = 'a'
     message_id = int(message_id)

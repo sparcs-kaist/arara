@@ -13,18 +13,20 @@ def index(request):
 
 
 def list(request, board_name):
+    r = {}
     server = arara.get_server()
     if "arara_session_key" in request.session:
         sess = request.session["arara_session_key"]
+        r['logged_in'] = True
     else:
         sess = ""
+        r['logged_in'] = False
     page_no = request.GET.get('page_no', 1)
     page_no = int(page_no)
     page_range_length = 10
     page_range_no = math.ceil(float(page_no) / page_range_length)
     ret, article_list = server.article_manager.article_list(sess, board_name, page_no)
     assert ret, article_list
-    r = {}
     r['article_list'] = article_list
     r['board_name'] = board_name
 
@@ -42,10 +44,6 @@ def list(request, board_name):
     if page_o.page(page_range_no).has_previous():
         r['prev_page_group'] = {'mark':r['prev'], 'no':page_o.page(page_o.previous_page_number()).end_index()}
         r['first_page'] = {'mark':r['prev_group'], 'no':1}
-    if sess == "":
-        r['write_visibility'] = False
-    else:
-        r['write_visibility'] = True
 
     rendered = render_to_string('board/list.html', r)
     return HttpResponse(rendered)
@@ -55,6 +53,7 @@ def write(request, board_name):
         return write_(request, board_name)
 
     r = {}
+    r['logged_in'] = True
     article_id = request.GET.get('article_id', 0)
     r['t_write'] = 'write'
 
@@ -90,10 +89,11 @@ def write_(request, board_name):
 
 def read(request, board_name, article_id):
     server = arara.get_server()
+    r = {}
     sess = request.session["arara_session_key"]
+    r['logged_in'] = True
     ret, article_list = server.article_manager.read(sess, board_name, int(article_id))
     assert ret, article_list
-    r = {}
     """
     if not ret:
         r['e'] = article_list
@@ -117,7 +117,9 @@ def read(request, board_name, article_id):
 
 def reply(request, board_name, article_id):
     server = arara.get_server()
+    r = {}
     sess = request.session["arara_session_key"]
+    r['logged_in'] = True
     reply_dic = {}
     reply_dic['content'] = request.POST.get('content', '')
     reply_dic['title'] = request.POST.get('title', '')
