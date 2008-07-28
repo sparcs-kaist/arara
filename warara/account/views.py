@@ -68,6 +68,7 @@ def account(request):
     ret, account = server.member_manager.get_info(session_key)
     assert ret, account
 
+    account['logged_in'] = True
     rendered = render_to_string('account/myaccount_frame.html', account)
     return HttpResponse(rendered)
 
@@ -85,6 +86,7 @@ def account_modify(request):
         assert ret, message
         return HttpResponseRedirect("/account/")
     else:
+        account['logged_in'] = True
         rendered = render_to_string('account/myaccount_modify.html', account)
         return HttpResponse(rendered)
 
@@ -99,7 +101,9 @@ def password_modify(request):
         assert ret, message
         return HttpResponseRedirect("/account/")
     else:
-        rendered = render_to_string('account/myacc_pw_modify.html')
+        account = {}
+        account['logged_in'] = True
+        rendered = render_to_string('account/myacc_pw_modify.html', account)
         return HttpResponse(rendered)
 
 def account_remove(request):
@@ -110,5 +114,7 @@ def account_remove(request):
         assert ret, message
         return HttpResponseRedirect("/")
     else:
-        rendered = render_to_string('account/myaccount_remove.html')
+        account = {}
+        account['logged_in'] = True
+        rendered = render_to_string('account/myaccount_remove.html', account)
         return HttpResponse(rendered)
