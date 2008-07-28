@@ -95,7 +95,18 @@ def password_modify(request):
         user_information_dic = {'current_password':last_password, 'new_password':password}
         ret, message = server.member_manager.modify(session_key, user_information_dic)
         assert ret, message
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect("/account/")
     else:
         rendered = render_to_string('account/myacc_pw_modify.html')
+        return HttpResponse(rendered)
+
+def account_remove(request):
+    session_key = request.session['arara_session_key']
+    server = arara.get_server()
+    if request.method == 'POST':
+        ret, message = server.member_manager.remove_user(session_key)
+        assert ret, message
+        return HttpResponseRedirect("/")
+    else:
+        rendered = render_to_string('account/myaccount_remove.html')
         return HttpResponse(rendered)

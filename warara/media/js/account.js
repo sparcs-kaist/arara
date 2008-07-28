@@ -22,14 +22,14 @@ $(document).ready(function(){
             if (!$(this).val()) {
                 $(this).parent().children("label").children("span.feedback")
                     .text("The field is empty");
-                $("#register_submit").parent().children("label").children("span.feedback").text("Please confirm your form");
+                $(".submit").parent().children("label").children("span.feedback").text("Please confirm your form");
                 event.preventDefault();
             }
         }); 
         if (!($("#password_field").val() == $("#re_password_field").val())) {
             $("#password_field").parent().children("label").children("span.feedback")
                 .text("The password doesn't matched with the re-enter");
-            $("#register_submit").parent().children("label").children("span.feedback").text("Please confirm your form");
+            $(".submit").parent().children("label").children("span.feedback").text("Please confirm your form");
             event.preventDefault();
         }
     });

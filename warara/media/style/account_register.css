@@ -18,13 +18,8 @@ input {
     width: 200px;
 }
 
-input.radio, input.submit {
+input.button, input.submit {
     width: auto;
-}
-
-input.radio {
-    float: left;
-    margin-right: 1em;
 }
 
 textarea {

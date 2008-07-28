@@ -1,0 +1,32 @@
+{% extends "account/myaccount_frame.html" %}
+
+{% block script %}
+<script type="text/javascript" src="/media/js/account_remove.js"></script>
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="/media/style/account_register.css" />
+{% endblock %}
+
+{% block myaccount_content %}
+<div id="myaccount_modify_content">
+    <form action="/account/account_remove/" method="post">
+	<h1>My Account Remove</h1>
+	<fieldset id="myaccountremove">
+	    <legend>Caution</legend>
+	    	<ul>
+		    <p>Though you remove your account, followings will still be valid for another user.</p>
+		    <li>The articles that you wrote.</li>
+		    <li>The messages that another user recieved after you wrote.</li>
+		    <li>etc.</li>
+		</ul>
+        </fieldset>
+        <input id="remove_button" type="button" value="Remove" class="button" />
+        <div id="confirm_remove" style="display: none">
+            <p> Are you sure remove your account? </p>
+            <input id="dont_remove" type="button" value="No" class="button" />
+            <input id="remove_submit" type="submit" value="Yes" class="submit" />
+        </div>
+    </form>
+</div>
+{% endblock %}
