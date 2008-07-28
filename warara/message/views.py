@@ -66,7 +66,7 @@ def outbox(request):
     return HttpResponse(rendered)
 
 def send(request, msg_no=0):
-    if request.POST:
+    if request.method == 'POST':
         return send_(request)
 
     r = {}
@@ -95,13 +95,17 @@ def send_(request):
     text = request.POST.get('text', '')
 
     ret, message = server.messaging_manager.send_message(sess, receiver, text)
-    assert ret, message
+    #assert ret, message
 
     if not ret:
-        r['e'] = mes
+        r['e'] = message
+        if "ajax" in request.POST:
+            return HttpResponse(message)
         rendered = render_to_string('message/error.html', r)
         return HttpResponse(rendered)
 
+    if "ajax" in request.POST:
+        return HttpResponse("Message send successful!")
     return HttpResponseRedirect(r['url'])
 
 def read(request, message_list_type, message_id):

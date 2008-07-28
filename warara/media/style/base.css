@@ -105,6 +105,7 @@ body {
     border-bottom: 0;
     background-color: white;
     cursor: default;
+    display: none;
 }
 
 .absolute {
@@ -126,3 +127,17 @@ body {
     padding: 2px;
 }
     
+/* message popup style */
+
+#message_popup {
+    display: none;
+    width: 30em;
+    border: 5px solid;
+    background-color: white;
+}
+
+#message_popup ul {
+    list-style-type: none;
+    padding: 0;
+
+}
