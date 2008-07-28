@@ -49,5 +49,14 @@
 </div>
 <div id="board_buttons">
     <a href="/board/{{board_name}}/write/">write</a>
+	<span>
+		<a href="/board/{{board_name}}">{{first_page}}</a>
+		<a href="/board/{{board_name}}">{{prev_page_group}}</a>
+		{% for page in page_list %}
+		<a href="/board/{{board_name}}">{{page}}</a>
+		{% endfor %}
+		<a href="/board/{{board_name}}">{{next_page_grout}}</a>
+		<a href="/board/{{board_name}}">{{last_page}}</a>
+	</span>
 </div>
 {% endblock board_content %}

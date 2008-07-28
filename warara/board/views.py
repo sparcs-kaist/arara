@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.paginator import Paginator
 
 import arara
 
@@ -21,6 +22,22 @@ def list(request, board_name):
     r = {}
     r['article_list'] = article_list
     r['board_name'] = board_name
+
+    #pagination
+    r['next'] = 'a'
+    r['prev'] = 'a'
+    r['next_group'] = 'a'
+    r['prev_group'] = 'a'
+    page_no = request.GET.get('page_no', 1)
+    r['page_num'] = article_list.pop()['last_page']
+    page_o = Paginator([x+1 for x in range(r['page_num'])],10)
+    r['page_list'] = page_o.page(page_no).object_list
+    if page_o.page(page_no).has_next():
+        r['next_page_group'] = {'mark':r['next'], 'no':page_o.page(page_o.next_page_number()).start_index()}
+        r['last_page'] = {'mark':r['next_group'], 'no':r['page_num']}
+    if page_o.page(page_no).has_previous():
+        r['prev_page_group'] = {'mark':r['prev'], 'no':page_o.page(page_o.previous_page_number()).end_index()}
+        r['first_page'] = {'mark':r['prev_group'], 'no':1}
 
     rendered = render_to_string('board/list.html', r)
     return HttpResponse(rendered)
