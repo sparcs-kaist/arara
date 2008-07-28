@@ -57,6 +57,8 @@ def logout(request):
     session_key = request.session['arara_session_key']
     server = arara.get_server()
     ret, account = server.login_manager.logout(session_key)
+    del request.session['arara_session_key']
+    del request.session['arara_username']
     assert ret, message
     return HttpResponseRedirect("/")
 
