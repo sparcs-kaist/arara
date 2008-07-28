@@ -3,6 +3,7 @@
 {% block message_content %}
 <form action="/message/send/" method="POST">
     <div id="message_send_receiver">
+        <span>send to : </span>
         <input type="text" name="receiver" value="{{default_receiver}}"></input>
     </div>
     <div id="message_send_text">
