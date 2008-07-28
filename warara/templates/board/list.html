@@ -50,13 +50,13 @@
 <div id="board_buttons">
     <a href="/board/{{board_name}}/write/">write</a>
 	<span>
-		<a href="/board/{{board_name}}">{{first_page}}</a>
-		<a href="/board/{{board_name}}">{{prev_page_group}}</a>
+        <a href="/board/{{board_name}}?page_no={{first_page.no}}">{{first_page.mark}}</a>
+        <a href="/board/{{board_name}}?page_no={{prev_page_group_no}}">{{prev_page_group.mark}}</a>
 		{% for page in page_list %}
-		<a href="/board/{{board_name}}">{{page}}</a>
+        <a href="/board/{{board_name}}?page_no={{page}}">{{page}}</a>
 		{% endfor %}
-		<a href="/board/{{board_name}}">{{next_page_grout}}</a>
-		<a href="/board/{{board_name}}">{{last_page}}</a>
+        <a href="/board/{{board_name}}?page_no={{next_page_group.no}}">{{next_page_group.mark}}</a>
+        <a href="/board/{{board_name}}?page_no={{last_page.no}}">{{last_page.mark}}</a>
 	</span>
 </div>
 {% endblock board_content %}

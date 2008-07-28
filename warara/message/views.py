@@ -11,6 +11,8 @@ def get_various_info(request, r):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
     page_no = request.GET.get('page_no', 1)
+    page_no = int(page_no)
+    page_range_length = 10
     r['num_new_message'] = 0
     r['num_message'] = 0
     r['next'] = 'a'
@@ -20,15 +22,16 @@ def get_various_info(request, r):
     r['nmpp'] = 10 #number of message per page
     r['mppp'] = 10 #number of pagegroup per page
 
+    page_group_no = math.ceil(float(page_no)/page_range_length)
     r['page_num'] = r['message_list'].pop()['last_page']
     r['message_num'] = len(r['message_list'])
     page_o = Paginator([x+1 for x in range(r['page_num'])],10)
-    r['page_list'] = page_o.page(page_no).object_list
+    r['page_list'] = page_o.page(page_group_no).object_list
 
-    if page_o.page(page_no).has_next():
+    if page_o.page(page_group_no).has_next():
         r['next_page_group'] = {'mark':r['next'], 'no':page_o.page(page_o.next_page_number()).start_index()}
         r['last_page'] = {'mark':r['next_group'], 'no':r['page_num']}
-    if page_o.page(page_no).has_previous():
+    if page_o.page(page_group_no).has_previous():
         r['prev_page_group'] = {'mark':r['prev'], 'no':page_o.page(page_o.previous_page_number()).end_index()}
         r['first_page'] = {'mark':r['prev_group'], 'no':1}
     return r
@@ -124,4 +127,10 @@ def read(request, message_list_type, message_id):
         r['person'] = r['message']['to']
 
     rendered = render_to_string('message/read.html', r)
+    return HttpResponse(rendered)
+
+def delete(request, msg_no):
+    msg_no = int(msg_no)
+
+    rendered = render_to_string('message/error.html', {'e':'There is no delete API function'})
     return HttpResponse(rendered)

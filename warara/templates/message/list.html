@@ -65,16 +65,17 @@
 		<form action="/message/delete/" method="POST">
 			<input type="hidden" name="del_message_no[]" value="">
 			<input type="submit" value="delete">
+            <input type="hidden" id="message_list_type" value="{{message_list_type}}">
 		</form>
 	</span>
 	<span>
-		<a href="/message/{{message_list_type}}">{{first_page}}</a>
-		<a href="/message/{{message_list_type}}">{{prev_page_group}}</a>
+        <a href="/message/{{message_list_type}}?page_no={{first_page.no}}">{{first_page.mark}}</a>
+        <a href="/message/{{message_list_type}}?page_no={{prev_page_group.no}}">{{prev_page_group.mark}}</a>
 		{% for page in page_list %}
-		<a href="/message/{{message_list_type}}">{{page}}</a>
+        <a href="/message/{{message_list_type}}?page_no={{page}}">{{page}}</a>
 		{% endfor %}
-		<a href="/message/{{message_list_type}}">{{next_page_grout}}</a>
-		<a href="/message/{{message_list_type}}">{{last_page}}</a>
+        <a href="/message/{{message_list_type}}?page_no={{next_page_group.no}}">{{next_page_group.mark}}</a>
+        <a href="/message/{{message_list_type}}?page_no={{last_page.no}}">{{last_page.mark}}</a>
 	</span>
 </div>
 {% endblock message_content %}
