@@ -126,7 +126,7 @@ body {
     border-bottom: 1px solid #999;
     padding: 2px;
 }
-    
+
 /* message popup style */
 
 #message_popup {
@@ -141,3 +141,8 @@ body {
     padding: 0;
 
 }
+
+/* display */
+.hidden {
+    display:none
+}    

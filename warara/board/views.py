@@ -42,6 +42,10 @@ def list(request, board_name):
     if page_o.page(page_range_no).has_previous():
         r['prev_page_group'] = {'mark':r['prev'], 'no':page_o.page(page_o.previous_page_number()).end_index()}
         r['first_page'] = {'mark':r['prev_group'], 'no':1}
+    if sess == "":
+        r['write_visibility'] = False
+    else:
+        r['write_visibility'] = True
 
     rendered = render_to_string('board/list.html', r)
     return HttpResponse(rendered)

@@ -48,7 +48,7 @@
     </table>
 </div>
 <div id="board_buttons">
-    <a href="/board/{{board_name}}/write/">write</a>
+    <a href="/board/{{board_name}}/write/" class="{% if not write_visibility %}hidden{% endif %}">write</a>
 	<span>
         <a href="/board/{{board_name}}?page_no={{first_page.no}}">{{first_page.mark}}</a>
         <a href="/board/{{board_name}}?page_no={{prev_page_group_no}}">{{prev_page_group.mark}}</a>
