@@ -80,8 +80,9 @@ class Article(object):
         return "<Article('%s', '%s', %s)>" % (self.title, self.author.username, str(self.date))
 
 class ReadStatus(object):
-    def __init__(self, user, read_status_data):
+    def __init__(self, user, board, read_status_data):
         self.user = user
+        self.board = board
         self.read_status_data = read_status_data
 
     def __repr__(self):
@@ -187,6 +188,7 @@ articles_table = Table('articles', metadata,
 read_status_table = Table('read_status', metadata,
     Column('id', Integer, primary_key=True),
     Column('user_id', Integer, ForeignKey('users.id')),
+    Column('board_id', Integer, ForeignKey('boards.id')),
     Column('read_status_data', PickleType),
 )
 
@@ -261,7 +263,8 @@ mapper(Article, articles_table, properties={
 })
 
 mapper(ReadStatus, read_status_table, properties={
-    'user': relation(User, backref='read_status')
+    'user': relation(User, backref='read_status'),
+    'board': relation(Board, backref=None),
 })
 
 mapper(Board, board_table)
