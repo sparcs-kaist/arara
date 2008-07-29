@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from arara.util import require_login, is_keys_in_dict
+from arara.util import require_login, is_keys_in_dict, filter_dict
 from arara import model
 from sqlalchemy.exceptions import InvalidRequestError
 
@@ -24,6 +24,22 @@ class NoticeManager(object):
 
     def _set_member_manager(self, member_manager):
         self.member_manager = member_manager
+
+    def _get_dict(self, item, whitelist=None):
+        item_dict = item.__dict__
+        if whitelist:
+            filtered_dict = filter_dict(item_dict, whitelist)
+        else:
+            filtered_dict = item_dict
+        return filtered_dict
+
+    def _get_dict_list(self, raw_list, whitelist=None):
+        return_list = []
+        for item in raw_list:
+            filtered_dict = self._get_dict(item, whitelist)
+            return_list.append(filtered_dict)
+        return return_list
+
     
     def get_banner(self):
         '''
@@ -37,9 +53,12 @@ class NoticeManager(object):
             1. 배너가 있을 때: True, 랜덤하게 선택된 배너(html)
             2. 배너가 없을 때: False, 'NO_BANNER'
         '''
-        available_banner = filter(lambda x: x['availability'] == 'True', self.banner_list)
-        if available_banner:
-            return True, available_banner[-1]['content']
+        session = model.Session()
+        available_banner = session.query(model.Welcome).filter_by(valid=True).all()
+        available_banner_dict_list = self._get_dict_list(available_banner, NOTICE_PUBLIC_KEYS)
+        print available_banner_dict_list
+        if available_banner_dict_list:
+            return True, available_banner_dict_list[-1]['content']
             #나중에는 랜덤하게 토해내는 것으로 바꿀것임
         else:
             return False, 'NO_BANNER'
