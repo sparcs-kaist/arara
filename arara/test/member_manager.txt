@@ -56,13 +56,28 @@ mikkang
 >>> user_password_dic = {'username':'mikkang', 'current_password':'ggingkkang', 'new_password':'mikkang'}
 >>> server.member_manager.modify_password(session_key, user_password_dic)
 (True, 'OK')
->>> modify_user_reg_dic = { 'nickname':'mikkang', 'signature':'KAIST07 && JSH07 && SPARCS07', 'self_introduction':'i am Munbeom', 'default_language':'korean' }
+>>> modify_user_reg_dic = { 'nickname':'ggingkkang', 'signature':'KAIST07 && JSH07 && SPARCS07', 'self_introduction':'i am Munbeom', 'default_language':'korean' }
 >>> server.member_manager.modify(session_key, modify_user_reg_dic)
 (True, 'OK')
->>> search_user_info ={}
->>> search_user_info['username'] = 'mikkang'
->>> server.member_manager.search_user(session_key, search_user_info)
-(True, u'mikkang')
+
+
+# Searh Test
+>>> server.member_manager.search_user(session_key, 'mikkang')
+(True, [{'username': u'mikkang', 'nickname': u'ggingkkang'}])
+
+# Register one user, ggingkkang for search test
+>>> user_reg_dic = {'username':'ggingkkang', 'password':'xx', 'nickname':'mikkang', 'email':'ggingkkang@sparcs.org', 'signature':'', 'self_introduction':'', 'default_language':'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+>>> server.member_manager.confirm('ggingkkang', register_key)
+(True, 'OK')
+>>> ret, session_key_ggingkkang = server.login_manager.login('ggingkkang', 'xx', '143.248.234.140')
+>>> ret
+True
+>>> server.member_manager.search_user(session_key, 'mikkang')
+(True, [{'username': u'mikkang', 'nickname': u'ggingkkang'}, {'username': u'ggingkkang', 'nickname': u'mikkang'}])
+
 >>> server.member_manager.remove_user(session_key)
 (True, 'OK')
 >>> server.member_manager.is_sysop(session_key)

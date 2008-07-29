@@ -5,6 +5,7 @@ import md5
 from arara.util import require_login, filter_dict, is_keys_in_dict
 from arara import model
 from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
+from sqlalchemy import or_, not_, and_
 
 class NoPermission(Exception):
     pass
@@ -23,6 +24,7 @@ USER_PUBLIC_WHITELIST= ('username', 'nickname', 'email',
         'signature', 'self_introduction', 'default_language', 'activated')
 USER_PUBLIC_MODIFIABLE_WHITELIST= ('nickname', 'signature', 'self_introduction', 
         'default_language')
+USER_SEARCH_WHITELIST = ('username', 'nickname')
 
 class MemberManager(object):
     '''
@@ -62,7 +64,21 @@ class MemberManager(object):
                 return False, 'WRONG_PASSWORD'
         except InvalidRequestError:
             return False, 'WRONG_USERNAME'
+    
+    def _get_dict(self, item, whitelist=None):
+        item_dict = item.__dict__
+        if whitelist:
+            filtered_dict = filter_dict(item_dict, whitelist)
+        else:
+            filtered_dict = item_dict
+        return filtered_dict
 
+    def _get_dict_list(self, raw_list, whitelist=None):
+        return_list = []
+        for item in raw_list:
+            filtered_dict = self._get_dict(item, whitelist)
+            return_list.append(filtered_dict)
+        return return_list
 
     def register(self, user_reg_dic):
         '''
@@ -337,27 +353,25 @@ class MemberManager(object):
             return False, 'NOT_LOGGEDIN'
         
     @require_login
-    def search_user(self, session_key, search_user_info):
+    def search_user(self, session_key, search_user):
         '''
         member_dic 에서 찾고자 하는 username와 nickname에 해당하는 user를 찾아주는 함수
 
         @type  session_key: string
         @param session_key: User Key
-        @type  search_user_info: dictionary
+        @type  search_user_info: string
         @param search_user_info: User Info(username or nickname)
-        @rtype: String
+        @rtype: dictionary 
         @return:
-            1. 성공시: True, USERNAME
+            1. 성공시: True, {'username':'kmb1109','nickname':'mikkang'} 
             2. 실패시: False, 'NOT_EXIST_USER'
         '''
 
         try:
             session = model.Session()
-            assert len(search_user_info.keys()) == 1
-            key = search_user_info.keys()[0]
-            assert key == 'username' or key == 'nickname'
-            user = session.query(model.User).filter_by(**search_user_info).one()
-            return True, user.username
+            user = session.query(model.User).filter(or_(model.users_table.c.username==search_user, model.users_table.c.nickname==search_user)).all()
+            user_dict_list = self._get_dict_list(user, USER_SEARCH_WHITELIST)
+            return True, user_dict_list
         except InvalidRequestError:
             return False, 'NOT_EXIST_USER'
         except AssertionError:
