@@ -5,6 +5,7 @@ import time
 from arara.util import require_login, filter_dict
 from arara import model
 from sqlalchemy.exceptions import InvalidRequestError
+from sqlalchemy import or_, not_, and_
 
 MESSAGE_WHITELIST = ['id', 'from', 'to', 'message', 'sent_time', 'read_status', 'blacklisted']
 
@@ -69,13 +70,13 @@ class MessagingManager(object):
         ret, user_info = self.login_manager.get_session(session_key)
         session = model.Session()
         sent_user = session.query(model.User).filter_by(username=user_info['username']).one()
-        sent_messages_count = session.query(model.Message).filter_by(from_id=sent_user.id).count()
+        sent_messages_count = session.query(model.Message).filter(and_(model.message_table.c.from_id==sent_user.id, not_(model.message_table.c.sent_deleted==True))).count()
         last_page = int(sent_messages_count / page_length) + 1
         if page > last_page:
-            return False, 'WRONT_PAGENUM'
+            return False, 'WRONG_PAGENUM'
         offset = page_length * (page - 1)
         last = offset + page_length
-        sent_messages = sent_user.send_messages[::-1][offset:last]
+        sent_messages = session.query(model.Message).filter(and_(model.message_table.c.from_id==sent_user.id, not_(model.message_table.c.sent_deleted==True)))[::-1][offset:last]
         sent_messages_dict_list = self._get_dict_list(sent_messages, MESSAGE_WHITELIST)
         sent_messages_dict_list.append({'last_page': last_page})
         return True, sent_messages_dict_list
@@ -108,13 +109,13 @@ class MessagingManager(object):
         for blacklist_item in blacklist_dict_list:
             if blacklist_item['block_message']:
                 blacklist_users.add(blacklist_item['blacklisted_user_username'])
-        received_messages_count = session.query(model.Message).filter_by(to_id=to_user.id).count()
+        received_messages_count = session.query(model.Message).filter(and_(model.message_table.c.to_id==to_user.id, not_(model.message_table.c.received_deleted==True))).count()
         last_page = int(received_messages_count / page_length) + 1
         if page > last_page:
             return False, 'WRONG_PAGENUM'
         offset = page_length * (page - 1)
         last = offset + page_length
-        received_messages = to_user.received_messages[::-1][offset:last]
+        received_messages = session.query(model.Message).filter(not_(model.message_table.c.received_deleted==True))[::-1][offset:last]
         received_messages_dict_list = self._get_dict_list(received_messages, MESSAGE_WHITELIST)
         for item in received_messages_dict_list:
             if item['from'] in blacklist_users:
@@ -181,12 +182,53 @@ class MessagingManager(object):
         session = model.Session()
         to_user = session.query(model.User).filter_by(username=user_info['username']).one()
         try:
-            message = session.query(model.Message).filter_by(to_id=to_user.id, id=msg_no).one()
+            message = session.query(model.Message).filter(and_(model.message_table.c.to_id==to_user.id, model.message_table.c.id==msg_no, not_(model.message_table.c.received_deleted==True))).one()
         except InvalidRequestError:
             return False, "MSG_NOT_EXIST"
         message_dict = self._get_dict(message, MESSAGE_WHITELIST)
         message.read_status = 'R'
         session.commit()
         return True, message_dict
+
+    @require_login
+    def delete_message(self, session_key, msg_no):
+        '''
+        쪽지 하나 삭제하기
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type  msg_no: integer
+        @param msg_no: Message Number
+        @rtype: string
+        @return:
+            1. 삭제 성공: True, 'OK'
+            2. 삭제 실패:
+                1. 메세지가 존재하지 않음: False, 'MSG_NOT_EXIST'
+                2. 로그인되지 않은 사용자: False, 'NOT_LOGGED_IN'
+                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        '''
+
+        ret, user_info = self.login_manager.get_session(session_key)
+        session = model.Session()
+        user = session.query(model.User).filter_by(username=user_info['username']).one()
+        try:
+            message_to_delete = session.query(model.Message).filter_by(id=msg_no).one()
+        except InvalidRequestError:
+            return False, 'MSG_NOT_EXIST'
+        if message_to_delete.to_id == user.id:
+            if message_to_delete.sent_deleted:
+                session.delete(message_to_delete)
+            else:
+                message_to_delete.received_deleted = True
+        elif message_to_delete.from_id == user.id:
+            if message_to_delete.received_deleted:
+                session.delete(message_to_delete)
+            else:
+                message_to_delete.sent_deleted = True
+        else:
+            return False, 'MSG_NOT_EXIST'
+        session.commit()
+        return True, 'OK'
+
 
 # vim: set et ts=8 sw=4 sts=4

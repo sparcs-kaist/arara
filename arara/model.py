@@ -106,6 +106,8 @@ class Message(object):
         self.to_user = to_user
         self.sent_time = datetime.datetime.fromtimestamp(time.time())
         self.message = message
+        self.received_deleted = False
+        self.sent_deleted = False
         self.read_status = 'N'
 
     def __repr__(self):
@@ -205,6 +207,8 @@ message_table = Table('messages', metadata,
     Column('to_id', Integer, ForeignKey('users.id'), nullable=False),
     Column('sent_time', DateTime),
     Column('message', Unicode(200)),
+    Column('received_deleted', Boolean),
+    Column('sent_deleted', Boolean),
     Column('read_status', Unicode(1)),
 )
 

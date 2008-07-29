@@ -121,6 +121,29 @@ True
 >>> server.messaging_manager.read_message(mikkang_session_key, 2)
 (True, {'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello2', 'id': 2})
 
+Test Delete Function
+
+>>> server.messaging_manager.delete_message(mikkang_session_key, 2)
+(True, 'OK')
+
+>>> server.messaging_manager.read_message(mikkang_session_key, 2)
+(False, 'MSG_NOT_EXIST')
+
+>>> server.messaging_manager.receive_list(mikkang_session_key)
+(True, [{'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'mikkang', 'message': u'hello', 'id': 1}, {'last_page': 1}])
+
+>>> server.messaging_manager.sent_list(serialx_session_key)
+(True, [{'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'mikkang', 'message': u'hello2', 'id': 2}, {'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'mikkang', 'message': u'hello', 'id': 1}, {'last_page': 1}])
+
+>>> server.messaging_manager.delete_message(serialx_session_key, 2)
+(True, 'OK')
+
+>>> server.messaging_manager.sent_list(serialx_session_key)
+(True, [{'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'mikkang', 'message': u'hello', 'id': 1}, {'last_page': 1}])
+
+>>> server.messaging_manager.receive_list(mikkang_session_key)
+(True, [{'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'mikkang', 'message': u'hello', 'id': 1}, {'last_page': 1}])
+
 Test Errors
 
 >>> server.messaging_manager.send_message('asdf', 'mikkang', 'hello')
@@ -131,6 +154,12 @@ Test Errors
 (False, 'MSG_NOT_EXIST')
 >>> server.messaging_manager.read_message('asdf', 2)
 (False, 'NOT_LOGGEDIN')
+>>> server.messaging_manager.delete_message(mikkang_session_key, 2)
+(False, 'MSG_NOT_EXIST')
+>>> server.messaging_manager.delete_message(serialx_session_key, 2)
+(False, 'MSG_NOT_EXIST')
+>>> server.messaging_manager.delete_message(mikkang_session_key, 8989)
+(False, 'MSG_NOT_EXIST')
 
 >>> time.time = org_time
 
