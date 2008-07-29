@@ -4,14 +4,18 @@
 import os
 import urwid.curses_display
 import urwid
-from ara_forms import *
+from ara_form import *
+import widget
 
-class ara_query_user(ara_forms):
+class ara_query_user(ara_form):
+    def keypress(self, size, id):
+        self.mainpile.keypress(size, id)
+
     def on_button_clicked(self, button):
         if button == self.btnsearch.body:
             self.query_information(self.idedit.body.get_edit_text())
         elif button == self.btncancel.body:
-            pass
+            self.parent.change_page("user_information", {'session_key':self.session_key})
 
     def query_information(self, id):
         a = self.server.member_manager.query_by_username(self.session_key, id)
@@ -41,20 +45,18 @@ class ara_query_user(ara_forms):
 	actiontext = urwid.Filler(urwid.Text(' * Press [Enter] to query another user, [q] to quit'))
 
         content = [('fixed',1, self.header),
-            ('fixed',1,self.dash),
+            ('fixed',1,widget.dash),
             ('fixed',1,self.buttoncolumn),
-            ('fixed',1,self.dash),
+            ('fixed',1,widget.dash),
             ('fixed',1,self.idtext),
             ('fixed',1,self.nicktext),
             ('fixed',6,self.introtext),
             ('fixed',6,self.sigtext),
             ('fixed',1,self.lasttext),
-            ('fixed',1,self.dash),
+            ('fixed',1,widget.dash),
             actiontext,
             ]
         self.mainpile = urwid.Pile(content)
-
-        return self.mainpile
 
 if __name__=="__main__":
     ara_query_user().main()

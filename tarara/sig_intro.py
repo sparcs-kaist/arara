@@ -4,13 +4,20 @@
 import os
 import urwid.curses_display
 import urwid
-from ara_forms import *
+from ara_form import *
+import widget
 
-class ara_sig_intro(ara_forms):
+class ara_sig_intro(ara_form):
+    def keypress(self, size, key):
+        self.mainpile.keypress(size, key)
+
     def on_button_clicked(self, button):
-        self.myinfo['signature'] = self.sigedit.body.get_edit_text()
-        self.myinfo['self_introduce'] = self.introedit.body.get_edit_text()
-        print self.server.member_manager.modify(self.session_key, self.myinfo)
+        if button == self.btnokay:
+            self.myinfo['signature'] = self.sigedit.body.get_edit_text()
+            self.myinfo['self_introduce'] = self.introedit.body.get_edit_text()
+            print self.server.member_manager.modify(self.session_key, self.myinfo)
+        elif button == self.btncancel:
+            self.parent.change_page("user_preferences",{'session_key':self.session_key})
 
     def set_sig_intro(self):
         self.sigedit.body.set_edit_text(self.myinfo['signature'])
@@ -33,19 +40,18 @@ class ara_sig_intro(ara_forms):
 
         content = [('fixed',1, self.header),
                 ('fixed',1,sigtext),
-                ('fixed',1,self.dash),
+                ('fixed',1,widget.dash),
                 self.sigedit,
-                ('fixed',1,self.dash),
+                ('fixed',1,widget.dash),
                 ('fixed',1,introtext),
-                ('fixed',1,self.dash),
+                ('fixed',1,widget.dash),
                 self.introedit,
-                ('fixed',1,self.dash),
+                ('fixed',1,widget.dash),
                 ('fixed',1,self.bottomcolumn)]
         self.mainpile = urwid.Pile(content)
 
         self.set_sig_intro()
 
-        return self.mainpile
 
 if __name__=="__main__":
     ara_sig_intro().main()

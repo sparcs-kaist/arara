@@ -4,14 +4,18 @@
 import os
 import urwid.curses_display
 import urwid
-from ara_forms import *
+from ara_form import *
+import widget
 
-class ara_post_article(ara_forms):
-    def __init__(self, session_key = None, board_name = None, mode='post', article_id = 0):
+class ara_post_article(ara_form):
+    def __init__(self, parent, session_key = None, board_name = None, mode='post', article_id = 0):
         self.board_name = board_name
         self.mode= mode
         self.article_id = article_id
-        ara_forms.__init__(self, session_key)
+        ara_form.__init__(self, parent, session_key)
+
+    def keypress(self, size, key):
+        self.mainpile.keypress(size, key)
 
     def on_button_clicked(self, button):
         if button == self.btnokay:
@@ -26,8 +30,7 @@ class ara_post_article(ara_forms):
             else:
                 pass
         elif button == self.btncancel:
-            # TODO: 이전 화면으로 돌아가기
-            pass
+            self.parent.change_page("list_article",{'session_key':self.session_key, 'board_name':self.board_name})
         elif button == self.btnhelp:
             # TODO: 편집 도움말
             pass
@@ -65,13 +68,11 @@ class ara_post_article(ara_forms):
         content = [('fixed',1, self.header),
                 ('fixed',1,self.titleedit),
                 ('fixed',1,bodytext),
-                ('fixed',1,self.dash),
+                ('fixed',1,widget.dash),
                 self.bodyedit,
-                ('fixed',1,self.dash),
+                ('fixed',1,widget.dash),
                 ('fixed',1,self.bottomcolumn)]
         self.mainpile = urwid.Pile(content)
-
-        return self.mainpile
 
 if __name__=="__main__":
     ara_post_article().main()

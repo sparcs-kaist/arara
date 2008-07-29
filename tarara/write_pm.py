@@ -4,13 +4,17 @@
 import os
 import urwid.curses_display
 import urwid
-from ara_forms import *
+from ara_form import *
+import widget
 
-class ara_write_pm(ara_forms):
-    def __init__(self, session_key = None, mode='write', reply_to = ""):
+class ara_write_pm(ara_form):
+    def __init__(self, parent, session_key = None, mode='write', reply_to = ""):
         self.mode = mode
         self.reply_to = reply_to
-        ara_forms.__init__(self, session_key)
+        ara_form.__init__(self, parent, session_key)
+
+    def keypress(self, size, key):
+        self.mainpile.keypress(size, key)
 
     def on_button_clicked(self, button):
         if button == self.btnokay:
@@ -20,8 +24,7 @@ class ara_write_pm(ara_forms):
             for sender in to:
                 print self.server.messaging_manager.send_message(self.session_key, sender, body)
         elif button == self.btncancel:
-            # TODO: 이전 화면으로 돌아가기
-            pass
+            self.parent.change_page("list_pm", {'session_key':self.session_key})
         elif button == self.btnhelp:
             # TODO: 편집 도움말
             pass
@@ -30,6 +33,7 @@ class ara_write_pm(ara_forms):
             pass
         else:
             assert("Call for undefined button")
+
     def __initwidgets__(self):
         self.idedit = urwid.Edit(caption="To (Enter ID): ", wrap='clip')
         if self.mode == 'reply':
@@ -61,13 +65,11 @@ class ara_write_pm(ara_forms):
                 ('fixed',1,self.idcolumn),
                 ('fixed',1,self.info),
                 ('fixed',1,bodytext),
-                ('fixed',1,self.dash),
+                ('fixed',1,widget.dash),
                 self.bodyedit,
-                ('fixed',1,self.dash),
+                ('fixed',1,widget.dash),
                 ('fixed',1,self.bottomcolumn)]
         self.mainpile = urwid.Pile(content)
-
-        return self.mainpile
 
 if __name__=="__main__":
     ara_write_pm().main()

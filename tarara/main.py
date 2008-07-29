@@ -1,19 +1,13 @@
 #!/usr/bin/python
 # coding: utf-8
 
-import os
+import sys
 import urwid.curses_display
 import urwid
-import sys
-from ara_forms import *
-from widget import *
-from list_boards import *
-from user_preferences import *
-from welcome import *
-from list_pm import *
-from user_information import *
+from ara_form import *
+import widget
 
-class ara_main(ara_forms):
+class ara_main(ara_form):
     menu = [
         "(N)ew article",
         "(S)elect board",
@@ -45,7 +39,7 @@ class ara_main(ara_forms):
 	    [u"랄라","kkhsoft"],
 	]
 
-    def __keypress__(self, size, key):
+    def keypress(self, size, key):
         key = key.strip().lower()
         if key == "tab":
             if self.maincolumn.get_focus() == self.menulist:
@@ -59,13 +53,13 @@ class ara_main(ara_forms):
                     # TODO: 새 글 읽기로 가기
                     pass
                 elif pos == 2:
-                    ara_list_boards(self.session_key).main()
+                    self.parent.change_page("list_boards", {'session_key':self.session_key})
                 elif pos == 3:
-                    ara_list_pm(self.session_key).main()
+                    self.parent.change_page("list_pm", {'session_key':self.session_key})
                 elif pos==4:
-                    ara_user_preferences(self.session_key).main()
+                    self.parent.change_page("user_preferences", {'session_key':self.session_key})
                 elif pos==5:
-                    ara_user_information(self.session_key).main()
+                    self.parent.change_page("user_information", {'session_key':self.session_key})
                 elif pos==6:
                     # TODO: 도움말로 가기
                     pass
@@ -75,25 +69,26 @@ class ara_main(ara_forms):
                 elif pos==8:
                     ara_welcome(self.session_key).main()
                 elif pos==9:
+                    self.server.login_manager.logout(self.session_key)
                     sys.exit(0)
         else:
-            self.frame.keypress(size, key)
+            self.mainpile.keypress(size, key)
 
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Main Menu", align='center'))
         menuitems = [urwid.Text('\n')]
-        menuitems +=[Item(" * "+w+"\n", None, 'selected') for w in self.menu]
+        menuitems +=[widget.Item(" * "+w+"\n", None, 'selected') for w in self.menu]
         self.menulist = urwid.ListBox(urwid.SimpleListWalker(menuitems))
 
 	self.tbtext = urwid.Filler(urwid.Text(u"Today Best", align='center'))
 	tbitems = ["%(name)s (%(date)s)" % {"name":text[0], "date":text[1]} for text in self.get_today_best()]
-        tbitems = [Item(w, None, 'selected') for w in tbitems]
+        tbitems = [widget.Item(w, None, 'selected') for w in tbitems]
         self.tblist = urwid.ListBox(urwid.SimpleListWalker(tbitems))
 	self.todaybest = urwid.Pile([('fixed',1,self.tbtext), self.tblist])
 
 	self.wbtext = urwid.Filler(urwid.Text(u"Weekly Best", align='center'))
 	wbitems = ["%(name)s (%(date)s)" % {"name":text[0], "date":text[1]} for text in self.get_today_best()]
-        wbitems = [Item(w, None, 'selected') for w in wbitems]
+        wbitems = [widget.Item(w, None, 'selected') for w in wbitems]
         self.wblist = urwid.ListBox(urwid.SimpleListWalker(wbitems))
 	self.weeklybest = urwid.Pile([('fixed',1,self.wbtext), self.wblist])
 
@@ -104,7 +99,7 @@ u"""  * Press [Tab] to jump between menu, today best, weekly best
 
         self.maincolumn = urwid.Columns([('weight',40,self.menulist),('weight',60,self.bests)])
 
-        content = [('fixed',1, self.header),('fixed',1,self.dash),self.maincolumn,('fixed',1,self.dash),('fixed',2,self.copyrightnotice)]
+        content = [('fixed',1, self.header),('fixed',1,widget.dash),self.maincolumn,('fixed',1,widget.dash),('fixed',2,self.copyrightnotice)]
         self.mainpile = urwid.Pile(content)
 
         self.keymap = {
@@ -113,8 +108,6 @@ u"""  * Press [Tab] to jump between menu, today best, weekly best
             "j":"down",
             "k":"up",
             }
-
-        return self.mainpile
 
 if __name__=="__main__":
     ara_main().main()

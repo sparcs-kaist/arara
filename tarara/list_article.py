@@ -4,13 +4,11 @@
 import os
 import urwid.curses_display
 import urwid
-from ara_forms import *
-from widget import *
-from read_article import *
-from post_article import *
+from ara_form import *
+import widget
 import listview
 
-class articlelist_rowitem(FieldRow):
+class articlelist_rowitem(widget.FieldRow):
     fields = [
         ('new', 1, 'right'),
         ('number', 4, 'left'),
@@ -21,22 +19,25 @@ class articlelist_rowitem(FieldRow):
         ('vote',4, 'left'),
     ]
 
-class ara_list_article(ara_forms):
-    def __init__(self, session_key = None, board_name = None):
+class ara_list_article(ara_form):
+    def __init__(self, parent, session_key = None, board_name = None):
         self.board_name = board_name
-        ara_forms.__init__(self, session_key)
+        ara_form.__init__(self, parent, session_key)
 
-    def __keypress__(self, size, key):
+    def keypress(self, size, key):
         key = key.strip()
         mainpile_focus = self.mainpile.get_focus()
         if key == "enter":
             # self.boardlist.get_body().get_focus()[0].w.w.widget_list : 현재 활성화된 항목
             article_id  = int(self.articlelist.get_body().get_focus()[0].w.w.widget_list[1].get_text()[0])
-            ara_read_article(session_key = self.session_key, board_name = self.board_name, article_id = article_id).main()
+            if self.hasarticle:
+                self.parent.change_page("read_article", {'session_key':self.session_key, 'board_name':self.board_name, 'article_id':article_id})
         elif key == 'w':
-            ara_post_article(self.session_key, self.board_name, 'post').main()
+            self.parent.change_page('post_article', {'session_key':self.session_key, 'board_name':self.board_name, 'mode':'post', 'article_id':''})
+        elif key == 'q':
+            self.parent.change_page("main", {'session_key':self.session_key})
         else:
-            self.frame.keypress(size, key)
+            self.mainpile.keypress(size, key)
 
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Article list",align='center'))
@@ -46,8 +47,9 @@ class ara_list_article(ara_forms):
         articles = self.server.article_manager.article_list(self.session_key, self.board_name)
         articles = articles[1]
         itemlist = []
-        if len(articles) == 0:
+        if len(articles) <= 1:
             itemlist += [{'new':'', 'number':'', 'author':'','title':'No article found. Have a nice day.','date':'','hit':'','vote':''}]
+            self.hasarticle = False
         else:
             for article in articles:
                 if article.has_key('last_page'):
@@ -55,14 +57,13 @@ class ara_list_article(ara_forms):
                     continue
                 itemlist += [{'new':'N', 'number':str(article['id']), 'author':article['author_username'], 'title':article['title'],
                     'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), 'vote':str(article['vote'])}]
+            self.hasarticle = True
         header = {'new':'N', 'number':'#', 'author':'Author', 'title':'Title', 'date':'Date', 'hit':'Hit', 'vote':'Vote'}
 
         self.articlelist = listview.get_view(itemlist, header, articlelist_rowitem)
 
         content = [('fixed',1, self.header),('fixed',1,self.infotext1),('fixed',1,self.infotext2),self.articlelist,]
         self.mainpile = urwid.Pile(content)
-
-        return self.mainpile
 
 if __name__=="__main__":
     ara_list_article().main()

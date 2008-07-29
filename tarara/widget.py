@@ -68,5 +68,17 @@ class Border(urwid.WidgetWrap):
 class PasswordEdit(urwid.Edit):
     def get_text(self):
         return self.caption + "*"*len(self.edit_text), self.attrib
+
+def EasyColumn(widget1, widget2,ratio1=60, ratio2=40):
+    return urwid.Columns([
+        ('weight', ratio1, widget1),
+        ('weight', ratio2, widget2),
+        ])
+
+utf8decode = urwid.escape.utf8decode
+dash = urwid.SolidFill(utf8decode('-'))
+blank = urwid.SolidFill(u" ")
+blanktext = urwid.Filler(urwid.Text(' '))
+
 # vim: set et ts=8 sw=4 sts=4:
 

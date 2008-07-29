@@ -4,31 +4,29 @@
 import os
 import urwid.curses_display
 import urwid
-from ara_forms import *
-from widget import *
-from list_article import *
+from ara_form import *
+import widget
 import listview
 
-class boardlist_rowitem(FieldRow):
+class boardlist_rowitem(widget.FieldRow):
     fields = [
         ('new', 1, 'right'),
         ('name',12, 'left'),
         ('desc',0, 'left'),
     ]
 
-class ara_list_boards(ara_forms):
-    def __keypress__(self, size, key):
-        key = key.strip().lower()
+class ara_list_boards(ara_form):
+    def keypress(self, size, key):
         mainpile_focus = self.mainpile.get_focus()
         if mainpile_focus == self.boardlist:
             if key == "enter":
                 # self.boardlist.get_body().get_focus()[0].w.w.widget_list : 현재 활성화된 항목
                 boardname = self.boardlist.get_body().get_focus()[0].w.w.widget_list[1].get_text()[0]
-                ara_list_article(session_key = self.session_key, board_name = boardname).main()
+                self.parent.change_page("list_article", {'session_key':self.session_key, 'board_name':boardname})
             else:
-                self.frame.keypress(size, key)
+                self.mainpile.keypress(size, key)
         else:
-            self.frame.keypress(size, key)
+            self.mainpile.keypress(size, key)
 
     def __initwidgets__(self):
         self.keymap = {
@@ -55,8 +53,6 @@ class ara_list_boards(ara_forms):
 
         content = [('fixed',1, self.header),('fixed',1,self.boardnameedit),('fixed',1,boardcounttext),self.boardlist]
         self.mainpile = urwid.Pile(content)
-
-        return self.mainpile
 
 if __name__=="__main__":
     ara_list_boards().main()

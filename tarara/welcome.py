@@ -4,10 +4,10 @@
 import os
 import urwid.curses_display
 import urwid
-from ara_forms import *
-from main import *
+from ara_form import *
+import widget
 
-class ara_welcome(ara_forms):
+class ara_welcome(ara_form, urwid.Widget):
     def get_banner(self):
 	banner = self.server.notice_manager.get_welcome()
 	if banner[0] == False:
@@ -24,9 +24,9 @@ class ara_welcome(ara_forms):
     def get_date(self):
         return "Today"
 
-    def __keypress__(self, size, key):
+    def keypress(self, size, key):
         if "enter" in key:
-            ara_main(self.session_key).main()
+            self.parent.change_page("main",{'session_key':self.session_key})
 
     def __initwidgets__(self):
         self.banner = urwid.Filler(urwid.Text(self.get_banner()))
@@ -37,10 +37,8 @@ class ara_welcome(ara_forms):
 
         self.entertext = urwid.Filler(urwid.Text("Press [Enter] key to continue"))
 
-        content = [self.banner,('fixed',1, self.logininfo),('fixed',1,self.blank), ("fixed", 1, self.entertext)]
+        content = [self.banner,('fixed',1, self.logininfo),('fixed',1,widget.blank), ("fixed", 1, self.entertext)]
         self.mainpile = urwid.Pile(content)
-
-        return self.mainpile
 
 if __name__=="__main__":
     ara_welcome().main()
