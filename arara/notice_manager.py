@@ -54,9 +54,8 @@ class NoticeManager(object):
             2. 배너가 없을 때: False, 'NO_BANNER'
         '''
         session = model.Session()
-        available_banner = session.query(model.Welcome).filter_by(valid=True).all()
+        available_banner = session.query(model.Banner).filter_by(valid=True).all()
         available_banner_dict_list = self._get_dict_list(available_banner, NOTICE_PUBLIC_KEYS)
-        print available_banner_dict_list
         if available_banner_dict_list:
             return True, available_banner_dict_list[-1]['content']
             #나중에는 랜덤하게 토해내는 것으로 바꿀것임
@@ -76,9 +75,11 @@ class NoticeManager(object):
             1. welcome 있을 때: True, 랜덤하게 선택된 welcome(html)
             2. welcome 없을 때: False, 'NO_WELCOME'
         '''
-        available_welcome = filter(lambda x: x['availability'] == 'True', self.welcome_list)
-        if available_welcome:
-            return True, available_welcome[-1]['content']
+        session = model.Session()
+        available_welcome= session.query(model.Welcome).filter_by(valid=True).all()
+        available_welcome_dict_list = self._get_dict_list(available_welcome, NOTICE_PUBLIC_KEYS)
+        if available_welcome_dict_list:
+            return True, available_welcome_dict_list[-1]['content']
             #나중에는 랜덤하게 토해내는 것으로 바꿀것임
         else:
             return False, 'NO_WELCOME'
@@ -100,17 +101,17 @@ class NoticeManager(object):
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
             3. 시삽이 아닐 때: False, 'NOT_SYSOP'
         '''
-        
         if not self.member_manager.is_sysop(session_key):
             return False, 'NOT_SYSOP'
-        
-        '''DB에서 banner 관련 해서 데이터 받아오는 부분 추가'''
 
-        if self.banner_list:
-            return True, self.banner_list
+        session = model.Session()
+        banner = session.query(model.Banner).all()
+        banner_dict_list = self._get_dict_list(banner, NOTICE_PUBLIC_KEYS)
+
+        if banner_dict_list:
+            return True, banner_dict_list
         else:    
             return False, 'NO_BANNER'
-
 
     @require_login
     def list_welcome(self, session_key):
@@ -131,11 +132,12 @@ class NoticeManager(object):
         
         if not self.member_manager.is_sysop(session_key):
             return False, 'NOT_SYSOP'
-        
-        '''DB에서 welcome 관련 해서 데이터 받아오는 부분 추가'''
+        session = model.Session()
+        welcome= session.query(model.Welcome).all()
+        welcome_dict_list = self._get_dict_list(welcome, NOTICE_PUBLIC_KEYS)
 
-        if self.welcome_list:
-            return True, self.welcome_list
+        if welcome_dict_list:
+            return True, welcome_dict_list
         else:    
             return False, 'NO_WELCOME'
         
@@ -172,8 +174,8 @@ class NoticeManager(object):
         session = model.Session()
         try:
             # Register welcome to db
-            welcome= model.Welcome(**notice_reg_dic)
-            session.save(welcome)
+            banner= model.Banner(**notice_reg_dic)
+            session.save(banner)
             session.commit()
             return True, 'OK' 
         except Exception, e:
@@ -223,7 +225,7 @@ class NoticeManager(object):
             return False, e
 
     @require_login 
-    def remove_banner(self, session_key, no):
+    def remove_banner(self, session_key, id):
         '''
         관리자용 배너 제거 함수
 
@@ -246,18 +248,19 @@ class NoticeManager(object):
         if not self.member_manager.is_sysop(session_key):
             return False, 'NOT_SYSOP'
         try:
-            '''DB에서 banner 관련 해서 데이터 받아오는 부분 추가'''
-            for banner in self.banner_list:
-                if banner['no'] == no:
-                    banner['availability'] = 'False' 
-                    return True, 'OK' 
-            return False, 'NOT_EXIST_BANNER'
+            session = model.Session()
+            invalid_banner= session.query(model.Banner).filter_by(id = id).one()
+            if invalid_banner:
+                invalid_banner.valid = 'False'
+                return True, 'OK' 
+            else:
+                return False, 'NOT_EXIST_WELCOME'
         except:
             raise
             return False, 'DATABASE_ERROR'
     
     @require_login 
-    def remove_welcome(self, session_key, no):
+    def remove_welcome(self, session_key, id):
         '''
         관리자용 welcome 제거 함수
 
@@ -280,12 +283,13 @@ class NoticeManager(object):
         if not self.member_manager.is_sysop(session_key):
             return False, 'NOT_SYSOP'
         try:
-            '''DB에서 welcome 관련 해서 데이터 받아오는 부분 추가'''
-            for welcome in self.welcome_list:
-                if welcome['no'] == no:
-                    welcome['availability'] = 'False' 
-                    return True, 'OK' 
-            return False, 'NOT_EXIST_WELCOME'
+            session = model.Session()
+            invalid_welcome= session.query(model.Welcome).filter_by(id = id).one()
+            if invalid_welcome:
+                invalid_welcome.valid = 'False'
+                return True, 'OK' 
+            else:
+                return False, 'NOT_EXIST_WELCOME'
         except:
             raise
             return False, 'DATABASE_ERROR'
