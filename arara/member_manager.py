@@ -4,7 +4,7 @@ import md5
 
 from arara.util import require_login, filter_dict, is_keys_in_dict
 from arara import model
-from sqlalchemy.exceptions import InvalidRequestError
+from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
 
 class NoPermission(Exception):
     pass
@@ -37,13 +37,21 @@ class MemberManager(object):
         self._register_sysop()
 
     def _register_sysop(self):
+
         sysop_reg_dic = {'username':u'SYSOP', 'password':u'SYSOP', 'nickname':u'SYSOP', 'email':u'SYSOP@sparcs.org', 'signature':u'', 'self_introduction':u'i am mikkang', 'default_language':u'ko_KR'}
-        user = model.User(**sysop_reg_dic)
-        session = model.Session()
-        session.save(user)
-        user.activated = True
-        session.commit()
-        
+        try:
+            print "Trying to register SYSOP on database..."
+            user = model.User(**sysop_reg_dic)
+            session = model.Session()
+            session.save(user)
+            user.activated = True
+            session.commit()
+            print "Successfully registered SYSOP on the database!"
+        except IntegrityError:
+            session.rollback()
+            print "SYSOP is already added on database...!" 
+            print "Skipping register process... Done"
+            pass
 
     def _set_login_manager(self, login_manager):
         self.login_manager = login_manager
