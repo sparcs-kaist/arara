@@ -67,7 +67,7 @@ class ara_main(ara_form):
                     # TODO: 아라 정보 보이기
                     pass
                 elif pos==8:
-                    ara_welcome(self.session_key).main()
+                    self.parent.change_page("welcome", {'session_key':self.session_key})
                 elif pos==9:
                     self.server.login_manager.logout(self.session_key)
                     sys.exit(0)
