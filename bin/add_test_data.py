@@ -4,6 +4,7 @@ import xmlrpclib
 server = xmlrpclib.Server('http://localhost:8000')
 server.article_manager.article_list(u'00', u'garbages')
 server.article_manager.article_list(u'000123', u'garbages')
+
 # mikkang
 user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
 print user_reg_dic
@@ -23,6 +24,7 @@ _, reg_key = server.member_manager.register(user_reg_dic)
 server.member_manager.confirm(u'jacob', unicode(reg_key))
 ret_jacob, sess_jacob = server.login_manager.login(u'jacob', u'jacob', u'127.0.0.1')
 
+# Create garbage board with board_manager
 ret, sess_sysop = server.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123')
 server.board_manager.add_board(sess_sysop, u'garbages', u'Garbages board')
 
@@ -33,6 +35,6 @@ server.article_manager.write_article(sess, u'garbages', article_dic)
 server.article_manager.article_list(sess, u'garbages')
 article_dic = {'title': u'polarbear', u'content': u'polarbear', 'method': u'web'}
 for i in range(900, 930):
-    server.messaging_manager.send_message(sess, u'breadfish', unicode(''.join([str(i)]*10)))
+    server.messaging_manager.send_message(sess, u'breadfish', unicode(u''.join([str(i)]*10)))
 
 server.blacklist_manager.add(sess, u'breadfish')
