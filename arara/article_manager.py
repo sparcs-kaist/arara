@@ -7,7 +7,6 @@ from arara import model
 from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy import and_, or_
 
-BOARDS = {u'garbages': u'Garbage board'}
 WRITE_ARTICLE_DICT = ['title', 'content']
 READ_ARTICLE_WHITELIST = ['id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted'
                     'author_ip', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id']
@@ -25,34 +24,29 @@ class ArticleManager(object):
     용법 : arara/test/article_manager.txt
     '''
     def __init__(self):
+        pass
         #monk data
         #self.articles = {'garbages': {} }
-        self._create_boards()
         #self.article_no = 0
 
     def _set_login_manager(self, login_manager):
         self.login_manager = login_manager
 
     def _set_blacklist_manager(self, blacklist_manager):
-        self.blacklist_manager = blacklist_manager
+        self.blacklist_manager = blacklist_manager 
 
     def _set_read_status_manager(self, read_status_manager):
         self.read_status_manager = read_status_manager
     
-    def _create_boards(self):
-        session = model.Session()
-        for board_name, board_description in BOARDS.items():
-            integrity_chk = session.query(model.Board).filter_by(board_name=board_name).all()
-            if integrity_chk:
-                return False, 'BOARD_ALREADY_EXIST'
-            board = model.Board(board_name, board_description)
-            session.save(board)
-            session.commit()
+    def _set_board_manager(self, board_manager):
+        self.board_manager = board_manager
 
     def _is_board_exist(self, board_name):
-        if not board_name in BOARDS:
+        ret, _ = self.board_manager.get_board(board_name)
+        if ret:
+            return True, 'OK'
+        else:
             return False, 'BOARD_NOT_EXIST'
-        return True, board_name
 
     def _article_thread_to_list(self, article_thread):
         stack = []
@@ -411,10 +405,11 @@ class ArticleManager(object):
             2. 리스트 읽어오기 실패: False 
                 1. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        ret = {}
-        for key in BOARDS:
-            ret[key] = 0
-        return True, ret
+        ret, board_list = self.board_manager.get_board_list()
+        if ret:
+            return True, board_list
+        else:
+            return False, 'DATABASE_ERROR'
 
     @require_login
     def search(self, session_key, board_name, query_text, search_type, page=1, page_length=20):
