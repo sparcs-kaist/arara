@@ -4,6 +4,7 @@
 from arara.util import require_login, is_keys_in_dict, filter_dict
 from arara import model
 from sqlalchemy.exceptions import InvalidRequestError
+import random
 
 NOTICE_PUBLIC_KEYS = ('id', 'content', 'issued_date', 'due_date', 'valid', 'weight')
 NOTICE_QUERY_WHITELIST = ('id', 'content', 'issued_date', 'due_date', 'valid', 'weight')
@@ -57,8 +58,12 @@ class NoticeManager(object):
         available_banner = session.query(model.Banner).filter_by(valid=True).all()
         available_banner_dict_list = self._get_dict_list(available_banner, NOTICE_PUBLIC_KEYS)
         if available_banner_dict_list:
-            return True, available_banner_dict_list[-1]['content']
-            #나중에는 랜덤하게 토해내는 것으로 바꿀것임
+            weight_banner = []
+            for index in range(len(available_banner_dict_list)):
+                for weight in range(available_banner_dict_list[index]['weight']):
+                    weight_banner.append(index)
+            n = random.choice(weight_banner)
+            return True, available_banner_dict_list[n]['content']
         else:
             return False, 'NO_BANNER'
 
@@ -79,8 +84,12 @@ class NoticeManager(object):
         available_welcome= session.query(model.Welcome).filter_by(valid=True).all()
         available_welcome_dict_list = self._get_dict_list(available_welcome, NOTICE_PUBLIC_KEYS)
         if available_welcome_dict_list:
-            return True, available_welcome_dict_list[-1]['content']
-            #나중에는 랜덤하게 토해내는 것으로 바꿀것임
+            weight_welcome = []
+            for index in range(len(available_welcome_dict_list)):
+                for weight in range(available_welcome_dict_list[index]['weight']):
+                    weight_welcome.append(index)
+            n = random.choice(weight_welcome)
+            return True, available_welcome_dict_list[n]['content']
         else:
             return False, 'NO_WELCOME'
 
