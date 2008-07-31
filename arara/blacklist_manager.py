@@ -77,11 +77,15 @@ class BlacklistManager(object):
             2. 추가 실패:
                 1. Wrong Dictionary: False, 'WRONG_DICTIONARY'
                 2. 존재하지 않는 아이디: False, 'USERNAME_NOT_EXIST'
-                3. 이미 추가되어있는 아이디: False, 'ALREADY_ADDED'
-                4. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
-                5. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                3. 자기 자신은 등록 불가: False, 'CANNOT_ADD_YOURSELF'
+                4. 이미 추가되어있는 아이디: False, 'ALREADY_ADDED'
+                5. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
+                6. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         ret, user_info = self.login_manager.get_session(session_key)
+
+        if blacklist_username == user_info['username']:
+            return False, 'CANNOT_ADD_YOURSELF'
 
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info['username']).one()
