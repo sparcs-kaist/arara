@@ -20,7 +20,7 @@
         <span class="article_date">{{article.date}}</span>
         <div class="article_text">
             {% if not article.blacklisted %}
-            {{article.content|linebreaks}}
+            {{article.content|safe}}
             {% else %}
             BLACKLISTED
             {% endif %}

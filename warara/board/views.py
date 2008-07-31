@@ -3,6 +3,8 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.paginator import Paginator
 
+from thirdparty.postmarkup import render_bbcode
+
 import arara
 import math
 import warara
@@ -95,6 +97,9 @@ def read(request, board_name, article_id):
         rendered = render_to_string('board/error.html', r)
         return HttpResponse(rendered)
         """
+
+    for i in range(len(article_list)):
+        article_list[i]['content'] = render_bbcode(article_list[i]['content'], 'UTF-8')
 
     r['article_list'] = article_list
     r['board_name'] = board_name
