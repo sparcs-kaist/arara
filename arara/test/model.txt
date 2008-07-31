@@ -13,6 +13,15 @@
 
 >>> from arara.model import *
 
+# Login as SYSOP and create 'garbage' board
+
+>>> ret, session_key_sysop = server.login_manager.login('SYSOP', 'SYSOP', '123.123.123.123')
+>>> ret
+True
+
+>>> server.board_manager.add_board(session_key_sysop, 'garbages', 'Garbage Board')
+(True, 'OK')
+
 # Register one user, serialx
 >>> user_reg_dic = {'username':'serialx', 'password':'serialx', 'nickname':'serialx', 'email':'serialx', 'signature':'serialx', 'self_introduction':'serialx', 'default_language':'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
