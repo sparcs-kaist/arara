@@ -75,7 +75,7 @@ class MemberManager(object):
                 user.last_login_time = datetime.datetime.fromtimestamp(time.time())
                 user.last_login_ip = unicode(user_ip)
                 session.commit()
-                return True, None
+                return True, user.last_login_time
             else:
                 return False, 'WRONG_PASSWORD'
         except InvalidRequestError:
