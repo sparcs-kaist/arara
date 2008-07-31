@@ -24,6 +24,7 @@
         <thead>
             <tr>
                 <th class="column" scope="col"></th>
+                <th class="column" scope="col"></th>
                 <th class="column" scope="col">id</th>
                 <th class="column" scope="col">title</th>
                 <th class="column" scope="col">author</th>
@@ -36,6 +37,7 @@
             {% for article in article_list %}
             <tr>
                 <td class="column cursor_col"></td>
+		<td class="column cursor_col">{{article.read_status}}</td>
                 <td class="column id_col">{{article.id}}</td>
                 <td class="column title_col">{% if logged_in %}<a href="/board/{{board_name}}/{{article.id}}">{{article.title}}</a>{% else %}{{article.title}}{% endif %}</td>
                 <td class="column author_col"><span class="username">{{article.author_username}}</span></td>
