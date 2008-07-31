@@ -5,13 +5,22 @@ load LoginManager & MemberManager
 >>> import arara
 >>> server = arara.get_namespace()
 
-Register one user, combacsa. then login as existing user mikkang
+# Login as SYSOP and create 'garbage' board
 
->>> user_reg_dic = {'username':'combacsa', 'password':'combacsa', 'nickname':'combacsa', 'email':'combacsa', 'signature':'combacsa', 'self_introduction':'combacsa', 'default_language':'english' }
+>>> ret, session_key_sysop = server.login_manager.login('SYSOP', 'SYSOP', '123.123.123.123')
+>>> ret
+True
+
+>>> server.board_manager.add_board(session_key_sysop, 'garbages', 'Garbage Board')
+(True, 'OK')
+
+# Register one user, combacsa.
+
+>>> user_reg_dic = {'username':u'combacsa', 'password':u'combacsa', 'nickname':u'combacsa', 'email':u'combacsa', 'signature':u'combacsa', 'self_introduction':u'combacsa', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
->>> server.member_manager.confirm('combacsa', register_key)
+>>> server.member_manager.confirm(u'combacsa', register_key)
 (True, 'OK')
 >>> ret, session_key_combacsa = server.login_manager.login('combacsa', 'combacsa', '143.248.234.140')
 >>> ret
@@ -19,11 +28,11 @@ True
 
 # Register one user, mikkang
 
->>> user_reg_dic = {'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'signature':'mikkang', 'self_introduction':'mikkang', 'default_language':'english' }
+>>> user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
->>> server.member_manager.confirm('mikkang', register_key)
+>>> server.member_manager.confirm(u'mikkang', register_key)
 (True, 'OK')
 >>> ret, session_key = server.login_manager.login('mikkang', 'mikkang', '143.248.234.140')
 >>> ret
@@ -31,7 +40,7 @@ True
 
 # Register one user, serialx
 
->>> user_reg_dic = {'username':'serialx', 'password':'serialx', 'nickname':'serialx', 'email':'serialx', 'signature':'serialx', 'self_introduction':'serialx', 'default_language':'english' }
+>>> user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
@@ -52,12 +61,12 @@ True
 # now Testing Article Manager!
 
 >>> server.article_manager.board_list(session_key)
-(True, {u'garbages': 0})
+(True, [{'board_name': u'garbages', 'board_description': u'Garbage Board'}])
 
 # Write an article
 
->>> article_dic = {'title': 'serialx is...', 'content': 'polarbear'}
->>> server.article_manager.write_article(session_key, 'garbages', article_dic)
+>>> article_dic = {'title': u'serialx is...', 'content': u'polarbear'}
+>>> server.article_manager.write_article(session_key, u'garbages', article_dic)
 (True, 1)
 
 # Read the article
@@ -67,7 +76,7 @@ True
 
 # Reply to the article
 
->>> reply_dic = {'title':'dummy', 'content': 'asdf'}
+>>> reply_dic = {'title':u'dummy', 'content': u'asdf'}
 >>> server.article_manager.write_reply(session_key, 'garbages', 24, reply_dic)
 (False, 'ARTICLE_NOT_EXIST')
 >>> server.article_manager.write_reply(session_key, 'garbages', 1, reply_dic)
@@ -131,7 +140,7 @@ u'serialx is... 80'
 # Board list
 
 >>> server.article_manager.board_list(session_key)
-(True, {u'garbages': 0})
+(True, [{'board_name': u'garbages', 'board_description': u'Garbage Board'}])
 
 
 # Write an article with many replies
