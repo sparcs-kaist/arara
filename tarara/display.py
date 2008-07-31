@@ -20,6 +20,7 @@ from change_password import *
 from blacklist import *
 from sig_intro import *
 from query_user import *
+from helpviewer import *
 
 Screen = urwid.curses_display.Screen
 
@@ -87,6 +88,9 @@ class ara_display:
         elif pagename == "query_user":
             self.ara_query_user = ara_query_user(self, args['session_key'])
             self.view = self.ara_query_user
+        elif pagename == "helpviewer":
+            self.ara_helpviewer = ara_helpviewer(self, args['topic'], args['caller'], args['caller_args'])
+            self.view = self.ara_helpviewer
 
     def main(self):
         self.ui = Screen()
