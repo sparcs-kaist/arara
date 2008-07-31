@@ -7,7 +7,7 @@ import urwid
 from ara_form import *
 import widget
 
-class ara_welcome(ara_form, urwid.Widget):
+class ara_welcome(ara_form):
     def get_banner(self):
 	banner = self.server.notice_manager.get_welcome()
 	if banner[0] == False:

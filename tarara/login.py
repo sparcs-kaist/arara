@@ -7,7 +7,7 @@ import urwid
 from ara_form import *
 import widget
 
-class ara_login(ara_form, urwid.Widget):
+class ara_login(ara_form):
     def get_login_message(self):
         basedir = os.path.dirname(__file__)
         banner = os.path.join(basedir, 'login.txt')
