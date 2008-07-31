@@ -1,4 +1,4 @@
-* common.py : Common forms
+* ara_form.py : Common forms
 
 * login.py : Login screen
 * welcome.py : Welcome screen
