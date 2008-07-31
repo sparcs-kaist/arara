@@ -1,13 +1,22 @@
-Bootstrap test
+# Bootstrap test
 
 >>> import arara.model
 >>> arara.model.init_test_database()
 >>> import arara
 >>> server = arara.get_namespace()
 
-Register one user, mikkang
+# Login as SYSOP and create 'garbage' board
 
->>> user_reg_dic = {'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'signature':'mikkang', 'self_introduction':'mikkang', 'default_language':'english' }
+>>> ret, session_key_sysop = server.login_manager.login('SYSOP', 'SYSOP', '123.123.123.123')
+>>> ret
+True
+
+>>> server.board_manager.add_board(session_key_sysop, 'garbages', 'Garbage Board')
+(True, 'OK')
+
+# Register one user, mikkang
+
+>>> user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
@@ -17,7 +26,19 @@ True
 >>> ret
 True
 
-Read_Status_Manager check!
+# Write an article
+
+>>> article_dic = {'title': u'serialx is...', 'content': u'polarbear'}
+>>> server.article_manager.write_article(session_key, u'garbages', article_dic)
+(True, 1)
+
+# Write one more article
+
+>>> article_dic = {'title': u'serialx is...', 'content': u'polarbear'}
+>>> server.article_manager.write_article(session_key, u'garbages', article_dic)
+(True, 2)
+
+# Read_Status_Manager check!
 
 >>> server.read_status_manager.check_stat(session_key, 'garbages', 1)
 (True, 'N')

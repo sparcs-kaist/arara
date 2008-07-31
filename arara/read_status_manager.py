@@ -122,7 +122,19 @@ class ReadStatusManager(object):
             return_list.append(filtered_dict)
         return return_list
 
-    def _check_data_exists(self, user, board):
+    def _check_article_exist(self, board, no_data):
+        session = model.Session()
+        article_count = session.query(model.Article).filter_by(board_id=board.id).count()
+        if type(no_data) == list:
+            for no in no_data:
+                if no > article_count:
+                    return False, 'ARTICLE_NOT_EXIST'
+        else:
+            if no_data > article_count:
+                return False, 'ARTICLE_NOT_EXIST'
+        return True, 'OK'
+
+    def _initialize_data(self, user, board):
         session = model.Session()
         if not self.read_status.has_key(user.id):
             self.read_status[user.id] = {}
@@ -168,9 +180,8 @@ class ReadStatusManager(object):
                 2. 읽지 않은 글: True, 'N'
                 3. 읽지 않고 통과한 글: True, 'V'
             2. 읽은글 여부 체크 실패:
-                1. 존재하지 않는 글: False, 'ARTICLE_NOT_EXIST'
-                2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
+                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         ret, user_info = self.login_manager.get_session(session_key)
         if ret:
@@ -180,9 +191,13 @@ class ReadStatusManager(object):
                 board = session.query(model.Board).filter_by(board_name=board_name).one()
             except InvalidRequestError:
                 return False, 'BOARD_NOT_EXIST'
-            ret, _ = self._check_data_exists(user, board)
-            status = self.read_status[user.id][board.id].get(no)
-            return True, status
+            ret, _ = self._initialize_data(user, board)
+            ret, msg = self._check_article_exist(board, no)
+            if ret:
+                status = self.read_status[user.id][board.id].get(no)
+                return True, status
+            else:
+                return ret, msg
 
     @require_login
     def check_stats(self, session_key, board_name, no_list):
@@ -202,9 +217,8 @@ class ReadStatusManager(object):
         @return:
             1. 읽은글 여부 체크 성공: True, read_stat_list
             2. 읽은글 여부 체크 실패:
-                1. 존재하지 않는 글: False, 'ARTICLE_NOT_EXIST'
-                2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
+                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         ret, user_info = self.login_manager.get_session(session_key)
         if ret:
@@ -214,9 +228,13 @@ class ReadStatusManager(object):
                 board = session.query(model.Board).filter_by(board_name=board_name).one()
             except InvalidRequestError:
                 return False, 'BOARD_NOT_EXIST'
-            ret, _ = self._check_data_exists(user, board)
-            status_list = self.read_status[user.id][board.id].get_range(no_list)
-            return True, status_list
+            ret, _ = self._initialize_data(user, board)
+            ret, msg = self._check_article_exist(board, no_list)
+            if ret:
+                status = self.read_status[user.id][board.id].get_range(no_list)
+                return True, status
+            else:
+                return ret, msg
 
     @require_login
     def mark_as_read(self, session_key, board_name, no):
@@ -248,9 +266,13 @@ class ReadStatusManager(object):
                 board = session.query(model.Board).filter_by(board_name=board_name).one()
             except InvalidRequestError:
                 return False, 'BOARD_NOT_EXIST'
-            ret, _ = self._check_data_exists(user, board)
-            self.read_status[user.id][board.id].set(no, 'R')
-            return True, 'OK'
+            ret, _ = self._initialize_data(user, board)
+            ret, msg = self._check_article_exist(board, no)
+            if ret:
+                status = self.read_status[user.id][board.id].set(no, 'R')
+                return True, 'OK'
+            else:
+                return ret, msg
 
     @require_login
     def mark_as_viewed(self, session_key, board_name, no):
@@ -279,8 +301,12 @@ class ReadStatusManager(object):
                 board = session.query(model.Board).filter_by(board_name=board_name).one()
             except InvalidRequestError:
                 return False, 'BOARD_NOT_EXIST'
-            ret, _ = self._check_data_exists(user, board)
-            self.read_status[user.id][board.id].set(no, 'V')
-            return True, 'OK'
+            ret, _ = self._initialize_data(user, board)
+            ret, msg = self._check_article_exist(board, no)
+            if ret:
+                status = self.read_status[user.id][board.id].set(no, 'V')
+                return True, 'OK'
+            else:
+                return ret, msg
 
 # vim: set et ts=8 sw=4 sts=4
