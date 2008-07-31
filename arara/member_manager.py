@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import md5
+import datetime
+import time
 
 from arara.util import require_login, filter_dict, is_keys_in_dict
 from arara import model
@@ -55,11 +57,24 @@ class MemberManager(object):
     def _set_login_manager(self, login_manager):
         self.login_manager = login_manager
 
-    def _authenticate(self, username, password):
+    def _logout_process(self, username):
+        session = model.Session()
+        try:
+            user = session.query(model.User).filter_by(username=username).one()
+            user.last_logout_time = datetime.datetime.fromtimestamp(time.time())
+            session.commit()
+            return True, 'OK'
+        except InvalidRequestError:
+            return False, 'DATABASE_ERROR'
+
+    def _authenticate(self, username, password, user_ip):
         session = model.Session()
         try:
             user = session.query(model.User).filter_by(username=username).one()
             if user.compare_password(password):
+                user.last_login_time = datetime.datetime.fromtimestamp(time.time())
+                user.last_login_ip = unicode(user_ip)
+                session.commit()
                 return True, None
             else:
                 return False, 'WRONG_PASSWORD'
