@@ -144,7 +144,13 @@ class MemberManager(object):
         
         session = model.Session()
         user = session.query(model.User).filter(model.User.username == username_to_confirm).one()
-        user_activation = session.query(model.UserActivation).filter_by(user_id=user.id).one()
+        try:
+            user_activation = session.query(model.UserActivation).filter_by(user_id=user.id).one()
+        except InvalidRequestError:
+            if user.activated == True:
+                return False, 'ALREADY_CONFIRMED'
+            else:
+                return False, 'DATABASE_ERROR'
 
         if user_activation.activation_code == confirm_key:
             user_activation.user.activated = True
