@@ -22,6 +22,8 @@ _, reg_key = server.member_manager.register(user_reg_dic)
 server.member_manager.confirm('jacob', reg_key)
 ret_jacob, sess_jacob = server.login_manager.login('jacob', 'jacob', '127.0.0.1')
 
+ret, sess_sysop = server.login_manager.login('SYSOP', 'SYSOP', '123.123.123.123')
+server.board_manager.add_board(sess_sysop, 'garbages', 'Garbages board')
 
 article_dic = {'author':'serialx', 'title': 'serialx is...', 'content': 'polarbear', 'method': 'web'}
 server.article_manager.write_article(sess, 'garbages', article_dic)
