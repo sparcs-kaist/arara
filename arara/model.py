@@ -40,7 +40,7 @@ class User(object):
 class UserActivation(object):
     def __init__(self, user, activation_code):
         self.user = user
-        self.activation_code = activation_code
+        self.activation_code = unicode(activation_code)
         self.issued_date = datetime.datetime.fromtimestamp(time.time())
 
     def __repr__(self):
