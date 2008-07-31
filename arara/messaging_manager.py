@@ -115,7 +115,7 @@ class MessagingManager(object):
             return False, 'WRONG_PAGENUM'
         offset = page_length * (page - 1)
         last = offset + page_length
-        received_messages = session.query(model.Message).filter(not_(model.message_table.c.received_deleted==True))[::-1][offset:last]
+        received_messages = session.query(model.Message).filter(not_(model.message_table.c.received_deleted==True))[offset:last].order_by(model.Message.id.desc()).all()
         received_messages_dict_list = self._get_dict_list(received_messages, MESSAGE_WHITELIST)
         for item in received_messages_dict_list:
             if item['from'] in blacklist_users:
