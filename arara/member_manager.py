@@ -46,6 +46,7 @@ class MemberManager(object):
             session = model.Session()
             session.save(user)
             user.activated = True
+            user.is_sysop = True
             session.commit()
         except IntegrityError:
             session.rollback()
@@ -115,9 +116,12 @@ class MemberManager(object):
             user_activation = model.UserActivation(user, activation_code)
             session.save(user_activation)
             session.commit()
-        except Exception, e:
+        except IntegrityError:
             session.rollback()
-            return False, e
+            return False, 'ALREADY_ADDED'
+        except InvalidRequestError:
+            session.rollback()
+            return False, 'DATABASE_ERROR'
 
         return True, activation_code
 
