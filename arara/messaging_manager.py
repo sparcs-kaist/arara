@@ -186,7 +186,7 @@ class MessagingManager(object):
         except InvalidRequestError:
             return False, "MSG_NOT_EXIST"
         message_dict = self._get_dict(message, MESSAGE_WHITELIST)
-        message.read_status = 'R'
+        message.read_status = u'R'
         session.commit()
         return True, message_dict
 
