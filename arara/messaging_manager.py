@@ -126,14 +126,15 @@ class MessagingManager(object):
         return True, received_messages_dict_list
 
     @require_login
-    def send_message(self, session_key, to, msg):
+    def send_message(self, session_key, to_data, msg):
         '''
         쪽지 전송하기
+        보내는 사람 항목인 to에는 한 명의 아이디 혹은 아이디의 리스트를 보낼 수 있음
 
         @type  session_key: string
         @param session_key: User Key
-        @type  to: string
-        @param to: Destination username
+        @type  to_data: string, list
+        @param to_data: Destination username
         @type  msg: string
         @param msg: Message string
         @rtype: string
@@ -146,19 +147,38 @@ class MessagingManager(object):
         '''
 
         ret, user_info = self.login_manager.get_session(session_key)
-        if not self.member_manager.is_registered(to):
-            return False, 'USER_NOT_EXIST'
-        session = model.Session()
-        from_user = session.query(model.User).filter_by(username=user_info['username']).one()
-        from_user_ip = user_info['ip']
-        to_user = session.query(model.User).filter_by(username=to).one()
-        message = model.Message(from_user, from_user_ip, to_user, msg)
-        try:
-            session.save(message)
-            session.commit()
-        except InvalidRequestError:
-            return False, "DATABASE_ERROR"
-        return True, 'OK'
+        if type(to_data) == list:
+            ret = []
+            for to in to_data: 
+                if self.member_manager.is_registered(to):
+                    session = model.Session()
+                    from_user = session.query(model.User).filter_by(username=user_info['username']).one()
+                    from_user_ip = user_info['ip']
+                    to_user = session.query(model.User).filter_by(username=to).one()
+                    message = model.Message(from_user, from_user_ip, to_user, msg)
+                    try:
+                        session.save(message)
+                        session.commit()
+                        ret.append('OK')
+                    except InvalidRequestError:
+                        return False, "DATABASE_ERROR"
+                else:
+                    ret.append('USER_NOT_EXIST')
+            return True, ret
+        else:
+            if not self.member_manager.is_registered(to_data):
+                return False, 'USER_NOT_EXIST'
+            session = model.Session()
+            from_user = session.query(model.User).filter_by(username=user_info['username']).one()
+            from_user_ip = user_info['ip']
+            to_user = session.query(model.User).filter_by(username=to_data).one()
+            message = model.Message(from_user, from_user_ip, to_user, msg)
+            try:
+                session.save(message)
+                session.commit()
+            except InvalidRequestError:
+                return False, "DATABASE_ERROR"
+            return True, 'OK'
 
     @require_login
     def read_message(self, session_key, msg_no):
