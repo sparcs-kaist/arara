@@ -1,0 +1,22 @@
+# Set the test database
+
+>>> import arara.model
+>>> arara.model.init_test_database()
+>>> import arara
+>>> server = arara.get_namespace()
+
+# Register one user, mikkang
+
+>>> user_reg_dic = {'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'signature':'mikkang', 'self_introduction':'mikkang', 'default_language':'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+>>> server.member_manager.confirm('mikkang', register_key)
+(True, 'OK')
+>>> ret, session_key = server.login_manager.login('mikkang', 'mikkang', '143.248.234.140')
+>>> ret
+True
+
+# Now test board_manager
+
+
