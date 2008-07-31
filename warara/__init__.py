@@ -1,5 +1,6 @@
 
-def check_logged_in(request, r):
+def check_logged_in(request):
+    r = {}
     if "arara_session_key" in request.session:
         sess = request.session["arara_session_key"]
         r['logged_in'] = True
@@ -7,5 +8,5 @@ def check_logged_in(request, r):
         sess = ""
         r['logged_in'] = False
 
-    return sess
+    return sess, r
 
