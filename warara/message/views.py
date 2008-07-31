@@ -43,8 +43,13 @@ def inbox(request):
     server = arara.get_server()
     r = {}
     sess = request.session["arara_session_key"]
+    if request.GET.has_key('page_no'):
+        page = request.GET['page_no']
+    else:
+        page = 1
+    page_length = 20
     r['logged_in'] = True
-    ret, r['message_list'] = server.messaging_manager.receive_list(sess)
+    ret, r['message_list'] = server.messaging_manager.receive_list(sess, page, page_length)
     assert ret, r['message_list']
     r = get_various_info(request, r)
     r['message_list_type'] = 'inbox'
@@ -57,8 +62,13 @@ def outbox(request):
     server = arara.get_server()
     r = {}
     sess = request.session["arara_session_key"]
+    if request.GET.has_key('page_no'):
+        page = request.GET['page_no']
+    else:
+        page = 1
+    page_length = 20
     r['logged_in'] = True
-    ret, r['message_list'] = server.messaging_manager.sent_list(sess)
+    ret, r['message_list'] = server.messaging_manager.sent_list(sess, page, page_length)
     assert ret, r['message_list']
     r = get_various_info(request, r)
     r['message_list_type'] = 'outbox'
@@ -120,7 +130,10 @@ def read(request, message_list_type, message_id):
     r['next'] = 'a'
     r['prev'] = 'a'
     message_id = int(message_id)
-    ret, r['message'] = server.messaging_manager.read_message(sess, message_id)
+    if message_list_type == 'inbox':
+        ret, r['message'] = server.messaging_manager.read_received_message(sess, message_id)
+    elif message_list_type == 'outbox':
+        ret, r['message'] = server.messaging_manager.read_sent_message(sess, message_id)
     assert ret, r['message']
 
     r['prev_message'] = {'mark':r['prev'], 'msg_no':''}
