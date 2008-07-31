@@ -30,7 +30,16 @@ class ara_post_article(ara_form):
                 retvalue= self.server.article_manager.write_article(self.session_key, self.board_name, {'title':title, 'content':body})
             else:
                 pass
-            print retvalue
+            if retvalue[0] == True:
+                confirm = widget.Dialog("Article posted.", ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
+                self.overlay = confirm
+                self.parent.run()
+                if confirm.b_pressed == "OK":
+                    self.parent.change_page("list_article",{'session_key':self.session_key, 'board_name':self.board_name})
+            else:
+                #self.overlay = None
+                #self.parent.run()
+                pass
         elif button == self.btncancel:
             self.parent.change_page("list_article",{'session_key':self.session_key, 'board_name':self.board_name})
         elif button == self.btnhelp:
