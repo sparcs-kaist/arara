@@ -115,7 +115,11 @@ class ArticleManager(object):
             if ret:
                 board = session.query(model.Board).filter_by(board_name=board_name).one()
                 article_count = session.query(model.Article).filter_by(board_id=board.id, root_id=None).count()
-                last_page = int(article_count / page_length) + 1
+                last_page = int(article_count / page_length)
+                if article_count % page_length != 0:
+                    last_page += 1
+                elif article_count == 0:
+                    last_page += 1
                 if page > last_page:
                     return False, 'WRONG_PAGENUM'
                 offset = page_length * (page - 1)
