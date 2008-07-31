@@ -85,12 +85,12 @@ True
 # Read the article again
 
 >>> server.article_manager.read(session_key, u'garbages', 1)
-(True, [{'root_id': 1, 'author_username': u'mikkang', 'hit': 2, 'blacklisted': False, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'root_id': 1, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
+(True, [{'root_id': 1, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'root_id': 1, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
 
 # List the article (should only be one article in the list
 
 >>> server.article_manager.article_list(session_key, u'garbages')
-(True, [{'author_username': u'mikkang', 'hit': 2, 'title': u'serialx is...', 'deleted': False, 'read_status': 'R', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 1}, {'last_page': 1}])
+(True, [{'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is...', 'deleted': False, 'read_status': 'R', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 1}, {'last_page': 1}])
 
 # Test for pagination
 
@@ -141,13 +141,42 @@ u'serialx is... 80'
 # Test for modification
 
 >>> server.article_manager.read(session_key, u'garbages', 1)
-(True, [{'root_id': 1, 'author_username': u'mikkang', 'hit': 3, 'blacklisted': False, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'root_id': 1, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
+(True, [{'root_id': 1, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'root_id': 1, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
 >>> article_dic = {'title': u'pipoket is...', 'content': u'woodori'}
 >>> server.article_manager.modify(session_key, u'garbages', 1, article_dic)
 (True, 1)
 >>> server.article_manager.read(session_key, u'garbages', 1)
-(True, [{'root_id': 1, 'author_username': u'mikkang', 'hit': 4, 'blacklisted': False, 'title': u'pipoket is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'woodori', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'root_id': 1, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
+(True, [{'root_id': 1, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'pipoket is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'woodori', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'root_id': 1, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
 
+# Now combacsa reads the modified article. The 'hit' should go up.
+>>> server.article_manager.read(session_key_combacsa, u'garbages', 1)
+(True, [{'root_id': 1, 'author_username': u'mikkang', 'hit': 2, 'blacklisted': False, 'title': u'pipoket is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'woodori', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'root_id': 1, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
+
+# Now serialx reads the modified article. The 'hit' should go up again.
+>>> server.article_manager.read(session_key_serialx, u'garbages', 1)
+(True, [{'root_id': 1, 'author_username': u'mikkang', 'hit': 3, 'blacklisted': False, 'title': u'pipoket is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'woodori', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'root_id': 1, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
+
+# But when combacsa reads the modified article again. The 'hit' won't(and shouldn't) go up.
+>>> server.article_manager.read(session_key_combacsa, u'garbages', 1)
+(True, [{'root_id': 1, 'author_username': u'mikkang', 'hit': 3, 'blacklisted': False, 'title': u'pipoket is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'woodori', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'root_id': 1, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
+
+# Now, serialx votes to the modified article
+>>> server.article_manager.vote_article(session_key_serialx, u'garbages', 1)
+(True, 'OK')
+
+# And serialx wants to re-vote the same article, but he can't :)
+>>> server.article_manager.vote_article(session_key_serialx, u'garbages', 1)
+(False, 'ALREADY_VOTED')
+
+# Read the article to check the vote status
+(True, [{'root_id': 1, 'author_username': u'mikkang', 'hit': 3, 'blacklisted': False, 'title': u'pipoket is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'woodori', 'vote': 1, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'root_id': 1, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
+
+# After some time, mikkang votes to the modified article
+>>> server.article_manager.vote_article(session_key, u'garbages', 1)
+(True, 'OK')
+
+# Read the article to check the vote status
+(True, [{'root_id': 1, 'author_username': u'mikkang', 'hit': 3, 'blacklisted': False, 'title': u'pipoket is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'woodori', 'vote': 2, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'root_id': 1, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
 
 # Board list
 

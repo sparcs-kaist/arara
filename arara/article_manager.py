@@ -172,8 +172,11 @@ class ArticleManager(object):
                     blacklist_users.add(blacklist_item['blacklisted_user_username'])
             try:
                 article = session.query(model.Article).filter_by(id=no).one()
-                article.hit += 1
-                session.commit()
+                ret, msg = self.read_status_manager.check_stat(session_key, board_name, no)
+                if ret:
+                    if msg == 'N':
+                        article.hit += 1
+                        session.commit()
             except InvalidRequestError:
                 return False, 'ARTICLE_NOT_EXIST'
             article_dict_list = self._article_thread_to_list(article)
@@ -182,9 +185,9 @@ class ArticleManager(object):
                     item['blacklisted'] = True
                 else:
                     item['blacklisted'] = False
-                    ret, msg = self.read_status_manager.mark_as_read(session_key, board_name, item['id'])
-                    if not ret:
-                        return ret, msg
+                ret, msg = self.read_status_manager.mark_as_read(session_key, board_name, item['id'])
+                if not ret:
+                    return ret, msg
             return True, article_dict_list
         else:
             return ret, message
@@ -213,8 +216,21 @@ class ArticleManager(object):
         ret, message = self._is_board_exist(board_name)
         if ret:
             session = model.Session()
-            #TODO: 어떻게 하면 중복추천을 막을 수 있을까?
-        pass
+            board = session.query(model.Board).filter_by(board_name=board_name).one()
+            try:
+                article = session.query(model.Article).filter_by(id=article_no).one()
+            except InvalidRequestError:
+                return False, 'ARTICLE_NOT_EXIST'
+            user = session.query(model.User).filter_by(username=user_info['username']).one()
+            vote_unique_check = session.query(model.ArticleVoteStatus).filter_by(user_id=user.id, board_id=board.id, article_id = article.id).all()
+            if vote_unique_check:
+                return False, 'ALREADY_VOTED'
+            else:
+                article.vote += 1
+                vote = model.ArticleVoteStatus(user, board, article)
+                session.save(vote)
+                session.commit()
+                return True, 'OK'
 
     @require_login
     def write_article(self, session_key, board_name, article_dic):
