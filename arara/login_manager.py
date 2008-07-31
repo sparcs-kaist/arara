@@ -2,6 +2,7 @@
 
 import md5 as hashlib
 import datetime
+import time
 
 from arara import model
 
@@ -12,6 +13,9 @@ class LoginManager(object):
     
     def __init__(self):
         self.session_dic = {}
+
+    def _set_member_manager(self, member_manager):
+        self.member_manager = member_manager
 
     def guest_login(self, guest_ip):
         '''
@@ -51,11 +55,11 @@ class LoginManager(object):
                 3. 데이터베이스 관련 에러: False, 'DATABASE_ERROR'
         '''
 
-        success, msg = self.member_manager._authenticate(username, password)
+        success, msg = self.member_manager._authenticate(username, password, user_ip)
         if success:
             hash = hashlib.md5(username+password+datetime.datetime.today().__str__()).hexdigest()
-            timestamp = datetime.datetime.isoformat(datetime.datetime.now())
-            self.session_dic[hash] = {'username': username, 'ip': user_ip, 'logintime': timestamp}
+            timestamp = datetime.datetime.fromtimestamp(time.time())
+            self.session_dic[hash] = {'username': username, 'ip': user_ip, 'logintime': msg}
             return True, hash
         return success, msg
 
@@ -74,13 +78,14 @@ class LoginManager(object):
         '''
 
         try:
-            self.session_dic.pop(session_key)
-            return True, 'OK'
+            ret, msg = self.member_manager._logout_process(self.session_dic[session_key]['username'])
+            if ret:
+                self.session_dic.pop(session_key)
+                return True, 'OK'
+            else:
+                return ret, msg
         except KeyError:
             return False, 'NOT_LOGGEDIN'
-
-    def _set_member_manager(self, member_manager):
-        self.member_manager = member_manager
 
     def update_session(self, session_key):
         '''
@@ -113,6 +118,27 @@ class LoginManager(object):
             session_info = self.session_dic[session_key]
             return True, session_info
         except KeyError:
+            return False, 'NOT_LOGGEDIN'
+
+    def get_current_online(self, session_key):
+        '''
+        현재 온라인 상태인 사용자를 반환하는 함수
+
+        @type  session_key: string
+        @param session_key: User Key
+        @rtype: list
+        @return:
+            1. 반환 성공: True, List of online users
+            2. 반환 실패
+                1. 로그인 되지 않은 사용자: False, 'NOT_LOGGEDIN'
+        '''
+
+        ret = []
+        if self.session_dic.has_key(session_key):
+            for user_info in self.session_dic.values():
+                ret.append(user_info)
+            return True, ret
+        else:
             return False, 'NOT_LOGGEDIN'
 
     def is_logged_in(self, session_key):
