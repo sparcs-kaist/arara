@@ -74,9 +74,19 @@ class ara_join(ara_form):
             self.mainpile.keypress(size, key)
 
     def on_button_clicked(self, button):
+        retvalue = None
         if button == self.joinbutton.body:
             reg_dic = {'username':self.idedit.body.get_edit_text(), 'password':self.pwedit.body.get_edit_text(), 'nickname':self.nickedit.body.get_edit_text(), 'email':self.emailedit.body.get_edit_text(), 'signature':'', 'self_introduction':'','default_language':'ko'}
-            print self.server.member_manager.register(reg_dic)
+            retvalue = self.server.member_manager.register(reg_dic)
+            if retvalue[0] == True:
+                confirm = widget.Dialog("Account created.\nPlease confirm it.", 
+                        ["OK"], ('menu', 'bg', 'bgf'), 30, 6, self)
+                self.overlay = confirm
+                self.parent.run()
+                if confirm.b_pressed == "OK":
+                    self.parent.change_page("login",{})
+                else:
+                    pass
         elif button == self.cancelbutton.body:
             self.parent.change_page("login",{})
 

@@ -17,12 +17,24 @@ class ara_write_pm(ara_form):
         self.mainpile.keypress(size, key)
 
     def on_button_clicked(self, button):
+        sended = True
+        retvalue = None
         if button == self.btnokay:
             to = self.idedit.get_edit_text()
             to = [x.strip() for x in to.split(';')]
             body = self.bodyedit.body.get_edit_text()
             for sender in to:
-                print self.server.messaging_manager.send_message(self.session_key, sender, body)
+                retvaule = self.server.messaging_manager.send_message(self.session_key, sender, body)
+                sended = sended & retvalue[0]
+                if sended:
+                    confirm = widget.Dialog("Message sent.", ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
+                    self.overlay = confirm
+                    self.parent.run()
+                    if confirm.b_pressed == "OK":
+                        self.parent.change_page("user_preferences",{'session_key':self.session_key})
+                    else:
+                        pass
+
         elif button == self.btncancel:
             self.parent.change_page("list_pm", {'session_key':self.session_key})
         elif button == self.btnhelp:
