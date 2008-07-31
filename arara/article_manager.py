@@ -123,6 +123,11 @@ class ArticleManager(object):
                 article_list = session.query(model.Article).filter_by(board_id=board.id, root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
                 article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
                 article_dict_list.append({'last_page': last_page})
+                for article in article_dict_list:
+                    if article.has_key('id'):
+                        ret, msg = self.read_status_manager.check_stat(session_key, board_name, article['id'])
+                        if ret:
+                            article['read_status'] = msg
                 return True, article_dict_list
             else:
                 return ret, 'BOARD_NOT_EXIST'
@@ -177,6 +182,9 @@ class ArticleManager(object):
                     item['blacklisted'] = True
                 else:
                     item['blacklisted'] = False
+                    ret, msg = self.read_status_manager.mark_as_read(session_key, board_name, item['id'])
+                    if not ret:
+                        return ret, msg
             return True, article_dict_list
         else:
             return ret, message
