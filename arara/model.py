@@ -16,20 +16,20 @@ class User(object):
         self.signature = signature
         self.self_introduction = self_introduction
         self.default_language = default_language
-        self.activated = 'False'
+        self.activated = False
         self.widget = 0
-        self.layout = ''
+        self.layout = u''
         self.join_time = datetime.datetime.fromtimestamp(time.time())
         self.last_login_time = None 
         self.last_logout_time = None
-        self.last_login_ip = ''
+        self.last_login_ip = u''
         self.is_sysop = False
 
     def set_password(self, password):
-        self.password = md5.md5(password).hexdigest()
+        self.password = unicode(md5.md5(password).hexdigest())
 
     def compare_password(self, password):
-        if md5.md5(password).hexdigest() == self.password:
+        if unicode(md5.md5(password).hexdigest()) == self.password:
             return True
         else:
             return False
@@ -109,7 +109,7 @@ class Message(object):
         self.message = message
         self.received_deleted = False
         self.sent_deleted = False
-        self.read_status = 'N'
+        self.read_status = u'N'
 
     def __repr__(self):
         return "<Message('%s','%s','%s')>" % (self.from_user, self.to_user, self.message)
@@ -157,7 +157,7 @@ users_table = Table('users', metadata,
 )
 
 user_activation_table = Table('user_activation', metadata,
-    Column('user_id', Unicode(40), ForeignKey('users.id'), primary_key=True),
+    Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
     Column('activation_code', Unicode(50), unique=True),
     Column('issued_date', DateTime),
 )
