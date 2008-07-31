@@ -10,8 +10,8 @@ import listview
 
 class articlelist_rowitem(widget.FieldRow):
     fields = [
-        ('new', 1, 'right'),
         ('number', 4, 'left'),
+        ('new', 1, 'right'),
         ('author',12, 'left'),
         ('title',0, 'left'),
         ('date',5, 'left'),
@@ -29,7 +29,7 @@ class ara_list_article(ara_form):
         mainpile_focus = self.mainpile.get_focus()
         if key == "enter":
             # self.boardlist.get_body().get_focus()[0].w.w.widget_list : 현재 활성화된 항목
-            article_id  = int(self.articlelist.get_body().get_focus()[0].w.w.widget_list[1].get_text()[0])
+            article_id  = int(self.articlelist.get_body().get_focus()[0].w.w.widget_list[0].get_text()[0])
             if self.hasarticle:
                 self.parent.change_page("read_article", {'session_key':self.session_key, 'board_name':self.board_name, 'article_id':article_id})
         elif key == 'w':
@@ -41,6 +41,7 @@ class ara_list_article(ara_form):
 
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Article list",align='center'))
+        self.header = urwid.AttrWrap(self.header, 'reversed')
         self.infotext1 = urwid.Filler(urwid.Text("(N)ext/(P)revious Page (n)ext/(p)revious article (Number+Enter) Jump to article"))
         self.infotext2 = urwid.Filler(urwid.Text("(Enter,space) Read (w)rite (f)ind (/)Find next (?) Find previous (h)elp (q)uit"))
 

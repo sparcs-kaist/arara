@@ -17,6 +17,7 @@ class ara_read_pm(ara_forms):
 
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Read private message",align='center'))
+        self.header = urwid.AttrWrap(self.header, 'reversed')
         functext = urwid.Filler(urwid.Text('(n)ext/(p)revious (b)lock (d)elete (r)eply (h)elp (q)uit'))
 	titletext = urwid.Filler(urwid.Text('Title: %s' % "윅베간다"))
 	infotext = urwid.Filler(urwid.Text('Sender: %(id)s (%(nickname)s)     %(date)s' % {'id':'peremen', 'nickname':'peremen','date':'today'}))

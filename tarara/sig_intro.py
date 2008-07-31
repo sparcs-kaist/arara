@@ -25,6 +25,7 @@ class ara_sig_intro(ara_form):
 
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Change Introduction & Signature", align='center'))
+        self.header = urwid.AttrWrap(self.header, 'reversed')
         self.myinfo = self.server.member_manager.get_info(self.session_key)
         self.myinfo = self.myinfo[1]
 

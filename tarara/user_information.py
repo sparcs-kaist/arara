@@ -39,6 +39,7 @@ class ara_user_information(ara_form):
 
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u"ARA: User Information", align='center'))
+        self.header = urwid.AttrWrap(self.header, 'reversed')
         menuitems = [widget.Item(" * "+w+"\n", None, 'selected') for w in self.menu]
         self.menulist = urwid.ListBox(urwid.SimpleListWalker(menuitems))
 
@@ -49,7 +50,9 @@ class ara_user_information(ara_form):
 
         infotext = urwid.Filler(urwid.Text("  * Use [Tab] or arrow key to move each items"))
 
-        content = [('fixed',1, self.header),('fixed',1,widget.dash),self.maincolumn,('fixed',1,widget.dash),('fixed',1,infotext),]
+        content = [('fixed',1, self.header),('fixed',1,widget.blanktext),
+                self.maincolumn,('fixed',1,widget.dash),
+                ('fixed',1,infotext),]
         self.mainpile = urwid.Pile(content)
 
 if __name__=="__main__":

@@ -89,7 +89,11 @@ class ara_display:
             self.ara_query_user = ara_query_user(self, args['session_key'])
             self.view = self.ara_query_user
         elif pagename == "helpviewer":
-            self.ara_helpviewer = ara_helpviewer(self, args['session_key'], args['topic'], args['caller'], args['caller_args'])
+            self.ara_helpviewer = ara_helpviewer(self, 
+                    session_key = args['session_key'],
+                    topic = args['topic'],
+                    caller = args['caller'],
+                    caller_args = args['caller_args'])
             self.view = self.ara_helpviewer
 
     def main(self):

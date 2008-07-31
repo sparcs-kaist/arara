@@ -10,8 +10,8 @@ import listview
 
 class pmlist_rowitem(widget.FieldRow):
     fields = [
-        ('new', 1, 'right'),
         ('number', 4, 'left'),
+        ('new', 1, 'right'),
         ('author',12, 'left'),
         ('title',0, 'left'),
         ('date',5, 'left'),
@@ -58,7 +58,7 @@ class ara_list_pm(ara_form):
         elif key == 'q':
             self.parent.change_page("main", {'session_key':self.session_key})
         elif mainpile_focus == self.pmlist and key=='enter':
-            pm_id = int(self.pmlist.get_body().get_focus()[0].w.w.widget_list[1].get_text()[0])
+            pm_id = int(self.pmlist.get_body().get_focus()[0].w.w.widget_list[0].get_text()[0])
         else:
             self.mainpile.keypress(size, key)
 
@@ -70,6 +70,7 @@ class ara_list_pm(ara_form):
 
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Private message",align='center'))
+        self.header = urwid.AttrWrap(self.header, 'reversed')
         self.infotext = urwid.Filler(urwid.Text(" (N)ext/(P)revious Page (w)rite (B)lock (h)elp (q)uit"))
 
         itemlist = []

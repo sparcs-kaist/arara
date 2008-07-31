@@ -30,11 +30,12 @@ class ara_query_user(ara_form):
 
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Query User",align='center'))
+        self.header = urwid.AttrWrap(self.header, 'reversed')
         self.idedit = urwid.Filler(urwid.Edit(caption=" * Enter ID: ", wrap='clip'))
-        self.btnsearch = urwid.Filler(urwid.Button("Search by nickname", self.on_button_clicked))
+        self.btnsearch = urwid.Filler(urwid.Button("Search", self.on_button_clicked))
         self.btncancel = urwid.Filler(urwid.Button("Cancel", self.on_button_clicked))
 
-        self.buttoncolumn = urwid.Columns([('weight', 70, self.idedit), ('weight', 20, self.btnsearch),('weight',10,self.btncancel)])
+        self.buttoncolumn = urwid.Columns([('weight', 60, self.idedit), ('weight', 20, self.btnsearch),('weight',20,self.btncancel)])
 
 	self.idtext = urwid.Filler(urwid.Text(' * ID: '))
 	self.nicktext = urwid.Filler(urwid.Text(' * Nickname: '))
@@ -44,16 +45,11 @@ class ara_query_user(ara_form):
 
 	actiontext = urwid.Filler(urwid.Text(' * Press [Enter] to query another user, [q] to quit'))
 
-        content = [('fixed',1, self.header),
-            ('fixed',1,widget.dash),
-            ('fixed',1,self.buttoncolumn),
-            ('fixed',1,widget.dash),
-            ('fixed',1,self.idtext),
-            ('fixed',1,self.nicktext),
-            ('fixed',6,self.introtext),
-            ('fixed',6,self.sigtext),
-            ('fixed',1,self.lasttext),
-            ('fixed',1,widget.dash),
+        content = [('fixed',1, self.header), ('fixed',1,widget.blanktext),
+            ('fixed',1,self.buttoncolumn), ('fixed',1,widget.dash),
+            ('fixed',1,self.idtext), ('fixed',1,self.nicktext),
+            ('fixed',6,self.introtext), ('fixed',6,self.sigtext),
+            ('fixed',1,self.lasttext), ('fixed',1,widget.dash),
             actiontext,
             ]
         self.mainpile = urwid.Pile(content)

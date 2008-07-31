@@ -39,7 +39,8 @@ class ara_user_preferences(ara_form):
             self.mainpile.keypress(size, key)
 
     def __initwidgets__(self):
-	header = urwid.Filler(urwid.Text("ARA: User Preferences", align='center'))
+	self.header = urwid.Filler(urwid.Text("ARA: User Preferences", align='center'))
+        self.header = urwid.AttrWrap(self.header, 'reversed')
 
 	self.idedit = urwid.Filler(urwid.Text("ID: %(id)s\nE-Mail: %(email)s" % {"id":"peremen","email":"ara@peremen.name"}))
 	iddesc = urwid.Filler(urwid.Text("You can't change ID\nand E-Mail"))
@@ -71,7 +72,9 @@ class ara_user_preferences(ara_form):
 
         infotext = urwid.Filler(urwid.Text("  * Use [Tab] or arrow key to move each items"))
 
-        content = [('fixed',1,header),self.contentpile,('fixed',1,widget.dash),('fixed',1,infotext),('fixed',1,widget.blank),('fixed',1,self.buttoncolumn)]
+        content = [('fixed',1,self.header),self.contentpile,
+                ('fixed',1,widget.dash),('fixed',1,infotext),
+                ('fixed',1,widget.blank),('fixed',1,self.buttoncolumn)]
         self.mainpile = urwid.Pile(content)
 
 if __name__=="__main__":

@@ -38,12 +38,13 @@ class ara_list_boards(ara_form):
             assert("Not logged in")
         boards = boardlist[1]#.keys()
 	self.header = urwid.Filler(urwid.Text(u"ARA: List boards",align='center'))
+        self.header = urwid.AttrWrap(self.header, 'reversed')
         self.boardnameedit = urwid.Filler(urwid.Edit(caption=" * Enter board name: ", wrap='clip'))
         itemlist = []
         if len(boards) > 0:
             boardcounttext = urwid.Filler(urwid.Text(' * There are %s boards.' % len(boards)))
             for data in boards:
-                itemlist += [{'new':'N', 'name':data, 'desc':u'설명'}]
+                itemlist += [{'new':'N', 'name':data['board_name'], 'desc':data['board_description']}]
         else:
             boardcounttext = urwid.Filler(urwid.Text(' * No boards found. Have a nice day.'))
             itemlist = [{'new':' ','name':'', 'desc':u'No boards found. Have a nice day.'}]

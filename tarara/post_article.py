@@ -19,16 +19,18 @@ class ara_post_article(ara_form):
 
     def on_button_clicked(self, button):
         if button == self.btnokay:
+            retvalue = None
             title = self.titleedit.body.get_edit_text()
             body = self.bodyedit.body.get_edit_text()
             if self.mode == 'modify':
-                print self.server.article_manager.modify(self.session_key, self.board_name, self.article_id, {'title':title, 'content':body})
+                retvalue= self.server.article_manager.modify(self.session_key, self.board_name, self.article_id, {'title':title, 'content':body})
             elif self.mode == 'reply':
-                print self.server.article_manager.write_reply(self.session_key, self.board_name, self.article_id, {'title':title, 'content':body})
+                retvalue= self.server.article_manager.write_reply(self.session_key, self.board_name, self.article_id, {'title':title, 'content':body})
             elif self.mode == 'post':
-                print self.server.article_manager.write_article(self.session_key, self.board_name, {'title':title, 'content':body})
+                retvalue= self.server.article_manager.write_article(self.session_key, self.board_name, {'title':title, 'content':body})
             else:
                 pass
+            print retvalue
         elif button == self.btncancel:
             self.parent.change_page("list_article",{'session_key':self.session_key, 'board_name':self.board_name})
         elif button == self.btnhelp:

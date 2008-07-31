@@ -22,7 +22,8 @@ class ara_change_password(ara_form):
             self.parent.change_page("user_preferences", {'session_key':self.session_key})
 
     def __initwidgets__(self):
-	header = urwid.Filler(urwid.Text("ARA: Change Password", align='center'))
+	self.header = urwid.Filler(urwid.Text("ARA: Change Password", align='center'))
+        self.header = urwid.AttrWrap(self.header, 'reversed')
 
         self.oldpwedit = urwid.Filler(widget.PasswordEdit(caption="Old password:", wrap='clip'))
         oldpwdesc = urwid.Filler(urwid.Text("Please enter your\nold password"))
@@ -45,7 +46,7 @@ class ara_change_password(ara_form):
         infotext = urwid.Filler(urwid.Text("""  * Press [Enter] to proceed to the next item, [Shift+Enter] - previous item
   * Press [Tab] to directly jump to OK or Cancel button"""))
 
-        content = [('fixed',1,header),self.pwpile,('fixed',2,infotext),('fixed',1,widget.blank),('fixed',1,buttoncolumn)]
+        content = [('fixed',1,self.header),self.pwpile,('fixed',2,infotext),('fixed',1,widget.blank),('fixed',1,buttoncolumn)]
         self.mainpile = urwid.Pile(content)
 
 if __name__=="__main__":

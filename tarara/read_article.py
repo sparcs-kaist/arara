@@ -25,7 +25,8 @@ class ara_read_article(ara_form):
         self.board_name = board_name
         self.article_id = article_id
         self.title_template = Template("Title: ${TITLE}")
-        self.info_template = Template("Author: ${AUTHOR}(${NICKNAME})    Hit: ${HIT} Reply: ${REPLY} ${DATE}")
+        self.author_template = Template("Author: ${AUTHOR} (${NICKNAME})")
+        self.info_template = Template("Date: ${DATE} Hit: ${HIT} Reply: ${REPLY}")
         self.reply_template = Template("Reply by ${AUTHOR}(${NICKNAME}) on ${DATE} ${NEW}")
         ara_form.__init__(self, parent, session_key)
 
@@ -33,9 +34,12 @@ class ara_read_article(ara_form):
         thread = self.server.article_manager.read(self.session_key, board_name, article_id)
         if thread[0]:
             body = thread[1][0]
-            self.titletext.body.set_text(self.title_template.safe_substitute(TITLE=body['title']))
-            self.infotext.body.set_text(self.info_template.safe_substitute(AUTHOR=body['author_username'],
-                NICKNAME='blahblah', HIT=body['hit'], REPLY=str(len(thread[1])-1),
+            self.titletext.body.set_text(self.title_template.safe_substitute(
+                TITLE=body['title']))
+            self.authortext.body.set_text(self.author_template.safe_substitute(
+                AUTHOR=body['author_username'], NICKNAME='blahblah'))
+            self.infotext.body.set_text(self.info_template.safe_substitute(
+                HIT=body['hit'], REPLY=str(len(thread[1])-1), 
                 DATE=body['date'].strftime("%Y/%m/%d %H:%M")))
             self.articletext.body.set_text(body['content'])
 
@@ -45,13 +49,17 @@ class ara_read_article(ara_form):
             'k': 'up',
         }
         self.titletext = urwid.Filler(urwid.Text(''))
+        self.authortext = urwid.Filler(urwid.Text(''))
         self.infotext = urwid.Filler(urwid.Text(''))
         self.articletext = urwid.Filler(urwid.Text(''))
         self.set_article(self.board_name, self.article_id)
 	self.header = urwid.Filler(urwid.Text(u"ARA: Read article",align='center'))
         functext = urwid.Filler(urwid.Text('(n)ext/(p)revious (b)lock (e)dit (d)elete (f)old/retract (r)eply (h)elp (q)uit'))
 
-        content = [('fixed',1, self.header),('fixed',1,functext),('fixed',1,self.titletext),('fixed',1,self.infotext),('fixed',1,widget.dash),self.articletext]
+        content = [('fixed',1,self.authortext),('fixed',1,self.infotext),
+                ('fixed',1,self.titletext),
+                ('fixed',1,widget.dash),self.articletext,
+                ('fixed',1,urwid.AttrWrap(functext, 'reversed'))]
         self.mainpile = urwid.Pile(content)
 
         return self.mainpile

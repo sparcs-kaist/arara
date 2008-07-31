@@ -49,24 +49,24 @@ class ara_main(ara_form):
         elif key == "enter":
             if self.maincolumn.get_focus() == self.menulist:
                 pos = self.menulist.get_focus()[1]
-                if pos == 1:
+                if pos == 0:
                     # TODO: 새 글 읽기로 가기
                     pass
-                elif pos == 2:
+                elif pos == 1:
                     self.parent.change_page("list_boards", {'session_key':self.session_key})
-                elif pos == 3:
+                elif pos == 2:
                     self.parent.change_page("list_pm", {'session_key':self.session_key})
-                elif pos==4:
+                elif pos == 3:
                     self.parent.change_page("user_preferences", {'session_key':self.session_key})
-                elif pos==5:
+                elif pos == 4:
                     self.parent.change_page("user_information", {'session_key':self.session_key})
-                elif pos==6:
+                elif pos == 5:
                     self.parent.change_page("helpviewer",{'session_key':self.session_key,'topic':'ara_help', 'caller':'main', 'caller_args':{'session_key':self.session_key}})
-                elif pos==7:
+                elif pos == 6:
                     self.parent.change_page("helpviewer",{'session_key':self.session_key,'topic':'about', 'caller':'main', 'caller_args':{'session_key':self.session_key}})
-                elif pos==8:
+                elif pos == 7:
                     self.parent.change_page("welcome", {'session_key':self.session_key})
-                elif pos==9:
+                elif pos == 8:
                     self.server.login_manager.logout(self.session_key)
                     sys.exit(0)
         else:
@@ -74,8 +74,8 @@ class ara_main(ara_form):
 
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Main Menu", align='center'))
-        menuitems = [urwid.Text('\n')]
-        menuitems +=[widget.Item(" * "+w+"\n", None, 'selected') for w in self.menu]
+        self.header = urwid.AttrWrap(self.header, 'reversed')
+        menuitems = [widget.Item(" * "+w+"\n", None, 'selected') for w in self.menu]
         self.menulist = urwid.ListBox(urwid.SimpleListWalker(menuitems))
 
 	self.tbtext = urwid.Filler(urwid.Text(u"Today Best", align='center'))
@@ -97,7 +97,9 @@ u"""  * Press [Tab] to jump between menu, today best, weekly best
 
         self.maincolumn = urwid.Columns([('weight',40,self.menulist),('weight',60,self.bests)])
 
-        content = [('fixed',1, self.header),('fixed',1,widget.dash),self.maincolumn,('fixed',1,widget.dash),('fixed',2,self.copyrightnotice)]
+        content = [('fixed',1, self.header),('fixed',1,widget.blanktext),
+                self.maincolumn, ('fixed',1,widget.dash),
+                ('fixed',2,self.copyrightnotice)]
         self.mainpile = urwid.Pile(content)
 
         self.keymap = {
