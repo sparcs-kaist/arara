@@ -132,6 +132,7 @@ def reply(request, board_name, article_id):
 def vote(request, board_name, root_id, article_no):
     server = arara.get_server()
     sess = request.session['arara_session_key']
-    server.vote_article(sess, board_name, int(article_no))
+    ret, message = server.article_manager.vote_article(sess, board_name, int(article_no))
+    assert ret, message
 
     return HttpResponseRedirect('/board/%s/%s' % (board_name, root_id))
