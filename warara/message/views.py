@@ -10,7 +10,7 @@ import math
 def get_various_info(request, r):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
-    page_no = request.GET.get('page_no', 1)
+    page_no = r['page_no']
     page_no = int(page_no)
     page_range_length = 10
     r['num_new_message'] = 0
@@ -25,14 +25,14 @@ def get_various_info(request, r):
     page_group_no = math.ceil(float(page_no)/page_range_length)
     r['page_num'] = r['message_list'].pop()['last_page']
     r['message_num'] = len(r['message_list'])
-    page_o = Paginator([x+1 for x in range(r['page_num'])],10)
+    page_o = Paginator([x+1 for x in range(r['page_num'])], 10)
     r['page_list'] = page_o.page(page_group_no).object_list
 
     if page_o.page(page_group_no).has_next():
-        r['next_page_group'] = {'mark':r['next'], 'no':page_o.page(page_o.next_page_number()).start_index()}
+        r['next_page_group'] = {'mark':r['next'], 'no':page_o.page(page_o.page(page_group_no).next_page_number()).start_index()}
         r['last_page'] = {'mark':r['next_group'], 'no':r['page_num']}
     if page_o.page(page_group_no).has_previous():
-        r['prev_page_group'] = {'mark':r['prev'], 'no':page_o.page(page_o.previous_page_number()).end_index()}
+        r['prev_page_group'] = {'mark':r['prev'], 'no':page_o.page(page_o.page(page_group_no).previous_page_number()).end_index()}
         r['first_page'] = {'mark':r['prev_group'], 'no':1}
     return r
 
@@ -50,6 +50,15 @@ def inbox(request):
     page_length = 20
     r['logged_in'] = True
     ret, r['message_list'] = server.messaging_manager.receive_list(sess, page, page_length)
+    if not ret:
+        page = int(page)
+        while page>0:
+            page -= 1
+            ret, r['message_list'] = server.messaging_manager.receive_list(sess, page, page_length)
+            if ret:
+                break;
+    r['page_no'] = page
+
     assert ret, r['message_list']
     r = get_various_info(request, r)
     r['message_list_type'] = 'inbox'
@@ -69,6 +78,15 @@ def outbox(request):
     page_length = 20
     r['logged_in'] = True
     ret, r['message_list'] = server.messaging_manager.sent_list(sess, page, page_length)
+    if not ret:
+        page = int(page)
+        while page>0:
+            page -= 1
+            ret, r['message_list'] = server.messaging_manager.receive_list(sess, page, page_length)
+            if ret:
+                break;
+    r['page_no'] = page
+    
     assert ret, r['message_list']
     r = get_various_info(request, r)
     r['message_list_type'] = 'outbox'
@@ -91,9 +109,15 @@ def send(request, msg_no=0):
     msg_no = int(msg_no)
 
     if msg_no:
-        ret, message = server.messaging_manager.read_message(sess, msg_no)
+        ret, message = server.messaging_manager.read_received_message(sess, msg_no)
         assert ret, message
         r['default_receiver'] = message['from']
+
+    if request.GET.get('mutli', 0): #for test only
+        multi = request.GET['multi']
+        multi = int(multi)
+        for i in range(multi):
+            ret, message = server.messaging_manager.send_message(sess, 'mikkang', str(i))
 
     rendered = render_to_string('message/send.html', r)
     return HttpResponse(rendered)
@@ -150,8 +174,21 @@ def read(request, message_list_type, message_id):
     rendered = render_to_string('message/read.html', r)
     return HttpResponse(rendered)
 
-def delete(request, msg_no):
-    msg_no = int(msg_no)
+def delete(request):
+    server = arara.get_server()
+    sess = request.session["arara_session_key"]
+    ret, msg = 1, 1
 
-    rendered = render_to_string('message/error.html', {'e':'There is no delete API function'})
-    return HttpResponse(rendered)
+    if request.POST.get('del_msg_no', 0):
+        ret, msg = server.messaging_manager.delete_message(sess, int(request.POST.get('del_msg_no', 0)))
+    elif request.method == "POST":
+        for x in range(21): #need_modify
+            del_msg_no = request.POST.get('ch_del_%s' % x, 0)
+            if del_msg_no:
+                del_msg_no = int(del_msg_no)
+                ret, msg = server.messaging_manager.delete_message(sess, int(del_msg_no));
+    assert ret, msg
+
+    return HttpResponseRedirect("/message/%s/?page_no=%s" %
+            (request.POST.get('message_list_type', 'inbox'),
+                request.POST.get('page_no', 1)))

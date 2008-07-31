@@ -17,13 +17,12 @@
 {% endifequal %}
 </div>
 
+<form action="/message/delete/" method="POST">
 <div id="message_list_table">
     <table border="1">
         <tr>
             <th>
-                <form>
-                    <input type="checkbox"></input>
-                </form>
+                <input type="checkbox"></input>
             </th>
             <th>
                 {{person_type}}
@@ -38,9 +37,7 @@
         {% for message in message_list %}
         <tr>
             <td>
-                <form>
-                    <input type="checkbox"></input>
-                </form>
+                <input type="checkbox" name="ch_del_{{forloop.counter0}}" value="{{message.id}}"></input>
             </td>
             <td>
                 {% ifequal message_list_type 'inbox' %}
@@ -61,13 +58,12 @@
 </div>
 
 <div id="message_buttons">
-	<span>
-		<form action="/message/delete/" method="POST">
-			<input type="hidden" name="del_message_no[]" value="">
-			<input type="submit" value="delete">
-            <input type="hidden" id="message_list_type" value="{{message_list_type}}">
-		</form>
-	</span>
+    <input type="hidden" value="{{page_no}}" name="page_no">
+    <input type="hidden" value="{{message_list_type}}" name="message_list_type">
+	<input type="submit" value="delete">
+</div>
+</form>
+<div id="message_page_move">
 	<span>
         <a href="/message/{{message_list_type}}?page_no={{first_page.no}}">{{first_page.mark}}</a>
         <a href="/message/{{message_list_type}}?page_no={{prev_page_group.no}}">{{prev_page_group.mark}}</a>

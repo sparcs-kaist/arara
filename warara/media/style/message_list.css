@@ -1,6 +1,5 @@
 #message_list_table table {
     border:1px solid #000;
-    background: #fff;
     border-collapse: collapse;
 }
 
@@ -16,4 +15,8 @@
 
 .makered {
     color: red;
+}
+
+#message_buttons, #message_page_move{
+	display:inline;
 }
