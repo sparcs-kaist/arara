@@ -64,8 +64,7 @@ class ara_main(ara_form):
                     # TODO: 도움말로 가기
                     pass
                 elif pos==7:
-                    # TODO: 아라 정보 보이기
-                    pass
+                    self.parent.change_page("helpviewer",{'session_key':self.session_key,'topic':'about', 'caller':'main', 'caller_args':{'session_key':self.session_key}})
                 elif pos==8:
                     self.parent.change_page("welcome", {'session_key':self.session_key})
                 elif pos==9:

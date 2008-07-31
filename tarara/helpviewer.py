@@ -11,7 +11,7 @@ class ara_helpviewer(ara_form):
     def __init__(self, parent, session_key = None, topic= "", caller="main",caller_args ={}):
         self.topic = topic
         self.caller = caller
-        self.caller_args = {}
+        self.caller_args = caller_args
         ara_form.__init__(self, parent, session_key)
 
     def keypress(self, size, key):
@@ -30,7 +30,7 @@ class ara_helpviewer(ara_form):
 
         self.entertext = urwid.Filler(urwid.Text("Press [Enter] key to return"))
 
-        content = [self.banner,('fixed',1, self.toptext),content, ("fixed", 1, self.entertext)]
+        content = [('fixed',1, self.toptext),content, ("fixed", 1, self.entertext)]
         self.mainpile = urwid.Pile(content)
 
 if __name__=="__main__":
