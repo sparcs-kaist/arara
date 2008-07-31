@@ -79,6 +79,12 @@ class Article(object):
     def __repr__(self):
         return "<Article('%s', '%s', %s)>" % (self.title, self.author.username, str(self.date))
 
+class ArticleVoteStatus(object):
+    def __init__(self, user, board, article):
+        self.user = user
+        self.board = board
+        self.article = article
+
 class ReadStatus(object):
     def __init__(self, user, board, read_status_data):
         self.user = user
@@ -185,6 +191,13 @@ articles_table = Table('articles', metadata,
     Column('last_modified_date', DateTime),
 )
 
+article_vote_table = Table('article_vote_status', metadata,
+    Column('id', Integer, primary_key=True),
+    Column('board_id', Integer, ForeignKey('boards.id'), nullable=False),
+    Column('article_id', Integer, ForeignKey('articles.id'), nullable=False),
+    Column('user_id', Integer, ForeignKey('users.id'), nullable=False),
+)
+
 read_status_table = Table('read_status', metadata,
     Column('id', Integer, primary_key=True),
     Column('user_id', Integer, ForeignKey('users.id')),
@@ -245,7 +258,6 @@ mapper(UserActivation, user_activation_table, properties={
 mapper(Article, articles_table, properties={
     'author':relation(User, backref='articles', lazy=False),
     'board':relation(Board, backref='articles', lazy=True),
-
     'children':relation(Article,
         primaryjoin=articles_table.c.parent_id==articles_table.c.id,
         backref=backref('parent', lazy=True,
@@ -260,6 +272,12 @@ mapper(Article, articles_table, properties={
             primaryjoin=articles_table.c.root_id==articles_table.c.id,
             )
         )
+})
+
+mapper(ArticleVoteStatus, article_vote_table, properties={
+    'article':relation(Article, backref='voted_users', lazy=True),
+    'user':relation(User, backref='voted_articles', lazy=True),
+    'board':relation(Board, backref=None, lazy=True),
 })
 
 mapper(ReadStatus, read_status_table, properties={
