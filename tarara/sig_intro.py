@@ -12,10 +12,19 @@ class ara_sig_intro(ara_form):
         self.mainpile.keypress(size, key)
 
     def on_button_clicked(self, button):
+        retvalue = None
         if button == self.btnokay:
             self.myinfo['signature'] = self.sigedit.body.get_edit_text()
             self.myinfo['self_introduce'] = self.introedit.body.get_edit_text()
-            print self.server.member_manager.modify(self.session_key, self.myinfo)
+            retvalue =  self.server.member_manager.modify(self.session_key, self.myinfo)
+            if retvalue[0] == True:
+                confirm = widget.Dialog("Sig/intro changed.", ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
+                self.overlay = confirm
+                self.parent.run()
+                if confirm.b_pressed == "OK":
+                    self.parent.change_page("user_preferences",{'session_key':self.session_key})
+                else:
+                    pass
         elif button == self.btncancel:
             self.parent.change_page("user_preferences",{'session_key':self.session_key})
 
