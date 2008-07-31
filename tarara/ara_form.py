@@ -18,6 +18,7 @@ class ara_form(urwid.Widget):
 	self.server = xmlrpclib.Server("http://%s:%s" % (XMLRPC_HOST, XMLRPC_PORT), use_datetime = True)
         self.set_session_key(session_key)
         self.parent = parent
+        self.overlay = None
         self.__initwidgets__()
 
     def set_session_key(self, session_key):

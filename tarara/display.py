@@ -29,6 +29,9 @@ class ara_display:
         ('header', 'black', 'dark cyan', 'standout'),
         ('selected', 'default', 'light gray', 'bold'),
         ('reversed', 'white', 'black', 'bold'),
+        ('menu', 'black', 'dark cyan', 'standout'),
+        ('bg', 'light gray', 'dark blue'),
+        ('bgf', 'black', 'light gray', 'standout'),
         ])
     def __init__(self):
         self.ara_login = ara_login(self)
@@ -103,18 +106,26 @@ class ara_display:
         self.ui.run_wrapper(self.run)
 
     def run(self):
-        size = self.ui.get_cols_rows()
+        self.size = self.ui.get_cols_rows()
         while True:
             #self.view = self.ara_login
-            canvas = self.view.render(size, focus = 1)
-            self.ui.draw_screen(size, canvas)
+            if self.view.overlay:
+                canvas = self.view.overlay.render(self.size, focus = 1)
+            else:
+                canvas = self.view.render(self.size, focus = 1)
+            self.ui.draw_screen(self.size, canvas)
             keys = None
             while not keys:
                 keys = self.ui.get_input()
                 for k in keys:
                     if k =='window resize':
-                        size = self.ui.get_cols_rows()
-                    k = self.view.keypress(size, k)
+                        self.size = self.ui.get_cols_rows()
+                    if self.view.overlay:
+                        k = self.view.overlay.keypress(self.size, k)
+                        if self.view.overlay.quit:
+                            return
+                    else:
+                        k = self.view.keypress(self.size, k)
 
 if __name__ == "__main__":
     ara_display().main()

@@ -67,8 +67,15 @@ class ara_main(ara_form):
                 elif pos == 7:
                     self.parent.change_page("welcome", {'session_key':self.session_key})
                 elif pos == 8:
-                    self.server.login_manager.logout(self.session_key)
-                    sys.exit(0)
+                    confirm = widget.Dialog("Really quit?", ["Yes", "No"], ('menu', 'bg', 'bgf'), 30, 5, self)
+                    self.overlay = confirm
+                    self.parent.run()
+                    if confirm.b_pressed == "Yes":
+                        self.server.login_manager.logout(self.session_key)
+                        sys.exit(0)
+                    else:
+                        self.overlay = None
+                        self.parent.run()
         else:
             self.mainpile.keypress(size, key)
 
