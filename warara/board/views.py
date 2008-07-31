@@ -15,9 +15,8 @@ def index(request):
     return HttpResponse(rendered)
 
 def list(request, board_name):
-    r = {}
     server = arara.get_server()
-    sess = warara.check_logged_in(request, r)
+    sess, r = warara.check_logged_in(request)
     page_no = request.GET.get('page_no', 1)
     page_no = int(page_no)
     page_range_length = 10
