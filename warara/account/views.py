@@ -94,10 +94,11 @@ def password_modify(request):
     session_key = request.session['arara_session_key']
     server = arara.get_server()
     if request.method == 'POST':
+        username = request.session['arara_username']
         last_password = request.POST['last_password']
         password = request.POST['password']
-        user_information_dic = {'current_password':last_password, 'new_password':password}
-        ret, message = server.member_manager.modify(session_key, user_information_dic)
+        user_information_dic = {'username':username, 'current_password':last_password, 'new_password':password}
+        ret, message = server.member_manager.modify_password(session_key, user_information_dic)
         assert ret, message
         return HttpResponseRedirect("/account/")
     else:
