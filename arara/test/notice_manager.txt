@@ -4,9 +4,9 @@ Bootstrap test
 >>> import arara
 >>> server = arara.get_namespace()
 
->>> server.member_manager.is_registered('SYSOP')
+>>> server.member_manager.is_registered(u'SYSOP')
 True
->>> ret, SYSOP_session_key = server.login_manager.login('SYSOP', 'SYSOP', '143.248.234.145')
+>>> ret, SYSOP_session_key = server.login_manager.login(u'SYSOP', u'SYSOP', '143.248.234.145')
 >>> ret
 True
 
@@ -21,7 +21,7 @@ Fake time
 >>> org_time = time.time
 >>> time.time = stub_time
 
->>> notice_reg_dic = { 'content':'hahahah', 'due_date':datetime.datetime.fromtimestamp(time.time()), 'weight':'1' }
+>>> notice_reg_dic = { 'content':u'hahahah', 'due_date':datetime.datetime.fromtimestamp(time.time()), 'weight':'1' }
 >>> server.notice_manager.add_welcome(SYSOP_session_key, notice_reg_dic)
 (True, 'OK')
 >>> server.notice_manager.add_banner(SYSOP_session_key, notice_reg_dic)

@@ -7,11 +7,11 @@
 
 # Login as SYSOP and create 'garbage' board
 
->>> ret, session_key_sysop = server.login_manager.login('SYSOP', 'SYSOP', '123.123.123.123')
+>>> ret, session_key_sysop = server.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123')
 >>> ret
 True
 
->>> server.board_manager.add_board(session_key_sysop, 'garbages', 'Garbage Board')
+>>> server.board_manager.add_board(session_key_sysop, u'garbages', u'Garbage Board')
 (True, 'OK')
 
 # Register one user, mikkang
@@ -20,9 +20,9 @@ True
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
->>> server.member_manager.confirm('mikkang', register_key)
+>>> server.member_manager.confirm(u'mikkang', register_key)
 (True, 'OK')
->>> ret, session_key = server.login_manager.login('mikkang', 'mikkang', '143.248.234.140')
+>>> ret, session_key = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.140')
 >>> ret
 True
 
@@ -40,40 +40,40 @@ True
 
 # Read_Status_Manager check!
 
->>> server.read_status_manager.check_stat(session_key, 'garbages', 1)
+>>> server.read_status_manager.check_stat(session_key, u'garbages', 1)
 (True, 'N')
->>> server.read_status_manager.check_stats(session_key, 'garbages', [1,2])
+>>> server.read_status_manager.check_stats(session_key, u'garbages', [1,2])
 (True, ['N', 'N'])
->>> server.read_status_manager.mark_as_read(session_key, 'garbages', 1)
+>>> server.read_status_manager.mark_as_read(session_key, u'garbages', 1)
 (True, 'OK')
->>> server.read_status_manager.mark_as_viewed(session_key, 'garbages', 2)
+>>> server.read_status_manager.mark_as_viewed(session_key, u'garbages', 2)
 (True, 'OK')
->>> server.read_status_manager.check_stats(session_key, 'garbages', [1,2])
+>>> server.read_status_manager.check_stats(session_key, u'garbages', [1,2])
 (True, ['R', 'V'])
 
 Error Test
 
->>> server.read_status_manager.check_stat(session_key, 'garbages', 3)
+>>> server.read_status_manager.check_stat(session_key, u'garbages', 3)
 (False, 'ARTICLE_NOT_EXIST')
->>> server.read_status_manager.check_stat('asdfasdf', 'garbages', 1)
+>>> server.read_status_manager.check_stat('asdfasdf', u'garbages', 1)
 (False, 'NOT_LOGGEDIN')
 
->>> server.read_status_manager.check_stat(session_key, 'NOTEXISTBOARD', 1)
+>>> server.read_status_manager.check_stat(session_key, u'NOTEXISTBOARD', 1)
 (False, 'BOARD_NOT_EXIST')
 
->>> server.read_status_manager.check_stats(session_key, 'garbages', [1,2,3])
+>>> server.read_status_manager.check_stats(session_key, u'garbages', [1,2,3])
 (False, 'ARTICLE_NOT_EXIST')
->>> server.read_status_manager.check_stats('asdfasdf', 'garbages', [1,2])
+>>> server.read_status_manager.check_stats('asdfasdf', u'garbages', [1,2])
 (False, 'NOT_LOGGEDIN')
 
->>> server.read_status_manager.mark_as_read(session_key, 'garbages', 3)
+>>> server.read_status_manager.mark_as_read(session_key, u'garbages', 3)
 (False, 'ARTICLE_NOT_EXIST')
->>> server.read_status_manager.mark_as_read('asdfasdf', 'garbages', 1)
+>>> server.read_status_manager.mark_as_read('asdfasdf', u'garbages', 1)
 (False, 'NOT_LOGGEDIN')
 
->>> server.read_status_manager.mark_as_viewed(session_key, 'garbages', 3)
+>>> server.read_status_manager.mark_as_viewed(session_key, u'garbages', 3)
 (False, 'ARTICLE_NOT_EXIST')
->>> server.read_status_manager.mark_as_viewed('asdfasdf', 'garbages', 2)
+>>> server.read_status_manager.mark_as_viewed('asdfasdf', u'garbages', 2)
 (False, 'NOT_LOGGEDIN')
 
 #Reset the database

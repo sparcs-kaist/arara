@@ -5,37 +5,37 @@
 
 Register one user, combacsa. then login as existing user mikkang
 
->>> user_reg_dic = {'username':'combacsa', 'password':'combacsa', 'nickname':'combacsa', 'email':'combacsa', 'signature':'combacsa', 'self_introduction':'combacsa', 'default_language':'english' }
+>>> user_reg_dic = {'username':u'combacsa', 'password':u'combacsa', 'nickname':u'combacsa', 'email':u'combacsa', 'signature':u'combacsa', 'self_introduction':u'combacsa', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
->>> server.member_manager.confirm('combacsa', register_key)
+>>> server.member_manager.confirm(u'combacsa', register_key)
 (True, 'OK')
->>> ret, session_key_combacsa = server.login_manager.login('combacsa', 'combacsa', '143.248.234.140')
+>>> ret, session_key_combacsa = server.login_manager.login(u'combacsa', u'combacsa', '143.248.234.140')
 >>> ret
 True
 
 # Register one user, mikkang
 
->>> user_reg_dic = {'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'signature':'mikkang', 'self_introduction':'mikkang', 'default_language':'english' }
+>>> user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
->>> server.member_manager.confirm('mikkang', register_key)
+>>> server.member_manager.confirm(u'mikkang', register_key)
 (True, 'OK')
->>> ret, session_key = server.login_manager.login('mikkang', 'mikkang', '143.248.234.140')
+>>> ret, session_key = server.login_manager.login(u'mikkang', u'mikkang', '143.248.234.140')
 >>> ret
 True
 
 # Register one user, serialx
 
->>> user_reg_dic = {'username':'serialx', 'password':'serialx', 'nickname':'serialx', 'email':'serialx', 'signature':'serialx', 'self_introduction':'serialx', 'default_language':'english' }
+>>> user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
->>> server.member_manager.confirm('serialx', register_key)
+>>> server.member_manager.confirm(u'serialx', register_key)
 (True, 'OK')
->>> ret, session_key_serialx = server.login_manager.login('serialx', 'serialx', '143.248.234.140')
+>>> ret, session_key_serialx = server.login_manager.login(u'serialx', u'serialx', u'143.248.234.140')
 >>> ret
 True
 
@@ -50,25 +50,25 @@ True
 
 now Test BlacklistManager!
 
->>> server.blacklist_manager.add(session_key, 'combacsa')
+>>> server.blacklist_manager.add(session_key, u'combacsa')
 (True, 'OK')
->>> server.blacklist_manager.add(session_key, 'pv457')
+>>> server.blacklist_manager.add(session_key, u'pv457')
 (False, 'USERNAME_NOT_EXIST')
->>> server.blacklist_manager.add(session_key, 'combacsa')
+>>> server.blacklist_manager.add(session_key, u'combacsa')
 (False, 'ALREADY_ADDED')
 >>> server.blacklist_manager.list(session_key)
 (True, [{'username': u'mikkang', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'block_article': True, 'blacklisted_user_username': u'combacsa', 'block_message': True, 'blacklisted_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}])
->>> server.blacklist_manager.modify(session_key, {'blacklisted_user_username': 'combacsa', 'block_article': 'False', 'block_message': 'True'})
+>>> server.blacklist_manager.modify(session_key, {'blacklisted_user_username': u'combacsa', 'block_article': 'False', 'block_message': 'True'})
 (True, 'OK')
 >>> server.blacklist_manager.list(session_key)
 (True, [{'username': u'mikkang', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'block_article': True, 'blacklisted_user_username': u'combacsa', 'block_message': True, 'blacklisted_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}])
->>> server.blacklist_manager.modify(session_key, {'blacklisted_user_username': 'pv457', 'block_article': 'False', 'block_message': 'True'})
+>>> server.blacklist_manager.modify(session_key, {'blacklisted_user_username': u'pv457', 'block_article': 'False', 'block_message': 'True'})
 (False, 'USERNAME_NOT_EXIST')
->>> server.blacklist_manager.delete(session_key, 'combacsa')
+>>> server.blacklist_manager.delete(session_key, u'combacsa')
 (True, 'OK')
->>> server.blacklist_manager.delete(session_key, 'combacsa')
+>>> server.blacklist_manager.delete(session_key, u'combacsa')
 (False, 'USERNAME_NOT_IN_BLACKLIST')
->>> server.blacklist_manager.delete(session_key, 'pv457')
+>>> server.blacklist_manager.delete(session_key, u'pv457')
 (False, 'USERNAME_NOT_EXIST')
 >>> server.login_manager.logout(session_key)
 (True, 'OK')

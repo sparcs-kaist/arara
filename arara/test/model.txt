@@ -15,31 +15,31 @@
 
 # Login as SYSOP and create 'garbage' board
 
->>> ret, session_key_sysop = server.login_manager.login('SYSOP', 'SYSOP', '123.123.123.123')
+>>> ret, session_key_sysop = server.login_manager.login(u'SYSOP', u'SYSOP', '123.123.123.123')
 >>> ret
 True
 
->>> server.board_manager.add_board(session_key_sysop, 'garbages', 'Garbage Board')
+>>> server.board_manager.add_board(session_key_sysop, u'garbages', u'Garbage Board')
 (True, 'OK')
 
 # Register one user, serialx
->>> user_reg_dic = {'username':'serialx', 'password':'serialx', 'nickname':'serialx', 'email':'serialx', 'signature':'serialx', 'self_introduction':'serialx', 'default_language':'english' }
+>>> user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
->>> server.member_manager.confirm('serialx', register_key)
+>>> server.member_manager.confirm(u'serialx', register_key)
 (True, 'OK')
->>> ret, session_key_serialx = server.login_manager.login('serialx', 'serialx', '143.248.234.140')
+>>> ret, session_key_serialx = server.login_manager.login(u'serialx', u'serialx', '143.248.234.140')
 >>> ret
 True
 
 >>> session = Session()
->>> board = session.query(Board).filter_by(board_name='garbages').one()
->>> serialx = session.query(User).filter_by(username='serialx').one()
->>> a = Article(board, 'title1', 'content', serialx, '0.0.0.0', None)
->>> b = Article(board, 'title2', 'content', serialx, '0.0.0.0', a)
->>> c = Article(board, 'title3', 'content', serialx, '0.0.0.0', b)
->>> d = Article(board, 'title4', 'content', serialx, '0.0.0.0', c)
+>>> board = session.query(Board).filter_by(board_name=u'garbages').one()
+>>> serialx = session.query(User).filter_by(username=u'serialx').one()
+>>> a = Article(board, u'title1', u'content', serialx, u'0.0.0.0', None)
+>>> b = Article(board, u'title2', u'content', serialx, u'0.0.0.0', a)
+>>> c = Article(board, u'title3', u'content', serialx, u'0.0.0.0', b)
+>>> d = Article(board, u'title4', u'content', serialx, u'0.0.0.0', c)
 >>> session.save(a)
 >>> session.save(b)
 >>> session.save(c)
@@ -56,9 +56,9 @@ True
 
 
 >>> session = Session()
->>> a = session.query(Article).filter_by(title='title1').one()
->>> c = session.query(Article).filter_by(title='title3').one()
->>> d = session.query(Article).filter_by(title='title4').one()
+>>> a = session.query(Article).filter_by(title=u'title1').one()
+>>> c = session.query(Article).filter_by(title=u'title3').one()
+>>> d = session.query(Article).filter_by(title=u'title4').one()
 >>> d.root
 <Article('title1', 'serialx', 1970-01-01 09:00:01.100000)>
 >>> d.parent

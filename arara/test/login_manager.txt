@@ -8,34 +8,34 @@ load LoginManager & MemberManager
 
 pipoket Login Test
 
->>> user_reg_dic = {'username':'pipoket', 'password':'pipoket', 'nickname':'pipoket', 'email':'pipoket', 'signature':'pipoket', 'self_introduction':'pipoket', 'default_language':'english' }
+>>> user_reg_dic = {'username':u'pipoket', 'password':u'pipoket', 'nickname':u'pipoket', 'email':u'pipoket', 'signature':u'pipoket', 'self_introduction':u'pipoket', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
->>> server.member_manager.confirm('pipoket', register_key)
+>>> server.member_manager.confirm(u'pipoket', unicode(register_key))
 (True, 'OK')
->>> server.login_manager.login('pipoket', 'not_test', '143.248.234.145')
+>>> server.login_manager.login(u'pipoket', u'not_test', '143.248.234.145')
 (False, 'WRONG_PASSWORD')
->>> server.login_manager.login('not_test', 'test', '143.248.234.145')
+>>> server.login_manager.login(u'not_test', u'test', '143.248.234.145')
 (False, 'WRONG_USERNAME')
->>> ret, session_key = server.login_manager.login('pipoket', 'pipoket', '143.248.234.145')
+>>> ret, session_key = server.login_manager.login(u'pipoket', u'pipoket', u'143.248.234.145')
 >>> ret
 True
->>> session_bee = 'thisisnotapropermd5sessionkey...'
->>> server.login_manager.is_logged_in(session_bee)
+>>> session_bee = u'thisisnotapropermd5sessionkey...'
+>>> server.login_manager.is_logged_in(unicode(session_bee))
 False
->>> server.login_manager.is_logged_in(session_key)
+>>> server.login_manager.is_logged_in(unicode(session_key))
 True
->>> _, result = server.login_manager.get_session(session_key)
+>>> _, result = server.login_manager.get_session(unicode(session_key))
 >>> result['ip']
-'143.248.234.145'
+u'143.248.234.145'
 >>> result['username']
-'pipoket'
->>> server.login_manager.logout(session_bee)
+u'pipoket'
+>>> server.login_manager.logout(unicode(session_bee))
 (False, 'NOT_LOGGEDIN')
->>> server.login_manager.logout(session_key)
+>>> server.login_manager.logout(unicode(session_key))
 (True, 'OK')
->>> server.login_manager.logout(session_key)
+>>> server.login_manager.logout(unicode(session_key))
 (False, 'NOT_LOGGEDIN')
 
 # Reset the database
