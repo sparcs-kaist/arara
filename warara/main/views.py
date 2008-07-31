@@ -6,8 +6,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse
 
 def index(request):
-    r = {}
-    sess = warara.check_logged_in(request, r)
+    sess, r = warara.check_logged_in(request)
     SAMPLE_BEST = {
             'todays_best_list': [
                 {'title': '아라가 새로 바뀌었다!', 'date': datetime.datetime.now(), 'reply_count': 213},
