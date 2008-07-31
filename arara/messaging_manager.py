@@ -70,13 +70,24 @@ class MessagingManager(object):
         ret, user_info = self.login_manager.get_session(session_key)
         session = model.Session()
         sent_user = session.query(model.User).filter_by(username=user_info['username']).one()
-        sent_messages_count = session.query(model.Message).filter(and_(model.message_table.c.from_id==sent_user.id, not_(model.message_table.c.sent_deleted==True))).count()
-        last_page = int(sent_messages_count / page_length) + 1
+        sent_messages_count = session.query(model.Message).filter(
+                and_(model.message_table.c.from_id==sent_user.id,
+                    not_(model.message_table.c.sent_deleted==True)
+                    )).count()
+        page = int(page)
+        last_page = int(sent_messages_count / page_length)
+        if sent_messages_count % page_length != 0:
+            last_page += 1
+        elif sent_messages_count == 0:
+            last_page += 1
         if page > last_page:
             return False, 'WRONG_PAGENUM'
         offset = page_length * (page - 1)
         last = offset + page_length
-        sent_messages = session.query(model.Message).filter(and_(model.message_table.c.from_id==sent_user.id, not_(model.message_table.c.sent_deleted==True)))[::-1][offset:last]
+        sent_messages = session.query(model.Message).filter(
+                and_(model.message_table.c.from_id==sent_user.id,
+                    not_(model.message_table.c.sent_deleted==True)
+                    ))[offset:last].order_by(model.Message.id.desc()).all()
         sent_messages_dict_list = self._get_dict_list(sent_messages, MESSAGE_WHITELIST)
         sent_messages_dict_list.append({'last_page': last_page})
         return True, sent_messages_dict_list
@@ -109,13 +120,24 @@ class MessagingManager(object):
         for blacklist_item in blacklist_dict_list:
             if blacklist_item['block_message']:
                 blacklist_users.add(blacklist_item['blacklisted_user_username'])
-        received_messages_count = session.query(model.Message).filter(and_(model.message_table.c.to_id==to_user.id, not_(model.message_table.c.received_deleted==True))).count()
-        last_page = int(received_messages_count / page_length) + 1
+        received_messages_count = session.query(model.Message).filter(
+                and_(model.message_table.c.to_id==to_user.id,
+                    not_(model.message_table.c.received_deleted==True)
+                    )).count()
+        last_page = int(received_messages_count / page_length)
+        page = int(page)
+        if received_messages_count % page_length != 0:
+            last_page += 1
+        elif received_messages_count == 0:
+            last_page += 1
         if page > last_page:
             return False, 'WRONG_PAGENUM'
         offset = page_length * (page - 1)
         last = offset + page_length
-        received_messages = session.query(model.Message).filter(not_(model.message_table.c.received_deleted==True))[offset:last].order_by(model.Message.id.desc()).all()
+        received_messages = session.query(model.Message).filter(
+                and_(model.message_table.c.to_id==to_user.id, 
+                    not_(model.message_table.c.received_deleted==True)
+                    ))[offset:last].order_by(model.Message.id.desc()).all()
         received_messages_dict_list = self._get_dict_list(received_messages, MESSAGE_WHITELIST)
         for item in received_messages_dict_list:
             if item['from'] in blacklist_users:
@@ -181,7 +203,7 @@ class MessagingManager(object):
             return True, 'OK'
 
     @require_login
-    def read_message(self, session_key, msg_no):
+    def read_received_message(self, session_key, msg_no):
         '''
         쪽지 하나 읽어오기
 
@@ -203,6 +225,36 @@ class MessagingManager(object):
         to_user = session.query(model.User).filter_by(username=user_info['username']).one()
         try:
             message = session.query(model.Message).filter(and_(model.message_table.c.to_id==to_user.id, model.message_table.c.id==msg_no, not_(model.message_table.c.received_deleted==True))).one()
+        except InvalidRequestError:
+            return False, "MSG_NOT_EXIST"
+        message_dict = self._get_dict(message, MESSAGE_WHITELIST)
+        message.read_status = u'R'
+        session.commit()
+        return True, message_dict
+
+    @require_login
+    def read_sent_message(self, session_key, msg_no):
+        '''
+        쪽지 하나 읽어오기
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type  msg_no: integer
+        @param msg_no: Message Number
+        @rtype: dictionary
+        @return:
+            1. 읽어오기 성공: True, Message Dictionary
+            2. 읽어오기 실패:
+                1. 메세지가 존재하지 않음: False, 'MSG_NOT_EXIST'
+                2. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
+                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        '''
+        
+        ret, user_info = self.login_manager.get_session(session_key)
+        session = model.Session()
+        from_user = session.query(model.User).filter_by(username=user_info['username']).one()
+        try:
+            message = session.query(model.Message).filter(and_(model.message_table.c.from_id==from_user.id, model.message_table.c.id==msg_no, not_(model.message_table.c.sent_deleted==True))).one()
         except InvalidRequestError:
             return False, "MSG_NOT_EXIST"
         message_dict = self._get_dict(message, MESSAGE_WHITELIST)
