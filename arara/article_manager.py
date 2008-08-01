@@ -5,7 +5,7 @@ import time
 from arara.util import require_login, filter_dict
 from arara import model
 from sqlalchemy.exceptions import InvalidRequestError
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, not_
 
 WRITE_ARTICLE_DICT = ['title', 'content']
 READ_ARTICLE_WHITELIST = ['id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted'
@@ -61,6 +61,50 @@ class ArticleManager(object):
                 stack.append((child, depth+1))
         return ret
 
+    def _get_today_best_article(self, session_key, board=None, count=5):
+        session = model.Session()
+        # 1 day is 86400 sec
+        time_to_filter = datetime.datetime.fromtimestamp(time.time()-86400)
+        if board:
+            today_best_article = session.query(model.Article).filter(and_(
+                    model.articles_table.c.board_id==board.id,
+                    model.articles_table.c.root_id==None,
+                    model.articles_table.c.last_modified_date > time_to_filter,
+                    not_(model.articles_table.c.deleted==True))
+                    )[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc()).all()
+            today_best_article_dict_list = self._get_dict_list(today_best_article, LIST_ARTICLE_WHITELIST)
+            return True, today_best_article_dict_list
+        else:
+            today_best_article = session.query(model.Article).filter(and_(
+                    model.articles_table.c.root_id==None,
+                    model.articles_table.c.last_modified_date > time_to_filter,
+                    not_(model.articles_table.c.deleted==True))
+                    )[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc()).all()
+            today_best_article_dict_list = self._get_dict_list(today_best_article, LIST_ARTICLE_WHITELIST)
+            return True, today_best_article_dict_list
+
+    def _get_weekly_best_article(self, session_key, board=None, count=5):
+        session = model.Session()
+        # 1 week is 604800 sec
+        time_to_filter = datetime.datetime.fromtimestamp(time.time()-604800)
+        if board:
+            weekly_best_article = session.query(model.Article).filter(and_(
+                    model.articles_table.c.board_id==board.id,
+                    model.articles_table.c.root_id==None,
+                    model.articles_table.c.last_modified_date > time_to_filter,
+                    not_(model.articles_table.c.deleted==True))
+                    )[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc()).all()
+            weekly_best_article_dict_list = self._get_dict_list(weekly_best_article, LIST_ARTICLE_WHITELIST)
+            return True, weekly_best_article_dict_list
+        else:
+            weekly_best_article = session.query(model.Article).filter(and_(
+                    model.articles_table.c.root_id==None,
+                    model.articles_table.c.last_modified_date > time_to_filter,
+                    not_(model.articles_table.c.deleted==True))
+                    )[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc()).all()
+            weekly_best_article_dict_list = self._get_dict_list(weekly_best_article, LIST_ARTICLE_WHITELIST)
+            return True, weekly_best_article_dict_list
+
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
         session = model.Session()
@@ -83,10 +127,47 @@ class ArticleManager(object):
             return_list.append(filtered_dict)
         return return_list
 
+    def get_today_best_list(self, session_key, count=5):
+        '''
+        투베를 가져오는 함수
 
-#   def _get_board_class(self, board_name):
-#       if not board_name in BOARDS:
-#           return False, "BOARD_NOT_EXIST"
+        @type  session_key: string
+        @param session_key: User Key
+        @type  count: integer
+        @param count: Number of today's best articles to get
+        @rtype: list
+        @return:
+            1. 투베를 가져오는데 성공: True, Article list of Today's Best
+            2. 투베를 가져오는데 실패:
+                1. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        '''
+        session = model.Session()
+        ret, today_best_list = self._get_today_best_article(session_key, None, count)
+        if ret:
+            return True, today_best_list
+        else:
+            return False, 'DATABASE_ERROR'
+
+    def get_weekly_best_list(self, session_key, count=5):
+        '''
+        윅베를 가져오는 함수
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type  count: integer
+        @param count: Number of today's best articles to get
+        @rtype: list
+        @return:
+            1. 투베를 가져오는데 성공: True, Article list of Today's Best
+            2. 투베를 가져오는데 실패:
+                1. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        '''
+        session = model.Session()
+        ret, weekly_best_list = self._get_weekly_best_article(session_key, None, count)
+        if ret:
+            return True, weekly_best_list
+        else:
+            return False, 'DATABASE_ERROR'
 
     def article_list(self, session_key, board_name, page=1, page_length=20):
         '''
@@ -115,6 +196,7 @@ class ArticleManager(object):
             if ret:
                 board = session.query(model.Board).filter_by(board_name=board_name).one()
                 article_count = session.query(model.Article).filter_by(board_id=board.id, root_id=None).count()
+                page_length -= 2
                 last_page = int(article_count / page_length)
                 if article_count % page_length != 0:
                     last_page += 1
@@ -126,6 +208,10 @@ class ArticleManager(object):
                 last = offset + page_length
                 article_list = session.query(model.Article).filter_by(board_id=board.id, root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
                 article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
+                ret, weekly_best_article_dict_list = self._get_weekly_best_article(session_key, board, 1)
+                ret, today_best_article_dict_list = self._get_today_best_article(session_key, board, 1)
+                article_dict_list.insert(0, weekly_best_article_dict_list[0])
+                article_dict_list.insert(0, today_best_article_dict_list[0])
                 article_dict_list.append({'last_page': last_page})
                 for article in article_dict_list:
                     if article.has_key('id'):
@@ -241,7 +327,7 @@ class ArticleManager(object):
         '''
         DB에 게시글 하나를 작성함
 
-        Article Dictionary { title, content, attach1, attach2 }
+        Article Dictionary { title, content, is_searchable, attach1, attach2 }
         attach1, attach2는 아직 구현되지 않음
 
         @type  session_key: string
@@ -272,6 +358,9 @@ class ArticleManager(object):
                                         user_info['ip'],
                                         None)
             session.save(new_article)
+            if article_dic.has_key('is_searchable'):
+                if not article_dic['is_searchable']:
+                    new_article.is_searchable = False
             session.commit()
         else:
             return ret, message
