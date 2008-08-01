@@ -19,7 +19,7 @@
         </tr>
         {% for todays_best in todays_best_list %}
         <tr class="best_articles_table_content">
-            <td>{{todays_best.title}}</td>
+            <td>{% if logged_in %}<a href="/board/{{todays_best.board_name}}/{{todays_best.id}}/">{{todays_best.title}}</a>{% else %}{{todays_best.title}}{% endif %}</td>
             <td>{{todays_best.vote}}</td>
             <td>{{todays_best.date|date:"m.d H:i"}}</td>
         </tr>
@@ -36,7 +36,7 @@
         </tr>
         {% for weekly_best in weekly_best_list %}
         <tr class="best_articles_table_content">
-            <td>{{weekly_best.title}}</td>
+            <td>{% if logged_in %}<a href="/board/{{weekly_best.board_name}}/{{weekly_best.id}}/">{{weekly_best.title}}</a>{% else %}{{weekly_best.title}}{% endif %}</td>
             <td>{{weekly_best.vote}}</td>
             <td>{{weekly_best.date|date:"m.d H:i"}}</td>
         </tr>
