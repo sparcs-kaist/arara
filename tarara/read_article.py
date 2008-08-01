@@ -26,7 +26,7 @@ class ara_read_article(ara_form):
         self.article_id = article_id
         self.title_template = Template("Title: ${TITLE}")
         self.author_template = Template("Author: ${AUTHOR} (${NICKNAME})")
-        self.info_template = Template("Date: ${DATE} Hit: ${HIT} Reply: ${REPLY}")
+        self.info_template = Template("Date: ${DATE} Hit: ${HIT} Reply: ${REPLY} Vote: ${VOTE}")
         self.reply_template = Template("Reply by ${AUTHOR}(${NICKNAME}) on ${DATE} ${NEW}")
         ara_form.__init__(self, parent, session_key)
 
@@ -40,7 +40,7 @@ class ara_read_article(ara_form):
                 AUTHOR=body['author_username'], NICKNAME='blahblah'))
             self.infotext.body.set_text(self.info_template.safe_substitute(
                 HIT=body['hit'], REPLY=str(len(thread[1])-1), 
-                DATE=body['date'].strftime("%Y/%m/%d %H:%M")))
+                DATE=body['date'].strftime("%Y/%m/%d %H:%M"), VOTE=str(body['vote'])))
             self.articletext.body.set_text(body['content'])
 
     def __initwidgets__(self):
