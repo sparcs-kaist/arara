@@ -48,3 +48,11 @@ col#board_title_col {
 .row_highlight {
     background-color: #ddf;
 }
+
+.todays_best {
+    background-color: #dfd;
+}
+
+.weekly_best {
+    background-color: #fdd;
+}

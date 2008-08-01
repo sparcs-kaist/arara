@@ -35,7 +35,7 @@
         </thead>
         <tbody>
             {% for article in article_list %}
-            <tr>
+            <tr class="{% ifequal article.type 'today' %}todays_best{% else %}{% ifequal article.type 'weekly' %}weekly_best{% endifequal %}{% endifequal %}">
                 <td class="column cursor_col"></td>
 		<td class="column cursor_col">{{article.read_status}}</td>
                 <td class="column id_col">{{article.id}}</td>
