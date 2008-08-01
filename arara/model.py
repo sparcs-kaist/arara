@@ -66,6 +66,7 @@ class Article(object):
         self.hit = 0
         self.vote = 0
         self.reply_count = 0
+        self.is_searchable = True
         if parent:
             if parent.root:
                 self.root = parent.root
@@ -188,6 +189,7 @@ articles_table = Table('articles', metadata,
     Column('root_id', Integer, ForeignKey('articles.id'), nullable=True),
     Column('parent_id', Integer, ForeignKey('articles.id'), nullable=True),
     Column('reply_count', Integer, nullable=False),
+    Column('is_searchable', Boolean, nullable=False),
     Column('last_modified_date', DateTime),
 )
 
