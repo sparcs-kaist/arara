@@ -25,8 +25,8 @@ class ara_list_article(ara_form):
         ara_form.__init__(self, parent, session_key)
 
     def keypress(self, size, key):
-        key = key.strip()
-        mainpile_focus = self.mainpile.get_focus()
+        if key in self.keymap:
+            key = self.keymap[key]
         if key == "enter":
             # self.boardlist.get_body().get_focus()[0].w.w.widget_list : 현재 활성화된 항목
             article_id  = int(self.articlelist.get_body().get_focus()[0].w.w.widget_list[0].get_text()[0])
@@ -40,9 +40,17 @@ class ara_list_article(ara_form):
             self.mainpile.keypress(size, key)
 
     def __initwidgets__(self):
+        self.keymap = {
+            'j': 'down',
+            'k': 'up',
+            'N': 'page down',
+            'P': 'page up',
+            ' ': 'enter',
+        }
+
 	self.header = urwid.Filler(urwid.Text(u"ARA: Article list",align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
-        self.infotext1 = urwid.Filler(urwid.Text("(N)ext/(P)revious Page (n)ext/(p)revious article (Number+Enter) Jump to article"))
+        self.infotext1 = urwid.Filler(urwid.Text("(N)ext/(P)revious Page (Number+Enter) Jump to article"))
         self.infotext2 = urwid.Filler(urwid.Text("(Enter,space) Read (w)rite (f)ind (/)Find next (?) Find previous (h)elp (q)uit"))
 
         articles = self.server.article_manager.article_list(self.session_key, self.board_name)

@@ -83,6 +83,14 @@ class ara_post_article(ara_form):
                 self.bodyedit,
                 ('fixed',1,widget.dash),
                 ('fixed',1,self.bottomcolumn)]
+        if self.mode == 'modify':
+            original_article = self.server.article_manager.read(self.session_key, self.board_name, int(self.article_id))
+            self.titleedit.body.set_edit_text(original_article[1][0]['title'])
+            self.bodyedit.body.set_edit_text(original_article[1][0]['content'])
+        elif self.mode == 'reply':
+            original_article = self.server.article_manager.read(self.session_key, self.board_name, int(self.article_id))
+            self.titleedit.body.set_edit_text("Re: " + original_article[1][0]['title'])
+
         self.mainpile = urwid.Pile(content)
 
 if __name__=="__main__":

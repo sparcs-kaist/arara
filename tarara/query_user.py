@@ -43,14 +43,14 @@ class ara_query_user(ara_form):
 	self.sigtext = urwid.Filler(urwid.Text(' * Signature:\n'))
 	self.lasttext = urwid.Filler(urwid.Text(' * Last usage:'))
 
-	actiontext = urwid.Filler(urwid.Text(' * Press [Enter] to query another user, [q] to quit'))
+	actiontext = urwid.Filler(urwid.Text(' * Enter user ID and press [Search]'))
 
         content = [('fixed',1, self.header), ('fixed',1,widget.blanktext),
             ('fixed',1,self.buttoncolumn), ('fixed',1,widget.dash),
             ('fixed',1,self.idtext), ('fixed',1,self.nicktext),
-            ('fixed',6,self.introtext), ('fixed',6,self.sigtext),
+            ('fixed',6,self.introtext), self.sigtext,
             ('fixed',1,self.lasttext), ('fixed',1,widget.dash),
-            actiontext,
+            ('fixed',1,actiontext),
             ]
         self.mainpile = urwid.Pile(content)
 

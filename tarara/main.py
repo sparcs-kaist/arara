@@ -40,7 +40,8 @@ class ara_main(ara_form):
 	]
 
     def keypress(self, size, key):
-        key = key.strip().lower()
+        if key in self.keymap:
+            key = self.keymap[key]
         if key == "tab":
             if self.maincolumn.get_focus() == self.menulist:
                 self.maincolumn.set_focus(self.bests)
@@ -80,6 +81,10 @@ class ara_main(ara_form):
             self.mainpile.keypress(size, key)
 
     def __initwidgets__(self):
+        self.keymap = {
+            'j':'down',
+            'k':'up',
+        }
 	self.header = urwid.Filler(urwid.Text(u"ARA: Main Menu", align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
         menuitems = [widget.Item(" * "+w+"\n", None, 'selected') for w in self.menu]

@@ -11,13 +11,22 @@ from string import Template
 class ara_read_article(ara_form):
     def keypress(self, size, key):
         key = key.strip()
-        mainpile_focus = self.mainpile.get_focus()
         if key == 'e':
             self.parent.change_page("post_article", {'session_key':self.session_key, 'board_name':self.board_name, 'mode':'modify', 'article_id':self.article_id})
         elif key == 'r':
             self.parent.change_page("post_article", {'session_key':self.session_key, 'board_name':self.board_name, 'mode':'reply', 'article_id':self.article_id})
         elif key == 'q':
             self.parent.change_page("list_article", {'session_key':self.session_key, 'board_name':self.board_name})
+        elif key == 'v':
+            retvalue = self.server.article_manager.vote_article(self.session_key, self.board_name, self.article_id)
+            if retvalue[0]:
+                confirm = widget.Dialog("Voted.", ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
+            else:
+                confirm = widget.Dialog(retvalue[1], ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
+            self.overlay = confirm
+            self.parent.run()
+            self.overlay = None
+            self.set_article(board_name = self.board_name, article_id = self.article_id)
         else:
             self.mainpile.keypress(size, key)
 
@@ -54,7 +63,7 @@ class ara_read_article(ara_form):
         self.articletext = urwid.Filler(urwid.Text(''))
         self.set_article(self.board_name, self.article_id)
 	self.header = urwid.Filler(urwid.Text(u"ARA: Read article",align='center'))
-        functext = urwid.Filler(urwid.Text('(n)ext/(p)revious (b)lock (e)dit (d)elete (f)old/retract (r)eply (h)elp (q)uit'))
+        functext = urwid.Filler(urwid.Text('(n)ext/(p)revious (b)lock (e)dit (d)elete (f)old/retract (r)eply (v)ote (q)uit'))
 
         content = [('fixed',1,self.authortext),('fixed',1,self.infotext),
                 ('fixed',1,self.titletext),

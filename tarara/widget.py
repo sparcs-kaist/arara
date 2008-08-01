@@ -113,8 +113,8 @@ class Dialog(urwid.WidgetWrap):
 
         #Combine message widget and button widget:
         widget_list = [msg_widget, self._blank, button_grid]
-        self._combined = urwid.AttrWrap(urwid.Filler(
-            urwid.Pile(widget_list, 2)), attr[0])
+        self._combined = urwid.AttrWrap(Border(urwid.Filler(
+            urwid.Pile(widget_list, 2))), attr[0])
         
         #Place the dialog widget on top of body:
         overlay = urwid.Overlay(self._combined, body, 'center', width,

@@ -49,7 +49,8 @@ class ara_list_pm(ara_form):
         self.pmlist.set_body(listview.make_body(message_item, pmlist_rowitem))
 
     def keypress(self, size, key):
-        key = key.strip()
+        if key in self.keymap:
+            key = self.keymap[key]
         mainpile_focus = self.mainpile.get_focus()
         if key == 'w':
             self.parent.change_page("write_pm", {'session_key':self.session_key, 'mode':'write', 'reply_to' : ''})
@@ -69,12 +70,17 @@ class ara_list_pm(ara_form):
             self.display_outbox()
 
     def __initwidgets__(self):
+        self.keymap = {
+            'j':'down',
+            'k':'up',
+            'N':'page down',
+            'P':'page up',
+        }
 	self.header = urwid.Filler(urwid.Text(u"ARA: Private message",align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
         self.infotext = urwid.Filler(urwid.Text(" (N)ext/(P)revious Page (w)rite (B)lock (h)elp (q)uit"))
 
-        itemlist = []
-        itemlist += [{'new':'N', 'number':'1', 'author':'peremen','title':'text','date':'1/1'}]
+        itemlist = [{'new':'N', 'number':'1', 'author':'dummy','title':'item','date':'1/1'}]
         self.list_header = {'new':'N', 'number':'#', 'author':'Author', 'title':'Title', 'date':'Date'}
 
         self.pmlist = listview.get_view(itemlist, self.list_header, pmlist_rowitem)
