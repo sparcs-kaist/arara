@@ -56,7 +56,10 @@ class ara_list_article(ara_form):
         articles = self.server.article_manager.article_list(self.session_key, self.board_name)
         articles = articles[1]
         itemlist = []
-        if len(articles) <= 1:
+        today_best = articles[0]
+        weekly_best = articles[1]
+        articles = articles[2:]
+        if len(articles) <= 3:
             itemlist += [{'new':'', 'number':'', 'author':'','title':'No article found. Have a nice day.','date':'','hit':'','vote':''}]
             self.hasarticle = False
         else:
