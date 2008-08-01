@@ -17,23 +17,16 @@ class ara_write_pm(ara_form):
         self.mainpile.keypress(size, key)
 
     def on_button_clicked(self, button):
-        sended = True
         retvalue = None
         if button == self.btnokay:
             to = self.idedit.get_edit_text()
-            to = [x.strip() for x in to.split(';')]
             body = self.bodyedit.body.get_edit_text()
-            for sender in to:
-                retvaule = self.server.messaging_manager.send_message(self.session_key, sender, body)
-                sended = sended & retvalue[0]
-                if sended:
-                    confirm = widget.Dialog("Message sent.", ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
-                    self.overlay = confirm
-                    self.parent.run()
-                    if confirm.b_pressed == "OK":
-                        self.parent.change_page("user_preferences",{'session_key':self.session_key})
-                    else:
-                        pass
+            retvalue = self.server.messaging_manager.send_message(self.session_key, to, body)
+            if retvalue[0]:
+                confirm = widget.Dialog("Message sent.", ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
+                self.overlay = confirm
+                self.parent.run()
+                self.parent.change_page("list_pm",{'session_key':self.session_key})
 
         elif button == self.btncancel:
             self.parent.change_page("list_pm", {'session_key':self.session_key})
@@ -56,7 +49,6 @@ class ara_write_pm(ara_form):
 
 	self.btnsearch = urwid.Button("Search by nickname")
         self.idcolumn = urwid.Filler(urwid.Columns([('weight',60,self.idedit),('weight',40,self.btnsearch)]))
-	self.info = urwid.Filler(urwid.Text(u"* You can use semicolon(;) to send two or more person."))
 
         bodytext = urwid.Filler(urwid.Text('Body'))
         self.bodyedit = urwid.Filler(urwid.Edit(multiline = True, wrap='clip'))
@@ -76,7 +68,6 @@ class ara_write_pm(ara_form):
 
         content = [('fixed',1, header),
                 ('fixed',1,self.idcolumn),
-                ('fixed',1,self.info),
                 ('fixed',1,bodytext),
                 ('fixed',1,widget.dash),
                 self.bodyedit,
