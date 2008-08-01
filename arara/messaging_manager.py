@@ -266,9 +266,9 @@ class MessagingManager(object):
         return True, message_dict
 
     @require_login
-    def delete_message(self, session_key, msg_no):
+    def delete_received_message(self, session_key, msg_no):
         '''
-        쪽지 하나 삭제하기
+        받은 쪽지 하나 삭제하기
 
         @type  session_key: string
         @param session_key: User Key
@@ -293,17 +293,47 @@ class MessagingManager(object):
         if message_to_delete.to_id == user.id:
             if message_to_delete.sent_deleted:
                 session.delete(message_to_delete)
+                session.commit()
+                return True, 'OK'
             else:
                 message_to_delete.received_deleted = True
-        elif message_to_delete.from_id == user.id:
+                session.commit()
+                return True, 'OK'
+        return False, 'MSG_NOT_EXIST'
+
+    @require_login
+    def delete_sent_message(self, session_key, msg_no):
+        '''
+        보낸 쪽지 하나 삭제하기
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type  msg_no: integer
+        @param msg_no: Message Number
+        @rtype: string
+        @return:
+            1. 삭제 성공: True, 'OK'
+            2. 삭제 실패:
+                1. 메세지가 존재하지 않음: False, 'MSG_NOT_EXIST'
+                2. 로그인되지 않은 사용자: False, 'NOT_LOGGED_IN'
+                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        '''
+
+        ret, user_info = self.login_manager.get_session(session_key)
+        session = model.Session()
+        user = session.query(model.User).filter_by(username=user_info['username']).one()
+        try:
+            message_to_delete = session.query(model.Message).filter_by(id=msg_no).one()
+        except InvalidRequestError:
+            return False, 'MSG_NOT_EXIST'
+        if message_to_delete.from_id == user.id:
             if message_to_delete.received_deleted:
                 session.delete(message_to_delete)
+                session.commit()
+                return True, 'OK'
             else:
                 message_to_delete.sent_deleted = True
-        else:
-            return False, 'MSG_NOT_EXIST'
-        session.commit()
-        return True, 'OK'
-
-
+                session.commit()
+                return True, 'OK'
+        return False, 'MSG_NOT_EXIST'
 # vim: set et ts=8 sw=4 sts=4

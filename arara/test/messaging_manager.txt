@@ -130,7 +130,7 @@ True
 
 Test Delete Function
 
->>> server.messaging_manager.delete_message(mikkang_session_key, 2)
+>>> server.messaging_manager.delete_received_message(mikkang_session_key, 2)
 (True, 'OK')
 
 >>> server.messaging_manager.read_received_message(mikkang_session_key, 2)
@@ -142,7 +142,7 @@ Test Delete Function
 >>> server.messaging_manager.sent_list(serialx_session_key)
 (True, [{'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'mikkang', 'message': u'hello2', 'id': 2}, {'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'mikkang', 'message': u'hello', 'id': 1}, {'last_page': 1}])
 
->>> server.messaging_manager.delete_message(serialx_session_key, 2)
+>>> server.messaging_manager.delete_sent_message(serialx_session_key, 2)
 (True, 'OK')
 
 >>> server.messaging_manager.sent_list(serialx_session_key)
@@ -162,6 +162,33 @@ Test Delete Function
 >>> server.messaging_manager.receive_list(serialx_session_key, 12, 10)
 (False, 'WRONG_PAGENUM')
 
+# Now Send message to myself and test delete
+>>> server.messaging_manager.send_message(serialx_session_key, u'serialx', u'send this to me')
+(True, 'OK')
+>>> server.messaging_manager.read_received_message(serialx_session_key, 102)
+(True, {'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'send this to me', 'id': 102})
+
+>>> server.messaging_manager.sent_list(serialx_session_key)
+(True, [{'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'serialx', 'message': u'send this to me', 'id': 102}, {'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'mikkang', 'message': u'hello', 'id': 1}, {'last_page': 1}])
+
+>>> server.messaging_manager.delete_received_message(serialx_session_key, 102)
+(True, 'OK')
+
+>>> server.messaging_manager.read_received_message(serialx_session_key, 102)
+(False, 'MSG_NOT_EXIST')
+
+>>> server.messaging_manager.delete_sent_message(serialx_session_key, 102)
+(True, 'OK')
+
+>>> server.messaging_manager.sent_list(serialx_session_key)
+(True, [{'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'mikkang', 'message': u'hello', 'id': 1}, {'last_page': 1}])
+
+>>> server.messaging_manager.delete_received_message(serialx_session_key, 102)
+(False, 'MSG_NOT_EXIST')
+
+>>> server.messaging_manager.delete_sent_message(serialx_session_key, 102)
+(False, 'MSG_NOT_EXIST')
+
 # Test Errors
 
 >>> server.messaging_manager.send_message(u'asdf', u'mikkang', u'hello')
@@ -172,11 +199,11 @@ Test Delete Function
 (False, 'MSG_NOT_EXIST')
 >>> server.messaging_manager.read_received_message(u'asdf', 2)
 (False, 'NOT_LOGGEDIN')
->>> server.messaging_manager.delete_message(mikkang_session_key, 109)
+>>> server.messaging_manager.delete_received_message(mikkang_session_key, 109)
 (False, 'MSG_NOT_EXIST')
->>> server.messaging_manager.delete_message(serialx_session_key, 109)
+>>> server.messaging_manager.delete_received_message(serialx_session_key, 109)
 (False, 'MSG_NOT_EXIST')
->>> server.messaging_manager.delete_message(mikkang_session_key, 8989)
+>>> server.messaging_manager.delete_received_message(mikkang_session_key, 8989)
 (False, 'MSG_NOT_EXIST')
 
 >>> time.time = org_time
