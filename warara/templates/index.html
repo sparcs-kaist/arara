@@ -14,13 +14,13 @@
         <caption>Today's Best</caption>
         <tr>
             <th>제목</th>
-            <th>답글수</th>
+            <th>추천수</th>
             <th>날짜</th>
         </tr>
         {% for todays_best in todays_best_list %}
         <tr class="best_articles_table_content">
             <td>{{todays_best.title}}</td>
-            <td>{{todays_best.reply_count}}</td>
+            <td>{{todays_best.vote}}</td>
             <td>{{todays_best.date|date:"m.d H:i"}}</td>
         </tr>
         {% endfor %}
@@ -31,12 +31,13 @@
         <caption>Weekly Best</caption>
         <tr>
             <th>제목</th>
+            <th>추천수</th>
             <th>날짜</th>
         </tr>
         {% for weekly_best in weekly_best_list %}
         <tr class="best_articles_table_content">
             <td>{{weekly_best.title}}</td>
-            <td>{{weekly_best.reply_count}}</td>
+            <td>{{weekly_best.vote}}</td>
             <td>{{weekly_best.date|date:"m.d H:i"}}</td>
         </tr>
         {% endfor %}
