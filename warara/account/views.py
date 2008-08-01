@@ -7,7 +7,7 @@ import warara
 def register(request):
     sess, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
-        rendered = render_to_string('account/already_logged_in.html', r)
+        rendered = render_to_string('already_logged_in.html', r)
         return HttpResponse(rendered)
 
     if request.method == 'POST':
@@ -30,7 +30,7 @@ def register(request):
 def agreement(request):
     sess, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
-        rendered = render_to_string('account/already_logged_in.html', r)
+        rendered = render_to_string('already_logged_in.html', r)
     else:
         rendered = render_to_string('account/register_agreement.html')
     return HttpResponse(rendered)
@@ -59,7 +59,7 @@ def login(request):
                 rendered = render_to_string('account/login.html')
                 return HttpResponse(rendered)
 
-            rendered = render_to_string('account/already_logged_in.html', r)
+            rendered = render_to_string('already_logged_in.html', r)
             return HttpResponse(rendered)
 
 
@@ -73,7 +73,7 @@ def logout(request):
         assert ret, message
         return HttpResponseRedirect("/")
     else:
-        rendered = render_to_string('account/not_logged_in.html', r)
+        rendered = render_to_string('not_logged_in.html', r)
         return HttpResponse(rendered)
 
 def account(request):
@@ -86,7 +86,7 @@ def account(request):
         account['logged_in'] = True
         rendered = render_to_string('account/myaccount_frame.html', account)
     else:
-        rendered = render_to_string('account/not_logged_in.html', r)
+        rendered = render_to_string('not_logged_in.html', r)
     return HttpResponse(rendered)
 
 def account_modify(request):
@@ -108,7 +108,7 @@ def account_modify(request):
             rendered = render_to_string('account/myaccount_modify.html', account)
             return HttpResponse(rendered)
     else:
-        rendered = render_to_string('account/not_logged_in.html', r)
+        rendered = render_to_string('not_logged_in.html', r)
         return HttpResponse(rendered)
 
 def password_modify(request):
@@ -124,7 +124,7 @@ def password_modify(request):
             assert ret, message
             return HttpResponseRedirect("/account/")
     else:
-        rendered = render_to_string('account/not_logged_in.html', r)
+        rendered = render_to_string('not_logged_in.html', r)
         return HttpResponse(rendered)
 
 def account_remove(request):
@@ -141,5 +141,5 @@ def account_remove(request):
             rendered = render_to_string('account/myaccount_remove.html', account)
             return HttpResponse(rendered)
     else:
-        rendered = render_to_string('account/not_logged_in.html', r)
+        rendered = render_to_string('not_logged_in.html', r)
         return HttpResponse(rendered)
