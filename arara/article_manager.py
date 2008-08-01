@@ -223,7 +223,8 @@ class ArticleManager(object):
                 article_dict_list.append({'last_page': last_page})
                 for article in article_dict_list:
                     if article.has_key('id'):
-                        article['type'] = 'normal'
+                        if not article.has_key('type'):
+                            article['type'] = 'normal'
                         ret, msg = self.read_status_manager.check_stat(session_key, board_name, article['id'])
                         if ret:
                             article['read_status'] = msg
