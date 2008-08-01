@@ -7,11 +7,12 @@ from arara import model
 from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy import and_, or_, not_
 
-WRITE_ARTICLE_DICT = ['title', 'content']
-READ_ARTICLE_WHITELIST = ['id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted'
-                    'author_ip', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id']
-LIST_ARTICLE_WHITELIST = ['id', 'title', 'date', 'last_modified_date', 'reply_count',
-                    'deleted', 'author_username', 'vote', 'hit', 'last_page']
+WRITE_ARTICLE_DICT = ('title', 'content')
+READ_ARTICLE_WHITELIST = ('id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable')
+LIST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
+                    'deleted', 'author_username', 'vote', 'hit', 'last_page')
+BEST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
+                    'deleted', 'author_username', 'vote', 'hit', 'last_page', 'board_name')
 
 class NotLoggedIn(Exception):
     pass
@@ -72,7 +73,9 @@ class ArticleManager(object):
                     model.articles_table.c.last_modified_date > time_to_filter,
                     not_(model.articles_table.c.deleted==True))
                     )[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc()).all()
-            today_best_article_dict_list = self._get_dict_list(today_best_article, LIST_ARTICLE_WHITELIST)
+            today_best_article_dict_list = self._get_dict_list(today_best_article, BEST_ARTICLE_WHITELIST)
+            for article in today_best_article_dict_list:
+                article['type'] = 'today'
             return True, today_best_article_dict_list
         else:
             today_best_article = session.query(model.Article).filter(and_(
@@ -80,7 +83,9 @@ class ArticleManager(object):
                     model.articles_table.c.last_modified_date > time_to_filter,
                     not_(model.articles_table.c.deleted==True))
                     )[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc()).all()
-            today_best_article_dict_list = self._get_dict_list(today_best_article, LIST_ARTICLE_WHITELIST)
+            today_best_article_dict_list = self._get_dict_list(today_best_article, BEST_ARTICLE_WHITELIST)
+            for article in today_best_article_dict_list:
+                article['type'] = 'today'
             return True, today_best_article_dict_list
 
     def _get_weekly_best_article(self, session_key, board=None, count=5):
@@ -94,7 +99,9 @@ class ArticleManager(object):
                     model.articles_table.c.last_modified_date > time_to_filter,
                     not_(model.articles_table.c.deleted==True))
                     )[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc()).all()
-            weekly_best_article_dict_list = self._get_dict_list(weekly_best_article, LIST_ARTICLE_WHITELIST)
+            weekly_best_article_dict_list = self._get_dict_list(weekly_best_article, BEST_ARTICLE_WHITELIST)
+            for article in weekly_best_article_dict_list:
+                article['type'] = 'weekly'
             return True, weekly_best_article_dict_list
         else:
             weekly_best_article = session.query(model.Article).filter(and_(
@@ -102,7 +109,9 @@ class ArticleManager(object):
                     model.articles_table.c.last_modified_date > time_to_filter,
                     not_(model.articles_table.c.deleted==True))
                     )[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc()).all()
-            weekly_best_article_dict_list = self._get_dict_list(weekly_best_article, LIST_ARTICLE_WHITELIST)
+            weekly_best_article_dict_list = self._get_dict_list(weekly_best_article, BEST_ARTICLE_WHITELIST)
+            for article in weekly_best_article_dict_list:
+                article['type'] = 'weekly'
             return True, weekly_best_article_dict_list
 
     def _get_dict(self, item, whitelist=None):
@@ -111,6 +120,9 @@ class ArticleManager(object):
         if item_dict.has_key('author_id'):
             item_dict['author_username'] = item.author.username
             del item_dict['author_id']
+        if item_dict.has_key('board_id'):
+            item_dict['board_name'] = item.board.board_name
+            del item_dict['board_id']
         if item_dict.has_key('root_id'):
             if not item_dict['root_id']:
                 item_dict['root_id'] = item_dict['id']
@@ -211,6 +223,7 @@ class ArticleManager(object):
                 article_dict_list.append({'last_page': last_page})
                 for article in article_dict_list:
                     if article.has_key('id'):
+                        article['type'] = 'normal'
                         ret, msg = self.read_status_manager.check_stat(session_key, board_name, article['id'])
                         if ret:
                             article['read_status'] = msg
@@ -552,6 +565,7 @@ class ArticleManager(object):
                 5. 데이터베이스 오류: False, 'DATABASE_ERROR'
 
         '''
+        ret, user_info = self.login_manager.get_session(session_key)
         return False, 'NOT_IMPLEMENTED'
 
 # vim: set et ts=8 sw=4 sts=4
