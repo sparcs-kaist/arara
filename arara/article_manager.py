@@ -131,8 +131,6 @@ class ArticleManager(object):
         '''
         투베를 가져오는 함수
 
-        @type  session_key: string
-        @param session_key: User Key
         @type  count: integer
         @param count: Number of today's best articles to get
         @rtype: list
@@ -152,8 +150,6 @@ class ArticleManager(object):
         '''
         윅베를 가져오는 함수
 
-        @type  session_key: string
-        @param session_key: User Key
         @type  count: integer
         @param count: Number of today's best articles to get
         @rtype: list
