@@ -127,7 +127,7 @@ class ArticleManager(object):
             return_list.append(filtered_dict)
         return return_list
 
-    def get_today_best_list(self, session_key, count=5):
+    def get_today_best_list(self, count=5):
         '''
         투베를 가져오는 함수
 
@@ -148,7 +148,7 @@ class ArticleManager(object):
         else:
             return False, 'DATABASE_ERROR'
 
-    def get_weekly_best_list(self, session_key, count=5):
+    def get_weekly_best_list(self, count=5):
         '''
         윅베를 가져오는 함수
 
