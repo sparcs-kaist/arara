@@ -51,7 +51,7 @@ def make_header(data, rowitem):
     @rtype: urwid.AttrWrap
     @return: 헤더 rowitem.
     '''
-    return urwid.AttrWrap(make_widget(data, rowitem), 'reversed')
+    return urwid.AttrWrap(make_widget(data, rowitem), 'header')
 
 def get_view(datalist, header, rowitem):
     '''

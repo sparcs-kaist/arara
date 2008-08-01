@@ -2,7 +2,7 @@
 # coding: utf-8
 
 import urwid
-import urwid.curses_display
+import urwid.raw_display
 from login import *
 from join import *
 from welcome import *
@@ -22,16 +22,16 @@ from sig_intro import *
 from query_user import *
 from helpviewer import *
 
-Screen = urwid.curses_display.Screen
+Screen = urwid.raw_display.Screen
 
 class ara_display:
     palette = ([
-        ('header', 'black', 'dark cyan', 'standout'),
-        ('selected', 'default', 'light gray', 'bold'),
-        ('reversed', 'white', 'black', 'bold'),
-        ('menu', 'black', 'dark cyan', 'standout'),
-        ('bg', 'light gray', 'dark blue'),
-        ('bgf', 'black', 'light gray', 'standout'),
+        ('header', 'black', 'dark cyan', 'bold'),
+        ('selected', 'black', 'light gray', 'standout'),
+        ('reversed', 'black', 'light gray', 'bold'),
+        ('menu', 'default', 'default', 'standout'),
+        ('bg', 'default', 'default'),
+        ('bgf', 'light gray', 'dark blue', 'standout'),
         ])
     def __init__(self):
         self.ara_login = ara_login(self)
