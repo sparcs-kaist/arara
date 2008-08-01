@@ -309,4 +309,17 @@ class ReadStatusManager(object):
             else:
                 return ret, msg
 
+    def save_to_database(self, user_id=None, session_key=None):
+        if user_id:
+            pass
+        elif session_key:
+            ret, user_info = self.login_manager.get_session(session_key)
+            if ret:
+                pass
+            else:
+                return False, 'NOT_LOGGEDIN'
+        else:
+            return False, 'WRONG_REQUEST'
+
+
 # vim: set et ts=8 sw=4 sts=4
