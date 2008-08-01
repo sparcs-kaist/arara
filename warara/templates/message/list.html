@@ -6,8 +6,8 @@
 {% endblock script %}
 
 {% block style %}
-<link rel="stylesheet" href="/media/style/message_list.css"></link>
 {{block.super}}
+    <link rel="stylesheet" href="/media/style/message_list.css"></link>
 {% endblock %}
 
 {% block message_content %}
@@ -18,11 +18,11 @@
 </div>
 
 <form action="/message/delete/" method="POST">
-<div id="message_list_table">
+<div class="message_list_table" id="message_list_table">
     <table border="1">
         <tr>
             <th>
-                <input type="checkbox"></input>
+                <input type="checkbox" name="ch_del_enm" value=1></input>
             </th>
             <th>
                 {{person_type}}
@@ -37,7 +37,7 @@
         {% for message in message_list %}
         <tr>
             <td>
-                <input type="checkbox" name="ch_del_{{forloop.counter0}}" value="{{message.id}}"></input>
+                <input type="checkbox" class="ch_del_d" name="ch_del_{{forloop.counter0}}" value="{{message.id}}"></input>
             </td>
             <td>
                 {% ifequal message_list_type 'inbox' %}
@@ -60,6 +60,7 @@
 <div id="message_buttons">
     <input type="hidden" value="{{page_no}}" name="page_no">
     <input type="hidden" value="{{message_list_type}}" name="message_list_type">
+    <input type="hidden" value="{{message_no_strlist}}" name="message_no_strlist">
 	<input type="submit" value="delete">
 </div>
 </form>
@@ -67,8 +68,8 @@
 	<span>
         <a href="/message/{{message_list_type}}?page_no={{first_page.no}}">{{first_page.mark}}</a>
         <a href="/message/{{message_list_type}}?page_no={{prev_page_group.no}}">{{prev_page_group.mark}}</a>
-		{% for page in page_list %}
-        <a href="/message/{{message_list_type}}?page_no={{page}}">{{page}}</a>
+        {% for page in page_list %}
+        <a href="/message/{{message_list_type}}?page_no={{page}}"{% ifequal page page_no %} class="makered"{%endifequal%}>{{page}}</a>
 		{% endfor %}
         <a href="/message/{{message_list_type}}?page_no={{next_page_group.no}}">{{next_page_group.mark}}</a>
         <a href="/message/{{message_list_type}}?page_no={{last_page.no}}">{{last_page.mark}}</a>

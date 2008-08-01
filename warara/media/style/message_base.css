@@ -10,8 +10,7 @@ form {
     background-color: #8ff;
 }
 
-#content A:visited, #content A:link {
+div.message_content A:visited, div.message_content A:link {
     text-decoration: none;
     color: #055;
 }
-

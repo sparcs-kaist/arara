@@ -5,7 +5,7 @@
 {% endblock style %}
 
 {% block content %}
-<div id="message_menu">
+<div id="message_menu" class="message_content">
     {% block message_menu %}
     <span>
 	<a href="/message/inbox/">inbox</a>
@@ -14,7 +14,7 @@
     </span>
     {% endblock %}
 </div>
-<div id="message_content">
+<div id="message_content" class="message_content">
     {% block message_content %}
     {% endblock message_content %}
 </div>

@@ -34,6 +34,11 @@ def get_various_info(request, r):
     if page_o.page(page_group_no).has_previous():
         r['prev_page_group'] = {'mark':r['prev'], 'no':page_o.page(page_o.page(page_group_no).previous_page_number()).end_index()}
         r['first_page'] = {'mark':r['prev_group'], 'no':1}
+
+    r['message_no_strlist'] = ''
+    for message in r['message_list']:
+        r['message_no_strlist'] = '|'.join([r['message_no_strlist'], str(message['id'])])
+
     return r
 
 def index(request):
@@ -57,7 +62,7 @@ def inbox(request):
             ret, r['message_list'] = server.messaging_manager.receive_list(sess, page, page_length)
             if ret:
                 break;
-    r['page_no'] = page
+    r['page_no'] = int(page)
 
     assert ret, r['message_list']
     r = get_various_info(request, r)
@@ -85,7 +90,7 @@ def outbox(request):
             ret, r['message_list'] = server.messaging_manager.receive_list(sess, page, page_length)
             if ret:
                 break;
-    r['page_no'] = page
+    r['page_no'] = int(page)
     
     assert ret, r['message_list']
     r = get_various_info(request, r)
@@ -113,11 +118,11 @@ def send(request, msg_no=0):
         assert ret, message
         r['default_receiver'] = message['from']
 
-    if request.GET.get('mutli', 0): #for test only
+    if request.GET.get('multi', 0): #for test only
         multi = request.GET['multi']
         multi = int(multi)
         for i in range(multi):
-            ret, message = server.messaging_manager.send_message(sess, 'mikkang', str(i))
+            ret, message = server.messaging_manager.send_message(sess, 'breadfish', str(i))
 
     rendered = render_to_string('message/send.html', r)
     return HttpResponse(rendered)
@@ -163,6 +168,7 @@ def read(request, message_list_type, message_id):
     r['prev_message'] = {'mark':r['prev'], 'msg_no':''}
     r['next_message'] = {'mark':r['next'], 'msg_no':''}
     r['message_id'] = message_id
+    r['message_list_type'] = message_list_type
 
     if message_list_type == 'inbox':
         r['person_type'] = 'sender'
@@ -182,11 +188,21 @@ def delete(request):
     if request.POST.get('del_msg_no', 0):
         ret, msg = server.messaging_manager.delete_message(sess, int(request.POST.get('del_msg_no', 0)))
     elif request.method == "POST":
+        flag_del_enm = 1 #flag_delete_entire_message
         for x in range(21): #need_modify
             del_msg_no = request.POST.get('ch_del_%s' % x, 0)
             if del_msg_no:
                 del_msg_no = int(del_msg_no)
                 ret, msg = server.messaging_manager.delete_message(sess, int(del_msg_no));
+                flag_del_enm=0
+
+        if flag_del_enm and request.POST.get('ch_del_enm', 0):
+            del_msg_list = request.POST.get('message_no_strlist', '').split('|')
+            for del_msg_no in del_msg_list:
+                if del_msg_no:
+                    del_msg_no = int(del_msg_no)
+                    ret, msg = server.messaging_manager.delete_message(sess, int(del_msg_no))
+                
     assert ret, msg
 
     return HttpResponseRedirect("/message/%s/?page_no=%s" %

@@ -22,8 +22,10 @@
     <textarea name="text" readonly="readonly">{{message.message}}</textarea>
 </div>
 <div id="message_read_buttons">
-    <a href="/message/delete/{{message_id}}">delete</a>
+    <a href="/message/delete/">delete</a>
+    {% ifequal message_list_type 'inbox' %}
     <a href="/message/reply/{{message_id}}">reply</a>
+    {% endifequal %}
     <a href="../">list</a>
 </div>
 

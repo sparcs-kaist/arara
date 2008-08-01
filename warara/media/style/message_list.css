@@ -3,7 +3,7 @@
     border-collapse: collapse;
 }
 
-#message_list_tablee table td, table th {
+#message_list_table table td, table th {
     margin: 0;
     padding: 2px 4px;
     border-bottom: 1px solid #b5b5b5;
@@ -13,7 +13,7 @@
     border:0 ;
 }
 
-.makered {
+#message_page_move a.makered {
     color: red;
 }
 
