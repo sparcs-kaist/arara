@@ -90,7 +90,7 @@ True
 # List the article (should only be one article in the list
 
 >>> server.article_manager.article_list(session_key, u'garbages')
-(True, [{'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is...', 'deleted': False, 'read_status': 'R', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 1}, {'last_page': 1}])
+(True, [{'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is...', 'deleted': False, 'read_status': 'R', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 1}, {'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is...', 'deleted': False, 'read_status': 'R', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 1}, {'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is...', 'deleted': False, 'read_status': 'R', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 1}, {'last_page': 1}])
 
 # Test for pagination
 
@@ -100,12 +100,12 @@ True
 >>> ret, l = server.article_manager.article_list(session_key, u'garbages')
 >>> len(l)
 21
->>> l[0]['title']
+>>> l[2]['title']
 u'serialx is... 99'
->>> l[1]['title']
+>>> l[3]['title']
 u'serialx is... 98'
 >>> l[19]['title']
-u'serialx is... 80'
+u'serialx is... 82'
 
 >>> ret, l = server.article_manager.article_list(session_key, u'garbages', page=2)
 >>> len(l)
@@ -119,11 +119,11 @@ u'serialx is... 80'
 >>> _, _ = server.article_manager.read(session_key, u'garbages', 102)
 
 >>> ret, l = server.article_manager.article_list(session_key, u'garbages')
->>> l[0]['read_status']
-'R'
->>> l[1]['read_status']
+>>> l[2]['read_status']
 'R'
 >>> l[3]['read_status']
+'R'
+>>> l[4]['read_status']
 'N'
 
 # Test for deletion
@@ -169,6 +169,7 @@ u'serialx is... 80'
 (False, 'ALREADY_VOTED')
 
 # Read the article to check the vote status
+>>> server.article_manager.read(session_key_combacsa, u'garbages', 1)
 (True, [{'root_id': 1, 'author_username': u'mikkang', 'hit': 3, 'blacklisted': False, 'title': u'pipoket is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'woodori', 'vote': 1, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'root_id': 1, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
 
 # After some time, mikkang votes to the modified article
@@ -176,7 +177,16 @@ u'serialx is... 80'
 (True, 'OK')
 
 # Read the article to check the vote status
+>>> server.article_manager.read(session_key_combacsa, u'garbages', 1)
 (True, [{'root_id': 1, 'author_username': u'mikkang', 'hit': 3, 'blacklisted': False, 'title': u'pipoket is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'woodori', 'vote': 2, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}, {'root_id': 1, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 2}])
+
+# Now check the today's best article function
+>>> server.article_manager.get_today_best_list(session_key, 5)
+(True, [{'author_username': u'mikkang', 'hit': 3, 'title': u'pipoket is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 2, 'id': 1}, {'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 102}, {'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is... 98', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 101}, {'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 97', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 100}, {'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 96', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 99}])
+
+# Check for weekly best article function
+>>> server.article_manager.get_weekly_best_list(session_key, 5)
+(True, [{'author_username': u'mikkang', 'hit': 3, 'title': u'pipoket is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 2, 'id': 1}, {'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 102}, {'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is... 98', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 101}, {'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 97', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 100}, {'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 96', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 99}])
 
 # Board list
 
