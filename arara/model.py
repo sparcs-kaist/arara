@@ -143,6 +143,14 @@ class Welcome(object):
     def __repr__(self):
         return "<Welcome('%s','%s')>" % (self.content, self.valid)
 
+class File(object): 
+    def __init__(self, filename, content): 
+        self.filename = filename
+        self.content = content
+
+    def __repr__(self):
+        return "<File('%s')>" % (self.filename)
+
 metadata = MetaData()
 users_table = Table('users', metadata,
     Column('id', Integer, primary_key=True),
@@ -246,6 +254,15 @@ welcome_table = Table('welcomes' , metadata,
     Column('valid', Boolean),
     Column('weight', Integer),
 )
+
+file_table = Table('files', metadata,
+    Column('id', Integer, primary_key=True),
+    Column('filename', Unicode(200)),
+    Column('content', Binary),
+)
+
+
+mapper(File, file_table)
 
 mapper(Banner, banner_table)
 
