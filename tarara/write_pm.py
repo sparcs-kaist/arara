@@ -68,10 +68,11 @@ class ara_write_pm(ara_form):
 
         self.bottomcolumn = urwid.Filler(urwid.Columns([
             ('weight',40,urwid.Text(' ')),
+            ('weight',15,self.btnokay),
+            ('weight',15,self.btncancel),
             ('weight',15,self.btnhelp),
             ('weight',15,self.btnpreview),
-            ('weight',15,self.btnokay),
-            ('weight',15,self.btncancel)]))
+            ]))
 
         content = [('fixed',1, header),
                 ('fixed',1,self.idcolumn),

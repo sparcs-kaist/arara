@@ -71,10 +71,11 @@ class ara_post_article(ara_form):
 
         self.bottomcolumn = urwid.Filler(urwid.Columns([
             ('weight',40,self.chkinclude),
+            ('weight',15,self.btnokay),
+            ('weight',15,self.btncancel),
             ('weight',15,self.btnhelp),
             ('weight',15,self.btnpreview),
-            ('weight',15,self.btnokay),
-            ('weight',15,self.btncancel)]))
+            ]))
 
         content = [('fixed',1, self.header),
                 ('fixed',1,self.titleedit),
