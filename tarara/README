@@ -1,16 +1,16 @@
-* ara_form.py : Common forms
+= Telnet ARAra =
+This is telnet ARAra client.
 
-* login.py : Login screen
-* welcome.py : Welcome screen
-* join.py : join screen
-* main.py : main screen
+== Execution ==
+# Launch ARAra XML-RPC Server.
+# Run display.py.
+# Enjoy.
 
-* userpreferences.py : user preferences screen
-* sig_intro.py : signature & introduction screen
-* changepw.py : change password screen
+== Common files ==
+* ara_form.py: Base class for all ARAra forms.
+* widget.py: Commonly used widgets.
+* listview.py: List view for articles. Depends on widget.py.
+* configuration.py: XML-RPC server configuration file.
 
-* pmread.py : read private message screen
-* pmwrite.py : write private message screen
-
-* articleread.py : article read screen
-* post.py : article post screen
+== Individual files ==
+To be continued.
