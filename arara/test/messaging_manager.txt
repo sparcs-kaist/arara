@@ -122,10 +122,10 @@ True
 >>> server.messaging_manager.sent_list(mikkang_session_key)
 (True, [{'last_page': 1}])
 
->>> server.messaging_manager.read_message(mikkang_session_key, 1)
+>>> server.messaging_manager.read_received_message(mikkang_session_key, 1)
 (True, {'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello', 'id': 1})
 
->>> server.messaging_manager.read_message(mikkang_session_key, 2)
+>>> server.messaging_manager.read_received_message(mikkang_session_key, 2)
 (True, {'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello2', 'id': 2})
 
 Test Delete Function
@@ -133,7 +133,7 @@ Test Delete Function
 >>> server.messaging_manager.delete_message(mikkang_session_key, 2)
 (True, 'OK')
 
->>> server.messaging_manager.read_message(mikkang_session_key, 2)
+>>> server.messaging_manager.read_received_message(mikkang_session_key, 2)
 (False, 'MSG_NOT_EXIST')
 
 >>> server.messaging_manager.receive_list(mikkang_session_key)
@@ -168,9 +168,9 @@ Test Delete Function
 (False, 'NOT_LOGGEDIN')
 >>> server.messaging_manager.send_message(serialx_session_key, u'asdf', u'hello')
 (False, 'USER_NOT_EXIST')
->>> server.messaging_manager.read_message(mikkang_session_key, 3)
+>>> server.messaging_manager.read_received_message(mikkang_session_key, 3)
 (False, 'MSG_NOT_EXIST')
->>> server.messaging_manager.read_message(u'asdf', 2)
+>>> server.messaging_manager.read_received_message(u'asdf', 2)
 (False, 'NOT_LOGGEDIN')
 >>> server.messaging_manager.delete_message(mikkang_session_key, 109)
 (False, 'MSG_NOT_EXIST')
