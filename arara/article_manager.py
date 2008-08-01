@@ -140,7 +140,7 @@ class ArticleManager(object):
                 1. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         session = model.Session()
-        ret, today_best_list = self._get_today_best_article(session_key, None, count)
+        ret, today_best_list = self._get_today_best_article(None, None, count)
         if ret:
             return True, today_best_list
         else:
@@ -159,7 +159,7 @@ class ArticleManager(object):
                 1. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         session = model.Session()
-        ret, weekly_best_list = self._get_weekly_best_article(session_key, None, count)
+        ret, weekly_best_list = self._get_weekly_best_article(None, None, count)
         if ret:
             return True, weekly_best_list
         else:
