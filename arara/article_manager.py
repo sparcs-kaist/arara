@@ -218,8 +218,10 @@ class ArticleManager(object):
                 article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
                 ret, weekly_best_article_dict_list = self._get_weekly_best_article(session_key, board, 1)
                 ret, today_best_article_dict_list = self._get_today_best_article(session_key, board, 1)
-                article_dict_list.insert(0, weekly_best_article_dict_list[0])
-                article_dict_list.insert(0, today_best_article_dict_list[0])
+                if weekly_best_article_dict_list:
+                    article_dict_list.insert(0, weekly_best_article_dict_list[0])
+                if today_best_article_dict_list:
+                    article_dict_list.insert(0, today_best_article_dict_list[0])
                 article_dict_list.append({'last_page': last_page})
                 for article in article_dict_list:
                     if article.has_key('id'):
