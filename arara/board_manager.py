@@ -55,7 +55,7 @@ class BoardManager(object):
         except InvalidRequestError:
             return False, 'BOARD_NOT_EXIST'
         board_dict = self._get_dict(board_to_get, BOARD_MANAGER_WHITELIST)
-        return True, 'BOARD_DICT'
+        return True, board_dict
 
     def get_board_list(self):
         session = model.Session()

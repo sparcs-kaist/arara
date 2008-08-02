@@ -23,8 +23,11 @@ def list(request, board_name):
     page_range_no = math.ceil(float(page_no) / page_range_length)
     ret, article_list = server.article_manager.article_list(sess, board_name, page_no)
     assert ret, article_list
+    ret, board_dict = server.board_manager.get_board(board_name)
+    assert ret, board_dict
+    r['board_name'] = board_dict['board_name']
+    r['board_description'] = board_dict['board_description']
     r['article_list'] = article_list
-    r['board_name'] = board_name
 
     #pagination
     r['next'] = 'a'
