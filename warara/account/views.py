@@ -123,6 +123,10 @@ def password_modify(request):
             ret, message = server.member_manager.modify_password(session_key, user_information_dic)
             assert ret, message
             return HttpResponseRedirect("/account/")
+        else:
+            rendered = render_to_string('account/myacc_pw_modify.html')
+            return HttpResponse(rendered)
+
     else:
         rendered = render_to_string('not_logged_in.html', r)
         return HttpResponse(rendered)
