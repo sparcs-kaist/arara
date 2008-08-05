@@ -70,7 +70,7 @@ def logout(request):
         ret, account = server.login_manager.logout(session_key)
         del request.session['arara_session_key']
         del request.session['arara_username']
-        assert ret, message
+        assert ret, account
         return HttpResponseRedirect("/")
     else:
         rendered = render_to_string('not_logged_in.html', r)
