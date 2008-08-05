@@ -32,16 +32,6 @@ def index(request):
     suc, ret = server.article_manager.get_weekly_best_list(5)
     assert suc, ret
     r['weekly_best_list'] = ret
-
-    if 'search' in request.GET:
-        query = request.GET['search']
-        search_type = 'username'
-        if 'search_type_main' in request.GET:
-            search_type = request.GET['search_type_main']
-        search_user_info = {search_type: query}
-        ret, user_id = server.member_manager.search_user(sess, search_user_info)
-        if ret:
-            r['search_result'] = user_id
-    
+   
     rendered = render_to_string('index.html', r)
     return HttpResponse(rendered)
