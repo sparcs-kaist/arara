@@ -24,6 +24,10 @@ def list(request, board_name):
     assert ret, article_list
     ret, board_dict = server.board_manager.get_board(board_name)
     assert ret, board_dict
+    for i in range(len(article_list)):
+        if article_list[i].get('deleted', 0):
+            article_list[i]['title'] = 'deleted'
+
     r['board_name'] = board_dict['board_name']
     r['board_description'] = board_dict['board_description']
     r['article_list'] = article_list
@@ -47,7 +51,7 @@ def list(request, board_name):
     return HttpResponse(rendered)
 
 def write(request, board_name):
-    if request.POST:
+    if request.method == 'POST':
         return write_(request, board_name)
 
     r = {}
@@ -61,6 +65,7 @@ def write(request, board_name):
         ret, article_list = server.article_manager.read(sess, board_name, int(article_id))
         r['default_title'] = article_list[0]['title']
         r['default_text'] = article_list[0]['content']
+        r['article_no'] = article_list[0]['id']
         r['t_write'] = 'modify'
     r['board_name'] = board_name
 
@@ -75,12 +80,16 @@ def write_(request, board_name):
     r['url'] = ''.join(['/board/', board_name, '/'])
     article_dic['content'] = request.POST.get('text', '')
     article_dic['title'] = request.POST.get('title', '')
-    ret, article_id = server.article_manager.write_article(sess, board_name, article_dic)
+    if request.POST.get('write_type', 0) == 'modify':
+        article_no = request.POST.get('article_no', 0)
+        ret, article_id = server.article_manager.modify(sess, board_name, int(article_no), article_dic)
+    else:
+        ret, article_id = server.article_manager.write_article(sess, board_name, article_dic)
     assert ret, article_id
     
     #upload file
     file1, file2 = {}, {}
-    if request.FILES['file1']:
+    if request.FILES:
         file1 = request.FILES['file1']
         fp = open('files/%s' % file1.name, 'wb')
         fp.write(file1.read())
@@ -108,6 +117,9 @@ def read(request, board_name, article_id):
 
     for i in range(len(article_list)):
         article_list[i]['content'] = render_bbcode(article_list[i]['content'], 'UTF-8')
+        if article_list[i]['deleted']:
+            article_list[i]['content'] = 'deleted'
+            article_list[i]['title'] = 'deleted'
 
     r['article_list'] = article_list
     r['board_name'] = board_name
@@ -142,6 +154,14 @@ def vote(request, board_name, root_id, article_no):
     server = arara.get_server()
     sess = request.session['arara_session_key']
     ret, message = server.article_manager.vote_article(sess, board_name, int(article_no))
+    assert ret, message
+
+    return HttpResponseRedirect('/board/%s/%s' % (board_name, root_id))
+
+def delete(request, board_name, root_id, article_no):
+    server = arara.get_server()
+    sess = request.session['arara_session_key']
+    ret, message = server.article_manager.delete(sess, board_name, int(article_no))
     assert ret, message
 
     return HttpResponseRedirect('/board/%s/%s' % (board_name, root_id))

@@ -23,7 +23,8 @@
     <div id="article_write_buttons">
         <input type="submit" value="{{t_write}}"></input>
         <input type="button" value="cancel" name="cancel"></input>
-        <input type="button" value="preview" name="preview"></input>
+        <input type="hidden" value="{{t_write}}" name="write_type"></input>
+        <input type="hidden" value="{{article_no}}" name="article_no"></input>
     </div>
 </form>
 {% endblock board_content %}

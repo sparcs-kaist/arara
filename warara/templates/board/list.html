@@ -38,7 +38,7 @@
             <tr class="{% ifequal article.type 'today' %}todays_best{% else %}{% ifequal article.type 'weekly' %}weekly_best{% endifequal %}{% endifequal %}">
                 <td class="column cursor_col"></td>
 		<td class="column cursor_col">{{article.read_status}}</td>
-                <td class="column id_col">{{article.id}}</td>
+        <td class="column id_col">{% ifequal article.type 'normal' %}{{article.id}}{%else%}wb{%endifequal%}</td>
                 <td class="column title_col">{% if logged_in %}<a href="/board/{{board_name}}/{{article.id}}">{{article.title}}</a>{% else %}{{article.title}}{% endif %}</td>
                 <td class="column author_col"><span class="username">{{article.author_username}}</span></td>
                 <td class="column date_col">{{article.date|date:"Y/m/d H:i"}}</td>
