@@ -62,11 +62,7 @@ def index(request):
     r['blacklist'] = blacklist
 
     if 'search' in request.GET:
-        query = request.GET['search']
-        search_type = 'username'
-        if 'search_type' in request.GET:
-            search_type = request.GET['search_type']
-        search_user_info = {search_type: query}
+        search_user_info = request.GET['search']
         ret, user_id = server.member_manager.search_user(sess, search_user_info)
         if ret:
             r['search_result'] = user_id

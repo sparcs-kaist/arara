@@ -40,15 +40,11 @@
         <p>User Search!!</p>
         <form id="search_form" action="/blacklist/" method="get">
             <input type="text" name="search" />
-            <label for="search_username">username</label>
-            <input id="search_username" name="search_type" type="radio" value="username" checked="on" />
-            <label for="search_nickname">nickname</label>
-            <input id="search_nickname" name="search_type" type="radio" value="nickname" />
             <input type="submit" />
         </form>
     </div>
     <div id="searching_results">
-        <span class="username">{{search_result}}</span>
+	{% for result in search_result %}<p class="username">{{result.username}}</p>{% endfor %}
     </div>
     </div>
 {% endblock %}
