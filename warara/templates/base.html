@@ -22,7 +22,8 @@
 		<a href="/account/" class="{% if not logged_in %}hidden{% endif %}">Account</a>
 		<a href="/account/register/agreement" class="{% if logged_in %}hidden{% endif %}">Register</a>
                 <a href="/message/inbox/" class="{% if not logged_in %}hidden{% endif %}">Message</a>
-                <a href="/blacklist/" class="{% if not logged_in %}hidden{% endif %}">Blacklist</a>
+		<a href="/blacklist/" class="{% if not logged_in %}hidden{% endif %}">Blacklist</a>
+		<a href="#" class="{% if not logged_in %}hidden{% endif %}" id="user_search_sidebar">User search</a>
             </div>
         </div>
         </div>
@@ -108,6 +109,20 @@
                 <li><input type="submit" id="message_submit" /></li>
             </ul>
         </div>
+	<div id="search_user_main">
+	    <p>User Search!!</p>
+	    <form id="search_form_main" action="/" method="get">
+		<input type="text" name="search" />
+		<label for="search_username_main">username</label>
+		<input id="search_username_main" name="search_type_main" type="radio" value="username" checked="on" />
+		<label for="search_nickname_main">nickname</label>
+		<input id="search_nickname_main" name="search_type_main" type="radio" value="nickname" />
+		<input type="submit" />
+	    </form>
+	</div>
+	<div id="searching_results_main">
+	    <span class="username">{{search_result}}</span>
+	</div>
     </div>
 </body>
 </html>
