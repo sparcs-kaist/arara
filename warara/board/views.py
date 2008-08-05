@@ -9,7 +9,6 @@ import arara
 import math
 import warara
 
-
 def index(request):
     rendered = render_to_string('board/index.html', {})
     return HttpResponse(rendered)
@@ -78,6 +77,13 @@ def write_(request, board_name):
     article_dic['title'] = request.POST.get('title', '')
     ret, article_id = server.article_manager.write_article(sess, board_name, article_dic)
     assert ret, article_id
+    
+    #upload file
+    file1, file2 = {}, {}
+    if request.FILES['file1']:
+        file1 = request.FILES['file1']
+        fp = open('files/%s' % file1.name, 'wb')
+        fp.write(file1.read())
 
     if not ret:
         r['e'] = article_id

@@ -184,16 +184,27 @@ def delete(request):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
     ret, msg = 1, 1
+    if request.POST.get('message_list_type', 'inbox') == 'inbox':
+        flag_inbox = 1
+    else:
+        flag_inbox = 0
 
     if request.POST.get('del_msg_no', 0):
-        ret, msg = server.messaging_manager.delete_message(sess, int(request.POST.get('del_msg_no', 0)))
+        if flag_inbox:
+            ret, msg = server.messaging_manager.delete_received_message(sess, int(request.POST.get('del_msg_no', 0)))
+        else:
+            ret, msg = server.messaging_manager.delete_sent_message(sess, int(request.POST.get('del_msg_no', 0)))
     elif request.method == "POST":
-        flag_del_enm = 1 #flag_delete_entire_message
+        flag_del_enm = request.POST.get('flag_del_enm', 0) #flag_delete_entire_message
+        flag_del_enm = int(flag_del_enm)
         for x in range(21): #need_modify
             del_msg_no = request.POST.get('ch_del_%s' % x, 0)
             if del_msg_no:
                 del_msg_no = int(del_msg_no)
-                ret, msg = server.messaging_manager.delete_message(sess, int(del_msg_no));
+                if flag_inbox:
+                    ret, msg = server.messaging_manager.delete_received_message(sess, int(del_msg_no));
+                else:
+                    ret, msg = server.messaging_manager.delete_sent_message(sess, int(del_msg_no));
                 flag_del_enm=0
 
         if flag_del_enm and request.POST.get('ch_del_enm', 0):
@@ -201,7 +212,10 @@ def delete(request):
             for del_msg_no in del_msg_list:
                 if del_msg_no:
                     del_msg_no = int(del_msg_no)
-                    ret, msg = server.messaging_manager.delete_message(sess, int(del_msg_no))
+                    if flag_inbox:
+                        ret, msg = server.messaging_manager.delete_received_message(sess, int(del_msg_no))
+                    else:
+                        ret, msg = server.messaging_manager.delete_received_message(sess, int(del_msg_no))
                 
     assert ret, msg
 

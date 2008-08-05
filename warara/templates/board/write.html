@@ -6,13 +6,19 @@
 {% endblock style %}
 
 {% block board_content %}
-<form name="article_write" action="/board/{{board_name}}/write/" method="POST">
+<form name="article_write" action="/board/{{board_name}}/write/" method="POST" enctype="multipart/form-data">
     <div id="article_write_title">
         title : 
         <input type="text" value="{{default_title}}" name="title"></input>
     </div>
     <div id="article_write_text">
         <textarea name="text">{{default_text}}</textarea>
+    </div>
+    <div id="article_write_file">
+        <p>
+            file 1 : 
+            <input type="file" name="file1"></input>
+        </p>
     </div>
     <div id="article_write_buttons">
         <input type="submit" value="{{t_write}}"></input>
