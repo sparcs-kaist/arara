@@ -17,7 +17,15 @@
         <div id="header">
             <h1><a href="/">아라</a></h1>
             <div id="top_menu">
-		<a href="/account/login/" class="{% if logged_in %}hidden{% endif %}">Login</a>
+		<form action="/account/login/" method="post">
+		    <span class="{% if logged_in %}hidden{% endif %}">
+		    <label for="username_field">Username:</label>
+		    <input type="text" id="username_field" name="username" />
+		    <label for="password_field">Password:</label>
+		    <input type="password" id="password_field" name="password" />
+		    <input type="submit" value="Login" />
+	    	    </span>
+		</form>
                 <a href="/account/logout/" class="{% if not logged_in %}hidden{% endif %}">Logout</a>
 		<a href="/account/" class="{% if not logged_in %}hidden{% endif %}">Account</a>
 		<a href="/account/register/agreement" class="{% if logged_in %}hidden{% endif %}">Register</a>

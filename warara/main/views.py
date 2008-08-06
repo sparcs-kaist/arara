@@ -32,6 +32,17 @@ def index(request):
     suc, ret = server.article_manager.get_weekly_best_list(5)
     assert suc, ret
     r['weekly_best_list'] = ret
-   
+    
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        client_ip = request.META['REMOTE_ADDR']
+        server = arara.get_server()
+        ret, session_key = server.login_manager.login(username, password, client_ip)
+        assert ret, session_key
+        request.session["arara_session_key"] = session_key
+        request.session["arara_username"] = username
+        return HttpResponseRedirect("/")
+    
     rendered = render_to_string('index.html', r)
     return HttpResponse(rendered)
