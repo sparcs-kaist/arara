@@ -64,9 +64,15 @@ $(document).ready(function(){
         $.post("/message/send/", {receiver: $("#message_receiver_field").val(), text: $("#message_text_field").val(), ajax:"1"},
             function(data){
                 alert(data);
-            }
-        );
-
+            });
         event.preventDefault();
     });
+    $("#login_toggle").toggle(
+        function () {
+            $("#login_textfield").show();
+        },
+        function () {
+            $("#login_textfield").hide();
+        }
+    );
 });
