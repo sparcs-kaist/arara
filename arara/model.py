@@ -144,9 +144,12 @@ class Welcome(object):
         return "<Welcome('%s','%s')>" % (self.content, self.valid)
 
 class File(object): 
-    def __init__(self, filename, content): 
+    def __init__(self, filename, filepath, user, board, article): 
         self.filename = filename
-        self.content = content
+        self.filepath= filepath 
+        self.user = user
+        self.board = board
+        self.article = article
 
     def __repr__(self):
         return "<File('%s')>" % (self.filename)
@@ -258,11 +261,18 @@ welcome_table = Table('welcomes' , metadata,
 file_table = Table('files', metadata,
     Column('id', Integer, primary_key=True),
     Column('filename', Unicode(200)),
-    Column('content', Binary),
+    Column('filepath', Text), 
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('board_id', Integer, ForeignKey('boards.id')),
+    Column('article_id', Integer, ForeignKey('articles.id')),
 )
 
 
-mapper(File, file_table)
+mapper(File, file_table, properties={
+    'user':relation(User, backref='files', lazy=True),
+    'board':relation(Board, backref=None, lazy=True),
+    'article':relation(Article, backref=None, lazy=True),
+})
 
 mapper(Banner, banner_table)
 
