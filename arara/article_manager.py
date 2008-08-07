@@ -205,7 +205,6 @@ class ArticleManager(object):
             if ret:
                 board = session.query(model.Board).filter_by(board_name=board_name).one()
                 article_count = session.query(model.Article).filter_by(board_id=board.id, root_id=None).count()
-                page_length -= 2
                 last_page = int(article_count / page_length)
                 if article_count % page_length != 0:
                     last_page += 1
@@ -217,12 +216,6 @@ class ArticleManager(object):
                 last = offset + page_length
                 article_list = session.query(model.Article).filter_by(board_id=board.id, root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
                 article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
-                ret, weekly_best_article_dict_list = self._get_weekly_best_article(session_key, board, 1)
-                ret, today_best_article_dict_list = self._get_today_best_article(session_key, board, 1)
-                if weekly_best_article_dict_list:
-                    article_dict_list.insert(0, weekly_best_article_dict_list[0])
-                if today_best_article_dict_list:
-                    article_dict_list.insert(0, today_best_article_dict_list[0])
                 article_dict_list.append({'last_page': last_page})
                 for article in article_dict_list:
                     if article.has_key('id'):
@@ -524,7 +517,7 @@ class ArticleManager(object):
             return ret, message
         return True, article.id
         
-    @require_login
+    #@require_login
     def board_list(self, session_key):
         '''
         게시판 목록 읽어오기
@@ -544,9 +537,13 @@ class ArticleManager(object):
             return False, 'DATABASE_ERROR'
 
     @require_login
-    def search(self, session_key, board_name, query_text, search_type, page=1, page_length=20):
+    def search(self, session_key, board_name, query_text, search_type='All', page=1, page_length=20):
         '''
         게시물 검색
+
+        검색 type이 all일 때 board_name을 지정하면 그 보드의 전체 검색결과를,
+        
+        board_name에 'all_board'를 넣으면 전체 보드를 검색한 결과를 리턴한다.
 
         @type  session_key: string
         @param session_key: User Key
@@ -555,7 +552,7 @@ class ArticleManager(object):
         @type  query_text: string
         @param query_text: Text to Search
         @type  search_type: string
-        @param search_type: Search Type (Title, Context, Author, Date, All)
+        @param search_type: Search Type (Title, Content, Author_nick, Author_username, Date, All)
         @type  page: integer
         @param page: Page Number to Request
         @type  page_length: integer
@@ -572,12 +569,159 @@ class ArticleManager(object):
 
         '''
         ret, user_info = self.login_manager.get_session(session_key)
-        ret = self._is_board_exist(board_name)
-        if not ret:
-            return False, 'BOARD_NOT_EXIST'
-        search_manager = xmlrpclib.Server('http://nan.sparcs.org:9000/api')
-        query = str(query_text) + ' source:ara'
-        result = search_manager.search('00000000000000000000000000000000',query)
-        return True, result
+        session = model.Session()
+        board_name = unicode(board_name)
+        query_text = unicode(query_text)
+        db_query_text = unicode('%' + query_text + '%')
+        if not search_type.upper() == 'ALL':
+            if board_name.upper() == 'ALL_BOARD':
+                board_name = None
+            else:
+                ret = self._is_board_exist(board_name)
+                if not ret:
+                    return False, 'BOARD_NOT_EXIST'
+                else:
+                    board = session.query(model.Board).filter_by(board_name=board_name).one()
+        else:
+            board = session.query(model.Board).filter_by(board_name=board_name).one()
 
+        if search_type.upper() == 'ALL':
+            try:
+                search_manager = xmlrpclib.Server('http://nan.sparcs.org:9000/api')
+                query = str(query_text) + ' source:ara'
+                if board_name:
+                    query += ' type:' + board_name
+                result = search_manager.search('00000000000000000000000000000000',query)
+                return True, result
+            except Exception:
+                if board_name:
+                    article_count = session.query(model.Article).filter(and_(
+                            model.articles_table.c.author_id == user.id,
+                            model.articles_table.c.board_id == board.id,
+                            not_(model.articles_table.c.is_searchable == False))).count()
+                else:
+                    article_count = session.query(model.Article).filter(and_(
+                            model.articles_table.c.author_id == user.id,
+                            not_(model.articles_table.c.is_searchable == False))).count()
+                last_page = int(article_count / page_length)
+                if article_count % page_length != 0:
+                    last_page += 1
+                elif article_count == 0:
+                    last_page += 1
+                if page > last_page:
+                    return False, 'WRONG_PAGENUM'
+                offset = page_length * (page - 1)
+                last = offset + page_length
+                if board_name:
+                    result = session.query(model.Article).filter(and_(or_(
+                            model.articles_table.c.title.like(db_query_text),
+                            model.articles_table.c.content.like(db_query_text),
+                            model.articles_table.c.author_id.like(db_query_text)),
+                            model.articles_table.c.board_id == board.id,
+                            not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
+                else:
+                    result = session.query(model.Article).filter(and_(or_(
+                            model.articles_table.c.title.like(db_query_text),
+                            model.articles_table.c.content.like(db_query_text),
+                            model.articles_table.c.author_id.like(db_query_text)),
+                            not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
+                search_dict_list = self._get_dict_list(result, LIST_ARTICLE_WHITELIST)
+                search_dict_list.append({'last_page': last_page})
+                return True, search_dict_list
+        elif search_type.upper() == 'TITLE':
+            article_count = session.query(model.Article).filter(and_(
+                    model.articles_table.c.title.like(db_query_text),
+                    model.articles_table.c.board_id == board.id,
+                    not_(model.articles_table.c.is_searchable == False))).count()
+            last_page = int(article_count / page_length)
+            if article_count % page_length != 0:
+                last_page += 1
+            elif article_count == 0:
+                last_page += 1
+            if page > last_page:
+                return False, 'WRONG_PAGENUM'
+            offset = page_length * (page - 1)
+            last = offset + page_length
+            result = session.query(model.Article).filter(and_(
+                    model.articles_table.c.title.like(db_query_text),
+                    model.articles_table.c.board_id == board.id,
+                    not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
+            search_dict_list = self._get_dict_list(result, LIST_ARTICLE_WHITELIST)
+            search_dict_list.append({'last_page': last_page})
+            return True, search_dict_list
+        elif search_type.upper() == 'CONTENT':
+            article_count = session.query(model.Article).filter(and_(
+                    model.articles_table.c.content.like(db_query_text),
+                    model.articles_table.c.board_id == board.id,
+                    not_(model.articles_table.c.is_searchable == False))).count()
+            last_page = int(article_count / page_length)
+            if article_count % page_length != 0:
+                last_page += 1
+            elif article_count == 0:
+                last_page += 1
+            if page > last_page:
+                return False, 'WRONG_PAGENUM'
+            offset = page_length * (page - 1)
+            last = offset + page_length
+            result = session.query(model.Article).filter(and_(
+                    model.articles_table.c.content.like(db_query_text),
+                    model.articles_table.c.board_id == board.id,
+                    not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
+            search_dict_list = self._get_dict_list(result, LIST_ARTICLE_WHITELIST)
+            search_dict_list.append({'last_page': last_page})
+            return True, search_dict_list
+        elif search_type.upper() == 'AUTHOR_NICK':
+            try:
+                user = session.query(model.User).filter_by(nickname=query_text).one()
+            except InvalidRequestError:
+                return False, 'USER_NOT_EXIST'
+            article_count = session.query(model.Article).filter(and_(
+                    model.articles_table.c.author_id == user.id,
+                    model.articles_table.c.board_id == board.id,
+                    not_(model.articles_table.c.is_searchable == False))).count()
+            last_page = int(article_count / page_length)
+            if article_count % page_length != 0:
+                last_page += 1
+            elif article_count == 0:
+                last_page += 1
+            if page > last_page:
+                return False, 'WRONG_PAGENUM'
+            offset = page_length * (page - 1)
+            last = offset + page_length
+            result = session.query(model.Article).filter(and_(
+                    model.articles_table.c.author_id == user.id,
+                    model.articles_table.c.board_id == board.id,
+                    not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
+            search_dict_list = self._get_dict_list(result, LIST_ARTICLE_WHITELIST)
+            search_dict_list.append({'last_page': last_page})
+            return True, search_dict_list
+        elif search_type.upper() == 'AUTHOR_USERNAME':
+            try:
+                user = session.query(model.User).filter_by(username=query_text).one()
+            except InvalidRequestError:
+                return False, 'USER_NOT_EXIST'
+            article_count = session.query(model.Article).filter(and_(
+                    model.articles_table.c.author_id == user.id,
+                    model.articles_table.c.board_id == board.id,
+                    not_(model.articles_table.c.is_searchable == False))).count()
+            last_page = int(article_count / page_length)
+            if article_count % page_length != 0:
+                last_page += 1
+            elif article_count == 0:
+                last_page += 1
+            if page > last_page:
+                return False, 'WRONG_PAGENUM'
+            offset = page_length * (page - 1)
+            last = offset + page_length
+            result = session.query(model.Article).filter(and_(
+                    model.articles_table.c.author_id == user.id,
+                    model.articles_table.c.board_id == board.id,
+                    not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
+            search_dict_list = self._get_dict_list(result, LIST_ARTICLE_WHITELIST)
+            search_dict_list.append({'last_page': last_page})
+            return True, search_dict_list
+        elif search_type.upper() == 'DATE':
+            return False, 'NOT_IMPLEMENTED'
+        else:
+            return False, 'WRONG_SEARCH_METHOD'
 # vim: set et ts=8 sw=4 sts=4
