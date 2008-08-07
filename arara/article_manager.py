@@ -303,6 +303,38 @@ class ArticleManager(object):
             return ret, message
 
     @require_login
+    def article_list_below(self, session_key, board_name, no, page_length=20):
+        '''
+        게시물을 읽을 때 밑에 표시될 게시글 목록을 가져오는 함수
+        '''
+        ret, user_info = self.login_manager.get_session(session_key)
+        ret, message = self._is_board_exist(board_name)
+
+        if ret:
+            session = model.Session()
+            board = session.query(model.Board).filter_by(board_name=board_name).one()
+            total_article_count = session.query(model.Article).filter_by(board_id=board.id, root_id=None).count()
+            remaining_article_count = session.query(model.Article).filter(and_(
+                    model.articles_table.c.board_id==board.id,
+                    model.articles_table.c.root_id==None,
+                    model.articles_table.c.id < no)).count()
+            position_no = total_article_count - remaining_article_count
+            page_position = 0
+            while True:
+                page_position += 1
+                if position_no <= (page_length * page_position):
+                    break
+            ret, below_article_dict_list = self.article_list(session_key, board_name, page_position, page_length)
+            if ret:
+                below_article_dict_list.append({'current_page': page_position})
+                return True, below_article_dict_list
+            else:
+                return False, 'DATABASE_ERROR'
+        else:
+            return False, 'BOARD_NOT_EXIST'
+        
+
+    @require_login
     def vote_article(self, session_key, board_name, article_no):
         '''
         DB의 게시물 하나의 추천수를 증가시킴
@@ -607,7 +639,6 @@ class ArticleManager(object):
                 if board_name:
                     query += ' type:' + board_name + '*'
                 result = search_manager.search('00000000000000000000000000000000',query)
-                print result
                 return True, result
             except Exception:
                 start_time = time.time()
