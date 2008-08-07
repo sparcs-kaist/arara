@@ -36,6 +36,8 @@ def suite():
                                    'notice_manager.txt')),
                                doctest.DocFileSuite(os.path.join(DOCTEST_PATH,
                                    'read_status_manager.txt')),
+                               doctest.DocFileSuite(os.path.join(DOCTEST_PATH,
+                                   'search_manager.txt')),
                                #doctest.DocTestSuite(blacklist_manager),
                                #doctest.DocTestSuite(logging_manager),
                                #doctest.DocTestSuite(log_manager),

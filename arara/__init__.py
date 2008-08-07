@@ -6,6 +6,7 @@ from arara.login_manager import LoginManager
 from arara.messaging_manager import MessagingManager
 from arara.notice_manager import NoticeManager
 from arara.read_status_manager import ReadStatusManager
+from arara.search_manager import SearchManager
 
 class Namespace(object):
     def __init__(self):
@@ -36,6 +37,9 @@ class Namespace(object):
         self.read_status_manager = ReadStatusManager()
         self.read_status_manager._set_login_manager(self.login_manager)
         self.read_status_manager._set_member_manager(self.member_manager)
+        self.search_manager = SearchManager()
+        self.search_manager._set_board_manager(self.board_manager)
+        self.search_manager._set_login_manager(self.login_manager)
 
 namespace = None
 

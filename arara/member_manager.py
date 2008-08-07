@@ -41,7 +41,6 @@ class MemberManager(object):
         self._register_sysop()
 
     def _register_sysop(self):
-
         sysop_reg_dic = {'username':u'SYSOP', 'password':u'SYSOP', 'nickname':u'SYSOP', 'email':u'SYSOP@sparcs.org', 'signature':u'', 'self_introduction':u'i am mikkang', 'default_language':u'ko_KR'}
         try:
             user = model.User(**sysop_reg_dic)
