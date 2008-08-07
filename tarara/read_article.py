@@ -36,21 +36,39 @@ class ara_read_article(ara_form):
         self.title_template = Template("Title: ${TITLE}")
         self.author_template = Template("Author: ${AUTHOR} (${NICKNAME})")
         self.info_template = Template("Date: ${DATE} Hit: ${HIT} Reply: ${REPLY} Vote: ${VOTE}")
-        self.reply_template = Template("Reply by ${AUTHOR}(${NICKNAME}) on ${DATE} ${NEW}")
+        self.reply_template = Template("Reply by ${AUTHOR}(${NICKNAME}) on ${DATE}")
         ara_form.__init__(self, parent, session_key)
 
     def set_article(self, board_name, article_id):
-        thread = self.server.article_manager.read(self.session_key, board_name, article_id)
-        if thread[0]:
-            body = thread[1][0]
-            self.titletext.body.set_text(self.title_template.safe_substitute(
-                TITLE=body['title']))
-            self.authortext.body.set_text(self.author_template.safe_substitute(
-                AUTHOR=body['author_username'], NICKNAME='blahblah'))
-            self.infotext.body.set_text(self.info_template.safe_substitute(
-                HIT=body['hit'], REPLY=str(len(thread[1])-1), 
-                DATE=body['date'].strftime("%Y/%m/%d %H:%M"), VOTE=str(body['vote'])))
-            self.articletext.body.set_text(body['content'])
+        self.thread = self.server.article_manager.read(self.session_key, board_name, article_id)
+        if self.thread[0]:
+            self.set_thread_info()
+            return self.get_article_body()
+
+    def set_thread_info(self):
+        body = self.thread[1][0]
+        self.titletext.body.set_text(self.title_template.safe_substitute(
+            TITLE=body['title']))
+        self.authortext.body.set_text(self.author_template.safe_substitute(
+            AUTHOR=body['author_username'], NICKNAME='blahblah'))
+        self.infotext.body.set_text(self.info_template.safe_substitute(
+            HIT=body['hit'], REPLY=str(len(self.thread[1])-1), 
+            DATE=body['date'].strftime("%Y/%m/%d %H:%M"), VOTE=str(body['vote'])))
+
+    def get_article_body(self):
+        article_list = []
+        body = self.thread[1]
+        for article in body:
+            if article['depth'] == 1:
+                article_list.append(urwid.Text(article['content']))
+            else:
+                reply_info = urwid.Text(self.reply_template.safe_substitute(AUTHOR=article['author_username'],
+                    NICKNAME='blahblah', DATE=article['date'].strftime("%Y/%m/%d %H:%M")))
+                reply_body = urwid.Text(article['content'])
+                reply_pile = urwid.Pile([('fixed',1,urwid.Filler(reply_info)),reply_body])
+                indented_pile = widget.IndentColumn(reply_pile, article['depth']-1)
+                article_list.append(indented_pile)
+        return article_list
 
     def __initwidgets__(self):
         self.keymap = {
@@ -60,14 +78,14 @@ class ara_read_article(ara_form):
         self.titletext = urwid.Filler(urwid.Text(''))
         self.authortext = urwid.Filler(urwid.Text(''))
         self.infotext = urwid.Filler(urwid.Text(''))
-        self.articletext = urwid.Filler(urwid.Text(''))
-        self.set_article(self.board_name, self.article_id)
+        self.article_threads = self.set_article(self.board_name, self.article_id)
+        self.article_list = urwid.ListBox(urwid.SimpleListWalker(self.article_threads))
 	self.header = urwid.Filler(urwid.Text(u"ARA: Read article",align='center'))
         functext = urwid.Filler(urwid.Text('(n)ext/(p)revious (b)lock (e)dit (d)elete (f)old/retract (r)eply (v)ote (q)uit'))
 
         content = [('fixed',1,self.authortext),('fixed',1,self.infotext),
                 ('fixed',1,self.titletext),
-                ('fixed',1,widget.dash),self.articletext,
+                ('fixed',1,widget.dash),self.article_list,
                 ('fixed',1,urwid.AttrWrap(functext, 'reversed'))]
         self.mainpile = urwid.Pile(content)
 

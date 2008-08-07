@@ -3,6 +3,12 @@
 
 import urwid
 
+utf8decode = urwid.escape.utf8decode
+dash = urwid.SolidFill(utf8decode('-'))
+blank = urwid.SolidFill(u" ")
+blanktext = urwid.Filler(urwid.Text(' '))
+nfblanktext = urwid.Text(' ')
+
 class Selectable:
     def selectable(self):
         return True
@@ -140,10 +146,8 @@ def EasyColumn(widget1, widget2,ratio1=60, ratio2=40):
         ('weight', ratio2, widget2),
         ])
 
-utf8decode = urwid.escape.utf8decode
-dash = urwid.SolidFill(utf8decode('-'))
-blank = urwid.SolidFill(u" ")
-blanktext = urwid.Filler(urwid.Text(' '))
+def IndentColumn(widget, indent=1):
+    return urwid.Columns([('fixed', indent, nfblanktext), widget,])
 
 # vim: set et ts=8 sw=4 sts=4:
 
