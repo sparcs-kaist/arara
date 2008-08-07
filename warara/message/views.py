@@ -26,6 +26,8 @@ def get_various_info(request, r):
     r['page_num'] = r['message_list'].pop()['last_page']
     r['message_num'] = len(r['message_list'])
     page_o = Paginator([x+1 for x in range(r['page_num'])], 10)
+    if page_o.num_pages < page_group_no:
+        page_group_no = page_o.num_pages
     r['page_list'] = page_o.page(page_group_no).object_list
 
     if page_o.page(page_group_no).has_next():
@@ -38,6 +40,8 @@ def get_various_info(request, r):
     r['message_no_strlist'] = ''
     for message in r['message_list']:
         r['message_no_strlist'] = '|'.join([r['message_no_strlist'], str(message['id'])])
+
+    r['page_length_list'] = [5, 10, 20]
 
     return r
 
@@ -52,8 +56,10 @@ def inbox(request):
         page = request.GET['page_no']
     else:
         page = 1
-    page_length = 20
     r['logged_in'] = True
+    r['page_no'] = int(page)
+    page_length = request.GET.get('page_length', 20)
+    page_length = int(page_length)
     ret, r['message_list'] = server.messaging_manager.receive_list(sess, page, page_length)
     if not ret:
         page = int(page)
@@ -62,10 +68,9 @@ def inbox(request):
             ret, r['message_list'] = server.messaging_manager.receive_list(sess, page, page_length)
             if ret:
                 break;
-    r['page_no'] = int(page)
-
     assert ret, r['message_list']
     r = get_various_info(request, r)
+    r['page_length'] = int(page_length)
     r['message_list_type'] = 'inbox'
     r['person_type'] = 'sender'
 
@@ -80,8 +85,10 @@ def outbox(request):
         page = request.GET['page_no']
     else:
         page = 1
-    page_length = 20
     r['logged_in'] = True
+    r['page_no'] = int(page)
+    page_length = request.GET.get('page_length', 20)
+    page_length = int(page_length)
     ret, r['message_list'] = server.messaging_manager.sent_list(sess, page, page_length)
     if not ret:
         page = int(page)
@@ -90,10 +97,9 @@ def outbox(request):
             ret, r['message_list'] = server.messaging_manager.receive_list(sess, page, page_length)
             if ret:
                 break;
-    r['page_no'] = int(page)
-    
     assert ret, r['message_list']
     r = get_various_info(request, r)
+    r['page_length'] = int(page_length)
     r['message_list_type'] = 'outbox'
     r['person_type'] = 'receiver'
     
@@ -184,16 +190,20 @@ def delete(request):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
     ret, msg = 1, 1
-    if request.POST.get('message_list_type', 'inbox') == 'inbox':
+    del_msg_no = request.GET.get('del_msg_no', 0)
+    if request.POST.get('message_list_type', 0) == 'inbox':
         flag_inbox = 1
+    elif request.GET.get('message_list_type', 0) == 'inbox':
+        flag_inbox = 1
+        del_msg_no = int(del_msg_no)
     else:
         flag_inbox = 0
 
-    if request.POST.get('del_msg_no', 0):
+    if del_msg_no:
         if flag_inbox:
-            ret, msg = server.messaging_manager.delete_received_message(sess, int(request.POST.get('del_msg_no', 0)))
+            ret, msg = server.messaging_manager.delete_received_message(sess, del_msg_no)
         else:
-            ret, msg = server.messaging_manager.delete_sent_message(sess, int(request.POST.get('del_msg_no', 0)))
+            ret, msg = server.messaging_manager.delete_sent_message(sess, del_msg_no)
     elif request.method == "POST":
         flag_del_enm = request.POST.get('flag_del_enm', 0) #flag_delete_entire_message
         flag_del_enm = int(flag_del_enm)

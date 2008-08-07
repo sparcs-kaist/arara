@@ -18,6 +18,13 @@
 </div>
 
 <form action="/message/delete/" method="POST">
+    <div class="message_page_length_selector">
+        <select name="page_length">
+            {% for pli in page_length_list %}
+            <option value="{{pli}}"{% ifequal pli page_length %} selected="selected"{%endifequal%}>{{pli}}</option>
+            {% endfor %}
+        </select>
+    </div>
 <div class="message_list_table" id="message_list_table">
     <table border="1">
         <tr>
@@ -67,13 +74,13 @@
 </form>
 <div id="message_page_move">
 	<span>
-        <a href="/message/{{message_list_type}}?page_no={{first_page.no}}">{{first_page.mark}}</a>
-        <a href="/message/{{message_list_type}}?page_no={{prev_page_group.no}}">{{prev_page_group.mark}}</a>
+        <a href="/message/{{message_list_type}}?page_no={{first_page.no}}&page_length={{page_length}}">{{first_page.mark}}</a>
+        <a href="/message/{{message_list_type}}?page_no={{prev_page_group.no}}&page_length={{page_length}}">{{prev_page_group.mark}}</a>
         {% for page in page_list %}
-        <a href="/message/{{message_list_type}}?page_no={{page}}"{% ifequal page page_no %} class="makered"{%endifequal%}>{{page}}</a>
+        <a href="/message/{{message_list_type}}?page_no={{page}}&page_length={{page_length}}"{% ifequal page page_no %} class="makered"{%endifequal%}>{{page}}</a>
 		{% endfor %}
-        <a href="/message/{{message_list_type}}?page_no={{next_page_group.no}}">{{next_page_group.mark}}</a>
-        <a href="/message/{{message_list_type}}?page_no={{last_page.no}}">{{last_page.mark}}</a>
+        <a href="/message/{{message_list_type}}?page_no={{next_page_group.no}}&page_length={{page_length}}">{{next_page_group.mark}}</a>
+        <a href="/message/{{message_list_type}}?page_no={{last_page.no}}&page_length={{page_length}}">{{last_page.mark}}</a>
 	</span>
 </div>
 {% endblock message_content %}

@@ -13,16 +13,18 @@
     <span id="message_time">
         {{message.sent_time}}
     </span>
+    <!-- next message, prev message
     <span id="message_move">
         {{prev_message.mark}}
         {{next_message.mark}}
     </span>
+    -->
 </div>
 <div id="message_read_text">
     <textarea name="text" readonly="readonly">{{message.message}}</textarea>
 </div>
 <div id="message_read_buttons">
-    <a href="/message/delete/">delete</a>
+    <a href="/message/delete/?del_msg_no={{message.id}}&message_list_type={{message_list_type}}">delete</a>
     {% ifequal message_list_type 'inbox' %}
     <a href="/message/reply/{{message_id}}">reply</a>
     {% endifequal %}

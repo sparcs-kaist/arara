@@ -6,4 +6,11 @@ $(document).ready(function() {
 			this.checked = checked;
 			});
 	});
+
+	$("select[name='page_length']").change(function() {
+		$("select[name='page_length'] option:selected").each(function(){
+			$src = "/message/" + $("input[name='message_list_type']").val() + "?page_no=" + $("input[name='page_no']").val() + "&page_length=" + $(this).val();
+			location.href = $src;
+			});
+		});
 })
