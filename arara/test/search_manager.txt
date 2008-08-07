@@ -1,0 +1,108 @@
+# load Search Manager
+
+>>> import arara.model
+>>> arara.model.init_test_database()
+>>> import arara
+>>> server = arara.get_namespace()
+
+# To test search manager, we have to write some article to the board.
+# So, let's copy some of the test module from the article_manager.txt
+####################################### QUOTE ############################################
+# Login as SYSOP and create 'garbage' board
+
+>>> ret, session_key_sysop = server.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123')
+>>> ret
+True
+
+>>> server.board_manager.add_board(unicode(session_key_sysop), u'garbages', u'Garbage Board')
+(True, 'OK')
+
+# Register one user, combacsa.
+
+>>> user_reg_dic = {'username':u'combacsa', 'password':u'combacsa', 'nickname':u'combacsa', 'email':u'combacsa', 'signature':u'combacsa', 'self_introduction':u'combacsa', 'default_language':u'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+>>> server.member_manager.confirm(u'combacsa', unicode(register_key))
+(True, 'OK')
+>>> ret, session_key_combacsa = server.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.140')
+>>> ret
+True
+
+# Register one user, mikkang
+
+>>> user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+>>> server.member_manager.confirm(u'mikkang', unicode(register_key))
+(True, 'OK')
+>>> ret, session_key = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.140')
+>>> ret
+True
+
+# Register one user, serialx
+
+>>> user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+>>> server.member_manager.confirm(u'serialx', unicode(register_key))
+(True, 'OK')
+>>> ret, session_key_serialx = server.login_manager.login(u'serialx', u'serialx', u'143.248.234.140')
+>>> ret
+True
+
+# Faking time.time (to check time field)
+
+>>> import time
+>>> def stub_time():
+...     return 1.1
+>>> org_time = time.time
+>>> time.time = stub_time
+
+# now Testing Article Manager!
+
+>>> server.article_manager.board_list(session_key)
+(True, [{'board_name': u'garbages', 'board_description': u'Garbage Board'}])
+
+# Write an article
+
+>>> article_dic = {'title': u'serialx is...', 'content': u'polarbear'}
+>>> server.article_manager.write_article(session_key, u'garbages', article_dic)
+(True, 1)
+
+# Read the article
+
+>>> server.article_manager.read(session_key, u'garbages', 1)
+(True, [{'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'root_id': 1, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'is_searchable': True, 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'serialx is...', 'id': 1}])
+
+# Reply to the article
+
+>>> reply_dic = {'title':u'dummy', 'content': u'asdf'}
+>>> server.article_manager.write_reply(session_key, u'garbages', 24, reply_dic)
+(False, 'ARTICLE_NOT_EXIST')
+>>> server.article_manager.write_reply(session_key, u'garbages', 1, reply_dic)
+(True, 2)
+
+# Read the article again
+
+>>> server.article_manager.read(session_key, u'garbages', 1)
+(True, [{'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'root_id': 1, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'is_searchable': True, 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'serialx is...', 'id': 1}, {'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'root_id': 1, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'is_searchable': True, 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'dummy', 'id': 2}])
+
+# List the article (should only be one article in the list
+
+>>> server.article_manager.article_list(session_key, u'garbages')
+(True, [{'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is...', 'deleted': False, 'read_status': 'R', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'board_name': u'garbages', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'type': 'today', 'id': 1}, {'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is...', 'deleted': False, 'read_status': 'R', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'board_name': u'garbages', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'type': 'weekly', 'id': 1}, {'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is...', 'deleted': False, 'read_status': 'R', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'type': 'normal', 'id': 1}, {'last_page': 1}])
+
+# Test for pagination
+
+>>> for i in range(100):
+...     article_dic = {u'title': u'serialx is... ' + unicode(i), u'content': u'polarbear'}
+...     _ = server.article_manager.write_article(session_key, u'garbages', article_dic)
+
+##################################### END QUOTE ##########################################
+
+# Now testing search_manager
+
+>>> server.search_manager.register_article()
