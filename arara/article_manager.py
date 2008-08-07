@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import time
+import xmlrpclib
 
 from arara.util import require_login, filter_dict
 from arara import model
@@ -569,6 +570,12 @@ class ArticleManager(object):
 
         '''
         ret, user_info = self.login_manager.get_session(session_key)
-        return False, 'NOT_IMPLEMENTED'
+        ret = self._is_board_exist(board_name)
+        if not ret:
+            return False, 'BOARD_NOT_EXIST'
+        search_manager = xmlrpclib.Server('http://nan.sparcs.org:9000/api')
+        query = str(query_text) + ' source:ara'
+        result = search_manager.search('00000000000000000000000000000000',query)
+        return True, result
 
 # vim: set et ts=8 sw=4 sts=4
