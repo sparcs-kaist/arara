@@ -1,0 +1,15 @@
+>>> import arara
+>>> server = arara.get_namespace()
+
+# Register one user, mikkang
+>>> user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+>>> server.member_manager.confirm(u'mikkang', unicode(register_key))
+(True, 'OK')
+>>> ret, session_key = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.140')
+>>> ret
+True
+
+# File manager Test!!
