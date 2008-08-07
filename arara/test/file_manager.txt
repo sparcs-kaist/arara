@@ -51,3 +51,5 @@ True
 >>> server.file_manager.save_file(session_key, article_id , u'hahahah.jpg')
 (True, 'garbages/1970/1/1')
 
+>>> time.time = org_time
+
