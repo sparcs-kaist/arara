@@ -7,6 +7,7 @@ from arara.messaging_manager import MessagingManager
 from arara.notice_manager import NoticeManager
 from arara.read_status_manager import ReadStatusManager
 from arara.search_manager import SearchManager
+from arara.file_manager import FileManager
 
 class Namespace(object):
     def __init__(self):
@@ -40,6 +41,9 @@ class Namespace(object):
         self.search_manager = SearchManager()
         self.search_manager._set_board_manager(self.board_manager)
         self.search_manager._set_login_manager(self.login_manager)
+        self.file_manager = FileManager()
+        self.file_manager._set_login_manager(self.login_manager)
+        self.article_manager._set_file_manager(self.file_manager)
 
 namespace = None
 
