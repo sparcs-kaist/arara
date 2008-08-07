@@ -11,7 +11,9 @@ from sqlalchemy import and_, or_, not_
 WRITE_ARTICLE_DICT = ('title', 'content')
 READ_ARTICLE_WHITELIST = ('id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable')
 LIST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
-                    'deleted', 'author_username', 'vote', 'hit', 'last_page')
+                    'deleted', 'author_username', 'vote', 'hit')
+SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
+                    'deleted', 'author_username', 'vote', 'hit', 'content')
 BEST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'vote', 'hit', 'last_page', 'board_name')
 
@@ -130,6 +132,9 @@ class ArticleManager(object):
         if item_dict.has_key('root_id'):
             if not item_dict['root_id']:
                 item_dict['root_id'] = item_dict['id']
+        if item_dict.has_key('content'):
+            if whitelist == SEARCH_ARTICLE_WHITELIST:
+                item_dict['content'] = item_dict['content'][:40]
         if whitelist:
             filtered_dict = filter_dict(item_dict, whitelist)
         else:
@@ -201,7 +206,8 @@ class ArticleManager(object):
                 2. 페이지 번호 오류: False, 'WRONG_PAGENUM' 
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        article_list = []
+        ret_dict = {}
+
         try:
             session = model.Session()
             ret, _ = self._is_board_exist(board_name)
@@ -228,6 +234,11 @@ class ArticleManager(object):
                         if ret:
                             article['read_status'] = msg
                 return True, article_dict_list
+                #XXX 이 아래 부분은 차후 Frontend쪽에 공지 후 적용될 부분
+                #ret_dict['hits'] = article_dict_list
+                #ret_dict['last_page'] = last_page
+                #ret_dict['results'] = article_count
+                #return True, ret_dict
             else:
                 return ret, 'BOARD_NOT_EXIST'
         except InvalidRequestError:
@@ -575,7 +586,7 @@ class ArticleManager(object):
         board_name = unicode(board_name)
         query_text = unicode(query_text)
         db_query_text = unicode('%' + query_text + '%')
-        if not search_type.upper() == 'ALL':
+        if search_type.upper() == 'ALL':
             if board_name.upper() == 'ALL_BOARD':
                 board_name = None
             else:
@@ -587,15 +598,19 @@ class ArticleManager(object):
         else:
             board = session.query(model.Board).filter_by(board_name=board_name).one()
 
+        ret_dict = {}
+
         if search_type.upper() == 'ALL':
             try:
                 search_manager = xmlrpclib.Server('http://nan.sparcs.org:9000/api')
                 query = str(query_text) + ' source:ara'
                 if board_name:
-                    query += ' type:' + board_name
+                    query += ' type:' + board_name + '*'
                 result = search_manager.search('00000000000000000000000000000000',query)
+                print result
                 return True, result
             except Exception:
+                start_time = time.time()
                 if board_name:
                     article_count = session.query(model.Article).filter(and_(
                             model.articles_table.c.author_id == user.id,
@@ -627,10 +642,15 @@ class ArticleManager(object):
                             model.articles_table.c.content.like(db_query_text),
                             model.articles_table.c.author_id.like(db_query_text)),
                             not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
-                search_dict_list = self._get_dict_list(result, LIST_ARTICLE_WHITELIST)
-                search_dict_list.append({'last_page': last_page})
-                return True, search_dict_list
+                end_time = time.time()
+                search_dict_list = self._get_dict_list(result, SEARCH_ARTICLE_WHITELIST)
+                ret_dict['hits'] = search_dict_list
+                ret_dict['results'] = article_count
+                ret_dict['search_time'] = str(end_time-start_time)
+                ret_dict['last_page'] = last_page
+                return True, ret_dict
         elif search_type.upper() == 'TITLE':
+            start_time = time.time()
             article_count = session.query(model.Article).filter(and_(
                     model.articles_table.c.title.like(db_query_text),
                     model.articles_table.c.board_id == board.id,
@@ -648,10 +668,15 @@ class ArticleManager(object):
                     model.articles_table.c.title.like(db_query_text),
                     model.articles_table.c.board_id == board.id,
                     not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
-            search_dict_list = self._get_dict_list(result, LIST_ARTICLE_WHITELIST)
-            search_dict_list.append({'last_page': last_page})
-            return True, search_dict_list
+            end_time = time.time()
+            search_dict_list = self._get_dict_list(result, SEARCH_ARTICLE_WHITELIST)
+            ret_dict['hits'] = search_dict_list
+            ret_dict['results'] = article_count
+            ret_dict['search_time'] = str(end_time-start_time)
+            ret_dict['last_page'] = last_page
+            return True, ret_dict
         elif search_type.upper() == 'CONTENT':
+            start_time = time.time()
             article_count = session.query(model.Article).filter(and_(
                     model.articles_table.c.content.like(db_query_text),
                     model.articles_table.c.board_id == board.id,
@@ -669,10 +694,15 @@ class ArticleManager(object):
                     model.articles_table.c.content.like(db_query_text),
                     model.articles_table.c.board_id == board.id,
                     not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
-            search_dict_list = self._get_dict_list(result, LIST_ARTICLE_WHITELIST)
-            search_dict_list.append({'last_page': last_page})
-            return True, search_dict_list
+            end_time = time.time()
+            search_dict_list = self._get_dict_list(result, SEARCH_ARTICLE_WHITELIST)
+            ret_dict['hits'] = search_dict_list
+            ret_dict['results'] = article_count
+            ret_dict['search_time'] = str(end_time-start_time)
+            ret_dict['last_page'] = last_page
+            return True, ret_dict
         elif search_type.upper() == 'AUTHOR_NICK':
+            start_time = time.time()
             try:
                 user = session.query(model.User).filter_by(nickname=query_text).one()
             except InvalidRequestError:
@@ -694,10 +724,15 @@ class ArticleManager(object):
                     model.articles_table.c.author_id == user.id,
                     model.articles_table.c.board_id == board.id,
                     not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
-            search_dict_list = self._get_dict_list(result, LIST_ARTICLE_WHITELIST)
-            search_dict_list.append({'last_page': last_page})
-            return True, search_dict_list
+            end_time = time.time()
+            search_dict_list = self._get_dict_list(result, SEARCH_ARTICLE_WHITELIST)
+            ret_dict['hits'] = search_dict_list
+            ret_dict['results'] = article_count
+            ret_dict['search_time'] = str(end_time-start_time)
+            ret_dict['last_page'] = last_page
+            return True, ret_dict
         elif search_type.upper() == 'AUTHOR_USERNAME':
+            start_time = time.time()
             try:
                 user = session.query(model.User).filter_by(username=query_text).one()
             except InvalidRequestError:
@@ -719,9 +754,13 @@ class ArticleManager(object):
                     model.articles_table.c.author_id == user.id,
                     model.articles_table.c.board_id == board.id,
                     not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
-            search_dict_list = self._get_dict_list(result, LIST_ARTICLE_WHITELIST)
-            search_dict_list.append({'last_page': last_page})
-            return True, search_dict_list
+            end_time = time.time()
+            search_dict_list = self._get_dict_list(result, SEARCH_ARTICLE_WHITELIST)
+            ret_dict['hits'] = search_dict_list
+            ret_dict['results'] = article_count
+            ret_dict['search_time'] = str(end_time-start_time)
+            ret_dict['last_page'] = last_page
+            return True, ret_dict
         elif search_type.upper() == 'DATE':
             return False, 'NOT_IMPLEMENTED'
         else:

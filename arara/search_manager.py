@@ -54,9 +54,10 @@ class SearchManager(object):
         if not ret:
             return False, 'DATABASE_ERROR'
 
-        for board_name in board_list:
+        for board_info in board_list:
             session = model.Session()
-            board = session.query(model.Board).filter_by(board_name=board_name['board_name']).one()
+            board_name = board_info['board_name']
+            board = session.query(model.Board).filter_by(board_name=board_name).one()
             article_count = session.query(model.Article).filter_by(board_id=board.id).count()
             for article_no in range(1, article_count):
                 article = session.query(model.Article).filter_by(id=article_no).one()
@@ -64,7 +65,6 @@ class SearchManager(object):
                 if article_dict['is_searchable']:
                     ksearch = xmlrpclib.Server('http://nan.sparcs.org:9000/api')
                     api_key = '54ebf56de7684dba0d69bffc9702e1b4'
-                    uri = 'http://arara.kaist.ac.kr/' + board_name['board_name'] + '/' + str(article_no)
+                    uri = 'http://ara.kaist.ac.kr/' + board_name + '/' + str(article_no)
                     result = ksearch.index(api_key, 'ara', uri, article_dict['title'], article_dict['content'], 1.0, board_name)
-                    print result
-
+                    assert result == 'OK'

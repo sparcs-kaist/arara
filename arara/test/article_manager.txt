@@ -228,11 +228,11 @@ True
 
 # Testing blacklist function
 
->>> article_dic = {'title': u'woodori is...', 'content': u'KIN'}
+>>> article_dic = {'title': u'woodori is...', 'content': u'123456789012345678901234567890123456789#123456789012345678901234567890'}
 >>> ret, article_id = server.article_manager.write_article(session_key_serialx, u'garbages', article_dic)
 
 >>> server.article_manager.read(session_key, u'garbages', article_id)
-(True, [{'author_username': u'serialx', 'hit': 1, 'blacklisted': True, 'root_id': 108, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'is_searchable': True, 'content': u'KIN', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'woodori is...', 'id': 108}])
+(True, [{'author_username': u'serialx', 'hit': 1, 'blacklisted': True, 'root_id': 108, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'is_searchable': True, 'content': u'123456789012345678901234567890123456789#123456789012345678901234567890', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'woodori is...', 'id': 108}])
 
 # delete polarbear from blacklist
 
@@ -255,6 +255,8 @@ True
 
 >>> server.article_manager.search(session_key, 'garbages', 'mikkang', 'author_nick', 1, 5)
 (True, [{'author_username': u'mikkang', 'hit': 0, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 107}, {'author_username': u'mikkang', 'hit': 0, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 106}, {'author_username': u'mikkang', 'hit': 0, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 105}, {'author_username': u'mikkang', 'hit': 0, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 104}, {'author_username': u'mikkang', 'hit': 1, 'title': u'woodori is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 103}, {'last_page': 22}])
+
+>>> server.article_manager.search(session_key, 'all_board', 'polarbear', 'all', 1, 5)
 
 >>> server.article_manager.search(session_key, 'garbages', 'NOT_EXIST_USERNAME', 'author_username', 1, 20)
 (False, 'USER_NOT_EXIST')
