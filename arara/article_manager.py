@@ -240,10 +240,10 @@ class ArticleManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @type  no: number
-        @param no: Article Number
         @type board_name: string
         @param board_name : BBS Name
+        @type  no: number
+        @param no: Article Number
         @rtype: boolean, dictionary
         @return:
             1. Read 성공: True, Article Dictionary
@@ -433,12 +433,12 @@ class ArticleManager(object):
 
         @type  session_key: string
         @param session_key: User Key
+        @type board_name: string
+        @param board_name : BBS Name
         @type  no: integer
         @param no: Article Number
         @type  article_dic : dictionary
         @param article_dic : Article Dictionary
-        @type board_name: string
-        @param board_name : BBS Name
         @rtype: boolean, string
         @return:
             1. Modify 성공: True, Article Number
@@ -480,10 +480,10 @@ class ArticleManager(object):
         
         @type  session_key: string
         @param session_key: User Key
-        @type  no: number
-        @param no: Article Number
         @type board_name: string
         @param board_name : BBS Name
+        @type  no: number
+        @param no: Article Number
         @rtype: boolean, string 
         @return:
             1. Delete 성공: True, 'OK'
