@@ -334,6 +334,8 @@ class ArticleManager(object):
                 session.save(vote)
                 session.commit()
                 return True, 'OK'
+        else:
+            return False, message
 
     @require_login
     def write_article(self, session_key, board_name, article_dic):
