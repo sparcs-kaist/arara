@@ -83,5 +83,8 @@ $(document).ready(function() {
 				break;
 
 			}
+			case 99: //c
+				break;
+			alert(event.which);
 	});
 });
