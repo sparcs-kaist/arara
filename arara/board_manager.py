@@ -59,16 +59,17 @@ class BoardManager(object):
 
     def get_board_list(self):
         session = model.Session()
-        try:
-            board_to_get = session.query(model.Board).all()
-        except InvalidRequestError:
-            return False, 'NO_BOARD_EXIST'
+        board_to_get = session.query(model.Board).all()
         board_dict_list = self._get_dict_list(board_to_get, BOARD_MANAGER_WHITELIST)
+        if board_dict_list == []:
+            return False, 'NO_BOARD_EXIST'
         return True, board_dict_list
 
     @require_login
     def delete_board(self, session_key, board_name):
+        ret, user_info = self.login_manager.get_session(session_key)
         session = model.Session()
+        user = session.query(model.User).filter_by(username=user_info['username']).one()
         try:
             board = session.query(model.Board).filter_by(board_name=board_name).one()
         except InvalidRequestError:
@@ -77,5 +78,4 @@ class BoardManager(object):
             return False, 'NO_PERMISSION'
         session.delete(board)
         session.commit()
-        pass
-
+        return True, 'OK'

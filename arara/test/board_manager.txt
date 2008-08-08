@@ -7,16 +7,83 @@
 
 # Register one user, mikkang
 
->>> user_reg_dic = {'username':'mikkang', 'password':'mikkang', 'nickname':'mikkang', 'email':'mikkang', 'signature':'mikkang', 'self_introduction':'mikkang', 'default_language':'english' }
+>>> user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
->>> server.member_manager.confirm('mikkang', register_key)
+>>> server.member_manager.confirm(u'mikkang', register_key)
 (True, 'OK')
->>> ret, session_key = server.login_manager.login('mikkang', 'mikkang', '143.248.234.140')
+>>> ret, session_key = server.login_manager.login(u'mikkang', u'mikkang', '143.248.234.140')
+>>> ret
+True
+
+# Login as sysop
+
+>>> ret, session_key_sysop = server.login_manager.login(u'SYSOP', u'SYSOP', '143.234.234.234')
 >>> ret
 True
 
 # Now test board_manager
+# Get the initial board list
 
+>>> server.board_manager.get_board_list()
+(False, 'NO_BOARD_EXIST')
 
+# Add one board 'garbages'
+
+>>> server.board_manager.add_board(session_key_sysop, u'garbages', u'Garbages Board')
+(True, 'OK')
+
+>>> server.board_manager.get_board_list()
+(True, [{'board_name': u'garbages', 'board_description': u'Garbages Board'}])
+
+# Add another board 'ToSysop'
+
+>>> server.board_manager.add_board(session_key_sysop, u'ToSysop', u'The comments to SYSOP')
+(True, 'OK')
+
+>>> server.board_manager.get_board_list()
+(True, [{'board_name': u'garbages', 'board_description': u'Garbages Board'}, {'board_name': u'ToSysop', 'board_description': u'The comments to SYSOP'}])
+
+# Check if you can get each board
+
+>>> server.board_manager.get_board(u'garbages')
+(True, {'board_name': u'garbages', 'board_description': u'Garbages Board'})
+
+>>> server.board_manager.get_board(u'ToSysop')
+(True, {'board_name': u'ToSysop', 'board_description': u'The comments to SYSOP'})
+
+>>> server.board_manager.get_board(u'garbage_bag_board')
+(False, 'BOARD_NOT_EXIST')
+
+# Try to add new board with normal user session
+
+>>> server.board_manager.add_board(session_key, u'I WANT THIS BOARD', u'MY BOARD')
+(False, 'NO_PERMISSION')
+
+>>> server.board_manager.get_board(u'I WANT THIS BOARD')
+(False, 'BOARD_NOT_EXIST')
+
+# Try to delete the board
+
+>>> server.board_manager.delete_board(session_key_sysop, u'ToSysop')
+(True, 'OK')
+
+>>> server.board_manager.get_board(u'ToSysop')
+(False, 'BOARD_NOT_EXIST')
+
+>>> server.board_manager.get_board_list()
+(True, [{'board_name': u'garbages', 'board_description': u'Garbages Board'}])
+
+# Try to delete the other remaining board with normal user session
+
+>>> server.board_manager.delete_board(session_key, u'garbages')
+(False, 'NO_PERMISSION')
+
+>>> server.board_manager.get_board(u'garbages')
+(True, {'board_name': u'garbages', 'board_description': u'Garbages Board'})
+
+>>> server.board_manager.get_board_list()
+(True, [{'board_name': u'garbages', 'board_description': u'Garbages Board'}])
+
+# Fin!
