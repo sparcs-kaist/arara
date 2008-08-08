@@ -1,9 +1,13 @@
 #article_write_text textarea {
     font-size: small;
-    background-color: #fef;
-    border: 1px solid #69f;
-    height: 165px;
-    width: 324px;
+    /*background-color: #fef;*/
+    border: 1px solid #ddd;
+    height: 400px;
+    width: 600px;
     overflow-x: hidden;
     overflow-y: auto;
+}
+
+input[type="text"] {
+	width: 400px;
 }

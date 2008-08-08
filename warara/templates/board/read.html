@@ -19,7 +19,9 @@
         <span class="username">{{article.author_username}}</span>
         <span class="article_date">{{article.date}}</span>
         <span class="vote">vote:{{article.vote}} </span>
+        {% ifequal article.id article.root_id %}
         <span class="hit"> hit:{{article.hit}} </span>
+        {% endifequal %}
         <div class="article_text">
             {% if not article.blacklisted %}
             {{article.content|safe}}
@@ -27,12 +29,14 @@
             BLACKLISTED
             {% endif %}
         </div>
+        {% if not article.deleted %}
         <a class="article_reply_show" href="#">reply</a>
         {% if article.flag_modify %}
         <a class="article_modify" href="/board/{{board_name}}/write?article_id={{article.id}}">modify</a>
         <a class="article_delete" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/delete/">delete</a>
         {% endif %}
         <a class="article_vote" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/vote">vote</a>
+        {% endif %}
         <div class="article_reply">
             <form class="article_reply_form" action="/board/{{board_name}}/{{article.id}}/reply/" method="POST">
                 <input type="hidden" name="root_id" value="{{article.root_id}}" />

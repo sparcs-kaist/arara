@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 
 from thirdparty.postmarkup import render_bbcode
 
+import os
 import arara
 import math
 import warara
@@ -27,6 +28,7 @@ def list(request, board_name):
     for i in range(len(article_list)):
         if article_list[i].get('deleted', 0):
             article_list[i]['title'] = 'deleted'
+            article_list[i]['author_username'] = 'deleted'
 
     r['board_name'] = board_dict['board_name']
     r['board_description'] = board_dict['board_description']
@@ -88,11 +90,14 @@ def write_(request, board_name):
     assert ret, article_id
     
     #upload file
-    file1, file2 = {}, {}
+    
     if request.FILES:
-        file1 = request.FILES['file1']
-        fp = open('files/%s' % file1.name, 'wb')
-        fp.write(file1.read())
+        for key, file in request.FILES.items():
+            ret, file_path = server.file_manager.save_file(sess, int(article_id), file.name)
+            if not os.path.isdir('files/%s' % file_path):
+                os.makedirs('files/%s' % file_path)
+            fp = open('files/%s/%s' % (file_path, file.name), 'wb')
+            fp.write(file.read())
 
     if not ret:
         r['e'] = article_id
@@ -118,6 +123,7 @@ def read(request, board_name, article_id):
     for i in range(len(article_list)):
         article_list[i]['content'] = render_bbcode(article_list[i]['content'], 'UTF-8')
         if article_list[i]['deleted']:
+            article_list[i]['author_username'] = 'deleted'
             article_list[i]['content'] = 'deleted'
             article_list[i]['title'] = 'deleted'
 

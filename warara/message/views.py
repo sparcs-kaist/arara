@@ -69,7 +69,7 @@ def inbox(request):
     r = get_various_info(request, r)
     r['page_length'] = int(page_length)
     r['message_list_type'] = 'inbox'
-    r['person_type'] = 'receiver'
+    r['person_type'] = 'sender'
 
     rendered = render_to_string('message/list.html', r)
     return HttpResponse(rendered)
@@ -98,7 +98,7 @@ def outbox(request):
     r = get_various_info(request, r)
     r['page_length'] = int(page_length)
     r['message_list_type'] = 'outbox'
-    r['person_type'] = 'sender'
+    r['person_type'] = 'receiver'
     
     rendered = render_to_string('message/list.html', r)
     return HttpResponse(rendered)
