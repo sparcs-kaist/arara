@@ -49,7 +49,12 @@ True
 
 >>> article_id = 1
 >>> server.file_manager.save_file(session_key, article_id , u'hahahah.jpg')
-(True, 'garbages/1970/1/1')
+(True, u'garbages/1970/1/1')
 
 >>> time.time = org_time
 
+>>> server.file_manager.download_file(session_key, article_id , u'hahahah.jpg')
+(True, u'garbages/1970/1/1')
+
+>>> server.file_manager.delete_file(session_key, article_id , u'hahahah.jpg')
+(True, u'garbages/1970/1/1')

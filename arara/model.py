@@ -150,6 +150,7 @@ class File(object):
         self.user = user
         self.board = board
         self.article = article
+        self.deleted = False
 
     def __repr__(self):
         return "<File('%s')>" % (self.filename)
@@ -265,6 +266,7 @@ file_table = Table('files', metadata,
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('board_id', Integer, ForeignKey('boards.id')),
     Column('article_id', Integer, ForeignKey('articles.id')),
+    Column('deleted', Boolean),
 )
 
 

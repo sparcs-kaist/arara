@@ -4,6 +4,8 @@
 from arara.util import require_login
 from arara import model
 
+from sqlalchemy import and_, or_, not_
+
 class FileManager(object):
     '''
     파일 처리 관련 클래스
@@ -50,7 +52,7 @@ class FileManager(object):
         
         session = model.Session()
         article = session.query(model.Article).filter_by(id=article_id).one()
-        filepath_to_save = str(article.board.board_name) + '/' +str(article.date.year) + '/' + str(article.date.month) + '/' + str(article.date.day)
+        filepath_to_save = u''+str(article.board.board_name) + '/' +str(article.date.year) + '/' + str(article.date.month) + '/' + str(article.date.day)
         try:
             file = model.File(filename, filepath_to_save, article.author, article.board, article)
             session.save(file)
@@ -61,29 +63,76 @@ class FileManager(object):
             return False, 'DATABASE_ERROR' 
 
     @require_login
-    def download_file(self, session_key, article, filename):
+    def download_file(self, session_key, article_id, filename):
         '''
         article의 파일을 다운로드 할때 실제로 파일이 저장된 장소를 리턴해주는 함수 
         
         @type  session_key: string
         @param session_key: User Key
-        @type  article: object
-        @param article: Article Object 
+        @type  article_id: Integer 
+        @param article_id: Article Number 
         @type  filename: string
         @param filename: File Name
         @rtype: boolean, string
         @return:
-            1. 저장 성공: True, 'garbages/2008/8/7' 
-            2. 저장 실패:
+            1. 경로 찾기 성공: True, 'garbages/2008/8/7' 
+            2. 경로 찾기 실패:
                 1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+        try:
+            session = model.Session()
+            article = session.query(model.Article).filter_by(id = article_id).one()
+            file = session.query(model.File).filter(
+                    and_(model.file_table.c.filename == filename,
+                    model.file_table.c.user_id == article.author.id,
+                    model.file_table.c.board_id == article.board.id,
+                    model.file_table.c.article_id == article.id, 
+                    model.file_table.c.deleted == False
+                    )).one()
+            download_path = file.filepath
+            session.commit()
+            return True, download_path
+        except Exception: 
+            raise
+            return False, 'DATABASE_ERROR' 
 
     @require_login
-    def delete_file(self, session_key):
+    def delete_file(self, session_key, article_id, filename):
         '''
-        파일을 지우는 함수
+        지울 파일이 저장된 장소를 리턴해주는 함수
+        
+        @type  session_key: string
+        @param session_key: User Key
+        @type  article_id: Integer 
+        @param article_id: Article Number 
+        @type  filename: string
+        @param filename: File Name
+        @rtype: boolean, string
+        @return:
+            1. 성공: True, 'garbages/2008/8/7' 
+            2. 실패:
+                1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
+                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        pass
+        #ret, filepath_to_delete= self.download_file(session_key, article_id, filename)
+        #download_file함수와 유사하다.. 똑같은 코드가 많다.. 먼가 비효율적이다.. 나중에 하나로 좀 해보자.. 일단 지금은 급하니까.. 복사해놓고...
+        try:
+            session = model.Session()
+            article = session.query(model.Article).filter_by(id = article_id).one()
+            file = session.query(model.File).filter(
+                    and_(model.file_table.c.filename == filename,
+                    model.file_table.c.user_id == article.author.id,
+                    model.file_table.c.board_id == article.board.id,
+                    model.file_table.c.article_id == article.id,
+                    model.file_table.c.deleted == False,
+                    )).one()
+            file.deleted = True
+            download_path = file.filepath
+            session.commit()
+            return True, download_path
+        except Exception: 
+            raise
+            return False, 'DATABASE_ERROR' 
 
 
