@@ -20,3 +20,7 @@
 #message_buttons, #message_page_move{
 	display:inline;
 }
+
+.row_highlight {
+    background-color: #ddf;
+}

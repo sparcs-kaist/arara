@@ -27,6 +27,7 @@
     </div>
 <div class="message_list_table" id="message_list_table">
     <table border="1">
+        <thead>
         <tr>
             <th>
                 <input type="checkbox" name="ch_del_enm" value=1></input>
@@ -41,6 +42,8 @@
                 time
             </th>
         </tr>
+        </thead>
+        <tbody>
         {% for message in message_list %}
         <tr>
             <td>
@@ -53,7 +56,7 @@
                 <span class="username">{{message.to}}</span>
                 {% endifequal %}
             </td>
-            <td>
+            <td name="text">
                 <a href="/message/{{message_list_type}}/{{message.id}}">{{message.message}}</a>
             </td>
             <td>
@@ -61,6 +64,7 @@
             </td>
         </tr>
         {% endfor %}
+        </tbody>
     </table>
 </div>
 
@@ -81,6 +85,7 @@
 		{% endfor %}
         <a href="/message/{{message_list_type}}?page_no={{next_page_group.no}}&page_length={{page_length}}">{{next_page_group.mark}}</a>
         <a href="/message/{{message_list_type}}?page_no={{last_page.no}}&page_length={{page_length}}">{{last_page.mark}}</a>
+        <input type="hidden" value="{{page_num}}" name="last_page"></input>
 	</span>
 </div>
 {% endblock message_content %}

@@ -52,10 +52,7 @@ def inbox(request):
     server = arara.get_server()
     r = {}
     sess = request.session["arara_session_key"]
-    if request.GET.has_key('page_no'):
-        page = request.GET['page_no']
-    else:
-        page = 1
+    page = request.GET.get('page_no', 1);
     r['logged_in'] = True
     r['page_no'] = int(page)
     page_length = request.GET.get('page_length', 20)
@@ -72,7 +69,7 @@ def inbox(request):
     r = get_various_info(request, r)
     r['page_length'] = int(page_length)
     r['message_list_type'] = 'inbox'
-    r['person_type'] = 'sender'
+    r['person_type'] = 'receiver'
 
     rendered = render_to_string('message/list.html', r)
     return HttpResponse(rendered)
@@ -101,7 +98,7 @@ def outbox(request):
     r = get_various_info(request, r)
     r['page_length'] = int(page_length)
     r['message_list_type'] = 'outbox'
-    r['person_type'] = 'receiver'
+    r['person_type'] = 'sender'
     
     rendered = render_to_string('message/list.html', r)
     return HttpResponse(rendered)
