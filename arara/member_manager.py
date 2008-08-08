@@ -201,6 +201,32 @@ class MemberManager(object):
         except InvalidRequestError:
             return False
 
+    def is_registered_nickname(self, user_nickname):
+        '''
+        등록된 nickname인지의 여부를 알려준다.
+        Confirm은 하지 않았더라도 등록되어있으면 True를 리턴한다.
+
+        @type  user_nickname: string
+        @param user_nickname: Nickname to check whether is registered or not
+        @rtype: bool
+        @return:
+            1. 존재하는 사용자: True
+            2. 존재하지 않는 사용자: False
+
+        >>> member_manager.is_registered_nickname('mikkang')
+        True
+        '''
+        #remove quote when MD5 hash for UI is available
+        #
+
+        session = model.Session()
+        query = session.query(model.User).filter_by(nickname=user_nickname)
+        try:
+            user = query.one()
+            return True
+        except InvalidRequestError:
+            return False
+
     @require_login
     def get_info(self, session_key):
         '''

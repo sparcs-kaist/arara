@@ -18,6 +18,10 @@ True
 # Register one user, mikkang
 
 >>> user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
+>>> server.member_manager.is_registered(user_reg_dic['username'])
+False
+>>> server.member_manager.is_registered_nickname(user_reg_dic['nickname'])
+False
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
