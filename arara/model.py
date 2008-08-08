@@ -144,8 +144,9 @@ class Welcome(object):
         return "<Welcome('%s','%s')>" % (self.content, self.valid)
 
 class File(object): 
-    def __init__(self, filename, filepath, user, board, article): 
+    def __init__(self, filename, saved_filename, filepath, user, board, article): 
         self.filename = filename
+        self.saved_filename = saved_filename
         self.filepath= filepath 
         self.user = user
         self.board = board
@@ -262,6 +263,7 @@ welcome_table = Table('welcomes' , metadata,
 file_table = Table('files', metadata,
     Column('id', Integer, primary_key=True),
     Column('filename', Unicode(200)),
+    Column('saved_filename', Unicode(200)),
     Column('filepath', Text), 
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('board_id', Integer, ForeignKey('boards.id')),
