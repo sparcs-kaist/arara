@@ -1,5 +1,10 @@
 {% extends "message/base.html" %}
 
+{% block script %}
+{{block.super}}
+<script type="text/javascript" src="/media/js/message_read.js"></script>
+{% endblock script %}
+
 {% block style %}
 <link rel="stylesheet" type="text/css" href="/media/style/message_read.css">
 {{ block.super }}
@@ -24,11 +29,11 @@
     <textarea name="text" readonly="readonly">{{message.message}}</textarea>
 </div>
 <div id="message_read_buttons">
-    <a href="/message/delete/?del_msg_no={{message.id}}&message_list_type={{message_list_type}}">delete</a>
+    <a name="message_read_delete" href="/message/delete/?del_msg_no={{message.id}}&message_list_type={{message_list_type}}">delete</a>
     {% ifequal message_list_type 'inbox' %}
-    <a href="/message/reply/{{message_id}}">reply</a>
+    <a name="message_read_reply" href="/message/reply/{{message_id}}">reply</a>
     {% endifequal %}
-    <a href="../">list</a>
+    <a name="message_read_move_to_list" href="../">list</a>
 </div>
 
 {% endblock message_content %}

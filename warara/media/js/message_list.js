@@ -1,7 +1,10 @@
 $(document).ready(function() {
 	$("input[name='ch_del_enm']").click(function() {
-		$("input[name='flag_del_enm']").val() = 0;
+		$("input[name='flag_del_enm']").each(function(){
+			$(this).val(0);
+			});
 		var checked = this.checked;
+		alert(checked);
 		$("input.ch_del_d").each(function(){
 			this.checked = checked;
 			});
@@ -20,6 +23,7 @@ $(document).ready(function() {
 	var row_length = $("#message_list_table tbody tr").length;
 	$page_no = $("input[name='page_no']").val();
 	$last_page = $("input[name='last_page']").val();
+	$message_list_type = $("input[name='message_list_type']").val();
 
 	$.history.init(function(hash){
 		if(hash){
@@ -65,6 +69,50 @@ $(document).ready(function() {
 		}
 	}
 
+	function drag_next(){
+		if(cursor_pos < row_length){
+			cuh = cursor_pos;
+			cursor_pos++;
+			if ($("#message_list_table tr").eq(cuh).hasClass("row_highlight") && !$("#message_list_table tr").eq(cursor_pos).hasClass("row_highlight")){
+				$("#message_list_table tr").eq(cursor_pos).addClass("row_highlight");
+			}
+			else if($("#message_list_table tr").eq(cuh).hasClass("row_highlight") && $("#message_list_table tr").eq(cursor_pos).hasClass("row_highlight")){
+				$("#message_list_table tr").eq(cuh).removeClass("row_highlight");
+			}
+		}
+	}
+
+	function drag_prev(){
+		if(cursor_pos > 1){
+			cuh = cursor_pos;
+			cursor_pos--;
+			if ($("#message_list_table tr").eq(cuh).hasClass("row_highlight") && !$("#message_list_table tr").eq(cursor_pos).hasClass("row_highlight")){
+				$("#message_list_table tr").eq(cursor_pos).addClass("row_highlight");
+			}
+			else if($("#message_list_table tr").eq(cuh).hasClass("row_highlight") && $("#message_list_table tr").eq(cursor_pos).hasClass("row_highlight")){
+				$("#message_list_table tr").eq(cuh).removeClass("row_highlight");
+			}
+		}
+	}
+
+	function delete_message(){
+		$("tr.row_highlight input[type='checkbox']").each(function(){
+				$src = "/message/delete?del_msg_no=" + $(this).val() + "&message_list_type=" + $message_list_type;
+				$.get("/message/delete", { del_msg_no:$(this).val(), message_list_type:$message_list_type });
+				});
+
+				location.href=$src;
+	}
+
+	function check(){
+		if($("input.ch_del_d").eq(cursor_pos-1).attr("checked") == true){
+			$("input.ch_del_d").eq(cursor_pos-1).attr("checked", false);
+		}
+		else{
+			$("input.ch_del_d").eq(cursor_pos-1).attr("checked", "checked");
+		}
+	}
+	
 	update_table(cursor_pos);
 
 	$(document).keypress(function(event){
@@ -82,9 +130,21 @@ $(document).ready(function() {
 				move_prev();
 				break;
 
-			}
 			case 99: //c
+				check();
 				break;
-			alert(event.which);
+
+			case 100: //d
+				delete_message();
+				break;
+
+			case 75: //K
+				drag_prev();
+				break;
+
+			case 74:
+				drag_next();
+				break;
+			}
 	});
 });

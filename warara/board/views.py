@@ -151,8 +151,18 @@ def reply(request, board_name, article_id):
     reply_dic['title'] = request.POST.get('title', '')
     root_id = request.POST.get('root_id', '')
 
-    ret, no = server.article_manager.write_reply(sess, board_name, int(article_id), reply_dic)
+    ret, article_id = server.article_manager.write_reply(sess, board_name, int(article_id), reply_dic)
     assert ret, article_list
+
+    #upload file
+    
+    if request.FILES:
+        for key, file in request.FILES.items():
+            ret, file_path = server.file_manager.save_file(sess, int(article_id), file.name)
+            if not os.path.isdir('files/%s' % file_path):
+                os.makedirs('files/%s' % file_path)
+            fp = open('files/%s/%s' % (file_path, file.name), 'wb')
+            fp.write(file.read())
 
     return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(root_id)))
 

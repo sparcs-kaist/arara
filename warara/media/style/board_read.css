@@ -19,6 +19,19 @@
     padding: 0;
 }
 
+input[type="file"] {
+	size = 60;
+	width = 60px;
+}
+
+.float_left {
+	float: left;
+}
+
+.inline {
+	display: inline;
+}
+
 div.article_depth_2 {margin-left: 2em;}
 div.article_depth_3 {margin-left: 4em;}
 div.article_depth_4 {margin-left: 6em;}
