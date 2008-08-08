@@ -561,8 +561,6 @@ class ArticleManager(object):
         else:
             return ret, message
         return True, article.id
-        
-    #@require_login
     def board_list(self, session_key):
         '''
         게시판 목록 읽어오기
@@ -663,10 +661,8 @@ class ArticleManager(object):
                 if board_name:
                     result = session.query(model.Article).filter(and_(or_(
                             model.articles_table.c.title.like(db_query_text),
-                            model.articles_table.c.content.like(db_query_text),
-                            model.articles_table.c.author_id.like(db_query_text)),
                             model.articles_table.c.board_id == board.id,
-                            not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
+                            not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc())).all()
                 else:
                     result = session.query(model.Article).filter(and_(or_(
                             model.articles_table.c.title.like(db_query_text),
