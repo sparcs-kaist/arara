@@ -38,6 +38,8 @@ def suite():
                                    'read_status_manager.txt')),
                                doctest.DocFileSuite(os.path.join(DOCTEST_PATH,
                                    'file_manager.txt')),
+                               doctest.DocFileSuite(os.path.join(DOCTEST_PATH,
+                                   'board_manager.txt')),
                                #doctest.DocFileSuite(os.path.join(DOCTEST_PATH,
                                #    'search_manager.txt')),
                                #doctest.DocTestSuite(blacklist_manager),
