@@ -70,7 +70,7 @@ class MemberManager(object):
         session = model.Session()
         try:
             user = session.query(model.User).filter_by(username=username).one()
-            if user.compare_password(password):
+            if user.compare_password(password) and user.activated == True:
                 user.last_login_time = datetime.datetime.fromtimestamp(time.time())
                 user.last_login_ip = unicode(user_ip)
                 session.commit()
