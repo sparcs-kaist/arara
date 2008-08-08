@@ -31,7 +31,6 @@ $(document).ready(function(){
                 event.preventDefault();
             }
         });
-        alert($("#password_field").val());
         if (!($("#password_field").val() == $("#re_password_field").val())) {
             $("#password_field").parent().children("label").children("span.feedback")
                 .text("The password doesn't matched with the re-enter");
