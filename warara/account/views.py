@@ -6,6 +6,7 @@ import warara
 
 def register(request):
     sess, r = warara.check_logged_in(request)
+    server = arara.get_server()
     if r['logged_in'] == True:
         rendered = render_to_string('already_logged_in.html', r)
         return HttpResponse(rendered)
@@ -19,13 +20,18 @@ def register(request):
         introduction = request.POST['introduce']
         language = request.POST['language']
         user_information_dic = {'username':username, 'password':password, 'nickname':nickname, 'email':email, 'signature':signature, 'self_introduction':introduction, 'default_language':language}
-        server = arara.get_server()
         ret, message = server.member_manager.register(user_information_dic)
         assert ret, message
         return HttpResponseRedirect("/")
-    else:
-        rendered = render_to_string('account/register.html')
-        return HttpResponse(rendered)
+    
+    if 'id' in request.GET:
+        confirm_username = request.GET['id']
+        ret, message = server.member_manager.is_registered(confirm_username)
+        if ret:
+            r['usename_confirm_result'] = 'The id was registered by another user'
+
+    rendered = render_to_string('account/register.html')
+    return HttpResponse(rendered)
 
 def agreement(request):
     sess, r = warara.check_logged_in(request)

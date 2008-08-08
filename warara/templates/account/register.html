@@ -13,8 +13,11 @@
         <fieldset id="information">
             <legend>User information</legend>
             <p>
-            <label for="id">ID:<span class="feedback"></span></label>
-            <input name="id" id="id" type="text" class="required_field" />
+	    <label for="id">ID:<span class="feedback">{{r.username_confirm_result}}</span></label>
+	    <form action="/account/register" method="get">
+		    <input name="id" id="id" type="text" class="required_field" />
+		    <input type="submit" />
+	    </form>
             </p>
             <p>
             <label for="nickname">Nickname:<span class="feedback"></span></label>
