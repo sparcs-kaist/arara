@@ -75,4 +75,16 @@ $(document).ready(function(){
             $("#login_textfield").hide();
         }
     );
+
+	$focus_input = 0;
+
+	$("input").focus(function(){
+			$focus_input = 1
+			});
+	$("textarea").focus(function(){
+			$focus_input = 1
+			});
+	$("input").blur(function(){
+			$focus_input = 0
+			});
 });

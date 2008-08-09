@@ -22,6 +22,9 @@ $(document).ready(function(){
     }
 
     $(document).keypress(function(event) {
+		if($focus_input){
+		return;
+		}
         switch (event.which) {
             case 13:  // enter
             case 32:  // space
@@ -42,4 +45,11 @@ $(document).ready(function(){
                 //alert(event.which);
         }
     });
+	/* search error handle
+	$("input[name='board_search_submit']").click(function(event){
+			$src = $(this).parent().attr("action");
+			$word = $("form[name='board_search' input[name='search_word']").val();
+			$method = $("form[name='board_search' select[name='search_method']").val();
+			});
+			*/
 });

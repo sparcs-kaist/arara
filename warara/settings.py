@@ -81,6 +81,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'warara.main',
 )
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.file'
