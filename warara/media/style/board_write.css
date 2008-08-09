@@ -11,3 +11,27 @@
 input[type="text"] {
 	width: 400px;
 }
+
+input.file_upload{
+	position: relative;
+	text-align: right;
+	-moz-opacity: 0;
+	filter: alpha(opacity: 0);
+	opacity: 0;
+	z-index: 2;
+}
+
+div.file_upload_p{
+	display: inline;
+	position: relative;
+}
+
+div.file_upload_f{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: 1;
+}
+
+div.file_upload_f input{
+}

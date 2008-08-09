@@ -20,11 +20,15 @@
         <textarea name="text">{{default_text}}</textarea>
     </div>
     <div id="article_write_file">
-        <p>
         <caption>file 1 : </caption>
-        <input type="file" name="file1"></input>
+        <div class="file_upload_p">
+        <input type="file" name="file1" class="file_upload" size="60"></input>
         <input type="button" name="file_input_add" value="+"></input>
-        </p>
+        <div class="file_upload_f">
+            <input size="60"></input>
+            <img src="http://nepeltari.cafe24.com/files/button_select.gif"></img>
+        </div>
+        </div>
     </div>
     <div id="article_write_buttons">
         <input type="submit" value="{{t_write}}"></input>

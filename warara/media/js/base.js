@@ -54,6 +54,7 @@ $(document).ready(function(){
 
     $("html").click(function(event) {
         $("#user_popup").hide("fast");
+		$("#login_box").hide("fast");
     });
 
     function show_message_box(username) {
@@ -67,6 +68,7 @@ $(document).ready(function(){
             });
         event.preventDefault();
     });
+	/* 로그인 css absolute show로 바꿈
     $("#login_toggle").toggle(
         function () {
             $("#login_textfield").show();
@@ -75,7 +77,9 @@ $(document).ready(function(){
             $("#login_textfield").hide();
         }
     );
+	*/
 
+//인풋에 포커스 있을때 단축키 작동안함
 	$focus_input = 0;
 
 	$("input").focus(function(){
@@ -87,4 +91,18 @@ $(document).ready(function(){
 	$("input").blur(function(){
 			$focus_input = 0
 			});
+
+//로그인 뜨게함
+	$("#login_box").addClass("absolute");
+	$("#login_box").hide();
+    $("#login_toggle").click(function(event) {
+
+        $("#login_box").css("top", $(this).offset()["top"] + $(this).height());
+        $("#login_box").css("left", $(this).offset()["left"] - 400);
+
+        $("#login_box").show("fast");
+		$("#login_username_field").focus();
+        event.stopPropagation(); 
+		event.preventDefault();
+    });
 });

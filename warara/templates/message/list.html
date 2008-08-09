@@ -12,7 +12,7 @@
 
 {% block message_content %}
 <div>
-{% ifequal message_list_type  'inbox'%}
+{% ifequal message_list_type 'inbox'%}
 {{num_new_message}} new message(s) / {{message_num}} message(s)
 {% endifequal %}
 </div>
@@ -27,6 +27,12 @@
     </div>
 <div class="message_list_table" id="message_list_table">
     <table border="1">
+        <colgroup>
+            <col id="message_list_table_checkbox_col">
+            <col id="message_list_table_person_col">
+            <col id="message_list_table_text_col">
+            <col id="message_list_table_time_col">
+        </colgroup>
         <thead>
         <tr>
             <th>
@@ -35,7 +41,7 @@
             <th>
                 {{person_type}}
             </th>
-            <th>
+            <th class="message_list_table_th_text">
                 text
             </th>
             <th>

@@ -24,3 +24,16 @@
 .row_highlight {
     background-color: #ddf;
 }
+
+#message_list_table th{
+	text-align: center;
+}
+
+#message_list_table th.message_list_table_th_text{
+	min-width: 400px;
+	max-width: 600px;
+}
+
+#message_list_table_text_col {
+	overflow-x: hidden;
+}

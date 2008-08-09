@@ -146,3 +146,7 @@ body {
 .hidden {
     display:none
 }    
+
+form[name="login"]{
+	display: inline;
+}
