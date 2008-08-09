@@ -96,21 +96,50 @@ $(document).ready(function() {
 	}
 
 	function delete_message(){
-		$("tr.row_highlight input[type='checkbox']").each(function(){
-				$src = "/message/delete?del_msg_no=" + $(this).val() + "&message_list_type=" + $message_list_type;
-				$.get("/message/delete", { del_msg_no:$(this).val(), message_list_type:$message_list_type });
-				});
-
-				location.href=$src;
-	}
-
-	function check(){
-		if($("input.ch_del_d").eq(cursor_pos-1).attr("checked") == true){
-			$("input.ch_del_d").eq(cursor_pos-1).attr("checked", false);
+		if($("tr input.ch_del_d:checked").length){
+			$("tr input.ch_del_d:checked").each(function(){
+					$.get("/message/delete", { 'del_msg_no':$(this).val(), 'message_list_type':$message_list_type }, function(data){});
+					});
 		}
 		else{
-			$("input.ch_del_d").eq(cursor_pos-1).attr("checked", "checked");
+			$("tr.row_highlight input[type='checkbox']").each(function(){
+					$.get("/message/delete", { 'del_msg_no':$(this).val(), 'message_list_type':$message_list_type }, function(data){});
+					});
 		}
+
+		$("select[name='page_length'] option:selected").each(function(){
+			$src = "/message/" + $("input[name='message_list_type']").val() + "?page_no=" + $("input[name='page_no']").val() + "&page_length=" + $(this).val();
+			alert("삭제한다");
+			location.href = $src;
+			});
+	}
+
+	function delete_message2(){
+		$length = $("tr.row_highlight input:checked").length;
+		var i=0;
+
+		for(i=0; i<$length; i++){
+		$del_msg_no = $("tr.row_highlight input:checked").eq(i).val();
+		$.get("/message/delete", { 'del_msg_no':$del_msg_no, 'message_list_type':$message_list_type }, function(data){
+				alert(data);});
+		}
+
+		$("select[name='page_length'] option:selected").each(function(){
+			$src = "/message/" + $("input[name='message_list_type']").val() + "?page_no=" + $("input[name='page_no']").val() + "&page_length=" + $(this).val();
+			location.href = $src;
+			});
+	}
+
+
+	function check(){
+		$("tr.row_highlight input[type='checkbox']").each(function(){
+				if($(this).attr("checked") == true){
+				$(this).attr("checked", false);
+				}
+				else{
+				$(this).attr("checked", "checked");
+				}
+				});
 	}
 	
 	update_table(cursor_pos);
@@ -142,8 +171,16 @@ $(document).ready(function() {
 				drag_prev();
 				break;
 
-			case 74:
+			case 74: //J
 				drag_next();
+				break;
+
+			case 65: //A
+				$("#message_list_table tbody tr").addClass("row_highlight");
+				break;
+
+			case 113: //q
+				location.href = '/';
 				break;
 			}
 	});

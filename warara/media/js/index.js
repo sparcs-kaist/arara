@@ -16,4 +16,12 @@ $(document).ready(function(){
             );*/
         }
     );
+
+	$(document).keypress(function(event){
+		switch(event.which){
+		case 113: //q
+		location.href = "/account/logout";
+		break;
+		}
+		});
 });

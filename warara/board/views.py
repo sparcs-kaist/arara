@@ -93,10 +93,11 @@ def write_(request, board_name):
     
     if request.FILES:
         for key, file in request.FILES.items():
-            ret, file_path = server.file_manager.save_file(sess, int(article_id), file.name)
+            ret, file_path, file_name = server.file_manager.save_file(sess, int(article_id), file.name)
+            assert ret, file_path
             if not os.path.isdir('files/%s' % file_path):
                 os.makedirs('files/%s' % file_path)
-            fp = open('files/%s/%s' % (file_path, file.name), 'wb')
+            fp = open('files/%s/%s' % (file_path, file_name), 'wb')
             fp.write(file.read())
 
     if not ret:
@@ -130,6 +131,8 @@ def read(request, board_name, article_id):
     r['article_list'] = article_list
     r['board_name'] = board_name
     username = request.session['arara_username']
+    ret, list = server.board_manager.get_board_list()
+    assert None, list
 
     for article in article_list:
         if article['author_username'] == username:
@@ -158,10 +161,10 @@ def reply(request, board_name, article_id):
     
     if request.FILES:
         for key, file in request.FILES.items():
-            ret, file_path = server.file_manager.save_file(sess, int(article_id), file.name)
+            ret, file_path, file_name = server.file_manager.save_file(sess, int(article_id), file.name)
             if not os.path.isdir('files/%s' % file_path):
                 os.makedirs('files/%s' % file_path)
-            fp = open('files/%s/%s' % (file_path, file.name), 'wb')
+            fp = open('files/%s/%s' % (file_path, file_name), 'wb')
             fp.write(file.read())
 
     return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(root_id)))
