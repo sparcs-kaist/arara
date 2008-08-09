@@ -97,39 +97,13 @@ $(document).ready(function() {
 
 	function delete_message(){
 		if($("tr input.ch_del_d:checked").length){
-			$("tr input.ch_del_d:checked").each(function(){
-					$.get("/message/delete", { 'del_msg_no':$(this).val(), 'message_list_type':$message_list_type }, function(data){});
-					});
+			document.message_delete.submit();
 		}
 		else{
-			$("tr.row_highlight input[type='checkbox']").each(function(){
-					$.get("/message/delete", { 'del_msg_no':$(this).val(), 'message_list_type':$message_list_type }, function(data){});
-					});
+			check();
+			document.message_delete.submit();
 		}
-
-		$("select[name='page_length'] option:selected").each(function(){
-			$src = "/message/" + $("input[name='message_list_type']").val() + "?page_no=" + $("input[name='page_no']").val() + "&page_length=" + $(this).val();
-			alert("삭제한다");
-			location.href = $src;
-			});
 	}
-
-	function delete_message2(){
-		$length = $("tr.row_highlight input:checked").length;
-		var i=0;
-
-		for(i=0; i<$length; i++){
-		$del_msg_no = $("tr.row_highlight input:checked").eq(i).val();
-		$.get("/message/delete", { 'del_msg_no':$del_msg_no, 'message_list_type':$message_list_type }, function(data){
-				alert(data);});
-		}
-
-		$("select[name='page_length'] option:selected").each(function(){
-			$src = "/message/" + $("input[name='message_list_type']").val() + "?page_no=" + $("input[name='page_no']").val() + "&page_length=" + $(this).val();
-			location.href = $src;
-			});
-	}
-
 
 	function check(){
 		$("tr.row_highlight input[type='checkbox']").each(function(){

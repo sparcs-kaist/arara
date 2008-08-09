@@ -17,7 +17,7 @@
 {% endifequal %}
 </div>
 
-<form action="/message/delete/" method="POST">
+<form action="/message/delete/" method="POST" name="message_delete">
     <div class="message_page_length_selector">
         <select name="page_length">
             {% for pli in page_length_list %}

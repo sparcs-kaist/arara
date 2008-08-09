@@ -8,4 +8,5 @@ urlpatterns = patterns('',
     (r'^([\w\[\]]+)/([\d]+)/reply/$', 'warara.board.views.reply'),
     (r'^([\w\[\]]+)/([\d]+)/(\d+)/vote/$', 'warara.board.views.vote'),
     (r'^([\w\[\]]+)/([\d]+)/(\d+)/delete/$', 'warara.board.views.delete'),
+    (r'^([\w\[\]]+)/search/$', 'warara.board.views.search'),
 )

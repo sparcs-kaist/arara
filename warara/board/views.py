@@ -33,6 +33,9 @@ def list(request, board_name):
     r['board_name'] = board_dict['board_name']
     r['board_description'] = board_dict['board_description']
     r['article_list'] = article_list
+    r['search_method_list'] = [{'val':'all', 'text':'all'}, {'val':'title', 'text':'title'},
+            {'val':'content', 'text':'content'},
+            {'val':'author_nick', 'text':'nickname'}, {'val':'author_username', 'text':'id'}]
 
     #pagination
     r['next'] = 'a'
@@ -132,7 +135,6 @@ def read(request, board_name, article_id):
     r['board_name'] = board_name
     username = request.session['arara_username']
     ret, list = server.board_manager.get_board_list()
-    assert None, list
 
     for article in article_list:
         if article['author_username'] == username:
@@ -184,3 +186,56 @@ def delete(request, board_name, root_id, article_no):
     assert ret, message
 
     return HttpResponseRedirect('/board/%s/%s' % (board_name, root_id))
+
+def search(request, board_name):
+    server = arara.get_server()
+    sess = request.session['arara_session_key']
+
+    search_word = request.GET.get('search_word', '')
+    search_method = request.GET.get('search_method', 'all')
+    page_no = request.GET.get('page_no', 1)
+    page_no = int(page_no)
+    if page_no:
+        page_no = 1
+    page_length = 20
+    page_range_length = 10
+    page_range_no = math.ceil(float(page_no) / page_range_length)
+
+    ret, search_result = server.article_manager.search(sess, board_name, search_word, search_method, page_no, page_length)
+    assert ret, search_result
+    r = {'logged_in':True}
+    r['article_list'] = search_result['hits']
+    r['page_num'] = search_result.get('last_page', 1)
+    r['search_time'] = search_result.get('search_time', 1)
+    r['article_num'] = search_result['results']
+    r['search_method_list'] = [{'val':'all', 'text':'all'}, {'val':'title', 'text':'title'},
+            {'val':'content', 'text':'content'},
+            {'val':'author_nick', 'text':'nickname'}, {'val':'author_username', 'text':'id'}]
+    r['search_method'] = search_method
+
+    ret, board_dict = server.board_manager.get_board(board_name)
+    assert ret, board_dict
+    for i in range(len(r['article_list'])):
+        if r['article_list'][i].get('deleted', 0):
+            r['article_list'][i]['title'] = 'deleted'
+            r['article_list'][i]['author_username'] = 'deleted'
+
+    r['board_name'] = board_dict['board_name']
+    r['board_description'] = board_dict['board_description']
+
+    #pagination
+    r['next'] = 'a'
+    r['prev'] = 'a'
+    r['next_group'] = 'a'
+    r['prev_group'] = 'a'
+    page_o = Paginator([x+1 for x in range(r['page_num'])],10)
+    r['page_list'] = page_o.page(page_range_no).object_list
+    if page_o.page(page_range_no).has_next():
+        r['next_page_group'] = {'mark':r['next'], 'no':page_o.page(page_o.next_page_number()).start_index()}
+        r['last_page'] = {'mark':r['next_group'], 'no':r['page_num']}
+    if page_o.page(page_range_no).has_previous():
+        r['prev_page_group'] = {'mark':r['prev'], 'no':page_o.page(page_o.previous_page_number()).end_index()}
+        r['first_page'] = {'mark':r['prev_group'], 'no':1}
+
+    rendered = render_to_string('board/list.html', r)
+    return HttpResponse(rendered)

@@ -24,7 +24,6 @@
         <thead>
             <tr>
                 <th class="column" scope="col"></th>
-                <th class="column" scope="col"></th>
                 <th class="column" scope="col">id</th>
                 <th class="column" scope="col">title</th>
                 <th class="column" scope="col">author</th>
@@ -36,7 +35,6 @@
         <tbody>
             {% for article in article_list %}
             <tr class="{% ifequal article.type 'today' %}todays_best{% else %}{% ifequal article.type 'weekly' %}weekly_best{% endifequal %}{% endifequal %}">
-                <td class="column cursor_col"></td>
 		<td class="column cursor_col">{{article.read_status}}</td>
         <td class="column id_col">{% ifequal article.type 'normal' %}{{article.id}}{%else%}wb{%endifequal%}</td>
                 <td class="column title_col">{% if logged_in %}<a href="/board/{{board_name}}/{{article.id}}">{{article.title}}</a>{% else %}{{article.title}}{% endif %}</td>
@@ -60,5 +58,16 @@
         <a href="/board/{{board_name}}?page_no={{next_page_group.no}}">{{next_page_group.mark}}</a>
         <a href="/board/{{board_name}}?page_no={{last_page.no}}">{{last_page.mark}}</a>
 	</span>
+</div>
+<div id="board_search">
+    <form name="board_search" method="GET" action="/board/{{board_name}}/search">
+        <select name="search_method">
+            {% for smi in search_method_list %}
+            <option value="{{smi.val}}"{%ifequal search_method smi.val%} selected="selected"{%endifequal%}>{{smi.text}}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="search_word"></input>
+        <input type="submit" value="search"></input>
+    </form>
 </div>
 {% endblock board_content %}
