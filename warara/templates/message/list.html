@@ -66,7 +66,11 @@
                 <a href="/message/{{message_list_type}}/{{message.id}}">{{message.message}}</a>
             </td>
             <td>
-                {{message.sent_time}}
+                {% ifequal message.sent_time|date:"Ymd" time_now|date:"Ymd" %}
+                {{message.sent_time|date:"H:i:s"}}
+                {% else %}
+                {{message.send_time|time:"Y/m/d"}}
+                {% endifequal %}
             </td>
         </tr>
         {% endfor %}

@@ -24,6 +24,8 @@ body {
     width: 12em;
     max-width: 14%;
     background-color: #ddd;
+
+	min-height: 48em; /*임시*/
 }
 
 #content_wrapper {
@@ -149,4 +151,10 @@ body {
 
 form[name="login"]{
 	display: inline;
+}
+
+input.button_exit{
+	position: absolute;
+	right: 0px;
+	top: 0px;
 }

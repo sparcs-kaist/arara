@@ -7,6 +7,9 @@ $(document).ready(function(){
     });
 
     $(document).keypress(function(event) {
+		if($input_focus){
+		return;
+		}
         switch (event.which) {
             case 108:  // list
                 var list_link = $("#list_link").attr("href");

@@ -21,15 +21,29 @@ $(document).ready(function(){
         $(this).removeClass("username_highlight");
     });
 
+	$popup_x_coor=0;
+	$popup_y_coor=0;
+
     var username;
     $(".username").click(function(event) {
         username = $(this).text();
         $("#user_popup #user_popup_username").text("User: " + username);
 
-        $("#user_popup").css("top", $(this).offset()["top"] + $(this).height())
-        $("#user_popup").css("left", $(this).offset()["left"])
+        $("#user_popup").css("top", $(this).offset()["top"] + $(this).height());
+        $("#user_popup").css("left", $(this).offset()["left"]);
+
+		$popup_y_coor = $(this).offset()["top"];
+		$popup_x_coor = $(this).offset()["left"];
 
         $("#user_popup").show("fast");
+
+		$(document).keyup(function(event){
+				switch(event.which){
+				case 27:
+				$("#user_popup").hide("fast");
+				break;
+				}
+				});
         event.stopPropagation(); 
     });
 
@@ -58,13 +72,30 @@ $(document).ready(function(){
     });
 
     function show_message_box(username) {
+        $("#message_popup").css("top", $popup_y_coor);
+        $("#message_popup").css("left", $popup_x_coor);
         message_popup.show(); 
         $("#message_receiver_field").val(username);
+		$("#message_text_field").focus();
+
+		$("input[name='message_popup_exit']").click(function(event){
+				$("#message_popup").hide();
+				});
+		$(document).keyup(function(event){
+				switch(event.which){
+				case 27:
+				$("#message_popup").hide("fast");
+				break;
+				}
+				});
     }
+
     $("#message_submit").click(function(event) {
         $.post("/message/send/", {receiver: $("#message_receiver_field").val(), text: $("#message_text_field").val(), ajax:"1"},
             function(data){
                 alert(data);
+				$("#message_popup").hide("fast");
+				$("#message_text_field").val("");
             });
         event.preventDefault();
     });

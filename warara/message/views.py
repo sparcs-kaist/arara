@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 
 import arara
 import math
+import datetime
 
 
 def get_various_info(request, r):
@@ -42,6 +43,7 @@ def get_various_info(request, r):
         r['message_no_strlist'] = '|'.join([r['message_no_strlist'], str(message['id'])])
 
     r['page_length_list'] = [5, 10, 20]
+    r['time_now'] = datetime.datetime.now()
 
     return r
 

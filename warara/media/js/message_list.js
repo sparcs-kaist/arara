@@ -115,10 +115,23 @@ $(document).ready(function() {
 				}
 				});
 	}
+
+	var text_length_limit = 60;
+	$("#message_list_table td[name='text'] a").each(function(){
+			if($(this).text().length > text_length_limit){
+			text = $(this).text();
+			text = text.substring(0, text_length_limit);
+			text = text + "...";
+			$(this).text(text);
+			}
+			});
 	
 	update_table(cursor_pos);
 
 	$(document).keypress(function(event){
+			if($input_focus){
+			return;
+			}
 			switch(event.which){
 			case 13:
 			case 32:
