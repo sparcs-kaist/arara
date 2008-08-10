@@ -115,6 +115,9 @@ $(document).ready(function(){
 
 	$("input").focus(function(){
 			$focus_input = 1
+			if($(this).attr("type") == "checkbox"){
+			$focus_input = 0
+			}
 			});
 	$("textarea").focus(function(){
 			$focus_input = 1
@@ -136,4 +139,126 @@ $(document).ready(function(){
         event.stopPropagation(); 
 		event.preventDefault();
     });
+
+//단축키 작동
+	var cursor_bl = 0; //cursor_board_list
+	var cursor_tm = 0; //cursor_topmenu
+	function focus_topmenu(){
+		if(cursor_tm){
+			cursor_tm = 0;
+			$(".hidden_highlight").removeClass("hidden_highlight").addClass("row_highlight");
+			$(".highlight").removeClass("highlight");
+			return;
+		}
+
+		cursor_tm = 1;
+		$(".highlight").removeClass("highlight");
+		$(".row_highlight").removeClass("row_highlight").addClass("hidden_highlight");
+		$("#top_menu a[class!='hidden']").eq(cursor_tm-1).addClass("highlight");
+		a_tm_length = $("#top_menu a[class!='hidden']").length;
+	}
+	function focus_board_list(){
+		if(cursor_bl){
+			cursor_bl = 0;
+			$(".hidden_highlight").removeClass("hidden_highlight").addClass("row_highlight");
+			$(".highlight").removeClass("highlight");
+			return;
+		}
+
+		cursor_bl = 1;
+		$(".highlight").removeClass("highlight");
+		$(".row_highlight").removeClass("row_highlight").addClass("hidden_highlight");
+		$("#menu a[class!='hidden']").eq(cursor_bl-1).addClass("highlight");
+		a_bl_length = $("menu a[class!='hidden']").length;
+	}
+	function move_next(cursor, il){
+		if(cursor < il){
+			cursor++;
+		}
+		return cursor;
+	}
+	function move_prev(cursor, il){
+		if(cursor > 1){
+			cursor--;
+		}
+		return cursor;
+	}
+	function update_highlight(div, cursor){
+		div.children("a[class='highlight']").removeClass("highlight");
+		div.children("a[class!='hidden']").eq(cursor-1).addClass("highlight");
+	}
+	function focus_content(){
+		$(".highlight").removeClass("highlight");
+		$(".hidden_highlight").removeClass("hidden_highlight").addClass("row_highlight");
+	}
+
+	$(document).keypress(function(event){
+			if(!$("#menu a[class='highlight']").length){
+			cursor_bl=0;
+			return;
+			}
+			if($focus_input || !cursor_bl){
+			return;
+			}
+			if(event.ctrlKey || event.altKey){
+			return;
+			}
+			switch(event.which){
+			case 107: //j
+			cursor_bl = move_next(cursor_bl, a_bl_length);
+			update_highlight($("#menu"), cursor_bl);
+			break;
+			case 106: //k
+			cursor_bl = move_prev(cursor_bl, a_bl_length);
+			update_highlight($("#menu"), cursor_bl);
+			break;
+			case 32: //spacs
+			location.href = $("#menu a[class!='hidden']").eq(cursor_bl-1).attr("href");
+			break;
+			}
+			});
+	$(document).keypress(function(event){
+			if(!$("#top_menu a[class='highlight']").length){
+			cursor_tm=0;
+			return;
+			}
+			if($focus_input || !cursor_tm){
+			return;
+			}
+			if(event.ctrlKey || event.altKey){
+			return;
+			}
+			switch(event.which){
+			case 107: //j
+			cursor_tm = move_next(cursor_tm, a_tm_length);
+			update_highlight($("#top_menu"), cursor_tm);
+			break;
+			case 106: //k
+			cursor_tm = move_prev(cursor_tm, a_tm_length);
+			update_highlight($("#top_menu"), cursor_tm);
+			break;
+			case 32: //spacs
+			location.href = $("#top_menu a[class!='hidden']").eq(cursor_tm-1).attr("href");
+			break;
+			}
+			});
+	$(document).keypress(function(event){
+			if($focus_input){
+			return;
+			}
+			if(event.ctrlKey || event.altKey){
+			return;
+			}
+			switch(event.which){
+			case 116: //t
+			focus_board_list();
+			break;
+			case 121: //y
+			focus_topmenu();
+			break;
+			case 120: //x
+			focus_content();
+			break;
+			}
+			});
 });

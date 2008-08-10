@@ -129,7 +129,10 @@ $(document).ready(function() {
 	update_table(cursor_pos);
 
 	$(document).keypress(function(event){
-			if($input_focus){
+			if($focus_input || !$("#message_list_table tr.row_highlight").length){
+			return;
+			}
+			if(event.ctrlKey || event.altKey){
 			return;
 			}
 			switch(event.which){
@@ -165,10 +168,20 @@ $(document).ready(function() {
 			case 65: //A
 				$("#message_list_table tbody tr").addClass("row_highlight");
 				break;
+			}
+	});
+	$(document).keypress(function(event){
+			if(event.ctrlKey || event.altKey){
+			return;
+			}
+			if($focus_input){
+			return;
+			}
+			switch(event.which){
 
 			case 113: //q
 				location.href = '/';
 				break;
 			}
-	});
+			});
 });

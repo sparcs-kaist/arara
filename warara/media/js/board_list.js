@@ -22,9 +22,13 @@ $(document).ready(function(){
     }
 
     $(document).keypress(function(event) {
-		if($focus_input){
+		if($focus_input || event.altKey || event.ctrlKey){
 		return;
 		}
+		if(!$("#article_table tr.row_highlight")){
+		return;
+		}
+	
         switch (event.which) {
             case 13:  // enter
             case 32:  // space
