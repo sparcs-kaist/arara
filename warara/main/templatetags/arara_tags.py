@@ -1,7 +1,5 @@
 import arara
 from django import template
-import datetime
-
 register = template.Library()
 
 @register.tag(name="get_board_list")

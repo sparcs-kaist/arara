@@ -20,10 +20,14 @@
 	color: #fff;
 }
 
-#help_top_menu ul a:hover{
+#help_top_menu ul a:hover {
 	background-color: #630;
 }
 
-#help_top_menu ul .first_li a{
+#help_top_menu ul .first_li a {
 	background-color: none;
+}
+
+#help_content{
+	clear: both;
 }

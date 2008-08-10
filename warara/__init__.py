@@ -1,3 +1,4 @@
+import pickle
 
 def check_logged_in(request):
     r = {}
