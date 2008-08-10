@@ -19,6 +19,15 @@ $(document).ready(function(){
             else
                 $("#password_field").parent().children("label").children("span.feedback").text("");
         });
+        $("#email").keydown(function(event) {
+            if(event.keyCode == 09) {
+                if ((document.form.email.value.indexOf('@') == -1 ) || (document.form.email.value.indexOf('.') == -1)) {
+                    $("#email").parent().children("label").children("span.feedback").text("The e-mail form is not proper");
+                }
+                else
+                    $("#email").parent().children("label").children("span.feedback").text(""); 
+            }
+        });
         $(this).parent().children("label").children("span.feedback").text("");
     });
     
@@ -37,5 +46,19 @@ $(document).ready(function(){
             $(".submit").parent().children("label").children("span.feedback").text("Please confirm your form");
             event.preventDefault();
         }
+        if ((document.form.email.value.indexOf('@') == -1 ) || (document.form.email.value.indexOf('.') == -1)) {
+            $("#email").parent().children("label").children("span.feedback").text("The e-mail form is not proper");
+            $(".submit").parent().children("label").children("span.feedback").text("Please confirm your form");
+            event.preventDefault();
+        }
     });
 });
+
+    $("#id_duplication_check").click(function(event) {
+        $.post("/account/register/idcheck/", {check_id_field: $("#check_id_field").val()},
+            function(data){
+                alert(data);
+            }
+        );
+        event.preventDefault();        
+    });

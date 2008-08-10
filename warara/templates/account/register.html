@@ -8,27 +8,26 @@
 {% endblock %}
 {% block content %}
 <div id="register_content">
-    <form action="/account/register/" method="post">
+    <form action="/account/register/" method="post" name="form">
         <h1>User Registration</h1>
         <fieldset id="information">
             <legend>User information</legend>
-            <p>
-	    <label for="id">ID:<span class="feedback">{{r.username_confirm_result}}</span></label>
-	    <form action="/account/register" method="get">
-		    <input name="id" id="id" type="text" class="required_field" />
-		    <input type="submit" />
-	    </form>
-            </p>
-            <p>
-            <label for="nickname">Nickname:<span class="feedback"></span></label>
-            <input name="nickname" id="nickname" type="text" class="required_field" />
-            </p>
-            <p>
+            <div>
+	    <label for="id">ID:<span class="feedback"></span></label>
+	    <input name="id" id="id" type="text" class="required_field" />
+	    <input type="submit" id="id_duplication_check" />
+            </div>
+            <div>
+	    <label for="nickname">Nickname:<span class="feedback"></span></label>
+	    <input name="nickname" id="nickname" type="text" class="required_field" />
+	    <input type="submit" id="nickname_duplication_check" />
+            </div>
+            <div>
             <label for="email">E-mail address:<span class="feedback"></span></label>
             <input name="email" id="email" type="text" class="required_field" />
             <br />
             <em class="required">(We will send you user registration confirmation to here)</em>
-            </p>
+            </div>
         </fieldset>
         <fieldset id="password_fieldset">
             <legend>Password</legend>
@@ -64,6 +63,13 @@
 	<input value="Done" name="done" id="register_submit" class="submit" type="submit" />
 	</p>
     </form>
+    <div id="id_check_popup">
+	<form action="/account/register/idcheck/" method="post">
+	    <label for="check_id_field"><span class="feedback"></span></label>
+            <input type="text" name="check_id_field" id="check_id_field" />
+            <input type="submit" id="id_duplication_check" value="check id duplication" />
+    	</form>
+    </div>
 </div>
 {% endblock %}
 <!--
