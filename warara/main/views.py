@@ -46,3 +46,10 @@ def index(request):
     
     rendered = render_to_string('index.html', r)
     return HttpResponse(rendered)
+
+def help(request):
+    server = arara.get_server() 
+    sess, r = warara.check_logged_in(request)
+    
+    rendered = render_to_string('help.html', r)
+    return HttpResponse(rendered)

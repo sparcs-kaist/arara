@@ -25,7 +25,7 @@ $(document).ready(function(){
 		if($focus_input || event.altKey || event.ctrlKey){
 		return;
 		}
-		if(!$("#article_table tr.row_highlight")){
+		if(!$("#article_table tr.row_highlight").length){
 		return;
 		}
 	

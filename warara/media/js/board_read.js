@@ -7,7 +7,7 @@ $(document).ready(function(){
     });
 
     $(document).keypress(function(event) {
-		if($input_focus){
+		if($focus_input || event.altKey || event.ctrlKey){
 		return;
 		}
         switch (event.which) {

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block style %}
+{{block.super}}
+<link rel="stylesheet" href="/media/style/help.css"></link>
+{% endblock style %}
+
+{% block script %}
+{{block.super}}
+<script type="text/javascript" src="/media/js/help.js"></script>
+{% endblock script %}
+
+{% block content %}
+
+<div id="help_top_menu">
+    <ul>
+        <li class="first_li"><a href="/help/base" name="base">base</a></li>
+        <li><a href="/help/account" name="account">account</a></li>
+        <li><a href="/help/article" name="article">article</a></li>
+        <li><a href="/help/message" name="message">message</a></li>
+        <li><a href="/help/blacklist" name="blacklist">blacklist</a></li>
+        <li><a href="/help/help" name="help">help</a></li>
+    </ul>
+</div>
+
+<div id="help_content">
+</div>
+
+<div id="help_base" class="hidden">
+    <h1>단축키</h1>
+    <h2>인덱스 페이지</h2>
+    <ul>
+        <li>q : logout</li>
+    </ul>
+    <h2>모든 페이지에 적용되는것</h2>
+    <ul>
+        <li>t : 커서가 게시판 목록으로 이동한다. 다시 누르면 커서가 컨텐츠로 이동한다.</li>
+        <li>y : 커서가 탑 메뉴로 이동한다. 다시 누르면 커서가 컨텐츠로 이동한다.</li>
+        <li>x : 커서가 컨텐츠로 이동한다. t, y와 다르게 토글이 아님</li>
+        <li>j, k : 커서가 게시판 목록이나 탑 메뉴에 있을때 상하 또는 좌우로 이동한다.</li>
+        <li>spacd : 커서가 있는 곳의 링크로 연결된다.</li>
+    </ul>
+
+</div>
+
+{% endblock content %}

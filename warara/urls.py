@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     (r'^blacklist/', include('warara.blacklist.urls')),
     (r'^board/', include('warara.board.urls')),
     (r'^message/', include('warara.message.urls')),
+    (r'^help/$', 'warara.main.views.help'),
 
     # Uncomment this for admin:
 #     (r'^admin/', include('django.contrib.admin.urls')),

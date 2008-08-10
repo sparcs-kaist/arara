@@ -1,0 +1,29 @@
+#help_top_menu ul {
+	margin: 0;
+	padding 0;
+	list-style: none;
+	float: left;
+	background-color: #036;
+}
+
+#help_top_menu ul li{
+	float: left;
+}
+
+#help_top_menu ul a{
+	display: block;
+	float: left;
+	padding: 0 2em;
+	line-height: 2.1em;
+	background-color: #036;
+	text-decoration: none;
+	color: #fff;
+}
+
+#help_top_menu ul a:hover{
+	background-color: #630;
+}
+
+#help_top_menu ul .first_li a{
+	background-color: none;
+}
