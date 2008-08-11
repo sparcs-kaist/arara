@@ -14,6 +14,13 @@
 <body>
     <div id="wrapper">
         <div id="header_wrapper">
+	<div id="top_header">
+		<ul id="link">
+			<li>웹아라</li>
+			<li>웹아라old</li>
+			<li>구름</li>
+		</ul>
+	</div>
         <div id="header">
 			{% load arara_tags %}
 			<h1><a href="/">아라</a></h1>
@@ -35,8 +42,11 @@
 		<a href="/blacklist/" class="{% if not logged_in %}hidden{% endif %}">Blacklist</a>
         <a href="/help">Help</a>
             </div>
-        </div>
-        </div>
+	</div>
+	<div id="bottom_header">
+		TEST TEXT
+	</div>
+    	</div>
         <div id="menu_wrapper">
         <div id="menu">
             {% block menu %}

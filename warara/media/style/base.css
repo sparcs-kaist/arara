@@ -23,7 +23,7 @@ body {
     float: left;
     width: 12em;
     max-width: 14%;
-    background-color: #ddd;
+    background-color: #f0f0f0;
 
 	min-height: 48em; /*임시*/
 }
@@ -40,12 +40,35 @@ body {
     padding: 20px;
 }
 
+#top_header {
+    float: left;
+    width: 100%;
+    background-color: #eaeaea;
+}
+
+#top_header ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    font-size: 100%;
+}
+
+#top_header li {
+    float: left;
+    margin: 0 0 0 5px;
+}
+
 #header {
+    clear: both;
     padding: 20px;
 }
 
+#bottom_header {
+    background-color: #fff;
+}
+
 #menu {
-    padding: 20px;
+    padding: 16px;
 }
 
 #content {
@@ -57,6 +80,11 @@ body {
     margin: 0;
     padding: 0;
     font-size: 100%;
+}
+
+#menu li {
+    margin: 0 0 5px 0;
+    font-family: Verdana;
 }
 
 #header h1 {
