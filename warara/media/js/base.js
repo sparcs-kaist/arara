@@ -66,9 +66,12 @@ $(document).ready(function(){
         event.preventDefault();
     });
 
-    $("html").click(function(event) {
+    $("div").click(function(event) {
+		if($focus_input){
+		return;
+		}
         $("#user_popup").hide("fast");
-		$("#login_box").hide("fast");
+		$("#login_box").hide();
     });
 
     function show_message_box(username) {
@@ -136,8 +139,8 @@ $(document).ready(function(){
 
         $("#login_box").show("fast");
 		$("#login_username_field").focus();
-        event.stopPropagation(); 
 		event.preventDefault();
+		event.stopPropagation();
     });
 
 //단축키 작동

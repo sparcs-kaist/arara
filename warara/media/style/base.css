@@ -162,3 +162,7 @@ input.button_exit{
 .highlight{
 	background-color: #ddf;
 }
+
+#input[name="message_popup_exit"]{
+	width=3em;
+}

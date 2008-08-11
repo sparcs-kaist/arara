@@ -1,6 +1,9 @@
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.mail import EmailMultiAlternatives
+from email.MIMEText import MIMEText
 
+import smtplib
 import arara
 import warara
 
@@ -22,6 +25,7 @@ def register(request):
         user_information_dic = {'username':username, 'password':password, 'nickname':nickname, 'email':email, 'signature':signature, 'self_introduction':introduction, 'default_language':language}
         ret, message = server.member_manager.register(user_information_dic)
         assert ret, message
+        #send_mail(email, username, message)
         return HttpResponseRedirect("/")
     
     if 'id' in request.GET:
@@ -33,12 +37,49 @@ def register(request):
     rendered = render_to_string('account/register.html')
     return HttpResponse(rendered)
 
+def send_mail(email, username, confirm_key):
+    sender = 'root_id@sparcs.org' #pv457, no_reply, ara, ara_admin
+    receiver = email
+    content = render_to_string('account/send_mail.html', {'username':username, 'confirm_key':confirm_key})
+    subject = "confirm" + username
+    msg = EmailMultiAlternatives(subject, '', sender, [receiver])
+    msg.attach_alternative(content, "text/html")
+    msg.send()
+'''
+
+def send_mail(email, username, confirm_key):
+    HOST = 'smtp.naver.com'
+    sender = 'root_id@sparcs.org'
+    content = render_to_string('account/send_mail.html', {'username':username, 'confirm_key':confirm_key})
+    title = "confirm"
+    msg = MIMEText(content, _subtype="html", _charset='euc_kr')
+    msg['Subject'] = title
+    msg['From'] = sender
+    msg['To'] = email
+    s = smtplib.SMTP()
+    s.connect(HOST)
+    s.login('newtron_star', 'q1q1q1')
+    s.sendmail(sender, [email], msg.as_string())
+    s.quit()
+'''
+
+def confirm_user(request, username, confirm_key):
+    server = arara.get_server()
+
+    if request.method == 'POST':
+        ret, mes = server.member_manager.confirm(username, confirm_key)
+        return HttpResponse(mes)
+
+    rendered = render_to_string('account/mail_confirm.html')
+    return HttpResponse(rendered)
+
 def agreement(request):
     sess, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
         rendered = render_to_string('already_logged_in.html', r)
     else:
         rendered = render_to_string('account/register_agreement.html')
+
     return HttpResponse(rendered)
 
 def login(request):
