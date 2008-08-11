@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    $("tr.best_articles_table_content").hover(
+    $("dl.best_articles_table_content").hover(
         function(event) {
             $(this).addClass("highlight");
         },
@@ -7,7 +7,7 @@ $(document).ready(function(){
             $(this).removeClass("highlight");
         }
     );
-    $("tr.best_articles_table_content").click(
+    $("dl.best_articles_table_content").click(
         function(event) {
             /*$.post("/", {aaa: "asdf"},
                 function(data, textStatus) {

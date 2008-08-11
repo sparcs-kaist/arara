@@ -1,3 +1,13 @@
 .highlight {
     background-color: #ddf;
 }
+
+.best_articles_caption {
+    background: #F7F7F7 url(/media/background/base/raw_ara_w_main_best_titlebar.png) no-repeat top left;
+    border: 1px solid #EAEAEA;
+}
+
+.best_articles {
+    border: 1px solid #EAEAEA;
+    margin: 4px; 
+}
