@@ -652,6 +652,11 @@ class ArticleManager(object):
                 if board_name:
                     query += ' type:' + board_name + '*'
                 result = search_manager.search('00000000000000000000000000000000',query)
+                for one_result in result['hits']:
+                    if one_result.has_key('uri'):
+                        parsed_uri = one_result['uri'].rsplit('/', 2)
+                        one_result['id'] = parsed_uri[::-1][0]
+                        one_result['board_name'] = parsed_uri[::-1][1]
                 return True, result
             except Exception:
                 start_time = time.time()

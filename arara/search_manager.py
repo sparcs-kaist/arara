@@ -5,6 +5,8 @@ from arara.util import require_login, filter_dict
 from arara import model
 
 READ_ARTICLE_WHITELIST = ('id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable')
+api_server_address = 'http://nan.sparcs.org:9000/api'
+api_key = '54ebf56de7684dba0d69bffc9702e1b4'
 
 class SearchManager(object):
     '''
@@ -63,8 +65,10 @@ class SearchManager(object):
                 article = session.query(model.Article).filter_by(id=article_no).one()
                 article_dict = self._get_dict(article, READ_ARTICLE_WHITELIST)
                 if article_dict['is_searchable']:
-                    ksearch = xmlrpclib.Server('http://nan.sparcs.org:9000/api')
-                    api_key = '54ebf56de7684dba0d69bffc9702e1b4'
+                    ksearch = xmlrpclib.Server(api_server_address)
                     uri = 'http://ara.kaist.ac.kr/' + board_name + '/' + str(article_no)
                     result = ksearch.index(api_key, 'ara', uri, article_dict['title'], article_dict['content'], 1.0, board_name)
                     assert result == 'OK'
+
+if __name__ == "__main__":
+    pass

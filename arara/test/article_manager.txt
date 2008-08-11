@@ -258,8 +258,7 @@ True
 
 #XXX The result of this part will be modified later
 #>>> ret, l = server.article_manager.search(session_key, u'all_board', 'polarbear', 'all', 1, 5)
-#>>> l['results']
-#100
+#>>> l
 
 >>> server.article_manager.search(session_key, u'garbages', 'NOT_EXIST_USERNAME', 'author_username', 1, 20)
 (False, 'USER_NOT_EXIST')
