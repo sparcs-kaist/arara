@@ -646,11 +646,9 @@ class ArticleManager(object):
         ret_dict = {}
 
         if search_type.upper() == 'ALL':
-            try:
+            if not board_name:
                 search_manager = xmlrpclib.Server('http://nan.sparcs.org:9000/api')
                 query = str(query_text) + ' source:ara'
-                if board_name:
-                    query += ' type:' + board_name + '*'
                 result = search_manager.search('00000000000000000000000000000000',query)
                 for one_result in result['hits']:
                     if one_result.has_key('uri'):
@@ -658,7 +656,7 @@ class ArticleManager(object):
                         one_result['id'] = parsed_uri[::-1][0]
                         one_result['board_name'] = parsed_uri[::-1][1]
                 return True, result
-            except Exception:
+            else:
                 start_time = time.time()
                 if board_name:
                     article_count = session.query(model.Article).filter(and_(
