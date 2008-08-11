@@ -15,12 +15,12 @@
             <div>
 	    <label for="id">ID:<span class="feedback"></span></label>
 	    <input name="id" id="id" type="text" class="required_field" />
-	    <input type="submit" id="id_duplication_check" />
+	    <input type="button" id="id_duplication_check" value="ID duplication check"/>
             </div>
             <div>
 	    <label for="nickname">Nickname:<span class="feedback"></span></label>
 	    <input name="nickname" id="nickname" type="text" class="required_field" />
-	    <input type="submit" id="nickname_duplication_check" />
+	    <input type="button" id="nickname_duplication_check" value="Nickname duplication check" />
             </div>
             <div>
             <label for="email">E-mail address:<span class="feedback"></span></label>
@@ -67,22 +67,15 @@
 	<form action="/account/register/idcheck/" method="post">
 	    <label for="check_id_field"><span class="feedback"></span></label>
             <input type="text" name="check_id_field" id="check_id_field" />
-            <input type="submit" id="id_duplication_check" value="check id duplication" />
+            <input type="submit" id="id_duplication_checking" value="check id duplication" />
+    	</form>
+    </div>
+    <div id="nickname_check_popup">
+	<form action="/account/register/nicknamecheck/" method="post">
+	    <label for="check_nickname_field"><span class="feedback"></span></label>
+            <input type="text" name="check_nickname_field" id="check_nickname_field" />
+            <input type="submit" id="nickname_duplication_checking" value="check nickname duplication" />
     	</form>
     </div>
 </div>
 {% endblock %}
-<!--
-id
-nickname
-e-mail address
-
-password
-confirm
-
--ara tjfwjd-
-signature
-introduce
-language
-
--->

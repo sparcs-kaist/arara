@@ -52,3 +52,12 @@ p {
 * html .feedback {
     width: 10em;
 }
+
+/* Duplication Check */
+#id_check_popup {
+    display: none;
+}
+
+#nickname_check_popup {
+    display: none;
+}

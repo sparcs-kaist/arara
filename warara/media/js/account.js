@@ -52,13 +52,36 @@ $(document).ready(function(){
             event.preventDefault();
         }
     });
-});
 
-    $("#id_duplication_check").click(function(event) {
+    $("#id_duplication_checking").click(function(event) {
         $.post("/account/register/idcheck/", {check_id_field: $("#check_id_field").val()},
-            function(data){
+            function(data, textStatus){
                 alert(data);
+                if (data == 'The ID is available') {
+                    $("#id_check_popup").hide();
+                }
             }
         );
-        event.preventDefault();        
+        event.preventDefault();
     });
+
+    $("#id_duplication_check").click(function(event) {
+        $("#id_check_popup").show();
+    });
+
+    $("#nickname_duplication_checking").click(function(event) {
+        $.post("/account/register/nicknamecheck/", {check_nickname_field: $("#check_nickname_field").val()},
+            function(data, textStatus){
+                alert(data);
+                if (data == 'The nickname is available') {
+                    $("#nickname_check_popup").hide();
+                }
+            }
+        );
+        event.preventDefault();
+    });
+    
+    $("#nickname_duplication_check").click(function(event) {
+        $("#nickname_check_popup").show();
+    });
+});

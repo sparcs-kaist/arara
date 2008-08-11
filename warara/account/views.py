@@ -28,13 +28,7 @@ def register(request):
         #send_mail(email, username, message)
         return HttpResponseRedirect("/")
     
-    if 'id' in request.GET:
-        confirm_username = request.GET['id']
-        ret, message = server.member_manager.is_registered(confirm_username)
-        if ret:
-            r['usename_confirm_result'] = 'The id was registered by another user'
-
-    rendered = render_to_string('account/register.html')
+    rendered = render_to_string('account/register.html', r)
     return HttpResponse(rendered)
 
 def send_mail(email, username, confirm_key):
@@ -123,6 +117,16 @@ def account(request):
         rendered = render_to_string('not_logged_in.html', r)
     return HttpResponse(rendered)
 
+def user_information(request):
+    if request.method == 'POST':
+        session_key, r = warara.check_logged_in(request)
+        server = arara.get_server()
+        query_user_name = request.POST['query_user_name']
+        ret, information = server.member_manager.query_by_username(session_key, query_user_name)
+        return HttpResponse(repr(information))
+    else:
+        return HttpResponse('Must use POST')
+
 def account_modify(request):
     session_key, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
@@ -181,3 +185,32 @@ def account_remove(request):
     else:
         rendered = render_to_string('not_logged_in.html', r)
         return HttpResponse(rendered)
+
+def id_check(request):
+    if request.method == 'POST':
+        server = arara.get_server()
+        r = {}
+        username = request.POST['check_id_field']
+        ret = server.member_manager.is_registered(username)
+        if ret:
+            r = 'The ID is not available'
+        else:
+            r = 'The ID is available'
+        return HttpResponse(r)
+    else:
+        return HttpResponse('Must use POST')
+
+def nickname_check(request):
+    if request.method == 'POST':
+        server = arara.get_server()
+        r = {}
+        username = request.POST['check_nickname_field']
+        ret = server.member_manager.is_registered_nickname(username)
+        if ret:
+            r = 'The nickname is not available'
+        else:
+            r = 'The nickname is available'
+        return HttpResponse(r)
+    else:
+        return HttpResponse('Must use POST')
+    
