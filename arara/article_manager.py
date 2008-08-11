@@ -225,7 +225,6 @@ class ArticleManager(object):
                 last = offset + page_length
                 article_list = session.query(model.Article).filter_by(board_id=board.id, root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
                 article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
-                article_dict_list.append({'last_page': last_page})
                 for article in article_dict_list:
                     if article.has_key('id'):
                         if not article.has_key('type'):
@@ -233,12 +232,10 @@ class ArticleManager(object):
                         ret, msg = self.read_status_manager.check_stat(session_key, board_name, article['id'])
                         if ret:
                             article['read_status'] = msg
-                return True, article_dict_list
-                #XXX 이 아래 부분은 차후 Frontend쪽에 공지 후 적용될 부분
-                #ret_dict['hits'] = article_dict_list
-                #ret_dict['last_page'] = last_page
-                #ret_dict['results'] = article_count
-                #return True, ret_dict
+                ret_dict['hit'] = article_dict_list
+                ret_dict['last_page'] = last_page
+                ret_dict['results'] = page_length
+                return True, ret_dict
             else:
                 return ret, 'BOARD_NOT_EXIST'
         except InvalidRequestError:
@@ -306,7 +303,17 @@ class ArticleManager(object):
     def article_list_below(self, session_key, board_name, no, page_length=20):
         '''
         게시물을 읽을 때 밑에 표시될 게시글 목록을 가져오는 함수
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type  board_name: string
+        @param board_name: Board Name
+        @type  no: integer
+        @param no: Article No
+        @type  page_length: integer
+        @param page_length: Number of articles to be displayed on a page
         '''
+        ret_dict = {}
         ret, user_info = self.login_manager.get_session(session_key)
         ret, message = self._is_board_exist(board_name)
 
@@ -326,8 +333,10 @@ class ArticleManager(object):
                     break
             ret, below_article_dict_list = self.article_list(session_key, board_name, page_position, page_length)
             if ret:
-                below_article_dict_list.append({'current_page': page_position})
-                return True, below_article_dict_list
+                ret_dict['hit'] = below_article_dict_list['hit']
+                ret_dict['current_page'] = page_position
+                ret_dict['results'] = page_length
+                return True, ret_dict
             else:
                 return False, 'DATABASE_ERROR'
         else:
@@ -671,7 +680,7 @@ class ArticleManager(object):
                             not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
                 end_time = time.time()
                 search_dict_list = self._get_dict_list(result, SEARCH_ARTICLE_WHITELIST)
-                ret_dict['hits'] = search_dict_list
+                ret_dict['hit'] = search_dict_list
                 ret_dict['results'] = article_count
                 ret_dict['search_time'] = str(end_time-start_time)
                 ret_dict['last_page'] = last_page
@@ -697,7 +706,7 @@ class ArticleManager(object):
                     not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
             end_time = time.time()
             search_dict_list = self._get_dict_list(result, SEARCH_ARTICLE_WHITELIST)
-            ret_dict['hits'] = search_dict_list
+            ret_dict['hit'] = search_dict_list
             ret_dict['results'] = article_count
             ret_dict['search_time'] = str(end_time-start_time)
             ret_dict['last_page'] = last_page
@@ -723,7 +732,7 @@ class ArticleManager(object):
                     not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
             end_time = time.time()
             search_dict_list = self._get_dict_list(result, SEARCH_ARTICLE_WHITELIST)
-            ret_dict['hits'] = search_dict_list
+            ret_dict['hit'] = search_dict_list
             ret_dict['results'] = article_count
             ret_dict['search_time'] = str(end_time-start_time)
             ret_dict['last_page'] = last_page
@@ -753,7 +762,7 @@ class ArticleManager(object):
                     not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
             end_time = time.time()
             search_dict_list = self._get_dict_list(result, SEARCH_ARTICLE_WHITELIST)
-            ret_dict['hits'] = search_dict_list
+            ret_dict['hit'] = search_dict_list
             ret_dict['results'] = article_count
             ret_dict['search_time'] = str(end_time-start_time)
             ret_dict['last_page'] = last_page
@@ -783,7 +792,7 @@ class ArticleManager(object):
                     not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
             end_time = time.time()
             search_dict_list = self._get_dict_list(result, SEARCH_ARTICLE_WHITELIST)
-            ret_dict['hits'] = search_dict_list
+            ret_dict['hit'] = search_dict_list
             ret_dict['results'] = article_count
             ret_dict['search_time'] = str(end_time-start_time)
             ret_dict['last_page'] = last_page

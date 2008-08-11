@@ -67,6 +67,7 @@ class MessagingManager(object):
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
 
+        ret_dict = {}
         ret, user_info = self.login_manager.get_session(session_key)
         session = model.Session()
         sent_user = session.query(model.User).filter_by(username=user_info['username']).one()
@@ -89,8 +90,10 @@ class MessagingManager(object):
                     not_(model.message_table.c.sent_deleted==True)
                     ))[offset:last].order_by(model.Message.id.desc()).all()
         sent_messages_dict_list = self._get_dict_list(sent_messages, MESSAGE_WHITELIST)
-        sent_messages_dict_list.append({'last_page': last_page})
-        return True, sent_messages_dict_list
+        ret_dict['hit'] = sent_messages_dict_list
+        ret_dict['last_page'] = last_page
+        ret_dict['results'] = sent_messages_count
+        return True, ret_dict
 
 
     @require_login
@@ -112,6 +115,7 @@ class MessagingManager(object):
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
 
+        ret_dict = {}
         ret, user_info = self.login_manager.get_session(session_key)
         session = model.Session()
         to_user = session.query(model.User).filter_by(username=user_info['username']).one()
@@ -122,6 +126,11 @@ class MessagingManager(object):
                 blacklist_users.add(blacklist_item['blacklisted_user_username'])
         received_messages_count = session.query(model.Message).filter(
                 and_(model.message_table.c.to_id==to_user.id,
+                    not_(model.message_table.c.received_deleted==True)
+                    )).count()
+        received_new_messages_count = session.query(model.Message).filter(
+                and_(model.message_table.c.to_id==to_user.id,
+                    model.message_table.c.read_status==u'N',
                     not_(model.message_table.c.received_deleted==True)
                     )).count()
         last_page = int(received_messages_count / page_length)
@@ -144,8 +153,11 @@ class MessagingManager(object):
                 item['blacklisted'] = True
             else:
                 item['blacklisted'] = False
-        received_messages_dict_list.append({'last_page': last_page})
-        return True, received_messages_dict_list
+        ret_dict['hit'] = received_messages_dict_list
+        ret_dict['last_page'] = last_page
+        ret_dict['new_message_count'] = received_new_messages_count
+        ret_dict['results'] = received_messages_count
+        return True, ret_dict
 
     @require_login
     def send_message(self, session_key, to_data, msg):
