@@ -11,24 +11,50 @@
 {% block content %}
 <div id="todays_best" class="best_articles">
     <div id="todays_best_table" class="best_articles_table">
-        <div class="best_articles_caption">Today's Best</div>
-        {% for todays_best in todays_best_list %}
-        <dl class="best_articles_table_content">
-            <dt>{% if logged_in %}<a href="/board/{{todays_best.board_name}}/{{todays_best.id}}/">{{todays_best.title}}</a>{% else %}{{todays_best.title}}{% endif %}</dt>
-            <dd>vote {{todays_best.vote}} | {{todays_best.date|date:"m.d H:i"}}</dd>
-        </dl>
-        {% endfor %}
+	<div class="best_articles_caption">Today's Best</div>
+	<div class="best_articles_content_margin">
+	{% for no, todays_best in todays_best_list %}
+	    {% if forloop.first %}
+	    <ul class="best_articles_content_first">
+		<div align="right">
+		<li>{{todays_best.date|date:"m.d H:i"}}</li>
+		<li>vote {{todays_best.vote}} </li>
+		</div>
+		<li>{% if logged_in %}<a href="/board/{{todays_best.board_name}}/{{todays_best.id}}/">{{todays_best.title}}</a>{% else %}{{todays_best.title}}{% endif %}</li>
+		<img src="/media/background/base/raw_ara_w_main_best_number_0.png" alt="1" class="best_article_number_first">
+	    </ul>
+	    {% else %}
+	    <dl class="best_articles_content">	
+	    <img src="/media/background/base/raw_ara_w_main_best_number_{{no}}.png" alt="{{no|add:"1"}}" class="best_article_number">
+		<dt>{% if logged_in %}<a href="/board/{{todays_best.board_name}}/{{todays_best.id}}/">{{todays_best.title}}</a>{% else %}{{todays_best.title}}{% endif %}</dt>
+		<dd>vote {{todays_best.vote}} | {{todays_best.date|date:"m.d H:i"}}</dd>
+	    </dl>
+	    {% endif %}
+	{% endfor %}
+	</div>
     </div>
 </div>
 <div id="weekly_best" class="best_articles">
     <div id="weekly_best_table" class="best_articles_table">
         <div class="best_articles_caption">Weekly Best</div>
-        {% for weekly_best in weekly_best_list %}
-        <dl class="best_articles_table_content">
-            <dt>{% if logged_in %}<a href="/board/{{weekly_best.board_name}}/{{weekly_best.id}}/">{{weekly_best.title}}</a>{% else %}{{weekly_best.title}}{% endif %}</dt>
-            <dd>vote {{weekly_best.vote}} | {{weekly_best.date|date:"m.d H:i"}}</dd>
-        </dl>
-        {% endfor %}
+	<div class="best_articles_content_margin">
+        {% for no, weekly_best in weekly_best_list %}
+	    {% if forloop.first %}
+	    <ul class="best_articles_content_first">
+		<li>vote {{weekly_best.vote}}</li>
+		<li>{{weekly_best.date|date:"m.d H:i"}}</li>
+		<li>{% if logged_in %}<a href="/board/{{weekly_best.board_name}}/{{weekly_best.id}}/">{{weekly_best.title}}</a>{% else %}{{weekly_best.title}}{% endif %}</li>
+	    	<img src="/media/background/base/raw_ara_w_main_best_number_0.png" alt="1" class="best_article_number_first">
+	    </ul>
+	    {% else %}
+	    <dl class="best_articles_content">	
+	    <img src="/media/background/base/raw_ara_w_main_best_number_{{no}}.png" alt="{{no|add:"1"}}" class="best_article_number">
+		<dt>{% if logged_in %}<a href="/board/{{weekly_best.board_name}}/{{weekly_best.id}}/">{{weekly_best.title}}</a>{% else %}{{weekly_best.title}}{% endif %}</dt>
+		<dd>vote {{weekly_best.vote}} | {{weekly_best.date|date:"m.d H:i"}}</dd>
+	    </dl>
+	    {% endif %}
+	{% endfor %}
+	</div>
     </div>
 </div>
 {% endblock %}

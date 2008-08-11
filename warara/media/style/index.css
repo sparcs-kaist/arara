@@ -2,12 +2,54 @@
     background-color: #ddf;
 }
 
+/* Best_article background */
 .best_articles_caption {
     background: #F7F7F7 url(/media/background/base/raw_ara_w_main_best_titlebar.png) no-repeat top left;
-    border: 1px solid #EAEAEA;
+    border-bottom: 1px solid #EAEAEA;
+    padding : 7px 0 0 10px;
 }
 
 .best_articles {
+    width: 560px;
     border: 1px solid #EAEAEA;
-    margin: 4px; 
+    margin: 10px 0 0 10px;
+    float: left; 
 }
+
+.best_articles_content_margin {
+    margin: 10px;
+}
+
+.best_articles dd {
+    margin: 0 0 0 24px;
+    padding: 0;
+}
+
+.best_articles_content_first {
+    float: left;
+    width: 176px;
+    background: url(/media/background/base/raw_ara_w_main_best_number_0_background.png) repeat top left;
+    list-style: none;
+    padding: 9px;
+    margin: 0;
+}
+
+
+
+.best_articles_content {
+    float: right;
+    width: 330px;
+    margin: 0 0 0 8px;
+}
+
+.best_article_number_first {
+    float: right;
+    margin: 0;
+    padding: 0;
+}
+
+.best_article_number {
+    float: left;
+    margin: 0 8px 0 0;
+}
+
