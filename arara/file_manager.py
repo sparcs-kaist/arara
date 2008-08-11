@@ -7,6 +7,7 @@ from arara.util import require_login
 from arara import model
 
 from sqlalchemy import and_, or_, not_
+from sqlalchemy.exceptions import InvalidRequestError
 
 class FileManager(object):
     '''
@@ -83,9 +84,12 @@ class FileManager(object):
                 1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+        session = model.Session()
         try:
-            session = model.Session()
             article = session.query(model.Article).filter_by(id = article_id).one()
+        except InvalidRequestError:
+            return False, 'ARTICLE_NOT_EXIST'
+        try:
             file = session.query(model.File).filter(
                     and_(model.file_table.c.filename == filename,
                     model.file_table.c.user_id == article.author.id,
@@ -93,13 +97,12 @@ class FileManager(object):
                     model.file_table.c.article_id == article.id, 
                     model.file_table.c.deleted == False
                     )).one()
-            download_path = file.filepath
-            ghost_filename = file.saved_filename
-            session.commit()
-            return True, download_path, ghost_filename
-        except Exception: 
-            raise
-            return False, 'DATABASE_ERROR' 
+        except InvalidRequestError:
+            return False, 'FILE_NOT_FOUND'
+        download_path = file.filepath
+        ghost_filename = file.saved_filename
+        session.commit()
+        return True, download_path, ghost_filename
 
     @require_login
     def delete_file(self, session_key, article_id, filename):
@@ -121,9 +124,12 @@ class FileManager(object):
         '''
         #ret, filepath_to_delete= self.download_file(session_key, article_id, filename)
         #download_file함수와 유사하다.. 똑같은 코드가 많다.. 먼가 비효율적이다.. 나중에 하나로 좀 해보자.. 일단 지금은 급하니까.. 복사해놓고...
+        session = model.Session()
         try:
-            session = model.Session()
             article = session.query(model.Article).filter_by(id = article_id).one()
+        except InvalidRequestError:
+            return False, 'ARTICLE_NOT_EXIST'
+        try:
             file = session.query(model.File).filter(
                     and_(model.file_table.c.filename == filename,
                     model.file_table.c.user_id == article.author.id,
@@ -131,13 +137,11 @@ class FileManager(object):
                     model.file_table.c.article_id == article.id,
                     model.file_table.c.deleted == False,
                     )).one()
-            file.deleted = True
-            download_path = file.filepath
-            ghost_filename = file.saved_filename
-            session.commit()
-            return True, download_path, ghost_filename
-        except Exception: 
-            raise
-            return False, 'DATABASE_ERROR' 
-
+        except InvalidRequestError:
+            return False, 'FILE_NOT_FOUND'
+        file.deleted = True
+        download_path = file.filepath
+        ghost_filename = file.saved_filename
+        session.commit()
+        return True, download_path, ghost_filename
 
