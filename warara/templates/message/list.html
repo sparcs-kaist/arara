@@ -12,11 +12,9 @@
 
 {% block message_content %}
 <div>
-{% ifequal message_list_type 'inbox'%}
-<!--
-{{num_new_message}} new message(s) / {{message_num}} message(s)
--->
+{% ifequal message_list_type 'inbox'%}{{num_new_message}} new message(s) /
 {% endifequal %}
+ {{num_message}} message(s)
 </div>
 
 <form action="/message/delete/" method="POST" name="message_delete">

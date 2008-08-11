@@ -11,8 +11,7 @@ def register(request):
     sess, r = warara.check_logged_in(request)
     server = arara.get_server()
     if r['logged_in'] == True:
-        rendered = render_to_string('already_logged_in.html', r)
-        return HttpResponse(rendered)
+        assert None, "ALEADY_LOGGED_IN"
 
     if request.method == 'POST':
         username = request.POST['id']
@@ -70,7 +69,7 @@ def confirm_user(request, username, confirm_key):
 def agreement(request):
     sess, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
-        rendered = render_to_string('already_logged_in.html', r)
+        assert None, "ALREADY_LOGGED_IN"
     else:
         rendered = render_to_string('account/register_agreement.html')
 
@@ -101,8 +100,7 @@ def logout(request):
         assert ret, account
         return HttpResponseRedirect("/")
     else:
-        rendered = render_to_string('not_logged_in.html', r)
-        return HttpResponse(rendered)
+        assert None, "NOT_LOGGED_IN"
 
 def account(request):
     session_key, r = warara.check_logged_in(request)
@@ -114,7 +112,7 @@ def account(request):
         account['logged_in'] = True
         rendered = render_to_string('account/myaccount_frame.html', account)
     else:
-        rendered = render_to_string('not_logged_in.html', r)
+        assert None, "NOT_LOGGED_IN"
     return HttpResponse(rendered)
 
 def user_information(request):
@@ -146,7 +144,7 @@ def account_modify(request):
             rendered = render_to_string('account/myaccount_modify.html', account)
             return HttpResponse(rendered)
     else:
-        rendered = render_to_string('not_logged_in.html', r)
+        assert None, "NOT_LOGGED_IN"
         return HttpResponse(rendered)
 
 def password_modify(request):
@@ -166,8 +164,7 @@ def password_modify(request):
             return HttpResponse(rendered)
 
     else:
-        rendered = render_to_string('not_logged_in.html', r)
-        return HttpResponse(rendered)
+        assert None, "NOT_LOGGED_IN"
 
 def account_remove(request):
     session_key, r = warara.check_logged_in(request)
@@ -183,8 +180,49 @@ def account_remove(request):
             rendered = render_to_string('account/myaccount_remove.html', account)
             return HttpResponse(rendered)
     else:
-        rendered = render_to_string('not_logged_in.html', r)
+        assert None, "NOT_LOGGED_IN"
         return HttpResponse(rendered)
+
+def wrap_error(f):
+    def check_error(*args, **argv):
+        r = {} #render item
+        try:
+            return f(*args, **argv)
+        except AssertionError, e:
+            if e.message == "NOT_LOGGED_IN":
+                r['error_message'] = "not logged in!"
+                rendered = render_to_string("error.html", r)
+                return HttpResponse(rendered)
+            elif e.message == "ALEADY_LOGGED_IN":
+                r['error_message'] = "aleady logged in"
+                rendered = render_to_string("error.html", r)
+                return HttpResponse(rendered)
+
+            r['error_message'] = "unknown keyerror : " + e.message
+            rendered = render_to_string("error.html", r)
+            return HttpResponse(rendered)
+                
+        except KeyError, e:
+            if e.message == "arara_session_key":
+                r['error_message'] = "not logged in!"
+                rendered = render_to_string("error.html", r)
+                return HttpResponse(rendered)
+            
+            r['error_message'] = "unknown keyerror : " + e.message
+            rendered = render_to_string("error.html", r)
+            return HttpResponse(rendered)
+
+    return check_error
+
+login = wrap_error(login)
+logout = wrap_error(logout)
+account = wrap_error(account)
+register = wrap_error(register)
+agreement = wrap_error(agreement)
+confirm_user = wrap_error(confirm_user)
+account_modify = wrap_error(account_modify)
+account_remove = wrap_error(account_remove)
+password_modify = wrap_error(password_modify)
 
 def id_check(request):
     if request.method == 'POST':
@@ -213,4 +251,3 @@ def nickname_check(request):
         return HttpResponse(r)
     else:
         return HttpResponse('Must use POST')
-    

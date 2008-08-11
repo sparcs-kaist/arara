@@ -14,8 +14,6 @@ def get_various_info(request, r):
     page_no = r['page_no']
     page_no = int(page_no)
     page_range_length = 10
-    r['num_new_message'] = 0
-    r['num_message'] = 0
     r['next'] = 'a'
     r['prev'] = 'a'
     r['next_group'] = 'a'
@@ -24,8 +22,8 @@ def get_various_info(request, r):
     r['mppp'] = 10 #number of pagegroup per page
 
     page_group_no = math.ceil(float(page_no)/page_range_length)
-    r['page_num'] = r['message_list'].pop()['last_page']
-    r['message_num'] = len(r['message_list'])
+    r['page_num'] = r['message_result']['last_page']
+    r['num_message'] = r['message_result']['results']
     page_o = Paginator([x+1 for x in range(r['page_num'])], 10)
     if page_o.num_pages < page_group_no:
         page_group_no = page_o.num_pages
@@ -59,16 +57,19 @@ def inbox(request):
     r['page_no'] = int(page)
     page_length = request.GET.get('page_length', 20)
     page_length = int(page_length)
-    ret, r['message_list'] = server.messaging_manager.receive_list(sess, page, page_length)
+    ret, r['message_result'] = server.messaging_manager.receive_list(sess, page, page_length)
+    assert ret, r['message_result']
     if not ret:
         page = int(page)
         while page>0:
             page -= 1
-            ret, r['message_list'] = server.messaging_manager.receive_list(sess, page, page_length)
+            ret, r['message_result'] = server.messaging_manager.receive_list(sess, page, page_length)
             if ret:
                 break;
-    assert ret, r['message_list']
+    assert ret, r['message_result']
+    r['message_list'] = r['message_result']['hit']
     r = get_various_info(request, r)
+    r['num_new_message'] = r['message_result']['new_message_count']
     r['page_length'] = int(page_length)
     r['message_list_type'] = 'inbox'
     r['person_type'] = 'sender'
@@ -88,15 +89,17 @@ def outbox(request):
     r['page_no'] = int(page)
     page_length = request.GET.get('page_length', 20)
     page_length = int(page_length)
-    ret, r['message_list'] = server.messaging_manager.sent_list(sess, page, page_length)
+    ret, r['message_result'] = server.messaging_manager.sent_list(sess, page, page_length)
+    assert ret, r['message_result']
     if not ret:
         page = int(page)
         while page>0:
             page -= 1
-            ret, r['message_list'] = server.messaging_manager.receive_list(sess, page, page_length)
+            ret, r['message_result'] = server.messaging_sent.receive_list(sess, page, page_length)
             if ret:
                 break;
-    assert ret, r['message_list']
+    assert ret, r['message_result']
+    r['message_list'] = r['message_result']['hit']
     r = get_various_info(request, r)
     r['page_length'] = int(page_length)
     r['message_list_type'] = 'outbox'
@@ -255,7 +258,7 @@ def wrap_error(f):
 
     return check_error
 
-inbox = wrap_error(inbox)
+#inbox = wrap_error(inbox)
 outbox = wrap_error(outbox)
 send = wrap_error(send)
 read = wrap_error(read)

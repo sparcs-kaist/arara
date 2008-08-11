@@ -5,7 +5,7 @@ $(document).ready(function(){
     var message_popup = $("#message_popup");
     message_popup.addClass("absolute");
 
-	$("input[name='current_page_rul']").val(location.pathname);
+	$("input[name='current_page_url']").val(location.pathname);
 
     $("#user_popup li").hover(
     function(event) {
@@ -28,6 +28,9 @@ $(document).ready(function(){
 
     var username;
     $(".username").click(function(event) {
+		if(!$(this).hasClass("username")){
+		return;
+		}
         username = $(this).text();
         $("#user_popup #user_popup_username").text("User: " + username);
 
@@ -130,6 +133,11 @@ $(document).ready(function(){
 	$("input").blur(function(){
 			$focus_input = 0
 			});
+	
+	//
+	if($("a[name='top_menu_message']").hasClass("hidden")){
+		$(".username").removeClass("username");
+	}
 
 //로그인 뜨게함
 	$("#login_box").addClass("absolute");

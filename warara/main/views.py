@@ -30,10 +30,24 @@ def index(request):
             }
     SAMPLE_BEST['logged_in'] = r['logged_in']
 
+    max_length = 20 #todays, weekly best max string length
     suc, ret = server.article_manager.get_today_best_list(5)
+    for i, tb in enumerate(ret):
+        if i==0:
+            max_length = 50
+        if len(tb['title']) > max_length:
+            ret[i]['title'] = ret[i]['title'][0:max_length]
+            ret[i]['title'] += '...'
+        max_length = 20
     assert suc, ret
     r['todays_best_list'] = enumerate(ret)
     suc, ret = server.article_manager.get_weekly_best_list(5)
+    for i, tb in enumerate(ret):
+        if i==0:
+            continue
+        if len(tb['title']) > max_length:
+            ret[i]['title'] = ret[i]['title'][0:max_length]
+            ret[i]['title'] += '...'
     assert suc, ret
     r['weekly_best_list'] = enumerate(ret)
     
