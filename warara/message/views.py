@@ -231,3 +231,32 @@ def delete(request):
     return HttpResponseRedirect("/message/%s/?page_no=%s" %
             (request.POST.get('message_list_type', 'inbox'),
                 request.POST.get('page_no', 1)))
+
+def wrap_error(f):
+    def check_error(*args, **argv):
+        r = {} #render item
+        try:
+            return f(*args, **argv)
+        except AssertionError, e:
+            if e.message == "NOT_LOGGED_IN":
+                r['error_message'] = "not logged in!"
+                rendered = render_to_string("error.html", r)
+                return HttpResponse(rendered)
+                
+        except KeyError, e:
+            if e.message == "arara_session_key":
+                r['error_message'] = "not logged in!"
+                rendered = render_to_string("error.html", r)
+                return HttpResponse(rendered)
+            
+            r['error_message'] = "unknown keyerror : " + e.message
+            rendered = render_to_string("error.html", r)
+            return HttpResponse(rendered)
+
+    return check_error
+
+inbox = wrap_error(inbox)
+outbox = wrap_error(outbox)
+send = wrap_error(send)
+read = wrap_error(read)
+delete = wrap_error(delete)

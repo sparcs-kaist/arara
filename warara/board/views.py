@@ -239,3 +239,34 @@ def search(request, board_name):
 
     rendered = render_to_string('board/list.html', r)
     return HttpResponse(rendered)
+
+def wrap_error(f):
+    def check_error(*args, **argv):
+        r = {} #render item
+        try:
+            return f(*args, **argv)
+        except AssertionError, e:
+            if e.message == "NOT_LOGGED_IN":
+                r['error_message'] = "not logged in!"
+                rendered = render_to_string("error.html", r)
+                return HttpResponse(rendered)
+                
+        except KeyError, e:
+            if e.message == "arara_session_key":
+                r['error_message'] = "not logged in!"
+                rendered = render_to_string("error.html", r)
+                return HttpResponse(rendered)
+            
+            r['error_message'] = "unknown keyerror : " + e.message
+            rendered = render_to_string("error.html", r)
+            return HttpResponse(rendered)
+
+    return check_error
+
+list = wrap_error(list)
+write = wrap_error(write)
+read = wrap_error(read)
+vote = wrap_error(vote)
+reply = wrap_error(reply)
+delete = wrap_error(delete)
+search = wrap_error(search)

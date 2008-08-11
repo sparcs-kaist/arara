@@ -5,6 +5,8 @@ $(document).ready(function(){
     var message_popup = $("#message_popup");
     message_popup.addClass("absolute");
 
+	$("input[name='current_page_rul']").val(location.pathname);
+
     $("#user_popup li").hover(
     function(event) {
         $(this).addClass("user_popup_menu_hover");

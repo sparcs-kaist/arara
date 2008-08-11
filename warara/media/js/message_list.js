@@ -4,7 +4,6 @@ $(document).ready(function() {
 			$(this).val(0);
 			});
 		var checked = this.checked;
-		alert(checked);
 		$("input.ch_del_d").each(function(){
 			this.checked = checked;
 			});
