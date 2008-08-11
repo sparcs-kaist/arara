@@ -157,7 +157,10 @@ class MemberManager(object):
         '''
         
         session = model.Session()
+        try:
         user = session.query(model.User).filter(model.User.username == username_to_confirm).one()
+        except InvalidRequestError:
+            return False, 'USER_NOT_EXIST'
         try:
             user_activation = session.query(model.UserActivation).filter_by(user_id=user.id).one()
         except InvalidRequestError:
