@@ -160,7 +160,6 @@ body {
 }
 
 /* message popup style */
-
 #message_popup {
     display: none;
     width: 30em;
@@ -171,8 +170,16 @@ body {
 #message_popup ul {
     list-style-type: none;
     padding: 0;
-
 }
+
+/* user information style*/
+#user_information_popup {
+    display: none;
+    width: 20em;
+    border: 2px solid;
+    padding: 1.5em;
+}
+
 
 /* display */
 .hidden {
@@ -210,7 +217,7 @@ input.button_exit{
     width:250px;
     border: 0;
     margin: 0;
-    padding: 8px 5px 8px 5px;
+    padding: 10px 5px 8px 5px;
 }
 
 #ksearch .q {
@@ -220,12 +227,9 @@ padding:2px 2px 0;
 width:200px;
 }
 
-#ksearch_logo_wrapper {
+#ksearch_logo {
     float:left;
     padding:15px 13px 15px 20px;
-}
-
-#ksearch_logo {
 width:40px;
 height:10px;
 background: url('/media/background/base/ksearch/ksearch.png') no-repeat;

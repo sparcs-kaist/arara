@@ -25,16 +25,17 @@
 	    {% load arara_tags %}
 	    <h1><a href="/">아라</a></h1>
 	    <form id="ksearch" action="" method="get">
-		<div id="ksearch_logo_wrapper"><div id="ksearch_logo"></div></div>
+		<div id="ksearch_logo"></div>
 		<fieldset>
 		<input type="text" class="q" id="q" name="ksearch">
-		<input type="image" src="/media/background/base/ksearch/ksearch_btn.png">
+		<input type="image" src="/media/background/base/ksearch/ksearch_btn.png" align="top">
 		</fieldset>
 	    </form>
 	</div>
 	<div id="bottom_header">
 		TEST TEXT
-            <div id="top_menu">
+		<div id="top_menu">
+			<span> {% if logged_in %} {{main_nickname.nickname}} logged in ARA bbs{% endif%} </span>
                 <a href="/account/logout/" class="{% if logged_in %}hidden{% endif %}" id="login_toggle">Login</a>
                 <span id="login_box"{%if logged_in%} class="hidden"{%endif%}>
                 <form action="/account/login/" method="post" name="login">
@@ -105,7 +106,9 @@
                 <li><input type="submit" id="message_submit" value="send" /></li>
             </ul>
             <input type="button" name="message_popup_exit" value="x" class="button_exit"></input>
-        </div>
+    	</div>
+	<div id="user_information_popup">
+    	</div>
     </div>
 </body>
 </html>
