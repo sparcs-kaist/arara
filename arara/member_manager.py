@@ -62,8 +62,10 @@ class MemberManager(object):
             user = session.query(model.User).filter_by(username=username).one()
             user.last_logout_time = datetime.datetime.fromtimestamp(time.time())
             session.commit()
+            session.close()
             return True, 'OK'
         except InvalidRequestError:
+            session.close()
             return False, 'DATABASE_ERROR'
 
     def _authenticate(self, username, password, user_ip):
@@ -74,10 +76,13 @@ class MemberManager(object):
                 user.last_login_time = datetime.datetime.fromtimestamp(time.time())
                 user.last_login_ip = unicode(user_ip)
                 session.commit()
+                session.close()
                 return True, user.last_login_time
             else:
+                session.close()
                 return False, 'WRONG_PASSWORD'
         except InvalidRequestError:
+            session.close()
             return False, 'WRONG_USERNAME'
     
     def _get_dict(self, item, whitelist=None):
@@ -132,11 +137,14 @@ class MemberManager(object):
             session.commit()
         except IntegrityError:
             session.rollback()
+            session.close()
             return False, 'ALREADY_ADDED'
         except InvalidRequestError:
             session.rollback()
+            session.close()
             return False, 'DATABASE_ERROR'
 
+        session.close()
         return True, activation_code
 
 
@@ -160,21 +168,26 @@ class MemberManager(object):
         try:
             user = session.query(model.User).filter(model.User.username == username_to_confirm).one()
         except InvalidRequestError:
+            session.close()
             return False, 'USER_NOT_EXIST'
         try:
             user_activation = session.query(model.UserActivation).filter_by(user_id=user.id).one()
         except InvalidRequestError:
             if user.activated == True:
+                session.close()
                 return False, 'ALREADY_CONFIRMED'
             else:
+                session.close()
                 return False, 'DATABASE_ERROR'
 
         if user_activation.activation_code == confirm_key:
             user_activation.user.activated = True
             session.delete(user_activation)
             session.commit()
+            session.close()
             return True, 'OK'
         else:
+            session.close()
             return False, 'WRONG_CONFIRM_KEY'
         
 
@@ -200,8 +213,10 @@ class MemberManager(object):
         query = session.query(model.User).filter_by(username=user_username)
         try:
             user = query.one()
+            session.close()
             return True
         except InvalidRequestError:
+            session.close()
             return False
 
     def is_registered_nickname(self, user_nickname):
@@ -226,8 +241,10 @@ class MemberManager(object):
         query = session.query(model.User).filter_by(nickname=user_nickname)
         try:
             user = query.one()
+            session.close()
             return True
         except InvalidRequestError:
+            session.close()
             return False
 
     @require_login
@@ -251,8 +268,10 @@ class MemberManager(object):
             username = self.login_manager.get_session(session_key)[1]['username']
             user = session.query(model.User).filter_by(username=username).one()
             user_dict = filter_dict(user.__dict__, USER_PUBLIC_WHITELIST)
+            session.close()
             return True, user_dict
         except InvalidRequestError:
+            session.close()
             return False, "MEMBER_NOT_EXIST"
 
     @require_login    
@@ -286,15 +305,19 @@ class MemberManager(object):
                 raise WrongPassword()
             user.set_password(user_password_dict['new_password'])
             session.commit()
+            session.close()
             return True, 'OK'
             
         except NoPermission:
+            session.close()
             return False, 'NO_PERMISSION'
 
         except WrongPassword:
+            session.close()
             return False, 'WRONG_PASSWORD'
 
         except KeyError:
+            session.close()
             return False, 'NOT_LOGGEDIN'
 
 
@@ -325,6 +348,7 @@ class MemberManager(object):
         for key, value in user_modify_dict.items():
             setattr(user, key, value)
         session.commit()
+        session.close()
         return True, 'OK'
 
     @require_login
@@ -350,8 +374,10 @@ class MemberManager(object):
             session = model.Session()
             query_user = session.query(model.User).filter_by(username=query_username).one()
             query_user_dict = filter_dict(query_user.__dict__, USER_QUERY_WHITELIST)
+            session.close()
             return True, query_user_dict
         except InvalidRequestError:
+            session.close()
             return False, "QUERY_ID_NOT_EXIST"
 
     @require_login
@@ -377,8 +403,10 @@ class MemberManager(object):
             session = model.Session()
             query_user = session.query(model.User).filter_by(nickname=query_nickname).one()
             query_user_dict = filter_dict(query_user.__dict__, USER_QUERY_WHITELIST)
+            session.close()
             return True, query_user_dict
         except InvalidRequestError:
+            session.close()
             return False, "QUERY_NICK_NOT_EXIST"
 
     @require_login
@@ -400,9 +428,10 @@ class MemberManager(object):
             user = session.query(model.User).filter_by(username=username).one()
             user.activated = False
             session.commit()
-
+            session.close()
             return True, 'OK'
         except KeyError:
+            session.close()
             return False, 'NOT_LOGGEDIN'
         
     @require_login
@@ -424,10 +453,13 @@ class MemberManager(object):
             session = model.Session()
             user = session.query(model.User).filter(or_(model.users_table.c.username==search_user, model.users_table.c.nickname==search_user)).all()
             user_dict_list = self._get_dict_list(user, USER_SEARCH_WHITELIST)
+            session.close()
             return True, user_dict_list
         except InvalidRequestError:
+            session.close()
             return False, 'NOT_EXIST_USER'
         except AssertionError:
+            session.close()
             return False, 'INVALID_KEY'
 
     @require_login

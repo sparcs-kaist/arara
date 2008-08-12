@@ -92,14 +92,17 @@ class BlacklistManager(object):
         try:
             target_user = session.query(model.User).filter_by(username=blacklist_username).one()
         except InvalidRequestError:
+            session.close()
             return False, 'USERNAME_NOT_EXIST'
         integrity_chk = session.query(model.Blacklist).filter_by(user_id=user.id, 
                         blacklisted_user_id=target_user.id).all()
         if integrity_chk:
+            session.close()
             return False, 'ALREADY_ADDED'
         new_blacklist = model.Blacklist(user, target_user, block_article, block_message)
         session.save(new_blacklist)
         session.commit()
+        session.close()
         return True, 'OK'
        
     @require_login
@@ -130,14 +133,17 @@ class BlacklistManager(object):
         try:
             blacklisted_user = session.query(model.User).filter_by(username=blacklist_username).one()
         except InvalidRequestError:
+            session.close()
             return False, 'USERNAME_NOT_EXIST'
         try:
             blacklist_to_del = session.query(model.Blacklist).filter_by(user_id=user.id,
                                 blacklisted_user_id=blacklisted_user.id).one()
         except InvalidRequestError:
+            session.close()
             return False, 'USERNAME_NOT_IN_BLACKLIST'
         session.delete(blacklist_to_del)
         session.commit()
+        session.close()
         return True, 'OK'
 
     @require_login
@@ -172,16 +178,19 @@ class BlacklistManager(object):
         try:
             target_user = session.query(model.User).filter_by(username=blacklist_dict['blacklisted_user_username']).one()
         except InvalidRequestError:
+            session.close()
             return False, 'USERNAME_NOT_EXIST'
         try:
             blacklist_to_modify = session.query(model.Blacklist).filter_by(user_id=user.id,
                                     blacklisted_user_id=target_user.id).one()
         except InvalidRequestError:
+            session.close()
             return False, 'USERNAME_NOT_IN_BLACKLIST'
         blacklist_to_modify.block_article = blacklist_dict['block_article']
         blacklist_to_modify.block_message = blacklist_dict['block_message']
         blacklist_to_modify.last_modified_date = datetime.datetime.fromtimestamp(time.time())
         session.commit()
+        session.close()
         return True, 'OK'
 
     @require_login
@@ -209,6 +218,7 @@ class BlacklistManager(object):
         user = session.query(model.User).filter_by(username=user_info['username']).one()
         blacklist_list = session.query(model.Blacklist).filter_by(user_id=user.id).all()
         blacklist_dict_list = self._get_dict_list(blacklist_list, BLACKLIST_LIST_DICT)
+        session.close()
         return True, blacklist_dict_list
 
 

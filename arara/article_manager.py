@@ -82,6 +82,7 @@ class ArticleManager(object):
             today_best_article_dict_list = self._get_dict_list(today_best_article, BEST_ARTICLE_WHITELIST)
             for article in today_best_article_dict_list:
                 article['type'] = 'today'
+            session.close()
             return True, today_best_article_dict_list
         else:
             today_best_article = session.query(model.Article).filter(and_(
@@ -92,6 +93,7 @@ class ArticleManager(object):
             today_best_article_dict_list = self._get_dict_list(today_best_article, BEST_ARTICLE_WHITELIST)
             for article in today_best_article_dict_list:
                 article['type'] = 'today'
+            session.close()
             return True, today_best_article_dict_list
 
     def _get_weekly_best_article(self, session_key, board=None, count=5):
@@ -108,6 +110,7 @@ class ArticleManager(object):
             weekly_best_article_dict_list = self._get_dict_list(weekly_best_article, BEST_ARTICLE_WHITELIST)
             for article in weekly_best_article_dict_list:
                 article['type'] = 'weekly'
+            session.close()
             return True, weekly_best_article_dict_list
         else:
             weekly_best_article = session.query(model.Article).filter(and_(
@@ -118,6 +121,7 @@ class ArticleManager(object):
             weekly_best_article_dict_list = self._get_dict_list(weekly_best_article, BEST_ARTICLE_WHITELIST)
             for article in weekly_best_article_dict_list:
                 article['type'] = 'weekly'
+            session.close()
             return True, weekly_best_article_dict_list
 
     def _get_dict(self, item, whitelist=None):
@@ -145,6 +149,7 @@ class ArticleManager(object):
             filtered_dict = filter_dict(item_dict, whitelist)
         else:
             filtered_dict = item_dict
+        session.close()
         return filtered_dict
 
     def _get_dict_list(self, raw_list, whitelist=None):
@@ -166,7 +171,6 @@ class ArticleManager(object):
             2. 투베를 가져오는데 실패:
                 1. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        session = model.Session()
         ret, today_best_list = self._get_today_best_article(None, None, count)
         if ret:
             return True, today_best_list
@@ -185,7 +189,6 @@ class ArticleManager(object):
             2. 투베를 가져오는데 실패:
                 1. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        session = model.Session()
         ret, weekly_best_list = self._get_weekly_best_article(None, None, count)
         if ret:
             return True, weekly_best_list
@@ -226,6 +229,7 @@ class ArticleManager(object):
                 elif article_count == 0:
                     last_page += 1
                 if page > last_page:
+                    session.close()
                     return False, 'WRONG_PAGENUM'
                 offset = page_length * (page - 1)
                 last = offset + page_length
@@ -241,11 +245,14 @@ class ArticleManager(object):
                 ret_dict['hit'] = article_dict_list
                 ret_dict['last_page'] = last_page
                 ret_dict['results'] = page_length
+                session.close()
                 return True, ret_dict
             else:
+                session.close()
                 return ret, 'BOARD_NOT_EXIST'
         except InvalidRequestError:
             raise
+            session.close()
             return False, 'DATABASE_ERROR'
              
     @require_login
@@ -291,6 +298,8 @@ class ArticleManager(object):
                         article.hit += 1
                         session.commit()
             except InvalidRequestError:
+                session.rollback()
+                session.close()
                 return False, 'ARTICLE_NOT_EXIST'
             article_dict_list = self._article_thread_to_list(article)
             for item in article_dict_list:
@@ -300,9 +309,12 @@ class ArticleManager(object):
                     item['blacklisted'] = False
                 ret, msg = self.read_status_manager.mark_as_read(session_key, board_name, item['id'])
                 if not ret:
+                    session.close()
                     return ret, msg
+            session.close()
             return True, article_dict_list
         else:
+            session.close()
             return ret, message
 
     @require_login
@@ -342,10 +354,13 @@ class ArticleManager(object):
                 ret_dict['hit'] = below_article_dict_list['hit']
                 ret_dict['current_page'] = page_position
                 ret_dict['results'] = page_length
+                session.close()
                 return True, ret_dict
             else:
+                session.close()
                 return False, 'DATABASE_ERROR'
         else:
+            session.close()
             return False, 'BOARD_NOT_EXIST'
         
 
@@ -377,18 +392,22 @@ class ArticleManager(object):
             try:
                 article = session.query(model.Article).filter_by(id=article_no).one()
             except InvalidRequestError:
+                session.close()
                 return False, 'ARTICLE_NOT_EXIST'
             user = session.query(model.User).filter_by(username=user_info['username']).one()
             vote_unique_check = session.query(model.ArticleVoteStatus).filter_by(user_id=user.id, board_id=board.id, article_id = article.id).all()
             if vote_unique_check:
+                session.close()
                 return False, 'ALREADY_VOTED'
             else:
                 article.vote += 1
                 vote = model.ArticleVoteStatus(user, board, article)
                 session.save(vote)
                 session.commit()
+                session.close()
                 return True, 'OK'
         else:
+            session.close()
             return False, message
 
     @require_login
@@ -431,7 +450,9 @@ class ArticleManager(object):
                     new_article.is_searchable = False
             session.commit()
         else:
+            session.close()
             return ret, message
+        session.close()
         return True, new_article.id
 
     @require_login
@@ -478,9 +499,12 @@ class ArticleManager(object):
                 session.save(new_reply)
                 session.commit()
             except InvalidRequestError:
+                session.close()
                 return False, 'ARTICLE_NOT_EXIST'
         else:
+            session.close()
             return ret, message
+        session.close()
         return True, new_reply.id
 
     @require_login
@@ -519,6 +543,7 @@ class ArticleManager(object):
             try:
                 article = session.query(model.Article).filter_by(board_id=board.id, id=no).one()
                 if article.deleted == True:
+                    session.close()
                     return False, "NO_PERMISSION"
                 if article.author_id == author.id:
                     article.title = article_dic['title']
@@ -526,11 +551,15 @@ class ArticleManager(object):
                     article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
                     session.commit()
                 else:
+                    session.close()
                     return False, "NO_PERMISSION"
             except InvalidRequestError:
+                session.close()
                 return False, "ARTICLE_NOT_EXIST"
         else:
+            session.close()
             return ret, message
+        session.close()
         return True, article.id
 
     @require_login
@@ -570,11 +599,15 @@ class ArticleManager(object):
                         article.root.reply_count -= 1
                     session.commit()
                 else:
+                    session.close()
                     return False, "NO_PERMISSION"
             except InvalidRequestError:
+                session.close()
                 return False, "ARTICLE_NOT_EXIST"
         else:
+            session.close()
             return ret, message
+        session.close()
         return True, article.id
     def board_list(self, session_key):
         '''
@@ -637,6 +670,7 @@ class ArticleManager(object):
             else:
                 ret = self._is_board_exist(board_name)
                 if not ret:
+                    session.close()
                     return False, 'BOARD_NOT_EXIST'
                 else:
                     board = session.query(model.Board).filter_by(board_name=board_name).one()
@@ -655,6 +689,7 @@ class ArticleManager(object):
                         parsed_uri = one_result['uri'].rsplit('/', 2)
                         one_result['id'] = parsed_uri[::-1][0]
                         one_result['board_name'] = parsed_uri[::-1][1]
+                session.close()
                 return True, result
             else:
                 start_time = time.time()
@@ -671,6 +706,7 @@ class ArticleManager(object):
                 elif article_count == 0:
                     last_page += 1
                 if page > last_page:
+                    session.close()
                     return False, 'WRONG_PAGENUM'
                 offset = page_length * (page - 1)
                 last = offset + page_length
@@ -693,6 +729,7 @@ class ArticleManager(object):
                 ret_dict['results'] = article_count
                 ret_dict['search_time'] = str(end_time-start_time)
                 ret_dict['last_page'] = last_page
+                session.close()
                 return True, ret_dict
         elif search_type.upper() == 'TITLE':
             start_time = time.time()
@@ -706,6 +743,7 @@ class ArticleManager(object):
             elif article_count == 0:
                 last_page += 1
             if page > last_page:
+                session.close()
                 return False, 'WRONG_PAGENUM'
             offset = page_length * (page - 1)
             last = offset + page_length
@@ -719,6 +757,7 @@ class ArticleManager(object):
             ret_dict['results'] = article_count
             ret_dict['search_time'] = str(end_time-start_time)
             ret_dict['last_page'] = last_page
+            session.close()
             return True, ret_dict
         elif search_type.upper() == 'CONTENT':
             start_time = time.time()
@@ -732,6 +771,7 @@ class ArticleManager(object):
             elif article_count == 0:
                 last_page += 1
             if page > last_page:
+                session.close()
                 return False, 'WRONG_PAGENUM'
             offset = page_length * (page - 1)
             last = offset + page_length
@@ -745,12 +785,14 @@ class ArticleManager(object):
             ret_dict['results'] = article_count
             ret_dict['search_time'] = str(end_time-start_time)
             ret_dict['last_page'] = last_page
+            session.close()
             return True, ret_dict
         elif search_type.upper() == 'AUTHOR_NICK':
             start_time = time.time()
             try:
                 user = session.query(model.User).filter_by(nickname=query_text).one()
             except InvalidRequestError:
+                session.close()
                 return False, 'USER_NOT_EXIST'
             article_count = session.query(model.Article).filter(and_(
                     model.articles_table.c.author_id == user.id,
@@ -762,6 +804,7 @@ class ArticleManager(object):
             elif article_count == 0:
                 last_page += 1
             if page > last_page:
+                session.close()
                 return False, 'WRONG_PAGENUM'
             offset = page_length * (page - 1)
             last = offset + page_length
@@ -775,12 +818,14 @@ class ArticleManager(object):
             ret_dict['results'] = article_count
             ret_dict['search_time'] = str(end_time-start_time)
             ret_dict['last_page'] = last_page
+            session.close()
             return True, ret_dict
         elif search_type.upper() == 'AUTHOR_USERNAME':
             start_time = time.time()
             try:
                 user = session.query(model.User).filter_by(username=query_text).one()
             except InvalidRequestError:
+                session.close()
                 return False, 'USER_NOT_EXIST'
             article_count = session.query(model.Article).filter(and_(
                     model.articles_table.c.author_id == user.id,
@@ -792,6 +837,7 @@ class ArticleManager(object):
             elif article_count == 0:
                 last_page += 1
             if page > last_page:
+                session.close()
                 return False, 'WRONG_PAGENUM'
             offset = page_length * (page - 1)
             last = offset + page_length
@@ -805,9 +851,12 @@ class ArticleManager(object):
             ret_dict['results'] = article_count
             ret_dict['search_time'] = str(end_time-start_time)
             ret_dict['last_page'] = last_page
+            session.close()
             return True, ret_dict
         elif search_type.upper() == 'DATE':
+            session.close()
             return False, 'NOT_IMPLEMENTED'
         else:
+            session.close()
             return False, 'WRONG_SEARCH_METHOD'
 # vim: set et ts=8 sw=4 sts=4

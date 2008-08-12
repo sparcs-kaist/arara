@@ -63,8 +63,10 @@ class NoticeManager(object):
                 for weight in range(available_banner_dict_list[index]['weight']):
                     weight_banner.append(index)
             n = random.choice(weight_banner)
+            session.close()
             return True, available_banner_dict_list[n]['content']
         else:
+            session.close()
             return False, 'NO_BANNER'
 
 
@@ -89,8 +91,10 @@ class NoticeManager(object):
                 for weight in range(available_welcome_dict_list[index]['weight']):
                     weight_welcome.append(index)
             n = random.choice(weight_welcome)
+            session.close()
             return True, available_welcome_dict_list[n]['content']
         else:
+            session.close()
             return False, 'NO_WELCOME'
 
 
@@ -118,8 +122,10 @@ class NoticeManager(object):
         banner_dict_list = self._get_dict_list(banner, NOTICE_PUBLIC_KEYS)
 
         if banner_dict_list:
+            session.close()
             return True, banner_dict_list
         else:    
+            session.close()
             return False, 'NO_BANNER'
 
     @require_login
@@ -146,8 +152,10 @@ class NoticeManager(object):
         welcome_dict_list = self._get_dict_list(welcome, NOTICE_PUBLIC_KEYS)
 
         if welcome_dict_list:
+            session.close()
             return True, welcome_dict_list
         else:    
+            session.close()
             return False, 'NO_WELCOME'
         
 
@@ -186,10 +194,12 @@ class NoticeManager(object):
             banner= model.Banner(**notice_reg_dic)
             session.save(banner)
             session.commit()
+            session.close()
             return True, 'OK' 
         except Exception, e:
             raise
             session.rollback()
+            session.close()
             return False, e
 
     @require_login    
@@ -227,10 +237,11 @@ class NoticeManager(object):
             welcome= model.Welcome(**notice_reg_dic)
             session.save(welcome)
             session.commit()
+            session.close()
             return True, 'OK' 
         except Exception, e:
-            raise
             session.rollback()
+            session.close()
             return False, e
 
     @require_login 
@@ -261,11 +272,13 @@ class NoticeManager(object):
             invalid_banner= session.query(model.Banner).filter_by(id = id).one()
             if invalid_banner:
                 invalid_banner.valid = 'False'
+                session.close()
                 return True, 'OK' 
             else:
+                session.close()
                 return False, 'NOT_EXIST_WELCOME'
-        except:
-            raise
+        except Exception:
+            session.close()
             return False, 'DATABASE_ERROR'
     
     @require_login 
@@ -296,11 +309,13 @@ class NoticeManager(object):
             invalid_welcome= session.query(model.Welcome).filter_by(id = id).one()
             if invalid_welcome:
                 invalid_welcome.valid = 'False'
+                session.close()
                 return True, 'OK' 
             else:
+                session.close()
                 return False, 'NOT_EXIST_WELCOME'
         except:
-            raise
+            session.close()
             return False, 'DATABASE_ERROR'
 
 # vim: set et ts=8 sw=4 sts=4

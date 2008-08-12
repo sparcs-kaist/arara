@@ -61,9 +61,10 @@ class FileManager(object):
             file = model.File(filename, ghost_filename, filepath_to_save, article.author, article.board, article)
             session.save(file)
             session.commit()
+            session.close()
             return True, filepath_to_save, ghost_filename 
         except Exception: 
-            raise
+            session.close()
             return False, 'DATABASE_ERROR' 
 
     @require_login
@@ -88,6 +89,7 @@ class FileManager(object):
         try:
             article = session.query(model.Article).filter_by(id = article_id).one()
         except InvalidRequestError:
+            session.close()
             return False, 'ARTICLE_NOT_EXIST'
         try:
             file = session.query(model.File).filter(
@@ -98,10 +100,12 @@ class FileManager(object):
                     model.file_table.c.deleted == False
                     )).one()
         except InvalidRequestError:
+            session.close()
             return False, 'FILE_NOT_FOUND'
         download_path = file.filepath
         ghost_filename = file.saved_filename
         session.commit()
+        session.close()
         return True, download_path, ghost_filename
 
     @require_login
@@ -128,6 +132,7 @@ class FileManager(object):
         try:
             article = session.query(model.Article).filter_by(id = article_id).one()
         except InvalidRequestError:
+            session.close()
             return False, 'ARTICLE_NOT_EXIST'
         try:
             file = session.query(model.File).filter(
@@ -138,10 +143,12 @@ class FileManager(object):
                     model.file_table.c.deleted == False,
                     )).one()
         except InvalidRequestError:
+            session.close()
             return False, 'FILE_NOT_FOUND'
         file.deleted = True
         download_path = file.filepath
         ghost_filename = file.saved_filename
         session.commit()
+        session.close()
         return True, download_path, ghost_filename
 

@@ -82,6 +82,7 @@ class MessagingManager(object):
         elif sent_messages_count == 0:
             last_page += 1
         if page > last_page:
+            session.close()
             return False, 'WRONG_PAGENUM'
         offset = page_length * (page - 1)
         last = offset + page_length
@@ -93,6 +94,7 @@ class MessagingManager(object):
         ret_dict['hit'] = sent_messages_dict_list
         ret_dict['last_page'] = last_page
         ret_dict['results'] = sent_messages_count
+        session.close()
         return True, ret_dict
 
 
@@ -140,6 +142,7 @@ class MessagingManager(object):
         elif received_messages_count == 0:
             last_page += 1
         if page > last_page:
+            session.close()
             return False, 'WRONG_PAGENUM'
         offset = page_length * (page - 1)
         last = offset + page_length
@@ -157,6 +160,7 @@ class MessagingManager(object):
         ret_dict['last_page'] = last_page
         ret_dict['new_message_count'] = received_new_messages_count
         ret_dict['results'] = received_messages_count
+        session.close()
         return True, ret_dict
 
     @require_login
@@ -214,7 +218,9 @@ class MessagingManager(object):
                 session.save(message)
                 session.commit()
             except InvalidRequestError:
+                session.close()
                 return False, "DATABASE_ERROR"
+            session.close()
             return True, 'OK'
 
     @require_login
@@ -241,10 +247,12 @@ class MessagingManager(object):
         try:
             message = session.query(model.Message).filter(and_(model.message_table.c.to_id==to_user.id, model.message_table.c.id==msg_no, not_(model.message_table.c.received_deleted==True))).one()
         except InvalidRequestError:
+            session.close()
             return False, "MSG_NOT_EXIST"
         message_dict = self._get_dict(message, MESSAGE_WHITELIST)
         message.read_status = u'R'
         session.commit()
+        session.close()
         return True, message_dict
 
     @require_login
@@ -271,10 +279,12 @@ class MessagingManager(object):
         try:
             message = session.query(model.Message).filter(and_(model.message_table.c.from_id==from_user.id, model.message_table.c.id==msg_no, not_(model.message_table.c.sent_deleted==True))).one()
         except InvalidRequestError:
+            session.close()
             return False, "MSG_NOT_EXIST"
         message_dict = self._get_dict(message, MESSAGE_WHITELIST)
         message.read_status = u'R'
         session.commit()
+        session.close()
         return True, message_dict
 
     @require_login
@@ -301,16 +311,20 @@ class MessagingManager(object):
         try:
             message_to_delete = session.query(model.Message).filter_by(id=msg_no).one()
         except InvalidRequestError:
+            session.close()
             return False, 'MSG_NOT_EXIST'
         if message_to_delete.to_id == user.id:
             if message_to_delete.sent_deleted:
                 session.delete(message_to_delete)
                 session.commit()
+                session.close()
                 return True, 'OK'
             else:
                 message_to_delete.received_deleted = True
                 session.commit()
+                session.close()
                 return True, 'OK'
+        session.close()
         return False, 'MSG_NOT_EXIST'
 
     @require_login
@@ -337,15 +351,19 @@ class MessagingManager(object):
         try:
             message_to_delete = session.query(model.Message).filter_by(id=msg_no).one()
         except InvalidRequestError:
+            session.close()
             return False, 'MSG_NOT_EXIST'
         if message_to_delete.from_id == user.id:
             if message_to_delete.received_deleted:
                 session.delete(message_to_delete)
                 session.commit()
+                session.close()
                 return True, 'OK'
             else:
                 message_to_delete.sent_deleted = True
                 session.commit()
+                session.close()
                 return True, 'OK'
+        session.close()
         return False, 'MSG_NOT_EXIST'
 # vim: set et ts=8 sw=4 sts=4

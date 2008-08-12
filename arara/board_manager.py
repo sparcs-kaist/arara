@@ -38,14 +38,17 @@ class BoardManager(object):
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info['username']).one()
         if not user.is_sysop:
+            session.close()
             return False, 'NO_PERMISSION'
         board_to_add = model.Board(board_name, board_description)
         try:
             session.save(board_to_add)
             session.commit()
+            session.close()
             return True, 'OK'
         except IntegrityError:
             session.rollback()
+            session.close()
             return False, 'ALREADY_ADDED'
 
     def get_board(self, board_name):
@@ -53,8 +56,10 @@ class BoardManager(object):
         try:
             board_to_get = session.query(model.Board).filter_by(board_name=board_name).one()
         except InvalidRequestError:
+            session.close()
             return False, 'BOARD_NOT_EXIST'
         board_dict = self._get_dict(board_to_get, BOARD_MANAGER_WHITELIST)
+        session.close()
         return True, board_dict
 
     def get_board_list(self):
@@ -62,7 +67,9 @@ class BoardManager(object):
         board_to_get = session.query(model.Board).all()
         board_dict_list = self._get_dict_list(board_to_get, BOARD_MANAGER_WHITELIST)
         if board_dict_list == []:
+            session.close()
             return False, 'NO_BOARD_EXIST'
+        session.close()
         return True, board_dict_list
 
     @require_login
@@ -73,9 +80,12 @@ class BoardManager(object):
         try:
             board = session.query(model.Board).filter_by(board_name=board_name).one()
         except InvalidRequestError:
+            session.close()
             return False, 'BOARD_NOT_EXIST'
         if not user.is_sysop:
+            session.close()
             return False, 'NO_PERMISSION'
         session.delete(board)
         session.commit()
+        session.close()
         return True, 'OK'

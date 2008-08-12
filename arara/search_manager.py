@@ -70,5 +70,7 @@ class SearchManager(object):
                     result = ksearch.index(api_key, 'ara', uri, article_dict['title'], article_dict['content'], 1.0, board_name)
                     assert result == 'OK'
 
+        session.close()
+
 if __name__ == "__main__":
     pass
