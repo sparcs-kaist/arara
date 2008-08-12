@@ -1,117 +1,122 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-    <script type="text/javascript" src="/media/thirdparty/jquery-latest.min.js"></script>
-    <script type="text/javascript" src="/media/thirdparty/jquery.history.js"></script>
-    <script type="text/javascript" src="/media/js/base.js"></script>
-    {% block script %}{% endblock %}
-    <link rel="stylesheet" href="/media/style/base.css" />
-    {% block style %}{% endblock %}
-    <title>{% block title %}아라{% endblock %}</title>
-</head>
+    <head>
+	<script type="text/javascript" src="/media/thirdparty/jquery-latest.min.js"></script>
+	<script type="text/javascript" src="/media/thirdparty/jquery.history.js"></script>
+	<script type="text/javascript" src="/media/js/base.js"></script>
+	{% block script %}{% endblock %}
+	<link rel="stylesheet" href="/media/style/base.css" />
+	{% block style %}{% endblock %}
+	<title>{% block title %}아라{% endblock %}</title>
+    </head>
 
-<body>
-    <div id="wrapper">
-        <div id="header_wrapper">
-	<div id="top_header">
-		<ul id="link">
+    <body>
+	<div id="wrapper">
+	    <div id="header_wrapper">
+		<div id="top_header">
+		    <ul id="link">
 			<li>웹아라</li>
 			<li>웹아라old</li>
 			<li>구름</li>
+		    </ul>
+		</div>
+		<div id="header">
+		    {% load arara_tags %}
+		    <h1><a href="/"><img src="/media/image/base/header/raw_ara_w_main_header_webara_title.png" alt="아라"></a></h1>
+		    <form id="ksearch" action="" method="get">
+			<div id="ksearch_logo"></div>
+			<fieldset>
+			    <input type="text" class="q" id="q" name="ksearch">
+			    <input type="image" src="/media/image/base/ksearch/ksearch_btn.png">
+			</fieldset>
+		    </form>
+		</div>
+		<div id="bottom_header">
+		    <div id="subtitle_wrapper">
+			<div id="subtitle_logo"></div>
+			<div id="subtitle_folding"></div>
+		    </div>
+		    <div id="top_menu_wrapper">
+			<div id="subtitle_round"></div>
+			<div id="bbstitle_wrapper">
+			    <div id="bbstitle_dingbet"></div>
+			    <div id="bbstitle">{% block bbstitle %}<span id="bbsname">main</span>환영합니다.{% endblock bbstitle %}</div>
+			</div>
+			<div id="top_menu">
+			    <a href="/account/logout/" class="{% if logged_in %}hidden{% endif %}" id="login_toggle">Login</a>
+			    <span id="login_box"{%if logged_in%} class="hidden"{%endif%}>
+				<form action="/account/login/" method="post" name="login">
+				    <label for="login_username_field">Username:</label>
+				    <input type="text" id="login_username_field" name="username" />
+				    <label for="login_password_field">Password:</label>
+				    <input type="password" id="login_password_field" name="password" />
+				    <input type="hidden" name="current_page_url" value="/"></input>
+				    <input type="submit" value="Login" />
+				</form>
+			    </span>
+			    <a href="/account/logout/" class="{% if not logged_in %}hidden{% endif %}">Logout</a>
+			    <a href="/account/" class="{% if not logged_in %}hidden{% endif %}">Account</a>
+			    <a href="/account/register/agreement" class="{% if logged_in %}hidden{% endif %}">Register</a>
+			    <a href="/message/inbox/" name="top_menu_message" class="{% if not logged_in %}hidden{% endif %}">Message</a>
+			    <a href="/blacklist/" class="{% if not logged_in %}hidden{% endif %}">Blacklist</a>
+			    <a href="/help">Help</a>
+			</div>
+		    </div>
+		</div>
+	    </div>
+	    <div id="menu_wrapper">
+		<div id="menu">
+		    {% block menu %}
+		    {% get_board_list %}
+		    <ul>
+			{% for board_info in board_list %}
+			<li><a href="/board/{{board_info.board_name}}">{{board_info.board_name}}</a></li>
+			{% endfor %}
+		    </ul>
+		    {% endblock %}
+		</div>
+	    </div>
+
+	    <div id="content_wrapper">
+		<div id="content">
+		    {% block content %}{% endblock %}
+		</div>
+	    </div>
+
+	    <div id="widget">
+	    </div>
+
+	    <div id="footer_wrapper">
+		<div id="footer">
+		    All copyrights reserved by SPARCS
+		</div>
+	    </div>
+
+	    <div id="user_popup">
+		<ul>
+		    <li id="user_popup_username"></li>
+		    <li class="{% if not logged_in %}hidden{% endif %}"><a id="user_popup_send_message" href="#">Send Message</a></li>
+		    <li><a id="user_popup_user_information" href="#">User Information</a></li>
+		    <li class="{% if not logged_in %}hidden{% endif %}"><a id="user_popup_add_blacklist" href="#">Add Blacklist</a></li>
 		</ul>
+	    </div>
+	    <div id="message_popup">
+		<ul>
+		    <li id="message_popup_username"></li>
+		    <li>
+		    <label for="message_receiver_field">To:</label>
+		    <input type="text" name="receiver" id="message_receiver_field"/>
+		    </li>
+		    <li>
+		    <label for="message_text_field">Message:</label>
+		    <textarea name="text" id="message_text_field"></textarea>
+		    </li>
+		    <li><input type="submit" id="message_submit" value="send" /></li>
+		</ul>
+		<input type="button" name="message_popup_exit" value="x" class="button_exit"></input>
+	    </div>
 	</div>
-        <div id="header">
-	    {% load arara_tags %}
-	    <h1><a href="/"><img src="/media/image/base/header/raw_ara_w_main_header_webara_title.png" alt="아라"></a></h1>
-	    <form id="ksearch" action="" method="get">
-		<div id="ksearch_logo"></div>
-		<fieldset>
-		<input type="text" class="q" id="q" name="ksearch">
-		<input type="image" src="/media/image/base/ksearch/ksearch_btn.png" align="top">
-		</fieldset>
-	    </form>
-	</div>
-	<div id="bottom_header">
-		TEST TEXT
-		<div id="top_menu">
-			<span> {% if logged_in %} {{main_nickname.nickname}} logged in ARA bbs{% endif%} </span>
-                <a href="/account/logout/" class="{% if logged_in %}hidden{% endif %}" id="login_toggle">Login</a>
-                <span id="login_box"{%if logged_in%} class="hidden"{%endif%}>
-                <form action="/account/login/" method="post" name="login">
-		    <label for="login_username_field">Username:</label>
-		    <input type="text" id="login_username_field" name="username" />
-		    <label for="login_password_field">Password:</label>
-		    <input type="password" id="login_password_field" name="password" />
-			<input type="hidden" name="current_page_url" value="/"></input>
-		    <input type="submit" value="Login" />
-		</form>
-    </span>
-                <a href="/account/logout/" class="{% if not logged_in %}hidden{% endif %}">Logout</a>
-		<a href="/account/" class="{% if not logged_in %}hidden{% endif %}">Account</a>
-		<a href="/account/register/agreement" class="{% if logged_in %}hidden{% endif %}">Register</a>
-                <a href="/message/inbox/" name="top_menu_message" class="{% if not logged_in %}hidden{% endif %}">Message</a>
-		<a href="/blacklist/" class="{% if not logged_in %}hidden{% endif %}">Blacklist</a>
-        <a href="/help">Help</a>
-            </div>
-	</div>
-    	</div>
-        <div id="menu_wrapper">
-        <div id="menu">
-            {% block menu %}
-			{% get_board_list %}
-            <ul>
-				{% for board_info in board_list %}
-                <li><a href="/board/{{board_info.board_name}}">{{board_info.board_name}}</a></li>
-				{% endfor %}
-            </ul>
-            {% endblock %}
-        </div>
-        </div>
-
-        <div id="content_wrapper">
-        <div id="content">
-            {% block content %}{% endblock %}
-        </div>
-        </div>
-
-        <div id="widget">
-        </div>
-
-        <div id="footer_wrapper">
-        <div id="footer">
-            All copyrights reserved by SPARCS
-        </div>
-        </div>
-
-        <div id="user_popup">
-            <ul>
-                <li id="user_popup_username"></li>
-                <li class="{% if not logged_in %}hidden{% endif %}"><a id="user_popup_send_message" href="#">Send Message</a></li>
-                <li><a id="user_popup_user_information" href="#">User Information</a></li>
-                <li class="{% if not logged_in %}hidden{% endif %}"><a id="user_popup_add_blacklist" href="#">Add Blacklist</a></li>
-            </ul>
-        </div>
-        <div id="message_popup">
-            <ul>
-                <li id="message_popup_username"></li>
-                <li>
-                    <label for="message_receiver_field">To:</label>
-                    <input type="text" name="receiver" id="message_receiver_field"/>
-                </li>
-                <li>
-                    <label for="message_text_field">Message:</label>
-                    <textarea name="text" id="message_text_field"></textarea>
-                </li>
-                <li><input type="submit" id="message_submit" value="send" /></li>
-            </ul>
-            <input type="button" name="message_popup_exit" value="x" class="button_exit"></input>
-    	</div>
-	<div id="user_information_popup">
-	    <input type="text" id"query_user_name" name="query_user_name" />
-	    <input type="submit" />
-    	</div>
-    </div>
-</body>
+    </body>
 </html>
 

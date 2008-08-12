@@ -60,12 +60,57 @@ body {
 }
 
 #header {
-    float: left;
+    float:left;
     width: 100%;
 }
 
 #bottom_header {
-    background-color: #fff;
+    float: left;
+    width: 100%;
+    height:40px;
+    background: url('/media/image/base/subtitle/subtitle_bg.png');
+}
+
+#subtitle_wrapper {
+    float:left;
+    width:151px;
+}
+
+#subtitle_logo {
+    float:left;
+    width:60px;
+    height:14px;
+    background: url('/media/image/base/subtitle/subtitle.png');
+    margin: 17px 20px 9px 20px;
+}
+
+#subtitle_folding {
+    float:right;
+    width:8px;
+    height:8px;
+    margin:32px 0px 0px 0px;
+    background: url('/media/image/base/subtitle/subtitle_folding.png');
+}
+
+#subtitle_round {
+    float:left;
+    width:7px;
+    height:7px;
+    background: url('/media/image/base/subtitle/subtitle_round.png');
+}
+
+#bbstitle_dingbet {
+    float:left;
+    width:15px;
+    height:12px;
+    margin:11px 8px 0px 10px;
+    background: url('/media/image/base/subtitle/subtitle_maintitle.png');
+}
+
+#bbstitle {
+    float:left;
+    width: 200px;
+    height: 100%;
 }
 
 #menu {
@@ -104,6 +149,11 @@ body {
     border: 0;
 }
 
+#top_menu_wrapper span, a {
+    text-decoration: none;
+    color:#828282;
+}
+
 /* IE hack */
 body {
     text-align: center;
@@ -112,12 +162,33 @@ body {
     text-align: left;
 }
 
+#bbstitle_wrapper {
+    float:left;
+    width:300px;
+    height:100%;
+}
+
+#bbsname {
+    font-size: 150%;
+    font-weight: bold;
+    color: #333333;
+}
+
 /* top menu style */
+#top_menu_wrapper{
+    float:right;
+    width:869px;
+    height:33px;
+    margin:6px 0px 0px 0px;
+    border-bottom: 1px solid #cccccc;
+    background-color:white;
+}
+
 #top_menu {
     float: right;
+    height: 100%;
     font-size: 120%;
     font-weight: bold;
-    margin-top: -15px;
 }
 #top_menu a {
     margin-left: 10px;
@@ -213,7 +284,7 @@ input.button_exit{
     width:335px;
     height:40px;
     text-align: right;
-    background: url('/media/background/base/ksearch/ksearch_bg.png')
+    background: url('/media/image/base/ksearch/ksearch_bg.png')
 }
 
 #ksearch fieldset {
@@ -233,8 +304,8 @@ width:200px;
 
 #ksearch_logo {
     float:left;
-    padding:15px 13px 15px 20px;
+    margin:15px 13px 15px 20px;
 width:40px;
 height:10px;
-background: url('/media/background/base/ksearch/ksearch.png') no-repeat;
+background: url('/media/image/base/ksearch/ksearch.png') no-repeat;
 }
