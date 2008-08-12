@@ -100,6 +100,9 @@ body {
     text-decoration: none;
     color: black;
 }
+#header h1 a img {
+    border: 0;
+}
 
 /* IE hack */
 body {
