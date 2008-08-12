@@ -79,8 +79,11 @@ class MemberManager(object):
                 session.close()
                 return True, user.last_login_time
             else:
-                session.close()
-                return False, 'WRONG_PASSWORD'
+                if user.activated:
+                    session.close()
+                    return False, 'WRONG_PASSWORD'
+                else:
+                    return False, 'NOT_ACTIVATED'
         except InvalidRequestError:
             session.close()
             return False, 'WRONG_USERNAME'

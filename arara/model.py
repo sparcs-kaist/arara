@@ -29,7 +29,7 @@ class User(object):
         self.password = unicode(md5.md5(password).hexdigest())
 
     def compare_password(self, password):
-        if unicode(md5.md5(password).hexdigest()) == self.password:
+        if unicode(md5.md5(password).hexdigest()) == unicode(self.password):
             return True
         else:
             return False
