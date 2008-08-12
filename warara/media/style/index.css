@@ -4,7 +4,7 @@
 
 /* Best_article background */
 .best_articles_caption {
-    background: #F7F7F7 url(/media/background/base/raw_ara_w_main_best_titlebar.png) no-repeat top left;
+    background: #F7F7F7 url(/media/image/base/index/raw_ara_w_main_best_titlebar.png) no-repeat top left;
     border-bottom: 1px solid #EAEAEA;
     padding : 7px 0 0 10px;
 }
@@ -28,7 +28,7 @@
 .best_articles_content_first {
     float: left;
     width: 176px;
-    background: url(/media/background/base/raw_ara_w_main_best_number_0_background.png) repeat top left;
+    background: url(/media/image/base/index/raw_ara_w_main_best_number_0_background.png) repeat top left;
     list-style: none;
     padding: 9px;
     margin: 0;
