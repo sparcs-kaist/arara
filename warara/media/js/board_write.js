@@ -14,5 +14,10 @@ $(document).ready(function() {
 	$("input[name='cancel']").click(function(){
 		history.go(-1);
 		});
+
+	$("input[name='file1']").change(function(){
+		$("input[name='file1_fi']").val($(this).val());
+		});
+
 	});
 

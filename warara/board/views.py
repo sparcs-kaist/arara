@@ -152,6 +152,13 @@ def read(request, board_name, article_id):
             article_list[i]['content'] = 'deleted'
             article_list[i]['title'] = 'deleted'
 
+        if article_list[i].get('attach', 0):
+
+            for j in range(len(article_list[i]['attach'])):
+                f = open("files/%s/%s" % (article_list[i]['attach'][j]['filepath'], 
+                    article_list[i]['attach'][j]['filehash']), 'rb')
+                article_list[i]['attach'][j]['order'] = j
+
     r['board_name'] = board_name
     username = request.session['arara_username']
     r['article_id'] = article_id
@@ -224,6 +231,17 @@ def search(request, board_name):
     r['path'] = path + "?search_word=" + request.GET.get('search_word', '') + "&search_method=" + request.GET.get('search_method', 'all')
     rendered = render_to_string('board/list.html', r)
     return HttpResponse(rendered)
+
+def file_download(request, board_name, article_root_id, article_id, file_order):
+    server = arara.get_server()
+    sess, r = warara.check_logged_in(request);
+    ret, article_list = server.article_manager.read(sess, board_name, int(article_id))
+    file = article_list[0]['attach'][int(file_order)]
+    file_ob = open("files/%s/%s" % (file['filepath'], file['filehash']))
+
+    response = HttpResponse(file_ob, mimetype="application/x-forcedownload")
+    response['Content-Disposition'] = "attachment; filename=" + file['filename']
+    return response
 
 def wrap_error(f):
     def check_error(*args, **argv):

@@ -30,6 +30,11 @@
             BLACKLISTED
             {% endif %}
         </div>
+        <div class="article_file">
+            {% for file in article.attach %}
+            <a href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/file/{{file.order}}" target="_blank">{{file.filename}}</a>
+            {% endfor %}
+        </div>
         {% if not article.deleted %}
         <a class="article_reply_show" href="#">reply</a>
         {% if article.flag_modify %}
