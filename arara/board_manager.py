@@ -54,7 +54,7 @@ class BoardManager(object):
     def get_board(self, board_name):
         session = model.Session()
         try:
-            board_to_get = session.query(model.Board).filter_by(board_name=board_name).one()
+            board_to_get = session.query(model.Board).filter_by(board_name=board_name, deleted=False).one()
         except InvalidRequestError:
             session.close()
             return False, 'BOARD_NOT_EXIST'
@@ -64,7 +64,7 @@ class BoardManager(object):
 
     def get_board_list(self):
         session = model.Session()
-        board_to_get = session.query(model.Board).all()
+        board_to_get = session.query(model.Board).filter_by(deleted=False).all()
         board_dict_list = self._get_dict_list(board_to_get, BOARD_MANAGER_WHITELIST)
         if board_dict_list == []:
             session.close()
@@ -85,7 +85,8 @@ class BoardManager(object):
         if not user.is_sysop:
             session.close()
             return False, 'NO_PERMISSION'
-        session.delete(board)
+        print board
+        board.deleted = True
         session.commit()
         session.close()
         return True, 'OK'
