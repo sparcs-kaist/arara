@@ -358,7 +358,7 @@ def get_engine():
         from sqlalchemy import create_engine
         engine = create_engine(CONNECTION_STRING, encoding='utf-8',
                                 convert_unicode=True, pool_size=20,
-                                echo=True)
+                                max_overflow=40, echo=False)
     return engine
 
 Session = None
