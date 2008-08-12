@@ -9,7 +9,7 @@ from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy import and_, or_, not_
 
 WRITE_ARTICLE_DICT = ('title', 'content')
-READ_ARTICLE_WHITELIST = ('id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable')
+READ_ARTICLE_WHITELIST = ('id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable', 'attach')
 LIST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'vote', 'hit')
 SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
@@ -139,13 +139,14 @@ class ArticleManager(object):
         if item_dict.has_key('content'):
             if whitelist == SEARCH_ARTICLE_WHITELIST:
                 item_dict['content'] = item_dict['content'][:40]
-            attach_files = session.query(model.File).filter_by(article_id=item.id).all()
-            if len(attach_files) > 0:
-                item_dict['attach'] = []
-                for one_file in attach_files:
-                    one_file_dict = one_file.__dict__
-                    item_dict['attach'].append({'filename': one_file_dict['filename'],
-                                                'filepath': one_file_dict['filepath']})
+            if whitelist == READ_ARTICLE_WHITELIST:
+                attach_files = session.query(model.File).filter_by(article_id=item.id).all()
+                if len(attach_files) > 0:
+                    item_dict['attach'] = []
+                    for one_file in attach_files:
+                        one_file_dict = one_file.__dict__
+                        item_dict['attach'].append({'filename': one_file_dict['filename'],
+                                                    'filepath': one_file_dict['filepath']})
         if whitelist:
             filtered_dict = filter_dict(item_dict, whitelist)
         else:
