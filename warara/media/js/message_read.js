@@ -9,6 +9,9 @@ $(document).ready(function(){
 
 			case 114: //r
 			case 109: //m
+			if($("input[name='message_list_type']").val() == 'outbox'){
+			return;
+			}
 			$src = $("a[name='message_read_reply']").attr("href");
 			location.href = $src;
 			break;

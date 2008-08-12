@@ -34,6 +34,7 @@
     <a name="message_read_reply" href="/message/reply/{{message_id}}">reply</a>
     {% endifequal %}
     <a name="message_read_move_to_list" href="../">list</a>
+    <input type="hidden" value="{{message_list_type}}" name="message_list_type">
 </div>
 
 {% endblock message_content %}
