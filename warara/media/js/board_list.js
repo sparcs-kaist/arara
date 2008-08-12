@@ -8,7 +8,7 @@ $(document).ready(function(){
                 cursor_pos = row_count - 1;
         }
     });
-	if(!$("#top_menu_message").hasClass()){
+	if(!$logged_in){
 	cursor_pos = -1;
 	}
 

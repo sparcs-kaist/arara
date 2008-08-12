@@ -134,9 +134,14 @@ $(document).ready(function(){
 			$focus_input = 0
 			});
 	
-	//
+	//로그인 안되있을때
+	$logged_in = 0
 	if($("a[name='top_menu_message']").hasClass("hidden")){
 		$(".username").removeClass("username");
+		$logged_in = 0
+	}
+	else{
+		$logged_in = 1
 	}
 
 //로그인 뜨게함

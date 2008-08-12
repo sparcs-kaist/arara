@@ -24,11 +24,12 @@ def register(request):
         user_information_dic = {'username':username, 'password':password, 'nickname':nickname, 'email':email, 'signature':signature, 'self_introduction':introduction, 'default_language':language}
         ret, message = server.member_manager.register(user_information_dic)
         assert ret, message
-        #send_mail(email, username, message)
+        send_mail(email, username, message)
         return HttpResponseRedirect("/")
     
     rendered = render_to_string('account/register.html', r)
     return HttpResponse(rendered)
+'''
 
 def send_mail(email, username, confirm_key):
     sender = 'root_id@sparcs.org' #pv457, no_reply, ara, ara_admin
@@ -54,7 +55,6 @@ def send_mail(email, username, confirm_key):
     s.login('newtron_star', 'q1q1q1')
     s.sendmail(sender, [email], msg.as_string())
     s.quit()
-'''
 
 def confirm_user(request, username, confirm_key):
     server = arara.get_server()

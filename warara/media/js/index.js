@@ -18,6 +18,9 @@ $(document).ready(function(){
     );
 
 	$(document).keypress(function(event){
+		if(!$logged_in || $focus_input || event.altKey || event.ctrlKey){
+		return;
+		}
 		switch(event.which){
 		case 113: //q
 		location.href = "/account/logout";
