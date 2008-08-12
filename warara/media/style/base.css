@@ -155,9 +155,15 @@ body {
 }
 
 /* IE hack */
+* {
+    color:#666666;
+    font-family: Verdana, 굴림
+}
+
 body {
     text-align: center;
 }
+
 #wrapper {
     text-align: left;
 }
@@ -308,4 +314,32 @@ width:200px;
 width:40px;
 height:10px;
 background: url('/media/image/base/ksearch/ksearch.png') no-repeat;
+}
+
+.small_form {
+    border:1px solid #dadada;
+    height:23px;
+    vertical-align:top;
+    padding:0px 0px 0px 2px;
+}
+
+.small_btn {
+    background: url('/media/image/small_btn_bg.png') repeat-x bottom;
+    border:1px solid #dadada;
+    height:23px;
+    width:50px;
+    vertical-align:top;
+}
+
+.big_form {
+    border:1px solid #dadada;
+    height:33px;
+    vertical-align:top;
+}
+
+.big_btn {
+    background: url('/media/image/big_btn_bg.png') repeat-x bottom;
+    border:1px solid #dadada;
+    height:33px;
+    vertical-align:top;
 }

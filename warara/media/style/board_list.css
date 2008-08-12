@@ -1,17 +1,18 @@
+#board_content {
+    width: 50em;
+}
+
+.full {
+    width: 100%;
+}
+
 #article_table table {
     border-collapse: collapse;
-    width: 50em;
-    border: 1px solid #666;
+    border-top: 1px solid #65aa5c;
 }
 
 #article_table th, td {
     padding: 0.1em 1em;
-}
-
-#article_below_list table {
-    border-collapse: collapse;
-    width: 50em;
-    border: 1px solid #666;
 }
 
 #article_table_list th, td {
@@ -19,38 +20,30 @@
 }
 
 .column.cursor_col{
-    width: 0.3em;
+    width: 0.2em;
 }
 .column.id_col{
     width: 1em;
 }
 .column.author_col{
-    width: 8em;
+    width: 6em;
 }
 .column.date_col{
-    width: 9em;
+    width: 6em;
 }
 .column.vote_col{
-    width: 1em;
+    width: 2em;
 }
 .column.hit_col{
-    width: 1em;
+    width: 2em;
 }
 
 .column {
-    border-right: 1px solid #ccc;
-}
-
-.last_column {
-    border-right: 1px solid #666;
-}
-
-col#board_title_col {
-    border: none;
+    border-right: 1px solid white;
 }
 
 .row_highlight {
-    background-color: #ddf;
+    background-color: #f0f0f0;
 }
 
 .todays_best {
@@ -59,4 +52,36 @@ col#board_title_col {
 
 .weekly_best {
     background-color: #fdd;
+}
+
+th {
+    background: url('/media/image/base/square.png') no-repeat;
+    background-color: #e0e0e0;
+    border-bottom: 5px solid #dadada;
+    border-top: 1px solid #65aa5c;
+    color:#454545;
+    height:24px;
+}
+
+td {
+    border-bottom: 1px solid #cccccc;
+}
+
+#board_pages {
+    text-align: center;
+    margin:10px;
+}
+
+#board_buttons {
+    width: 100%;
+}
+
+#board_search {
+    width: 500px;
+    text-align: right;
+    float:right;
+}
+
+#board_write {
+   float: right;
 }
