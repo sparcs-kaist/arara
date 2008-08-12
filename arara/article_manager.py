@@ -9,13 +9,13 @@ from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy import and_, or_, not_
 
 WRITE_ARTICLE_DICT = ('title', 'content')
-READ_ARTICLE_WHITELIST = ('id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable', 'attach')
+READ_ARTICLE_WHITELIST = ('id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'author_nickname', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable', 'attach')
 LIST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
-                    'deleted', 'author_username', 'vote', 'hit')
+                    'deleted', 'author_username', 'author_nickname', 'vote', 'hit')
 SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
-                    'deleted', 'author_username', 'vote', 'hit', 'content')
+                    'deleted', 'author_username', 'author_nickname', 'vote', 'hit', 'content')
 BEST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
-                    'deleted', 'author_username', 'vote', 'hit', 'last_page', 'board_name')
+                    'deleted', 'author_username', 'author_nickname', 'vote', 'hit', 'last_page', 'board_name')
 
 class NotLoggedIn(Exception):
     pass
@@ -129,6 +129,7 @@ class ArticleManager(object):
         session = model.Session()
         if item_dict.has_key('author_id'):
             item_dict['author_username'] = item.author.username
+            item_dict['author_nickname'] = item.author.nickname
             del item_dict['author_id']
         if item_dict.has_key('board_id'):
             item_dict['board_name'] = item.board.board_name
