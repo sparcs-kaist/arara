@@ -1,0 +1,81 @@
+#message_content {
+	width: 40em;
+	margin: 2em;
+}
+
+#message_send_head {
+	background: url(/media/image/head_background.png) repeat;
+	width: 100%;
+	padding: 0.8em 0em;
+	color: white;
+}
+
+#message_send_head .main_head {
+	font-size: 2em;
+	font-weight: bold;
+	color: white;
+	margin-left: 3%;
+}
+
+#message_send_head .sub_head {
+	font-size: 1em;
+	color: white;
+}
+
+#message_send_receiver {
+	clear: both;
+	width: 90%;
+	margin: 1em 5%;
+	text-align: left;
+}
+
+#message_send_receiver .sendto{
+	float: left;
+	width: 15%;
+	margin-bottom: 1em;
+}
+
+#message_send_receiver .doublemarginshet{
+	float: right;
+	width: 84%;
+}
+
+#message_send_receiver input {
+	width: 100%;
+	border: 1px solid #ccc;
+}
+
+#message_send_text {
+	margin 1em 0%;
+	text-align: center;
+}
+#message_send_text textarea {
+	width: 90%;
+	height: 25em;
+	border: 1px solid #ccc;
+}
+
+#message_send_buttons {
+	width: 100%;
+	margin: 1em 0em;
+	padding: 0.3em 0em;
+	background-color: #ddd;
+	vertical-align: center;
+	vertical-align: middle;
+}
+
+#message_send_buttons input {
+	width: 4em;
+	height: 2em;
+}
+
+#message_send_buttons span .message_send_submit {
+	height: 3em;
+	width: 6em;
+	margin-left: 42%;
+}
+
+#message_send_buttons .message_send_cancel {
+	position: relative;
+	top: -15%;
+}
