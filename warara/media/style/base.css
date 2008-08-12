@@ -16,6 +16,7 @@ body {
 }
 
 #header_wrapper {
+    width: 100%;
     background-color: #999;
 }
 
@@ -59,8 +60,8 @@ body {
 }
 
 #header {
-    clear: both;
-    padding: 20px;
+    float: left;
+    width: 100%;
 }
 
 #bottom_header {
@@ -88,8 +89,9 @@ body {
 }
 
 #header h1 {
+    float: left;
     font-size: 3em;
-    margin: 0;
+    margin: 20px;
     padding: 0;
 }
 
@@ -175,7 +177,7 @@ body {
 /* display */
 .hidden {
     display:none
-}    
+}
 
 form[name="login"]{
 	display: inline;
@@ -193,4 +195,38 @@ input.button_exit{
 
 #input[name="message_popup_exit"]{
 	width=3em;
+}
+
+#ksearch {
+    float: right;
+    width:335px;
+    height:40px;
+    text-align: right;
+    background: url('/media/background/base/ksearch/ksearch_bg.png')
+}
+
+#ksearch fieldset {
+    float:right;
+    width:250px;
+    border: 0;
+    margin: 0;
+    padding: 8px 5px 8px 5px;
+}
+
+#ksearch .q {
+border:1px solid #aaaaaa;
+height:17px;
+padding:2px 2px 0;
+width:200px;
+}
+
+#ksearch_logo_wrapper {
+    float:left;
+    padding:15px 13px 15px 20px;
+}
+
+#ksearch_logo {
+width:40px;
+height:10px;
+background: url('/media/background/base/ksearch/ksearch.png') no-repeat;
 }

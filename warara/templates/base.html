@@ -22,8 +22,18 @@
 		</ul>
 	</div>
         <div id="header">
-			{% load arara_tags %}
-			<h1><a href="/">아라</a></h1>
+	    {% load arara_tags %}
+	    <h1><a href="/">아라</a></h1>
+	    <form id="ksearch" action="" method="get">
+		<div id="ksearch_logo_wrapper"><div id="ksearch_logo"></div></div>
+		<fieldset>
+		<input type="text" class="q" id="q" name="ksearch">
+		<input type="image" src="/media/background/base/ksearch/ksearch_btn.png">
+		</fieldset>
+	    </form>
+	</div>
+	<div id="bottom_header">
+		TEST TEXT
             <div id="top_menu">
                 <a href="/account/logout/" class="{% if logged_in %}hidden{% endif %}" id="login_toggle">Login</a>
                 <span id="login_box"{%if logged_in%} class="hidden"{%endif%}>
@@ -43,9 +53,6 @@
 		<a href="/blacklist/" class="{% if not logged_in %}hidden{% endif %}">Blacklist</a>
         <a href="/help">Help</a>
             </div>
-	</div>
-	<div id="bottom_header">
-		TEST TEXT
 	</div>
     	</div>
         <div id="menu_wrapper">
