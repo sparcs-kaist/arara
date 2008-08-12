@@ -8,6 +8,9 @@
 {% block content %}
 
 <div id="board_content">
+    <div id="board_description">
+        <span>{{board_name}} : {{board_description}}</span>
+    </div>
     {% block board_content %}
     {% endblock board_content %}
 </div>

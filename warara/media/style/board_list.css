@@ -1,17 +1,21 @@
-table {
+#article_table table {
     border-collapse: collapse;
     width: 50em;
     border: 1px solid #666;
 }
 
-th, td {
+#article_table th, td {
     padding: 0.1em 1em;
 }
 
-caption {
-    font-size: 1.2em;
-    font-weight: bold;
-    margin: 1em 0;
+#article_below_list table {
+    border-collapse: collapse;
+    width: 50em;
+    border: 1px solid #666;
+}
+
+#article_table_list th, td {
+    padding: 0.1em 1em;
 }
 
 .column.cursor_col{

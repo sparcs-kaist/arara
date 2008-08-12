@@ -14,17 +14,32 @@ def index(request):
     rendered = render_to_string('board/index.html', {})
     return HttpResponse(rendered)
 
-def list(request, board_name):
+def get_article_list(request, r, mode):
     server = arara.get_server()
-    sess, r = warara.check_logged_in(request)
+    sess, _ = warara.check_logged_in(request)
+    
     page_no = request.GET.get('page_no', 1)
-    page_no = int(page_no)
+    r['page_no'] = int(page_no)
+    page_length = 20
+    if mode == 'list':
+        ret, article_result = server.article_manager.article_list(sess, r['board_name'], r['page_no'])
+    elif mode == 'read':
+        ret, article_result = server.article_manager.article_list_below(sess, r['board_name'], r['page_no'])
+        r['page_no'] = article_result['current_page']
+        article_result['last_page'] = 1
+    elif mode == 'search':
+        search_word = request.GET.get('search_word', '')
+        search_method = request.GET.get('search_method', 'all')
+        if page_no:
+            page_no = 1
+        ret, article_result = server.article_manager.search(sess, r['board_name'], search_word, search_method, page_no, page_length)
+    assert ret, article_result
+
     page_range_length = 10
     page_range_no = math.ceil(float(page_no) / page_range_length)
-    ret, article_result = server.article_manager.article_list(sess, board_name, page_no)
-    assert ret, article_result
+
     article_list = article_result['hit']
-    ret, board_dict = server.board_manager.get_board(board_name)
+    ret, board_dict = server.board_manager.get_board(r['board_name'])
     assert ret, board_dict
     for i in range(len(article_list)):
         if article_list[i].get('deleted', 0):
@@ -57,6 +72,12 @@ def list(request, board_name):
     if page_o.page(page_range_no).has_previous():
         r['prev_page_group'] = {'mark':r['prev'], 'no':page_o.page(page_o.previous_page_number()).end_index()}
         r['first_page'] = {'mark':r['prev_group'], 'no':1}
+
+def list(request, board_name):
+    server = arara.get_server()
+    sess, r = warara.check_logged_in(request)
+    r['board_name'] = board_name
+    get_article_list(request, r, 'list')
 
     rendered = render_to_string('board/list.html', r)
     return HttpResponse(rendered)
@@ -123,12 +144,6 @@ def read(request, board_name, article_id):
     r['logged_in'] = True
     ret, article_list = server.article_manager.read(sess, board_name, int(article_id))
     assert ret, article_list
-    """
-    if not ret:
-        r['e'] = article_list
-        rendered = render_to_string('board/error.html', r)
-        return HttpResponse(rendered)
-        """
 
     for i in range(len(article_list)):
         article_list[i]['content'] = render_bbcode(article_list[i]['content'], 'UTF-8')
@@ -137,7 +152,6 @@ def read(request, board_name, article_id):
             article_list[i]['content'] = 'deleted'
             article_list[i]['title'] = 'deleted'
 
-    r['article_list'] = article_list
     r['board_name'] = board_name
     username = request.session['arara_username']
     ret, list = server.board_manager.get_board_list()
@@ -147,6 +161,10 @@ def read(request, board_name, article_id):
             article['flag_modify'] = 1
         else:
             article['flag_modify'] = 0
+    r['article_read_list'] = article_list
+
+    #article_below_list
+    get_article_list(request, r, 'read')
 
     rendered = render_to_string('board/read.html', r)
     return HttpResponse(rendered)
@@ -195,59 +213,14 @@ def delete(request, board_name, root_id, article_no):
 
 def search(request, board_name):
     server = arara.get_server()
-    sess = request.session['arara_session_key']
+    sess, r = warara.check_logged_in(request);
+    r['board_name'] = board_name
+    get_article_list(request, r, 'search')
 
-    search_word = request.GET.get('search_word', '')
-    search_method = request.GET.get('search_method', 'all')
-    page_no = request.GET.get('page_no', 1)
-    page_no = int(page_no)
-    if page_no:
-        page_no = 1
-    page_length = 20
-    page_range_length = 10
-    page_range_no = math.ceil(float(page_no) / page_range_length)
-
-    ret, search_result = server.article_manager.search(sess, board_name, search_word, search_method, page_no, page_length)
-    assert ret, search_result
-    r = {'logged_in':True}
-    r['article_list'] = search_result['hit']
-    r['page_num'] = search_result.get('last_page', 1)
-    r['search_time'] = search_result.get('search_time', 1)
-    r['article_num'] = search_result['results']
-    r['search_method_list'] = [{'val':'all', 'text':'all'}, {'val':'title', 'text':'title'},
-            {'val':'content', 'text':'content'},
-            {'val':'author_nick', 'text':'nickname'}, {'val':'author_username', 'text':'id'}]
-    r['search_method'] = search_method
-
-    ret, board_dict = server.board_manager.get_board(board_name)
-    assert ret, board_dict
-    for i in range(len(r['article_list'])):
-        if r['article_list'][i].get('deleted', 0):
-            r['article_list'][i]['title'] = 'deleted'
-            r['article_list'][i]['author_username'] = 'deleted'
-
-        max_length = 15 # max title string length
-        if len(r['article_list'][i]['title']) > max_length:
-            r['article_list'][i]['title'] = r['article_list'][i]['title'][0:max_length]
-            r['article_list'][i]['title'] += "..."
-
-    r['board_name'] = board_dict['board_name']
-    r['board_description'] = board_dict['board_description']
-
-    #pagination
-    r['next'] = 'a'
-    r['prev'] = 'a'
-    r['next_group'] = 'a'
-    r['prev_group'] = 'a'
-    page_o = Paginator([x+1 for x in range(r['page_num'])],10)
-    r['page_list'] = page_o.page(page_range_no).object_list
-    if page_o.page(page_range_no).has_next():
-        r['next_page_group'] = {'mark':r['next'], 'no':page_o.page(page_o.next_page_number()).start_index()}
-        r['last_page'] = {'mark':r['next_group'], 'no':r['page_num']}
-    if page_o.page(page_range_no).has_previous():
-        r['prev_page_group'] = {'mark':r['prev'], 'no':page_o.page(page_o.previous_page_number()).end_index()}
-        r['first_page'] = {'mark':r['prev_group'], 'no':1}
-
+    r['method'] = 'search'
+    path = request.get_full_path()
+    path = path.split('?')[0]
+    r['path'] = path + "?search_word=" + request.GET.get('search_word', '') + "&search_method=" + request.GET.get('search_method', 'all')
     rendered = render_to_string('board/list.html', r)
     return HttpResponse(rendered)
 
@@ -266,7 +239,7 @@ def wrap_error(f):
                 rendered = render_to_string("error.html", r)
                 return HttpResponse(rendered)
 
-            r['error_message'] = "unknown keyerror : " + repr(e.message)
+            r['error_message'] = "unknown assertionerror : " + repr(e.message)
             rendered = render_to_string("error.html", r)
             return HttpResponse(rendered)
                 
@@ -283,7 +256,7 @@ def wrap_error(f):
     return check_error
 
 #list = wrap_error(list)
-read = wrap_error(read)
+#read = wrap_error(read)
 vote = wrap_error(vote)
 write = wrap_error(write)
 reply = wrap_error(reply)

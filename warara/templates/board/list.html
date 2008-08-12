@@ -1,4 +1,4 @@
-{% extends "board/board_base.html" %}
+{% extends "board/base.html" %}
 
 {% block style %}
 <link rel="stylesheet" type="text/css" href="/media/style/board_list.css"></link>
@@ -13,7 +13,6 @@
 {% block board_content %}
 <div id="article_table">
     <table cellspacing="0" id="board_table" summary="{{board_description}}">
-        <caption>{{board_name}} : {{board_description}}</caption>
         <colgroup>
             <col id="board_cursor_col" />
             <col id="board_id_col" />
@@ -37,7 +36,7 @@
             <tr>
 		<td class="column cursor_col">{{article.read_status}}</td>
         <td class="column id_col">{% ifequal article.type 'normal' %}{{article.id}}{%else%}wb{%endifequal%}</td>
-                <td class="column title_col">{% if logged_in %}<a href="/board/{{board_name}}/{{article.id}}">{{article.title}}</a>{% else %}{{article.title}}{% endif %}</td>
+        <td class="column title_col">{% if logged_in %}<a href="/board/{{board_name}}/{{article.id}}?page_no={{page_no}}">{{article.title}}</a>{% else %}{{article.title}}{% endif %}</td>
                 <td class="column author_col"><span class="username">{{article.author_username}}</span></td>
                 <td class="column date_col">{{article.date|date:"Y/m/d H:i"}}</td>
                 <td class="column vote_col">{{article.vote}}</td>
@@ -50,6 +49,15 @@
 <div id="board_buttons">
     <a href="/board/{{board_name}}/write/" class="{% if not logged_in %}hidden{% endif %}">write</a>
 	<span>
+        {% ifequal method 'search' %}
+        <a href="{{path}}&page_no={{first_page.no}}">{{first_page.mark}}</a>
+        <a href="{{path}}&page_no={{prev_page_group_no}}">{{prev_page_group.mark}}</a>
+		{% for page in page_list %}
+        <a href="{{path}}&page_no={{page}}">{{page}}</a>
+		{% endfor %}
+        <a href="{{path}}&page_no={{next_page_group.no}}">{{next_page_group.mark}}</a>
+        <a href="{{path}}&page_no={{last_page.no}}">{{last_page.mark}}</a>
+        {% else %}
         <a href="/board/{{board_name}}?page_no={{first_page.no}}">{{first_page.mark}}</a>
         <a href="/board/{{board_name}}?page_no={{prev_page_group_no}}">{{prev_page_group.mark}}</a>
 		{% for page in page_list %}
@@ -57,6 +65,7 @@
 		{% endfor %}
         <a href="/board/{{board_name}}?page_no={{next_page_group.no}}">{{next_page_group.mark}}</a>
         <a href="/board/{{board_name}}?page_no={{last_page.no}}">{{last_page.mark}}</a>
+        {% endifequal %}
 	</span>
 </div>
 <div id="board_search">
@@ -67,7 +76,7 @@
             {% endfor %}
         </select>
         <input type="text" name="search_word"></input>
-        <input type="submit" value="search" name="board_search_submit"></input>
+        <input type="submit" value="search" id="board_search_submit"></input>
     </form>
 </div>
 {% endblock board_content %}
