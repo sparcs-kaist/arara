@@ -24,7 +24,7 @@ def get_article_list(request, r, mode):
     if mode == 'list':
         ret, article_result = server.article_manager.article_list(sess, r['board_name'], r['page_no'])
     elif mode == 'read':
-        ret, article_result = server.article_manager.article_list_below(sess, r['board_name'], r['page_no'])
+        ret, article_result = server.article_manager.article_list_below(sess, r['board_name'], r['article_id'])
         r['page_no'] = article_result['current_page']
         article_result['last_page'] = 1
     elif mode == 'search':
@@ -154,6 +154,7 @@ def read(request, board_name, article_id):
 
     r['board_name'] = board_name
     username = request.session['arara_username']
+    r['article_id'] = article_id
     ret, list = server.board_manager.get_board_list()
 
     for article in article_list:

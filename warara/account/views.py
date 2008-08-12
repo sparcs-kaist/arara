@@ -91,6 +91,10 @@ def login(request):
     return HttpResponseRedirect('/')
 
 def logout(request):
+    if request.session.get('arara_session_key', 0):
+        del request.session['arara_session_key']
+        del request.session['arara_username']
+        return HttpResponseRedirect("/")
     session_key, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
         server = arara.get_server()
@@ -100,6 +104,9 @@ def logout(request):
         assert ret, account
         return HttpResponseRedirect("/")
     else:
+        if request.session.get('arara_session_key', 0):
+            del request.session['arara_session_key']
+            del request.session['arara_username']
         assert None, "NOT_LOGGED_IN"
 
 def account(request):
@@ -214,8 +221,8 @@ def wrap_error(f):
 
     return check_error
 
-login = wrap_error(login)
-logout = wrap_error(logout)
+#login = wrap_error(login)
+#logout = wrap_error(logout)
 account = wrap_error(account)
 register = wrap_error(register)
 agreement = wrap_error(agreement)

@@ -19,8 +19,8 @@ DATABASE_PORT = ''             # Set to empty string for default. Not used with 
 # EMAIL SETTINGS
 EMAIL_HOST = 'sparcs.kaist.ac.kr'
 EMAIL_PORT = 25
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_USER = 'arara'
+EMAIL_HOST_PASSWORD = 'tnfqkrtm'
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
