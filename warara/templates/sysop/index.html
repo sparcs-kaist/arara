@@ -18,7 +18,7 @@
     보드 삭제
     <form method="post" action="/sysop/remove_board/">
         {% for board in board_list %}
-        <input type="checkbox" name="{{board}}" value="{{board}}">
+        <input type="checkbox" name="{{board.board_name}}" value="{{board.board_name}}">
         <span>{{board.board_name}}</span>
         <span>{{board.board_description}}</span><br>
         {% endfor %}
