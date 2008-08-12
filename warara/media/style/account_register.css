@@ -1,33 +1,30 @@
-fieldset {
+#register_content fieldset {
     margin: 1em 0;
     padding: 1em;
     border: 1px solid;
 }
 
-legend {
+#register_content legend {
     font-weight: bold;
 }
 
-label {
+#register_content label {
     float: left;
     width: 10em;
     display: block;
 }
 
-input {
-    width: 200px;
-}
 
-input.button, input.submit {
+#register_content input.button, input.submit {
     width: auto;
 }
 
-textarea {
+#register_content textarea {
     width: 300px;
     height: 100px;
 }
 
-input:focus, textarea:focus {
+#register_content input:focus, textarea:focus {
     background: #BBBDCC;
 }
 
@@ -36,7 +33,7 @@ input:focus, textarea:focus {
     color: #760000;
 }
 
-p {
+#regiser_content p {
     position: relative;
 }
 
