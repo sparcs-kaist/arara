@@ -92,7 +92,8 @@ body {
     float: left;
     font-size: 3em;
     margin: 20px;
-    padding: 0;
+    padding: 0 0 0 22px;
+    background: url('/media/image/base/header/raw_ara_w_main_header_webara_logo.png') no-repeat left;
 }
 
 #header h1 a {
