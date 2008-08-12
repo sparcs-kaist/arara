@@ -133,6 +133,13 @@ $(document).ready(function(){
 	$("input").blur(function(){
 			$focus_input = 0
 			});
+
+
+	//ksearch
+	$("input[name='ksearch_submit']").click(function(event){
+			window.open("http://nan.sparcs.org:9000/search?q=" + $("input[name='ksearch']").val());
+			event.preventDefault();
+			});
 	
 	//로그인 안되있을때
 	$logged_in = 0

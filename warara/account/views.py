@@ -29,8 +29,8 @@ def register(request):
     
     rendered = render_to_string('account/register.html', r)
     return HttpResponse(rendered)
-'''
 
+'''
 def send_mail(email, username, confirm_key):
     sender = 'root_id@sparcs.org' #pv457, no_reply, ara, ara_admin
     receiver = email

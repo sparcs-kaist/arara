@@ -86,8 +86,7 @@ def write(request, board_name):
     if request.method == 'POST':
         return write_(request, board_name)
 
-    r = {}
-    r['logged_in'] = True
+    sess, r = warara.check_logged_in(request)
     article_id = request.GET.get('article_id', 0)
     r['t_write'] = 'write'
 
@@ -106,9 +105,8 @@ def write(request, board_name):
 
 def write_(request, board_name):
     server = arara.get_server()
-    sess = request.session["arara_session_key"]
+    sess, r = warara.check_logged_in(request)
     article_dic = {}
-    r = {}
     r['url'] = ''.join(['/board/', board_name, '/'])
     article_dic['content'] = request.POST.get('text', '')
     article_dic['title'] = request.POST.get('title', '')
@@ -139,9 +137,7 @@ def write_(request, board_name):
 
 def read(request, board_name, article_id):
     server = arara.get_server()
-    r = {}
-    sess = request.session["arara_session_key"]
-    r['logged_in'] = True
+    sess, r = warara.check_logged_in(request)
     ret, article_list = server.article_manager.read(sess, board_name, int(article_id))
     assert ret, article_list
 
@@ -180,9 +176,7 @@ def read(request, board_name, article_id):
 
 def reply(request, board_name, article_id):
     server = arara.get_server()
-    r = {}
-    sess = request.session["arara_session_key"]
-    r['logged_in'] = True
+    sess, r = warara.check_logged_in(request)
     reply_dic = {}
     reply_dic['content'] = request.POST.get('content', '')
     reply_dic['title'] = request.POST.get('title', '')
@@ -205,7 +199,7 @@ def reply(request, board_name, article_id):
 
 def vote(request, board_name, root_id, article_no):
     server = arara.get_server()
-    sess = request.session['arara_session_key']
+    sess, r = warara.check_logged_in(request)
     ret, message = server.article_manager.vote_article(sess, board_name, int(article_no))
     assert ret, message
 
@@ -213,7 +207,7 @@ def vote(request, board_name, root_id, article_no):
 
 def delete(request, board_name, root_id, article_no):
     server = arara.get_server()
-    sess = request.session['arara_session_key']
+    sess, r = warara.check_logged_in(request)
     ret, message = server.article_manager.delete(sess, board_name, int(article_no))
     assert ret, message
 

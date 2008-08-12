@@ -11,7 +11,7 @@ urlpatterns = patterns('',
     (r'^board/', include('warara.board.urls')),
     (r'^message/', include('warara.message.urls')),
     (r'^sysop/', include('warara.sysop.urls')),
-    (r'^help/$', 'warara.main.views.help'),
+    (r'^main/', include('warara.main.urls')),
 
     # Uncomment this for admin:
 #     (r'^admin/', include('django.contrib.admin.urls')),
