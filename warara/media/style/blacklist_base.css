@@ -21,6 +21,11 @@
     padding: 0;
 }
 
+#bl_mypage_chart {
+    width: 350px;
+    margin: 15px 0 0 0;
+}
+
 #blacklist_mypage_content {
     margin: 15px 0 0 15px;
 }
@@ -78,6 +83,16 @@ th[name="del_ea"] {
     padding: 4px 0 0 7px;
 }
 
+#bl_delete_submit {
+    float: right;
+    margin: 5px 3px 0 0;
+}
+
+#bl_update_submit {
+    float: right;
+    margin: 5px 10px 0 0;
+}
+
 /* User search */
 #search_user {
     float: right;
@@ -95,9 +110,20 @@ th[name="del_ea"] {
 }
 
 #blacklist_user_search_content {
+    width: 350px;
     margin: 15px 0 0 15px;
 }
 
+#bl_search_text_field {
+    width: 283px;
+}
+
 #searching_results {
-    float: right;
+    float: left;
+    margin: 10px 0 0 0;
+}
+
+#searching_results p {
+    background: url(/media/image/base/square.png) no-repeat top left;
+    padding: 4px 0 0 10px;
 }

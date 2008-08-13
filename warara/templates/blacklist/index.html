@@ -47,13 +47,13 @@
 	<div id="blacklist_user_search_head">USER SEARCH</div>
 	<div id="blacklist_user_search_content">
         <form id="search_form" action="/blacklist/" method="get">
-            <input type="text" name="search" />
+            <input type="text" name="search" id="bl_search_text_field" />
             <input type="submit" value="search" class="small_btn" />
     	</form>
-	</div>
-    </div>
-    <div id="searching_results">
-	{% for result in search_result %}<p class="username">{{result.username}}</p>{% endfor %}
+	<div id="searching_results">
+	    {% for result in search_result %}<p class="username">{{result.username}}</p>{% endfor %}
+        </div>
+    	</div>
     </div>
     </div>
 {% endblock %}
