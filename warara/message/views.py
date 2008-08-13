@@ -55,10 +55,9 @@ def inbox(request):
     page = request.GET.get('page_no', 1);
     r['logged_in'] = True
     r['page_no'] = int(page)
-    page_length = request.GET.get('page_length', 20)
+    page_length = request.GET.get('page_length', 10)
     page_length = int(page_length)
     ret, r['message_result'] = server.messaging_manager.receive_list(sess, page, page_length)
-    assert ret, r['message_result']
     if not ret:
         page = int(page)
         while page>0:
@@ -87,10 +86,9 @@ def outbox(request):
         page = 1
     r['logged_in'] = True
     r['page_no'] = int(page)
-    page_length = request.GET.get('page_length', 20)
+    page_length = request.GET.get('page_length', 10)
     page_length = int(page_length)
     ret, r['message_result'] = server.messaging_manager.sent_list(sess, page, page_length)
-    assert ret, r['message_result']
     if not ret:
         page = int(page)
         while page>0:

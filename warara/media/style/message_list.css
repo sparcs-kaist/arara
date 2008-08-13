@@ -1,24 +1,89 @@
+#message_content {
+	width: 40em;
+	margin: 2em;
+}
+
+#message_list_head {
+	background: url(/media/image/head_background.png) repeat;
+	width: 100%;
+	padding: 0.8em 0em;
+	color: white;
+}
+
+#message_list_head .main_head {
+	font-size: 2em;
+	font-weight: bold;
+	color: white;
+	margin-left: 3%;
+}
+
+#message_list_head .sub_head {
+	font-size: 1em;
+	color: white;
+}
+
+#message_page_length_selector {
+	width: 90%;
+	padding-left: 5%;
+	margin: 1em 0em;
+}
+
+#message_page_length_selector .display_message_num{
+	margin-left: 3em;
+}
+
+#message_list_table {
+	width: 90%;
+	padding-left: 5%;
+	margin: 1em 0em;
+}
+
 #message_list_table table {
-    border:1px solid #000;
+    border: 0em;
+	border-top: 1px solid green;
     border-collapse: collapse;
+}
+
+#message_list_table .message_list_table_th_row{
 }
 
 #message_list_table table td, table th {
     margin: 0;
-    padding: 2px 4px;
+    padding: 3px 5px;
+	border: 1px solid #fff;
     border-bottom: 1px solid #b5b5b5;
+	overflow: hidden;
+}
+
+#message_list_table th {
+	background: #e0e0e0 url(/media/image/base/square.png) no-repeat 0% 0%;
+	border-top: 1px solid green;
+	border-bottom: 5px solid #dadada;
 }
 
 #message_list_table table tr {
-    border:0 ;
+    border: 0;
+}
+
+#message_list_table_checkbox_col {
+	text-align: center;
+	width: 10%;
+}
+
+#message_list_table_person_col {
+	width: 25%;
+}
+
+#message_list_table_text_col {
+	width: 70%;
+}
+
+#message_list_table_time_col {
+	width: 25%;
 }
 
 #message_page_move a.makered {
     color: red;
-}
-
-#message_buttons, #message_page_move{
-	display:inline;
 }
 
 .row_highlight {
@@ -29,11 +94,31 @@
 	text-align: center;
 }
 
-#message_list_table th.message_list_table_th_text{
-	min-width: 400px;
-	max-width: 600px;
-}
-
 #message_list_table_text_col {
 	overflow-x: hidden;
+}
+
+#message_page_move {
+	text-align: center;
+	width: 90%;
+	padding-left: 5%;
+}
+
+#message_page_move span.number {
+	position: relative;
+}
+
+#message_page_move span.prev {
+	position: relative;
+}
+
+#message_page_move span.next {
+	position: relative;
+}
+
+#message_buttons {
+	width: 90%;
+	padding: 0% 5%;
+	margin: 1em 0;
+	text-align: right;
 }

@@ -115,12 +115,12 @@ $(document).ready(function() {
 				});
 	}
 
-	var text_length_limit = 60;
+	var text_length_limit = 15;
 	$("#message_list_table td[name='text'] a").each(function(){
 			if($(this).text().length > text_length_limit){
 			text = $(this).text();
 			text = text + "";
-			text = text.split(0, text_length_limit);
+			text = text.substring(0, text_length_limit);
 			text = text + "...";
 			$(this).text(text);
 			}

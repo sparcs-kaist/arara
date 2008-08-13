@@ -11,20 +11,27 @@
 {% endblock %}
 
 {% block message_content %}
-<div>
-{% ifequal message_list_type 'inbox'%}{{num_new_message}} new message(s) /
-{% endifequal %}
- {{num_message}} message(s)
+<div id="message_list_head">
+    <span class="main_head">
+        messages
+    </span>
+    <span class="sub_head">
+        messages
+    </span>
 </div>
 
-<form action="/message/delete/" method="POST" name="message_delete">
-    <div class="message_page_length_selector">
+<div id="message_page_length_selector">
         <select name="page_length">
             {% for pli in page_length_list %}
             <option value="{{pli}}"{% ifequal pli page_length %} selected="selected"{%endifequal%}>{{pli}}</option>
             {% endfor %}
         </select>
-    </div>
+        <span class="display_message_num">
+            {% ifequal message_list_type 'inbox'%}{{num_new_message}} new message(s) /{% endifequal %} {{num_message}} message(s)
+        </span>
+</div>
+
+<form action="/message/delete/" method="POST" name="message_delete">
 <div class="message_list_table" id="message_list_table">
     <table border="1">
         <colgroup>
@@ -34,7 +41,7 @@
             <col id="message_list_table_time_col">
         </colgroup>
         <thead>
-        <tr>
+        <tr class="message_list_table_th_row">
             <th>
                 <input type="checkbox" name="ch_del_enm" value=1></input>
             </th>
@@ -78,6 +85,34 @@
     </table>
 </div>
 
+<div id="message_page_move">
+	<span class="prev">
+        {% if prev_page_group.mark %}
+        <a href="/message/{{message_list_type}}?page_no={{first_page.no}}&page_length={{page_length}}">《 </a>
+        <a href="/message/{{message_list_type}}?page_no={{prev_page_group.no}}&page_length={{page_length}}">〈 </a>
+        {% else %}
+        《 〈 
+        {% endif %}
+    </span>
+    <span class="number">
+        {% for page in page_list %}
+        | 
+        <a href="/message/{{message_list_type}}?page_no={{page}}&page_length={{page_length}}"{% ifequal page page_no %} class="makered"{%endifequal%}>{{page}}</a>
+        {% endfor %}
+        |
+    </span>
+    <span class="next">
+        {% if next_page_group.mark %}
+        <a href="/message/{{message_list_type}}?page_no={{next_page_group.no}}&page_length={{page_length}}"> 〉</a>
+        <a href="/message/{{message_list_type}}?page_no={{last_page.no}}&page_length={{page_length}}"> 》</a>
+        {% else %}
+         〉 》
+        {% endif %}
+    </span>
+        <input type="hidden" value="{{page_num}}" name="last_page"></input>
+    </span>
+</div>
+
 <div id="message_buttons">
     <input type="hidden" value="{{page_no}}" name="page_no">
     <input type="hidden" value="{{message_list_type}}" name="message_list_type">
@@ -86,16 +121,4 @@
 	<input type="submit" value="delete">
 </div>
 </form>
-<div id="message_page_move">
-	<span>
-        <a href="/message/{{message_list_type}}?page_no={{first_page.no}}&page_length={{page_length}}">{{first_page.mark}}</a>
-        <a href="/message/{{message_list_type}}?page_no={{prev_page_group.no}}&page_length={{page_length}}">{{prev_page_group.mark}}</a>
-        {% for page in page_list %}
-        <a href="/message/{{message_list_type}}?page_no={{page}}&page_length={{page_length}}"{% ifequal page page_no %} class="makered"{%endifequal%}>{{page}}</a>
-		{% endfor %}
-        <a href="/message/{{message_list_type}}?page_no={{next_page_group.no}}&page_length={{page_length}}">{{next_page_group.mark}}</a>
-        <a href="/message/{{message_list_type}}?page_no={{last_page.no}}&page_length={{page_length}}">{{last_page.mark}}</a>
-        <input type="hidden" value="{{page_num}}" name="last_page"></input>
-	</span>
-</div>
 {% endblock message_content %}
