@@ -45,7 +45,6 @@
 					<span class="board_description">{% block board_description %}환영합니다.{% endblock board_description %}</span></div>
 			</div>
 			<div id="top_menu">
-			    <a href="/account/logout/" class="{% if logged_in %}hidden{% endif %}" id="login_toggle">Login</a>
 			    <div id="login_box"{%if logged_in%} class="hidden"{%endif%}>
 				<form action="/account/login/" method="post" name="login">
 				    <label for="login_username_field">Username:</label>
@@ -56,6 +55,7 @@
 				    <input type="submit" value="Login" />
 				</form>
 			    </div>
+			    <a href="/account/logout/" class="{% if logged_in %}hidden{% endif %}" id="login_toggle">Login</a>
 			    <a href="/account/logout/" class="{% if not logged_in %}hidden{% endif %}">Logout</a>
 			    <a href="/account/" class="{% if not logged_in %}hidden{% endif %}">Account</a>
 			    <a href="/account/register/agreement" class="{% if logged_in %}hidden{% endif %}">Register</a>
