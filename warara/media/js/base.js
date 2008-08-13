@@ -194,7 +194,7 @@ $(document).ready(function(){
 		$(".highlight").removeClass("highlight");
 		$(".row_highlight").removeClass("row_highlight").addClass("hidden_highlight");
 		$("#menu a[class!='hidden']").eq(cursor_bl-1).addClass("highlight");
-		a_bl_length = $("menu a[class!='hidden']").length;
+		a_bl_length = $("#menu a[class!='hidden']").length;
 	}
 	function move_next(cursor, il){
 		if(cursor < il){
@@ -209,8 +209,8 @@ $(document).ready(function(){
 		return cursor;
 	}
 	function update_highlight(div, cursor){
-		div.children("a[class='highlight']").removeClass("highlight");
-		div.children("a[class!='hidden']").eq(cursor-1).addClass("highlight");
+		$(div + " a[class='highlight']").removeClass("highlight");
+		$(div + " a[class!='hidden']").eq(cursor-1).addClass("highlight");
 	}
 	function focus_content(){
 		$(".highlight").removeClass("highlight");
@@ -229,13 +229,13 @@ $(document).ready(function(){
 			return;
 			}
 			switch(event.which){
-			case 107: //j
+			case 106: //j
 			cursor_bl = move_next(cursor_bl, a_bl_length);
-			update_highlight($("#menu"), cursor_bl);
+			update_highlight("#menu", cursor_bl);
 			break;
-			case 106: //k
+			case 107: //k
 			cursor_bl = move_prev(cursor_bl, a_bl_length);
-			update_highlight($("#menu"), cursor_bl);
+			update_highlight("#menu", cursor_bl);
 			break;
 			case 32: //spacs
 			location.href = $("#menu a[class!='hidden']").eq(cursor_bl-1).attr("href");
@@ -256,11 +256,11 @@ $(document).ready(function(){
 			switch(event.which){
 			case 107: //j
 			cursor_tm = move_next(cursor_tm, a_tm_length);
-			update_highlight($("#top_menu"), cursor_tm);
+			update_highlight("#top_menu", cursor_tm);
 			break;
 			case 106: //k
 			cursor_tm = move_prev(cursor_tm, a_tm_length);
-			update_highlight($("#top_menu"), cursor_tm);
+			update_highlight("#top_menu", cursor_tm);
 			break;
 			case 32: //spacs
 			location.href = $("#top_menu a[class!='hidden']").eq(cursor_tm-1).attr("href");
