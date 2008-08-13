@@ -30,25 +30,32 @@ def delete(request):
         assert ret, message
         return HttpResponseRedirect("/blacklist/")
 
-
 def update(request):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
     ret, blacklist = server.blacklist_manager.list(sess)
-    for b in blacklist:
-        article_bl_key = 'blacklist_article_%s' % b['blacklisted_user_username']
-        if article_bl_key in request.POST:
-            b['block_article'] = True
-        else:
-            b['block_article'] = False
-        message_bl_key = 'blacklist_message_%s' % b['blacklisted_user_username']
-        if message_bl_key in request.POST:
-            b['block_message'] = True
-        else:
-            b['block_message'] = False
+    bl_submit_chooser = request.POST['bl_submit_chooser']
+    if bl_submit_chooser == "update":
+        for b in blacklist:
+            article_bl_key = 'blacklist_article_%s' % b['blacklisted_user_username']
+            if article_bl_key in request.POST:
+                b['block_article'] = True
+            else:
+                b['block_article'] = False
+            message_bl_key = 'blacklist_message_%s' % b['blacklisted_user_username']
+            if message_bl_key in request.POST:
+                b['block_message'] = True
+            else:
+                b['block_message'] = False
 
-        ret, msg = server.blacklist_manager.modify(sess, b)
-        assert ret, msg
+            ret, msg = server.blacklist_manager.modify(sess, b)
+            assert ret, msg
+    if bl_submit_chooser == "delete":
+        for b in blacklist:
+            delete_user = request.POST.get('bl_%s_delete' % b['blacklisted_user_username'], "")
+            if delete_user != "":
+                ret, message = server.blacklist_manager.delete(sess, delete_user)
+                assert ret, message
 
     return HttpResponseRedirect("/blacklist/")
 

@@ -18,7 +18,7 @@
             <input type="text" name="blacklist_id" id="blacklist_mypage_add" />
 	    <input type="submit" value="add" class="small_btn" />
     	</form>
-        <form action="/blacklist/update/" method="post" name="bl_mypage_chart">
+        <form action="/blacklist/update/" method="post" id="bl_mypage_chart" name="bl_mypage_chart">
             <table>
                 <tr>
 		    <th class="th" name="del_checkbox"><input type="checkbox" id="check_all_bl" /></th>
@@ -29,16 +29,17 @@
                 </tr>
                 {% for b in blacklist %}
                 <tr>
-		    <td class="del_cb"><input type="checkbox" name="{{b.blacklisted_user_username}}" class="del_cb_each" id="bl_mp_ch_{{forloop.counter0}}" /></td>
+			<td class="del_cb"><input type="checkbox" name="bl_{{b.blacklisted_user_username}}_delete" class="del_cb_each" value="{{b.blacklisted_user_username}}" /></td>
                     <td><span class="username">{{b.blacklisted_user_username}}</span></td>
                     <td><input type="checkbox" name="blacklist_article_{{b.blacklisted_user_username}}" {% if b.block_article %}checked="on"{% else %}{% endif %}/></td>
                     <td><input type="checkbox" name="blacklist_message_{{b.blacklisted_user_username}}" {% if b.block_message%}checked="on"{% else %}{% endif %}/></td>
                     <td class="del_ea"><input type="image" src="/media/image/delete_button.png" class="delete_user" name="{{b.blacklisted_user_username}}" alt="delete" /></td>
                 </tr>
                 {% endfor %}
-            </table>
-            <input type="submit" name="done" value="Done" class="small_btn" />
-            <input type="button" name="delete" value="Delete" class="small_btn" id="bl_mypage_modify" />
+	    </table>
+	    <input type="hidden" name="bl_submit_chooser" id="bl_submit_chooser" />
+            <input type="submit" name="done" value="Done" id="bl_update_submit" class="small_btn" />
+            <input type="submit" name="delete" value="Delete" id="bl_delete_submit" class="small_btn" id="bl_mypage_modify" />
         </form>
 	</div>
     </div>
