@@ -156,10 +156,7 @@ $(document).ready(function(){
 	$("#login_box").hide();
     $("#login_toggle").click(function(event) {
 
-        $("#login_box").css("top", $(this).offset()["top"] + $(this).height());
-        $("#login_box").css("left", $(this).offset()["left"] - 400);
-
-        $("#login_box").show("fast");
+        $("#login_box").show();
 		$("#login_username_field").focus();
 		event.preventDefault();
 		event.stopPropagation();

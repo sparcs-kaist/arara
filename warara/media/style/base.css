@@ -110,8 +110,20 @@ body {
 
 #bbstitle {
     float:left;
-    width: 200px;
+    width: 20em;
     height: 100%;
+	position: relative;
+	top: 10%;
+}
+
+#bbstitle span{
+	margin-right: 1em;
+}
+
+#bbstitle #bbsname {
+}
+
+#bbstitle span.board_description {
 }
 
 #menu {
@@ -192,13 +204,19 @@ body {
 }
 
 #top_menu {
+	position: relative;
     float: right;
     height: 100%;
     font-size: 120%;
-    font-weight: bold;
+	margin: 0em 1em;
+	width: 20em;
+	text-align: right;
 }
+
 #top_menu a {
-    margin-left: 10px;
+    margin-left: 1em;
+	position: relative;
+	top: 20%;
 }
 
 
@@ -268,7 +286,17 @@ body {
     display:none
 }
 
-form[name="login"]{
+#login_box {
+	position: absolute;
+	top: 10%;
+	right: 0%;
+	z-index: 2;
+	width: 40em;
+	background-color: white;
+	text-align: right;
+}
+
+#login_box form{
 	display: inline;
 }
 
@@ -288,34 +316,36 @@ input.button_exit{
 
 #ksearch {
     float: right;
-    width:335px;
-    height:40px;
+    width: 28em;
+    height: 3.2em;
     text-align: right;
     background: url('/media/image/base/ksearch/ksearch_bg.png')
 }
 
-#ksearch fieldset {
+#ksearch .ksearch {
     float:right;
-    width:250px;
-    border: 0;
-    margin: 0;
-    padding: 10px 5px 8px 5px;
+	border: none;
+	padding-top: 0.5em;
+	width: 80%;
 }
 
 #ksearch .q {
-border:1px solid #aaaaaa;
-height:17px;
-padding:2px 2px 0;
-width:200px;
+	border:1px solid #aaaaaa;
+	width: 80%;
+	margin-bottom: 1%;
 }
 
 #ksearch_logo {
     float:left;
-    margin:15px 13px 15px 20px;
-width:40px;
-height:10px;
-background: url('/media/image/base/ksearch/ksearch.png') no-repeat;
+	width: 5em;
+	height: 2em;
+	background: url('/media/image/base/ksearch/ksearch.png') no-repeat 100% 100%;
 }
+
+#ksearch .ksearch_submit {
+	position: relative;
+	padding-top: 1%;
+}   
 
 .small_form {
     border:1px solid #dadada;

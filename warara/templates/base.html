@@ -26,10 +26,10 @@
 		    <h1><a href="/"><img src="/media/image/base/header/raw_ara_w_main_header_webara_title.png" alt="아라"></a></h1>
 		    <form id="ksearch" action="http://nan.sparcs.org:9000/search" method="get">
 			<div id="ksearch_logo"></div>
-			<fieldset>
+			<div class="ksearch">
 			    <input type="text" class="q" id="q" name="ksearch">
-			    <input type="image" name="ksearch_submit" src="/media/image/base/ksearch/ksearch_btn.png">
-			</fieldset>
+			    <input type="image" class="ksearch_submit" name="ksearch_submit" src="/media/image/base/ksearch/ksearch_btn.png">
+			</div>
 		    </form>
 		</div>
 		<div id="bottom_header">
@@ -41,11 +41,12 @@
 			<div id="subtitle_round"></div>
 			<div id="bbstitle_wrapper">
 			    <div id="bbstitle_dingbet"></div>
-			    <div id="bbstitle"><span id="bbsname">{% block board_name %}main{% endblock board_name %}</span><span>{% block board_description %}환영합니다.{% endblock board_description %}</span></div>
+				<div id="bbstitle"><span id="bbsname">{% block board_name %}main{% endblock board_name %}</span>
+					<span class="board_description">{% block board_description %}환영합니다.{% endblock board_description %}</span></div>
 			</div>
 			<div id="top_menu">
 			    <a href="/account/logout/" class="{% if logged_in %}hidden{% endif %}" id="login_toggle">Login</a>
-			    <span id="login_box"{%if logged_in%} class="hidden"{%endif%}>
+			    <div id="login_box"{%if logged_in%} class="hidden"{%endif%}>
 				<form action="/account/login/" method="post" name="login">
 				    <label for="login_username_field">Username:</label>
 				    <input type="text" id="login_username_field" name="username" />
@@ -54,7 +55,7 @@
 				    <input type="hidden" name="current_page_url" value="/"></input>
 				    <input type="submit" value="Login" />
 				</form>
-			    </span>
+			    </div>
 			    <a href="/account/logout/" class="{% if not logged_in %}hidden{% endif %}">Logout</a>
 			    <a href="/account/" class="{% if not logged_in %}hidden{% endif %}">Account</a>
 			    <a href="/account/register/agreement" class="{% if logged_in %}hidden{% endif %}">Register</a>
