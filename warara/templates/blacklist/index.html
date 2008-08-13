@@ -9,39 +9,47 @@
 {% block content %}
     <div id="blacklist">
     <div id="mypage">
+	<div id="blacklist_mypage_head">BLACKLIST</div>
+	<div id="blacklist_mypage_content">
         <form id="blacklist_delete_form" action="/blacklist/delete/" method="post">
             <input type="hidden" id="username" name="username" />
         </form>
-        <form action="/blacklist/update/" method="post">
+        <form action="/blacklist/add/" method="post">
+            <input type="text" name="blacklist_id" id="blacklist_mypage_add" />
+	    <input type="submit" value="add" class="small_btn" />
+    	</form>
+        <form action="/blacklist/update/" method="post" name="bl_mypage_chart">
             <table>
                 <tr>
-                    <th>Username</th>
-                    <th>Article</th>
-                    <th>Message</th>
-                    <th></th>
+		    <th class="th" name="del_checkbox"><input type="checkbox" id="check_all_bl" /></th>
+		    <th class="th" name="chart_username">USERNAME</th>
+		    <th class="th" name="block_art">ARTICLE</th>
+		    <th class="th" name="block_mes">MESSAGE</th>
+		    <th class="th" name="del_ea"><img src="/media/image/delete_button.png" alt="delete"></th>
                 </tr>
                 {% for b in blacklist %}
                 <tr>
+		    <td class="del_cb"><input type="checkbox" name="{{b.blacklisted_user_username}}" class="del_cb_each" id="bl_mp_ch_{{forloop.counter0}}" /></td>
                     <td><span class="username">{{b.blacklisted_user_username}}</span></td>
                     <td><input type="checkbox" name="blacklist_article_{{b.blacklisted_user_username}}" {% if b.block_article %}checked="on"{% else %}{% endif %}/></td>
                     <td><input type="checkbox" name="blacklist_message_{{b.blacklisted_user_username}}" {% if b.block_message%}checked="on"{% else %}{% endif %}/></td>
-                    <td><input type="button" class="delete_user" value="delete" name="{{b.blacklisted_user_username}}"/></td>
+                    <td class="del_ea"><input type="image" src="/media/image/delete_button.png" class="delete_user" name="{{b.blacklisted_user_username}}" alt="delete" /></td>
                 </tr>
                 {% endfor %}
             </table>
-            <input type="submit" name="done" value="Done" />
+            <input type="submit" name="done" value="Done" class="small_btn" />
+            <input type="button" name="delete" value="Delete" class="small_btn" id="bl_mypage_modify" />
         </form>
-        <form action="/blacklist/add/" method="post">
-            <input type="text" name="blacklist_id" />
-            <input type="submit" value="추가" />
-        </form>
+	</div>
     </div>
     <div id="search_user">
-        <p>User Search!!</p>
+	<div id="blacklist_user_search_head">USER SEARCH</div>
+	<div id="blacklist_user_search_content">
         <form id="search_form" action="/blacklist/" method="get">
             <input type="text" name="search" />
-            <input type="submit" />
-        </form>
+            <input type="submit" value="search" class="small_btn" />
+    	</form>
+	</div>
     </div>
     <div id="searching_results">
 	{% for result in search_result %}<p class="username">{{result.username}}</p>{% endfor %}
