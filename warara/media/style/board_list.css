@@ -1,5 +1,5 @@
 #board_content {
-    width: 50em;
+    width: 100%;
 }
 
 .full {
@@ -20,22 +20,26 @@
 }
 
 .column.cursor_col{
-    width: 0.2em;
+    width: 1%;
 }
 .column.id_col{
-    width: 1em;
+    width: 5%;
 }
 .column.author_col{
-    width: 6em;
+    width: 10%;
 }
 .column.date_col{
-    width: 6em;
+    width: 10%;
 }
 .column.vote_col{
-    width: 2em;
+    width: 1%;
+	padding-right: 0em;
 }
 .column.hit_col{
-    width: 2em;
+    width: 2%;
+}
+.column.title_col{
+	width: 50%;
 }
 
 .column {
@@ -73,15 +77,27 @@ td {
 }
 
 #board_buttons {
+	text-align: right;
     width: 100%;
 }
 
-#board_search {
-    width: 500px;
+#board_buttons form {
+	display: inline;
+	position: relative;
+    width: 50%;
     text-align: right;
     float:right;
 }
 
 #board_write {
-   float: right;
+	position: relative;
+	float: right;
+	text-align: center;
+	margin-left: 1%;
+}
+
+#board_write a{
+	display: block;
+	position: relative;
+	top: 15%;
 }

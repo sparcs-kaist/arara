@@ -46,7 +46,7 @@ def get_article_list(request, r, mode):
             article_list[i]['title'] = 'deleted'
             article_list[i]['author_username'] = 'deleted'
 
-        max_length = 15 # max title string length
+        max_length = 100 # max title string length
         if len(article_list[i]['title']) > max_length:
             article_list[i]['title'] = article_list[i]['title'][0:max_length]
             article_list[i]['title'] += "..."

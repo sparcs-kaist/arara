@@ -66,6 +66,9 @@
     {% endifequal %}
 </div>
 <div id="board_buttons" class="width_full">
+    <div id="board_write" class="small_btn {% if not logged_in %}hidden{% endif %}">
+        <a href="/board/{{board_name}}/write/">write</a>
+    </div>
     <form name="board_search" method="GET" action="/board/{{board_name}}/search">
         <select name="search_method" class="small_form">
             {% for smi in search_method_list %}
@@ -75,6 +78,5 @@
         <input type="text" name="search_word" class="small_form"></input>
         <input class="small_btn" type="submit" value="search" id="board_search_submit"></input>
     </form>
-    <div name="board_write" class="small_btn {% if not logged_in %}hidden{% endif %}" ><a href="/board/{{board_name}}/write/">write</a></div>
 </div>
 {% endblock board_content %}
