@@ -9,6 +9,8 @@ from django.http import HttpResponse
 import arara
 
 def index(request):
+    if request.session.get('arara_username', '') == 'mikkang':
+        del request.session['arara_session_key']
     server = arara.get_server() 
     sess, r = warara.check_logged_in(request)
     

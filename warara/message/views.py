@@ -143,7 +143,7 @@ def send_(request):
     text = request.POST.get('text', '')
 
     ret, message = server.messaging_manager.send_message(sess, receiver, text)
-    #assert ret, message
+    assert ret, message
 
     if not ret:
         r['e'] = message
@@ -244,6 +244,10 @@ def wrap_error(f):
                 rendered = render_to_string("error.html", r)
                 return HttpResponse(rendered)
                 
+            r['error_message'] = "unknown assertionerror : " + e.message
+            rendered = render_to_string("error.html", r)
+            return HttpResponse(rendered)
+
         except KeyError, e:
             if e.message == "arara_session_key":
                 r['error_message'] = "not logged in!"
@@ -258,6 +262,6 @@ def wrap_error(f):
 
 #inbox = wrap_error(inbox)
 outbox = wrap_error(outbox)
-send = wrap_error(send)
-read = wrap_error(read)
+#send = wrap_error(send)
+#read = wrap_error(read)
 delete = wrap_error(delete)

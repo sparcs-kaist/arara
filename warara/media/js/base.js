@@ -133,6 +133,9 @@ $(document).ready(function(){
 	$("input").blur(function(){
 			$focus_input = 0
 			});
+	$("textarea").blur(function(){
+			$focus_input = 0
+			});
 
 
 	//ksearch

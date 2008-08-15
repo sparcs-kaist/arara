@@ -1,5 +1,8 @@
 $(document).ready(function(){
 		$(document).keypress(function(event){
+			if($focus_input || event.altKey || event.ctrlKey){
+			return;
+			}
 			switch(event.which){
 
 			case 113: //q
@@ -12,8 +15,7 @@ $(document).ready(function(){
 			if($("input[name='message_list_type']").val() == 'outbox'){
 			return;
 			}
-			$src = $("a[name='message_read_reply']").attr("href");
-			location.href = $src;
+			$("#message_send_text textarea").focus();	
 			break;
 
 			case 100: //d

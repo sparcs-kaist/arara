@@ -1,9 +1,115 @@
-#message_read_text textarea {
+#message_content {
+	width: 40em;
+	margin: 2em;
+}
+
+#message_read_head {
+	background: url(/media/image/head_background.png) repeat;
+	width: 100%;
+	padding: 0.8em 0em;
+	color: white;
+}
+
+#message_read_head .main_head {
+	font-size: 1.5em;
+	font-weight: bold;
+	color: white;
+	margin-left: 3%;
+}
+
+#message_read_head .sub_head {
+	font-size: 1em;
+	color: white;
+}
+
+#message_info {
+	width: 94%;
+	margin: 0% 3%;
+	background-color: #ddd;
+}
+
+#message_person {
+	margin: 0% 2%;
+}
+
+#message_time {
+	float: right;
+	padding: 0% 2%;
+}
+
+#message_read_text {
+	width: 94%;
+	padding: 3% 3%;
+}
+
+#message_read_text .textarea {
     font-size: small;
-    background-color: #9cf;
+    background-color: #fff;
     border: 0 solid #69f;
-    height: 165px;
-    width: 324px;
+    width: 100%;
     overflow-x: hidden;
     overflow-y: auto;
+}
+
+div.line {
+	background-color: #ddd;
+	width: 94%;
+	margin: 1% 3%;
+	height: 0.5em;
+}
+
+div.caption_reply {
+	width: 94%;
+	margin: 1% 3%;
+}
+
+#message_send_text {
+	margin 1em 3%;
+	text-align: center;
+}
+#message_send_text textarea {
+	width: 94%;
+	height: 10em;
+	border: 1px solid #ccc;
+}
+
+#message_send_buttons {
+	width: 100%;
+	background-color: #ddd;
+	text-align: center;
+	padding: 0.5em 0em;
+	float: left;
+	text-align: center;
+	margin: 1em 0em;
+}
+
+#message_send_buttons ul{
+	margin: 0em;
+	padding: 0.5em 0em;
+	padding-bottom: 0em;
+	list-style-type: none;
+}
+
+#message_send_buttons ul li {
+	margin: 0.5em 0.1em;
+	margin-bottom: 0em;
+	display: inline;
+}
+
+#message_send_buttons ul a {
+	display: -moz-inline-stack;
+	display: inline-block;
+	padding: 0.4em 1.5em;
+	text-decoration: none;
+	background-color: white;
+	color: #aaa;
+}
+
+#message_send_buttons li.submit_button {
+	position: relative;
+	top: -0.4em;
+}
+
+#message_send_buttons .big_btn {
+	width: 6em;
 }
