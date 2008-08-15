@@ -53,23 +53,38 @@ class ara_list_article(ara_form):
         self.infotext1 = urwid.Filler(urwid.Text("(N)ext/(P)revious Page (Number+Enter) Jump to article"))
         self.infotext2 = urwid.Filler(urwid.Text("(Enter,space) Read (w)rite (f)ind (/)Find next (?) Find previous (h)elp (q)uit"))
 
-        articles = self.server.article_manager.article_list(self.session_key, self.board_name)
-        articles = articles[1]
+        commented = """
+        # Acquire today_best, weekly_best
+        # XXX : Actually it does not getting those of chosen board. -_-;
+        result, today_best = self.server.article_manager.get_today_best_list(self.session_key)
+        assert result, today_best
+        result, weekly_best = self.server.article_manager.get_weekly_best_list(self.session_key)
+        assert result,weekly_best
+        """
+
+        # Acquire articles
+        result, article_list = self.server.article_manager.article_list(self.session_key, self.board_name)
+        assert result, article_list # To handle error message from XML-RPC server
+
+        self.last_page = article_list['last_page']
+        articles = article_list['hit']
+
+        # Generating itemlist from articles
         itemlist = []
-        today_best = articles[0]
-        weekly_best = articles[1]
-        articles = articles[2:]
-        if len(articles) <= 3:
+        if len(articles) < 1:
+            # If no article found, make sure that itemlist display "No article found"
             itemlist += [{'new':'', 'number':'', 'author':'','title':'No article found. Have a nice day.','date':'','hit':'','vote':''}]
             self.hasarticle = False
         else:
+            # Otherwise add all articles into itemlist
             for article in articles:
-                if article.has_key('last_page'):
-                    self.last_page = article['last_page']
-                    continue
-                itemlist += [{'new':article['read_status'], 'number':str(article['id']),
-                    'author':article['author_username'], 'title':article['title'],
-                    'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']),
+                # XXX Temporary hack. After we implement read_status_manager properly, remove it.
+                if not article.has_key('read_status'): 
+                    article['read_status'] = 'N'
+
+                itemlist += [{'new':article['read_status'], 'number':str(article['id']), \
+                    'author':article['author_username'], 'title':article['title'], \
+                    'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), \
                     'vote':str(article['vote'])}]
             self.hasarticle = True
         header = {'new':'N', 'number':'#', 'author':'Author', 'title':'Title', 'date':'Date', 'hit':'Hit', 'vote':'Vote'}
