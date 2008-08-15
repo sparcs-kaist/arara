@@ -22,14 +22,19 @@ class ara_list_pm(ara_form):
         self.list_header = {'new':'N', 'number':'#', 'author':'Author', 'title':'Title', 'date':'Date'}
         self.pmlist.set_header(listview.make_header(self.list_header, pmlist_rowitem))
 
-        message_list = self.server.messaging_manager.receive_list(self.session_key, 1, 10)
+        # Acqure messages
+        ret, receive_list = self.server.messaging_manager.receive_list(self.session_key, 1, 10)
+        assert ret, receive_list
+        message_list = receive_list['hit']
+
+        # Generate message_item
         message_item = []
-        if len(message_list[1]) == 1:
+        if len(message_list) < 1:
+            # If no message...
             message_item = [{'new':'', 'number':'', 'author':'','title':'No private messages. Have a nice day.','date':''}]
         else:
-            for msg in message_list[1]:
-                if msg.has_key("last_page"):
-                    continue
+            # Otherwise...
+            for msg in message_list:
                 message_item += [{'new':str(msg['read_status']), 'number':str(msg['id']), 'author':msg['from'], 'title':msg['message'], 'date':msg['sent_time'].strftime("%m/%d")}]
         self.pmlist.set_body(listview.make_body(message_item, pmlist_rowitem))
 
@@ -37,14 +42,19 @@ class ara_list_pm(ara_form):
         self.list_header = {'new':'N', 'number':'#', 'author':'Recepient', 'title':'Title', 'date':'Date'}
         self.pmlist.set_header(listview.make_header(self.list_header, pmlist_rowitem))
 
-        message_list = self.server.messaging_manager.sent_list(self.session_key, 1, 10)
+        # Acquire messages
+        ret, sent_list = self.server.messaging_manager.sent_list(self.session_key, 1, 10)
+        assert ret, sent_list
+        message_list = sent_list['hit']
+        
+        # Generate message_item
         message_item = []
-        if len(message_list[1]) == 1:
+        if len(message_list) < 1:
+            # If no message...
             message_item = [{'new':'', 'number':'', 'author':'','title':'No private messages. Have a nice day.','date':''}]
         else:
-            for msg in message_list[1]:
-                if msg.has_key("last_page"):
-                    continue
+            # Otherwise...
+            for msg in message_list:
                 message_item += [{'new':str(msg['read_status']), 'number':str(msg['id']), 'author':msg['to'], 'title':msg['message'], 'date':msg['sent_time'].strftime("%m/%d")}]
         self.pmlist.set_body(listview.make_body(message_item, pmlist_rowitem))
 
