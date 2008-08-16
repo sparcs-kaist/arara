@@ -66,9 +66,6 @@ class BoardManager(object):
         session = model.Session()
         board_to_get = session.query(model.Board).filter_by(deleted=False).all()
         board_dict_list = self._get_dict_list(board_to_get, BOARD_MANAGER_WHITELIST)
-        if board_dict_list == []:
-            session.close()
-            return False, 'NO_BOARD_EXIST'
         session.close()
         return True, board_dict_list
 
