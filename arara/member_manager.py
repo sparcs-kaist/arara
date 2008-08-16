@@ -87,7 +87,7 @@ class MemberManager(object):
         except InvalidRequestError:
             session.close()
             return False, 'WRONG_USERNAME'
-    
+   
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
         if whitelist:
@@ -151,6 +151,51 @@ class MemberManager(object):
         return True, activation_code
 
 
+    @require_login
+    def backdoor_confirm(self, session_key, username):
+        '''
+        인증코드 없이 시샵이 사용자의 등록 할 수 있게 해준다
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type  username: string
+        @param username: User ID
+        @rtype: boolean, string
+        @return:
+            1. 인증 성공: True, 'OK'
+            2. 인증 실패:
+                1. 시샵이 아닌 경우: False, 'NOT_SYSOP'
+                2. 사용자가 없는 경우: False, 'USER_NOT_EXIST'
+                3. 이미 인증이 된 사용자의 경우: False, 'ALREADY_CONFIRMED'
+                4. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        '''
+        
+        if not self.is_sysop(session_key):
+            return False, 'NOT_SYSOP'
+
+        session = model.Session()
+        try:
+            user = session.query(model.User).filter(model.User.username == username).one()
+        except InvalidRequestError:
+            session.close()
+            return False, 'USER_NOT_EXIST'
+        try:
+            user_activation = session.query(model.UserActivation).filter_by(user_id=user.id).one()
+        except InvalidRequestError:
+            if user.activated == True:
+                session.close()
+                return False, 'ALREADY_CONFIRMED'
+            else:
+                session.close()
+                return False, 'DATABASE_ERROR'
+
+        user_activation.user.activated = True
+        session.delete(user_activation)
+        session.commit()
+        session.close()
+        return True, 'OK'
+
+
     def confirm(self, username_to_confirm, confirm_key):
         '''
         인증코드(activation code) 확인.
@@ -159,7 +204,7 @@ class MemberManager(object):
         @param username_to_confirm: Confirm Username
         @type  confirm_key: string
         @param confirm_key: Confirm Key
-        @rtype: string
+        @rtype: boolean, string
         @return:
             1. 인증 성공: True, 'OK'
             2. 인증 실패:

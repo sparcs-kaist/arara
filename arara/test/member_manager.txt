@@ -30,6 +30,8 @@ True
 >>> ret, session_key = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.140')
 >>> ret
 True
+>>> server.login_manager.logout(session_key)
+(True, 'OK')
 
 # Register one user, serialx
 
@@ -89,9 +91,28 @@ False
 
 Add SYSOP
 >>> user_reg_dic = { 'username':u'SYSOP', 'password':u'SYSOP', 'nickname':u'SYSOP', 'email':u'SYSOP@sparcs.org', 'signature':u'', 'self_introduction':u'i am mikkang', 'default_language':u'english' }
->>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret, register_key
+>>> ret, sysop_register_key = server.member_manager.register(user_reg_dic)
+>>> ret, sysop_register_key
 (False, 'PERMISSION_DENIED')
+
+# Backdoor_confirm Test!
+>>> user_reg_dic = {'username':u'mikkang20', 'password':u'mikkang', 'nickname':u'mikkang20', 'email':u'mikkang', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
+>>> server.member_manager.is_registered(user_reg_dic['username'])
+False
+>>> server.member_manager.is_registered_nickname(user_reg_dic['nickname'])
+False
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+
+>>> ret, sysop_session_key = server.login_manager.login(u'SYSOP', u'SYSOP', u'143.248.234.140')
+>>> ret
+True
+>>> server.member_manager.backdoor_confirm(sysop_session_key, u'mikkang20')
+(True, 'OK')
+>>> ret, session_key = server.login_manager.login(u'mikkang20', u'mikkang', u'143.248.234.140')
+>>> ret
+True
 
 # Reset the database
 >>> import arara.model
