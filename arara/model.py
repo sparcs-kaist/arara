@@ -56,7 +56,8 @@ class Board(object):
         return "<Board('%s', '%s')>" % (self.board_name, self.board_description)
 
 class Article(object):
-    def __init__(self, board, title, content, author, author_ip, parent):
+    def __init__(self, displayed_id, board, title, content, author, author_ip, parent):
+        self.displayed_id = displayed_id
         self.board = board
         self.title = title
         self.content = content
@@ -194,6 +195,7 @@ articles_table = Table('articles', metadata,
     Column('id', Integer, primary_key=True),
     Column('title', Unicode(30)),
     Column('board_id', Integer, ForeignKey('boards.id')),
+    Column('displayed_id', Integer, nullable=False),
     Column('content', UnicodeText),
     Column('author_id', Integer, ForeignKey('users.id')),
     Column('author_ip', Unicode(15)),
