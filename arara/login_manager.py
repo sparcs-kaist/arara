@@ -53,10 +53,15 @@ class LoginManager(object):
                 1. 아이디 존재하지 않음: False, 'WRONG_USERNAME'
                 2. 패스워드 불일치: False, 'WRONG_PASSWORD'
                 3. 데이터베이스 관련 에러: False, 'DATABASE_ERROR'
+                4. 이미 로그인된 아이디: False, 'ALREADY_LOGIN'
         '''
-
+        
+        ret = []
         success, msg = self.member_manager._authenticate(username, password, user_ip)
         if success:
+            for user_info in self.session_dic.values():
+                if user_info['username'] == username:
+                    return False, 'ALREADY_LOGIN'
             hash = hashlib.md5(username+password+datetime.datetime.today().__str__()).hexdigest()
             timestamp = datetime.datetime.fromtimestamp(time.time())
             self.session_dic[hash] = {'username': username, 'ip': user_ip, 'logintime': msg}
@@ -119,6 +124,7 @@ class LoginManager(object):
             return True, session_info
         except KeyError:
             return False, 'NOT_LOGGEDIN'
+
 
     def get_current_online(self, session_key):
         '''
