@@ -56,8 +56,7 @@ class Board(object):
         return "<Board('%s', '%s')>" % (self.board_name, self.board_description)
 
 class Article(object):
-    def __init__(self, displayed_id, board, title, content, author, author_ip, parent):
-        self.displayed_id = displayed_id
+    def __init__(self, board, title, content, author, author_ip, parent):
         self.board = board
         self.title = title
         self.content = content

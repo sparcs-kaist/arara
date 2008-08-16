@@ -435,18 +435,6 @@ class ArticleManager(object):
             session.close()
             return False, message
 
-    def _get_max_article_id(self, board):
-        '''
-        Get Maximum article id for selected board (internal)
-        '''
-        session = model.Session()
-        max_article_id = session.execute(select([func.max(model.articles_table.c.displayed_id, type_=Integer)], model.articles_table.c.board_id==board.id)).scalar()
-        if max_article_id:
-            max_article_id = int(max_article_id) + 1
-        else:
-            max_article_id = 1
-        return max_article_id
-
     @require_login
     def write_article(self, session_key, board_name, article_dic):
         '''
@@ -475,9 +463,7 @@ class ArticleManager(object):
             session = model.Session()
             author = session.query(model.User).filter_by(username=user_info['username']).one()
             board = session.query(model.Board).filter_by(board_name=board_name).one()
-            max_article_id = self._get_max_article_id(board)
-            new_article = model.Article(max_article_id,
-                                        board,
+            new_article = model.Article(board,
                                         article_dic['title'],
                                         article_dic['content'],
                                         author,
