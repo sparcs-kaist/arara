@@ -10,7 +10,7 @@ import arara
 
 def index(request):
     if request.session.get('arara_username', '') == 'mikkang':
-        del request.session['arara_session_key']
+        del request.session['arara_username'] # XXX : Debugging!
     server = arara.get_server() 
     sess, r = warara.check_logged_in(request)
     
