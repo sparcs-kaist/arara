@@ -11,6 +11,14 @@
 {% endblock style %}
 
 {% block board_content %}
+<div id="article_write_head">
+    <span class="main_head">
+        write an article
+    </span>
+    <span class="sub_head">
+        write an article
+    </span>
+</div>
 <form name="article_write" action="/board/{{board_name}}/write/" method="POST" enctype="multipart/form-data">
     <div id="article_write_title">
         <caption>title : </caption>
@@ -20,19 +28,39 @@
         <textarea name="text">{{default_text}}</textarea>
     </div>
     <div id="article_write_file">
-        <caption>file 1 : </caption>
-        <div class="file_upload_p">
-        <input type="file" name="file1" class="file_upload" size="60"></input>
-        <input type="button" name="file_input_add" value="+"></input>
-        <div class="file_upload_f">
-            <input size="60" name="file1_fi"></input> <!-- file1 fake input -->
-            <img src="http://nepeltari.cafe24.com/files/button_select.gif"></img>
+        <div class="file_line">
+            <span class="article_write_file_caption">file 1</span>
+            <div class="file_upload_p">
+                <input type="file" name="file1" class="file_upload" size=95></input>
+                <div class="file_upload_f">
+                    <input name="file1_fi" class="file_input_f"></input> <!-- file1 fake input -->
+                    <div class="file_search_button">
+                        search
+                    </div>
+                </div>
+                <input type="button" name="file_input_add" class="small_btn" value="+"></input>
+            </div>
         </div>
+    </div>
+    <div id="file_line_model">
+        <div class="file_line">
+            <span class="article_write_file_caption">file 1</span>
+            <div class="file_upload_p">
+                <input type="file" name="file1" class="file_upload" size=95></input>
+                <div class="file_upload_f">
+                    <input name="file1_fi" class="file_input_f"></input> <!-- file1 fake input -->
+                    <div class="file_search_button">
+                        search
+                    </div>
+                </div>
+                <input type="button" name="file_input_delete" class="small_btn" value="-"></input>
+            </div>
         </div>
     </div>
     <div id="article_write_buttons">
-        <input type="submit" value="{{t_write}}"></input>
-        <input type="button" value="cancel" name="cancel"></input>
+        <input type="button" value="preview" class="small_btn"></input>
+        <input type="submit" value="{{t_write}}" class="big_btn"></input>
+        <input type="button" value="cancel" name="cancel" class="small_btn"></input>
         <input type="hidden" value="{{t_write}}" name="write_type"></input>
         <input type="hidden" value="{{article_no}}" name="article_no"></input>
     </div>
