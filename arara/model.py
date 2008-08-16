@@ -238,7 +238,7 @@ message_table = Table('messages', metadata,
     Column('from_ip', Unicode(15)),
     Column('to_id', Integer, ForeignKey('users.id'), nullable=False),
     Column('sent_time', DateTime),
-    Column('message', Unicode(200)),
+    Column('message', Text),
     Column('received_deleted', Boolean),
     Column('sent_deleted', Boolean),
     Column('read_status', Unicode(1)),
@@ -359,8 +359,8 @@ def get_engine():
     if not engine:
         from sqlalchemy import create_engine
         engine = create_engine(CONNECTION_STRING, encoding='utf-8',
-                                convert_unicode=True, pool_size=20,
-                                max_overflow=40, echo=False)
+                                convert_unicode=True, pool_size=5,
+                                max_overflow=10, echo=False)
     return engine
 
 Session = None
