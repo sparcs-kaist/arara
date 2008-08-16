@@ -1,27 +1,3 @@
-#message_content {
-	width: 40em;
-	margin: 2em;
-}
-
-#message_read_head {
-	background: url(/media/image/head_background.png) repeat;
-	width: 100%;
-	padding: 0.8em 0em;
-	color: white;
-}
-
-#message_read_head .main_head {
-	font-size: 1.5em;
-	font-weight: bold;
-	color: white;
-	margin-left: 3%;
-}
-
-#message_read_head .sub_head {
-	font-size: 1em;
-	color: white;
-}
-
 #message_info {
 	width: 94%;
 	margin: 0% 3%;

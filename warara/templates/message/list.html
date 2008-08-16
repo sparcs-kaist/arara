@@ -10,25 +10,26 @@
     <link rel="stylesheet" href="/media/style/message_list.css"></link>
 {% endblock %}
 
+{% block main_head %}
+messages
+{% endblock %}
+{% block sub_head %}
+messages
+{% endblock %}
 {% block message_content %}
-<div id="message_list_head">
-    <span class="main_head">
-        messages
-    </span>
-    <span class="sub_head">
-        messages
-    </span>
-</div>
-
 <div id="message_page_length_selector">
+    <span class="display_message_num">
+        {% ifequal message_list_type 'inbox'%}{{num_new_message}} new message(s) /{% endifequal %} {{num_message}} message(s)
+    </span>
+    <span class="selector">
+        한번에
         <select name="page_length">
             {% for pli in page_length_list %}
             <option value="{{pli}}"{% ifequal pli page_length %} selected="selected"{%endifequal%}>{{pli}}</option>
             {% endfor %}
         </select>
-        <span class="display_message_num">
-            {% ifequal message_list_type 'inbox'%}{{num_new_message}} new message(s) /{% endifequal %} {{num_message}} message(s)
-        </span>
+        개씩 보기
+    </span>
 </div>
 
 <form action="/message/delete/" method="POST" name="message_delete">
@@ -118,7 +119,8 @@
     <input type="hidden" value="{{message_list_type}}" name="message_list_type">
     <input type="hidden" value="{{message_no_strlist}}" name="message_no_strlist">
     <input type="hidden" value=1 name="flag_del_enm" id="flag_del_enm">
-	<input type="submit" value="delete">
+	<input type="submit" class="small_btn" value="delete">
+    <a class="big_btn" href="/message/send/">send</a>
 </div>
 </form>
 {% endblock message_content %}

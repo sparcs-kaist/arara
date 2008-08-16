@@ -10,14 +10,10 @@
 {{ block.super }}
 {% endblock style %}
 
+{% block main_head %}
+read a message
+{% endblock %}
 {% block message_content %}
-<div id="message_read_head">
-    <span class="main_head">
-        read a message / reply to a message
-    </span>
-    <span class="sub_head">
-    </span>
-</div>
 <div id="message_info">
     <span id="message_time">
         {{message.sent_time}}

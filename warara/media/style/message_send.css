@@ -1,31 +1,7 @@
-#message_content {
-	width: 37em;
-	margin: 2em;
-}
-
-#message_send_head {
-	background: url(/media/image/head_background.png) repeat;
-	width: 100%;
-	padding: 0.8em 0em;
-	color: white;
-}
-
-#message_send_head .main_head {
-	font-size: 1.5em;
-	font-weight: bold;
-	color: white;
-	margin-left: 3%;
-}
-
-#message_send_head .sub_head {
-	font-size: 1em;
-	color: white;
-}
-
 #message_send_receiver {
 	clear: both;
-	width: 90%;
-	margin: 1em 5%;
+	width: 94%;
+	margin: 1em 3%;
 	text-align: left;
 }
 
@@ -50,7 +26,7 @@
 	text-align: center;
 }
 #message_send_text textarea {
-	width: 90%;
+	width: 94%;
 	height: 25em;
 	border: 1px solid #ccc;
 }

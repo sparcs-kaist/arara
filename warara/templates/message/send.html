@@ -5,15 +5,13 @@
 <link rel="stylesheet" href="/media/style/message_send.css">
 {% endblock %}
 
+{% block main_head %}
+send a message
+{% endblock %}
+{% block sub_head %}
+send a message
+{% endblock %}
 {% block message_content %}
-<div id="message_send_head">
-    <span class="main_head">
-        send a message
-    </span>
-    <span class="sub_head">
-        send a message
-    </span>
-</div>
 <form action="/message/send/" method="POST">
     <div id="message_send_receiver">
         <div class="sendto">send to : </div>

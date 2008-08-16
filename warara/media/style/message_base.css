@@ -1,16 +1,54 @@
+#message_content {
+	width: 40em;
+}
+
+.message_content A:visited, .message_content A:link {
+    text-decoration: none;
+    color: #666;
+}
+
+#message_head {
+	background: url(/media/image/head_background.png) repeat;
+	width: 40em;
+	height: 3.2em;
+	color: white;
+}
+
+#message_head .main_head {
+	font-size: 1.5em;
+	font-weight: bold;
+	color: white;
+	padding: 0.4em;
+	padding-left: 1em;
+	position: relative;
+	float: left;
+}
+
+#message_head .sub_head {
+	font-size: 1em;
+	color: white;
+	position: relative;
+	float: left;
+	padding-top: 1.1em;
+}
+
 form {
     display: inline;
 }
 
-#message_menu span {
-    background-color: #fff;
+#message_menu {
+	position: relative;
+	float: right;
+	margin: 0.5em;
+	padding: 0.5em;
+	background: url(/media/image/black_transparent.png) repeat;
+	color: white;
 }
 
-#page_list span {
-    background-color: #8ff;
+#message_menu a{
+	color: white;
 }
 
-div.message_content A:visited, div.message_content A:link {
-    text-decoration: none;
-    color: #055;
+#message_menu span{
+	color: white;
 }

@@ -5,14 +5,21 @@
 {% endblock style %}
 
 {% block content %}
-<div id="message_menu" class="message_content">
-    {% block message_menu %}
-    <span>
-	<a href="/message/inbox/">inbox</a>
-	<a href="/message/outbox/">outbox</a>
-	<a href="/message/send/">send</a>
+<div id="message_head">
+    <span class="main_head">
+        {% block main_head %}{% endblock %}
     </span>
-    {% endblock %}
+    <span class="sub_head">
+        {% block sub_head %}{% endblock %}
+    </span>
+
+    <div id="message_menu">
+        <span>
+        <a href="/message/inbox/">inbox</a> | 
+        <a href="/message/outbox/">outbox</a> | 
+        <a href="/message/send/">send</a>
+        </span>
+    </div>
 </div>
 <div id="message_content" class="message_content">
     {% block message_content %}
