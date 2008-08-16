@@ -59,9 +59,9 @@ class LoginManager(object):
         ret = []
         success, msg = self.member_manager._authenticate(username, password, user_ip)
         if success:
-            for user_info in self.session_dic.values():
-                if user_info['username'] == username:
-                    return False, 'ALREADY_LOGIN'
+            #for user_info in self.session_dic.values():
+            #    if user_info['username'] == username:
+            #        return False, 'ALREADY_LOGIN'
             hash = hashlib.md5(username+password+datetime.datetime.today().__str__()).hexdigest()
             timestamp = datetime.datetime.fromtimestamp(time.time())
             self.session_dic[hash] = {'username': username, 'ip': user_ip, 'logintime': msg}

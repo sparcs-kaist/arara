@@ -47,8 +47,9 @@ True
 (False, 'WRONG_PASSWORD')
 >>> server.login_manager.login(u'not_test', u'test', '143.248.234.145')
 (False, 'WRONG_USERNAME')
->>> server.login_manager.login(u'pipoket', u'pipoket', u'143.248.234.145')
-(False, 'ALREADY_LOGIN')
+
+#>>> server.login_manager.login(u'pipoket', u'pipoket', u'143.248.234.145')
+#(False, 'ALREADY_LOGIN')
 
 # Session key test
 
