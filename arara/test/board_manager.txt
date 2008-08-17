@@ -27,7 +27,7 @@ True
 # Get the initial board list
 
 >>> server.board_manager.get_board_list()
-(False, 'NO_BOARD_EXIST')
+(True, [])
 
 # Add one board 'garbages'
 

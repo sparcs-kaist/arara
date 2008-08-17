@@ -82,7 +82,6 @@ class BoardManager(object):
         if not user.is_sysop:
             session.close()
             return False, 'NO_PERMISSION'
-        print board
         board.deleted = True
         session.commit()
         session.close()
