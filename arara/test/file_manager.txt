@@ -45,7 +45,7 @@ True
 # Read the article
 
 >>> server.article_manager.read(session_key, u'garbages', 1)
-(True, [{'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'root_id': 1, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'is_searchable': True, 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'serialx is...', 'id': 1}])
+(True, [{'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'root_id': 1, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'serialx is...', 'id': 1}])
 
 >>> article_id = 1
 >>> server.file_manager.save_file(session_key, article_id , u'hahahah.jpg')
