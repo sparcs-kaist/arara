@@ -3,6 +3,7 @@ import os
 import sys
 import optparse
 import traceback
+import xmlrpclib
 
 PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
 sys.path.append(PROJECT_PATH)
@@ -39,7 +40,7 @@ class DetailedFaultXMLRPCDispatcher(SimpleXMLRPCDispatcher):
             response = (response,)
             response = xmlrpclib.dumps(response, methodresponse=1,
                                        allow_none=self.allow_none, encoding=self.encoding)
-        except Fault, fault:
+        except xmlrpclib.Fault, fault:
             response = xmlrpclib.dumps(fault, allow_none=self.allow_none,
                                        encoding=self.encoding)
         except:
