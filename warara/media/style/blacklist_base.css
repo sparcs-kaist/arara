@@ -1,37 +1,39 @@
 /* My page */
 #mypage {
+    width: 30em;
     float: left;
-    margin: 0;
+    margin: 0 4.2% 0 0;
 }
 
 #blacklist_mypage_head {
-    width: 370px;
+    width: 100%;
     font-size: 1.5em;
     color: #FFFFFF;
     font-weight: bold;
     font-family: tahoma;
     background: url(/media/image/head_background.png) repeat top left; 
     margin: 0;
-    padding: 11px 0 11px 10px;
+    padding: 0.7em 0 0.7em 0.7em;
 }
 
 #blacklist_mypage_add {
-    width: 280px;
-    margin: 0 0 0 2px;
+    width: 80%;
+    margin: 0 0 0 0.2em;
     padding: 0;
 }
 
 #bl_mypage_chart {
-    width: 350px;
-    margin: 15px 0 0 0;
+    width: 97%;
+    margin: 0.5em 0 0 0;
 }
 
 #blacklist_mypage_content {
-    margin: 15px 0 0 15px;
+    width: 30em;
+    margin: 1.25em 0 0 1em;
 }
 
 #blacklist_mypage_content table {
-    margin: 5px 0 0 0;
+    margin: 0.5em 0 0 0;
     padding: 0;
 }
 
@@ -39,7 +41,7 @@
     background: #E0E0E0 url(/media/image/base/square.png) no-repeat top left;
     border-top: 1px #65AA5C solid;
     border-bottom: 5px #DADADA solid;
-    height: 25px;
+    height: 2.3em;
 }
 
 #blacklist_mypage_content td {
@@ -47,32 +49,33 @@
 }
 
 #blacklist_mypage_content tr {
-    height: 25px;
+    height: 2.3em;
 }
 
 th[name="del_checkbox"] {
-    width: 29px;
-    padding: 4px 0 0 7px;
+    width: 10%;
+    padding: 0.4em 0 0 0.6em;
 }
 
 th[name="chart_username"] {
-    width: 125px;
-    padding: 4px 0 0 7px;
+    width: 35%;
+    padding: 0.3em 0 0 0.6em;
 }
 
 th[name="block_art"] {
-    width: 47px;
-    padding: 4px 0 0 7px;
+    width: 20%;
+    padding: 0.3em 0 0 0.6em;
 }
 
 th[name="block_mes"] {
-    width: 46px;
-    padding: 4px 0 0 7px;
+    width: 20%;
+    padding: 0.3em 0 0 0.6em;
 }
 
 th[name="del_ea"] {
-    width: 25px;
+    width: 5%;
     text-align: center;
+    padding: 0.1em 0 0 0;
 }
 
 .del_ea {
@@ -80,50 +83,50 @@ th[name="del_ea"] {
 }
 
 .del_cb {
-    padding: 4px 0 0 7px;
+    padding: 0 0 0 0.5em;
 }
 
 #bl_delete_submit {
-    float: right;
-    margin: 5px 3px 0 0;
+    float: left;
+    margin: 0.4em 0.3em 0 70%;
 }
 
 #bl_update_submit {
-    float: right;
-    margin: 5px 10px 0 0;
+    float: left;
+    margin: 0.4em 0 0 0;
 }
 
 /* User search */
 #search_user {
-    float: right;
-    margin: 0 40px 0 0;
+    width: 30em;
+    float: left;
 }
 
 #blacklist_user_search_head {
-    width: 370px;
+    width: 98%;
     font-size: 1.5em;
     color: #FFFFFF;
     font-weight: bold;
     font-family: tahoma;
     background: url(/media/image/head_background.png) repeat top left;
-    padding: 11px 0 11px 10px;
+    padding: 0.7em 0 0.7em 0.7em;
 }
 
 #blacklist_user_search_content {
-    width: 350px;
-    margin: 15px 0 0 15px;
+    width: 30em;
+    margin: 1.25em 0 0 1.25em;
 }
 
 #bl_search_text_field {
-    width: 283px;
+    width: 77%;
 }
 
 #searching_results {
     float: left;
-    margin: 10px 0 0 0;
+    margin: 0.1em 0 0 0;
 }
 
 #searching_results p {
     background: url(/media/image/base/square.png) no-repeat top left;
-    padding: 4px 0 0 10px;
+    padding: 0.3em 0 0 0.9em;
 }
