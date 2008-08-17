@@ -6,15 +6,15 @@ import xmlrpclib
 from arara.util import require_login, filter_dict
 from arara import model
 from sqlalchemy.exceptions import InvalidRequestError
-from sqlalchemy import and_, or_, not_, func, select, Integer
+from sqlalchemy import and_, or_, not_
 
 WRITE_ARTICLE_DICT = ('title', 'content')
-READ_ARTICLE_WHITELIST = ('id', 'displayed_id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'author_nickname', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable', 'attach')
-LIST_ARTICLE_WHITELIST = ('id', 'displayed_id', 'title', 'date', 'last_modified_date', 'reply_count',
+READ_ARTICLE_WHITELIST = ('id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'author_nickname', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable', 'attach')
+LIST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'author_nickname', 'vote', 'hit')
-SEARCH_ARTICLE_WHITELIST = ('id', 'displayed_id', 'title', 'date', 'last_modified_date', 'reply_count',
+SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'author_nickname', 'vote', 'hit', 'content')
-BEST_ARTICLE_WHITELIST = ('id', 'displayed_id', 'title', 'date', 'last_modified_date', 'reply_count',
+BEST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'author_nickname', 'vote', 'hit', 'last_page', 'board_name')
 
 class NotLoggedIn(Exception):
@@ -163,58 +163,37 @@ class ArticleManager(object):
             return_list.append(filtered_dict)
         return return_list
 
-    def get_today_best_list(self, board_name=None, count=5):
+    def get_today_best_list(self, count=5):
         '''
         투베를 가져오는 함수
 
-        @type  board_name: string
-        @param board_name: Board Name
         @type  count: integer
         @param count: Number of today's best articles to get
         @rtype: list
         @return:
             1. 투베를 가져오는데 성공: True, Article list of Today's Best
             2. 투베를 가져오는데 실패:
-                1. Not Existing Board: False, 'BOARD_NOT_EXIST'
-                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        session = model.Session()
-        if board_name:
-            try:
-                board = session.query(model.Board).filter_by(board_name=board_name).one()
-            except InvalidRequestError:
-                return False, 'BOARD_NOT_EXIST'
-            ret, today_best_list = self._get_today_best_article(None, board, count)
-        else:
-            ret, today_best_list = self._get_today_best_article(None, None, count)
+        ret, today_best_list = self._get_today_best_article(None, None, count)
         if ret:
             return True, today_best_list
         else:
             return False, 'DATABASE_ERROR'
 
-    def get_weekly_best_list(self, board_name=None, count=5):
+    def get_weekly_best_list(self, count=5):
         '''
         윅베를 가져오는 함수
 
-        @type  board_name: string
-        @param board_name: Board Name
         @type  count: integer
         @param count: Number of today's best articles to get
         @rtype: list
         @return:
             1. 투베를 가져오는데 성공: True, Article list of Today's Best
             2. 투베를 가져오는데 실패:
-                1. Not Exsiting Board: False, 'BOARD_NOT_EXIST'
-                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        if board_name:
-            try:
-                board = session.query(model.Board).filter_by(board_name=board_name).one()
-            except InvalidRequestError:
-                return False, 'BOARD_NOT_EXIST'
-            ret, weekly_best_list = self._get_weekly_best_article(None, board, count)
-        else:
-            ret, weekly_best_list = self._get_weekly_best_article(None, None, count)
+        ret, weekly_best_list = self._get_weekly_best_article(None, None, count)
         if ret:
             return True, weekly_best_list
         else:
