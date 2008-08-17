@@ -163,39 +163,28 @@ class ArticleManager(object):
             return_list.append(filtered_dict)
         return return_list
 
-    def get_today_best_list(self, board_name=None, count=5):
+    def get_today_best_list(self, count=5):
         '''
-        투베를 가져오는 함수
+        전체 보드에서 투베를 가져오는 함수
 
-        @type  board_name: string
-        @param board_name: Board Name
         @type  count: integer
         @param count: Number of today's best articles to get
         @rtype: list
         @return:
             1. 투베를 가져오는데 성공: True, Article list of Today's Best
             2. 투베를 가져오는데 실패:
-                1. Not Existing Board: False, 'BOARD_NOT_EXIST'
-                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        session = model.Session()
-        if board_name:
-            try:
-                board = session.query(model.Board).filter_by(board_name=board_name).one()
-            except InvalidRequestError:
-                return False, 'BOARD_NOT_EXIST'
-            ret, today_best_list = self._get_today_best_article(None, board, count)
-        else:
-            ret, today_best_list = self._get_today_best_article(None, None, count)
+        ret, today_best_list = self._get_today_best_article(None, None, count)
 
         if ret:
             return True, today_best_list
         else:
             return False, 'DATABASE_ERROR'
 
-    def get_weekly_best_list(self, board_name=None, count=5):
+    def get_today_best_list_specific(self, board_name, count=5):
         '''
-        윅베를 가져오는 함수
+        해당 보드에서 투베를 가져오는 함수
 
         @type  board_name: string
         @param board_name: Board Name
@@ -209,14 +198,60 @@ class ArticleManager(object):
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         session = model.Session()
-        if board_name:
-            try:
-                board = session.query(model.Board).filter_by(board_name=board_name).one()
-            except InvalidRequestError:
-                return False, 'BOARD_NOT_EXIST'
-            ret, weekly_best_list = self._get_weekly_best_article(None, board, count)
+        try:
+            board = session.query(model.Board).filter_by(board_name=board_name).one()
+        except InvalidRequestError:
+            return False, 'BOARD_NOT_EXIST'
+        ret, today_best_list = self._get_today_best_article(None, board, count)
+
+        if ret:
+            return True, today_best_list
         else:
-            ret, weekly_best_list = self._get_weekly_best_article(None, None, count)
+            return False, 'DATABASE_ERROR'
+
+    def get_weekly_best_list(self, count=5):
+        '''
+        전체 보드에서 윅베를 가져오는 함수
+
+        @type  board_name: string
+        @param board_name: Board Name
+        @type  count: integer
+        @param count: Number of today's best articles to get
+        @rtype: list
+        @return:
+            1. 투베를 가져오는데 성공: True, Article list of Today's Best
+            2. 투베를 가져오는데 실패:
+                1. Not Existing Board: False, 'BOARD_NOT_EXIST'
+                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        '''
+        ret, weekly_best_list = self._get_weekly_best_article(None, None, count)
+
+        if ret:
+            return True, weekly_best_list
+        else:
+            return False, 'DATABASE_ERROR'
+
+    def get_weekly_best_list_specific(self, board_name, count=5):
+        '''
+        해당 보드에서 윅베를 가져오는 함수
+
+        @type  board_name: string
+        @param board_name: Board Name
+        @type  count: integer
+        @param count: Number of today's best articles to get
+        @rtype: list
+        @return:
+            1. 투베를 가져오는데 성공: True, Article list of Today's Best
+            2. 투베를 가져오는데 실패:
+                1. Not Existing Board: False, 'BOARD_NOT_EXIST'
+                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        '''
+        session = model.Session()
+        try:
+            board = session.query(model.Board).filter_by(board_name=board_name).one()
+        except InvalidRequestError:
+            return False, 'BOARD_NOT_EXIST'
+        ret, weekly_best_list = self._get_weekly_best_article(None, board, count)
 
         if ret:
             return True, weekly_best_list
