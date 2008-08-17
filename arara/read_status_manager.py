@@ -124,13 +124,13 @@ class ReadStatusManager(object):
 
     def _check_article_exist(self, board, no_data):
         session = model.Session()
-        top_article_id = session.query(model.Article).filter_by(board_id=board.id)[:1]
+        top_article = session.query(model.Article).filter_by(board_id=board.id)[0]
         if type(no_data) == list:
             for no in no_data:
-                if no > top_article_id.id:
+                if no > top_article.id:
                     return False, 'ARTICLE_NOT_EXIST'
         else:
-            if no_data > top_article_id.id:
+            if no_data > top_article.id:
                 return False, 'ARTICLE_NOT_EXIST'
         return True, 'OK'
 
