@@ -63,6 +63,7 @@ body {
 #header {
     float:left;
     width: 100%;
+    background-color: #FFFFFF;
 }
 
 #bottom_header {
@@ -370,8 +371,8 @@ input.button_exit{
 .small_btn {
     background: url('/media/image/small_btn_bg.png') repeat-x bottom;
     border:1px solid #dadada;
-    height:23px;
-    width:50px;
+    height: 1.6em;
+    width: 3.7em;
     vertical-align:top;
 }
 
