@@ -2,7 +2,7 @@
 #mypage {
     width: 30em;
     float: left;
-    margin: 0 4.2% 0 0;
+    margin: 0 4.2% 4% 0;
 }
 
 #blacklist_mypage_head {
@@ -17,7 +17,7 @@
 }
 
 #blacklist_mypage_add {
-    width: 80%;
+    width: 78%;
     margin: 0 0 0 0.2em;
     padding: 0;
 }
@@ -88,7 +88,7 @@ th[name="del_ea"] {
 
 #bl_delete_submit {
     float: left;
-    margin: 0.4em 0.3em 0 70%;
+    margin: 0.4em 0.3em 0 66%;
 }
 
 #bl_update_submit {
