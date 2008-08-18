@@ -10,7 +10,7 @@ body {
 #wrapper {
     width: 85em;
     max-width: 100%;
-    min-width: 980px;
+    min-width: 61.25em;
     margin: 0 auto;
     background-color: #fff;
 }
@@ -39,7 +39,7 @@ body {
 #footer_wrapper {
     clear: both;
     background-color: #eee;
-    padding: 20px;
+    padding: 1.5em;
 }
 
 #top_header {
@@ -57,7 +57,8 @@ body {
 
 #top_header li {
     float: left;
-    margin: 0 0 0 5px;
+    margin: 0.3em 0 0 0.45em;
+    vertical-align: middle;
 }
 
 #header {
@@ -69,7 +70,7 @@ body {
 #bottom_header {
     float: left;
     width: 100%;
-    height:40px;
+    height: 3.315em;
     background: url('/media/image/base/subtitle/subtitle_bg.png');
 }
 
@@ -80,25 +81,25 @@ body {
 
 #subtitle_logo {
     float:left;
-    width:60px;
-    height:14px;
-    background: url('/media/image/base/subtitle/subtitle.png');
-    margin: 17px 20px 9px 20px;
+    width: 5.2em;
+    height: 1.3em;
+    background: url('/media/image/base/subtitle/subtitle.png') no-repeat;
+    margin: 1.06em 1.25em 0.56em 1.7em;
 }
 
 #subtitle_folding {
     float:right;
-    width:8px;
-    height:8px;
-    margin:32px 0px 0px 0px;
-    background: url('/media/image/base/subtitle/subtitle_folding.png');
+    width: 0.65em;
+    height: 0.65em;
+    margin: 2.668em 0 0 0;
+    background: url('/media/image/base/subtitle/subtitle_folding.png') no-repeat right bottom;
 }
 
 #subtitle_round {
     float:left;
-    width:7px;
-    height:7px;
-    background: url('/media/image/base/subtitle/subtitle_round.png');
+    width: 0.5em;
+    height: 0.5em;
+    background: url('/media/image/base/subtitle/subtitle_round.png') no-repeat left top;
 }
 
 #bbstitle_wapper {
@@ -107,10 +108,10 @@ body {
 
 #bbstitle_dingbet {
     float:left;
-    width:15px;
-    height:12px;
-    margin:11px 8px 0px 10px;
-    background: url('/media/image/base/subtitle/subtitle_maintitle.png');
+    width: 1.31em;
+    height: 1.1em;
+    margin: 0.78em 0.68em 0 0.8em;
+    background: url('/media/image/base/subtitle/subtitle_maintitle.png') no-repeat left;
 }
 
 #bbstitle {
@@ -132,11 +133,11 @@ body {
 }
 
 #menu {
-    padding: 16px;
+    padding: 1.3em;
 }
 
 #content {
-    padding: 20px;
+    padding: 1.68em;
 }
 
 #menu ul {
@@ -147,7 +148,7 @@ body {
 }
 
 #menu li {
-    margin: 0 0 5px 0;
+    margin: 0 0 0.35em 0;
     font-family: Verdana;
 }
 
@@ -192,7 +193,7 @@ body {
 
 #bbstitle_wrapper {
     float:left;
-    width:300px;
+    width: 25em;
     height:100%;
 }
 
@@ -206,10 +207,10 @@ body {
 #top_menu_wrapper{
     float:right;
     width:85%;
-    height:33px;
-    margin:6px 0px 0px 0px;
+    height: 2.77em;
+    margin: 0.52em 0 0 0;
     border-bottom: 1px solid #cccccc;
-    background-color:white;
+    background-color: white;
 }
 
 #top_menu {
@@ -240,7 +241,7 @@ body {
 }
 
 #user_popup {
-    width: 180px;
+    width: 15em;
     border: 1px solid #333;
     border-top: 1px solid #999;
     border-bottom: 0;
@@ -265,7 +266,7 @@ body {
 
 #user_popup li {
     border-bottom: 1px solid #999;
-    padding: 2px;
+    padding: 0.2em;
 }
 
 /* message popup style */
@@ -311,8 +312,8 @@ body {
 
 input.button_exit{
 	position: absolute;
-	right: 0px;
-	top: 0px;
+	right: 0x;
+	top: 0;
 }
 
 .highlight{
@@ -363,16 +364,16 @@ input.button_exit{
 
 .small_form {
     border:1px solid #dadada;
-    height:23px;
-    vertical-align:top;
-    padding:0px 0px 0px 2px;
+    height: 1.6em;
+    vertical-align: top;
+    margin: 0 0.3em 0 0;
 }
 
 .small_btn {
     background: url('/media/image/small_btn_bg.png') repeat-x bottom;
     border:1px solid #dadada;
-    height: 1.6em;
-    width: 3.7em;
+    height: 1.9em;
+    width: 4.2em;
     vertical-align:top;
 }
 
