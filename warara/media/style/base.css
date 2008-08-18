@@ -214,19 +214,16 @@ body {
 }
 
 #top_menu {
-	position: relative;
     float: right;
     height: 100%;
     font-size: 120%;
-	margin: 0em 1em;
-	width: 50%;
-	text-align: right;
+    width: 50%;
+    text-align: right;
+    margin: 0.5em 1em 0 0;
 }
 
 #top_menu a {
-    margin-left: 3%;
-	position: relative;
-	top: 20%;
+    margin: 0 0 0 3%;
 }
 
 
@@ -326,12 +323,10 @@ input.button_exit{
 
 #ksearch {
     float: right;
-	margin: 0em 2em;
-	padding-right: 2em;
-    width: 28em;
+    padding-right: 2em;
+    width: 26em;
     height: 3.2em;
-    text-align: right;
-    background: url('/media/image/base/ksearch/ksearch_bg.png')
+    background: url('/media/image/base/ksearch/ksearch_bg.png') no-repeat left top;
 }
 
 #ksearch .ksearch {
@@ -344,9 +339,7 @@ input.button_exit{
 #ksearch .q {
 	border:1px solid #aaaaaa;
 	width: 80%;
-	margin-bottom: 1%;
-	position: relative;
-	top: -1%;
+	margin: 0 0 1% 1.7%;
 }
 
 #ksearch_logo {
