@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # coding: utf-8
 
-import os
+import sys
 import urwid.curses_display
 import urwid
 from ara_form import *
@@ -15,6 +15,7 @@ class ara_user_preferences(ara_form):
         "Change Introduction/Signature",
         "Zap Board",
         "Set Terminal Encoding",
+        "Delete account",
         "Exit menu",
     ]
     menudesc = [
@@ -24,6 +25,7 @@ class ara_user_preferences(ara_form):
         "Change intruduction and signature used in the articles",
         "Zap board\n",
         "Set your terminal encoding\n",
+        "Delete your ARA account\n",
         "Return to main menu\n",
     ]
 
@@ -45,6 +47,17 @@ class ara_user_preferences(ara_form):
                 # TODO: 인코딩 설정
                 pass
             elif pos == 6:
+                # TODO: 탈퇴되었음을 알리는 대화상자 삽입
+                confirm = widget.Dialog("Do you want to delete your ARA account?", ["OK","Cancel"], ('menu', 'bg', 'bgf'), 45, 5, self)
+                self.overlay = confirm
+                self.parent.run()
+                if confirm.b_pressed == "OK":
+                    self.server.remove_user(self.session_key)
+                    sys.exit(0)
+                else:
+                    self.overlay = None
+                    self.parent.run()
+            elif pos == 7:
                 self.parent.change_page("main",{'session_key':self.session_key})
         else:
             self.mainpile.keypress(size, key)
