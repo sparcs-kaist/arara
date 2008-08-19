@@ -17,6 +17,7 @@ from read_article import *
 from write_pm import *
 from post_article import *
 from change_password import *
+from change_basic_info import *
 from blacklist import *
 from sig_intro import *
 from query_user import *
@@ -98,6 +99,9 @@ class ara_display:
                     caller = args['caller'],
                     caller_args = args['caller_args'])
             self.view = self.ara_helpviewer
+        elif pagename == "change_basic_info":
+            self.ara_change_basic_info = ara_change_basic_info(self, args['session_key'])
+            self.view = self.ara_change_basic_info
 
     def main(self):
         self.ui = Screen()

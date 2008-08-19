@@ -58,8 +58,8 @@ class Border(urwid.WidgetWrap):
         utf8decode = lambda x: x
         # Define the border characters
         tline = bline = urwid.Divider(utf8decode('--'))
-        lline = urwid.Filler(urwid.Text(utf8decode('| \n| \n| \n| \n| \n| \n| \n| ')))
-        rline = urwid.Filler(urwid.Text(utf8decode(' |\n |\n |\n |\n |\n |\n |\n |')))
+        lline = urwid.Filler(urwid.Text(utf8decode('| \n| \n| \n| \n| \n| \n| \n| \n| \n| \n| \n| \n| \n| \n| \n| ')))
+        rline = urwid.Filler(urwid.Text(utf8decode(' |\n |\n |\n |\n |\n |\n |\n |\n |\n |\n |\n |\n |\n |\n |\n |')))
         tlcorner = urwid.Text(utf8decode('+-'))
         trcorner = urwid.Text(utf8decode('-+'))
         blcorner = urwid.Text(utf8decode('+-'))
