@@ -39,14 +39,8 @@ class ara_read_article(ara_form):
         self.reply_template = Template("Reply by ${AUTHOR}(${NICKNAME}) on ${DATE}")
         ara_form.__init__(self, parent, session_key)
 
-    def set_article(self, board_name, article_id):
-        self.thread = self.server.article_manager.read(self.session_key, board_name, article_id)
-        if self.thread[0]:
-            self.set_thread_info()
-            return self.get_article_body()
-
     def set_thread_info(self):
-        body = self.thread[1][0]
+        body = self.thread[0]
         self.titletext.body.set_text(self.title_template.safe_substitute(
             TITLE=body['title']))
         self.authortext.body.set_text(self.author_template.safe_substitute(
@@ -57,7 +51,7 @@ class ara_read_article(ara_form):
 
     def get_article_body(self):
         article_list = []
-        body = self.thread[1]
+        body = self.thread
         for article in body:
             if article['depth'] == 1:
                 article_list.append(urwid.Text(article['content']))
@@ -78,8 +72,17 @@ class ara_read_article(ara_form):
         self.titletext = urwid.Filler(urwid.Text(''))
         self.authortext = urwid.Filler(urwid.Text(''))
         self.infotext = urwid.Filler(urwid.Text(''))
-        self.article_threads = self.set_article(self.board_name, self.article_id)
+
+        self.thread = self.server.article_manager.read(self.session_key, self.board_name, self.article_id)
+        self.thread = self.thread[1]
+        assert self.thread
+
+        self.set_thread_info()
+        self.article_threads = self.get_article_body()
+        #self.article_threads = [urwid.Text('a')]
+        assert self.article_threads
         self.article_list = urwid.ListBox(urwid.SimpleListWalker(self.article_threads))
+
 	self.header = urwid.Filler(urwid.Text(u"ARA: Read article",align='center'))
         functext = urwid.Filler(urwid.Text('(n)ext/(p)revious (b)lock (e)dit (d)elete (f)old/retract (r)eply (v)ote (q)uit'))
 
