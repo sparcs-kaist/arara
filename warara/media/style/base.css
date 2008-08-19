@@ -298,10 +298,6 @@ input.button_exit{
 	background-color: #ddf;
 }
 
-#input[name="message_popup_exit"]{
-	width=3em;
-}
-
 #ksearch {
     float: right;
     padding-right: 2em;
@@ -341,6 +337,9 @@ input.button_exit{
     display: none;
     width: 40em;
     background-color: white;
+	position: absolute;
+	right: 0%;
+	top: 0%;
 }
 
 #message_content {

@@ -72,7 +72,7 @@ $(document).ready(function(){
         event.preventDefault();
     });
 
-    $("div").click(function(event) {
+    $("html").click(function(event) {
 		if($focus_input){
 		return;
 		}
@@ -82,12 +82,10 @@ $(document).ready(function(){
 
     function show_message_box(username, event) {
 		if(event.shiftKey){
-			$("#message_popup").css("top", $popup_y_coor);
-			$("#message_popup").css("left", $popup_x_coor);
+			$("#user_popup .thickbox").removeClass("thickbox");
 			message_popup.show(); 
 		}
         $("#message_receiver_field").val(username);
-		$("#message_text_field").focus();
 
 		$("input[name='message_popup_exit']").click(function(event){
 				$("#message_popup").hide();
@@ -96,6 +94,9 @@ $(document).ready(function(){
 				switch(event.which){
 				case 27:
 				$("#message_popup").hide("fast");
+				break;
+				case 70: //f
+				$("#message_text_field").focus();
 				break;
 				}
 				});
@@ -279,12 +280,19 @@ $(document).ready(function(){
 			}
 			});
 	$(document).keypress(function(event){
-			if($focus_input){
-			return;
-			}
 			if(event.ctrlKey || event.altKey){
 			return;
 			}
+
+			if($focus_input){
+			switch(event.which){
+			case 27: //esc
+			$focus_input = 0;
+			break;
+			}
+			return;
+			}
+
 			switch(event.which){
 			case 116: //t
 			focus_board_list();
