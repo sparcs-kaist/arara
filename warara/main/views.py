@@ -32,6 +32,9 @@ def index(request):
 
     max_length = 20 #todays, weekly best max string length
     suc, ret = server.article_manager.get_today_best_list(5)
+    if not suc: #XXX
+        rendered = render_to_string('index.html', r)
+        return HttpResponse(rendered)
     for i, tb in enumerate(ret):
         if i==0:
             max_length = 50

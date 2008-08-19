@@ -5,8 +5,10 @@
 	<script type="text/javascript" src="/media/thirdparty/jquery-latest.min.js"></script>
 	<script type="text/javascript" src="/media/thirdparty/jquery.history.js"></script>
 	<script type="text/javascript" src="/media/js/base.js"></script>
+	<script type="text/javascript" src="/media/thirdparty/thickbox/thickbox.js"></script>
 	{% block script %}{% endblock %}
 	<link rel="stylesheet" href="/media/style/base.css" />
+	<link rel="stylesheet" href="/media/thirdparty/thickbox/thickbox.css"></link>
 	{% block style %}{% endblock %}
 	<title>{% block title %}아라{% endblock %}</title>
     </head>
@@ -97,25 +99,42 @@
 	    <div id="user_popup">
 		<ul>
 		    <li id="user_popup_username"></li>
-		    <li class="{% if not logged_in %}hidden{% endif %}"><a id="user_popup_send_message" href="#">Send Message</a></li>
+			<li class="{% if not logged_in %} hidden{% endif %}"><a id="user_popup_send_message" class="thickbox" href="#TB_inline?height=550&width=480&inlineId=message_popup&modal=true">Send Message</a></li>
 		    <li><a id="user_popup_user_information" href="#">User Information</a></li>
 		    <li class="{% if not logged_in %}hidden{% endif %}"><a id="user_popup_add_blacklist" href="#">Add Blacklist</a></li>
 		</ul>
 	    </div>
+
 	    <div id="message_popup">
-		<ul>
-		    <li id="message_popup_username"></li>
-		    <li>
-		    <label for="message_receiver_field">To:</label>
-		    <input type="text" name="receiver" id="message_receiver_field"/>
-		    </li>
-		    <li>
-		    <label for="message_text_field">Message:</label>
-		    <textarea name="text" id="message_text_field"></textarea>
-		    </li>
-		    <li><input type="submit" id="message_submit" value="send" /></li>
-		</ul>
-		<input type="button" name="message_popup_exit" value="x" class="button_exit"></input>
+			<div id="message_head">
+				<span class="main_head">
+					send a message
+				</span>
+				<span class="sub_head">
+					send a message
+				</span>
+			</div>
+			<div id="message_content" class="message_content">
+				<form action="/message/send/" method="POST">
+					<div id="message_send_receiver">
+						<div class="sendto">send to : </div>
+						<div class="doublemarginshet">
+						<input type="text" id="message_receiver_field" name="receiver" value="{{default_receiver}}"></input>
+						</div>
+					</div>
+					<div id="message_send_text">
+						<textarea id="message_text_field" name="text">{{default_text}}</textarea>
+					</div>
+					<div id="message_send_buttons">
+						<span class="message_send_submit">
+							<input type="submit" name="submit" class="message_send_submit" value="send"></input>
+						</span>
+						<span class="message_send_cancel">
+							<input type="button" name="cancel" value="cancel"></input>
+						</span>
+					</div>
+				</form>
+			</div>
 	    </div>
 	</div>
     </body>

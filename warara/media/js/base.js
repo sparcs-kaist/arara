@@ -44,8 +44,9 @@ $(document).ready(function(){
 
 		$(document).keyup(function(event){
 				switch(event.which){
-				case 27:
+				case 27: //esc
 				$("#user_popup").hide("fast");
+				tb_remove();
 				break;
 				}
 				});
@@ -53,7 +54,7 @@ $(document).ready(function(){
     });
 
     $("#user_popup_send_message").click(function(event) {
-        show_message_box(username);
+        show_message_box(username, event);
         event.preventDefault();
     });
 
@@ -79,10 +80,12 @@ $(document).ready(function(){
 		$("#login_box").hide();
     });
 
-    function show_message_box(username) {
-        $("#message_popup").css("top", $popup_y_coor);
-        $("#message_popup").css("left", $popup_x_coor);
-        message_popup.show(); 
+    function show_message_box(username, event) {
+		if(event.shiftKey){
+			$("#message_popup").css("top", $popup_y_coor);
+			$("#message_popup").css("left", $popup_x_coor);
+			message_popup.show(); 
+		}
         $("#message_receiver_field").val(username);
 		$("#message_text_field").focus();
 
@@ -98,10 +101,12 @@ $(document).ready(function(){
 				});
     }
 
-    $("#message_submit").click(function(event) {
+    $("#message_popup input.message_send_submit").click(function(event) {
+		tb_remove();
         $.post("/message/send/", {receiver: $("#message_receiver_field").val(), text: $("#message_text_field").val(), ajax:"1"},
             function(data){
                 alert(data);
+				$("#user_popup").hide();
 				$("#message_popup").hide("fast");
 				$("#message_text_field").val("");
             });
@@ -153,6 +158,12 @@ $(document).ready(function(){
 	else{
 		$logged_in = 1
 	}
+
+	//message_thickbox
+	$("#message_popup input[name='cancel']").click(function(event){
+			tb_remove();
+			$("#message_popup").hide();
+			});
 
 //로그인 뜨게함
 	$("#login_box").addClass("absolute");
