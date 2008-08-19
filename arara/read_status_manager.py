@@ -4,6 +4,7 @@ from arara.util import require_login
 from arara import model
 
 from sqlalchemy.exceptions import InvalidRequestError
+from sqlalchemy.sql import func, select
 
 class ReadStatus(object):
     def __init__(self, default='N'):
@@ -124,7 +125,11 @@ class ReadStatusManager(object):
 
     def _check_article_exist(self, board, no_data):
         session = model.Session()
-        top_article = session.query(model.Article).filter_by(board_id=board.id)[0]
+        top_article = session.query(model.Article).from_statement(
+                select(
+                    [model.articles_table],
+                    select([func.max(model.articles_table.c.id)]).label('top_article_id')==model.articles_table.c.id)
+                )[0]
         if type(no_data) == list:
             for no in no_data:
                 if no > top_article.id:
@@ -183,6 +188,7 @@ class ReadStatusManager(object):
                 1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+
         ret, user_info = self.login_manager.get_session(session_key)
         if ret:
             session = model.Session()
