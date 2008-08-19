@@ -63,3 +63,18 @@ form {
 .article_read_buttons {
     font-size: large;
 }
+
+.reply {
+    background-color: #dadada;
+    border-top: 1px solid #65aa5c;
+    padding: 0 0 0 10px;
+}
+
+.article_subtitle {
+    height: 1.8em;
+}
+
+.article_subtitle span {
+    float: right;
+    margin: 10 20 10 0px;
+}

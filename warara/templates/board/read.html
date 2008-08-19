@@ -1,4 +1,4 @@
-{% extends "board/base.html" %}
+{% extends "board/list.html" %}
 
 {% block style %}
 {{block.super}}
@@ -11,7 +11,7 @@
 <link rel="stylesheet" type="text/css" href="/media/style/board_list.css"></link>
 {% endblock script %}
 
-{% block board_content %}
+{% block article_content %}
 
 {% for article in article_read_list %}
 <div class="article article_depth_{{article.depth}}">
@@ -68,73 +68,5 @@
     <a id="list_link" href="/board/{{board_name}}">list</a>
     <a id="write_link" href="/board/{{board_name}}/write">write</a>
 </div>
-<div id="article_table">
-    <table cellspacing="0" id="board_table" summary="{{board_description}}">
-        <colgroup>
-            <col id="board_cursor_col" class="cursor_col"/>
-            <col id="board_id_col" class="id_col"/>
-            <col id="board_title_col" class="title_col"/>
-            <col id="board_author_col" class="author_col"/>
-            <col id="board_date_col" class="date_col"/>
-        </colgroup>
-        <thead>
-            <tr>
-                <th class="column cursor_col" scope="col"></th>
-                <th class="column id_col" scope="col">id</th>
-                <th class="column title_col" scope="col">title</th>
-                <th class="column author_col" scope="col">author</th>
-                <th class="column date_col" scope="col">date</th>
-                <th class="column vote_col" scope="col">vote</th>
-                <th class="column hit_col" scope="col">hit</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for article in article_list %}
-            <tr>
-		<td class="column cursor_col">{{article.read_status}}</td>
-        <td class="column id_col">{% ifequal article.type 'normal' %}{{article.id}}{%else%}wb{%endifequal%}</td>
-                <td class="column title_col">{% if logged_in %}<a href="/board/{{board_name}}/{{article.id}}">{{article.title}}</a>{% else %}{{article.title}}{% endif %}</td>
-                <td class="column author_col"><span class="username">{{article.author_username}}</span></td>
-                <td class="column date_col">{{article.date|date:"Y/m/d"}}</td>
-                <td class="column vote_col">{{article.vote}}</td>
-                <td class="column last_column hit_col">{{article.hit}}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-<div id="board_pages" class="width_full">
-    {% ifequal method 'search' %}
-    <a href="{{path}}&page_no={{first_page.no}}">{{first_page.mark}}</a>
-    <a href="{{path}}&page_no={{prev_page_group_no}}">{{prev_page_group.mark}}</a>
-    {% for page in page_list %}
-    <a href="{{path}}&page_no={{page}}">{{page}}</a>
-    {% endfor %}
-    <a href="{{path}}&page_no={{next_page_group.no}}">{{next_page_group.mark}}</a>
-    <a href="{{path}}&page_no={{last_page.no}}">{{last_page.mark}}</a>
-    {% else %}
-    <a href="/board/{{board_name}}?page_no={{first_page.no}}">{{first_page.mark}}</a>
-    <a href="/board/{{board_name}}?page_no={{prev_page_group_no}}">{{prev_page_group.mark}}</a>
-    {% for page in page_list %}
-    <a href="/board/{{board_name}}?page_no={{page}}">{{page}}</a>
-    {% endfor %}
-    <a href="/board/{{board_name}}?page_no={{next_page_group.no}}">{{next_page_group.mark}}</a>
-    <a href="/board/{{board_name}}?page_no={{last_page.no}}">{{last_page.mark}}</a>
-    {% endifequal %}
-</div>
-<div id="board_buttons" class="width_full">
-    <div id="board_write" class="small_btn {% if not logged_in %}hidden{% endif %}">
-        <a href="/board/{{board_name}}/write/">write</a>
-    </div>
-    <form name="board_search" method="GET" action="/board/{{board_name}}/search">
-        <select name="search_method" class="small_form">
-            {% for smi in search_method_list %}
-            <option value="{{smi.val}}"{%ifequal search_method smi.val%} selected="selected"{%endifequal%}>{{smi.text}}</option>
-            {% endfor %}
-        </select>
-        <input type="text" name="search_word" class="small_form"></input>
-        <input class="small_btn" type="submit" value="search" id="board_search_submit"></input>
-    </form>
-</div>
 
-{% endblock board_content %}
+{% endblock article_content %}

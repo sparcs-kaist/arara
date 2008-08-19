@@ -483,3 +483,11 @@ form {
     height:33px;
     vertical-align:top;
 }
+
+.bold {
+    font-weight: bold;
+}
+
+.black {
+    color: black;
+}
