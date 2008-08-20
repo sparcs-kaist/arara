@@ -26,7 +26,7 @@ class ara_read_article(ara_form):
             self.overlay = confirm
             self.parent.run()
             self.overlay = None
-            self.set_article(board_name = self.board_name, article_id = self.article_id)
+            self.parent.run()
         else:
             self.mainpile.keypress(size, key)
 
@@ -44,9 +44,9 @@ class ara_read_article(ara_form):
         self.titletext.body.set_text(self.title_template.safe_substitute(
             TITLE=body['title']))
         self.authortext.body.set_text(self.author_template.safe_substitute(
-            AUTHOR=body['author_username'], NICKNAME='blahblah'))
+            AUTHOR=body['author_username'], NICKNAME=body['author_nickname']))
         self.infotext.body.set_text(self.info_template.safe_substitute(
-            HIT=body['hit'], REPLY=str(len(self.thread[1])-1), 
+            HIT=body['hit'], REPLY=str(len(self.thread)-1), 
             DATE=body['date'].strftime("%Y/%m/%d %H:%M"), VOTE=str(body['vote'])))
 
     def get_article_body(self):
@@ -57,7 +57,7 @@ class ara_read_article(ara_form):
                 article_list.append(urwid.Text(article['content']))
             else:
                 reply_info = urwid.Text(self.reply_template.safe_substitute(AUTHOR=article['author_username'],
-                    NICKNAME='blahblah', DATE=article['date'].strftime("%Y/%m/%d %H:%M")))
+                    NICKNAME=article['author_nickname'], DATE=article['date'].strftime("%Y/%m/%d %H:%M")))
                 reply_body = urwid.Text(article['content'])
                 reply_pile = urwid.Pile([('fixed',1,urwid.Filler(reply_info)),reply_body])
                 indented_pile = widget.IndentColumn(reply_pile, article['depth']-1)
@@ -74,12 +74,11 @@ class ara_read_article(ara_form):
         self.infotext = urwid.Filler(urwid.Text(''))
 
         self.thread = self.server.article_manager.read(self.session_key, self.board_name, self.article_id)
+        assert self.thread[0]
         self.thread = self.thread[1]
-        assert self.thread
 
         self.set_thread_info()
         self.article_threads = self.get_article_body()
-        #self.article_threads = [urwid.Text('a')]
         assert self.article_threads
         self.article_list = urwid.ListBox(urwid.SimpleListWalker(self.article_threads))
 
