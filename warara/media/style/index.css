@@ -28,13 +28,18 @@
 .best_articles_content_first {
     float: left;
     width: 176px;
-    background: url(/media/image/base/index/raw_ara_w_main_best_number_0_background.png) repeat top left;
     list-style: none;
     padding: 9px;
     margin: 0;
 }
 
+#today_best_article_first {
+    background: url(/media/image/base/index/raw_ara_w_main_best_number_0_background.png) repeat top left;
+}
 
+#weekly_best_article_first {
+    background: url(/media/image/base/week_best_number_0_background.png) repeat top left;
+}
 
 .best_articles_content {
     float: right;
@@ -52,4 +57,3 @@
     float: left;
     margin: 0 8px 0 0;
 }
-
