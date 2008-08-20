@@ -29,7 +29,8 @@ class ara_main(ara_form):
             elif self.maincolumn.get_focus() == self.bests:
                 self.maincolumn.set_focus(self.menulist)
         elif key == "enter":
-            if self.maincolumn.get_focus() == self.menulist:
+            maincolumn_focus = self.maincolumn.get_focus()
+            if maincolumn_focus == self.menulist:
                 pos = self.menulist.get_focus()[1]
                 if pos == 0:
                     # TODO: 새 글 읽기로 가기
@@ -58,6 +59,16 @@ class ara_main(ara_form):
                     else:
                         self.overlay = None
                         self.parent.run()
+            elif maincolumn_focus == self.bests:
+                bests_focus = self.bests.get_focus()
+                if bests_focus == self.todaybest:
+                    selected = self.tblist_raw[self.tblist.get_focus()[1]]
+                    self.parent.change_page("read_article", {'session_key':self.session_key,
+                        'board_name':selected['board_name'], 'article_id':selected['id']})
+                elif bests_focus == self.weeklybest:
+                    selected = self.wblist_raw[self.wblist.get_focus()[1]]
+                    self.parent.change_page("read_article", {'session_key':self.session_key,
+                        'board_name':selected['board_name'], 'article_id':selected['id']})
         else:
             self.mainpile.keypress(size, key)
 
@@ -71,23 +82,23 @@ class ara_main(ara_form):
         menuitems = [widget.Item(" * "+w+"\n", None, 'selected') for w in self.menu]
         self.menulist = urwid.ListBox(urwid.SimpleListWalker(menuitems))
 
-	self.tbtext = urwid.Filler(urwid.Text(u"Today Best", align='center'))
-        retvalue, tblist = self.server.article_manager.get_today_best_list()
+	tbtext = urwid.Filler(urwid.Text(u"Today Best", align='center'))
+        retvalue, self.tblist_raw = self.server.article_manager.get_today_best_list()
         assert retvalue
 	tbitems = ["%(title)s (%(nickname)s, %(date)s)" % {"title":text['title'],
-            'nickname':text['author_nickname'],'date':text['date'].strftime("%Y/%m/%d")} for text in tblist]
+            'nickname':text['author_nickname'],'date':text['date'].strftime("%Y/%m/%d")} for text in self.tblist_raw]
         tbitems = [widget.Item(w, None, 'selected') for w in tbitems]
         self.tblist = urwid.ListBox(urwid.SimpleListWalker(tbitems))
-	self.todaybest = urwid.Pile([('fixed',1,self.tbtext), self.tblist])
+	self.todaybest = urwid.Pile([('fixed',1,tbtext), self.tblist])
 
-	self.wbtext = urwid.Filler(urwid.Text(u"Weekly Best", align='center'))
-        retvalue, wblist = self.server.article_manager.get_weekly_best_list()
+	wbtext = urwid.Filler(urwid.Text(u"Weekly Best", align='center'))
+        retvalue, self.wblist_raw = self.server.article_manager.get_weekly_best_list()
         assert retvalue
 	wbitems = ["%(title)s (%(nickname)s, %(date)s)" % {"title":text['title'],
-            'nickname':text['author_nickname'],'date':text['date'].strftime("%Y/%m/%d")} for text in wblist]
+            'nickname':text['author_nickname'],'date':text['date'].strftime("%Y/%m/%d")} for text in self.wblist_raw]
         wbitems = [widget.Item(w, None, 'selected') for w in wbitems]
         self.wblist = urwid.ListBox(urwid.SimpleListWalker(wbitems))
-	self.weeklybest = urwid.Pile([('fixed',1,self.wbtext), self.wblist])
+	self.weeklybest = urwid.Pile([('fixed',1,wbtext), self.wblist])
 
 	self.bests = urwid.Pile([self.todaybest, self.weeklybest])
 	self.copyrightnotice = urwid.Filler(urwid.Text(
