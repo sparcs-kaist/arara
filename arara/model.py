@@ -51,6 +51,7 @@ class Board(object):
         self.board_name = board_name
         self.board_description = board_description
         self.deleted = False
+        self.read_only = False
 
     def __repr__(self):
         return "<Board('%s', '%s')>" % (self.board_name, self.board_description)
@@ -188,6 +189,7 @@ board_table = Table('boards', metadata,
     Column('board_name', Unicode(30), unique=True),
     Column('board_description', UnicodeText),
     Column('deleted', Boolean),
+    Column('read_only', Boolean),
 )
 
 articles_table = Table('articles', metadata,

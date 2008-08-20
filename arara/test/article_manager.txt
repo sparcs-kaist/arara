@@ -14,6 +14,19 @@ True
 >>> server.board_manager.add_board(unicode(session_key_sysop), u'garbages', u'Garbage Board')
 (True, 'OK')
 
+# Read Only Board Test
+
+>>> server.board_manager.add_read_only_board(session_key_sysop, u'garbages')
+(True, 'OK')
+
+>>> article_dic = {'title': u'serialx is...', 'content': u'polarbear'}
+>>> server.article_manager.write_article(session_key_sysop, u'garbages', article_dic)
+(False, 'READ_ONLY_BOARD')
+
+>>> server.board_manager.return_read_only_board(session_key_sysop, u'garbages')
+(True, 'OK')
+
+
 # Register one user, combacsa.
 
 >>> user_reg_dic = {'username':u'combacsa', 'password':u'combacsa', 'nickname':u'combacsa', 'email':u'combacsa', 'signature':u'combacsa', 'self_introduction':u'combacsa', 'default_language':u'english' }
@@ -288,6 +301,7 @@ True
 
 >>> server.login_manager.logout(session_key)
 (True, 'OK')
+
 
 Fin!
 

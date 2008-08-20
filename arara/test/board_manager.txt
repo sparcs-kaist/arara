@@ -86,4 +86,12 @@ True
 >>> server.board_manager.get_board_list()
 (True, [{'board_name': u'garbages', 'board_description': u'Garbages Board'}])
 
+# Read Only Test!
+
+>>> server.board_manager.add_read_only_board(session_key_sysop, u'garbages')
+(True, 'OK')
+
+>>> server.board_manager.return_read_only_board(session_key_sysop, u'garbages')
+(True, 'OK')
+
 # Fin!

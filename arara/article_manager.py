@@ -492,7 +492,8 @@ class ArticleManager(object):
             2. Write 실패:
                 1. 존재하지 않는 게시판: False, 'BOARD_NOT_EXIST'
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                3. 읽기 전용 보드: False, 'READ_ONLY_BOARD'
+                4. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
 
         ret, user_info = self.login_manager.get_session(session_key)
@@ -501,17 +502,21 @@ class ArticleManager(object):
             session = model.Session()
             author = session.query(model.User).filter_by(username=user_info['username']).one()
             board = session.query(model.Board).filter_by(board_name=board_name).one()
-            new_article = model.Article(board,
-                                        article_dic['title'],
-                                        article_dic['content'],
-                                        author,
-                                        user_info['ip'],
-                                        None)
-            session.save(new_article)
-            if article_dic.has_key('is_searchable'):
-                if not article_dic['is_searchable']:
-                    new_article.is_searchable = False
-            session.commit()
+            if not board.read_only:
+                new_article = model.Article(board,
+                                            article_dic['title'],
+                                            article_dic['content'],
+                                            author,
+                                            user_info['ip'],
+                                            None)
+                session.save(new_article)
+                if article_dic.has_key('is_searchable'):
+                    if not article_dic['is_searchable']:
+                        new_article.is_searchable = False
+                session.commit()
+            else:
+                session.close()
+                return False, 'READ_ONLY_BOARD'
         else:
             session.close()
             return ret, message
