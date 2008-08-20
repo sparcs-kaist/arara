@@ -74,7 +74,7 @@ True
 # now Testing Article Manager!
 
 >>> server.article_manager.board_list(session_key)
-(True, [{'board_name': u'garbages', 'board_description': u'Garbage Board'}])
+(True, [{'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbage Board'}])
 
 # Write an article
 
@@ -204,7 +204,7 @@ True
 # Board list
 
 >>> server.article_manager.board_list(session_key)
-(True, [{'board_name': u'garbages', 'board_description': u'Garbage Board'}])
+(True, [{'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbage Board'}])
 
 
 # Write an article with many replies

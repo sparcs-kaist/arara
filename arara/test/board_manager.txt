@@ -35,7 +35,7 @@ True
 (True, 'OK')
 
 >>> server.board_manager.get_board_list()
-(True, [{'board_name': u'garbages', 'board_description': u'Garbages Board'}])
+(True, [{'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board'}])
 
 # Add another board 'ToSysop'
 
@@ -43,15 +43,15 @@ True
 (True, 'OK')
 
 >>> server.board_manager.get_board_list()
-(True, [{'board_name': u'garbages', 'board_description': u'Garbages Board'}, {'board_name': u'ToSysop', 'board_description': u'The comments to SYSOP'}])
+(True, [{'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board'}, {'read_only': False, 'board_name': u'ToSysop', 'board_description': u'The comments to SYSOP'}])
 
 # Check if you can get each board
 
 >>> server.board_manager.get_board(u'garbages')
-(True, {'board_name': u'garbages', 'board_description': u'Garbages Board'})
+(True, {'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board'})
 
 >>> server.board_manager.get_board(u'ToSysop')
-(True, {'board_name': u'ToSysop', 'board_description': u'The comments to SYSOP'})
+(True, {'read_only': False, 'board_name': u'ToSysop', 'board_description': u'The comments to SYSOP'})
 
 >>> server.board_manager.get_board(u'garbage_bag_board')
 (False, 'BOARD_NOT_EXIST')
@@ -73,7 +73,7 @@ True
 (False, 'BOARD_NOT_EXIST')
 
 >>> server.board_manager.get_board_list()
-(True, [{'board_name': u'garbages', 'board_description': u'Garbages Board'}])
+(True, [{'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board'}])
 
 # Try to delete the other remaining board with normal user session
 
@@ -81,10 +81,10 @@ True
 (False, 'NO_PERMISSION')
 
 >>> server.board_manager.get_board(u'garbages')
-(True, {'board_name': u'garbages', 'board_description': u'Garbages Board'})
+(True, {'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board'})
 
 >>> server.board_manager.get_board_list()
-(True, [{'board_name': u'garbages', 'board_description': u'Garbages Board'}])
+(True, [{'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board'}])
 
 # Read Only Test!
 
