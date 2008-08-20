@@ -19,25 +19,6 @@ class ara_main(ara_form):
         "(W)elcome screen",
         "(Q)uit",
     ]
-    def get_today_best(self):
-        return [
-            [u"투베갑시다", "peremen"],
-	    [u"나도 투베가자","pipoket"],
-	    [u"꺼져라 내가 투베간다","ssaljalu"],
-	    [u"같이가요","jacob"],
-	    [u"메롱 약오르지","combacsa"],
-	    [u"랄라","kkhsoft"],
-	]
-
-    def get_weekly_best(self):
-        return [
-            [u"투베갑시다", "peremen"],
-	    [u"나도 투베가자","pipoket"],
-	    [u"꺼져라 내가 투베간다","ssaljalu"],
-	    [u"같이가요","jacob"],
-	    [u"메롱 약오르지","combacsa"],
-	    [u"랄라","kkhsoft"],
-	]
 
     def keypress(self, size, key):
         if key in self.keymap:
@@ -91,13 +72,19 @@ class ara_main(ara_form):
         self.menulist = urwid.ListBox(urwid.SimpleListWalker(menuitems))
 
 	self.tbtext = urwid.Filler(urwid.Text(u"Today Best", align='center'))
-	tbitems = ["%(name)s (%(date)s)" % {"name":text[0], "date":text[1]} for text in self.get_today_best()]
+        retvalue, tblist = self.server.article_manager.get_today_best_list()
+        assert retvalue
+	tbitems = ["%(title)s (%(nickname)s, %(date)s)" % {"title":text['title'],
+            'nickname':text['author_nickname'],'date':text['date'].strftime("%Y/%m/%d")} for text in tblist]
         tbitems = [widget.Item(w, None, 'selected') for w in tbitems]
         self.tblist = urwid.ListBox(urwid.SimpleListWalker(tbitems))
 	self.todaybest = urwid.Pile([('fixed',1,self.tbtext), self.tblist])
 
 	self.wbtext = urwid.Filler(urwid.Text(u"Weekly Best", align='center'))
-	wbitems = ["%(name)s (%(date)s)" % {"name":text[0], "date":text[1]} for text in self.get_today_best()]
+        retvalue, wblist = self.server.article_manager.get_weekly_best_list()
+        assert retvalue
+	wbitems = ["%(title)s (%(nickname)s, %(date)s)" % {"title":text['title'],
+            'nickname':text['author_nickname'],'date':text['date'].strftime("%Y/%m/%d")} for text in wblist]
         wbitems = [widget.Item(w, None, 'selected') for w in wbitems]
         self.wblist = urwid.ListBox(urwid.SimpleListWalker(wbitems))
 	self.weeklybest = urwid.Pile([('fixed',1,self.wbtext), self.wblist])
