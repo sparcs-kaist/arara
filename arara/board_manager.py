@@ -3,7 +3,7 @@ from arara.util import require_login, filter_dict
 from arara import model
 from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
 
-BOARD_MANAGER_WHITELIST = ('board_name', 'board_description')
+BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only')
 
 class BoardManager(object):
     '''
