@@ -27,6 +27,25 @@ class ara_read_article(ara_form):
             self.parent.run()
             self.overlay = None
             self.parent.run()
+        elif key == 'd':
+            confirm = widget.Dialog("Really delete?", ["Yes", "No"], ('menu', 'bg', 'bgf'), 30, 5, self)
+            self.overlay = confirm
+            self.parent.run()
+            if confirm.b_pressed == "Yes":
+                retvaule, result = self.server.article_manager.delete(self.session_key,self.article_id,self.board_name)
+                self.overlay = None
+                self.parent.run()
+                if retvalue:
+                    notice = widget.Dialog("Article deleted.", ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
+                else:
+                    notice = widget.Dialog(result, ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
+                self.overlay = notice
+                self.parent.run()
+                self.overlay = None
+                self.parent.run()
+            else:
+                self.overlay = None
+                self.parent.run()
         else:
             self.mainpile.keypress(size, key)
 
