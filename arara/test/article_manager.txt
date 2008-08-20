@@ -233,6 +233,19 @@ True
 True
 >>> article[4]['root_id'] == article_id
 True
+>>> article[0]['root_id'] == article_id
+True
+
+>>> article[0]['depth']
+1
+>>> article[1]['depth']
+2
+>>> article[2]['depth']
+3
+>>> article[3]['depth']
+4
+>>> article[4]['depth']
+5
 
 # adding blacklist to test blacklist function
 
