@@ -51,6 +51,12 @@ def suite():
                               )
 
 if __name__ == "__main__":
+    try:
+        import coverage
+        coverage.start()
+    except ImportError:
+        print "Coverage is not installed. Coverage data not acculumating..."
+
     try: 
         import testoob 
         testoob.main(defaultTest="suite") 
