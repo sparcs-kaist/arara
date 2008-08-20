@@ -11,24 +11,6 @@ import arara
 def index(request):
     server = arara.get_server() 
     sess, r = warara.check_logged_in(request)
-    
-    if sess:
-        ret, message = server.member_manager.get_info(sess)
-        r['main_nickname'] = message
-
-    SAMPLE_BEST = {
-            'todays_best_list': [
-                {'title': '아라가 새로 바뀌었다!', 'date': datetime.datetime.now(), 'reply_count': 213},
-                {'title': '아라 참 멋지네요', 'date': datetime.datetime.now(), 'reply_count':56},
-                {'title': '우왕ㅋ국ㅋ', 'date': datetime.datetime.now(), 'reply_count':44},
-                ],
-            'weekly_best_list': [
-                {'title': '아라가 새로 바뀌었다!', 'date': datetime.datetime.now(), 'reply_count': 213},
-                {'title': '아라 참 멋지네요', 'date': datetime.datetime.now(), 'reply_count':56},
-                {'title': '우왕ㅋ국ㅋ', 'date': datetime.datetime.now(), 'reply_count':44},
-                ],
-            }
-    SAMPLE_BEST['logged_in'] = r['logged_in']
 
     max_length = 20 #todays, weekly best max string length
     suc, ret = server.article_manager.get_today_best_list(5)
@@ -53,9 +35,19 @@ def index(request):
             ret[i]['title'] += '...'
     assert suc, ret
     r['weekly_best_list'] = enumerate(ret)
-    
-    rendered = render_to_string('index.html', r)
-    return HttpResponse(rendered)
+
+    if request.method == 'POST':
+        session_key, r = warara.check_logged_in(request)
+        server = arara.get_server()
+        query_user_name = request.POST['query_user_name']
+        ret, information = server.member_manager.query_by_username(session_key, query_user_name)
+        assert ret, information
+        rendered = render_to_string('account/another_user_account.html', information)
+        return HttpResponse(rendered)
+
+    else:
+        rendered = render_to_string('index.html', r)
+        return HttpResponse(rendered)
 
 def help(request):
     server = arara.get_server() 

@@ -59,7 +59,15 @@ $(document).ready(function(){
     });
 
     $("#user_popup_user_information").click(function(event) {
-        alert("hello, world!");
+        $.post("/", {query_user_name: username},
+            function(data, textStatus) {
+                alert(data);
+                $(data).appendTo("#user_information_popup");
+            }
+        );
+        $("#user_information_popup").show();
+
+        /*show_user_information_box(username, event);*/
         event.preventDefault();
     });
 
@@ -113,6 +121,18 @@ $(document).ready(function(){
             });
         event.preventDefault();
     });
+
+    /*function show_user_information_box(username, event) {
+        $("#user_information_popup").show();
+        $("#user_information_close").click(function(event) {
+            $("#user_information_popup").hide("fast"); 
+        });
+        $(document).keyup(function(event) {
+            case 27:
+                $("#user_information_popup").hide("fast");
+        }); 
+    }*/
+
 	/* 로그인 css absolute show로 바꿈
     $("#login_toggle").toggle(
         function () {
