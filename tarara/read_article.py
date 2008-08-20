@@ -9,16 +9,21 @@ import widget
 from string import Template
 
 class ara_read_article(ara_form):
+    def get_selected_article_id(self):
+        return self.thread[self.article_list.get_focus()[1]]['id']
+
     def keypress(self, size, key):
         key = key.strip()
         if key == 'e':
-            self.parent.change_page("post_article", {'session_key':self.session_key, 'board_name':self.board_name, 'mode':'modify', 'article_id':self.article_id})
+            self.parent.change_page("post_article", {'session_key':self.session_key, 'board_name':self.board_name,
+                'mode':'modify', 'article_id':self.get_selected_article_id()})
         elif key == 'r':
-            self.parent.change_page("post_article", {'session_key':self.session_key, 'board_name':self.board_name, 'mode':'reply', 'article_id':self.article_id})
+            self.parent.change_page("post_article", {'session_key':self.session_key, 'board_name':self.board_name,
+                'mode':'reply', 'article_id':self.get_selected_article_id()})
         elif key == 'q':
             self.parent.change_page("list_article", {'session_key':self.session_key, 'board_name':self.board_name})
         elif key == 'v':
-            retvalue = self.server.article_manager.vote_article(self.session_key, self.board_name, self.article_id)
+            retvalue = self.server.article_manager.vote_article(self.session_key, self.board_name, self.get_selected_article_id())
             if retvalue[0]:
                 confirm = widget.Dialog("Voted.", ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
             else:
@@ -32,7 +37,7 @@ class ara_read_article(ara_form):
             self.overlay = confirm
             self.parent.run()
             if confirm.b_pressed == "Yes":
-                retvaule, result = self.server.article_manager.delete(self.session_key,self.article_id,self.board_name)
+                retvaule, result = self.server.article_manager.delete(self.session_key,self.get_selected_article_id(),self.board_name)
                 self.overlay = None
                 self.parent.run()
                 if retvalue:
@@ -73,13 +78,16 @@ class ara_read_article(ara_form):
         body = self.thread
         for article in body:
             if article['depth'] == 1:
-                article_list.append(urwid.Text(article['content']))
+                article_text = widget.NonTextItem(urwid.Text(article['content']),None,'selected')
+                article_list.append(article_text)
             else:
-                reply_info = urwid.Text(self.reply_template.safe_substitute(AUTHOR=article['author_username'],
-                    NICKNAME=article['author_nickname'], DATE=article['date'].strftime("%Y/%m/%d %H:%M")))
+                reply_title = urwid.Filler(urwid.Text(self.title_template.safe_substitute(TITLE=article['title'])))
+                reply_info = urwid.Filler(urwid.Text(self.reply_template.safe_substitute(AUTHOR=article['author_username'],
+                    NICKNAME=article['author_nickname'], DATE=article['date'].strftime("%Y/%m/%d %H:%M"))))
                 reply_body = urwid.Text(article['content'])
-                reply_pile = urwid.Pile([('fixed',1,urwid.Filler(reply_info)),reply_body])
+                reply_pile = urwid.Pile([('fixed',1,reply_info),('fixed',1,reply_title),reply_body])
                 indented_pile = widget.IndentColumn(reply_pile, article['depth']-1)
+                indented_pile = widget.NonTextItem(indented_pile,None,'selected')
                 article_list.append(indented_pile)
         return article_list
 

@@ -20,6 +20,10 @@ class Item(Selectable, urwid.AttrWrap):
         w = urwid.Text(text)
         urwid.AttrWrap.__init__(self, w, attr, focus_attr)
 
+class NonTextItem(Selectable, urwid.AttrWrap):
+    def __init__(self, w, attr, focus_attr=None):
+        urwid.AttrWrap.__init__(self, w, attr, focus_attr)
+
 class MarkedItem(Selectable, urwid.WidgetWrap):
     def __init__(self, marker, widget):
         width = len(marker)
