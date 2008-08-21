@@ -3,10 +3,12 @@ import datetime
 import time
 import xmlrpclib
 
-from arara.util import require_login, filter_dict
+from arara.util import require_login, filter_dict, log_method_call_with_source
 from arara import model
 from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy import and_, or_, not_
+
+log_method_call = log_method_call_with_source('article_manager')
 
 WRITE_ARTICLE_DICT = ('title', 'content')
 READ_ARTICLE_WHITELIST = ('id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'author_nickname', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable', 'attach')
@@ -163,6 +165,7 @@ class ArticleManager(object):
             return_list.append(filtered_dict)
         return return_list
 
+    @log_method_call
     def get_today_best_list(self, count=5):
         '''
         전체 보드에서 투베를 가져오는 함수
@@ -182,6 +185,7 @@ class ArticleManager(object):
         else:
             return False, 'DATABASE_ERROR'
 
+    @log_method_call
     def get_today_best_list_specific(self, board_name, count=5):
         '''
         해당 보드에서 투베를 가져오는 함수
@@ -209,6 +213,7 @@ class ArticleManager(object):
         else:
             return False, 'DATABASE_ERROR'
 
+    @log_method_call
     def get_weekly_best_list(self, count=5):
         '''
         전체 보드에서 윅베를 가져오는 함수
@@ -231,6 +236,7 @@ class ArticleManager(object):
         else:
             return False, 'DATABASE_ERROR'
 
+    @log_method_call
     def get_weekly_best_list_specific(self, board_name, count=5):
         '''
         해당 보드에서 윅베를 가져오는 함수
@@ -258,6 +264,7 @@ class ArticleManager(object):
         else:
             return False, 'DATABASE_ERROR'
 
+    @log_method_call
     def article_list(self, session_key, board_name, page=1, page_length=20):
         '''
         게시판의 게시글 목록 읽어오기
@@ -319,6 +326,7 @@ class ArticleManager(object):
             return False, 'DATABASE_ERROR'
              
     @require_login
+    @log_method_call
     def read(self, session_key, board_name, no):
         '''
         DB로부터 게시글 하나를 읽어옴
@@ -342,6 +350,7 @@ class ArticleManager(object):
         '''
 
         _, user_info = self.login_manager.get_session(session_key)
+        user_info.asdfasdgag
         ret, message = self._is_board_exist(board_name)
         
         if ret:
@@ -381,6 +390,7 @@ class ArticleManager(object):
             return ret, message
 
     @require_login
+    @log_method_call
     def article_list_below(self, session_key, board_name, no, page_length=20):
         '''
         게시물을 읽을 때 밑에 표시될 게시글 목록을 가져오는 함수
@@ -428,6 +438,7 @@ class ArticleManager(object):
         
 
     @require_login
+    @log_method_call
     def vote_article(self, session_key, board_name, article_no):
         '''
         DB의 게시물 하나의 추천수를 증가시킴
@@ -474,6 +485,7 @@ class ArticleManager(object):
             return False, message
 
     @require_login
+    @log_method_call
     def write_article(self, session_key, board_name, article_dic):
         '''
         DB에 게시글 하나를 작성함
@@ -524,6 +536,7 @@ class ArticleManager(object):
         return True, new_article.id
 
     @require_login
+    @log_method_call
     def write_reply(self, session_key, board_name, article_no, reply_dic):
         '''
         댓글 하나를 해당하는 글에 추가
@@ -576,6 +589,7 @@ class ArticleManager(object):
         return True, new_reply.id
 
     @require_login
+    @log_method_call
     def modify(self, session_key, board_name, no, article_dic):
         '''
         DB의 해당하는 게시글 수정
@@ -631,6 +645,7 @@ class ArticleManager(object):
         return True, article.id
 
     @require_login
+    @log_method_call
     def delete(self, session_key, board_name, no):
         '''
         DB에 해당하는 글 삭제
@@ -677,6 +692,8 @@ class ArticleManager(object):
             return ret, message
         session.close()
         return True, article.id
+
+    @log_method_call
     def board_list(self, session_key):
         '''
         게시판 목록 읽어오기
@@ -696,6 +713,7 @@ class ArticleManager(object):
             return False, 'DATABASE_ERROR'
 
     @require_login
+    @log_method_call
     def search(self, session_key, board_name, query_text, search_type='All', page=1, page_length=20):
         '''
         게시물 검색

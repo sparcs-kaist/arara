@@ -1,5 +1,29 @@
 # -*- coding: utf-8 -*-
 
+import traceback
+import logging
+
+
+def log_method_call_with_source(source):
+
+    def log_method_call(function):
+        def wrapper(self, *args):
+            logger = logging.getLogger(source)
+            logger.debug("CALL %s.%s%s", source, function.func_name, repr(args))
+            try:
+                ret = function(self, *args)
+            except:
+                logger.error("EXCEPTION %s.%s%s:\n%s", source, function.func_name,
+                        repr(args), traceback.format_exc())
+                raise
+            logger.debug("RETURN %s.%s%s=%s", source, function.func_name, repr(args), repr(ret))
+            return ret
+
+        return wrapper
+
+    return log_method_call
+
+
 def require_login(function):
     """
     로그인이 되어 있을 때에만 작동하는 메소드로 만들어주는 데코레이터.
@@ -11,6 +35,7 @@ def require_login(function):
             return function(self, session_key, *args)
     return wrapper
 
+
 def filter_dict(dictionary, keys):
     """Dictionary is filtered by the given keys."""
     new_dict = {}
@@ -18,6 +43,7 @@ def filter_dict(dictionary, keys):
         if key in keys:
             new_dict[key] = dictionary[key]
     return new_dict
+
 
 def is_keys_in_dict(dictionary, keys):
     for key in keys:

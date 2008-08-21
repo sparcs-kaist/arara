@@ -4,6 +4,8 @@ import sys
 import optparse
 import traceback
 import xmlrpclib
+import logging
+import logging.handlers
 
 PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
 sys.path.append(PROJECT_PATH)
@@ -14,6 +16,14 @@ import arara.model
 from thirdparty import wsgiserver
 
 from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
+
+handler = logging.handlers.RotatingFileHandler('arara_server.log', 'a', 2**20*50, 10)
+formatter = logging.Formatter('%(asctime)s [%(process)d:%(thread)X] <%(name)s> ** %(levelname)s ** %(message)s')
+handler.setFormatter(formatter)
+handler.setLevel(logging.DEBUG)
+
+logging.getLogger('').setLevel(logging.NOTSET)
+logging.getLogger('').addHandler(handler)
 
 class DetailedFaultXMLRPCDispatcher(SimpleXMLRPCDispatcher):
     def _marshaled_dispatch(self, data, dispatch_method = None):

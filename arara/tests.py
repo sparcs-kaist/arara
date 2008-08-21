@@ -17,6 +17,13 @@ from arara import notice_manager
 from arara import read_status_manager
 from arara import sysop_manager
 
+import logging
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s <%(name)> ** %(levelname) ** %(message)s',
+                    filename='arara_tests.log',
+                    filemode='w')
+
 def suite():
     return unittest.TestSuite([
                                doctest.DocFileSuite(
