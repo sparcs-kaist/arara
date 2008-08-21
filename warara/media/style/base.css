@@ -26,7 +26,7 @@ a {
 
 #menu_wrapper {
     float: left;
-    width: 12em;
+    width: 14%;
     max-width: 14%;
     background-color: #f0f0f0;
 
@@ -36,7 +36,7 @@ a {
 
 #content_wrapper {
     float: right;
-    width: 73em;
+    width: 86%;
     max-width: 86%;
 }
 

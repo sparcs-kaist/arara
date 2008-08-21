@@ -14,15 +14,31 @@
 {% block article_content %}
 
 {% for article in article_read_list %}
-{% ifequal article.id article.root_id %}
-{% else %}
 <div class="article article_depth_{{article.depth}}">
-    <h1 class="article_title"><a href="#">{{article.title}}</a></h1>
+    {% ifequal article.id article.root_id %}
+    <h1 class="root_article_title"><a href="#">{{article.title}}</a></h1>
+    <div id="root_article_info">
+        <span class="user_nickname username">{{article.author_nickname}}</span>
+        <span class="user_name">{{article.author_username}}</span>
+        <span class="article_date">{{article.date|date:"Y/m/d H:i:s"}}</span>
+        <span class="vote">vote: {{article.vote}} |</span>
+        <span class="hit">hit: {{article.hit}} |</span>
+        <div class="clear_float"></div>
+    </div>
+    {% else %}
+    <div class="article_reply_title">
+        <h1><a href="#">{{article.title}}</a></h1>
+        <span class="article_info">
+            <span class="user_nickname username">{{article.author_nickname}}</span>
+            <span class="user_name">{{article.author_username}}</span> |
+            <span class="vote">vote:{{article.vote}} </span> |
+            <span class="article_date">{{article.date|date:"Y/m/d H:i:s"}}</span>
+        </span>
+        <div class="clear_float"></div>
+    </div>
+    {% endifequal %}
     <div class="article_content{%ifequal article.read_status "R" %} previously_read{% endifequal %}">
-        <span class="username">{{article.author_username}}</span>
-        <span class="article_date">{{article.date}}</span>
-        <span class="vote">vote:{{article.vote}} </span>
-        <div class="article_text">
+        <div class="{%ifequal article.id article.root_id%}article_root_text{%else%}article_text{%endifequal%}">
             {% if not article.blacklisted %}
             {{article.content|safe}}
             {% else %}
@@ -30,43 +46,78 @@
             {% endif %}
         </div>
         <div class="article_file">
+            {% if article.attach %}
+            file(s) : 
+            {% endif %}
             {% for file in article.attach %}
             <a href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/file/{{file.order}}" target="_blank">{{file.filename}}</a>
             {% endfor %}
         </div>
-        {% if not article.deleted %}
-        <a class="article_reply_show" href="#">reply</a>
-        {% if article.flag_modify %}
-        <a class="article_modify" href="/board/{{board_name}}/write?article_id={{article.id}}">modify</a>
-        <a class="article_delete" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/delete/">delete</a>
-        {% endif %}
-        <a class="article_vote" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/vote">vote</a>
-        {% endif %}
+        <div class="article_read_buttons">
+            {% if not article.deleted %}
+            <a class="article_reply_show" href="#">reply</a>
+            {% if article.flag_modify %}
+            <a class="article_modify" href="/board/{{board_name}}/write?article_id={{article.id}}">modify</a>
+            <a class="article_delete" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/delete/">delete</a>
+            {% endif %}
+            <a class="article_vote" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/vote">vote</a>
+            {% endif %}
+        </div>
+        <div class="clear_float"></div>
         <div class="article_reply">
             <form class="article_reply_form" action="/board/{{board_name}}/{{article.id}}/reply/" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="root_id" value="{{article.root_id}}" />
                 <ul>
-                    <li><input type="text" name="title" value="{{article.title}}" /></li>
+                    <li><input type="text" name="title" class="write_reply_title" value="{{article.title}}" /></li>
                     <li><textarea name="content"></textarea></li>
-                    <li><input type="submit" name="submit" value="write" /></li>
-                    <div id="article_write_file" class="">
-                        <p>
-                        <caption>file 1 : </caption>
-                        <input type="file" name="file1"></input>
-                        <input type="button" name="file_input_add" value="+"></input>
-                        </p>
-                    </div>
                 </ul>
                 <input type="hidden" value="{{article_no}}" name="article_no"></input>
+                <div class="article_write_file">
+                    <div class="file_line">
+                        <span class="article_write_file_caption">file 1</span>
+                        <div class="file_upload_p">
+                            <div class="file_upload_t">
+                                <input type="file" name="file1" class="file_upload" size=50></input>
+                            </div>
+                            <div class="file_upload_f">
+                                <input name="file1_fi" class="file_input_f"></input> <!-- file1 fake input -->
+                                <div class="file_search_button">
+                                    search
+                                </div>
+                            </div>
+                            <input type="button" name="file_input_add" class="small_btn" value="+"></input>
+                        </div>
+                    </div>
+                </div>
+                <input type="submit" class="write_reply small_btn" name="submit" value="write" />
+                <input type="button" class="cancel_reply small_btn" value="cancel"></input>
+                <div class="clear_float"></div>
             </form>
         </div>
     </div>
 </div>
-{% endifequal %}
 {% endfor %}
+
+<div id="file_line_model">
+    <div class="file_line">
+        <span class="article_write_file_caption">file 1</span>
+        <div class="file_upload_p">
+            <div class="file_upload_t">
+                <input type="file" name="file1" class="file_upload" size=95></input>
+            </div>
+            <div class="file_upload_f">
+                <input name="file1_fi" class="file_input_f"></input> <!-- file1 fake input -->
+                <div class="file_search_button">
+                    search
+                </div>
+            </div>
+            <input type="button" name="file_input_delete" class="small_btn" value="-"></input>
+        </div>
+    </div>
+</div>
 <div id="article_nav_buttons">
-    <a id="list_link" href="/board/{{board_name}}">list</a>
-    <a id="write_link" href="/board/{{board_name}}/write">write</a>
+    <a class="btn" id="list_link" href="/board/{{board_name}}">list</a>
+    <a class="btn" id="write_link" href="/board/{{board_name}}/write">write</a>
 </div>
 
 {% endblock article_content %}

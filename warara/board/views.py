@@ -151,12 +151,12 @@ def read(request, board_name, article_id):
             article_list[i]['title'] = 'deleted'
 
         if article_list[i].get('attach', 0):
-
+            '''
             for j in range(len(article_list[i]['attach'])):
                 f = open("files/%s/%s" % (article_list[i]['attach'][j]['filepath'], 
                     article_list[i]['attach'][j]['filehash']), 'rb')
                 article_list[i]['attach'][j]['order'] = j
-
+            '''
     r['board_name'] = board_name
     username = request.session['arara_username']
     r['article_id'] = article_id

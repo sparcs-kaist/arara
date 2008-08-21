@@ -63,12 +63,18 @@
 }
 
 input.file_upload{
-	position: absolute;
 	-moz-opacity: 0;
 	filter: alpha(opacity: 0);
 	opacity: 0;
 	z-index: 2;
+	float: right;
+}
+
+div.file_upload_t {
+	position: absolute;
+	z-index: 2;
 	width: 90%;
+	text-align: right;
 	float: right;
 }
 
