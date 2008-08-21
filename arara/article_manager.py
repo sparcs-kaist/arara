@@ -350,7 +350,6 @@ class ArticleManager(object):
         '''
 
         _, user_info = self.login_manager.get_session(session_key)
-        user_info.asdfasdgag
         ret, message = self._is_board_exist(board_name)
         
         if ret:
