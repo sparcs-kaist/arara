@@ -68,7 +68,7 @@ mikkang
 >>> user_password_dic = {'username':u'mikkang', 'current_password':u'ggingkkang', 'new_password':u'mikkang'}
 >>> server.member_manager.modify_password(session_key, user_password_dic)
 (True, 'OK')
->>> modify_user_reg_dic = { 'nickname':u'ggingkkang', 'signature':u'KAIST07 && JSH07 && SPARCS07', 'self_introduction':u'i am Munbeom', 'default_language':u'korean', 'widget':1, 'layout':'aaa' }
+>>> modify_user_reg_dic = { 'nickname':u'ggingkkang', 'signature':u'KAIST07 && JSH07 && SPARCS07', 'self_introduction':u'i am Munbeom', 'default_language':u'korean', 'widget':1, 'layout':u'aaa' }
 >>> server.member_manager.modify(session_key, modify_user_reg_dic)
 (True, 'OK')
 >>> ret, member = server.member_manager.get_info(unicode(session_key))
