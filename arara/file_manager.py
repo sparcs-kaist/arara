@@ -66,14 +66,14 @@ class FileManager(object):
             session.save(file)
             session.commit()
             session.close()
-            return True, filepath_to_save, ghost_filename 
+            return True, filepath_to_save, ghost_filename
         except Exception: 
             session.close()
             return False, 'DATABASE_ERROR' 
 
     @require_login
     @log_method_call
-    def download_file(self, session_key, article_id, filename):
+    def download_file(self, session_key, article_id, file_id):
         '''
         article의 파일을 다운로드 할때 실제로 파일이 저장된 장소와 저장된 파일명을 리턴해주는 함수 
         
@@ -98,7 +98,7 @@ class FileManager(object):
             return False, 'ARTICLE_NOT_EXIST'
         try:
             file = session.query(model.File).filter(
-                    and_(model.file_table.c.filename == filename,
+                    and_(model.file_table.c.id == file_id,
                     model.file_table.c.user_id == article.author.id,
                     model.file_table.c.board_id == article.board.id,
                     model.file_table.c.article_id == article.id, 
@@ -115,7 +115,7 @@ class FileManager(object):
 
     @require_login
     @log_method_call_important
-    def delete_file(self, session_key, article_id, filename):
+    def delete_file(self, session_key, article_id, file_id):
         '''
         지울 파일이 저장된 장소와 저장된 파일명을 리턴해주는 함수
         
@@ -142,7 +142,7 @@ class FileManager(object):
             return False, 'ARTICLE_NOT_EXIST'
         try:
             file = session.query(model.File).filter(
-                    and_(model.file_table.c.filename == filename,
+                    and_(model.file_table.c.id == file_id,
                     model.file_table.c.user_id == article.author.id,
                     model.file_table.c.board_id == article.board.id,
                     model.file_table.c.article_id == article.id,

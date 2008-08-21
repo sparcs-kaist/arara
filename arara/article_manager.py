@@ -153,8 +153,7 @@ class ArticleManager(object):
                     for one_file in attach_files:
                         one_file_dict = one_file.__dict__
                         item_dict['attach'].append({'filename': one_file_dict['filename'],
-                                                    'filehash': one_file_dict['saved_filename'],
-                                                    'filepath': one_file_dict['filepath']})
+                                                    'file_id': one_file_dict['id']})
         if whitelist:
             filtered_dict = filter_dict(item_dict, whitelist)
         else:

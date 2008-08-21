@@ -53,8 +53,8 @@ True
 
 >>> time.time = org_time
 
->>> server.file_manager.download_file(session_key, article_id , u'hahahah.jpg')
+>>> server.file_manager.download_file(session_key, article_id , 1)
 (True, u'garbages/1970/1/1', u'a99c6ec38a09c884d8ae2ae04ebaf652')
 
->>> server.file_manager.delete_file(session_key, article_id , u'hahahah.jpg')
+>>> server.file_manager.delete_file(session_key, article_id , 1)
 (True, u'garbages/1970/1/1', u'a99c6ec38a09c884d8ae2ae04ebaf652')
