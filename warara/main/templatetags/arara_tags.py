@@ -14,6 +14,6 @@ class BoardListUpdateNode(template.Node):
         board_list = cache.get('board_list')
         if not board_list:
             suc, board_ilst = server.board_manager.get_board_list()
-            cache.set('board_list', board_list, 60)
+            cache.set('board_list', board_list, 10)
         context["board_list"] = board_list
         return ""
