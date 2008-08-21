@@ -295,6 +295,31 @@ class MemberManager(object):
             session.close()
             return False
 
+    def is_registered_email(self, email):
+        '''
+        등록된 이메일인지의 여부를 알려준다.
+        Confirm하지 않았더라도 등록되어있으면 True를 리턴한다.
+
+        @type  email: string
+        @param email: E-mail to check whether registered or not.
+        @rtype: bool
+        @return:
+            1. 존재하는 사용자: True
+            2. 존재하지 않는 사용자: False
+
+        >>> member_manager.is_registered_email('pipoket@hotmail.com')
+        False
+        '''
+        session = model.Session()
+        query = session.query(model.User).filter_by(email=email)
+        try:
+            user = query.one()
+            session.close()
+            return True
+        except InvalidRequestError:
+            session.close()
+            return False
+
     @require_login
     def get_info(self, session_key):
         '''
