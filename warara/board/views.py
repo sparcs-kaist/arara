@@ -83,15 +83,17 @@ def list(request, board_name):
     return HttpResponse(rendered)
 
 def write(request, board_name):
+    server = arara.get_server()
     if request.method == 'POST':
         return write_(request, board_name)
 
     sess, r = warara.check_logged_in(request)
     article_id = request.GET.get('article_id', 0)
     r['t_write'] = 'write'
+    ret, r['default_text'] = server.member_manager.get_info(sess)
+    r['default_text'] = r['default_text']['signature']
 
     if article_id:
-        server = arara.get_server()
         sess = request.session["arara_session_key"]
         ret, article_list = server.article_manager.read(sess, board_name, int(article_id))
         r['default_title'] = article_list[0]['title']

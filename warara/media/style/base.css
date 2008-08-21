@@ -7,6 +7,10 @@ body {
     background-color: #bbb;
 }
 
+a {
+	text-decoration: none;
+}
+
 #wrapper {
     width: 85em;
     max-width: 100%;
@@ -59,6 +63,7 @@ body {
     float: left;
     margin: 0.3em 0 0 0.45em;
     vertical-align: middle;
+    list-style-type: none;
 }
 
 #header {
@@ -155,6 +160,7 @@ body {
 #menu li {
     margin: 0 0 0.35em 0;
     font-family: Verdana;
+    list-style-type: none;
 }
 
 #header {
@@ -175,11 +181,6 @@ body {
 }
 #header h1 a img {
     border: 0;
-}
-
-#top_menu_wrapper span, a {
-    text-decoration: none;
-    color:#828282;
 }
 
 /* IE hack */
@@ -204,6 +205,11 @@ body {
     margin: 0.52em 0 0 0;
     border-bottom: 1px solid #cccccc;
     background-color: white;
+}
+
+#top_menu_wrapper span, #top_menu_wrapper a {
+    text-decoration: none;
+    color:#828282;
 }
 
 #top_menu {
@@ -259,6 +265,7 @@ body {
 #user_popup li {
     border-bottom: 1px solid #999;
     padding: 0.2em;
+    list-style-type: none;
 }
 
 /* user information style*/

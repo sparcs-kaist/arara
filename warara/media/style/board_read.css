@@ -1,3 +1,8 @@
+#board_content {
+	padding: 1em 1%;
+	background: url("/media/image/board/read_title_bg.png") no-repeat top left;
+}
+
 .article_text table{ 
     font-size: small;
     border: 1px solid #69f;
@@ -17,11 +22,6 @@
     list-style-type: none;
     margin: 0;
     padding: 0;
-}
-
-input[type="file"] {
-	size = 60;
-	width = 60px;
 }
 
 .float_left {
@@ -44,10 +44,12 @@ div.article_depth_10 {margin-left: 18em;}
 div.article_depth_11 {margin-left: 20em;}
 div.article_depth_12 {margin-left: 22em;}
 
-.article_depth_2 h1 {font-size: 1.5em;}
-.article_depth_3 h1 {font-size: 1.5em;}
-.article_depth_4 h1 {font-size: 1.5em;}
-.article_depth_5 h1 {font-size: 1.5em;}
+/*
+.article_depth_1 h1 {font-size: 1.5em;}
+.article_depth_2 h1 {font-size: 1.2em;}
+.article_depth_3 h1 {font-size: 1.2em;}
+.article_depth_4 h1 {font-size: 1.2em;}
+.article_depth_5 h1 {font-size: 1.2em;}
 .article_depth_6 h1 {font-size: 1.45em;}
 .article_depth_7 h1 {font-size: 1.45em;}
 .article_depth_8 h1 {font-size: 1.45em;}
@@ -55,6 +57,13 @@ div.article_depth_12 {margin-left: 22em;}
 .article_depth_10 h1 {font-size: 1.45em;}
 .article_depth_11 h1 {font-size: 1.45em;}
 .article_depth_12 h1 {font-size: 1.45em;}
+--breadfish
+*/
+
+#board_content h1 a{
+	font-size: 100%;
+	color: black;
+}
 
 form {
     /*display: inline;*/

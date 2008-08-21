@@ -8,6 +8,7 @@
 
 #article_table table {
     border-collapse: collapse;
+	border: 0px;
     border-top: 1px solid #65aa5c;
 }
 
@@ -20,6 +21,7 @@
 }
 
 .column.cursor_col{
+	border-left: 1px solid white;
     width: 1%;
 }
 .column.id_col{

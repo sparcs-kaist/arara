@@ -33,6 +33,10 @@
     margin: 0;
 }
 
+.best_articles_content_first li{
+    list-style: none;
+}
+
 #today_best_article_first {
     background: url(/media/image/base/index/raw_ara_w_main_best_number_0_background.png) repeat top left;
 }
