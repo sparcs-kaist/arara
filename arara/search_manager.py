@@ -18,7 +18,6 @@ class SearchManager(object):
 
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
-        session = model.Session()
         if item_dict.has_key('author_id'):
             item_dict['author_username'] = item.author.username
             del item_dict['author_id']
