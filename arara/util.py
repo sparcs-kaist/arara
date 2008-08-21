@@ -8,18 +8,21 @@ def log_method_call_with_source_important(source):
     def log_method_call(function):
         def wrapper(self, session_key, *args, **kwargs):
             logger = logging.getLogger(source)
-            if self.login_manager:
+            username = session_key
+            if 'login_manager' in self.__dict__:
                 ret, user_info = self.login_manager.get_session(session_key)
-                logger.info("FUNCTION %s.%s%s is called by '%s'", source, function.func_name, repr(args), user_info['username'])
-            else:
-                logger.info("CALL %s.%s%s", source, function.func_name, repr(args))
+                username = user_info['username']
+            logger.info("CALL(by %s) %s.%s%s", username, source,
+                    function.func_name, repr(args))
             try:
                 ret = function(self, session_key, *args, **kwargs)
             except:
-                logger.error("EXCEPTION %s.%s%s:\n%s", source, function.func_name,
-                        repr(args), traceback.format_exc())
+                logger.error("EXCEPTION(by %s) %s.%s%s:\n%s", username, source,
+                        function.func_name, repr(args), traceback.format_exc())
                 return False, 'INTERNAL_SERVER_ERROR'
-            logger.debug("RETURN %s.%s%s=%s", source, function.func_name, repr(args), repr(ret))
+            logger.debug("RETURN(by %s) %s.%s%s=%s", username, source,
+                    function.func_name, repr(args), repr(ret))
+
             return ret
 
         return wrapper
@@ -40,6 +43,7 @@ def log_method_call_with_source(source):
                         repr(args), traceback.format_exc())
                 return False, 'INTERNAL_SERVER_ERROR'
             logger.debug("RETURN %s.%s%s=%s", source, function.func_name, repr(args), repr(ret))
+
             return ret
 
         return wrapper
