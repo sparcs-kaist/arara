@@ -1,4 +1,4 @@
-import pickle
+from django.core.cache import cache
 
 def check_logged_in(request):
     r = {}
@@ -9,7 +9,29 @@ def check_logged_in(request):
     else:
         sess = ""
         r['logged_in'] = False
-        r['id'] = ""
+        r['username'] = ""
 
     return sess, r
 
+def cache_page(expire=60):
+    def cache_page_wrap(function):
+        def wrapper(request, *args, **kwargs):
+            if request.method != 'GET':
+                return function(request, *args, **kwargs)
+
+            sess, r = check_logged_in(request)
+            key = '%s_%s_%s' % (__file__, function.func_name, repr(args))
+            logged_in = r['logged_in']
+            if logged_in:
+                username = r['username']
+                key = '%s_%s' % (key, username)
+
+            response = cache.get(key)
+            if response == None:
+                response = function(request, *args, **kwargs)
+                cache.set(key, response, expire)
+
+            return response
+
+        return wrapper
+    return cache_page_wrap
