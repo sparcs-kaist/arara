@@ -33,7 +33,8 @@ True
 
 >>> server.board_manager.add_board(session_key_sysop, u'garbages', u'Garbages Board')
 (True, 'OK')
-
+>>> server.board_manager.add_board(session_key_sysop, u'garbages', u'Garbages Board')
+(False, 'ALREADY_ADDED')
 >>> server.board_manager.get_board_list()
 (True, [{'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board'}])
 
@@ -68,6 +69,9 @@ True
 
 >>> server.board_manager.delete_board(session_key_sysop, u'ToSysop')
 (True, 'OK')
+>>> server.board_manager.delete_board(session_key_sysop, u'chaos')
+(False, 'BOARD_NOT_EXIST')
+
 
 >>> server.board_manager.get_board(u'ToSysop')
 (False, 'BOARD_NOT_EXIST')
@@ -90,8 +94,21 @@ True
 
 >>> server.board_manager.add_read_only_board(session_key_sysop, u'garbages')
 (True, 'OK')
+>>> server.board_manager.add_read_only_board(session_key, u'garbages')
+(False, 'NO_PERMISSION')
+>>> server.board_manager.add_read_only_board(session_key_sysop, u'garbages')
+(False, 'ALEARDY_READ_ONLY_BOARD')
+>>> server.board_manager.add_read_only_board(session_key_sysop, u'chaos')
+(False, 'BOARD_NOT_EXIST')
+
 
 >>> server.board_manager.return_read_only_board(session_key_sysop, u'garbages')
 (True, 'OK')
+>>> server.board_manager.return_read_only_board(session_key, u'garbages')
+(False, 'NO_PERMISSION')
+>>> server.board_manager.return_read_only_board(session_key_sysop, u'chaos')
+(False, 'BOARD_NOT_EXIST')
+>>> server.board_manager.return_read_only_board(session_key_sysop, u'garbages')
+(False, 'NOT_READ_ONLY_BOARD')
 
 # Fin!
