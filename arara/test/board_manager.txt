@@ -111,4 +111,12 @@ True
 >>> server.board_manager.return_read_only_board(session_key_sysop, u'garbages')
 (False, 'NOT_READ_ONLY_BOARD')
 
+>>> class A(object):
+...     pass
+>>> a = A()
+>>> a.a = 1
+
+>>> server.board_manager._get_dict(a)
+{'a': 1}
+
 # Fin!
