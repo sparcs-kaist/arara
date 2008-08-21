@@ -23,9 +23,9 @@ USER_PUBLIC_KEYS = ['username', 'password', 'nickname', 'email',
 USER_QUERY_WHITELIST = ('username', 'nickname', 'email',
         'signature', 'self_introduction', 'last_login_ip')
 USER_PUBLIC_WHITELIST= ('username', 'nickname', 'email',
-        'signature', 'self_introduction', 'default_language', 'activated')
+        'signature', 'self_introduction', 'default_language', 'activated', 'widget', 'layout')
 USER_PUBLIC_MODIFIABLE_WHITELIST= ('nickname', 'signature', 'self_introduction', 
-        'default_language')
+        'default_language', 'widget', 'layout')
 USER_SEARCH_WHITELIST = ('username', 'nickname')
 
 class MemberManager(object):
