@@ -7,11 +7,11 @@ import logging
 def log_method_call_with_source(source):
 
     def log_method_call(function):
-        def wrapper(self, *args):
+        def wrapper(self, *args, **kwargs):
             logger = logging.getLogger(source)
             logger.debug("CALL %s.%s%s", source, function.func_name, repr(args))
             try:
-                ret = function(self, *args)
+                ret = function(self, *args, **kwargs)
             except:
                 logger.error("EXCEPTION %s.%s%s:\n%s", source, function.func_name,
                         repr(args), traceback.format_exc())
