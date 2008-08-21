@@ -53,6 +53,8 @@ def suite():
 if __name__ == "__main__":
     try:
         import coverage
+        print "Running coverage..."
+        coverage.erase()
         coverage.start()
     except ImportError:
         print "Coverage is not installed. Coverage data not acculumating..."
