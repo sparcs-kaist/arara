@@ -164,7 +164,7 @@ users_table = Table('users', metadata,
     Column('username', Unicode(40), unique=True),
     Column('password', Unicode(50)),
     Column('nickname', Unicode(40), unique=True),
-    Column('email', Unicode(60)),
+    Column('email', Unicode(60), unique=True),
     Column('signature', Unicode(80)),
     Column('self_introduction', Unicode(100)),
     Column('default_language', Unicode(5)),  # ko_KR, en_US
