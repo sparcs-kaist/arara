@@ -8,8 +8,13 @@ from ara_form import *
 import widget
 
 class ara_query_user(ara_form):
-    def keypress(self, size, id):
-        self.mainpile.keypress(size, id)
+    def keypress(self, size, key):
+        if 'enter' in key and self.buttoncolumn.get_focus() == self.idedit:
+            edittext = self.idedit.body.get_edit_text().strip()
+            if edittext != '':
+                self.query_information(edittext)
+        else:
+            self.mainpile.keypress(size, key)
 
     def on_button_clicked(self, button):
         if button == self.btnsearch.body:
@@ -18,15 +23,19 @@ class ara_query_user(ara_form):
             self.parent.change_page("user_information", {'session_key':self.session_key})
 
     def query_information(self, id):
-        a = self.server.member_manager.query_by_username(self.session_key, id)
-        if a[1] == 'QUERY_ID_NOT_EXIST':
-            return
-        a = a[1]
-	self.idtext.body.set_text(' * ID: %s' % a['username'])
-	self.nicktext.body.set_text(' * Nickname: %s' % a['nickname'])
-	self.introtext.body.set_text(' * Introduction:\n%s' % a['self_introduction'])
-	self.sigtext.body.set_text(' * Signature:\n%s' % a['signature'])
-	self.lasttext.body.set_text(' * Last usage: %s' % a['last_login_ip'])
+        retvalue, data = self.server.member_manager.query_by_username(self.session_key, id)
+        if retvalue:
+            self.idtext.body.set_text(' * ID: %s' % data['username'])
+            self.nicktext.body.set_text(' * Nickname: %s' % data['nickname'])
+            self.introtext.body.set_text(' * Introduction:\n%s' % data['self_introduction'])
+            self.sigtext.body.set_text(' * Signature:\n%s' % data['signature'])
+            self.lasttext.body.set_text(' * Last usage: %s' % data['last_login_ip'])
+        else:
+            self.idtext.body.set_text(data)
+            self.nicktext.body.set_text('')
+            self.introtext.body.set_text('')
+            self.sigtext.body.set_text('')
+            self.lasttext.body.set_text('')
 
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Query User",align='center'))
@@ -37,11 +46,11 @@ class ara_query_user(ara_form):
 
         self.buttoncolumn = urwid.Columns([('weight', 60, self.idedit), ('weight', 20, self.btnsearch),('weight',20,self.btncancel)])
 
-	self.idtext = urwid.Filler(urwid.Text(' * ID: '))
-	self.nicktext = urwid.Filler(urwid.Text(' * Nickname: '))
-	self.introtext = urwid.Filler(urwid.Text(' * Introduction:\n'))
-	self.sigtext = urwid.Filler(urwid.Text(' * Signature:\n'))
-	self.lasttext = urwid.Filler(urwid.Text(' * Last usage:'))
+	self.idtext = urwid.Filler(urwid.Text(''))
+	self.nicktext = urwid.Filler(urwid.Text(''))
+	self.introtext = urwid.Filler(urwid.Text(''))
+	self.sigtext = urwid.Filler(urwid.Text(''))
+	self.lasttext = urwid.Filler(urwid.Text(''))
 
 	actiontext = urwid.Filler(urwid.Text(' * Enter user ID and press [Search]'))
 
