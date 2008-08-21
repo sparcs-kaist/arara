@@ -25,8 +25,7 @@ class ara_user_information(ara_form):
         if key == "enter":
             pos = self.menulist.get_focus()[1]
             if pos == 0:
-                # TODO: 연결된 사용자 보여주기
-                pass
+                self.parent.change_page("list_connected_users", {'session_key':self.session_key})
             elif pos == 1:
                 # TODO: 연결된 사용자 관찰하기
                 pass

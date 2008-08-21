@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import os
+import socket
 import urwid.curses_display
 import urwid
 from ara_form import *
@@ -10,7 +11,7 @@ import widget
 class ara_login(ara_form):
     def get_remote_ip(self):
         try:
-            ip = os.environ['REMOTEHOST']
+            ip = socket.gethostbyname(os.environ['REMOTEHOST'])
         except KeyError:
             ip = '127.0.0.1'
         return ip

@@ -22,6 +22,7 @@ from blacklist import *
 from sig_intro import *
 from query_user import *
 from helpviewer import *
+from list_connected_users import *
 
 Screen = urwid.raw_display.Screen
 
@@ -102,6 +103,8 @@ class ara_display:
         elif pagename == "change_basic_info":
             self.ara_change_basic_info = ara_change_basic_info(self, args['session_key'])
             self.view = self.ara_change_basic_info
+        elif pagename == "list_connected_users":
+            self.view = ara_list_connected_users(self, args['session_key'])
 
     def main(self):
         self.ui = Screen()
