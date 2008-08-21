@@ -12,6 +12,13 @@ import arara
 
 @warara.cache_page(60)
 def index(request):
+    r = {}
+    r['counter_today'] = 1048576
+    r['counter_total'] = 2147483647
+    rendered = render_to_string('index.html', r)
+    return HttpResponse(rendered)
+
+def main(request):
     server = arara.get_server() 
     sess, r = warara.check_logged_in(request)
 
@@ -21,7 +28,7 @@ def index(request):
         suc, ret = server.article_manager.get_today_best_list(5)
         cache.set('todays_best_list', ret, 60)
     if not suc: #XXX
-        rendered = render_to_string('index.html', r)
+        rendered = render_to_string('main.html', r)
         return HttpResponse(rendered)
     for i, tb in enumerate(ret):
         if i==0:
@@ -55,7 +62,7 @@ def index(request):
         return HttpResponse(rendered)
 
     else:
-        rendered = render_to_string('index.html', r)
+        rendered = render_to_string('main.html', r)
         return HttpResponse(rendered)
 
 def help(request):
