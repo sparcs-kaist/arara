@@ -58,16 +58,24 @@ True
 mikkang
 >>> print member[u'nickname']
 mikkang
+>>> print member[u'widget']
+0
+>>> print member[u'layout']
+<BLANKLINE>
 >>> user_password_dic = {'username':u'mikkang', 'current_password':u'mikkang', 'new_password':u'ggingkkang'}
 >>> server.member_manager.modify_password(session_key, user_password_dic)
 (True, 'OK')
 >>> user_password_dic = {'username':u'mikkang', 'current_password':u'ggingkkang', 'new_password':u'mikkang'}
 >>> server.member_manager.modify_password(session_key, user_password_dic)
 (True, 'OK')
->>> modify_user_reg_dic = { 'nickname':u'ggingkkang', 'signature':u'KAIST07 && JSH07 && SPARCS07', 'self_introduction':u'i am Munbeom', 'default_language':u'korean' }
+>>> modify_user_reg_dic = { 'nickname':u'ggingkkang', 'signature':u'KAIST07 && JSH07 && SPARCS07', 'self_introduction':u'i am Munbeom', 'default_language':u'korean', 'widget':1, 'layout':'aaa' }
 >>> server.member_manager.modify(session_key, modify_user_reg_dic)
 (True, 'OK')
-
+>>> ret, member = server.member_manager.get_info(unicode(session_key))
+>>> print member[u'widget']
+1
+>>> print member[u'layout']
+aaa
 
 # Searh Test
 >>> server.member_manager.search_user(session_key, u'mikkang')
