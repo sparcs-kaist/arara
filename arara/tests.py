@@ -3,7 +3,7 @@ import doctest
 import sys
 import os
 
-PROJECT_PATH = os.path.join(os.path.abspath(__file__), '..')
+PROJECT_PATH = os.path.join(os.path.dirname(__file__), '..')
 sys.path.append(PROJECT_PATH)
 
 from arara import article_manager
