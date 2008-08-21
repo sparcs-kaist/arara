@@ -8,6 +8,13 @@ from ara_form import *
 import widget
 
 class ara_login(ara_form):
+    def get_remote_ip(self):
+        try:
+            ip = os.environ['REMOTEHOST']
+        except KeyError:
+            ip = '127.0.0.1'
+        return ip
+
     def get_login_message(self):
         basedir = os.path.dirname(__file__)
         banner = os.path.join(basedir, 'login.txt')
@@ -49,7 +56,7 @@ class ara_login(ara_form):
                 if (curpos == self.idedit) & (self.idedit.body.get_edit_text().strip() != ""):
                     self.idpwpile.set_focus(1)
                 elif (curpos == self.pwedit) & (self.pwedit.body.get_edit_text().strip() != ""):
-                    session_key = self.login(self.idedit.body.get_edit_text(), self.pwedit.body.get_edit_text(), "127.0.0.1")
+                    session_key = self.login(self.idedit.body.get_edit_text(), self.pwedit.body.get_edit_text(), self.get_remote_ip())
                     if session_key[0] != False:
                         self.parent.change_page("welcome", {'session_key':session_key[1]})
             elif curfocus == 1:
@@ -59,7 +66,7 @@ class ara_login(ara_form):
                 if row ==0:
                     self.parent.change_page("join", {})
                 elif row == 1:
-                    session_key = self.server.login_manager.guest_login("127.0.0.1")
+                    session_key = self.server.login_manager.guest_login(self.get_remote_ip())
                     ara_welcome(session_key[1]).main()
         else:
             self.mainpile.keypress(size, key)
