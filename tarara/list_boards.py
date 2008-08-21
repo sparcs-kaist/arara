@@ -33,10 +33,9 @@ class ara_list_boards(ara_form):
             'j': 'down',
             'k': 'up',
         }
-        boardlist = self.server.article_manager.board_list(self.session_key)
-        if boardlist[0] == False:
-            assert("Not logged in")
-        boards = boardlist[1]#.keys()
+        retvalue, boardlist = self.server.article_manager.board_list(self.session_key)
+        assert retvalue, boardlist
+        boards = boardlist
 	self.header = urwid.Filler(urwid.Text(u"ARA: List boards",align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
         self.boardnameedit = urwid.Filler(urwid.Edit(caption=" * Enter board name: ", wrap='clip'))
