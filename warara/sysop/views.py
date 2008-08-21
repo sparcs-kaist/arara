@@ -31,3 +31,10 @@ def remove_board(request):
             ret, msg = server.board_manager.delete_board(sess, board['board_name'])
             assert ret, msg
     return HttpResponseRedirect('/sysop/')
+
+def confirm_user(request):
+    server = arara.get_server()
+    sess, r = warara.check_logged_in(request)
+    ret, msg = server.sysop_manager.conform_username_valusernameation(sess, request.POST['confirm_username'])
+    assert ret, msg
+    return HttpResponseRedirect('/sysop/')

@@ -7,15 +7,15 @@
 
 {% block content %}
 <div id="add_board">
-    보드 추가
+    <h3>보드 추가</h3>
     <form method="post" action="/sysop/add_board/">
-        <span>보드 이름</span><input type="text" name="add_board_name" id="add_board_name"></span><br>
-        <span>보드 설명</span><input type="text" name="add_board_description" id="add_board_description"></span><br>
+        <span>보드 이름</span><input type="text" name="add_board_name" id="add_board_name"><br>
+        <span>보드 설명</span><input type="text" name="add_board_description" id="add_board_description"><br>
         <input type="submit" value="추가">
     </form>
 </div>
 <div id="remove_board">
-    보드 삭제
+    <h3>보드 삭제</h3>
     <form method="post" action="/sysop/remove_board/">
         {% for board in board_list %}
         <input type="checkbox" name="{{board.board_name}}" value="{{board.board_name}}">
@@ -23,6 +23,13 @@
         <span>{{board.board_description}}</span><br>
         {% endfor %}
         <input type="submit" value="삭제">
+    </form>
+</div>
+<div id="confirm_user">
+    <h3>사용자 인증</h3>
+    <form method="post" action="/sysop/confirm_user/">
+        <span>사용자 아이디</span><input type="text" name="confirm_username" id="confirm_username">
+        <input type="submit" value="인증">
     </form>
 </div>
 {% endblock content %}
