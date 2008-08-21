@@ -68,8 +68,7 @@ class SearchManager(object):
                     uri = 'http://ara.kaist.ac.kr/' + board_name + '/' + str(article_no)
                     result = ksearch.index(api_key, 'ara', uri, article_dict['title'], article_dict['content'], 1.0, board_name)
                     assert result == 'OK'
-
-        session.close()
+            session.close()
 
 if __name__ == "__main__":
     pass

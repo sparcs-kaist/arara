@@ -86,8 +86,8 @@ class MemberManager(object):
                 session.close()
                 return True, ret 
             else:
+                session.close()
                 if user.activated:
-                    session.close()
                     return False, 'WRONG_PASSWORD'
                 else:
                     return False, 'NOT_ACTIVATED'

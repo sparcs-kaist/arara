@@ -135,9 +135,11 @@ class ReadStatusManager(object):
                     [model.articles_table],
                     select([func.max(model.articles_table.c.id)]).label('top_article_id')==model.articles_table.c.id)
                 )[0]
+        session.close()
         if type(no_data) == list:
             for no in no_data:
                 if no > top_article.id:
+                    
                     return False, 'ARTICLE_NOT_EXIST'
         else:
             if no_data > top_article.id:
@@ -150,6 +152,7 @@ class ReadStatusManager(object):
             self.read_status[user.id] = {}
             read_status = session.query(model.ReadStatus).filter_by(user_id=user.id).all()
             read_status_dict_list = self._get_dict_list(read_status)
+            session.close()
             if read_status_dict_list:
                 for item in read_status_dict_list:
                     self.read_status[user.id][item['board_id']] = item['read_status_data']
@@ -197,10 +200,11 @@ class ReadStatusManager(object):
 
         ret, user_info = self.login_manager.get_session(session_key)
         if ret:
-            session = model.Session()
-            user = session.query(model.User).filter_by(username=user_info['username']).one()
             try:
+                session = model.Session()
+                user = session.query(model.User).filter_by(username=user_info['username']).one()
                 board = session.query(model.Board).filter_by(board_name=board_name).one()
+                session.close()
             except InvalidRequestError:
                 return False, 'BOARD_NOT_EXIST'
             ret, _ = self._initialize_data(user, board)
@@ -235,10 +239,11 @@ class ReadStatusManager(object):
         '''
         ret, user_info = self.login_manager.get_session(session_key)
         if ret:
-            session = model.Session()
-            user = session.query(model.User).filter_by(username=user_info['username']).one()
             try:
+                session = model.Session()
+                user = session.query(model.User).filter_by(username=user_info['username']).one()
                 board = session.query(model.Board).filter_by(board_name=board_name).one()
+                session.close()
             except InvalidRequestError:
                 return False, 'BOARD_NOT_EXIST'
             ret, _ = self._initialize_data(user, board)
@@ -274,10 +279,11 @@ class ReadStatusManager(object):
         '''
         ret, user_info = self.login_manager.get_session(session_key)
         if ret:
-            session = model.Session()
-            user = session.query(model.User).filter_by(username=user_info['username']).one()
             try:
+                session = model.Session()
+                user = session.query(model.User).filter_by(username=user_info['username']).one()
                 board = session.query(model.Board).filter_by(board_name=board_name).one()
+                session.close()
             except InvalidRequestError:
                 return False, 'BOARD_NOT_EXIST'
             ret, _ = self._initialize_data(user, board)
@@ -310,10 +316,11 @@ class ReadStatusManager(object):
         '''
         ret, user_info = self.login_manager.get_session(session_key)
         if ret:
-            session = model.Session()
-            user = session.query(model.User).filter_by(username=user_info['username']).one()
             try:
+                session = model.Session()
+                user = session.query(model.User).filter_by(username=user_info['username']).one()
                 board = session.query(model.Board).filter_by(board_name=board_name).one()
+                session.close()
             except InvalidRequestError:
                 return False, 'BOARD_NOT_EXIST'
             ret, _ = self._initialize_data(user, board)

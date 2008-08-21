@@ -69,7 +69,9 @@ class ArticleManager(object):
             d['depth'] = depth
             ret.append(filter_dict(d, READ_ARTICLE_WHITELIST))
             for child in a.children[::-1]:
-                stack.append((child, depth+1))
+                if depth < 12:
+                    depth += 1
+                stack.append((child, depth))
         return ret
 
     def _get_today_best_article(self, session_key, board=None, count=5):
@@ -208,6 +210,7 @@ class ArticleManager(object):
             board = session.query(model.Board).filter_by(board_name=board_name).one()
         except InvalidRequestError:
             return False, 'BOARD_NOT_EXIST'
+        session.close()
         ret, today_best_list = self._get_today_best_article(None, board, count)
 
         if ret:
@@ -259,6 +262,7 @@ class ArticleManager(object):
             board = session.query(model.Board).filter_by(board_name=board_name).one()
         except InvalidRequestError:
             return False, 'BOARD_NOT_EXIST'
+        session.close()
         ret, weekly_best_list = self._get_weekly_best_article(None, board, count)
 
         if ret:
@@ -387,7 +391,6 @@ class ArticleManager(object):
             session.close()
             return True, article_dict_list
         else:
-            session.close()
             return ret, message
 
     @require_login
@@ -434,7 +437,6 @@ class ArticleManager(object):
                 session.close()
                 return False, 'DATABASE_ERROR'
         else:
-            session.close()
             return False, 'BOARD_NOT_EXIST'
         
 
@@ -482,7 +484,6 @@ class ArticleManager(object):
                 session.close()
                 return True, 'OK'
         else:
-            session.close()
             return False, message
 
     @require_login
@@ -527,13 +528,12 @@ class ArticleManager(object):
                     if not article_dic['is_searchable']:
                         new_article.is_searchable = False
                 session.commit()
+                session.close()
             else:
                 session.close()
                 return False, 'READ_ONLY_BOARD'
         else:
-            session.close()
             return ret, message
-        session.close()
         return True, new_article.id
 
     @require_login
@@ -580,13 +580,12 @@ class ArticleManager(object):
                 article.reply_count += 1
                 session.save(new_reply)
                 session.commit()
+                session.close()
             except InvalidRequestError:
                 session.close()
                 return False, 'ARTICLE_NOT_EXIST'
         else:
-            session.close()
             return ret, message
-        session.close()
         return True, new_reply.id
 
     @require_login
@@ -633,6 +632,7 @@ class ArticleManager(object):
                     article.content = article_dic['content']
                     article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
                     session.commit()
+                    session.close()
                 else:
                     session.close()
                     return False, "NO_PERMISSION"
@@ -640,9 +640,7 @@ class ArticleManager(object):
                 session.close()
                 return False, "ARTICLE_NOT_EXIST"
         else:
-            session.close()
             return ret, message
-        session.close()
         return True, article.id
 
     @require_login
@@ -682,6 +680,7 @@ class ArticleManager(object):
                     if article.root:
                         article.root.reply_count -= 1
                     session.commit()
+                    session.close()
                 else:
                     session.close()
                     return False, "NO_PERMISSION"
@@ -689,9 +688,7 @@ class ArticleManager(object):
                 session.close()
                 return False, "ARTICLE_NOT_EXIST"
         else:
-            session.close()
             return ret, message
-        session.close()
         return True, article.id
 
     @log_method_call
