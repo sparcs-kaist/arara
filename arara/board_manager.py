@@ -18,7 +18,6 @@ class BoardManager(object):
 
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
-        session = model.Session()
         if whitelist:
             filtered_dict = filter_dict(item_dict, whitelist)
         else:
