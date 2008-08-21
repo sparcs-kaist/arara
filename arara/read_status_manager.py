@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from arara.util import require_login
-from arara import model
 
 from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy.sql import func, select
+from arara.util import require_login
+from arara import model
+from arara.util import require_login
+from arara.util import log_method_call_with_source, log_method_call_with_source_important
+
+log_method_call = log_method_call_with_source('read_status_manager')
+log_method_call_important = log_method_call_with_source_important('read_status_manager')
 
 class ReadStatus(object):
     def __init__(self, default='N'):
@@ -165,6 +170,7 @@ class ReadStatusManager(object):
             return False, 'ALREADY_ADDED'
 
     @require_login
+    @log_method_call
     def check_stat(self, session_key, board_name, no):
         '''
         읽은 글인지의 여부를 체크
@@ -206,6 +212,7 @@ class ReadStatusManager(object):
                 return ret, msg
 
     @require_login
+    @log_method_call
     def check_stats(self, session_key, board_name, no_list):
         '''
         복수개의 글의 읽은 여부를 체크
@@ -243,6 +250,7 @@ class ReadStatusManager(object):
                 return ret, msg
 
     @require_login
+    @log_method_call
     def mark_as_read(self, session_key, board_name, no):
         '''
         읽은 글로 등록하기
@@ -281,6 +289,7 @@ class ReadStatusManager(object):
                 return ret, msg
 
     @require_login
+    @log_method_call
     def mark_as_viewed(self, session_key, board_name, no):
         '''
         통과한 글로 등록하기
@@ -315,6 +324,7 @@ class ReadStatusManager(object):
             else:
                 return ret, msg
 
+    @log_method_call
     def save_to_database(self, user_id=None, session_key=None):
         if user_id:
             pass

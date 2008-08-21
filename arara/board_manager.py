@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
-from arara.util import require_login, filter_dict
-from arara import model
 from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
+from arara import model
+from arara.util import filter_dict, require_login
+from arara.util import log_method_call_with_source, log_method_call_with_source_important
+
+log_method_call = log_method_call_with_source('board_manager')
+log_method_call_important = log_method_call_with_source_important('board_manager')
 
 BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only')
 
@@ -32,6 +36,7 @@ class BoardManager(object):
         return return_list
 
     @require_login
+    @log_method_call_important
     def add_board(self, session_key, board_name, board_description):
         ret, user_info = self.login_manager.get_session(session_key)
         session = model.Session()
@@ -50,6 +55,7 @@ class BoardManager(object):
             session.close()
             return False, 'ALREADY_ADDED'
 
+    @log_method_call
     def get_board(self, board_name):
         session = model.Session()
         try:
@@ -61,6 +67,7 @@ class BoardManager(object):
         session.close()
         return True, board_dict
 
+    @log_method_call
     def get_board_list(self):
         session = model.Session()
         board_to_get = session.query(model.Board).filter_by(deleted=False).all()
@@ -69,6 +76,7 @@ class BoardManager(object):
         return True, board_dict_list
 
     @require_login
+    @log_method_call_important
     def add_read_only_board(self, session_key, board_name):
         '''
         보드를 읽기 전용으로 변경해주는 함수
@@ -109,6 +117,7 @@ class BoardManager(object):
 
 
     @require_login
+    @log_method_call_important
     def return_read_only_board(self, session_key, board_name):
         '''
         보드를 읽기 전용에서 다시 쓰기/읽기 가능 보드로 변경해주는 함수
@@ -149,6 +158,7 @@ class BoardManager(object):
         
 
     @require_login
+    @log_method_call_important
     def delete_board(self, session_key, board_name):
         ret, user_info = self.login_manager.get_session(session_key)
         session = model.Session()

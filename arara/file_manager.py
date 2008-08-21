@@ -3,11 +3,14 @@
 
 import md5 as hashlib
 
-from arara.util import require_login
-from arara import model
-
 from sqlalchemy import and_, or_, not_
 from sqlalchemy.exceptions import InvalidRequestError
+from arara import model
+from arara.util import require_login
+from arara.util import log_method_call_with_source, log_method_call_with_source_important
+
+log_method_call = log_method_call_with_source('file_manager')
+log_method_call_important = log_method_call_with_source_important('file_manager')
 
 class FileManager(object):
     '''
@@ -28,6 +31,7 @@ class FileManager(object):
         self.login_manager = login_manager
 
     @require_login
+    @log_method_call_important
     def save_file(self, session_key, article_id, filename):
         '''
         article작성시 파일을 저장할 장소와 저장할 파일명를 리턴해주는 함수
@@ -68,6 +72,7 @@ class FileManager(object):
             return False, 'DATABASE_ERROR' 
 
     @require_login
+    @log_method_call
     def download_file(self, session_key, article_id, filename):
         '''
         article의 파일을 다운로드 할때 실제로 파일이 저장된 장소와 저장된 파일명을 리턴해주는 함수 
@@ -109,6 +114,7 @@ class FileManager(object):
         return True, download_path, ghost_filename
 
     @require_login
+    @log_method_call_important
     def delete_file(self, session_key, article_id, filename):
         '''
         지울 파일이 저장된 장소와 저장된 파일명을 리턴해주는 함수

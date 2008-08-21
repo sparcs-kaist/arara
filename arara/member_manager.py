@@ -4,10 +4,14 @@ import md5
 import datetime
 import time
 
-from arara.util import require_login, filter_dict, is_keys_in_dict
-from arara import model
 from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
 from sqlalchemy import or_, not_, and_
+from arara import model
+from arara.util import require_login, filter_dict, is_keys_in_dict
+from arara.util import log_method_call_with_source, log_method_call_with_source_important
+
+log_method_call = log_method_call_with_source('member_manager')
+log_method_call_important = log_method_call_with_source_important('member_manager')
 
 class NoPermission(Exception):
     pass
@@ -56,6 +60,7 @@ class MemberManager(object):
     def _set_login_manager(self, login_manager):
         self.login_manager = login_manager
 
+    @log_method_call
     def _logout_process(self, username):
         session = model.Session()
         try:
@@ -68,6 +73,7 @@ class MemberManager(object):
             session.close()
             return False, 'DATABASE_ERROR'
 
+    @log_method_call
     def _authenticate(self, username, password, user_ip):
         session = model.Session()
         try:
@@ -75,9 +81,10 @@ class MemberManager(object):
             if user.compare_password(password) and user.activated == True:
                 user.last_login_time = datetime.datetime.fromtimestamp(time.time())
                 user.last_login_ip = unicode(user_ip)
+                ret = {'last_login_time': user.last_login_time, 'nickname': user.nickname}
                 session.commit()
                 session.close()
-                return True, user.last_login_time
+                return True, ret 
             else:
                 if user.activated:
                     session.close()
@@ -103,6 +110,7 @@ class MemberManager(object):
             return_list.append(filtered_dict)
         return return_list
 
+    @log_method_call
     def register(self, user_reg_dic):
         '''
         DB에 회원 정보 추가. activation code를 발급한다.
@@ -152,6 +160,7 @@ class MemberManager(object):
 
 
     @require_login
+    @log_method_call_important
     def backdoor_confirm(self, session_key, username):
         '''
         인증코드 없이 시샵이 사용자의 등록 할 수 있게 해준다
@@ -195,7 +204,7 @@ class MemberManager(object):
         session.close()
         return True, 'OK'
 
-
+    @log_method_call
     def confirm(self, username_to_confirm, confirm_key):
         '''
         인증코드(activation code) 확인.
@@ -239,6 +248,7 @@ class MemberManager(object):
             return False, 'WRONG_CONFIRM_KEY'
         
 
+    @log_method_call
     def is_registered(self, user_username):
         '''
         등록된 사용자인지의 여부를 알려준다.
@@ -267,6 +277,7 @@ class MemberManager(object):
             session.close()
             return False
 
+    @log_method_call
     def is_registered_nickname(self, user_nickname):
         '''
         등록된 nickname인지의 여부를 알려준다.
@@ -295,6 +306,7 @@ class MemberManager(object):
             session.close()
             return False
 
+    @log_method_call
     def is_registered_email(self, email):
         '''
         등록된 이메일인지의 여부를 알려준다.
@@ -321,6 +333,7 @@ class MemberManager(object):
             return False
 
     @require_login
+    @log_method_call
     def get_info(self, session_key):
         '''
         회원 정보 수정을 위해 현재 로그인된 회원의 정보를 가져오는 함수.
@@ -348,6 +361,7 @@ class MemberManager(object):
             return False, "MEMBER_NOT_EXIST"
 
     @require_login    
+    @log_method_call_important
     def modify_password(self, session_key, user_password_dict):
         '''
         회원의 password를 수정.
@@ -395,6 +409,7 @@ class MemberManager(object):
 
 
     @require_login
+    @log_method_call_important
     def modify(self, session_key, user_modify_dict):
         '''
         password를 제외한 회원 정보 수정
@@ -425,6 +440,7 @@ class MemberManager(object):
         return True, 'OK'
 
     @require_login
+    @log_method_call
     def query_by_username(self, session_key, query_username):
         '''
         쿼리 함수
@@ -454,6 +470,7 @@ class MemberManager(object):
             return False, "QUERY_ID_NOT_EXIST"
 
     @require_login
+    @log_method_call
     def query_by_nick(self, session_key, query_nickname):
         '''
         쿼리 함수
@@ -483,6 +500,7 @@ class MemberManager(object):
             return False, "QUERY_NICK_NOT_EXIST"
 
     @require_login
+    @log_method_call_important
     def remove_user(self, session_key):
         '''
         session key로 로그인된 사용자를 등록된 사용자에서 제거한다' - 회원탈퇴
@@ -508,6 +526,7 @@ class MemberManager(object):
             return False, 'NOT_LOGGEDIN'
         
     @require_login
+    @log_method_call
     def search_user(self, session_key, search_user):
         '''
         member_dic 에서 찾고자 하는 username와 nickname에 해당하는 user를 찾아주는 함수
@@ -536,6 +555,7 @@ class MemberManager(object):
             return False, 'INVALID_KEY'
 
     @require_login
+    @log_method_call_important
     def is_sysop(self, session_key):
         '''
         로그인한 user가 SYSOP인지 아닌지를 확인하는 함수

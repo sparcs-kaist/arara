@@ -2,10 +2,14 @@
 import datetime
 import time
 
-from arara.util import require_login, filter_dict
-from arara import model
 from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy import or_, not_, and_
+from arara import model
+from arara.util import require_login, filter_dict
+from arara.util import log_method_call_with_source, log_method_call_with_source_important
+
+log_method_call = log_method_call_with_source('messaging_manager')
+log_method_call_important = log_method_call_with_source_important('messaging_manager')
 
 MESSAGE_WHITELIST = ['id', 'from', 'to', 'message', 'sent_time', 'read_status', 'blacklisted']
 
@@ -49,6 +53,7 @@ class MessagingManager(object):
 
 
     @require_login
+    @log_method_call
     def sent_list(self, session_key, page=1, page_length=20):
         '''
         보낸 쪽지 리스트 읽어오기
@@ -99,6 +104,7 @@ class MessagingManager(object):
 
 
     @require_login
+    @log_method_call
     def receive_list(self, session_key, page=1, page_length=20):
         '''
         받은 쪽지 리스트 읽어오기
@@ -164,6 +170,7 @@ class MessagingManager(object):
         return True, ret_dict
 
     @require_login
+    @log_method_call_important
     def send_message(self, session_key, to_data, msg):
         '''
         쪽지 전송하기
@@ -224,6 +231,7 @@ class MessagingManager(object):
             return True, 'OK'
 
     @require_login
+    @log_method_call
     def read_received_message(self, session_key, msg_no):
         '''
         쪽지 하나 읽어오기
@@ -256,6 +264,7 @@ class MessagingManager(object):
         return True, message_dict
 
     @require_login
+    @log_method_call_important
     def read_sent_message(self, session_key, msg_no):
         '''
         쪽지 하나 읽어오기
@@ -288,6 +297,7 @@ class MessagingManager(object):
         return True, message_dict
 
     @require_login
+    @log_method_call_important
     def delete_received_message(self, session_key, msg_no):
         '''
         받은 쪽지 하나 삭제하기
@@ -328,6 +338,7 @@ class MessagingManager(object):
         return False, 'MSG_NOT_EXIST'
 
     @require_login
+    @log_method_call_important
     def delete_sent_message(self, session_key, msg_no):
         '''
         보낸 쪽지 하나 삭제하기

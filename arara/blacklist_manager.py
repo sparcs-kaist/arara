@@ -3,9 +3,13 @@
 import datetime
 import time
 
-from arara.util import filter_dict, require_login, is_keys_in_dict
-from arara import model
 from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
+from arara import model
+from arara.util import filter_dict, require_login, is_keys_in_dict
+from arara.util import log_method_call_with_source, log_method_call_with_source_important
+
+log_method_call = log_method_call_with_source('blacklist_manager')
+log_method_call_important = log_method_call_with_source_important('blacklist_manager')
 
 class AlreadyAddedException(Exception):
     pass
@@ -61,6 +65,7 @@ class BlacklistManager(object):
         return return_list
 
     @require_login
+    @log_method_call_important
     def add(self, session_key, blacklist_username, block_article=True, block_message=True):
         '''
         블랙리스트 username 추가
@@ -106,6 +111,7 @@ class BlacklistManager(object):
         return True, 'OK'
        
     @require_login
+    @log_method_call_important
     def delete(self, session_key, blacklist_username):
         '''
         블랙리스트 username 삭제 
@@ -147,6 +153,7 @@ class BlacklistManager(object):
         return True, 'OK'
 
     @require_login
+    @log_method_call_important
     def modify(self, session_key, blacklist_dict):
         '''
         블랙리스트 id 수정 
@@ -194,6 +201,7 @@ class BlacklistManager(object):
         return True, 'OK'
 
     @require_login
+    @log_method_call
     def list(self,session_key):
         '''
         블랙리스트로 설정한 사람의 목록을 보여줌

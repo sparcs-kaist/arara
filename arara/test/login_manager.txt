@@ -70,7 +70,7 @@ u'pipoket'
 # Get online user info test
 
 >>> server.login_manager.get_current_online(session_key)
-(True, [{'username': u'pipoket', 'ip': u'143.248.234.145', 'logintime': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000)}, {'username': u'serialx', 'ip': u'143.248.234.140', 'logintime': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000)}])
+(True, [{'username': u'pipoket', 'ip': u'143.248.234.145', 'nickname': u'pipoket', 'logintime': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000)}, {'username': u'serialx', 'ip': u'143.248.234.140', 'nickname': u'serialx', 'logintime': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000)}])
 >>> server.login_manager.get_current_online(session_bee)
 (False, 'NOT_LOGGEDIN')
 

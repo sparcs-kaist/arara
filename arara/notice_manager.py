@@ -1,10 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from arara.util import require_login, is_keys_in_dict, filter_dict
-from arara import model
-from sqlalchemy.exceptions import InvalidRequestError
 import random
+from sqlalchemy.exceptions import InvalidRequestError
+from arara import model
+from arara.util import require_login, filter_dict, is_keys_in_dict
+from arara.util import log_method_call_with_source, log_method_call_with_source_important
+
+
+log_method_call = log_method_call_with_source('notice_manager')
+log_method_call_important = log_method_call_with_source_important('notice_manager')
 
 NOTICE_PUBLIC_KEYS = ('id', 'content', 'issued_date', 'due_date', 'valid', 'weight')
 NOTICE_QUERY_WHITELIST = ('id', 'content', 'issued_date', 'due_date', 'valid', 'weight')
@@ -41,7 +46,7 @@ class NoticeManager(object):
             return_list.append(filtered_dict)
         return return_list
 
-    
+    @log_method_call
     def get_banner(self):
         '''
         배너를 가져오는 함수
@@ -69,7 +74,7 @@ class NoticeManager(object):
             session.close()
             return False, 'NO_BANNER'
 
-
+    @log_method_call
     def get_welcome(self):
         '''
         welcome 가져오는 함수
@@ -97,8 +102,8 @@ class NoticeManager(object):
             session.close()
             return False, 'NO_WELCOME'
 
-
     @require_login
+    @log_method_call_important
     def list_banner(self, session_key):
         '''
         관리자용 banner 페이지 목록을 가져오는 함수
@@ -129,6 +134,7 @@ class NoticeManager(object):
             return False, 'NO_BANNER'
 
     @require_login
+    @log_method_call_important
     def list_welcome(self, session_key):
         '''
         관리자용 welcome 페이지 목록을 가져오는 함수
@@ -160,6 +166,7 @@ class NoticeManager(object):
         
 
     @require_login    
+    @log_method_call_important
     def add_banner(self, session_key, notice_reg_dic):
         '''
         관리자용 배너 추가 함수
@@ -203,6 +210,7 @@ class NoticeManager(object):
             return False, e
 
     @require_login    
+    @log_method_call_important
     def add_welcome(self, session_key, notice_reg_dic):
         '''
         관리자용 welcome 추가 함수
@@ -245,6 +253,7 @@ class NoticeManager(object):
             return False, e
 
     @require_login 
+    @log_method_call_important
     def remove_banner(self, session_key, id):
         '''
         관리자용 배너 제거 함수
@@ -282,6 +291,7 @@ class NoticeManager(object):
             return False, 'DATABASE_ERROR'
     
     @require_login 
+    @log_method_call_important
     def remove_welcome(self, session_key, id):
         '''
         관리자용 welcome 제거 함수

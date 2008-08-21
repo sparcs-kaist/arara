@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import md5 as hashlib
+import logging
 import datetime
 import time
 
 from arara import model
+from util import is_keys_in_dict
+from util import log_method_call_with_source
+
+log_method_call = log_method_call_with_source('login_manager')
 
 class LoginManager(object):
     '''
@@ -13,6 +18,7 @@ class LoginManager(object):
     
     def __init__(self):
         self.session_dic = {}
+        self.logger = logging.getLogger('login_manager')
 
     def _set_member_manager(self, member_manager):
         self.member_manager = member_manager
@@ -33,8 +39,8 @@ class LoginManager(object):
         #timestamp = datetime.datetime.isoformat(datetime.datetime.now())
         #self.session_dic[hash] = {'username': 'guest', 'ip': guest_ip, 'logintime': timestamp}
         #return True, hash
-    
 
+    @log_method_call
     def login(self, username, password, user_ip):
         '''
         로그인 처리를 담당하는 함수.
@@ -64,7 +70,8 @@ class LoginManager(object):
             #        return False, 'ALREADY_LOGIN'
             hash = hashlib.md5(username+password+datetime.datetime.today().__str__()).hexdigest()
             timestamp = datetime.datetime.fromtimestamp(time.time())
-            self.session_dic[hash] = {'username': username, 'ip': user_ip, 'logintime': msg}
+            self.session_dic[hash] = {'username': username, 'ip': user_ip, 'nickname': msg['nickname'], 'logintime': msg['last_login_time']}
+            self.logger.info("User '%s' has LOGGED IN from '%s'", username, user_ip)
             return True, hash
         return success, msg
 
@@ -85,6 +92,7 @@ class LoginManager(object):
         try:
             ret, msg = self.member_manager._logout_process(self.session_dic[session_key]['username'])
             if ret:
+                self.logger.info("User '%s' has LOGGED OUT", self.session_dic[session_key]['username'])
                 self.session_dic.pop(session_key)
                 return True, 'OK'
             else:
@@ -108,6 +116,7 @@ class LoginManager(object):
 
         return False, 'NOT_IMPLEMENTED'
 
+    @log_method_call
     def get_session(self, session_key):
         '''
         세션 정보를 반환하는 함수
@@ -125,7 +134,7 @@ class LoginManager(object):
         except KeyError:
             return False, 'NOT_LOGGEDIN'
 
-
+    @log_method_call
     def get_current_online(self, session_key):
         '''
         현재 온라인 상태인 사용자를 반환하는 함수
@@ -147,6 +156,7 @@ class LoginManager(object):
         else:
             return False, 'NOT_LOGGEDIN'
 
+    @log_method_call
     def is_logged_in(self, session_key):
         '''
         로그인 여부를 체크하는 함수
