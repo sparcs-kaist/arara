@@ -71,7 +71,7 @@ class LoginManager(object):
             hash = hashlib.md5(username+password+datetime.datetime.today().__str__()).hexdigest()
             timestamp = datetime.datetime.fromtimestamp(time.time())
             self.session_dic[hash] = {'username': username, 'ip': user_ip, 'nickname': msg['nickname'], 'logintime': msg['last_login_time']}
-            self.logger.info("User '%s' has LOGGED IN from '%s'", username, user_ip)
+            self.logger.info("User '%s' has LOGGED IN from '%s' as '%s'", username, user_ip, hash)
             return True, hash
         return success, msg
 
