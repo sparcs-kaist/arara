@@ -20,7 +20,7 @@ from arara import sysop_manager
 import logging
 
 logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s <%(name)> ** %(levelname) ** %(message)s',
+                    format='%(asctime)s <%(name)s> ** %(levelname)s ** %(message)s',
                     filename='arara_tests.log',
                     filemode='w')
 
