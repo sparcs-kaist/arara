@@ -268,6 +268,10 @@ body {
     list-style-type: none;
 }
 
+#user_popup a {
+    display: block;
+}
+
 /* user information style*/
 #user_information_popup {
     display: none;
