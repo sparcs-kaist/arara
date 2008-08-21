@@ -10,7 +10,6 @@ from django.core.cache import cache
 
 import arara
 
-@warara.cache_page(60)
 def index(request):
     r = {}
     r['counter_today'] = 1048576
@@ -18,6 +17,7 @@ def index(request):
     rendered = render_to_string('index.html', r)
     return HttpResponse(rendered)
 
+@warara.cache_page(60)
 def main(request):
     server = arara.get_server() 
     sess, r = warara.check_logged_in(request)
