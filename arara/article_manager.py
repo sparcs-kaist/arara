@@ -762,12 +762,18 @@ class ArticleManager(object):
             else:
                 start_time = time.time()
                 if board_name:
-                    article_count = session.query(model.Article).filter(and_(
+                    article_count = session.query(model.Article).join('author').filter(and_(or_(
+                            model.articles_table.c.title.like(db_query_text),
+                            model.articles_table.c.content.like(db_query_text),
+                            model.User.username.like(db_query_text)),
                             model.articles_table.c.board_id == board.id,
                             not_(model.articles_table.c.is_searchable == False))).count()
                 else:
-                    article_count = session.query(model.Article).filter(
-                            not_(model.articles_table.c.is_searchable == False)).count()
+                    article_count = session.query(model.Article).join('author').filter(and_(or_(
+                            model.articles_table.c.title.like(db_query_text),
+                            model.articles_table.c.content.like(db_query_text),
+                            model.User.username.like(db_query_text)),
+                            not_(model.articles_table.c.is_searchable == False))).count()
                 last_page = int(article_count / page_length)
                 if article_count % page_length != 0:
                     last_page += 1
@@ -779,17 +785,17 @@ class ArticleManager(object):
                 offset = page_length * (page - 1)
                 last = offset + page_length
                 if board_name:
-                    result = session.query(model.Article).filter(and_(or_(
+                    result = session.query(model.Article).join('author').filter(and_(or_(
                             model.articles_table.c.title.like(db_query_text),
                             model.articles_table.c.content.like(db_query_text),
-                            model.articles_table.c.author_id.like(db_query_text)),
+                            model.User.username.like(db_query_text)),
                             model.articles_table.c.board_id == board.id,
                             not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
                 else:
-                    result = session.query(model.Article).filter(and_(or_(
+                    result = session.query(model.Article).join('author').filter(and_(or_(
                             model.articles_table.c.title.like(db_query_text),
                             model.articles_table.c.content.like(db_query_text),
-                            model.articles_table.c.author_id.like(db_query_text)),
+                            model.User.username.like(db_query_text)),
                             not_(model.articles_table.c.is_searchable == False)))[offset:last].order_by(model.Article.id.desc()).all()
                 end_time = time.time()
                 search_dict_list = self._get_dict_list(result, SEARCH_ARTICLE_WHITELIST)
