@@ -32,7 +32,7 @@ class ara_list_article(ara_form):
             if self.hasarticle:
                 article_id = int(self.articlelist.get_body().get_focus()[0].w.w.widget_list[0].get_text()[0])
                 self.parent.change_page("read_article", {'session_key':self.session_key, 'board_name':self.board_name, 'article_id':article_id})
-        elif key == 'w':
+        elif key == 'w' and not self.readonly:
             self.parent.change_page('post_article', {'session_key':self.session_key, 'board_name':self.board_name, 'mode':'post', 'article_id':''})
         elif key == 'q':
             self.parent.change_page("main", {'session_key':self.session_key})
@@ -48,10 +48,20 @@ class ara_list_article(ara_form):
             ' ': 'enter',
         }
 
+        self.readonly = False
+        retvalue, boardlist = self.server.article_manager.board_list(self.session_key)
+        assert retvalue, boardlist
+        for board in boardlist:
+            if self.board_name == board['board_name']:
+                self.readonly = board['read_only']
+
 	self.header = urwid.Filler(urwid.Text(u"ARA: Article list",align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
         self.infotext1 = urwid.Filler(urwid.Text("(N)ext/(P)revious Page (Number+Enter) Jump to article"))
-        self.infotext2 = urwid.Filler(urwid.Text("(Enter,space) Read (w)rite (f)ind (/)Find next (?) Find previous (h)elp (q)uit"))
+        if self.readonly:
+            self.infotext2 = urwid.Filler(urwid.Text("(Enter,space) Read (f)ind (/)Find next (?) Find previous (h)elp (q)uit"))
+        else:
+            self.infotext2 = urwid.Filler(urwid.Text("(Enter,space) Read (w)rite (f)ind (/)Find next (?) Find previous (h)elp (q)uit"))
 
         commented = """
         # Acquire today_best, weekly_best
