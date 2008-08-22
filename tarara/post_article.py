@@ -23,14 +23,14 @@ class ara_post_article(ara_form):
             title = self.titleedit.body.get_edit_text()
             body = self.bodyedit.body.get_edit_text()
             if self.mode == 'modify':
-                retvalue= self.server.article_manager.modify(self.session_key, self.board_name, self.article_id, {'title':title, 'content':body})
+                retvalue, result = self.server.article_manager.modify(self.session_key, self.board_name, self.article_id, {'title':title, 'content':body})
             elif self.mode == 'reply':
-                retvalue= self.server.article_manager.write_reply(self.session_key, self.board_name, self.article_id, {'title':title, 'content':body})
+                retvalue, result = self.server.article_manager.write_reply(self.session_key, self.board_name, self.article_id, {'title':title, 'content':body})
             elif self.mode == 'post':
-                retvalue= self.server.article_manager.write_article(self.session_key, self.board_name, {'title':title, 'content':body})
+                retvalue, result = self.server.article_manager.write_article(self.session_key, self.board_name, {'title':title, 'content':body})
             else:
-                pass
-            if retvalue[0] == True:
+                return
+            if retvalue:
                 confirm = widget.Dialog("Article posted.", ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
                 self.overlay = confirm
                 self.parent.run()
@@ -58,6 +58,7 @@ class ara_post_article(ara_form):
             self.header = urwid.Filler(urwid.Text(u"ARA: Reply Article  Current board: %s" % self.board_name, align='center'))
 	else:
             self.header = urwid.Filler(urwid.Text(u"ARA: Post Article  Current board: %s" % self.board_name, align='center'))
+        self.header = urwid.AttrWrap(self.header, 'reversed')
 
         self.titleedit = urwid.Filler(urwid.Edit(caption="Title: ", wrap='clip'))
         bodytext = urwid.Filler(urwid.Text('Body'))
