@@ -31,9 +31,7 @@ class HelpDialog(urwid.WidgetWrap):
         msg_widget = urwid.Padding(urwid.Text(content), 'center', width - 4)
 
         #GridFlow widget containing all the buttons:
-        button_widgets = []
-        for button in ['OK']:
-            button_widgets.append(urwid.AttrWrap(urwid.Button(button, self._action), attr[1], attr[2]))
+        button_widgets = [urwid.AttrWrap(urwid.Button('OK', self._action), attr[1], attr[2])]
         button_grid = urwid.GridFlow(button_widgets, 12, 2, 1, 'center')
 
         #Combine message widget and button widget:
