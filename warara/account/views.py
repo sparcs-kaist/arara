@@ -133,7 +133,7 @@ def account_modify(request):
             signature = request.POST['mysig']
             introduction = request.POST['myintroduce']
             language = request.POST['mylanguage']
-            modified_information_dic = {'nickname':nickname, 'signature':signature, 'self_introduction':introduction, 'default_language':language}
+            modified_information_dic = {'nickname': nickname, 'signature': signature, 'self_introduction': introduction, 'default_language': language, 'widget': 0, 'layout': 0}
             ret, message = server.member_manager.modify(session_key, modified_information_dic)
             assert ret, message
             return HttpResponseRedirect("/account/")
