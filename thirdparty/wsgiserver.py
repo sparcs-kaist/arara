@@ -760,6 +760,8 @@ class CP_fileobject(socket._fileobject):
         else:
             # Read until size bytes or EOF seen, whichever comes first
             data = self._rbuf
+            if hasattr(data, 'getvalue'):
+                data = data.getvalue()
             buf_len = len(data)
             if buf_len >= size:
                 self._rbuf = data[size:]
@@ -785,6 +787,8 @@ class CP_fileobject(socket._fileobject):
 
     def readline(self, size=-1):
         data = self._rbuf
+        if hasattr(data, 'getvalue'):
+            data = data.getvalue()
         if size < 0:
             # Read until \n or EOF, whichever comes first
             if self._rbufsize <= 1:
