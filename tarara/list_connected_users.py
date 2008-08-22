@@ -34,7 +34,7 @@ class ara_list_connected_users(ara_form):
         userlist = []
         if len(users) > 0:
             for user in users:
-                userlist += [{'id':user['username'], 'nickname':'nickname', 'ip':user['ip'], 'action':'Sleeping'}]
+                userlist += [{'id':user['username'], 'nickname':user['nickname'], 'ip':user['ip'], 'action':'Sleeping'}]
         else:
             userlist = [{'id':' ','nickname':'', 'ip':' ', 'action':u'No users online.'}]
 
