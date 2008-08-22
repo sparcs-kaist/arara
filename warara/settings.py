@@ -93,6 +93,14 @@ INSTALLED_APPS = (
 SESSION_ENGINE = 'django.contrib.sessions.backends.file'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
+import tempfile
+login = os.getlogin()
+temp_dir = tempfile.gettempdir()
+session_dir = os.path.join(temp_dir, 'warara-' + login)
+if not os.path.exists(session_dir):
+    os.mkdir(session_dir)
+SESSION_FILE_PATH = session_dir
+
 #CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 
 # vim: set et ts=8 sw=4 sts=4
