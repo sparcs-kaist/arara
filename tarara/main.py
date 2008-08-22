@@ -6,6 +6,7 @@ import urwid.curses_display
 import urwid
 from ara_form import *
 import widget
+from helpviewer import *
 
 class ara_main(ara_form):
     menu = [
@@ -44,9 +45,19 @@ class ara_main(ara_form):
                 elif pos == 4:
                     self.parent.change_page("user_information", {'session_key':self.session_key})
                 elif pos == 5:
-                    self.parent.change_page("helpviewer",{'session_key':self.session_key,'topic':'ara_help', 'caller':'main', 'caller_args':{'session_key':self.session_key}})
+                    confirm = HelpDialog('ara_help', ('menu','bg','bgf'), 40, 15, self)
+                    self.overlay = confirm
+                    self.parent.run()
+                    if confirm.b_pressed == "OK":
+                        self.overlay = None
+                        self.parent.run()
                 elif pos == 6:
-                    self.parent.change_page("helpviewer",{'session_key':self.session_key,'topic':'about', 'caller':'main', 'caller_args':{'session_key':self.session_key}})
+                    confirm = HelpDialog('about', ('menu','bg','bgf'), 40, 15, self)
+                    self.overlay = confirm
+                    self.parent.run()
+                    if confirm.b_pressed == "OK":
+                        self.overlay = None
+                        self.parent.run()
                 elif pos == 7:
                     self.parent.change_page("welcome", {'session_key':self.session_key})
                 elif pos == 8:

@@ -21,7 +21,6 @@ from change_basic_info import *
 from blacklist import *
 from sig_intro import *
 from query_user import *
-from helpviewer import *
 from list_connected_users import *
 
 Screen = urwid.raw_display.Screen
@@ -93,13 +92,6 @@ class ara_display:
         elif pagename == "query_user":
             self.ara_query_user = ara_query_user(self, args['session_key'])
             self.view = self.ara_query_user
-        elif pagename == "helpviewer":
-            self.ara_helpviewer = ara_helpviewer(self, 
-                    session_key = args['session_key'],
-                    topic = args['topic'],
-                    caller = args['caller'],
-                    caller_args = args['caller_args'])
-            self.view = self.ara_helpviewer
         elif pagename == "change_basic_info":
             self.ara_change_basic_info = ara_change_basic_info(self, args['session_key'])
             self.view = self.ara_change_basic_info
