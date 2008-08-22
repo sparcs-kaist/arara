@@ -164,7 +164,7 @@ class MemberManager(object):
     
     def send_mail(self, email, username, confirm_key):
         '''
-        회원 가입하는 사용자 email로  confrim_key를 보내는 함수 
+        회원 가입하는 사용자 email로  confirm_key를 보내는 함수 
 
         @type  email: string
         @param email: User E-mail
