@@ -145,6 +145,7 @@ def read(request, board_name, article_id):
 
     for i in range(len(article_list)):
         article_list[i]['content'] = render_bbcode(article_list[i]['content'], 'UTF-8')
+        article_list[i]['depth_list'] = [x+1 for x in range(article_list[i]['depth']-2)]
         if article_list[i]['deleted']:
             article_list[i]['author_username'] = 'deleted'
             article_list[i]['content'] = 'deleted'

@@ -201,6 +201,19 @@ $(document).ready(function(){
 		event.stopPropagation();
     });
 
+	//logout function
+	$("a[name='logout']").click(function(event){
+			$.get("/account/logout", function(data){
+				$("a[name='logout']").hide();
+				$("a[name='login']").show();
+				$("a[name='account']").hide();
+				$("a[name='register']").show();
+				$("a[name='top_menu_message']").hide();
+				$("a[name='blacklist']").hide();
+				});
+			event.preventDefault();
+			});
+
 //단축키 작동
 	var cursor_bl = 0; //cursor_board_list
 	var cursor_tm = 0; //cursor_topmenu

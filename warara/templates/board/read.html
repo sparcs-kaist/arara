@@ -15,6 +15,9 @@
 
 {% for article in article_read_list %}
 <div class="article article_depth_{{article.depth}}">
+    {% for depth in article.depth_list %}
+    <img class="reply_title_img img_{{depth}}" src="/media/image/board/read_reply_hierarchy.jpg"></img>
+    {% endfor %}
     {% ifequal article.id article.root_id %}
     <h1 class="root_article_title"><a href="#">{{article.title}}</a></h1>
     <div id="root_article_info">
@@ -77,7 +80,7 @@
                         <span class="article_write_file_caption">file 1</span>
                         <div class="file_upload_p">
                             <div class="file_upload_t">
-                                <input type="file" name="file1" class="file_upload" size=50></input>
+                                <input type="file" name="file1" class="file_upload" size=5></input>
                             </div>
                             <div class="file_upload_f">
                                 <input name="file1_fi" class="file_input_f"></input> <!-- file1 fake input -->
