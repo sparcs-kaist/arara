@@ -1,3 +1,3 @@
-ARAra release 1.0
+ARAra, the 3rd-generation ARA.
 
 Copyright (C) 2008, SPARCS. All rights reserved.
