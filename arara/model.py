@@ -6,16 +6,22 @@ import md5
 from sqlalchemy import *
 from sqlalchemy.orm import *
 
+def smart_unicode(string):
+    if type(string) == str:
+        return unicode(string, 'UTF-8')
+    else:
+        return unicode(string)
+
 class User(object):
     def __init__(self, username, password, nickname, email, signature,
                  self_introduction, default_language):
-        self.username = username
+        self.username = smart_unicode(username)
         self.set_password(password)
-        self.nickname = nickname
-        self.email = email
-        self.signature = signature
-        self.self_introduction = self_introduction
-        self.default_language = default_language
+        self.nickname = smart_unicode(nickname)
+        self.email = smart_unicode(email)
+        self.signature = smart_unicode(signature)
+        self.self_introduction = smart_unicode(self_introduction)
+        self.default_language = smart_unicode(default_language)
         self.activated = False
         self.widget = 0
         self.layout = u''
@@ -26,10 +32,10 @@ class User(object):
         self.is_sysop = False
 
     def set_password(self, password):
-        self.password = unicode(md5.md5(password).hexdigest())
+        self.password = smart_unicode(md5.md5(password).hexdigest())
 
     def compare_password(self, password):
-        if unicode(md5.md5(password).hexdigest()) == unicode(self.password):
+        if smart_unicode(md5.md5(password).hexdigest()) == smart_unicode(self.password):
             return True
         else:
             return False
@@ -40,7 +46,7 @@ class User(object):
 class UserActivation(object):
     def __init__(self, user, activation_code):
         self.user = user
-        self.activation_code = unicode(activation_code)
+        self.activation_code = smart_unicode(activation_code)
         self.issued_date = datetime.datetime.fromtimestamp(time.time())
 
     def __repr__(self):
@@ -48,8 +54,8 @@ class UserActivation(object):
 
 class Board(object):
     def __init__(self, board_name, board_description):
-        self.board_name = board_name
-        self.board_description = board_description
+        self.board_name = smart_unicode(board_name)
+        self.board_description = smart_unicode(board_description)
         self.deleted = False
         self.read_only = False
 
@@ -59,10 +65,10 @@ class Board(object):
 class Article(object):
     def __init__(self, board, title, content, author, author_ip, parent):
         self.board = board
-        self.title = title
-        self.content = content
+        self.title = smart_unicode(title)
+        self.content = smart_unicode(content)
         self.author = author
-        self.author_ip = author_ip
+        self.author_ip = smart_unicode(author_ip)
         self.deleted = False
         self.date = datetime.datetime.fromtimestamp(time.time())
         self.hit = 0
@@ -112,10 +118,10 @@ class Blacklist(object):
 class Message(object):
     def __init__(self, from_user, from_user_ip, to_user, message):
         self.from_user = from_user
-        self.from_user_ip = from_user_ip
+        self.from_user_ip = smart_unicode(from_user_ip)
         self.to_user = to_user
         self.sent_time = datetime.datetime.fromtimestamp(time.time())
-        self.message = message
+        self.message = smart_unicode(message)
         self.received_deleted = False
         self.sent_deleted = False
         self.read_status = u'N'
@@ -125,7 +131,7 @@ class Message(object):
 
 class Banner(object): 
     def __init__(self, content, weight, due_date): 
-        self.content = content
+        self.content = smart_unicode(content)
         self.valid = True
         self.weight = weight
         self.issued_date = datetime.datetime.fromtimestamp(time.time()) 
@@ -136,7 +142,7 @@ class Banner(object):
 
 class Welcome(object): 
     def __init__(self, content, weight, due_date): 
-        self.content = content
+        self.content = smart_unicode(content)
         self.valid = True
         self.weight = weight
         self.issued_date = datetime.datetime.fromtimestamp(time.time()) 
@@ -147,8 +153,8 @@ class Welcome(object):
 
 class File(object): 
     def __init__(self, filename, saved_filename, filepath, user, board, article): 
-        self.filename = filename
-        self.saved_filename = saved_filename
+        self.filename = smart_unicode(filename)
+        self.saved_filename = smart_unicode(saved_filename)
         self.filepath= filepath 
         self.user = user
         self.board = board
