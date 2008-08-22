@@ -40,19 +40,16 @@ class HelpDialog(urwid.WidgetWrap):
         button_widgets = []
 
         for button in ['OK']:
-            button_widgets.append(urwid.AttrWrap(
-                urwid.Button(button, self._action), attr[1], attr[2]))
+            button_widgets.append(urwid.AttrWrap(urwid.Button(button, self._action), attr[1], attr[2]))
 
         button_grid = urwid.GridFlow(button_widgets, 12, 2, 1, 'center')
 
         #Combine message widget and button widget:
         widget_list = [msg_widget, self._blank, button_grid]
-        self._combined = urwid.AttrWrap(widget.Border(urwid.Filler(
-            urwid.Pile(widget_list, 2))), attr[0])
+        self._combined = urwid.AttrWrap(widget.Border(urwid.Filler(urwid.Pile(widget_list, 2))), attr[0])
         
         #Place the dialog widget on top of body:
-        overlay = urwid.Overlay(self._combined, body, 'center', width,
-                                'middle', height)
+        overlay = urwid.Overlay(self._combined, body, 'center', width, 'middle', height)
         self.quit = False
        
         urwid.WidgetWrap.__init__(self, overlay)
