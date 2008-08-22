@@ -1,4 +1,3 @@
-
 $(document).ready(function(){
     var user_popup = $("#user_popup");
     user_popup.addClass("absolute");
@@ -68,6 +67,20 @@ $(document).ready(function(){
         $("#user_information_popup").show("fast");
 
         /*show_user_information_box(username, event);*/
+        event.preventDefault();
+    });
+
+    $("#u_info_send_message").click(function(event) {
+        show_message_box(username, event);
+        event.preventDefault();
+    });
+    
+    $("#u_info_add_blacklist").click(function(event) {
+        $.post("/blacklist/add/", {blacklist_id: username},
+            function(data) {
+                alert("Added " + username + " to blacklist.");
+            }
+        );
         event.preventDefault();
     });
 
