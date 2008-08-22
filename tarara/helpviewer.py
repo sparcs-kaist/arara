@@ -10,15 +10,9 @@ class HelpDialog(urwid.WidgetWrap):
     """
     Creates a BoxWidget that displays a help message
     Attributes:
-    b_pressed -- Contains the label of the last button pressed or None if no
-                 button has been pressed.
+    quit -- User closed the dialog.
     """
     
-    b_pressed = None
-
-    _blank = urwid.Text("")
-    _mode = None
-
     def __init__(self, topic, attr, width, height, body, ):
         """
         topic -- Help topic
@@ -38,14 +32,12 @@ class HelpDialog(urwid.WidgetWrap):
 
         #GridFlow widget containing all the buttons:
         button_widgets = []
-
         for button in ['OK']:
             button_widgets.append(urwid.AttrWrap(urwid.Button(button, self._action), attr[1], attr[2]))
-
         button_grid = urwid.GridFlow(button_widgets, 12, 2, 1, 'center')
 
         #Combine message widget and button widget:
-        widget_list = [msg_widget, self._blank, button_grid]
+        widget_list = [msg_widget, widget.nfblanktext, button_grid]
         self._combined = urwid.AttrWrap(widget.Border(urwid.Filler(urwid.Pile(widget_list, 2))), attr[0])
         
         #Place the dialog widget on top of body:
@@ -59,8 +51,6 @@ class HelpDialog(urwid.WidgetWrap):
         Function called when a button is pressed.
         Should not be called manually.
         """
-        
-        self.b_pressed = button.get_label()
         self.quit = True
 
 # vim: set et ts=8 sw=4 sts=4:

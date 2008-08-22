@@ -48,14 +48,14 @@ class ara_main(ara_form):
                     confirm = HelpDialog('ara_help', ('menu','bg','bgf'), 40, 15, self)
                     self.overlay = confirm
                     self.parent.run()
-                    if confirm.b_pressed == "OK":
+                    if confirm.quit:
                         self.overlay = None
                         self.parent.run()
                 elif pos == 6:
                     confirm = HelpDialog('about', ('menu','bg','bgf'), 40, 15, self)
                     self.overlay = confirm
                     self.parent.run()
-                    if confirm.b_pressed == "OK":
+                    if confirm.quit:
                         self.overlay = None
                         self.parent.run()
                 elif pos == 7:
