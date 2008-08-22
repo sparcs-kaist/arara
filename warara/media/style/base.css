@@ -291,11 +291,6 @@ body {
     padding: 0;
 }
 
-#user_information_popup_html dl {
-    margin: 0;
-    padding: 0;
-}
-
 #u_info_pop_head {
     font-size: 1.5em;
     color: #FFFFFF;
@@ -327,26 +322,29 @@ body {
     padding: 0.5em 0 0 0.7em; 
     margin: 0.7em 0 0 0;
     float: left;
+    clear: left;
 }
 
 .uip_list_content {
-    width: 80%;
-    margin: 0.8em 0 0.2em 0.1em;
+    width: 77%;
+    margin: 1.2em 0 0.2em 0.3em;
     padding: 0;
     float: left;
 }
 
 #u_info_send_message {
     float: left;
-    margin: 0 0.5em 0 0;
+    margin: 1.5em 0.5em 0 0;
 }
 
 #u_info_add_blacklist {
     float: left;
+    margin: 1.5em 0 0 0;
 }
 
 #user_information_close {
     float: right;
+    margin: 1.5em 0 0 0;
 }
 
 /* display */
