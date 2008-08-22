@@ -1,6 +1,12 @@
 = Telnet ARAra =
 This is telnet ARAra client.
 
+== Setup ==
+* Setup telnet server, add a user account.
+** Use inetutils-telnetd, not simple telnetd.
+* Make new user's shell to display.py.
+* Read more in [[Telnet]] article in wiki.
+
 == Execution ==
 # Launch ARAra XML-RPC Server.
 # Run display.py.
