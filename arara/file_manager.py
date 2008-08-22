@@ -71,14 +71,11 @@ class FileManager(object):
             session.close()
             return False, 'DATABASE_ERROR' 
 
-    @require_login
     @log_method_call
-    def download_file(self, session_key, article_id, file_id):
+    def download_file(self, article_id, file_id):
         '''
         article의 파일을 다운로드 할때 실제로 파일이 저장된 장소와 저장된 파일명을 리턴해주는 함수 
         
-        @type  session_key: string
-        @param session_key: User Key
         @type  article_id: Integer 
         @param article_id: Article Number 
         @type  filename: string
