@@ -123,16 +123,6 @@ def account(request):
         assert None, "NOT_LOGGED_IN"
     return HttpResponse(rendered)
 
-def user_information(request):
-    if request.method == 'POST':
-        session_key, r = warara.check_logged_in(request)
-        server = arara.get_server()
-        query_user_name = request.POST['query_user_name']
-        ret, information = server.member_manager.query_by_username(session_key, query_user_name)
-        return HttpResponse(repr(information))
-    else:
-        return HttpResponse('Must use POST')
-
 def account_modify(request):
     session_key, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
