@@ -9,12 +9,6 @@ from ara_form import *
 import widget
 
 class ara_join(ara_form):
-    def get_login_message(self):
-        basedir = os.path.dirname(__file__)
-        banner = os.path.join(basedir, 'login.txt')
-        f = open(banner, 'r')
-        return f.read().decode('utf-8')
-
     def keypress(self, size, key):
         if key == 'enter':
             if self.mainpile.get_focus() == self.joinpile:
@@ -25,8 +19,10 @@ class ara_join(ara_form):
                     else:
                         self.joinpile.set_focus(self.nickcolumn)
                 elif curfocus == self.nickcolumn:
-                    # TODO: 닉네임 중복 확인
-                    self.joinpile.set_focus(self.pwcolumn)
+                    if self.server.member_manager.is_registered_nickname(self.nickedit.body.get_edit_text()):
+                        self.nickedit.body.set_edit_text('')
+                    else:
+                        self.joinpile.set_focus(self.pwcolumn)
                 elif curfocus == self.pwcolumn:
                     self.joinpile.set_focus(self.confirmcolumn)
                 elif curfocus == self.confirmcolumn:
@@ -37,8 +33,10 @@ class ara_join(ara_form):
                     else:
                         self.joinpile.set_focus(self.emailcolumn)
                 elif curfocus == self.emailcolumn:
-                    # TODO: 이메일 중복 확인
-                    if re.match("^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+\.[a-zA-Z]{2,6}$", self.emailedit.body.get_edit_text()):
+                    text = self.emailedit.body.get_edit_text()
+                    is_registered = self.server.member_manager.is_registered_email(text)
+                    is_valid_form = re.match("^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+\.[a-zA-Z]{2,6}$", text) 
+                    if not is_registered and is_valid_form:
                         self.joinpile.set_focus(self.langcolumn)
                     else:
                         self.emailedit.body.set_edit_text('')
@@ -76,22 +74,31 @@ class ara_join(ara_form):
     def on_button_clicked(self, button):
         retvalue = None
         if button == self.joinbutton.body:
-            reg_dic = {'username':self.idedit.body.get_edit_text(), 'password':self.pwedit.body.get_edit_text(), 'nickname':self.nickedit.body.get_edit_text(), 'email':self.emailedit.body.get_edit_text(), 'signature':'', 'self_introduction':'','default_language':'ko'}
-            retvalue = self.server.member_manager.register(reg_dic)
-            if retvalue[0] == True:
+            reg_dic = {'username':self.idedit.body.get_edit_text(), 'password':self.pwedit.body.get_edit_text(),
+                'nickname':self.nickedit.body.get_edit_text(), 'email':self.emailedit.body.get_edit_text(),
+                'signature':'', 'self_introduction':'','default_language':'ko'}
+            retvalue, reg_key = self.server.member_manager.register(reg_dic)
+            if retvalue:
+                self.server.member_manager.send_mail(self.emailedit.body.get_edit_text(), self.idedit.body.get_edit_text(),
+                    reg_key)
                 confirm = widget.Dialog("Account created.\nPlease confirm it.", 
                         ["OK"], ('menu', 'bg', 'bgf'), 30, 6, self)
                 self.overlay = confirm
                 self.parent.run()
                 if confirm.b_pressed == "OK":
                     self.parent.change_page("login",{})
-                else:
-                    pass
+            else:
+                message = widget.Dialog(reg_key, ["OK"], ('menu', 'bg', 'bgf'), 30, 6, self)
+                self.overlay = message
+                self.parent.run()
+                if message.b_pressed == "OK":
+                    self.parent.change_page("login",{})
         elif button == self.cancelbutton.body:
             self.parent.change_page("login",{})
 
     def __initwidgets__(self):
 	header = urwid.Filler(urwid.Text("ARA: Join", align='center'))
+	header = urwid.AttrWrap(header, 'reversed')
 
         self.idedit = urwid.Filler(urwid.Edit(caption="ID:", wrap='clip'))
         iddesc = urwid.Filler(urwid.Text("ID's length should be\nbetween 4 and 10 chars"))
@@ -101,11 +108,11 @@ class ara_join(ara_form):
         nickdesc=urwid.Filler(urwid.Text("You can't use duplicated\nnickname or other's ID"))
         self.nickcolumn = widget.EasyColumn(self.nickedit, nickdesc)
         
-        self.pwedit = urwid.Filler(urwid.Edit(caption="Password:", wrap='clip'))
+        self.pwedit = urwid.Filler(widget.PasswordEdit(caption="Password:", wrap='clip'))
         pwdesc = urwid.Filler(urwid.Text("Minimum password length\nis 4 characters"))
         self.pwcolumn = widget.EasyColumn(self.pwedit, pwdesc)
 
-        self.confirmedit = urwid.Filler(urwid.Edit(caption="Confirm\nPassword:", wrap='clip'))
+        self.confirmedit = urwid.Filler(widget.PasswordEdit(caption="Confirm\nPassword:", wrap='clip'))
         confirmdesc = urwid.Filler(urwid.Text("Type password here\nonce again"))
         self.confirmcolumn = widget.EasyColumn(self.confirmedit, confirmdesc)
 
@@ -127,10 +134,10 @@ class ara_join(ara_form):
         self.cancelbutton = urwid.Filler(urwid.Button("Cancel", self.on_button_clicked))
         self.buttoncolumn = widget.EasyColumn(self.joinbutton, self.cancelbutton, 50, 50)
 
-        infotext = urwid.Filler(urwid.Text("""  * Press [Enter] to proceed to the next item, [Shift+Enter] - previous item
-  * Press [Tab] to directly jump to Join or Cancel button
-  * We'll send confirmation mail to your address.
-  * To activate your ID, click the link on the mail."""))
+        infotext = urwid.Filler(urwid.Text("""  * Press [Enter] to proceed to the next item, [Shift+Enter] - previous item.
+  * Press [Tab] to directly jump to Join or Cancel button.
+  * Please be patient after click Join button. We'll send confirmation mail.
+  * After join, you should activate your ID via link on the mail."""))
 
         content = [('fixed',1,header),self.joinpile,('fixed',4,infotext),('fixed',1,widget.blank),('fixed',1,self.buttoncolumn)]
         self.mainpile = urwid.Pile(content)
