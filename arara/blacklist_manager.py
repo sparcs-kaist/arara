@@ -21,7 +21,7 @@ class NotLoggedIn(Exception):
     pass
 
 BLACKLIST_DICT = ['blacklist_username', 'block_article', 'block_message']
-BLACKLIST_LIST_DICT = ['id', 'username', 'blacklisted_user_username', 'blacklisted_date', 'last_modified_date', 'block_article', 'block_message']
+BLACKLIST_LIST_DICT = ['id', 'blacklisted_user_nickname', 'blacklisted_user_username', 'blacklisted_date', 'last_modified_date', 'block_article', 'block_message']
 
 class BlacklistManager(object):
     '''
@@ -52,6 +52,7 @@ class BlacklistManager(object):
             del item_dict['user_id']
         if item_dict['blacklisted_user_id']:
             item_dict['blacklisted_user_username'] = item.target_user.username
+            item_dict['blacklisted_user_nickname'] = item.target_user.nickname
             del item_dict['blacklisted_user_id']
         filtered_dict = filter_dict(item_dict, whitelist)
 
