@@ -59,16 +59,20 @@ $(document).ready(function(){
     });
 
     $("#user_popup_user_information").click(function(event) {
-        $.post("/", {query_user_name: username},
+        $("#user_information_popup_content").contents().remove();
+        $.post("/main/", {query_user_name: username},
             function(data, textStatus) {
-                alert(data);
-                $(data).appendTo("#user_information_popup");
+                $(data).appendTo("#user_information_popup_content");
             }
         );
-        $("#user_information_popup").show();
+        $("#user_information_popup").show("fast");
 
         /*show_user_information_box(username, event);*/
         event.preventDefault();
+    });
+
+    $("#user_information_close").click(function(event) {
+        $("#user_information_popup").hide("fast");
     });
 
     $("#user_popup_add_blacklist").click(function(event) {
