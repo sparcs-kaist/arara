@@ -275,11 +275,79 @@ body {
 /* user information style*/
 #user_information_popup {
     display: none;
-    width: 20em;
+    width: 40em;
     border: 2px solid;
     padding: 1.5em;
+    margin: 0;
+    float: left;
+}
+#user_information_popup_content {
+    margin: 0;
+    padding: 0;
 }
 
+#user_information_popup_html {
+    margin: 10px 20px;
+    padding: 0;
+}
+
+#user_information_popup_html dl {
+    margin: 0;
+    padding: 0;
+}
+
+#u_info_pop_head {
+    font-size: 1.5em;
+    color: #FFFFFF;
+    font-weight: bold;
+    font-family: tahoma;
+    background: url(/media/image/head_background.png) repeat top left;
+    padding: 0.7em 0 0.7em 0.7em;
+}
+
+.uip_subtitle {
+    width: 100%;
+    border-top: 1px #65AA5C solid;
+    border-bottom: 1px #CCCCCC solid;
+    background: url(/media/image/base/square.png) no-repeat top left #E0E0E0;
+    margin: 1.4em 0 0 0;
+    float: left;
+}
+
+.uip_subtitle_name {
+    border-bottom: 5px #DADADA solid;
+    padding: 0.5em 0 0 0.7em;
+    vertical-align: bottom;
+}
+
+.uip_list_name {
+    width: 20%;
+    background: url(/media/image/base/square_small.png) no-repeat top left;
+    border-bottom: 1px #CCCCCC solid;
+    padding: 0.5em 0 0 0.7em; 
+    margin: 0.7em 0 0 0;
+    float: left;
+}
+
+.uip_list_content {
+    width: 80%;
+    margin: 0.8em 0 0.2em 0.1em;
+    padding: 0;
+    float: left;
+}
+
+#u_info_send_message {
+    float: left;
+    margin: 0 0.5em 0 0;
+}
+
+#u_info_add_blacklist {
+    float: left;
+}
+
+#user_information_close {
+    float: right;
+}
 
 /* display */
 .hidden {
