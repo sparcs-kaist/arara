@@ -86,6 +86,9 @@ aaa
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
+>>> server.member_manager.send_mail(u'mikkang@sparcs.org', u'ggingang', register_key)
+(True, 'OK')
+
 >>> server.member_manager.confirm(u'ggingkkang', unicode(register_key))
 (True, 'OK')
 >>> ret, session_key_ggingkkang = server.login_manager.login(u'ggingkkang', u'xx', u'143.248.234.140')

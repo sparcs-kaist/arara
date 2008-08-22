@@ -3,12 +3,15 @@
 import md5
 import datetime
 import time
+import smtplib
 
 from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
 from sqlalchemy import or_, not_, and_
 from arara import model
 from arara.util import require_login, filter_dict, is_keys_in_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
+from django.template.loader import render_to_string
+from email.MIMEText import MIMEText
 
 log_method_call = log_method_call_with_source('member_manager')
 log_method_call_important = log_method_call_with_source_important('member_manager')
@@ -157,6 +160,42 @@ class MemberManager(object):
 
         session.close()
         return True, activation_code
+
+    
+    def send_mail(self, email, username, confirm_key):
+        '''
+        회원 가입하는 사용자 email로  confrim_key를 보내는 함수 
+
+        @type  email: string
+        @param email: User E-mail
+        @type  username: string
+        @param username: User ID
+        @type  confirm_key: string
+        @param confirm_key: Confirm Key
+        @rtype: string
+        @return:
+            1. 성공: True, 'OK' 
+            2. 실패: 
+        '''
+
+        try:
+            HOST = 'smtp.naver.com'
+            sender = 'root_id@sparcs.org'
+            content = 'You have been successfully registered as the ARAra member.<br />To use your account, you have to activate it.<br />Please copy and paste the link below on any web browser to activate your account.<br /><br />'
+            confirm_url = 'http://nan.sparcs.org:8080/account/confirm/%s/%s' % (username, confirm_key)
+            title = "[ARAra] Please activate your account"
+            msg = MIMEText(content+confirm_url, _subtype="html", _charset='euc_kr')
+            msg['Subject'] = title
+            msg['From'] = sender
+            msg['To'] = email
+            s = smtplib.SMTP()
+            s.connect(HOST)
+            s.login('newtron_star', 'q1q1q1')
+            s.sendmail(sender, [email], msg.as_string())
+            s.quit()
+        except Exception:
+            raise
+        return True, 'OK'
 
 
     @require_login
