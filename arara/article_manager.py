@@ -269,6 +269,62 @@ class ArticleManager(object):
         else:
             return False, 'DATABASE_ERROR'
 
+    @require_login
+    def new_article_list(self, session_key, page=1, page_length=20):
+        '''
+        사용자가 로그아웃한 이후 게시판에 새로 올라온 글 또는 수정된 글들을 불러오는 함수
+
+        @type  session_key: string
+        @param session_key: User Key
+        @rtype: boolean, list
+        @type  page: integer
+        @param page: Page Number to Request
+        @type  page_length: integer
+        @param page_length: Count of Article on a Page
+        @rtype: boolean, list
+        @return:
+            1. 리스트 읽어오기 성공: True, New Article List
+            2. 리스트 읽어오기 실패:
+                1. 페이지 번호 오류: False, 'WRONG_PAGENUM' 
+                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        '''
+        ret_dict = {}
+        _, user_info = self.login_manager.get_session(session_key)
+
+        try:
+            session = model.Session()
+            user = session.query(model.User).filter_by(username=user_info['username']).one()
+            article_count = article_list = session.query(model.Article).filter(and_(
+                                model.articles_table.c.root_id==None,
+                                model.articles_table.c.last_modified_date > user.last_logout_time)).count()
+            last_page = int(article_count / page_length)
+            if article_count % page_length != 0:
+                last_page += 1
+            elif article_count == 0:
+                last_page += 1
+            if page > last_page:
+                session.close()
+                return False, 'WRONG_PAGENUM'
+            offset = page_length * (page - 1)
+            last = offset + page_length
+
+            article_list = session.query(model.Article).filter(and_(
+                    model.articles_table.c.root_id==None,
+                    model.articles_table.c.last_modified_date > user.last_logout_time))[offset:last].order_by(model.Article.id.desc()).all()
+            article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
+            for article in article_dict_list:
+                    article['read_status'] = 'N'
+            ret_dict['hit'] = article_dict_list
+            ret_dict['last_page'] = last_page
+            ret_dict['results'] = article_count
+            session.close()
+            return True, ret_dict
+        except InvalidRequestError:
+            raise
+            session.close()
+            return False, 'DATABASE_ERROR'
+
+
     @log_method_call
     def article_list(self, session_key, board_name, page=1, page_length=20):
         '''

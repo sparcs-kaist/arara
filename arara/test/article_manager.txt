@@ -327,10 +327,39 @@ True
 >>> server.login_manager.logout(session_key)
 (True, 'OK')
 
+# New Aritlcle List Test
+
+# Restore time to NOW.
+>>> time.time = org_time
+
+>>> ret, session_key_mikkang = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.140')
+>>> ret, session_key_combacsa = server.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.140')
+
+>>> article_dic = {'title': u'serialx is...1', 'content': u'polarbear'}
+>>> ret, _ = server.article_manager.write_article(session_key_mikkang, u'garbages', article_dic)
+>>> ret
+True
+
+>>> server.login_manager.logout(session_key_combacsa)
+(True, 'OK')
+
+>>> article_dic = {'title': u'serialx is...2', 'content': u'polarbear'}
+>>> ret, _ = server.article_manager.write_article(session_key_mikkang, u'garbages', article_dic)
+>>> ret
+True
+
+>>> ret, session_key_combacsa = server.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.140')
+>>> _, l = server.article_manager.new_article_list(session_key_combacsa)
+>>> ret
+True
+>>> l['hit'][0]['title']
+u'serialx is...2'
+>>> l['hit'][0]['author_username']
+u'mikkang'
+
 
 Fin!
 
->>> time.time = org_time
 
 # Reset the database
 >>> import arara.model
