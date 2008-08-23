@@ -5,8 +5,9 @@
 {{block.super}}
 {% endblock style %}
 
+{% load arara_tags %}
 {% block board_name %}{{board_name}}{% endblock board_name %}
-{% block board_description %}{{board_description}}{% endblock board_description %}
+{% block board_description %}{{board_name|get_board_description:""}}{% endblock board_description %}
 
 {% block content %}
 

@@ -53,7 +53,7 @@
             file(s) : 
             {% endif %}
             {% for file in article.attach %}
-            <a href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/file/{{file.order}}" target="_blank">{{file.filename}}</a>
+            <a href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" target="_blank">{{file.filename}}</a>
             {% endfor %}
         </div>
         <div class="article_read_buttons">

@@ -24,5 +24,16 @@ $(document).ready(function() {
 		$(this).parent().parent().children("div.file_upload_f").children("input.file_input_f").val($(this).val());
 		});
 
+	$("a.delete_file_button").click(function(){
+			var article_id = $("input[name='article_no']").val();
+			var board_name = $("input[name='board_name']").val();
+			var file_id = $(this).parent().children("input[name='file_id']").val();
+			var delete_url = "/board/" + board_name + "/delete_file";
+			$.get(delete_url, {'article_id':article_id, 'file_id':file_id}, function(data){
+				alert(data);
+				$(this).parent().remove();
+				});
+			});
+
 	});
 

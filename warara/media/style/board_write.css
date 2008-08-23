@@ -45,6 +45,12 @@
     overflow-y: auto;
 }
 
+#article_delete_file {
+	width: 98%;
+	padding-left: 2%;
+	margin: 1em 0em;
+}
+
 #article_write_file {
 	width: 98%;
 	padding-left: 2%;

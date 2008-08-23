@@ -44,17 +44,17 @@ img.reply_title_img {
 }
 
 img.img_1 {left: -1em;}
-img.img_2 {left: -2em;-moz-opacity:0.7;filter:alpha(opacity:70);opacity:0.5}
-img.img_3 {left: -3em;-moz-opacity:0.6;filter:alpha(opacity:60);opacity:0.5}
-img.img_4 {left: -4em;-moz-opacity:0.55;filter:alpha(opacity:55);opacity:0.5}
+img.img_2 {left: -2em;-moz-opacity:0.7;filter:alpha(opacity:70);opacity:0.7}
+img.img_3 {left: -3em;-moz-opacity:0.6;filter:alpha(opacity:60);opacity:0.6}
+img.img_4 {left: -4em;-moz-opacity:0.55;filter:alpha(opacity:55);opacity:0.55}
 img.img_5 {left: -5em;-moz-opacity:0.5;filter:alpha(opacity:50);opacity:0.5}
-img.img_6 {left: -6em;-moz-opacity:0.45;filter:alpha(opacity:45);opacity:0.5}
-img.img_7 {left: -7em;-moz-opacity:0.4;filter:alpha(opacity:40);opacity:0.5}
-img.img_8 {left: -8em;-moz-opacity:0.35;filter:alpha(opacity:35);opacity:0.5}
-img.img_9 {left: -9em;-moz-opacity:0.3;filter:alpha(opacity:30);opacity:0.5}
-img.img_10 {left: -10em;-moz-opacity:0.25;filter:alpha(opacity:25);opacity:0.5}
-img.img_11 {left: -11em;-moz-opacity:0.2;filter:alpha(opacity:20);opacity:0.5}
-img.img_12 {left: -12em;-moz-opacity:0.15;filter:alpha(opacity:15);opacity:0.5}
+img.img_6 {left: -6em;-moz-opacity:0.45;filter:alpha(opacity:45);opacity:0.45}
+img.img_7 {left: -7em;-moz-opacity:0.4;filter:alpha(opacity:40);opacity:0.4}
+img.img_8 {left: -8em;-moz-opacity:0.35;filter:alpha(opacity:35);opacity:0.35}
+img.img_9 {left: -9em;-moz-opacity:0.3;filter:alpha(opacity:30);opacity:0.3}
+img.img_10 {left: -10em;-moz-opacity:0.25;filter:alpha(opacity:25);opacity:0.25}
+img.img_11 {left: -11em;-moz-opacity:0.2;filter:alpha(opacity:20);opacity:0.2}
+img.img_12 {left: -12em;-moz-opacity:0.15;filter:alpha(opacity:15);opacity:0.15}
 
 /*
 .article_depth_1 h1 {font-size: 1.5em;}

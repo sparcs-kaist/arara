@@ -17,3 +17,10 @@ class BoardListUpdateNode(template.Node):
             cache.set('board_list', board_list, 10)
         context["board_list"] = board_list
         return ""
+
+@register.filter(name='get_board_description')
+def do_get_board_description(value, arg):
+    "Get board name and board description"
+    server = arara.get_server()
+    suc, board = server.board_manager.get_board(value)
+    return board['board_description']

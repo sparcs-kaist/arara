@@ -9,6 +9,6 @@ urlpatterns = patterns('',
     (r'^([\w\[\]]+)/([\d]+)/(\d+)/vote/$', 'warara.board.views.vote'),
     (r'^([\w\[\]]+)/([\d]+)/(\d+)/delete/$', 'warara.board.views.delete'),
     (r'^([\w\[\]]+)/search/$', 'warara.board.views.search'),
-    (r'^([\w\[\]]+)/([\d]+)/file/([\w/]+)/$', 'warara.board.views.file_download'),
+    (r'^([\w\[\]]+)/delete_file/$', 'warara.board.views.file_delete'),
     (r'^([\w\[\]]+)/([\d]+)/(\d+)/file/(\d+)/$', 'warara.board.views.file_download'),
 )
