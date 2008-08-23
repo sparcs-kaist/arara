@@ -8,14 +8,11 @@ sys.path.append(PROJECT_PATH)
 
 from arara import article_manager
 from arara import blacklist_manager
-from arara import logging_manager
 from arara import login_manager
-from arara import log_manager
 from arara import member_manager
 from arara import messaging_manager
 from arara import notice_manager
 from arara import read_status_manager
-from arara import sysop_manager
 
 import logging
 
