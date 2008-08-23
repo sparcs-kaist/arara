@@ -66,7 +66,7 @@ class FileManager(object):
             session.save(file)
             session.commit()
             session.close()
-            return True, filepath_to_save, ghost_filename
+            return True, {'file_path': filepath_to_save, 'saved_filename': ghost_filename}
         except Exception: 
             session.close()
             return False, 'DATABASE_ERROR' 
@@ -106,9 +106,10 @@ class FileManager(object):
             return False, 'FILE_NOT_FOUND'
         download_path = file.filepath
         ghost_filename = file.saved_filename
+        real_filename = file.filename
         session.commit()
         session.close()
-        return True, download_path, ghost_filename
+        return True, {'file_path': download_path, 'saved_filename': ghost_filename, 'real_filename': real_filename}
 
     @require_login
     @log_method_call_important
@@ -153,5 +154,5 @@ class FileManager(object):
         ghost_filename = file.saved_filename
         session.commit()
         session.close()
-        return True, download_path, ghost_filename
+        return True, {'file_path': download_path, 'saved_filename': ghost_filename}
 
