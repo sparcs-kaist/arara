@@ -35,6 +35,7 @@ a {
 }
 
 #content_wrapper {
+	position: relative;
     float: right;
     width: 86%;
     max-width: 86%;
@@ -150,7 +151,10 @@ a {
 }
 
 #content {
-    padding: 1.68em;
+	position: relative;
+    padding: 1.68em 0em;
+	padding-left: 2%;
+	width: 98%;
 }
 
 #menu ul {

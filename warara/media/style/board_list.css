@@ -6,12 +6,6 @@
     width: 100%;
 }
 
-#article_table table {
-    border-collapse: collapse;
-	border: 0px;
-    border-top: 1px solid #65aa5c;
-}
-
 #article_table th, td {
     padding: 0.1em 1em;
 }

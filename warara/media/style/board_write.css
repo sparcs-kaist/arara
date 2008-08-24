@@ -153,3 +153,7 @@ div.file_upload_f input {
 	margin-top: 0.5%;
 	width: 5em;
 }
+
+#article_delete_file .deleted_file {
+	text-decoration: line-through;
+}

@@ -39,20 +39,18 @@ def get_article_list(request, r, mode):
     page_range_no = math.ceil(float(page_no) / page_range_length)
 
     article_list = article_result['hit']
-    ret, board_dict = server.board_manager.get_board(r['board_name'])
+    ret, r['board_dict'] = server.board_manager.get_board(r['board_name'])
     assert ret, board_dict
     for i in range(len(article_list)):
         if article_list[i].get('deleted', 0):
             article_list[i]['title'] = 'deleted'
             article_list[i]['author_username'] = ''
 
-        max_length = 36 # max title string length
+        max_length = 32 # max title string length
         if len(article_list[i]['title']) > max_length:
             article_list[i]['title'] = article_list[i]['title'][0:max_length]
             article_list[i]['title'] += "..."
 
-    r['board_name'] = board_dict['board_name']
-    r['board_description'] = board_dict['board_description']
     r['article_list'] = article_list
     r['search_method_list'] = [{'val':'all', 'text':'all'}, {'val':'title', 'text':'title'},
             {'val':'content', 'text':'content'},
@@ -117,12 +115,21 @@ def write_(request, board_name):
     if request.POST.get('write_type', 0) == 'modify':
         article_no = request.POST.get('article_no', 0)
         ret, article_id = server.article_manager.modify(sess, board_name, int(article_no), article_dic)
+
+        delete_file = request.POST.get('delete_file', 0) #delete_file
+        if delete_file:
+            delete_file = delete_file[1:]
+            delete_file = delete_file.split('&')
+            for file_id in delete_file:
+                ret, file = server.file_manager.delete_file(sess, int(article_no), int(file_id))
+                assert ret, file
+                os.remove("files/%s/%s" % (file['file_path'], file['saved_filename']))
+
     else:
         ret, article_id = server.article_manager.write_article(sess, board_name, article_dic)
     assert ret, article_id
     
     #upload file
-    
     if request.FILES:
         file = {}
         for key, file_ob in request.FILES.items():
@@ -133,12 +140,7 @@ def write_(request, board_name):
             fp = open('files/%s/%s' % (file['file_path'], file['saved_filename']), 'wb')
             fp.write(file_ob.read())
 
-    if not ret:
-        r['e'] = article_id
-        rendered = render_to_string('board/error.html', r)
-        return HttpResponse(rendered)
-
-    return HttpResponseRedirect('/board/%s' % board_name)
+    return HttpResponseRedirect('/board/%s/%s' % (board_name, str(article_id)))
 
 def read(request, board_name, article_id):
     server = arara.get_server()
@@ -150,8 +152,8 @@ def read(request, board_name, article_id):
     for i in range(len(article_list)):
         if article_list[i].get('attach', 0): #image view
             for file in article_list[i]['attach']:
-                if file['filename'].split('.')[-1] in image_filetype:
-                    insert_image_tag = "<img src=\"/board/" + board_name + "/" + str(article_list[i]['root_id']) + "/" + str(article_list[i]['id']) + "/file/" + str(file['file_id']) + "\"></img><br>"
+                if file['filename'].split('.')[-1].lower() in image_filetype:
+                    insert_image_tag = "<p><img src=\"/board/" + board_name + "/" + str(article_list[i]['root_id']) + "/" + str(article_list[i]['id']) + "/file/" + str(file['file_id']) + "\"></img></p>"
                     article_list[i]['content'] = insert_image_tag + article_list[i]['content']
 
         #article_list[i]['content'] = render_bbcode(article_list[i]['content'], 'UTF-8')
@@ -244,15 +246,6 @@ def file_download(request, board_name, article_root_id, article_id, file_id):
     response = HttpResponse(file_ob, mimetype="application/x-forcedownload")
     response['Content-Disposition'] = "attachment; filename=" + file['real_filename']
     return response
-
-def file_delete(request, board_name):
-    server = arara.get_server()
-    sess, r = warara.check_logged_in(request)
-    article_id = request.GET.get('article_id', 0)
-    file_id = request.GET.get('file_id', 0)
-    ret, message = server.file_manager.delete_file(sess, board_name, int(article_id), int(file_id))
-
-    return HttpResponse(message)
 
 def wrap_error(f):
     def check_error(*args, **argv):

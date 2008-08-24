@@ -4,7 +4,9 @@ $(document).ready(function() {
 	$("input[name='file_input_add']").click(function(){
 		$file_no++;
 		$("#file_line_model span.article_write_file_caption").text("file " + $file_no);
-		$("#file_line_model input.file_upload").attr("name", "file"+$file_no);
+		$("#file_line_model .file_upload_t input[type='file']").remove();
+		var file_append = "<input type=\"file\" name=\"file" + $file_no + "\" class=\"file_upload\" size=\"95\"></input>";
+		$("#file_line_model .file_upload_t").append(file_append);
 		$("#article_write_file").append($("#file_line_model").contents().clone());
 
 		$("input[name='file_input_delete']").click(function(){
@@ -24,16 +26,16 @@ $(document).ready(function() {
 		$(this).parent().parent().children("div.file_upload_f").children("input.file_input_f").val($(this).val());
 		});
 
-	$("a.delete_file_button").click(function(){
-			var article_id = $("input[name='article_no']").val();
-			var board_name = $("input[name='board_name']").val();
-			var file_id = $(this).parent().children("input[name='file_id']").val();
-			var delete_url = "/board/" + board_name + "/delete_file";
-			$.get(delete_url, {'article_id':article_id, 'file_id':file_id}, function(data){
-				alert(data);
-				$(this).parent().remove();
-				});
+	$("a.delete_file_button").click(function(event){
+			$file_anchor = $(this).parent().children("a[name='file_name']");
+			$file_anchor.toggleClass("deleted_file");
 			});
 
+	$("input[name='article_write']").click(function(event){
+			$("a.deleted_file").each(function(){
+				$file_anchor = $(this);
+				$("input[name='delete_file']").val($("input[name='delete_file']").val() + "&" + $file_anchor.attr("rel"));
+				});
+			});
 	});
 
