@@ -61,7 +61,7 @@ class FileManager(object):
         article = session.query(model.Article).filter_by(id=article_id).one()
         filepath_to_save = u''+str(article.board.board_name) + '/' +str(article.date.year) + '/' + str(article.date.month) + '/' + str(article.date.day)
         try:
-            ghost_filename = u''+hashlib.md5(str(filename) + str(article.author.id) + str(article.board.id) + str(article.id)).hexdigest()
+            ghost_filename = u''+hashlib.md5(filename.encode('utf-8') + str(article.author.id) + str(article.board.id) + str(article.id)).hexdigest()
             file = model.File(filename, ghost_filename, filepath_to_save, article.author, article.board, article)
             session.save(file)
             session.commit()
@@ -69,7 +69,7 @@ class FileManager(object):
             return True, {'file_path': filepath_to_save, 'saved_filename': ghost_filename}
         except Exception: 
             session.close()
-            return False, 'DATABASE_ERROR' 
+            raise
 
     @log_method_call
     def download_file(self, article_id, file_id):
