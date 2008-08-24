@@ -43,6 +43,12 @@ def get_various_info(request, r):
     r['page_length_list'] = [5, 10, 20]
     r['time_now'] = datetime.datetime.now()
 
+    for i, message in enumerate(r['message_list']):
+        if message['sent_time'].strftime('%Y%m%d') == r['time_now'].strftime('%Y%m%d'):
+            r['message_list'][i]['time'] = message['sent_time'].strftime('%H:%M:%S')
+        else:
+            r['message_list'][i]['time'] = message['sent_time'].strftime('%Y/%m/%d')
+
     return r
 
 def index(request):

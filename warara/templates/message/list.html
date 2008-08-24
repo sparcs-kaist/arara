@@ -70,15 +70,11 @@ messages
                 <span class="username">{{message.to}}</span>
                 {% endifequal %}
             </td>
-            <td name="text">
+            <td name="text"{%ifequal message.read_status 'N'%} class="new_message"{%endifequal%}>
                 <a href="/message/{{message_list_type}}/{{message.id}}">{{message.message}}</a>
             </td>
             <td>
-                {% ifequal message.sent_time|date:"Ymd" time_now|date:"Ymd" %}
-                {{message.sent_time|date:"H:i:s"}}
-                {% else %}
-                {{message.send_time|time:"Y/m/d"}}
-                {% endifequal %}
+                {{message.time}}
             </td>
         </tr>
         {% endfor %}

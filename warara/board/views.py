@@ -244,7 +244,7 @@ def file_download(request, board_name, article_root_id, article_id, file_id):
     file_ob = open("files/%s/%s" % (file['file_path'], file['saved_filename']))
 
     response = HttpResponse(file_ob, mimetype="application/x-forcedownload")
-    response['Content-Disposition'] = "attachment; filename=" + file['real_filename']
+    response['Content-Disposition'] = "attachment; filename=" + unicode(file['real_filename']).encode('euc-kr')
     return response
 
 def wrap_error(f):

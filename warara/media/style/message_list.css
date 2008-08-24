@@ -67,10 +67,12 @@
 }
 
 #message_list_table_text_col {
+	color: #333;
 	width: 70%;
 }
 
 #message_list_table_time_col {
+	text-align: right;
 	width: 25%;
 }
 
@@ -88,6 +90,10 @@
 
 #message_list_table_text_col {
 	overflow-x: hidden;
+}
+
+#message_list_table .new_message {
+	font-weight: bold;
 }
 
 #message_page_move {

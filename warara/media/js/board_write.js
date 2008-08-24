@@ -29,6 +29,7 @@ $(document).ready(function() {
 	$("a.delete_file_button").click(function(event){
 			$file_anchor = $(this).parent().children("a[name='file_name']");
 			$file_anchor.toggleClass("deleted_file");
+			event.preventDefault();
 			});
 
 	$("input[name='article_write']").click(function(event){
