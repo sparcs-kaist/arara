@@ -105,4 +105,5 @@ True
 
 # Now testing search_manager
 
->>> server.search_manager.register_article()
+# Registering dummy article to the K-Search is not appropriate.
+#>>> server.search_manager.register_article()
