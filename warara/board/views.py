@@ -46,7 +46,7 @@ def get_article_list(request, r, mode):
             article_list[i]['title'] = 'deleted'
             article_list[i]['author_username'] = ''
 
-        max_length = 100 # max title string length
+        max_length = 36 # max title string length
         if len(article_list[i]['title']) > max_length:
             article_list[i]['title'] = article_list[i]['title'][0:max_length]
             article_list[i]['title'] += "..."
@@ -148,6 +148,12 @@ def read(request, board_name, article_id):
     image_filetype = ['jpg', 'jpeg', 'gif', 'png']
 
     for i in range(len(article_list)):
+        if article_list[i].get('attach', 0): #image view
+            for file in article_list[i]['attach']:
+                if file['filename'].split('.')[-1] in image_filetype:
+                    insert_image_tag = "<img src=\"/board/" + board_name + "/" + str(article_list[i]['root_id']) + "/" + str(article_list[i]['id']) + "/file/" + str(file['file_id']) + "\"></img><br>"
+                    article_list[i]['content'] = insert_image_tag + article_list[i]['content']
+
         #article_list[i]['content'] = render_bbcode(article_list[i]['content'], 'UTF-8')
         article_list[i]['depth_list'] = [x+1 for x in range(article_list[i]['depth']-2)]
         if article_list[i]['deleted']: #deleted article access
@@ -155,12 +161,6 @@ def read(request, board_name, article_id):
             article_list[i]['author_username'] = ''
             article_list[i]['content'] = 'deleted'
             article_list[i]['title'] = 'deleted'
-
-        if article_list[i].get('attach', 0): #image view
-            for file in article_list[i]['attach']:
-                if file['filename'].split('.')[-1] in image_filetype:
-                    insert_image_tag = "<img src=\"/board/" + board_name + "/" + str(article_list[i]['root_id']) + "/" + str(article_list[i]['id']) + "/file/" + str(file['file_id']) + "\"></img><br>"
-                    article_list[i]['content'] = insert_image_tag + article_list[i]['content']
 
     r['board_name'] = board_name
     username = request.session['arara_username']

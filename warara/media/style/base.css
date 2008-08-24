@@ -73,6 +73,7 @@ a {
 }
 
 #bottom_header {
+	position: relative;
     float: left;
     width: 100%;
     height: 3.315em;
@@ -81,7 +82,7 @@ a {
 
 #subtitle_wrapper {
     float:left;
-    width: 15%;
+    width: 14%;
 }
 
 #subtitle_logo {
@@ -93,10 +94,11 @@ a {
 }
 
 #subtitle_folding {
-    float:right;
+	position: absolute;
+	bottom: -3%;
+	right: 100%;
     width: 0.65em;
     height: 0.65em;
-    margin: 2.668em 0 0 0;
     background: url('/media/image/base/subtitle/subtitle_folding.png') no-repeat right bottom;
 }
 
@@ -110,7 +112,7 @@ a {
 #bbstitle_wrapper {
     float:left;
     height:100%;
-	width: 49%;
+	width: 50%;
 }
 
 #bbsname {
@@ -121,6 +123,7 @@ a {
 
 #bbstitle_dingbet {
     float:left;
+	display: inline;
     width: 1.31em;
     height: 1.1em;
     margin: 0.78em 0.68em 0 0.8em;
@@ -199,10 +202,11 @@ body {
 
 /* top menu style */
 #top_menu_wrapper{
+	position: relative;
     float:right;
-    width:85%;
+    width:85.3%;
     height: 2.77em;
-    margin: 0.52em 0 0 0;
+   	margin-top: 0.52em;
     border-bottom: 1px solid #cccccc;
     background-color: white;
 }
@@ -213,18 +217,23 @@ body {
 }
 
 #top_menu {
-	position: relative;
-    float: right;
+	position: absolute;
+	top: 0%;
+	right: 0%;
     height: 100%;
     font-size: 120%;
-    width: 49%;
+    width: 48%;
     text-align: right;
     margin-top: 0.5em;
-	margin-right: 1%;
+	padding-right: 1%;
 }
 
 #top_menu a {
     margin: 0 0 0 3%;
+}
+
+#top_menu .small_btn {
+	height: 1.6em;
 }
 
 

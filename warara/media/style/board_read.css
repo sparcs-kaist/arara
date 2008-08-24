@@ -75,6 +75,7 @@ img.img_12 {left: -12em;-moz-opacity:0.15;filter:alpha(opacity:15);opacity:0.15}
 h1.root_article_title{
 	width: 100%;
 	margin: 0.2em 0em;
+	overflow-x: hidden;
 }
 
 h1.root_article_title a {
