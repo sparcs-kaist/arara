@@ -147,7 +147,9 @@ class ArticleManager(object):
             if whitelist == SEARCH_ARTICLE_WHITELIST:
                 item_dict['content'] = item_dict['content'][:40]
             if whitelist == READ_ARTICLE_WHITELIST:
-                attach_files = session.query(model.File).filter_by(article_id=item.id).all()
+                attach_files = session.query(model.File).filter(and_(
+                    model.file_table.c.article_id == item.id,
+                    model.file_table.c.deleted == False)).all()
                 if len(attach_files) > 0:
                     item_dict['attach'] = []
                     for one_file in attach_files:
