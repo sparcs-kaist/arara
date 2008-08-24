@@ -1,11 +1,18 @@
 # -*- coding: utf-8 -*-
 import xmlrpclib
+import time
+
+from sqlalchemy.exceptions import InvalidRequestError
+from sqlalchemy import and_, or_, not_
 
 from arara.util import require_login, filter_dict
+from arara.util import log_method_call_with_source, log_method_call_with_source_important
 from arara import model
 
-READ_ARTICLE_WHITELIST = ('id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable')
-SEARCH_DICT = ('title', 'content', 'author_nick', 'author_username', 'date')
+READ_ARTICLE_WHITELIST = ('id', 'title', 'contsent', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable')
+SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
+                    'deleted', 'author_username', 'author_nickname', 'vote', 'hit', 'content')
+SEARCH_DICT = ('title', 'content', 'author_nickname', 'author_username', 'date')
 api_server_address = 'http://nan.sparcs.org:9000/api'
 api_key = '54ebf56de7684dba0d69bffc9702e1b4'
 
@@ -21,6 +28,7 @@ class SearchManager(object):
         item_dict = item.__dict__
         if item_dict.has_key('author_id'):
             item_dict['author_username'] = item.author.username
+            item_dict['author_nickname'] = item.author.nickname
             del item_dict['author_id']
         if item_dict.has_key('board_id'):
             item_dict['board_name'] = item.board.board_name
@@ -28,6 +36,9 @@ class SearchManager(object):
         if item_dict.has_key('root_id'):
             if not item_dict['root_id']:
                 item_dict['root_id'] = item_dict['id']
+        if item_dict.has_key('content'):
+            if whitelist == SEARCH_ARTICLE_WHITELIST:
+                item_dict['content'] = item_dict['content'][:40]
         if whitelist:
             filtered_dict = filter_dict(item_dict, whitelist)
         else:
@@ -74,12 +85,15 @@ class SearchManager(object):
     def ksearch(self):
         pass
 
-    def search(self, session_key, all_flag, board_name, query_dic, page=1, page_length=20):
+    def _search_via_ksearch(self):
+        pass
+
+    def search(self, session_key, all_flag, board_name, query_dict, page=1, page_length=20):
         '''
         게시물 검색
 
         전체검색이 아닐경우 query_dic에
-        'title', 'content', 'author_nick', 'author_username', 'date'중
+        'title', 'content', 'author_nickname', 'author_username', 'date'중
         최소 한가지 이상의 조건을 넣어 보내면 주어진 조건에 대하여 AND 검색된다.
 
         전체검색을 하고 싶으면 all_flag를 true로 하면 된다.
@@ -88,15 +102,15 @@ class SearchManager(object):
         전체 검색일 때 search_dic에 'content'이외의 키가 있을 경우
         WRONG_DICTIONARY 에러를 리턴한다.
 
-        전체검색일 때 board_name을 지정하면, 그 보드만 전체검색을,
+        검색을 요청할 때 board_name을 지정하면, 그 보드만 검색을,
         board_name을 'no_board'(string)로 지정하면 전체 보드 검색을 시도한다.
 
         기본적으로 전체검색은 K-Search를 사용하지만,
         K-Search가 비정상적으로 작동할경우 자체 쿼리 검색을 사용한다.
 
-        all_flag 'TRUE'  ==> search_dic {'query': 'QUERY TEXT'}
-        all_flag 'FALSE' ==> search_dic {'title': '...', 'content': '...',
-        'author_nick': '...', 'author_username': '...', 'date': '...'}
+        all_flag 'TRUE'  ==> query_dict {'query': 'QUERY TEXT'}
+        all_flag 'FALSE' ==> query_dict {'title': '...', 'content': '...',
+        'author_nickname': '...', 'author_username': '...', 'date': '...'}
 
         date 조건의 경우 YYYYMMDDHHmmSS (ex 20080301123423) 식으로 보내준다.
         
@@ -112,8 +126,8 @@ class SearchManager(object):
         @param all_flag: Search all or not
         @type  board_name: string
         @param board_name: BBS Name
-        @type  query_dic: dictionary
-        @param query_dic: Search Dictionary
+        @type  query_dict: dictionary
+        @param query_dict: Search Dictionary
         @type  page: integer
         @param page: Page Number to Request
         @type  page_length: integer
@@ -129,7 +143,103 @@ class SearchManager(object):
                 5. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 6. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        pass
+        if not len(query_dict) > 0:
+            return False, 'WRONG_DICTIONARY'
+
+        for key in query_dict.keys():
+            if all_flag:
+                if not key.upper == 'QUERY':
+                    return False, 'WRONG_DICTIONARY'
+            else:
+                if not key in SEARCH_DICT:
+                    return False, 'WRONG_DICTIONARY'
+
+        session = model.Session()
+        ret_dict = {}
+
+        start_time = time.time()
+
+        if board_name.upper() == 'NO_BOARD':
+            board = None
+        else:
+            try:
+                board = session.query(model.Board).filter_by(board_name=board_name).one()
+            except InvalidRequestError:
+                session.close()
+                return False, 'BOARD_NOT_EXIST'
+                
+        query = session.query(model.Article).filter_by(is_searchable=True)
+
+        if board:
+            query = query.filter_by(board_id=board.id)
+
+        if all_flag:
+            pass
+        else:
+            if query_dict.has_key('title'):
+                query_text = self._get_query_text(query_dict, 'title')
+                query = query.filter(
+                        model.articles_table.c.title.like(query_text))
+            if query_dict.has_key('content'):
+                query_text = self._get_query_text(query_dict, 'content')
+                query = query.filter(
+                        model.articles_table.c.content.like(query_text))
+            if query_dict.has_key('author_nickname'):
+                query_text = self._get_query_text(query_dict, 'author_nickname')
+                try:
+                    user_list = session.query(model.User).filter(
+                            model.users_table.c.nickname.like(query_text)).all()
+                except Exception:
+                    session.close()
+                    raise
+                if len(user_list) > 0:
+                    for one_user in user_list:
+                        query = query.filter(or_(
+                            model.articles_table.c.author_id==one_user.id))
+                else:
+                    query = query.filter_by(author_id=-1)
+            if query_dict.has_key('author_username'):
+                query_text = self._get_query_text(query_dict, 'author_username')
+                try:
+                    user_list = session.query(model.User).filter(
+                            model.users_table.c.username.like(query_text)).all()
+                except Exception:
+                    session.close()
+                    raise
+                if len(user_list) > 0:
+                    for one_user in user_list:
+                        query = query.filter(or_(
+                            model.articles_table.c.author_id==one_user.id))
+                else:
+                    query = query.filter_by(author_id=-1)
+            if query_dict.has_key('date'):
+                pass
+
+        article_count = query.count()
+        last_page = int(article_count / page_length)
+        if article_count % page_length != 0:
+            last_page += 1
+        elif article_count == 0:
+            last_page += 1
+        if page > last_page:
+            session.close()
+            return False, 'WRONG_PAGENUM'
+        offset = page_length * (page - 1)
+        last = offset + page_length
+        result = query[offset:last].order_by(model.Article.id.desc()).all()
+        end_time = time.time()
+
+        search_dict_list = self._get_dict_list(result, SEARCH_ARTICLE_WHITELIST)
+        ret_dict['hit'] = search_dict_list
+        ret_dict['results'] = article_count
+        ret_dict['search_time'] = str(end_time-start_time)
+        ret_dict['last_page'] = last_page
+        session.close()
+        return True, ret_dict
+
+    def _get_query_text(self, query_dict, key):
+        query_text = unicode('%' + query_dict[key] + '%')
+        return query_text
 
 if __name__ == "__main__":
     pass
