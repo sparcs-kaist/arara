@@ -25,6 +25,14 @@ class ara_list_boards(ara_form):
                 self.parent.change_page("list_article", {'session_key':self.session_key, 'board_name':boardname})
             else:
                 self.mainpile.keypress(size, key)
+        elif mainpile_focus == self.boardnameedit:
+            if key == 'enter':
+                boardname = self.boardnameedit.body.get_edit_text()
+                retvalue, status = self.server.board_manager.get_board(boardname)
+                if retvalue:
+                    self.parent.change_page("list_article", {'session_key':self.session_key, 'board_name':boardname})
+            else:
+                self.mainpile.keypress(size, key)
         else:
             self.mainpile.keypress(size, key)
 
@@ -35,14 +43,14 @@ class ara_list_boards(ara_form):
         }
         retvalue, boardlist = self.server.article_manager.board_list(self.session_key)
         assert retvalue, boardlist
-        boards = boardlist
+
 	self.header = urwid.Filler(urwid.Text(u"ARA: List boards",align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
         self.boardnameedit = urwid.Filler(urwid.Edit(caption=" * Enter board name: ", wrap='clip'))
         itemlist = []
-        if len(boards) > 0:
-            boardcounttext = urwid.Filler(urwid.Text(' * There are %s boards.' % len(boards)))
-            for data in boards:
+        if len(boardlist) > 0:
+            boardcounttext = urwid.Filler(urwid.Text(' * There are %s boards.' % len(boardlist)))
+            for data in boardlist:
                 itemlist += [{'new':'N', 'name':data['board_name'], 'desc':data['board_description']}]
         else:
             boardcounttext = urwid.Filler(urwid.Text(' * No boards found. Have a nice day.'))
