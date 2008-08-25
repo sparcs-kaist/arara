@@ -9,6 +9,9 @@ from arara.util import require_login, filter_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 from arara import model
 
+log_method_call = log_method_call_with_source('search_manager')
+log_method_call_important = log_method_call_with_source_important('search_manager')
+
 READ_ARTICLE_WHITELIST = ('id', 'title', 'contsent', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable')
 SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'author_nickname', 'vote', 'hit', 'content')
@@ -82,6 +85,8 @@ class SearchManager(object):
                     assert result == 'OK'
             session.close()
 
+    @require_login
+    @log_method_call
     def ksearch(self, query_text, page=1, page_length=20):
         '''
         K-Search를 이용한 게시물 검색
@@ -103,6 +108,7 @@ class SearchManager(object):
                 one_result['board_name'] = parsed_uri[::-1][1]
         return True, result
 
+    @log_method_call
     def _search_via_ksearch(self, query_text, page=1, page_length=20):
         # XXX: Still Working...
         return False, 'KSEARCH_DEAD'
@@ -114,6 +120,8 @@ class SearchManager(object):
         #    return False, 'KSEARCH_DEAD'
         #return ret, result
 
+    @require_login
+    @log_method_call_important
     def search(self, session_key, all_flag, board_name, query_dict, page=1, page_length=20):
         '''
         게시물 검색
