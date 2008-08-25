@@ -271,7 +271,7 @@ class ArticleManager(object):
             return False, 'DATABASE_ERROR'
         
     @require_login
-    def not_read_article_list(self, session_key, page=1, page_length=20)
+    def not_read_article_list(self, session_key, page=1, page_length=20):
         '''
         사용자가 안 읽은 글들을 불러오는 함수
 
