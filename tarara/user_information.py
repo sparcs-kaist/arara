@@ -11,8 +11,8 @@ class ara_user_information(ara_form):
     menu = [
         "List (c)onnected users",
         "(M)onitor connected users",
-        "(Q)uery user",
-        "(E)xit menu",
+        "Q(u)ery user",
+        "(Q)uit menu",
     ]
     menudesc = [
         "Show information about\ncurrent users",
@@ -22,7 +22,18 @@ class ara_user_information(ara_form):
     ]
 
     def keypress(self, size, key):
-        if key == "enter":
+        if key.lower() == 'c':
+            self.menulist.set_focus(0)
+            self.parent.change_page("list_connected_users", {'session_key':self.session_key})
+        elif key.lower() == 'm':
+            self.menulist.set_focus(1)
+        elif key.lower() == 'u':
+            self.menulist.set_focus(2)
+            self.parent.change_page("query_user", {'session_key':self.session_key})
+        elif key.lower() == 'q':
+            self.menulist.set_focus(3)
+            self.parent.change_page("main", {'session_key':self.session_key})
+        elif key == "enter":
             pos = self.menulist.get_focus()[1]
             if pos == 0:
                 self.parent.change_page("list_connected_users", {'session_key':self.session_key})

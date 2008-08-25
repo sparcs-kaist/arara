@@ -57,21 +57,31 @@ class ara_main(ara_form):
             elif self.maincolumn.get_focus() == self.bests:
                 self.maincolumn.set_focus(self.menulist)
             pass
+        elif key.lower() == 'n':
+            self.menulist.set_focus(0)
         elif key.lower() == 's':
+            self.menulist.set_focus(1)
             self.parent.change_page("list_boards", {'session_key':self.session_key})
         elif key.lower() == 'p':
+            self.menulist.set_focus(2)
             self.parent.change_page("list_pm", {'session_key':self.session_key})
         elif key.lower() == 'u':
+            self.menulist.set_focus(3)
             self.parent.change_page("user_preferences", {'session_key':self.session_key})
         elif key.lower() == 'i':
+            self.menulist.set_focus(4)
             self.parent.change_page("user_information", {'session_key':self.session_key})
         elif key.lower() == 'h':
+            self.menulist.set_focus(5)
             self.show_help()
         elif key.lower() == 'a':
+            self.menulist.set_focus(6)
             self.show_about()
         elif key.lower() == 'w':
+            self.menulist.set_focus(7)
             self.parent.change_page("welcome", {'session_key':self.session_key})
         elif key.lower() == 'q':
+            self.menulist.set_focus(8)
             self.confirm_quit()
         elif key == "enter":
             maincolumn_focus = self.maincolumn.get_focus()

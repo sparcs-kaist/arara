@@ -9,28 +9,61 @@ import widget
 
 class ara_user_preferences(ara_form):
     menu = [
-        "Change Basic information",
-        "Change Password",
-        "View/edit Blacklist",
-        "Change Introduction/Signature",
-        "Zap Board",
-        "Set Terminal Encoding",
-        "Delete account",
-        "Exit menu",
+        "Change (B)asic information",
+        "Change (P)assword",
+        "View/edit B(l)acklist",
+        "Change (I)ntroduction/Signature",
+        "(Z)ap Board",
+        "Set (T)erminal Encoding",
+        "(D)elete account",
+        "(Q)uit menu",
     ]
     menudesc = [
-        "Change basic information like nickname and email",
+        "Change basic information\nlike nickname and email",
         "Change password\n",
         "View and edit your blacklist\n",
-        "Change intruduction and signature used in the articles",
+        "Change intruduction and\nsignature used in the articles",
         "Zap board\n",
         "Set your terminal encoding\n",
         "Delete your ARA account\n",
         "Return to main menu\n",
     ]
 
+    def delete_account(self):
+        confirm = widget.Dialog("Do you want to delete your ARA account?", ["OK","Cancel"], ('menu', 'bg', 'bgf'), 45, 5, self)
+        self.overlay = confirm
+        self.parent.run()
+        if confirm.b_pressed == "OK":
+            self.server.remove_user(self.session_key)
+            sys.exit(0)
+        else:
+            self.overlay = None
+            self.parent.run()
+
     def keypress(self, size, key):
-        if key == "enter":
+        if key.lower() == 'b':
+            self.menulist.set_focus(0)
+            self.parent.change_page("change_basic_info", {'session_key':self.session_key})
+        elif key.lower() == 'p':
+            self.menulist.set_focus(1)
+            self.parent.change_page("change_password", {'session_key':self.session_key})
+        elif key.lower() == 'l':
+            self.menulist.set_focus(2)
+            self.parent.change_page("blacklist", {'session_key':self.session_key})
+        elif key.lower() == 'i':
+            self.menulist.set_focus(3)
+            self.parent.change_page("sig_intro", {'session_key':self.session_key})
+        elif key.lower() == 'z':
+            self.menulist.set_focus(4)
+        elif key.lower() == 't':
+            self.menulist.set_focus(5)
+        elif key.lower() == 'd':
+            self.menulist.set_focus(6)
+            self.delete_account()
+        elif key.lower() == 'q':
+            self.menulist.set_focus(7)
+            self.parent.change_page("main",{'session_key':self.session_key})
+        elif key == "enter":
             pos = self.menulist.get_focus()[1]
             if pos == 0:
                 self.parent.change_page("change_basic_info", {'session_key':self.session_key})
@@ -48,15 +81,7 @@ class ara_user_preferences(ara_form):
                 pass
             elif pos == 6:
                 # TODO: 탈퇴되었음을 알리는 대화상자 삽입
-                confirm = widget.Dialog("Do you want to delete your ARA account?", ["OK","Cancel"], ('menu', 'bg', 'bgf'), 45, 5, self)
-                self.overlay = confirm
-                self.parent.run()
-                if confirm.b_pressed == "OK":
-                    self.server.remove_user(self.session_key)
-                    sys.exit(0)
-                else:
-                    self.overlay = None
-                    self.parent.run()
+                self.delete_account()
             elif pos == 7:
                 self.parent.change_page("main",{'session_key':self.session_key})
         else:
