@@ -38,8 +38,8 @@ def suite():
                                    'test/file_manager.txt'),
                                doctest.DocFileSuite(
                                    'test/board_manager.txt'),
-                               #doctest.DocFileSuite(
-                               #    'test/search_manager.txt'),
+                               doctest.DocFileSuite(
+                                   'test/search_manager.txt'),
                                #doctest.DocTestSuite(blacklist_manager),
                                #doctest.DocTestSuite(logging_manager),
                                #doctest.DocTestSuite(log_manager),
