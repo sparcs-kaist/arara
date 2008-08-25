@@ -10,6 +10,7 @@ a {
 }
 
 #wrapper {
+    float: left;
     width: 100%;
     margin: 0 auto;
     background-color: #fff;
@@ -22,10 +23,12 @@ a {
 }
 
 #content_wrapper {
+    float: left;
     width: 600px;
 }
 
 #postcard {
+    float: left;
     width: 600px;
     height: 400px;
 }
@@ -42,41 +45,41 @@ a {
     margin: 0 50px 0 0;
 }
 
-#login p {
+#login div {
+    clear: both;
+}
+
+#login label {
     float: left;
     margin: 0.5em;
+}
+
+#login input {
+    float: right;
+    margin: 0.4em;
 }
 
 #login div input {
     float: right;
     width: 10em;
-}
-#login input {
-    clear: both;
-    float: right;
+    margin: 0.2em;
 }
 
 #navigation {
     clear: both;
     float: right;
-    left: 50%;
-    width: 140px;
-    margin: 0 50px;
+    margin: 0 100px 0 0;
 }
 
-#register {
+#navigation p {
     float: left;
-}
-
-#guest {
-    float: right;
+    margin: 1.5em;
 }
 
 #footer_wrapper {
     clear: both;
     float: left;
     width: 100%;
-    bottom: 0;
     background-color: #eee;
 }
 
