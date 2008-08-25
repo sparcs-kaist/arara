@@ -48,12 +48,9 @@ class ara_list_article(ara_form):
             ' ': 'enter',
         }
 
-        self.readonly = False
-        retvalue, boardlist = self.server.article_manager.board_list(self.session_key)
-        assert retvalue, boardlist
-        for board in boardlist:
-            if self.board_name == board['board_name']:
-                self.readonly = board['read_only']
+        retvalue, boardinfo = self.server.board_manager.get_board(self.board_name)
+        assert retvalue, boardinfo
+        self.readonly = boardinfo['read_only']
 
 	self.header = urwid.Filler(urwid.Text(u"ARA: Article list",align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
