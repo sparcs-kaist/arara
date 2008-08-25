@@ -68,6 +68,8 @@ a {
 #navigation {
     clear: both;
     float: right;
+    width: 15em;
+    padding: 1.5em;
     margin: 0 100px 0 0;
 }
 
