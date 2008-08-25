@@ -70,7 +70,7 @@ class LoginManager(object):
             #        return False, 'ALREADY_LOGIN'
             hash = hashlib.md5(username+password+datetime.datetime.today().__str__()).hexdigest()
             timestamp = datetime.datetime.fromtimestamp(time.time())
-            self.session_dic[hash] = {'username': username, 'ip': user_ip, 'nickname': msg['nickname'], 'logintime': msg['last_login_time']}
+            self.session_dic[hash] = {'username': username, 'ip': user_ip, 'nickname': msg['nickname'], 'logintime': msg['last_login_time'], 'current_action': 'login_manager.login()'}
             self.logger.info("User '%s' has LOGGED IN from '%s' as '%s'", username, user_ip, hash)
             return True, hash
         return success, msg
@@ -98,6 +98,13 @@ class LoginManager(object):
             else:
                 return ret, msg
         except KeyError:
+            return False, 'NOT_LOGGEDIN'
+
+    def _update_monitor_status(self, session_key, action):
+        if self.session_dic.has_key(session_key):
+            self.session_dic[session_key]['current_action'] = action
+            return True, 'OK'
+        else:
             return False, 'NOT_LOGGEDIN'
 
     def update_session(self, session_key):
