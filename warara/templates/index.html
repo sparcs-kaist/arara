@@ -10,15 +10,16 @@
             <div id="content_wrapper">
 		    <p id="postcard"><img src="/media/image/postcard.png" alt="아라 POSTCARD"></p>
 		    <p id="logo"><img src="/media/image/logo.png" alt="아라 LOGO"></p>
-		    <form id="login">
+		    <form id="login" action="/account/login/" method="post">
 			<div id="username">
+			    <label for="username">ID</label>
 			    <input type="text" id="username" name="username">
-			    <p>ID</p>
 			</div>
 			<div id="password">
+			    <label for="password">PASSWORD</label>
 			    <input type="password" id="password" name="password">
-			    <p>PASSWORD</p>
 			</div>
+			<input type="hidden" name="current_page_url" value="/main/"></input>
 			<input type="image" src="/media/image/index/login.png" alt="LOGIN">
 		    </form>
 		    <div id="navigation">
