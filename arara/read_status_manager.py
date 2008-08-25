@@ -44,6 +44,11 @@ class ReadStatus(object):
             ret.append(self.get(i))
         return ret
 
+    def set_range(self, range_list, value):
+        for i in range_list:
+            self.set(i, value)
+        return True
+
     def _merge_right(self, idx):
         if self.data[idx][1] == self.data[idx + 1][1]:
             del self.data[idx + 1]
@@ -251,6 +256,46 @@ class ReadStatusManager(object):
             if ret:
                 status = self.read_status[user.id][board.id].get_range(no_list)
                 return True, status
+            else:
+                return ret, msg
+
+    @require_login
+    @log_method_call
+    def mark_as_read_list(self, session_key, board_name, no_list):
+        '''
+        읽은 글로 복수개의 글을 등록하기
+
+        >>> readstat.mark_as_read(session_key, 'garbages', 34)
+        True, 'OK'
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type  board_name: string
+        @param board_name: board Name
+        @type  no : integer
+        @param no : Article Number
+        @rtype: string
+        @return:
+            1. 등록 성공: True, 'OK'
+            2. 등록 실패:
+                1. 존재하지 않는 글: False, 'ARTICLE_NOT_EXIST'
+                2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
+                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        '''
+        ret, user_info = self.login_manager.get_session(session_key)
+        if ret:
+            try:
+                session = model.Session()
+                user = session.query(model.User).filter_by(username=user_info['username']).one()
+                board = session.query(model.Board).filter_by(board_name=board_name).one()
+                session.close()
+            except InvalidRequestError:
+                return False, 'BOARD_NOT_EXIST'
+            ret, _ = self._initialize_data(user, board)
+            ret, msg = self._check_article_exist(board, no_list)
+            if ret:
+                status = self.read_status[user.id][board.id].set_range(no_list, 'R')
+                return True, 'OK'
             else:
                 return ret, msg
 
