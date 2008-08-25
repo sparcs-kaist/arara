@@ -7,23 +7,25 @@
     </head>
     <body>
         <div id="wrapper">
-            <img src="/media/image/postcard.png" alt="아라 POSTCARD">
-            <img src="/media/image/logo.png" alt="아라 LOGO">
-            <form id="login">
-                <div id="username">
-                    ID
-                    <input type="text" id="username" name="username">
-                </div>
-                <div id="password">
-                    PASSWORD
-                    <input type="password" id="password" name="password">
-                </div>
-                <input type="image" src="/media/image/index/login.png" alt="LOGIN">
-            </form>
-            <div id="navigation">
-                <p id="register"><a href="/account/register/agreement/">REGISTER</a></p>
-                <p id="guest"><a href="/main/">GUEST</a></p>
-            </div>
+            <div id="content_wrapper">
+		    <p id="postcard"><img src="/media/image/postcard.png" alt="아라 POSTCARD"></p>
+		    <p id="logo"><img src="/media/image/logo.png" alt="아라 LOGO"></p>
+		    <form id="login">
+			<div id="username">
+			    <input type="text" id="username" name="username">
+			    <p>ID</p>
+			</div>
+			<div id="password">
+			    <input type="password" id="password" name="password">
+			    <p>PASSWORD</p>
+			</div>
+			<input type="image" src="/media/image/index/login.png" alt="LOGIN">
+		    </form>
+		    <div id="navigation">
+			<p id="register"><a href="/account/register/agreement/">REGISTER</a></p>
+			<p id="guest"><a href="/main/">GUEST</a></p>
+		    </div>
+	    </div>
             <div id="footer_wrapper">
 		<div id="footer">
 		    All copyrights reserved by SPARCS
@@ -33,7 +35,6 @@
                     <p>TOTAL : <span>{{counter_total}}</span></p>
                 </div>
             </div>
-            <a href="/main/">일단 메인페이지로</a>
         </div>
     </body>
 </html>
