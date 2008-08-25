@@ -419,13 +419,16 @@ class ArticleManager(object):
                 last = offset + page_length
                 article_list = session.query(model.Article).filter_by(board_id=board.id, root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
                 article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
+                article_id_list = []
                 for article in article_dict_list:
                     if article.has_key('id'):
                         if not article.has_key('type'):
                             article['type'] = 'normal'
-                        ret, msg = self.read_status_manager.check_stat(session_key, board_name, article['id'])
-                        if ret:
-                            article['read_status'] = msg
+                        article_id_list.append(article['id']) 
+                ret, msg = self.read_status_manager.check_stats(session_key, board_name, article_id_list)
+                if ret:
+                    for index, article in enumerate(article_dict_list):
+                        article['read_status'] = msg[index]
                 ret_dict['hit'] = article_dict_list
                 ret_dict['last_page'] = last_page
                 ret_dict['results'] = article_count 
@@ -440,7 +443,7 @@ class ArticleManager(object):
             return False, 'DATABASE_ERROR'
              
     @require_login
-    @log_method_call
+    @log_method_call_important
     def read(self, session_key, board_name, no):
         '''
         DB로부터 게시글 하나를 읽어옴
@@ -487,15 +490,17 @@ class ArticleManager(object):
                 session.close()
                 return False, 'ARTICLE_NOT_EXIST'
             article_dict_list = self._article_thread_to_list(article)
+            article_id_list = []
             for item in article_dict_list:
                 if item['author_username'] in blacklist_users:
                     item['blacklisted'] = True
                 else:
                     item['blacklisted'] = False
-                ret, msg = self.read_status_manager.mark_as_read(session_key, board_name, item['id'])
-                if not ret:
-                    session.close()
-                    return ret, msg
+                article_id_list.append(item['id'])
+            ret, msg = self.read_status_manager.mark_as_read_list(session_key, board_name, article_id_list)
+            if not ret:
+                session.close()
+                return ret, msg
             session.close()
             return True, article_dict_list
         else:
@@ -538,7 +543,7 @@ class ArticleManager(object):
             if ret:
                 ret_dict['hit'] = below_article_dict_list['hit']
                 ret_dict['current_page'] = page_position
-                ret_dict['results'] = article_count 
+                ret_dict['results'] = below_article_dict_list['results'] 
                 session.close()
                 return True, ret_dict
             else:
