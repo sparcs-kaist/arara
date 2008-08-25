@@ -21,6 +21,33 @@ class ara_main(ara_form):
         "(Q)uit",
     ]
 
+    def show_help(self):
+        confirm = HelpDialog('ara_help', ('menu','bg','bgf'), 40, 15, self)
+        self.overlay = confirm
+        self.parent.run()
+        if confirm.quit:
+            self.overlay = None
+            self.parent.run()
+
+    def show_about(self):
+        confirm = HelpDialog('about', ('menu','bg','bgf'), 40, 15, self)
+        self.overlay = confirm
+        self.parent.run()
+        if confirm.quit:
+            self.overlay = None
+            self.parent.run()
+
+    def confirm_quit(self):
+        confirm = widget.Dialog("Really quit?", ["Yes", "No"], ('menu', 'bg', 'bgf'), 30, 5, self)
+        self.overlay = confirm
+        self.parent.run()
+        if confirm.b_pressed == "Yes":
+            self.server.login_manager.logout(self.session_key)
+            sys.exit(0)
+        else:
+            self.overlay = None
+            self.parent.run()
+
     def keypress(self, size, key):
         if key in self.keymap:
             key = self.keymap[key]
@@ -29,6 +56,23 @@ class ara_main(ara_form):
                 self.maincolumn.set_focus(self.bests)
             elif self.maincolumn.get_focus() == self.bests:
                 self.maincolumn.set_focus(self.menulist)
+            pass
+        elif key.lower() == 's':
+            self.parent.change_page("list_boards", {'session_key':self.session_key})
+        elif key.lower() == 'p':
+            self.parent.change_page("list_pm", {'session_key':self.session_key})
+        elif key.lower() == 'u':
+            self.parent.change_page("user_preferences", {'session_key':self.session_key})
+        elif key.lower() == 'i':
+            self.parent.change_page("user_information", {'session_key':self.session_key})
+        elif key.lower() == 'h':
+            self.show_help()
+        elif key.lower() == 'a':
+            self.show_about()
+        elif key.lower() == 'w':
+            self.parent.change_page("welcome", {'session_key':self.session_key})
+        elif key.lower() == 'q':
+            self.confirm_quit()
         elif key == "enter":
             maincolumn_focus = self.maincolumn.get_focus()
             if maincolumn_focus == self.menulist:
@@ -45,31 +89,13 @@ class ara_main(ara_form):
                 elif pos == 4:
                     self.parent.change_page("user_information", {'session_key':self.session_key})
                 elif pos == 5:
-                    confirm = HelpDialog('ara_help', ('menu','bg','bgf'), 40, 15, self)
-                    self.overlay = confirm
-                    self.parent.run()
-                    if confirm.quit:
-                        self.overlay = None
-                        self.parent.run()
+                    self.show_help()
                 elif pos == 6:
-                    confirm = HelpDialog('about', ('menu','bg','bgf'), 40, 15, self)
-                    self.overlay = confirm
-                    self.parent.run()
-                    if confirm.quit:
-                        self.overlay = None
-                        self.parent.run()
+                    self.show_about()
                 elif pos == 7:
                     self.parent.change_page("welcome", {'session_key':self.session_key})
                 elif pos == 8:
-                    confirm = widget.Dialog("Really quit?", ["Yes", "No"], ('menu', 'bg', 'bgf'), 30, 5, self)
-                    self.overlay = confirm
-                    self.parent.run()
-                    if confirm.b_pressed == "Yes":
-                        self.server.login_manager.logout(self.session_key)
-                        sys.exit(0)
-                    else:
-                        self.overlay = None
-                        self.parent.run()
+                    self.confirm_quit()
             elif maincolumn_focus == self.bests:
                 bests_focus = self.bests.get_focus()
                 if bests_focus == self.todaybest:
