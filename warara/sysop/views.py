@@ -35,6 +35,6 @@ def remove_board(request):
 def confirm_user(request):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request)
-    ret, msg = server.sysop_manager.conform_username_valusernameation(sess, request.POST['confirm_username'])
+    ret, msg = server.member_manager.backdoor_confirm(sess, request.POST['confirm_username'])
     assert ret, msg
     return HttpResponseRedirect('/sysop/')
