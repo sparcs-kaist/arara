@@ -226,8 +226,8 @@ def id_check(request):
     if request.method == 'POST':
         server = arara.get_server()
         r = {}
-        username = request.POST['check_id_field']
-        ret = server.member_manager.is_registered(username)
+        check_id_field = request.POST['check_id_field']
+        ret = server.member_manager.is_registered(check_id_field)
         if ret:
             r = 'The ID is not available'
         else:
@@ -240,8 +240,8 @@ def nickname_check(request):
     if request.method == 'POST':
         server = arara.get_server()
         r = {}
-        username = request.POST['check_nickname_field']
-        ret = server.member_manager.is_registered_nickname(username)
+        check_nickname_field = request.POST['check_nickname_field']
+        ret = server.member_manager.is_registered_nickname(check_nickname_field)
         if ret:
             r = 'The nickname is not available'
         else:

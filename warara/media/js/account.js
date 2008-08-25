@@ -1,5 +1,7 @@
 $(document).ready(function(){
     $("#id").focus();
+    var id;
+    var nickname;
     
     $("input.required_field").focus(function() {
         $("input.required_field").keyup(function(event) {
@@ -29,8 +31,28 @@ $(document).ready(function(){
             }
         });
         $(this).parent().children("label").children("span.feedback").text("");
-    });
-    
+        $("#id").keydown(function(event) {
+            id = $("#id").val(); 
+            if(event.keyCode == 09) {
+                $.post("/account/register/idcheck/", {check_id_field: id},
+                    function(data) {
+                        $("#id").parent().children("label").children("span.feedback").text(data);
+                    }
+                );
+            }
+        });
+        $("#nickname").keydown(function(event) {
+            nickname = $("#nickname").val();
+            if(event.keyCode == 09) {
+                $.post("/account/register/nicknamecheck/", {check_nickname_field: nickname},
+                    function(data) {
+                        $("#nickname").parent().children("label").children("span.feedback").text(data);
+                    }
+                );
+            }
+        });
+    }); 
+
     $(".submit").click(function(event) {
         $("input.required_field").each(function(i) {
             if (!$(this).val()) {
@@ -51,37 +73,5 @@ $(document).ready(function(){
             $(".submit").parent().children("label").children("span.feedback").text("Please confirm your form");
             event.preventDefault();
         }
-    });
-
-    $("#id_duplication_checking").click(function(event) {
-        $.post("/account/register/idcheck/", {check_id_field: $("#check_id_field").val()},
-            function(data, textStatus){
-                alert(data);
-                if (data == 'The ID is available') {
-                    $("#id_check_popup").hide();
-                }
-            }
-        );
-        event.preventDefault();
-    });
-
-    $("#id_duplication_check").click(function(event) {
-        $("#id_check_popup").show();
-    });
-
-    $("#nickname_duplication_checking").click(function(event) {
-        $.post("/account/register/nicknamecheck/", {check_nickname_field: $("#check_nickname_field").val()},
-            function(data, textStatus){
-                alert(data);
-                if (data == 'The nickname is available') {
-                    $("#nickname_check_popup").hide();
-                }
-            }
-        );
-        event.preventDefault();
-    });
-    
-    $("#nickname_duplication_check").click(function(event) {
-        $("#nickname_check_popup").show();
     });
 });
