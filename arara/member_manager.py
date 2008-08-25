@@ -28,8 +28,8 @@ class NotLoggedIn(Exception):
 USER_PUBLIC_KEYS = ['username', 'password', 'nickname', 'email',
         'signature', 'self_introduction', 'default_language']
 USER_QUERY_WHITELIST = ('username', 'nickname', 'email',
-        'signature', 'self_introduction', 'last_login_ip')
-USER_PUBLIC_WHITELIST= ('username', 'nickname', 'email',
+        'signature', 'self_introduction', 'last_login_ip', 'last_logout_time')
+USER_PUBLIC_WHITELIST= ('username', 'nickname', 'email', 'last_login_ip', 'last_logout_time',
         'signature', 'self_introduction', 'default_language', 'activated', 'widget', 'layout')
 USER_PUBLIC_MODIFIABLE_WHITELIST= ('nickname', 'signature', 'self_introduction', 
         'default_language', 'widget', 'layout')
@@ -394,6 +394,8 @@ class MemberManager(object):
             username = self.login_manager.get_session(session_key)[1]['username']
             user = session.query(model.User).filter_by(username=username).one()
             user_dict = filter_dict(user.__dict__, USER_PUBLIC_WHITELIST)
+            if not user_dict['last_logout_time']:
+                user_dict['last_logout_time'] = 'NOT AVAILABLE'
             session.close()
             return True, user_dict
         except InvalidRequestError:
@@ -503,6 +505,8 @@ class MemberManager(object):
             session = model.Session()
             query_user = session.query(model.User).filter_by(username=query_username).one()
             query_user_dict = filter_dict(query_user.__dict__, USER_QUERY_WHITELIST)
+            if not query_user_dict['last_logout_time']:
+                query_user_dict['last_logout_time'] = 'NOT AVAILABLE'
             session.close()
             return True, query_user_dict
         except InvalidRequestError:
@@ -533,6 +537,8 @@ class MemberManager(object):
             session = model.Session()
             query_user = session.query(model.User).filter_by(nickname=query_nickname).one()
             query_user_dict = filter_dict(query_user.__dict__, USER_QUERY_WHITELIST)
+            if not query_user_dict['last_logout_time']:
+                query_user_dict['last_logout_time'] = 'NOT AVAILABLE'
             session.close()
             return True, query_user_dict
         except InvalidRequestError:
