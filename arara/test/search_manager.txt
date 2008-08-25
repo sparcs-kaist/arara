@@ -65,7 +65,7 @@ True
 
 # now Testing Article Manager!
 
->>> server.article_manager.board_list(session_key)
+>>> server.board_manager.get_board_list()
 (True, [{'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbage Board'}, {'read_only': False, 'board_name': u'KAIST', 'board_description': u'The KAIST Board'}])
 
 # Write an article on garbage board

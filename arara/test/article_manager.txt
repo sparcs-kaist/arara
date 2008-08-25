@@ -73,7 +73,7 @@ True
 
 # now Testing Article Manager!
 
->>> server.article_manager.board_list(session_key)
+>>> server.board_manager.get_board_list()
 (True, [{'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbage Board'}])
 
 # Write an article
@@ -103,7 +103,7 @@ True
 # List the article (should only be one article in the list
 
 >>> server.article_manager.article_list(session_key, u'garbages')
-(True, {'last_page': 1, 'hit': [{'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is...', 'deleted': False, 'read_status': 'R', 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'type': 'normal', 'id': 1}], 'results': 20})
+(True, {'last_page': 1, 'hit': [{'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is...', 'deleted': False, 'read_status': 'R', 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'type': 'normal', 'id': 1}], 'results': 1})
 
 # Test for pagination
 
@@ -116,8 +116,6 @@ True
 ...         article_dic = {u'title': u'serialx is... ' + unicode(i), u'content': u'polarbear'}
 ...     _ = server.article_manager.write_article(session_key, u'garbages', article_dic)
 >>> ret, l = server.article_manager.article_list(session_key, u'garbages')
->>> l['results'] == len(l['hit'])
-True
 >>> l['hit'][0]['title']
 u'serialx is... 99'
 >>> l['hit'][1]['title']
@@ -126,8 +124,6 @@ u'serialx is... 98'
 u'serialx is... 80'
 
 >>> ret, l = server.article_manager.article_list(session_key, u'garbages', page=2)
->>> l['results'] == len(l['hit'])
-True
 >>> l['last_page']
 6
 
@@ -208,7 +204,7 @@ True
 
 # Board list
 
->>> server.article_manager.board_list(session_key)
+>>> server.board_manager.get_board_list()
 (True, [{'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbage Board'}])
 
 
@@ -269,40 +265,6 @@ True
 
 >>> server.blacklist_manager.delete(session_key, u'serialx')
 (True, 'OK')
-
-# Testing Search Function
-
->>> server.article_manager.search(session_key, u'garbages', 'woodori', 'title', 1, 20)
-(True, {'last_page': 1, 'search_time': '0.0', 'hit': [{'author_username': u'serialx', 'hit': 1, 'title': u'woodori is...', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'serialx', 'content': u'123456789012345678901234567890123456789#', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 108}, {'author_username': u'mikkang', 'hit': 1, 'title': u'woodori is...', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'KIN', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 103}], 'results': 2})
-
->>> server.article_manager.search(session_key, u'garbages', 'serialx', 'title', 1, 5)
-(True, {'last_page': 20, 'search_time': '0.0', 'hit': [{'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'polarbear', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 102}, {'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is... 98', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'polarbear', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 101}, {'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 97', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'polarbear', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 100}, {'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 96', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'polarbear', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 99}, {'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 95', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'polarbear', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 98}], 'results': 100})
-
->>> server.article_manager.search(session_key, u'garbages', 'NOT EXIST', 'title', 1, 20)
-(True, {'last_page': 1, 'search_time': '0.0', 'hit': [], 'results': 0})
-
->>> server.article_manager.search(session_key, u'garbages', 'serialx', 'author_username', 1, 20)
-(True, {'last_page': 1, 'search_time': '0.0', 'hit': [{'author_username': u'serialx', 'hit': 1, 'title': u'woodori is...', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'serialx', 'content': u'123456789012345678901234567890123456789#', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 108}], 'results': 1})
-
->>> server.article_manager.search(session_key, u'garbages', 'mikkang', 'author_nick', 1, 5)
-(True, {'last_page': 22, 'search_time': '0.0', 'hit': [{'author_username': u'mikkang', 'hit': 0, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'asdf', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 107}, {'author_username': u'mikkang', 'hit': 0, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'asdf', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 106}, {'author_username': u'mikkang', 'hit': 0, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'asdf', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 105}, {'author_username': u'mikkang', 'hit': 0, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'asdf', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 104}, {'author_username': u'mikkang', 'hit': 1, 'title': u'woodori is...', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'KIN', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 103}], 'results': 107})
-
->>> server.article_manager.search(session_key, u'garbages', u'bearbear', 'all', 1, 10)
-(True, {'last_page': 1, 'search_time': '0.0', 'hit': [{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 90', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'polarbear bearbear', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 93}, {'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 60', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'polarbear bearbear', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 63}, {'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... bearbear50', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'polarbear', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 53}, {'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 30', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'polarbear bearbear', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 33}, {'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is... 0', 'deleted': True, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'polarbear bearbear', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 3}], 'results': 5})
-
->>> server.article_manager.search(session_key, u'garbages', u'mikkang', 'all', 1, 5)
-(True, {'last_page': 22, 'search_time': '0.0', 'hit': [{'author_username': u'mikkang', 'hit': 0, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'asdf', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 107}, {'author_username': u'mikkang', 'hit': 0, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'asdf', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 106}, {'author_username': u'mikkang', 'hit': 0, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'asdf', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 105}, {'author_username': u'mikkang', 'hit': 0, 'title': u'dummy', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'asdf', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 104}, {'author_username': u'mikkang', 'hit': 1, 'title': u'woodori is...', 'deleted': False, 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'KIN', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 103}], 'results': 107})
-
-
-#XXX The result of this part will be modified later
-#>>> ret, l = server.article_manager.search(session_key, u'all_board', 'polarbear', 'all', 1, 5)
-#>>> l
-
->>> server.article_manager.search(session_key, u'garbages', 'NOT_EXIST_USERNAME', 'author_username', 1, 20)
-(False, 'USER_NOT_EXIST')
-
->>> server.article_manager.search(session_key, u'garbages', 'NOT_EXIST_NICKNAME', 'author_nick', 1, 20)
-(False, 'USER_NOT_EXIST')
 
 # Test article listed below
 
