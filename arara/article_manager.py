@@ -269,6 +269,58 @@ class ArticleManager(object):
             return True, weekly_best_list
         else:
             return False, 'DATABASE_ERROR'
+        
+    @require_login
+    def not_read_article_list(self, session_key, page=1, page_length=20)
+        '''
+        사용자가 안 읽은 글들을 불러오는 함수
+
+        @type  session_key: string
+        @param session_key: User Key
+        @rtype: boolean, list
+        @type  page: integer
+        @param page: Page Number to Request
+        @type  page_length: integer
+        @param page_length: Count of Article on a Page
+        @rtype: boolean, list
+        @return:
+            1. 리스트 읽어오기 성공: True, Not Read Article List
+            2. 리스트 읽어오기 실패:
+                1. 페이지 번호 오류: False, 'WRONG_PAGENUM' 
+                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        '''
+
+        ret_dict = {}
+        try:
+            session = model.Session()
+            article_count = session.query(model.Article).filter_by(root_id=None).count()
+            last_page = int(article_count / page_length)
+            if article_count % page_length != 0:
+                last_page += 1
+            elif article_count == 0:
+                last_page += 1
+            if page > last_page:
+                session.close()
+                return False, 'WRONG_PAGENUM'
+            offset = page_length * (page - 1)
+            last = offset + page_length
+            article_list = session.query(model.Article).filter_by(root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
+            article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
+            for article in article_dict_list:
+                ret, msg = self.read_status_manager.check_stat(session_key, board_name, article['id'])
+                if ret:
+                    article['read_status'] = msg
+            ret_dict['hit'] = article_dict_list
+            ret_dict['last_page'] = last_page
+            ret_dict['results'] = article_count 
+            session.close()
+            return True, ret_dict
+        except InvalidRequestError:
+            raise
+            session.close()
+            return False, 'DATABASE_ERROR'
+
+
 
     @require_login
     def new_article_list(self, session_key, page=1, page_length=20):
@@ -376,7 +428,7 @@ class ArticleManager(object):
                             article['read_status'] = msg
                 ret_dict['hit'] = article_dict_list
                 ret_dict['last_page'] = last_page
-                ret_dict['results'] = page_length
+                ret_dict['results'] = article_count 
                 session.close()
                 return True, ret_dict
             else:
@@ -486,7 +538,7 @@ class ArticleManager(object):
             if ret:
                 ret_dict['hit'] = below_article_dict_list['hit']
                 ret_dict['current_page'] = page_position
-                ret_dict['results'] = page_length
+                ret_dict['results'] = article_count 
                 session.close()
                 return True, ret_dict
             else:
