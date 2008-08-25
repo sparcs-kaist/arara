@@ -7,9 +7,9 @@ $(document).ready(function(){
     });
 
     $(document).keypress(function(event) {
-		if($focus_input || event.altKey || event.ctrlKey){
-		return;
-		}
+        if($focus_input || event.altKey || event.ctrlKey){
+        return;
+        }
         switch (event.which) {
             case 108:  // list
                 var list_link = $("#list_link").attr("href");
@@ -30,37 +30,59 @@ $(document).ready(function(){
         event.preventDefault();
     });
 
-	$file_no = 1;
+    $file_no = 1;
 
-	$("input[name='file_input_add']").click(function(){
-		$file_no++;
-		$("#file_line_model span.article_write_file_caption").text("file " + $file_no);
-		$("#file_line_model input.file_upload").attr("name", "file"+$file_no);
-		$(this).parent().parent().parent().append($("#file_line_model").contents().clone());
+    $("input[name='file_input_add']").click(function(){
+        $file_no++;
+        $("#file_line_model span.article_write_file_caption").text("file " + $file_no);
+        $("#file_line_model input.file_upload").attr("name", "file"+$file_no);
+        $(this).parent().parent().parent().append($("#file_line_model").contents().clone());
 
-		$("input[name='file_input_delete']").click(function(){
-			$(this).parent().parent().remove();
-			});
+        $("input[name='file_input_delete']").click(function(){
+            $(this).parent().parent().remove();
+            });
 
-		$("input.file_upload").change(function(){
-			$(this).parent().parent().children("div.file_upload_f").children("input.file_input_f").val($(this).val());
-			});
-		});
+        $("input.file_upload").change(function(){
+            $(this).parent().parent().children("div.file_upload_f").children("input.file_input_f").val($(this).val());
+            });
+        });
 
-	$("input.file_upload").change(function(){
-		$(this).parent().parent().children("div.file_upload_f").children("input.file_input_f").val($(this).val());
-		});
+    $("input.file_upload").change(function(){
+        $(this).parent().parent().children("div.file_upload_f").children("input.file_input_f").val($(this).val());
+        });
 
-	$("input.cancel_reply").click(function(){
-			$(this).parent().parent().hide();
-			$(this).parent().children("ul").children("li").children("input[name='title']").val("");
-			$(this).parent().children("ul").children("li").children("textarea").val("");
-			});
+    $("input.cancel_reply").click(function(){
+            $(this).parent().parent().hide();
+            $(this).parent().children("ul").children("li").children("input[name='title']").val("");
+            $(this).parent().children("ul").children("li").children("textarea").val("");
+            });
+    
+    $(".article_content img").load(function(){
+        var this_width = $(this).width()
+        $(this).width(10);
+        var parent_width = $(this).parent().width();
+        if(this_width > parent_width){
+            $(this).width(parent_width);
+        }
+        else {
+            $(this).width(this_width);
+        }
+    });
+/*$(window).load(function(){
 
-	//image resize
-	$(".article_content img").each(function(){
-			if($(this).width() > $(this).parent().width()){
-			$(this).width($(this).parent().width());
-			}
-			});
+    //image resize
+    $(".article_content img").each(function(){
+            var this_width = $(this).width()
+            $(this).width(10);
+            var parent_width = $(this).parent().width();
+            if(this_width > parent_width){
+            $(this).width(parent_width);
+            }
+            else {
+            $(this).width(this_width);
+            }
+            });
+});*/
+
 });
+

@@ -3,6 +3,7 @@
 	padding: 0.5em 2%;
 	padding-right: 1%;
 	background: url("/media/image/board/read_title_bg.png") no-repeat top left;
+	overflow: hidden;  /* XXX(serialx): 큰 이미지나 텍스트가 레이아웃을 깨는것 방지 */
 }
 
 .float_left {
