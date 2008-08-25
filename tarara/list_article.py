@@ -60,17 +60,9 @@ class ara_list_article(ara_form):
         else:
             self.infotext2 = urwid.Filler(urwid.Text("(Enter,space) Read (w)rite (f)ind (/)Find next (?) Find previous (h)elp (q)uit"))
 
-        commented = """
-        # Acquire today_best, weekly_best
-        # XXX : Actually it does not getting those of chosen board. -_-;
-        result, today_best = self.server.article_manager.get_today_best_list(self.session_key)
-        assert result, today_best
-        result, weekly_best = self.server.article_manager.get_weekly_best_list(self.session_key)
-        assert result,weekly_best
-        """
-
         # Acquire articles
-        result, article_list = self.server.article_manager.article_list(self.session_key, self.board_name)
+        cols, rows = self.parent.ui.get_cols_rows()
+        result, article_list = self.server.article_manager.article_list(self.session_key, self.board_name, 1, rows-4)
         assert result, article_list # To handle error message from XML-RPC server
 
         self.last_page = article_list['last_page']
