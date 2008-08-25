@@ -82,11 +82,37 @@ class SearchManager(object):
                     assert result == 'OK'
             session.close()
 
-    def ksearch(self):
-        pass
+    def ksearch(self, query_text, page=1, page_length=20):
+        '''
+        K-Search를 이용한 게시물 검색
 
-    def _search_via_ksearch(self):
-        pass
+        @type  query_text: string
+        @param query_text: Text to Query
+        @type  page: integer
+        @param page: Page Number
+        @type  page_length: integer
+        @param page_length: Count of Articles on a page
+        '''
+        search_manager = xmlrpclib.Server('http://nan.sparcs.org:9000/api')
+        query = str(query_text) + ' source:arara'
+        result = search_manager.search('00000000000000000000000000000000', query)
+        for one_result in result['hits']:
+            if one_result.has_key('uri'):
+                parsed_uri = one_result['uri'].rsplit('/', 2)
+                one_result['id'] = parsed_uri[::-1][0]
+                one_result['board_name'] = parsed_uri[::-1][1]
+        return True, result
+
+    def _search_via_ksearch(self, query_text, page=1, page_length=20):
+        # XXX: Still Working...
+        return False, 'KSEARCH_DEAD'
+        #try:
+        #    ret, result = ksearch(query_text, page, page_length)
+        #except:
+        #    return False, 'KSEARCH_DEAD'
+        #if not ret:
+        #    return False, 'KSEARCH_DEAD'
+        #return ret, result
 
     def search(self, session_key, all_flag, board_name, query_dict, page=1, page_length=20):
         '''
@@ -114,9 +140,9 @@ class SearchManager(object):
 
         date 조건의 경우 YYYYMMDDHHmmSS (ex 20080301123423) 식으로 보내준다.
         
-        > 2008년 4월 3일부터 2008년 4월 5일까지의 게시물 20080403~20080405
-        > 2008년 4월 3일 이후의 게시물 20080403~
-        > 2008년 4월 3일 까지의 게시물 ~20080403
+        @2008년 4월 3일부터 2008년 4월 5일까지의 게시물 20080403~20080405
+        @2008년 4월 3일 이후의 게시물 20080403~
+        @2008년 4월 3일 까지의 게시물 ~20080403
 
         **date는 현재 구현되지 않았음. 값을 넘겨도 무시됨 (2008.08.25 00:09)
 
@@ -148,7 +174,7 @@ class SearchManager(object):
 
         for key in query_dict.keys():
             if all_flag:
-                if not key.upper == 'QUERY':
+                if not key == 'query':
                     return False, 'WRONG_DICTIONARY'
             else:
                 if not key in SEARCH_DICT:
@@ -174,7 +200,18 @@ class SearchManager(object):
             query = query.filter_by(board_id=board.id)
 
         if all_flag:
-            pass
+            query_text = query_dict['query']
+            ret, result = self._search_via_ksearch(query, page, page_length)
+            if ret:
+                return ret, result
+            else:
+                # I think K-Search is dead, so let's search it by query.
+                query_text = self._get_query_text(query_dict, 'query')
+                query = query.join('author').filter(or_(
+                        model.articles_table.c.title.like(query_text),
+                        model.articles_table.c.content.like(query_text),
+                        model.User.username.like(query_text),
+                        model.User.nickname.like(query_text)))
         else:
             if query_dict.has_key('title'):
                 query_text = self._get_query_text(query_dict, 'title')
