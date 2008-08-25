@@ -249,3 +249,17 @@ def nickname_check(request):
         return HttpResponse(r)
     else:
         return HttpResponse('Must use POST')
+
+def email_check(request):
+    if request.method == 'POST':
+        server = arara.get_server()
+        r = {}
+        check_email_field = request.POST['check_email_field']
+        ret = server.member_manager.is_registered_email(check_email_field)
+        if ret:
+            r = 'The email is not available'
+        else:
+            r = 'The email is available'
+        return HttpResponse(r)
+    else:
+        return HttpResponse('Must use POST')

@@ -2,8 +2,10 @@ $(document).ready(function(){
     $("#id").focus();
     var id;
     var nickname;
+    var email;
     
     $("input.required_field").focus(function() {
+        $(this).parent().children("label").children("span.feedback").text("");
         $("input.required_field").keyup(function(event) {
             if (!(event.keyCode == 09)) {
                 if (!$(this).val()) {
@@ -21,21 +23,11 @@ $(document).ready(function(){
             else
                 $("#password_field").parent().children("label").children("span.feedback").text("");
         });
-        $("#email").keydown(function(event) {
-            if(event.keyCode == 09) {
-                if ((document.form.email.value.indexOf('@') == -1 ) || (document.form.email.value.indexOf('.') == -1)) {
-                    $("#email").parent().children("label").children("span.feedback").text("The e-mail form is not proper");
-                }
-                else
-                    $("#email").parent().children("label").children("span.feedback").text(""); 
-            }
-        });
-        $(this).parent().children("label").children("span.feedback").text("");
         $("#id").keydown(function(event) {
             id = $("#id").val(); 
             if(event.keyCode == 09) {
                 $.post("/account/register/idcheck/", {check_id_field: id},
-                    function(data) {
+                    function(data, textStatus) {
                         $("#id").parent().children("label").children("span.feedback").text(data);
                     }
                 );
@@ -45,10 +37,23 @@ $(document).ready(function(){
             nickname = $("#nickname").val();
             if(event.keyCode == 09) {
                 $.post("/account/register/nicknamecheck/", {check_nickname_field: nickname},
-                    function(data) {
+                    function(data, textStatus) {
                         $("#nickname").parent().children("label").children("span.feedback").text(data);
                     }
                 );
+            }
+        });
+        $("#email").keydown(function(event) {
+            email = $("#email").val();
+            if(event.keyCode == 09) {
+                $.post("/account/register/emailcheck/", {check_email_field: email},
+                    function(data, textStatus) {
+                        $("#email").parent().children("label").children("span.feedback").text(data);
+                    }
+                );
+                if ((document.form.email.value.indexOf('@') == -1 ) || (document.form.email.value.indexOf('.') == -1)) {
+                    $("#email").parent().children("label").children("span.feedback").text("The e-mail form is not proper");
+                }
             }
         });
     }); 
