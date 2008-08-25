@@ -18,7 +18,7 @@ api_key = '54ebf56de7684dba0d69bffc9702e1b4'
 
 class SearchManager(object):
     '''
-    K-Search에 현재 게시물들을 추가하는 클래스
+    게시물 검색 기능을 담당하는 클래스
     '''
 
     def __init__(self):
