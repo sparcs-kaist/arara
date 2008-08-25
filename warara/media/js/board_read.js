@@ -57,4 +57,10 @@ $(document).ready(function(){
 			$(this).parent().children("ul").children("li").children("textarea").val("");
 			});
 
+	//image resize
+	$(".article_content img").each(function(){
+			if($(this).width() > $(this).parent().width()){
+			$(this).width($(this).parent().width());
+			}
+			});
 });
