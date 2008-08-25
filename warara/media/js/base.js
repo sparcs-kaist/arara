@@ -59,14 +59,20 @@ $(document).ready(function(){
 
     $("#user_popup_user_information").click(function(event) {
         $("#user_information_popup_content").contents().remove();
+        if(event.shiftKey) {
+            $("#user_popup .thickbox").removeClass("thickbox");
+            $("#user_information_popup").show("fast"); 
+        }
         $.post("/main/", {query_user_name: username},
             function(data, textStatus) {
                 $(data).appendTo("#user_information_popup_content");
             }
         );
-        $("#user_information_popup").show("fast");
-
-        /*show_user_information_box(username, event);*/
+        $(document).keyup(function(event) {
+            if(event.keyCode == 27) {
+                $("#user_information_popup").hide("fast");
+            }
+        });
         event.preventDefault();
     });
 
@@ -85,6 +91,7 @@ $(document).ready(function(){
     });
 
     $("#user_information_close").click(function(event) {
+        tb_remove(); 
         $("#user_information_popup").hide("fast");
     });
 
@@ -138,17 +145,6 @@ $(document).ready(function(){
             });
         event.preventDefault();
     });
-
-    /*function show_user_information_box(username, event) {
-        $("#user_information_popup").show();
-        $("#user_information_close").click(function(event) {
-            $("#user_information_popup").hide("fast"); 
-        });
-        $(document).keyup(function(event) {
-            case 27:
-                $("#user_information_popup").hide("fast");
-        }); 
-    }*/
 
 	/* 로그인 css absolute show로 바꿈
     $("#login_toggle").toggle(
