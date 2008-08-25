@@ -8,13 +8,15 @@
 # To test search manager, we have to write some article to the board.
 # So, let's copy some of the test module from the article_manager.txt
 ####################################### QUOTE ############################################
-# Login as SYSOP and create 'garbage' board
+# Login as SYSOP and create 'garbage', 'KAIST' board
 
 >>> ret, session_key_sysop = server.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123')
 >>> ret
 True
 
 >>> server.board_manager.add_board(unicode(session_key_sysop), u'garbages', u'Garbage Board')
+(True, 'OK')
+>>> server.board_manager.add_board(unicode(session_key_sysop), u'KAIST', u'The KAIST Board')
 (True, 'OK')
 
 # Register one user, combacsa.
@@ -64,9 +66,9 @@ True
 # now Testing Article Manager!
 
 >>> server.article_manager.board_list(session_key)
-(True, [{'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbage Board'}])
+(True, [{'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbage Board'}, {'read_only': False, 'board_name': u'KAIST', 'board_description': u'The KAIST Board'}])
 
-# Write an article
+# Write an article on garbage board
 
 >>> article_dic = {'title': u'serialx is...', 'content': u'black polarbear'}
 >>> server.article_manager.write_article(session_key, u'garbages', article_dic)
@@ -93,7 +95,7 @@ True
 # List the article (should only be one article in the list
 
 >>> server.article_manager.article_list(session_key, u'garbages')
-(True, {'last_page': 1, 'hit': [{'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is...', 'deleted': False, 'read_status': 'R', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'type': 'normal', 'id': 1}], 'results': 20})
+(True, {'last_page': 1, 'hit': [{'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is...', 'deleted': False, 'read_status': 'R', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'type': 'normal', 'id': 1}], 'results': 1})
 
 # Test for pagination with mikkang session_key
 
@@ -105,6 +107,11 @@ True
 >>> for i in range(100):
 ...     article_dic = {u'title': u'serialx is... ' + unicode(i), u'content': u'polarbear'}
 ...     _ = server.article_manager.write_article(session_key_combacsa, u'garbages', article_dic)
+
+# Write an article on KAIST board
+>>> article_dic = {'title': u'serialx is...', 'content': u'black polarbear'}
+>>> server.article_manager.write_article(session_key, u'KAIST', article_dic)
+(True, 203)
 
 ##################################### END QUOTE ##########################################
 
@@ -170,6 +177,16 @@ True
 # This should return empty result, NOT exception or False.
 >>> server.search_manager.search(session_key, False, u'garbages', {u'title': u'serialx', u'author_nickname': u'ideal_society'}, 1, 20)
 (True, {'last_page': 1, 'search_time': '0.0', 'hit': [], 'results': 0})
+
+# Now search the article with all_flag ON WITH BOARD_NAME
+>>> server.search_manager.search(session_key, True, u'garbages', {u'query': u'serialx'}, 1, 2)
+(True, {'last_page': 101, 'search_time': '0.0', 'hit': [{'author_username': u'combacsa', 'hit': 0, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'combacsa', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 202}, {'author_username': u'combacsa', 'hit': 0, 'title': u'serialx is... 98', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'combacsa', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 201}], 'results': 201})
+>>> server.search_manager.search(session_key, True, u'KAIST', {u'query': u'serialx'}, 1, 2)
+(True, {'last_page': 1, 'search_time': '0.0', 'hit': [{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'black polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 203}], 'results': 1})
+
+# Now search the article with all_flag OFF WITHOUT BOARD_NAME
+>>> server.search_manager.search(session_key, True, u'no_board', {u'query': u'serialx'}, 1, 2)
+(True, {'last_page': 101, 'search_time': '0.0', 'hit': [{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'black polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 203}, {'author_username': u'combacsa', 'hit': 0, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'combacsa', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 202}], 'results': 202})
 
 # Restore time.time
 >>> time.time = org_time
