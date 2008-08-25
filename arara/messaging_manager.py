@@ -231,7 +231,7 @@ class MessagingManager(object):
             return True, 'OK'
 
     @require_login
-    @log_method_call
+    @log_method_call_important
     def read_received_message(self, session_key, msg_no):
         '''
         쪽지 하나 읽어오기
