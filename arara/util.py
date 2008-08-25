@@ -3,6 +3,12 @@
 import traceback
 import logging
 
+def update_monitor_status(function):
+    def wrapper(self, session_key, *args, **kwargs):
+        if 'login_manager' in self.__dict__:
+            action = function.func_name
+            ret, msg = self.login_manager._update_monitor_status(session_key, action)
+
 def log_method_call_with_source_important(source):
 
     def log_method_call(function):
@@ -10,10 +16,20 @@ def log_method_call_with_source_important(source):
             logger = logging.getLogger(source)
             username = session_key
             if 'login_manager' in self.__dict__:
+                action = source + '.' + function.func_name
+                ret, msg = self.login_manager._update_monitor_status(session_key, action)
+                try:
+                    assert ret, msg
+                except AssertionError:
+                    logger.error("EXCEPTION(by %s) %s.%s%s:\n%s", username, source,
+                            function.func_name, repr(args), traceback.format_exc())
+                    return False, 'INTERNAL_SERVER_ERROR'
                 ret, user_info = self.login_manager.get_session(session_key)
                 username = user_info['username']
             logger.info("CALL(by %s) %s.%s%s", username, source,
                     function.func_name, repr(args))
+            logger.debug("CURRENT USER STATUS UPDATED: User '%s' calls '%s' function",
+                    username, user_info['current_action'])
             try:
                 ret = function(self, session_key, *args, **kwargs)
             except:
