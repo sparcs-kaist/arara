@@ -90,7 +90,7 @@ class ara_display:
             self.ara_sig_intro = ara_sig_intro(self, args['session_key'])
             self.view = self.ara_sig_intro
         elif pagename == "query_user":
-            self.ara_query_user = ara_query_user(self, args['session_key'])
+            self.ara_query_user = ara_query_user(self, args['session_key'], args['default_user'])
             self.view = self.ara_query_user
         elif pagename == "change_basic_info":
             self.ara_change_basic_info = ara_change_basic_info(self, args['session_key'])

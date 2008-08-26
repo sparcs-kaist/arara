@@ -17,17 +17,20 @@ class connected_user_rowitem(widget.FieldRow):
     ]
 
 class ara_list_connected_users(ara_form):
-    def on_button_clicked(self, button):
-        if button == self.returnbutton.body:
-            self.parent.change_page('user_information', {'session_key':self.session_key})
     def keypress(self, size, key):
-        return self.mainpile.keypress(size, key)
+        if key.lower() == 'q':
+            self.parent.change_page('user_information', {'session_key':self.session_key})
+        elif key == 'enter':
+            # self.userlist.get_body().get_focus()[0].w.w.widget_list : 현재 활성화된 항목
+            username = self.userlist.get_body().get_focus()[0].w.w.widget_list[0].get_text()[0]
+            self.parent.change_page('query_user', {'session_key':self.session_key, 'default_user':username})
+        else:
+            self.mainpile.keypress(size, key)
 
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u'ARA: List connected users',align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
-        self.querytext = urwid.Filler(urwid.Edit(caption=' * Search: ', wrap='clip'))
-        self.infotext = urwid.Filler(urwid.Text('(/)search (s)imple (d)etailed (q)uit (Enter) query'))
+        self.infotext = urwid.Filler(urwid.Text('(s)imple (d)etailed (q)uit (Enter) query'))
 
         retvalue, users = self.server.login_manager.get_current_online(self.session_key)
         assert retvalue, users
@@ -39,13 +42,9 @@ class ara_list_connected_users(ara_form):
             userlist = [{'id':' ','nickname':'', 'ip':' ', 'action':u'No users online.'}]
 
         header = {'id':'ID', 'nickname':'Nickname','ip':'IP Address', 'action':'Action'}
-        self.boardlist = listview.get_view(userlist, header, connected_user_rowitem)
+        self.userlist = listview.get_view(userlist, header, connected_user_rowitem)
 
-        self.returnbutton = urwid.Filler(urwid.Button('Return', self.on_button_clicked))
-        buttoncolumn = widget.EasyColumn(widget.blanktext, self.returnbutton, 80, 20)
-
-        content = [('fixed',1, self.header),('fixed',1,self.querytext),('fixed',1,self.infotext),
-                self.boardlist, ('fixed',1,widget.dash), ('fixed',1,buttoncolumn)]
+        content = [('fixed',1, self.header),('fixed',1,self.infotext), self.userlist]
         self.mainpile = urwid.Pile(content)
 
         return self.mainpile

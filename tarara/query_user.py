@@ -8,8 +8,28 @@ from ara_form import *
 import widget
 
 class ara_query_user(ara_form):
+    def __init__(self, parent, session_key = None, default_user = ''):
+        self.default_user = default_user
+        ara_form.__init__(self, parent, session_key)
+
     def keypress(self, size, key):
-        if 'enter' in key and self.buttoncolumn.get_focus() == self.idedit:
+        if key == 'tab':
+            buttoncolumnfocus = self.buttoncolumn.get_focus()
+            if buttoncolumnfocus == self.idedit:
+                self.buttoncolumn.set_focus(self.btnsearch)
+            elif buttoncolumnfocus == self.btnsearch:
+                self.buttoncolumn.set_focus(self.btncancel)
+            elif buttoncolumnfocus == self.btncancel:
+                self.buttoncolumn.set_focus(self.idedit)
+        elif key == 'shift tab':
+            buttoncolumnfocus = self.buttoncolumn.get_focus()
+            if buttoncolumnfocus == self.idedit:
+                self.buttoncolumn.set_focus(self.btncancel)
+            elif buttoncolumnfocus == self.btncancel:
+                self.buttoncolumn.set_focus(self.btnsearch)
+            elif buttoncolumnfocus == self.btnsearch:
+                self.buttoncolumn.set_focus(self.idedit)
+        elif 'enter' in key and self.buttoncolumn.get_focus() == self.idedit:
             edittext = self.idedit.body.get_edit_text().strip()
             if edittext != '':
                 self.query_information(edittext)
@@ -41,6 +61,7 @@ class ara_query_user(ara_form):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Query User",align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
         self.idedit = urwid.Filler(urwid.Edit(caption=" * Enter ID: ", wrap='clip'))
+        self.idedit.body.set_edit_text(self.default_user)
         self.btnsearch = urwid.Filler(urwid.Button("Search", self.on_button_clicked))
         self.btncancel = urwid.Filler(urwid.Button("Cancel", self.on_button_clicked))
 
@@ -62,6 +83,8 @@ class ara_query_user(ara_form):
             ('fixed',1,actiontext),
             ]
         self.mainpile = urwid.Pile(content)
+        if self.default_user != '':
+            self.query_information(self.idedit.body.get_edit_text())
 
 if __name__=="__main__":
     ara_query_user().main()

@@ -29,7 +29,7 @@ class ara_user_information(ara_form):
             self.menulist.set_focus(1)
         elif key.lower() == 'u':
             self.menulist.set_focus(2)
-            self.parent.change_page("query_user", {'session_key':self.session_key})
+            self.parent.change_page("query_user", {'session_key':self.session_key, 'default_user':''})
         elif key.lower() == 'q':
             self.menulist.set_focus(3)
             self.parent.change_page("main", {'session_key':self.session_key})
@@ -41,7 +41,7 @@ class ara_user_information(ara_form):
                 # TODO: 연결된 사용자 관찰하기
                 pass
             elif pos == 2:
-                self.parent.change_page("query_user", {'session_key':self.session_key})
+                self.parent.change_page("query_user", {'session_key':self.session_key, 'default_user':''})
             elif pos == 3:
                 self.parent.change_page("main", {'session_key':self.session_key})
         else:
