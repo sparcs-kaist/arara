@@ -91,6 +91,7 @@ $(document).ready(function(){
             $("#user_information_popup").hide("fast");
             $("#message_popup").show("fast");
             event.preventDefault();
+            $("#message_receiver_field").val(username);
         });
     });
 
