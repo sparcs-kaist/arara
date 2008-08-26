@@ -41,14 +41,19 @@ class ara_list_connected_users(ara_form):
     def refresh_view(self):
         retvalue, users = self.server.login_manager.get_current_online(self.session_key)
         assert retvalue, users
-        self.userlist = []
+        self.userlistitem = []
         if len(users) > 0:
             for user in users:
-                self.userlist += [{'id':user['username'], 'nickname':user['nickname'],
+                self.userlistitem += [{'id':user['username'], 'nickname':user['nickname'],
                     'ip':user['ip'], 'time':user['logintime'].strftime('%m/%d %H:%M:%S'),
                     'action':user['current_action']}]
         else:
-            self.userlist = [{'id':' ','nickname':'', 'ip':' ', 'time':' ','action':u'No users online.'}]
+            self.userlistitem = [{'id':' ','nickname':'', 'ip':' ', 'time':' ','action':u'No users online.'}]
+        try:
+            userlistitem = [widget.MarkedItem('>', connected_user_rowitem(data)) for data in self.userlistitem]
+            self.userlist.get_body().body = urwid.PollingListWalker(userlistitem)
+        except:
+            pass
 
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u'ARA: List connected users',align='center'))
@@ -57,7 +62,7 @@ class ara_list_connected_users(ara_form):
 
         self.refresh_view()
         self.userlistheader = {'id':'ID', 'nickname':'Nickname','ip':'IP Address', 'time':'Login Time', 'action':'Action'}
-        self.userlist = listview.get_view(self.userlist, self.userlistheader, connected_user_rowitem)
+        self.userlist = listview.get_view(self.userlistitem, self.userlistheader, connected_user_rowitem)
 
         content = [('fixed',1, self.header),('fixed',1,self.infotext), self.userlist]
         self.mainpile = urwid.Pile(content)
