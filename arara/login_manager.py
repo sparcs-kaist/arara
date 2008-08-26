@@ -19,6 +19,14 @@ class LoginManager(object):
     def __init__(self):
         self.session_dic = {}
         self.logger = logging.getLogger('login_manager')
+        self._create_counter_column()
+
+    def _create_counter_column(self):
+        session = model.Session()
+        visitor = model.Visitor()
+        session.save(visitor)
+        session.commit()
+        session.close()
 
     def _set_member_manager(self, member_manager):
         self.member_manager = member_manager
@@ -40,6 +48,29 @@ class LoginManager(object):
         #self.session_dic[hash] = {'username': 'guest', 'ip': guest_ip, 'logintime': timestamp}
         #return True, hash
 
+
+    def total_visitor(self):
+        '''
+        방문자 수를 1증가 시켜줌과 동시에 지금까지의 ARAra 방문자 수를 리틴해주는 함수
+
+        @rtype: boolean, integer
+        @return:
+            1. 성공 시: True, total_visitor_count
+            2. 실패 시: False, -1
+        '''
+        session = model.Session()
+        try:
+            visitor = session.query(model.Visitor).one()
+        except Exception, e: 
+            raise
+            session.close()
+            return False, -1
+        visitor.total = visitor.total + 1
+        total_visitor_count = visitor.total
+        session.commit()
+        session.close()
+        return True, total_visitor_count
+
     @log_method_call
     def login(self, username, password, user_ip):
         '''
@@ -52,7 +83,7 @@ class LoginManager(object):
         @param password: User Password
         @type  user_ip: string
         @param user_ip: User IP
-        @rtype: string
+        @rtype: boolean, string
         @return: 
             1. 로그인 성공 시: True, user_key
             2. 로그인 실패 시

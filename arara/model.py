@@ -164,6 +164,13 @@ class File(object):
     def __repr__(self):
         return "<File('%s')>" % (self.filename)
 
+class Visitor(object):
+    def __init__(self):
+        self.total = 0
+
+    def __repr__(self):
+        return "<Visitor<'%d'>" % (self.total)
+
 metadata = MetaData()
 users_table = Table('users', metadata,
     Column('id', Integer, primary_key=True),
@@ -281,6 +288,12 @@ file_table = Table('files', metadata,
     Column('deleted', Boolean),
 )
 
+visitor_table = Table('visitors', metadata,
+    Column('total', Integer, primary_key=True),
+)
+
+
+mapper(Visitor, visitor_table)
 
 mapper(File, file_table, properties={
     'user':relation(User, backref='files', lazy=True),
