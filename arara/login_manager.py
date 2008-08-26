@@ -22,7 +22,6 @@ class LoginManager(object):
         self._create_counter_column()
 
     def _create_counter_column(self):
-        self.today_visitor_count = 0
         session = model.Session()
         visitor = model.Visitor()
         session.save(visitor)
@@ -55,10 +54,10 @@ class LoginManager(object):
         방문자 수를 1증가 시켜줌과 동시에 
         지금까지의 ARAra 총 방문자 수와 오늘 하루 방문자수를 리틴해주는 함수
 
-        @rtype: boolean, integer, integer
+        @rtype: boolean, dictionary
         @return:
-            1. 성공 시: True, total_visitor_count, today_visitor_count
-            2. 실패 시: False, -1, -1
+            1. 성공 시: True, {'total_visitor_count':12345, 'today_visitor_count':423}
+            2. 실패 시: False, {}
         '''
         session = model.Session()
         try:
@@ -66,18 +65,17 @@ class LoginManager(object):
         except Exception, e: 
             raise
             session.close()
-            return False, -1, -1
+            return False, {} 
         visitor.total = visitor.total + 1
-        total_visitor_count = visitor.total
         now = datetime.datetime.fromtimestamp(time.time())
         if not now.day == visitor.date.day:
-            self.today_visitor_count = 0
+            visitor.today = 0
         visitor.today = visitor.today + 1
-        self.today_visitor_count = visitor.today
         visitor.date = datetime.datetime.fromtimestamp(time.time())
         session.commit()
         session.close()
-        return True, total_visitor_count, self.today_visitor_count
+        visitor_count= {'total_visitor_count':visitor.total, 'today_visitor_count':visitor.today}
+        return True, visitor_count 
 
     @log_method_call
     def login(self, username, password, user_ip):

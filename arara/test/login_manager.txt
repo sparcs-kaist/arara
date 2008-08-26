@@ -91,7 +91,7 @@ u'pipoket'
 >>> _ = server.login_manager.total_visitor() 
 >>> _ = server.login_manager.total_visitor() 
 >>> server.login_manager.total_visitor() 
-(True, 4, 4)
+(True, {'total_visitor_count': 4, 'today_visitor_count': 4})
 
 # Reset the database
 >>> import arara.model
