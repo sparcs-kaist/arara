@@ -77,9 +77,12 @@ class ara_login(ara_form):
         self.errormessage = urwid.Filler(urwid.Text("", align="center"))
         self.message_ko = urwid.Filler(urwid.Text(u"[Tab] 키를 누르면 항목간을 전환할 수 있습니다", align='center'))
         self.message_en = urwid.Filler(urwid.Text(u"Press [Tab] key to jump between each items", align='center'))
+        retvalue, count = self.server.login_manager.total_visitor()
+        self.counter = urwid.Filler(urwid.Text(u"Today: %s Total: %s" %
+            (count['today_visitor_count'], count['total_visitor_count']), align='center'))
 
-        self.idedit = urwid.Filler(urwid.Edit(caption="ID:", wrap='clip'))
-        self.pwedit = urwid.Filler(widget.PasswordEdit(caption="Password:", wrap='clip'))
+        self.idedit = urwid.Filler(urwid.Edit(caption="ID: ", wrap='clip'))
+        self.pwedit = urwid.Filler(widget.PasswordEdit(caption="Password: ", wrap='clip'))
         self.idpwpile = urwid.Pile([self.idedit, self.pwedit])
 
         langitems = ['Korean','English','Chinese']
@@ -92,7 +95,9 @@ class ara_login(ara_form):
 
         self.bottomcolumn = urwid.Columns([('weight',40,self.idpwpile),('weight',30,self.langlist),('weight',30,self.joinlist)])
 
-        content = [self.message,('fixed',1,self.errormessage),('fixed',1, widget.dash), ("fixed", 1, self.message_ko), ('fixed',1,self.message_en), ('fixed',1,widget.blank), ('fixed',5,self.bottomcolumn)]
+        content = [self.message,('fixed',1,self.errormessage),('fixed',1, widget.dash),
+                ("fixed",1,self.counter), ("fixed", 1, self.message_ko),
+                ('fixed',1,self.message_en), ('fixed',5,self.bottomcolumn)]
         self.mainpile = urwid.Pile(content)
 
         self.keymap = {'left':'', 'right':''}
