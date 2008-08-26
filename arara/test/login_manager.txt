@@ -83,16 +83,15 @@ u'pipoket'
 >>> server.login_manager.logout(unicode(session_key))
 (False, 'NOT_LOGGEDIN')
 
+>>> time.time = org_time
+
 # Count test
 
 >>> _ = server.login_manager.total_visitor() 
 >>> _ = server.login_manager.total_visitor() 
 >>> _ = server.login_manager.total_visitor() 
 >>> server.login_manager.total_visitor() 
-(True, 4)
-
-
->>> time.time = org_time
+(True, 4, 4)
 
 # Reset the database
 >>> import arara.model

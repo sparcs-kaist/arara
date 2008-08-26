@@ -167,9 +167,11 @@ class File(object):
 class Visitor(object):
     def __init__(self):
         self.total = 0
+        self.today = 0
+        self.date = datetime.datetime.fromtimestamp(time.time())
 
     def __repr__(self):
-        return "<Visitor<'%d'>" % (self.total)
+        return "<Visitor<'%d','%d'>" % (self.total, self.today)
 
 metadata = MetaData()
 users_table = Table('users', metadata,
@@ -290,6 +292,8 @@ file_table = Table('files', metadata,
 
 visitor_table = Table('visitors', metadata,
     Column('total', Integer, primary_key=True),
+    Column('today', Integer),
+    Column('date', DateTime),
 )
 
 
