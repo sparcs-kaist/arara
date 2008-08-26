@@ -13,6 +13,7 @@ class connected_user_rowitem(widget.FieldRow):
         ('id', 10, 'left'),
         ('nickname',10, 'left'),
         ('ip',16, 'left'),
+        ('time',14, 'left'),
         ('action',0,'left'),
     ]
 
@@ -20,6 +21,8 @@ class ara_list_connected_users(ara_form):
     def keypress(self, size, key):
         if key.lower() == 'q':
             self.parent.change_page('user_information', {'session_key':self.session_key})
+        elif key.lower() == 'r':
+            self.refresh_view()
         elif key == 'enter':
             # self.userlist.get_body().get_focus()[0].w.w.widget_list : 현재 활성화된 항목
             username = self.userlist.get_body().get_focus()[0].w.w.widget_list[0].get_text()[0]
@@ -27,22 +30,26 @@ class ara_list_connected_users(ara_form):
         else:
             self.mainpile.keypress(size, key)
 
+    def refresh_view(self):
+        retvalue, users = self.server.login_manager.get_current_online(self.session_key)
+        assert retvalue, users
+        self.userlist = []
+        if len(users) > 0:
+            for user in users:
+                self.userlist += [{'id':user['username'], 'nickname':user['nickname'],
+                    'ip':user['ip'], 'time':user['logintime'].strftime('%m/%d %H:%M:%S'),
+                    'action':user['current_action']}]
+        else:
+            self.userlist = [{'id':' ','nickname':'', 'ip':' ', 'time':' ','action':u'No users online.'}]
+
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u'ARA: List connected users',align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
-        self.infotext = urwid.Filler(urwid.Text('(s)imple (d)etailed (q)uit (Enter) query'))
+        self.infotext = urwid.Filler(urwid.Text('(s)imple (d)etailed (r)efresh (q)uit (Enter) query'))
 
-        retvalue, users = self.server.login_manager.get_current_online(self.session_key)
-        assert retvalue, users
-        userlist = []
-        if len(users) > 0:
-            for user in users:
-                userlist += [{'id':user['username'], 'nickname':user['nickname'], 'ip':user['ip'], 'action':'Sleeping'}]
-        else:
-            userlist = [{'id':' ','nickname':'', 'ip':' ', 'action':u'No users online.'}]
-
-        header = {'id':'ID', 'nickname':'Nickname','ip':'IP Address', 'action':'Action'}
-        self.userlist = listview.get_view(userlist, header, connected_user_rowitem)
+        self.refresh_view()
+        self.userlistheader = {'id':'ID', 'nickname':'Nickname','ip':'IP Address', 'time':'Login Time', 'action':'Action'}
+        self.userlist = listview.get_view(self.userlist, self.userlistheader, connected_user_rowitem)
 
         content = [('fixed',1, self.header),('fixed',1,self.infotext), self.userlist]
         self.mainpile = urwid.Pile(content)
