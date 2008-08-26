@@ -24,13 +24,11 @@ a {
 
 #content_wrapper {
     float: left;
-    width: 600px;
+    width: 700px;
 }
 
 #postcard {
     float: left;
-    width: 600px;
-    height: 400px;
 }
 
 #logo {
@@ -45,13 +43,15 @@ a {
     margin: 0 50px 0 0;
 }
 
-#login div {
+#input_wrapper {
     clear: both;
+    float: left;
 }
 
 #login label {
     float: left;
-    margin: 0.5em;
+    font-size: 80%;
+    margin: 0.7em;
 }
 
 #login input {
@@ -69,7 +69,6 @@ a {
     clear: both;
     float: right;
     width: 15em;
-    padding: 1.5em;
     margin: 0 100px 0 0;
 }
 
