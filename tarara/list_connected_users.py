@@ -7,6 +7,7 @@ import urwid
 import widget
 import listview
 from ara_form import *
+import timer
 
 class connected_user_rowitem(widget.FieldRow):
     fields = [
@@ -21,6 +22,13 @@ class ara_list_connected_users(ara_form):
     def keypress(self, size, key):
         if key.lower() == 'q':
             self.parent.change_page('user_information', {'session_key':self.session_key})
+        elif key.lower() == 'm':
+            if self.timer.state:
+                self.infotext.body.set_text('(r)efresh start (m)onitoring (q)uit (Enter) query')
+                self.timer.cancel()
+            else:
+                self.infotext.body.set_text('(r)efresh stop (m)onitoring (q)uit (Enter) query')
+                self.timer.run()
         elif key.lower() == 'r':
             self.refresh_view()
         elif key == 'enter':
@@ -45,7 +53,7 @@ class ara_list_connected_users(ara_form):
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u'ARA: List connected users',align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
-        self.infotext = urwid.Filler(urwid.Text('(s)imple (d)etailed (r)efresh (q)uit (Enter) query'))
+        self.infotext = urwid.Filler(urwid.Text('(r)efresh start (m)onitoring (q)uit (Enter) query'))
 
         self.refresh_view()
         self.userlistheader = {'id':'ID', 'nickname':'Nickname','ip':'IP Address', 'time':'Login Time', 'action':'Action'}
@@ -53,6 +61,8 @@ class ara_list_connected_users(ara_form):
 
         content = [('fixed',1, self.header),('fixed',1,self.infotext), self.userlist]
         self.mainpile = urwid.Pile(content)
+
+        self.timer = timer.Timer(10.0, self.refresh_view)
 
         return self.mainpile
 
