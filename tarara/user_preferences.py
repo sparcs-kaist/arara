@@ -14,7 +14,6 @@ class ara_user_preferences(ara_form):
         "View/edit B(l)acklist",
         "Change (I)ntroduction/Signature",
         "(Z)ap Board",
-        "Set (T)erminal Encoding",
         "(D)elete account",
         "(Q)uit menu",
     ]
@@ -24,7 +23,6 @@ class ara_user_preferences(ara_form):
         "View and edit your blacklist\n",
         "Change intruduction and\nsignature used in the articles",
         "Zap board\n",
-        "Set your terminal encoding\n",
         "Delete your ARA account\n",
         "Return to main menu\n",
     ]
@@ -55,13 +53,11 @@ class ara_user_preferences(ara_form):
             self.parent.change_page("sig_intro", {'session_key':self.session_key})
         elif key.lower() == 'z':
             self.menulist.set_focus(4)
-        elif key.lower() == 't':
-            self.menulist.set_focus(5)
         elif key.lower() == 'd':
-            self.menulist.set_focus(6)
+            self.menulist.set_focus(5)
             self.delete_account()
         elif key.lower() == 'q':
-            self.menulist.set_focus(7)
+            self.menulist.set_focus(6)
             self.parent.change_page("main",{'session_key':self.session_key})
         elif key == "enter":
             pos = self.menulist.get_focus()[1]
@@ -77,12 +73,9 @@ class ara_user_preferences(ara_form):
                 # TODO: 잽
                 pass
             elif pos == 5:
-                # TODO: 인코딩 설정
-                pass
-            elif pos == 6:
                 # TODO: 탈퇴되었음을 알리는 대화상자 삽입
                 self.delete_account()
-            elif pos == 7:
+            elif pos == 6:
                 self.parent.change_page("main",{'session_key':self.session_key})
         else:
             self.mainpile.keypress(size, key)
