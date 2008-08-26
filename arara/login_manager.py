@@ -6,6 +6,7 @@ import datetime
 import time
 
 from arara import model
+from sqlalchemy.exceptions import InvalidRequestError
 from util import is_keys_in_dict
 from util import log_method_call_with_source
 
@@ -23,10 +24,14 @@ class LoginManager(object):
 
     def _create_counter_column(self):
         session = model.Session()
-        visitor = model.Visitor()
-        session.save(visitor)
-        session.commit()
-        session.close()
+        try:
+            visitor = session.query(model.Visitor).one()
+            session.close()
+        except InvalidRequestError:
+            visitor = model.Visitor()
+            session.save(visitor)
+            session.commit()
+            session.close()
 
     def _set_member_manager(self, member_manager):
         self.member_manager = member_manager
@@ -48,7 +53,7 @@ class LoginManager(object):
         #self.session_dic[hash] = {'username': 'guest', 'ip': guest_ip, 'logintime': timestamp}
         #return True, hash
 
-
+    @log_method_call
     def total_visitor(self):
         '''
         방문자 수를 1증가 시켜줌과 동시에 
