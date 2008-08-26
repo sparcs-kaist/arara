@@ -74,25 +74,24 @@ $(document).ready(function(){
             }
         });
         event.preventDefault();
-    });
-
-    $("#u_info_send_message").click(function(event) {
-        show_message_box(username, event);
-        event.preventDefault();
-    });
-    
-    $("#u_info_add_blacklist").click(function(event) {
-        $.post("/blacklist/add/", {blacklist_id: username},
-            function(data) {
-                alert("Added " + username + " to blacklist.");
-            }
-        );
-        event.preventDefault();
-    });
-
-    $("#user_information_close").click(function(event) {
-        tb_remove(); 
-        $("#user_information_popup").hide("fast");
+        $("#user_information_close").click(function(event) {
+            tb_remove(); 
+            $("#user_information_popup").hide("fast");
+        });
+        $("#u_info_add_blacklist").click(function(event) {
+            $.post("/blacklist/add/", {blacklist_id: username},
+                function(data, textStatus) {
+                    alert("Added " + username + " to blacklist.");
+                }
+            );
+            event.preventDefault();
+        });
+        $("#u_info_send_message").click(function(event) {
+            tb_remove(); 
+            $("#user_information_popup").hide("fast");
+            $("#message_popup").show("fast");
+            event.preventDefault();
+        });
     });
 
     $("#user_popup_add_blacklist").click(function(event) {

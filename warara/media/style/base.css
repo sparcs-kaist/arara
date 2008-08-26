@@ -289,10 +289,14 @@ body {
 #user_information_popup {
     display: none;
     width: 40em;
-    border: 2px solid;
+    border: 1px solid;
     padding: 1.5em;
     margin: 0;
     float: left;
+    position: absolute;
+    right: 0%;
+    top: 0%;
+    background-color: white;
 }
 #user_information_popup_content {
     margin: 0;
