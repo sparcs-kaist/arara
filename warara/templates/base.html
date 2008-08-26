@@ -6,6 +6,7 @@
 	<script type="text/javascript" src="/media/thirdparty/jquery.history.js"></script>
 	<script type="text/javascript" src="/media/js/base.js"></script>
 	<script type="text/javascript" src="/media/thirdparty/thickbox/thickbox.js"></script>
+	<script type="text/javascript" src="/media/thirdparty/jquerypngfix.js"></script>
 	{% block script %}{% endblock %}
 	<link rel="stylesheet" href="/media/style/reset-min.css"></link>
 	<link rel="stylesheet" href="/media/style/reset_base-min.css"></link>
@@ -27,10 +28,10 @@
 		</div>
 		<div id="header">
 		    {% load arara_tags %}
-		    <h1><a href="/main/"><img src="/media/image/base/header/raw_ara_w_main_header_webara_title.png" alt="아라"></a></h1>
+		    <h1><a href="/main/"><img class="iepngfix" src="/media/image/base/header/raw_ara_w_main_header_webara_title.png" alt="아라"></a></h1>
 		    <form id="ksearch" action="http://nan.sparcs.org:9000/search" method="get">
 			<div id="ksearch_bg_bottom">
-			    <div id="ksearch_logo"></div>
+			    <div id="ksearch_logo" class="iepngfix"></div>
 			    <div class="ksearch">
 				<input type="text" class="q" id="q" name="ksearch" />
 				<input type="image" class="ksearch_submit" name="ksearch_submit" src="/media/image/base/ksearch/ksearch_btn.png" />
@@ -40,7 +41,7 @@
 		</div>
 		<div id="bottom_header">
 		    <div id="subtitle_wrapper">
-			<div id="subtitle_logo"></div>
+			<div id="subtitle_logo" class="iepngfix"></div>
 		    </div>
 		    <div id="top_menu_wrapper">
 			<div id="subtitle_folding"></div>

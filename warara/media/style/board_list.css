@@ -97,3 +97,14 @@ td {
 	position: relative;
 	top: 15%;
 }
+
+.search_method a {
+	color: #aaa;
+	margin: 0em 0.1em;
+	line-height: 180%;
+}
+
+.search_method a.selected {
+	color: #222;
+	font-weight: bold;
+}

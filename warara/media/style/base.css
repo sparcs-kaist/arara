@@ -395,14 +395,15 @@ input.button_exit{
 #ksearch {
     float: right;
     padding-right: 2em;
-    width: 26em;
+    width: 25em;
     height: 3.2em;
     background: url('/media/image/base/ksearch/ksearch_bg.png') repeat left top;
 }
 
 #ksearch_bg_bottom {
     float: right;
-    width: 26em;
+    width: 23.5em;
+	padding-left: 1.5em;
     height: 3.2em;
     background: url('/media/image/base/ksearch/ksearch_bg_bottom.png') no-repeat left bottom;
 }
@@ -411,20 +412,22 @@ input.button_exit{
     float:right;
 	border: none;
 	padding-top: 0.5em;
-	width: 80%;
+	width: 84%;
 }
 
 #ksearch .q {
 	border:1px solid #aaaaaa;
 	width: 80%;
-	margin: 0 0 1% 1.7%;
+	position: relative;
+	top: -0.25em;
 }
 
 #ksearch_logo {
     float:left;
-	width: 5em;
-	height: 2em;
-	background: url('/media/image/base/ksearch/ksearch.png') no-repeat 100% 100%;
+	margin: 1em 0em 0em 0em;
+	width: 3.5em;
+	height: 1em;
+	background: url('/media/image/base/ksearch/ksearch.png') no-repeat;
 }
 
 #ksearch .ksearch_submit {
@@ -590,4 +593,8 @@ form {
 
 .black {
     color: black;
+}
+
+.iepngfix{
+	behavior: url(/media/thirdparty/iepngfix/iepngfix.htc);
 }

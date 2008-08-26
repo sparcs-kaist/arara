@@ -71,11 +71,12 @@
         <a href="/board/{{board_name}}/write/">write</a>
     </div>
     <form name="board_search" method="GET" action="/board/{{board_name}}/search">
-        <select name="search_method" class="small_form">
-            {% for smi in search_method_list %}
-            <option value="{{smi.val}}"{%ifequal search_method smi.val%} selected="selected"{%endifequal%}>{{smi.text}}</option>
-            {% endfor %}
-        </select>
+        {% for smi in search_method_list %}
+            <span class="search_method">
+                <a href="#" rel="{{smi.val}}" name="search_method_select"{%if smi.selected%} class="selected"{%endif%}>{{smi.text}}</a>
+            <input type="hidden" value="{{smi.val}}"{%if smi.selected%} name="{{smi.val}}"{%endif%}></input>
+            </span>
+        {% endfor %}
         <input type="text" name="search_word" class="small_form"></input>
         <input class="small_btn" type="submit" value="search" id="board_search_submit"></input>
     </form>

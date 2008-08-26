@@ -21,6 +21,9 @@ def get_article_list(request, r, mode):
     page_no = request.GET.get('page_no', 1)
     r['page_no'] = int(page_no)
     page_length = 20
+    r['selected_method_list'] = ['title', 'content', 'author_nickname', 'author_username']
+    r['search_method_list'] = [{'val':'title', 'text':'title'}, {'val':'content', 'text':'content'},
+            {'val':'author_nickname', 'text':'nickname'}, {'val':'author_username', 'text':'id'}]
     if mode == 'list':
         ret, article_result = server.article_manager.article_list(sess, r['board_name'], r['page_no'])
     elif mode == 'read':
@@ -29,10 +32,18 @@ def get_article_list(request, r, mode):
         article_result['last_page'] = 1
     elif mode == 'search':
         search_word = request.GET.get('search_word', '')
-        search_method = request.GET.get('search_method', 'all')
+        r['selected_method_list'] = []
+        search_method = {}
+        for method in r['search_method_list']:
+            if request.GET.get(method['val'], 0):
+                r['selected_method_list'].append(method['val'])
+                if method['val'] == 'all':
+                    search_method['query'] = search_word
+                    break;
+                search_method[method['val']] = search_word
         if page_no:
             page_no = 1
-        ret, article_result = server.article_manager.search(sess, r['board_name'], search_word, search_method, page_no, page_length)
+        ret, article_result = server.search_manager.search(sess, False, r['board_name'], search_method, page_no, page_length)
     assert ret, article_result
 
     page_range_length = 10
@@ -52,9 +63,11 @@ def get_article_list(request, r, mode):
             article_list[i]['title'] += "..."
 
     r['article_list'] = article_list
-    r['search_method_list'] = [{'val':'all', 'text':'all'}, {'val':'title', 'text':'title'},
-            {'val':'content', 'text':'content'},
-            {'val':'author_nick', 'text':'nickname'}, {'val':'author_username', 'text':'id'}]
+    for i, smi in enumerate(r['search_method_list']):
+        if smi['val'] in r['selected_method_list']:
+            r['search_method_list'][i]['selected'] = True
+        else:
+            r['search_method_list'][i]['selected'] = False
 
     #pagination
     r['next'] = 'a'

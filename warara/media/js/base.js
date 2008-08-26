@@ -176,6 +176,8 @@ $(document).ready(function(){
 			$focus_input = 0
 			});
 
+    //png fix
+    //$(".iepngfix").pngfix();
 
 	//ksearch
 	$("input[name='ksearch_submit']").click(function(event){

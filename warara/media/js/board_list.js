@@ -24,6 +24,20 @@ $(document).ready(function(){
         location.href = article_link;
     }
 
+    $("#board_buttons a[name='search_method_select']").click(function(event){
+            $(this).toggleClass("selected");
+            if($(this).hasClass("selected")){
+            $(this).parent().children("input").attr("name", $(this).attr("rel"));
+            }
+            else{
+            $(this).parent().children("input").removeAttr("name");
+            }
+            if(!$(".selected").length){
+            $("#board_buttons span a[name='search_method_select']").eq(((cursor_pos-1) % 4)).addClass("selected");
+            }
+            event.preventDefault();
+            });
+
     $(document).keypress(function(event) {
 		if($focus_input || event.altKey || event.ctrlKey){
 		return;
@@ -52,11 +66,4 @@ $(document).ready(function(){
                 //alert(event.which);
         }
     });
-	/* search error handle
-	$("input[name='board_search_submit']").click(function(event){
-			$src = $(this).parent().attr("action");
-			$word = $("form[name='board_search' input[name='search_word']").val();
-			$method = $("form[name='board_search' select[name='search_method']").val();
-			});
-			*/
 });

@@ -33,9 +33,12 @@ $(document).ready(function(){
     $file_no = 1;
 
     $("input[name='file_input_add']").click(function(){
-        $file_no++;
-        $("#file_line_model span.article_write_file_caption").text("file " + $file_no);
-        $("#file_line_model input.file_upload").attr("name", "file"+$file_no);
+		$file_no++;
+		$("#file_line_model span.article_write_file_caption").text("file " + $file_no);
+		$("#file_line_model .file_upload_t input[type='file']").remove();
+		var file_append = "<input type=\"file\" name=\"file" + $file_no + "\" class=\"file_upload\" size=\"95\"></input>";
+		$("#file_line_model .file_upload_t").append(file_append);
+		$("#article_write_file").append($("#file_line_model").contents().clone());
         $(this).parent().parent().parent().append($("#file_line_model").contents().clone());
 
         $("input[name='file_input_delete']").click(function(){
@@ -68,21 +71,5 @@ $(document).ready(function(){
             $(this).width(this_width);
         }
     });
-/*$(window).load(function(){
-
-    //image resize
-    $(".article_content img").each(function(){
-            var this_width = $(this).width()
-            $(this).width(10);
-            var parent_width = $(this).parent().width();
-            if(this_width > parent_width){
-            $(this).width(parent_width);
-            }
-            else {
-            $(this).width(this_width);
-            }
-            });
-});*/
-
 });
 
