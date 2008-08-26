@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 
 import arara
 import math
+import warara
 import datetime
 
 
@@ -143,10 +144,10 @@ def send_(request):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
     r = {}
-    r['url'] = '/message/send'
     
     receiver = request.POST.get('receiver', '')
     text = request.POST.get('text', '')
+    receiver_type = request.POST.get('receiver_type', 'nickname')
 
     ret, message = server.messaging_manager.send_message(sess, receiver, text)
     assert ret, message
@@ -160,6 +161,7 @@ def send_(request):
 
     if "ajax" in request.POST:
         return HttpResponse("Message send successful!")
+    r['url'] = '/message/outbox'
     return HttpResponseRedirect(r['url'])
 
 def read(request, message_list_type, message_id):
@@ -244,30 +246,23 @@ def wrap_error(f):
         r = {} #render item
         try:
             return f(*args, **argv)
-        except AssertionError, e:
+        except StandardError, e:
             if e.message == "NOT_LOGGED_IN":
-                r['error_message'] = "not logged in!"
+                r['error_message'] = e.message
                 rendered = render_to_string("error.html", r)
                 return HttpResponse(rendered)
-                
-            r['error_message'] = "unknown assertionerror : " + e.message
-            rendered = render_to_string("error.html", r)
-            return HttpResponse(rendered)
-
-        except KeyError, e:
-            if e.message == "arara_session_key":
-                r['error_message'] = "not logged in!"
+            elif e.message == "arara_session_key":
+                r['error_message'] = "NOT_LOGGED_IN"
                 rendered = render_to_string("error.html", r)
                 return HttpResponse(rendered)
-            
-            r['error_message'] = "unknown keyerror : " + e.message
-            rendered = render_to_string("error.html", r)
-            return HttpResponse(rendered)
+            else:
+                rendered = render_to_string("error.html")
+                return HttpResponse(rendered)
 
     return check_error
 
-#inbox = wrap_error(inbox)
+inbox = wrap_error(inbox)
 outbox = wrap_error(outbox)
-#send = wrap_error(send)
-#read = wrap_error(read)
+send = wrap_error(send)
+read = wrap_error(read)
 delete = wrap_error(delete)

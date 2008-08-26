@@ -17,8 +17,17 @@
 }
 
 #message_send_receiver input {
-	width: 100%;
+	float: left;
+	width: 80%;
 	border: 1px solid #ccc;
+}
+
+.doublemarginshet a {
+	float: right;
+}
+
+#message_send_receiver span.type_id {
+	display: none;
 }
 
 #message_send_text {
@@ -53,5 +62,5 @@
 
 #message_send_buttons .message_send_cancel {
 	position: relative;
-	top: -15%;
+	top: 0.5em;
 }

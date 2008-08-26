@@ -34,6 +34,7 @@ $(document).ready(function(){
             }
             if(!$(".selected").length){
             $("#board_buttons span a[name='search_method_select']").eq(((cursor_pos-1) % 4)).addClass("selected");
+            $("#board_buttons span.search_method input").eq(((cursor_pos-1) % 4)).attr("name", $("#board_buttons span a[name='search_method_select']").eq(((cursor_pos-1) % 4)).attr("rel"));
             }
             event.preventDefault();
             });

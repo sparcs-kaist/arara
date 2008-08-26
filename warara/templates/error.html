@@ -4,6 +4,11 @@
 <script type="text/javascript" src="/media/js/error.js"></script>
 {% endblock script %}
 
+{% block style %}
+<link rel="stylesheet" href="/media/style/error.css"></link>
+{% endblock style %}
+
 {% block content %}
-<div id="error_message">{{error_message}}</div>
+<div id="error_notice">에러가 발생했습니다. 시샵에게 문의하세요.</div>
+<div id="error_alert">{{error_message}}</div>
 {% endblock content %}

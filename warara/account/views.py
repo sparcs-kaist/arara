@@ -186,34 +186,24 @@ def wrap_error(f):
         r = {} #render item
         try:
             return f(*args, **argv)
-        except AssertionError, e:
+        except StandardError, e:
             if e.message == "NOT_LOGGED_IN":
-                r['error_message'] = "not logged in!"
+                r['error_message'] = e.message
                 rendered = render_to_string("error.html", r)
                 return HttpResponse(rendered)
-            elif e.message == "ALEADY_LOGGED_IN":
-                r['error_message'] = "aleady logged in"
+            elif e.message == "arara_session_key":
+                r['error_message'] = "NOT_LOGGED_IN"
                 rendered = render_to_string("error.html", r)
                 return HttpResponse(rendered)
-
-            r['error_message'] = "unknown keyerror : " + e.message
-            rendered = render_to_string("error.html", r)
-            return HttpResponse(rendered)
-                
-        except KeyError, e:
-            if e.message == "arara_session_key":
-                r['error_message'] = "not logged in!"
+            else:
+                r['error_message'] = e.message
                 rendered = render_to_string("error.html", r)
                 return HttpResponse(rendered)
-            
-            r['error_message'] = "unknown keyerror : " + e.message
-            rendered = render_to_string("error.html", r)
-            return HttpResponse(rendered)
 
     return check_error
 
-#login = wrap_error(login)
-#logout = wrap_error(logout)
+login = wrap_error(login)
+logout = wrap_error(logout)
 account = wrap_error(account)
 register = wrap_error(register)
 agreement = wrap_error(agreement)
@@ -226,8 +216,13 @@ def id_check(request):
     if request.method == 'POST':
         server = arara.get_server()
         r = {}
-        check_id_field = request.POST['check_id_field']
+        check_id_field = request.POST['check_field']
         ret = server.member_manager.is_registered(check_id_field)
+        if(request.POST.get('from_message_send', 0)):
+            if ret:
+                return HttpResponse(1)
+            else:
+                return HttpResponse(0)
         if ret:
             r = 'The ID is not available'
         else:
@@ -240,7 +235,7 @@ def nickname_check(request):
     if request.method == 'POST':
         server = arara.get_server()
         r = {}
-        check_nickname_field = request.POST['check_nickname_field']
+        check_nickname_field = request.POST['check_field']
         ret = server.member_manager.is_registered_nickname(check_nickname_field)
         if ret:
             r = 'The nickname is not available'

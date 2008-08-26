@@ -26,7 +26,7 @@ $(document).ready(function(){
         $("#id").keydown(function(event) {
             id = $("#id").val(); 
             if(event.keyCode == 09) {
-                $.post("/account/register/idcheck/", {check_id_field: id},
+                $.post("/account/register/idcheck/", {check_field: id},
                     function(data, textStatus) {
                         $("#id").parent().children("label").children("span.feedback").text(data);
                     }
@@ -36,7 +36,7 @@ $(document).ready(function(){
         $("#nickname").keydown(function(event) {
             nickname = $("#nickname").val();
             if(event.keyCode == 09) {
-                $.post("/account/register/nicknamecheck/", {check_nickname_field: nickname},
+                $.post("/account/register/nicknamecheck/", {check_field: nickname},
                     function(data, textStatus) {
                         $("#nickname").parent().children("label").children("span.feedback").text(data);
                     }

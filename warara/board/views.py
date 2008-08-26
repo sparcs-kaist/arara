@@ -291,10 +291,11 @@ def wrap_error(f):
 
     return check_error
 
-#list = wrap_error(list)
-#read = wrap_error(read)
+list = wrap_error(list)
+read = wrap_error(read)
 vote = wrap_error(vote)
 write = wrap_error(write)
 reply = wrap_error(reply)
 delete = wrap_error(delete)
 search = wrap_error(search)
+file_download = wrap_error(file_download)

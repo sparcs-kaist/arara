@@ -5,6 +5,11 @@
 <link rel="stylesheet" href="/media/style/message_send.css">
 {% endblock %}
 
+{% block script %}
+{{block.super}}
+<script type="text/javascript" src="/media/js/message_send.js"></script>
+{% endblock script %}
+
 {% block main_head %}
 send a message
 {% endblock %}
@@ -12,11 +17,13 @@ send a message
 send a message
 {% endblock %}
 {% block message_content %}
-<form action="/message/send/" method="POST">
+<form action="/message/send/" method="POST" name="message_send">
     <div id="message_send_receiver">
         <div class="sendto">send to : </div>
         <div class="doublemarginshet">
         <input type="text" name="receiver" value="{{default_receiver}}"></input>
+        <a href="#" name="select_receiver_type"><span rel="nickname" class="select_type type_nickname">nickname</span><span rel="id" class="select_type type_id">id</span></a>
+        <input type="hidden" name="receiver_type" value="nickname"></input>
         </div>
     </div>
     <div id="message_send_text">
@@ -24,10 +31,10 @@ send a message
     </div>
     <div id="message_send_buttons">
         <span class="message_send_submit">
-            <input type="submit" name="submit" class="message_send_submit" value="send"></input>
+            <input type="submit" name="message_submit" class="message_send_submit big_btn" value="send"></input>
         </span>
         <span class="message_send_cancel">
-            <input type="button" name="cancel" value="cancel"></input>
+            <input type="button" name="cancel" value="cancel" class="small_btn"></input>
         </span>
     </div>
 </form>
