@@ -46,9 +46,11 @@ a {
 #input_wrapper {
     clear: both;
     float: left;
+    width: 20em;
 }
 
 #login label {
+    clear: both;
     float: left;
     font-size: 80%;
     margin: 0.7em;
