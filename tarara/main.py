@@ -51,12 +51,11 @@ class ara_main(ara_form):
     def keypress(self, size, key):
         if key in self.keymap:
             key = self.keymap[key]
-        if key == "tab":
+        if "tab" in key:
             if self.maincolumn.get_focus() == self.menulist:
                 self.maincolumn.set_focus(self.bests)
             elif self.maincolumn.get_focus() == self.bests:
                 self.maincolumn.set_focus(self.menulist)
-            pass
         elif key.lower() == 'n':
             self.menulist.set_focus(0)
         elif key.lower() == 's':
