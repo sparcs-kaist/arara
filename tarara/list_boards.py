@@ -41,7 +41,7 @@ class ara_list_boards(ara_form):
             'j': 'down',
             'k': 'up',
         }
-        retvalue, boardlist = self.server.article_manager.board_list(self.session_key)
+        retvalue, boardlist = self.server.board_manager.get_board_list()
         assert retvalue, boardlist
 
 	self.header = urwid.Filler(urwid.Text(u"ARA: List boards",align='center'))

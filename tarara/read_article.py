@@ -61,6 +61,7 @@ class ara_read_article(ara_form):
         self.author_template = Template("Author: ${AUTHOR} (${NICKNAME})")
         self.info_template = Template("Date: ${DATE} Hit: ${HIT} Reply: ${REPLY} Vote: ${VOTE}")
         self.reply_template = Template("Reply by ${AUTHOR}(${NICKNAME}) on ${DATE}")
+        self.attach_template = Template("Attachment: ${SERVER_ADDRESS}/board/${BOARD_NAME}/${ROOT_ID}/${ARTICLE_ID}/file/${FILE_ID}\n")
         ara_form.__init__(self, parent, session_key)
 
     def set_thread_info(self):
@@ -78,13 +79,29 @@ class ara_read_article(ara_form):
         body = self.thread
         for article in body:
             if article['depth'] == 1:
-                article_text = widget.NonTextItem(urwid.Text(article['content']),None,'selected')
+                body = article['content']
+                if article.has_key('attach'):
+                    body += '\n\n'
+                    for item in article['attach']:
+                        string = self.attach_template.safe_substitute(SERVER_ADDRESS="http://nan.sparcs.org:8003",
+                                BOARD_NAME=self.board_name, ROOT_ID = article['root_id'],
+                                ARTICLE_ID = article['id'], FILE_ID = item['file_id'])
+                        body += string
+                article_text = widget.NonTextItem(urwid.Text(body.rstrip()),None,'selected')
                 article_list.append(article_text)
             else:
                 reply_title = urwid.Filler(urwid.Text(self.title_template.safe_substitute(TITLE=article['title'])))
                 reply_info = urwid.Filler(urwid.Text(self.reply_template.safe_substitute(AUTHOR=article['author_username'],
                     NICKNAME=article['author_nickname'], DATE=article['date'].strftime("%Y/%m/%d %H:%M"))))
-                reply_body = urwid.Text(article['content'])
+                body = article['content']
+                if article.has_key('attach'):
+                    body += '\n\n'
+                    for item in article['attach']:
+                        string = self.attach_template.safe_substitute(SERVER_ADDRESS="http://nan.sparcs.org:8003",
+                                BOARD_NAME=self.board_name, ROOT_ID = article['root_id'],
+                                ARTICLE_ID = article['id'], FILE_ID = item['file_id'])
+                        body += string
+                reply_body = urwid.Text(body.rstrip())
                 reply_pile = urwid.Pile([('fixed',1,reply_info),('fixed',1,reply_title),reply_body])
                 indented_pile = widget.IndentColumn(reply_pile, article['depth']-1)
                 indented_pile = widget.NonTextItem(indented_pile,None,'selected')
