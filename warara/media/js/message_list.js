@@ -22,6 +22,8 @@ $(document).ready(function() {
 	var row_length = $("#message_list_table tbody tr").length;
 	$page_no = $("input[name='page_no']").val();
 	$last_page = $("input[name='last_page']").val();
+    $page_no = parseInt($page_no);
+    $last_page = parseInt($last_page);
 	$message_list_type = $("input[name='message_list_type']").val();
 
 	$.history.init(function(hash){
@@ -40,18 +42,44 @@ $(document).ready(function() {
 		$("#message_list_table tr").eq(cursor_pos).addClass("row_highlight");
 	}
 
+    function move_next_page(){
+        if($page_no < $last_page){
+            $page_no++;
+            $src = "/message/" + $("input[name='message_list_type']").val() + "?page_no=" + $page_no + "&page_length=" + $page_length;
+            location.href = $src;
+            }
+    }
+
+    function move_prev_page(){
+			if($page_no > 1){
+				$page_no--;
+				$src = "/message/" + $("input[name='message_list_type']").val() + "?page_no=" + $page_no + "&page_length=" + $page_length;
+				location.href = $src;
+			}
+    }
+
+    function move_next_page_group(){
+        $src = $("#message_page_move a[name='next_page_group']").attr("href");
+        if($src){
+            location.href = $src;
+        }
+    }
+
+    function move_prev_page_group(){
+        $src = $("#message_page_move a[name='prev_page_group']").attr("href");
+        if($src){
+            location.href = $src;
+        }
+    }
+
 	function move_next(){
 		if(cursor_pos < row_length){
 			cursor_pos++;
 			update_table(cursor_pos);
 			}
 		else if(cursor_pos == row_length){
-			if($page_no < $last_page){
-				$page_no++;
-				$src = "/message/" + $("input[name='message_list_type']").val() + "?page_no=" + $page_no + "&page_length=" + $page_length;
-				location.href = $src;
-				}
-			}
+            move_next_page();
+        }
 	}
 
 	function move_prev(){
@@ -60,11 +88,7 @@ $(document).ready(function() {
 			update_table(cursor_pos);
 			}
 		else if(cursor_pos == 1){
-			if($page_no > 1){
-				$page_no--;
-				$src = "/message/" + $("input[name='message_list_type']").val() + "?page_no=" + $page_no + "&page_length=" + $page_length;
-				location.href = $src;
-			}
+            move_prev_page();
 		}
 	}
 
@@ -138,6 +162,7 @@ $(document).ready(function() {
 			switch(event.which){
 			case 13:
 			case 32:
+            case 105:
 				read_message(cursor_pos);
 				break;
 
@@ -168,7 +193,23 @@ $(document).ready(function() {
 			case 65: //A
 				$("#message_list_table tbody tr").addClass("row_highlight");
 				break;
+            
+            case 112:
+                move_next_page();
+                break;
+
+            case 110:
+                move_prev_page();
+                break;
+
+            case 78:
+                move_prev_page_group();
+                break;
+
+            case 80:
+                move_next_page_group();
 			}
+
 	});
 	$(document).keypress(function(event){
 			if(event.ctrlKey || event.altKey){
@@ -180,7 +221,7 @@ $(document).ready(function() {
 			switch(event.which){
 
 			case 113: //q
-				location.href = '/';
+				location.href = '/main';
 				break;
 			}
 			});

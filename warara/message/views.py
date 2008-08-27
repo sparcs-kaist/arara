@@ -134,8 +134,11 @@ def send(request, msg_no=0):
     if request.GET.get('multi', 0): #for test only
         multi = request.GET['multi']
         multi = int(multi)
+        rc = request.GET.get('rc', 'SYSOP')
+        con = request.GET.get('con', 'almond chocoball')
         for i in range(multi):
-            ret, message = server.messaging_manager.send_message(sess, 'breadfish', str(i))
+            ret, message = server.messaging_manager.send_message(sess, rc, con)
+        return HttpResponseRedirect('/message/outbox/')
 
     rendered = render_to_string('message/send.html', r)
     return HttpResponse(rendered)

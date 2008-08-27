@@ -4,6 +4,10 @@
 <link rel="stylesheet" href="/media/style/message_base.css"></link>
 {% endblock style %}
 
+{% block script %}
+<script type="text/javascript" src="/media/js/message_base.js"></script>
+{% endblock %}
+
 {% block content %}
 <div id="message_head">
     <span class="main_head">
@@ -15,9 +19,9 @@
 
     <div id="message_menu">
         <span>
-        <a href="/message/inbox/">inbox</a> | 
-        <a href="/message/outbox/">outbox</a> | 
-        <a href="/message/send/">send</a>
+        <a name="inbox" href="/message/inbox/">inbox</a> | 
+        <a name="outbox" href="/message/outbox/">outbox</a> | 
+        <a name="send" href="/message/send/">send</a>
         </span>
     </div>
 </div>

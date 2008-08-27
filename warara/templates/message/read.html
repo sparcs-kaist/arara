@@ -41,14 +41,14 @@ read a message
     reply to a message
 </div>
 
-<form action="/message/send/" method="POST">
+<form action="/message/send/" method="POST" name="message_send">
     <div id="message_send_text">
         <textarea name="text">{{default_text}}</textarea>
     </div>
     <div id="message_send_buttons">
         <ul>
             <li><a name="message_read_move_to_list" href="../">list</a></li>
-            <li class="submit_button"><input class="big_btn" type="submit" name="submit" class="message_send_submit" value="send"></input></li>
+            <li class="submit_button"><input class="big_btn" type="submit" name="" class="message_send_submit" value="send"></input></li>
             <li><a name="message_read_delete" href="/message/delete/?del_msg_no={{message.id}}&message_list_type={{message_list_type}}">delete</a></li>
         </ul>
     </div>

@@ -213,8 +213,9 @@ $(document).ready(function(){
     });
 
 	//logout function
-	$("a[name='logout']").click(function(event){
+    function logout(){
 			$.get("/account/logout", function(data){
+                $("#top_menu a.hidden").removeClass("hidden");
 				$("a[name='logout']").hide();
 				$("a[name='login']").show();
 				$("a[name='account']").hide();
@@ -222,6 +223,9 @@ $(document).ready(function(){
 				$("a[name='top_menu_message']").hide();
 				$("a[name='blacklist']").hide();
 				});
+    }
+	$("a[name='logout']").click(function(event){
+            logout();
 			event.preventDefault();
 			});
 
@@ -239,8 +243,8 @@ $(document).ready(function(){
 		cursor_tm = 1;
 		$(".highlight").removeClass("highlight");
 		$(".row_highlight").removeClass("row_highlight").addClass("hidden_highlight");
-		$("#top_menu a[class!='hidden']").eq(cursor_tm-1).addClass("highlight");
-		a_tm_length = $("#top_menu a[class!='hidden']").length;
+		$("#top_menu a:visible").eq(cursor_tm-1).addClass("highlight");
+		a_tm_length = $("#top_menu a:visible").length;
 	}
 	function focus_board_list(){
 		if(cursor_bl){
@@ -270,7 +274,7 @@ $(document).ready(function(){
 	}
 	function update_highlight(div, cursor){
 		$(div + " a[class='highlight']").removeClass("highlight");
-		$(div + " a[class!='hidden']").eq(cursor-1).addClass("highlight");
+		$(div + " a:visible").eq(cursor-1).addClass("highlight");
 	}
 	function focus_content(){
 		$(".highlight").removeClass("highlight");
@@ -323,7 +327,20 @@ $(document).ready(function(){
 			update_highlight("#top_menu", cursor_tm);
 			break;
 			case 32: //spacs
-			location.href = $("#top_menu a[class!='hidden']").eq(cursor_tm-1).attr("href");
+            if($("#top_menu a[name='login']").hasClass("highlight")){
+                $("#login_box").show();
+                $("#login_username_field").focus();
+                event.preventDefault();
+                break;
+            }
+            else if($("#top_menu a[name='logout']").hasClass("highlight")){
+                $(".highlight").removeClass("highlight");
+                cursor_tm = 0;
+                logout();
+                event.preventDefault();
+                break;
+            }
+			location.href = $("#top_menu a:visible").eq(cursor_tm-1).attr("href");
 			break;
 			}
 			});

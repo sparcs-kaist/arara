@@ -38,3 +38,28 @@ def confirm_user(request):
     ret, msg = server.member_manager.backdoor_confirm(sess, request.POST['confirm_username'])
     assert ret, msg
     return HttpResponseRedirect('/sysop/')
+
+def wrap_error(f):
+    def check_error(*args, **argv):
+        r = {} #render item
+        try:
+            return f(*args, **argv)
+        except StandardError, e:
+            if e.message == "NOT_LOGGED_IN":
+                r['error_message'] = e.message
+                rendered = render_to_string("error.html", r)
+                return HttpResponse(rendered)
+            elif e.message == "arara_session_key":
+                r['error_message'] = "NOT_LOGGED_IN"
+                rendered = render_to_string("error.html", r)
+                return HttpResponse(rendered)
+            else:
+                rendered = render_to_string("error.html")
+                return HttpResponse(rendered)
+
+    return check_error
+
+index = wrap_error(index)
+add_board = wrap_error(add_board)
+remove_board = wrap_error(remove_board)
+confirm_user = wrap_error(confirm_user)

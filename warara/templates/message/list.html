@@ -86,7 +86,7 @@ messages
 	<span class="prev">
         {% if prev_page_group.mark %}
         <a href="/message/{{message_list_type}}?page_no={{first_page.no}}&page_length={{page_length}}">《 </a>
-        <a href="/message/{{message_list_type}}?page_no={{prev_page_group.no}}&page_length={{page_length}}">〈 </a>
+        <a name="prev_page_group" href="/message/{{message_list_type}}?page_no={{prev_page_group.no}}&page_length={{page_length}}">〈 </a>
         {% else %}
         《 〈 
         {% endif %}
@@ -100,7 +100,7 @@ messages
     </span>
     <span class="next">
         {% if next_page_group.mark %}
-        <a href="/message/{{message_list_type}}?page_no={{next_page_group.no}}&page_length={{page_length}}"> 〉</a>
+        <a name="next_page_group" href="/message/{{message_list_type}}?page_no={{next_page_group.no}}&page_length={{page_length}}"> 〉</a>
         <a href="/message/{{message_list_type}}?page_no={{last_page.no}}&page_length={{page_length}}"> 》</a>
         {% else %}
          〉 》

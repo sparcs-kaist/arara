@@ -1,5 +1,12 @@
 $(document).ready(function(){
 		$(document).keypress(function(event){
+            switch(event.which){
+                case 13:
+                    if(event.shiftKey){
+                        $("form[name='message_send']").submit();
+                    }
+                    break;
+            }
 			if($focus_input || event.altKey || event.ctrlKey){
 			return;
 			}
@@ -12,6 +19,7 @@ $(document).ready(function(){
 
 			case 114: //r
 			case 109: //m
+            case 70:
 			if($("input[name='message_list_type']").val() == 'outbox'){
 			return;
 			}

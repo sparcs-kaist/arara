@@ -265,35 +265,25 @@ def wrap_error(f):
         r = {} #render item
         try:
             return f(*args, **argv)
-        except AssertionError, e:
+        except StandardError, e:
             if e.message == "NOT_LOGGED_IN":
-                r['error_message'] = "not logged in!"
+                r['error_message'] = e.message
                 rendered = render_to_string("error.html", r)
                 return HttpResponse(rendered)
-            elif e.message == "ALEADY_LOGGED_IN":
-                r['error_message'] = "aleady logged in"
+            elif e.message == "arara_session_key":
+                r['error_message'] = "NOT_LOGGED_IN"
                 rendered = render_to_string("error.html", r)
                 return HttpResponse(rendered)
-
-            r['error_message'] = "unknown assertionerror : " + repr(e.message)
-            rendered = render_to_string("error.html", r)
-            return HttpResponse(rendered)
-                
-        except KeyError, e:
-            if e.message == "arara_session_key":
-                r['error_message'] = "not logged in!"
-                rendered = render_to_string("error.html", r)
+            else:
+                rendered = render_to_string("error.html")
                 return HttpResponse(rendered)
-            
-            r['error_message'] = "unknown keyerror : " + repr(e.message)
-            rendered = render_to_string("error.html", r)
-            return HttpResponse(rendered)
 
     return check_error
 
 list = wrap_error(list)
 read = wrap_error(read)
 vote = wrap_error(vote)
+index = wrap_error(index)
 write = wrap_error(write)
 reply = wrap_error(reply)
 delete = wrap_error(delete)

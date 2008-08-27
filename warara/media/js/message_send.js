@@ -20,4 +20,31 @@ $(document).ready(function(){
             event.preventDefault();
             $("input[name='receiver_type']").val($("a[name='select_receiver_type'] span:visible").attr("rel"));
         });
+
+        $("#send_receiver").focus();
+
+        $(document).keypress(function(event){
+                if(event.shiftKey){
+                switch(event.which){
+                    case 13:
+                        if(confirm("send")){
+                            $("form[name='message_send']").submit();
+                            break;
+                        }
+                    }
+                    }
+                if($focus_input || event.altKey || event.ctrlKey){
+                return;
+                }
+                switch(event.which){
+                    case 99:
+                        $("span.select_type").toggle();
+                        $("input[name='receiver_type']").val($("a[name='select_receiver_type'] span:visible").attr("rel"));
+                        break;
+                    case 70:
+                        $("#send_receiver").focus();
+                        break;
+                }
+        });
+
  });
