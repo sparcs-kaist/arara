@@ -28,7 +28,7 @@ class ara_list_connected_users(ara_form):
                 self.timer.cancel()
             else:
                 self.infotext.body.set_text('(r)efresh (m)onitoring:stop (q)uit (Enter) query')
-                self.timer.run()
+                self.timer.start()
         elif key.lower() == 'r':
             self.refresh_view()
         elif key == 'enter':
