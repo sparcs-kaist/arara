@@ -8,6 +8,15 @@
 {% endblock %}
 {% block content %}
 <div id="register_content" class="account_content">
+    <div class="account_head_block">
+	<div class="account_head">USER REGISTRATION</div>
+	<div class="register_process">
+	    <span>Step 1 : Regisgtration agreement</span>
+	    <span>|</span>
+	    <span id="contempo_process">Step 2 : Account register</span>
+	</div>
+    </div>
+    <div id="agreement_subtitle_bottom"><div id="agreement_sub_title">User Agreement</div></div>
     <form action="/account/register/" method="post" name="form">
         <h1>User Registration</h1>
         <fieldset id="information">
