@@ -81,7 +81,10 @@ class ara_list_article(ara_form):
                 if not article.has_key('read_status'): 
                     article['read_status'] = 'N'
                 if article['deleted']:
-                    itemlist += [{'new':'', 'number':'', 'author':'', 'title':'Deleted article.', 'date':'', 'hit':'', 'vote':''}]
+                    itemlist += [{'new':article['read_status'], 'number':str(article['id']), \
+                        'author':'', 'title':'Deleted article.', \
+                        'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), \
+                        'vote':str(article['vote'])}]
                 else:
                     itemlist += [{'new':article['read_status'], 'number':str(article['id']), \
                         'author':article['author_username'], 'title':article['title'], \

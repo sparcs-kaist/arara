@@ -30,6 +30,7 @@ class ara_display:
         ('header', 'black', 'dark cyan', 'bold'),
         ('selected', 'black', 'light gray', 'standout'),
         ('reversed', 'black', 'light gray', 'bold'),
+        ('article_selected', 'white', 'dark red', 'bold'),
         ('menu', 'default', 'default', 'standout'),
         ('bg', 'default', 'default'),
         ('bgf', 'light gray', 'dark blue', 'standout'),
