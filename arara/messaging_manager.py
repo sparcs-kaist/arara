@@ -171,6 +171,82 @@ class MessagingManager(object):
 
     @require_login
     @log_method_call_important
+    def send_message_by_username(self, session_key, to_username, msg):
+        '''
+        해당 하는 username을 갖는 사용자에게 쪽지를 전송하는 함수 
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type  to_username: string, list
+        @param to_username: Destination username
+        @type  msg: string
+        @param msg: Message string
+        @rtype: string
+        @return:
+            1. 메세지 전송 성공: True, 'OK'
+            2. 메세지 전송 실패:
+                1. 보낼 아이디가 존재하지 않음: False, 'USER_NOT_EXIST'
+                2. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
+                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        '''
+
+        ret, user_info = self.login_manager.get_session(session_key)
+        if not self.member_manager.is_registered(to_username):
+            return False, 'USER_NOT_EXIST'
+        session = model.Session()
+        from_user = session.query(model.User).filter_by(username=user_info['username']).one()
+        from_user_ip = user_info['ip']
+        to_user = session.query(model.User).filter_by(username=to_username).one()
+        message = model.Message(from_user, from_user_ip, to_user, msg)
+        try:
+            session.save(message)
+            session.commit()
+        except InvalidRequestError:
+            session.close()
+            return False, "DATABASE_ERROR"
+        session.close()
+        return True, 'OK'
+
+    @require_login
+    @log_method_call_important
+    def send_message_by_nickname(self, session_key, to_nickname, msg):
+        '''
+        해당 하는 nickname을 갖는 사용자에게 쪽지를 전송하는 함수 
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type  to_nickname: string, list
+        @param to_nickname: Destination nickname
+        @type  msg: string
+        @param msg: Message string
+        @rtype: string
+        @return:
+            1. 메세지 전송 성공: True, 'OK'
+            2. 메세지 전송 실패:
+                1. 보낼 아이디가 존재하지 않음: False, 'USER_NOT_EXIST'
+                2. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
+                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        '''
+
+        ret, user_info = self.login_manager.get_session(session_key)
+        if not self.member_manager.is_registered_nickname(to_nickname):
+            return False, 'USER_NOT_EXIST'
+        session = model.Session()
+        from_user = session.query(model.User).filter_by(nickname=user_info['nickname']).one()
+        from_user_ip = user_info['ip']
+        to_user = session.query(model.User).filter_by(nickname=to_nickname).one()
+        message = model.Message(from_user, from_user_ip, to_user, msg)
+        try:
+            session.save(message)
+            session.commit()
+        except InvalidRequestError:
+            session.close()
+            return False, "DATABASE_ERROR"
+        session.close()
+        return True, 'OK'
+
+    @require_login
+    @log_method_call_important
     def send_message(self, session_key, to_data, msg):
         '''
         쪽지 전송하기

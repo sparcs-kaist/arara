@@ -50,7 +50,7 @@ Fake time
 >>> org_time = time.time
 >>> time.time = stub_time
 
-Login existing user mikkang
+#Login existing user mikkang
 
 >>> server.member_manager.is_registered(u'mikkang')
 True
@@ -58,7 +58,7 @@ True
 >>> ret
 True
 
-Login existing user serialx
+#Login existing user serialx
 
 >>> ret, serialx_session_key = server.login_manager.login(u'serialx', u'serialx', '143.248.234.140')
 >>> ret
@@ -83,6 +83,7 @@ True
 (True, 'OK')
 >>> server.messaging_manager.receive_list(mikkang_session_key)
 (True, {'last_page': 1, 'hit': [{'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello2', 'id': 2}, {'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello', 'id': 1}], 'results': 2, 'new_message_count': 2})
+
 
 # now add serialx to blacklist to check blacklist function
 >>> server.blacklist_manager.add(mikkang_session_key, u'serialx')
@@ -191,6 +192,29 @@ Test Delete Function
 
 >>> server.messaging_manager.delete_sent_message(serialx_session_key, 102)
 (False, 'MSG_NOT_EXIST')
+
+# send_message_by_username, send_message_by_nickname Test!!
+
+Register one user, dodo
+
+>>> user_reg_dic = {'username':u'zzongaly', 'password':u'zzongaly', 'nickname':u'dodo', 'email':u'zzongaly', 'signature':u'mikkang friend', 'self_introduction':u'i am dodo', 'default_language':u'english' }
+>>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> ret
+True
+>>> server.member_manager.confirm(u'zzongaly', unicode(register_key))
+(True, 'OK')
+>>> ret, zzongaly_session_key = server.login_manager.login(u'zzongaly', u'zzongaly', '143.248.234.140')
+>>> ret
+True
+
+>>> server.messaging_manager.send_message_by_username(mikkang_session_key, u'zzongaly', u'hi dodo username test')
+(True, 'OK')
+
+>>> server.messaging_manager.send_message_by_nickname(mikkang_session_key, u'dodo', u'hi dodo nickname test')
+(True, 'OK')
+
+>>> server.messaging_manager.receive_list(zzongaly_session_key)
+(True, {'last_page': 1, 'hit': [{'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'zzongaly', 'message': u'hi dodo nickname test', 'id': 103}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'zzongaly', 'message': u'hi dodo username test', 'id': 102}], 'results': 2, 'new_message_count': 2})
 
 # Test Errors
 
