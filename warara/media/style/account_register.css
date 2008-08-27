@@ -1,3 +1,96 @@
+/* Common */
+#contempo_process {
+    font-weight: bold;
+}
+
+/* Register Agreement */
+#register_head_block {
+    width: 96%;
+    background: url(/media/image/head_background.png) repeat top left;
+    float: left;
+    margin-bottom: 1.3em; 
+}
+
+#register_head {
+    font-size: 1.5em;
+    color: #FFFFFF;
+    font-weight: bold;
+    font-family: tahoma;
+    margin: 0;
+    padding: 0.7em 0 0.7em 0.7em;
+    float: left;
+}
+
+#register_process {
+    float: right;
+    margin: 0.95em;
+    padding: 0.5em;
+    background: url(/media/image/black_transparent.png) repeat;
+    color: white;
+    vertical-align: center;
+}
+
+#register_process span {
+    color: white;
+}
+
+#agreement_sub_title {
+    min-height: 1.6em; 
+    background: #E0E0E0 url(/media/image/base/square.png) no-repeat top left;
+    border-top: 1px #65AA5C solid;
+    border-bottom: 5px #DADADA solid;
+    padding: 0.5em 0 0 0.8em;
+    clear: left;
+}
+
+#agreement_subtitle_bottom {
+    width: 67.3em;
+    margin: 0 0 0 1.4em;
+    border-bottom: 1px #CCCCCC solid;
+}
+
+#agreement_content {
+    margin: 1em 3.3em 0 1.8em;
+}
+
+#agreement {
+    width: 100%;
+    height: 13em;
+}
+
+#register_agree_buttons {
+    position: relative;
+    top: 2em;
+    width: 100%
+    padding: 0.3em 0;
+    vertical-align: center;
+}
+
+#register_agree {
+    margin: 0 0 0 40%
+}
+
+#register_agree input {
+    background: url('/media/image/big_btn_bg.png') repeat-x bottom;
+    border:1px solid #dadada;
+    height: 3em;
+    padding: 0 1%;
+    vertical-align: top;
+}
+
+#register_disagree {
+    position: relative;
+    top: 0.45em;
+}
+
+#register_disagree input {
+    background: url('/media/image/small_btn_bg.png') repeat-x bottom;
+    border:1px solid #dadada;
+    height: 1.9em;
+    vertical-align: top;
+}
+
+/* Account Register*/
 .account_content fieldset {
     margin: 1em 0;
     padding: 1em;
@@ -12,11 +105,6 @@
     float: left;
     width: 10em;
     display: block;
-}
-
-
-.account_content input.button, input.submit {
-    width: auto;
 }
 
 .account_content textarea {
@@ -50,11 +138,3 @@
     width: 10em;
 }
 
-/* Duplication Check */
-#id_check_popup {
-    display: none;
-}
-
-#nickname_check_popup {
-    display: none;
-}

@@ -6,23 +6,26 @@
 
 {% block content %}
 <div id="register_content">
-    <h1>User Registration Agreement</h1>
-    <fieldset id="agreement">
-        <legend>User Agreement</legend>
-        <p>
-        <textarea name="agreement" id="agreement" cols="50" rows="10"/>
+    <div id="register_head_block">
+	<div id="register_head">REGISTRATION AGREEMENT</div>
+	<div id="register_process">
+	    <span id="contempo_process">Step 1 : Regisgtration agreement</span>
+	    <span>|</span>
+	    <span>Step 2 : Account register</span>
+	</div>
+    </div>
+    <div id="agreement_subtitle_bottom"><div id="agreement_sub_title">User Agreement</div></div>
+    <div id="agreement_content">
+        <textarea name="agreement" id="agreement" readonly />
 -- User Agreement --
 Glad to see you
 <!--It will be modified-->
 	</textarea>
-	<p>
-	Want you create an account, you should check Agree.
-	</p>
-        </p>
-	<p>
-	<a href="/account/register/" id="agree">agree</a>
-	<a href="/" id="disagree">disagree</a>
-	</p>
-    </fieldset>
+	<div>Want you create an account, you should check Agree.</div>
+    </div>
+    <div id="register_agree_buttons">
+	<span id="register_agree"><input type="button" value="agree" onClick="location.href='/account/register/'" /></span>
+	<span id="register_disagree"><input type="button" value="disagree" onClick="location.href='/main/'" /></span>
+    </div>
 </div>
 {% endblock %}
