@@ -39,19 +39,12 @@ def make_widget(data, rowitem):
     return widget.MarkedItem('>', rowitem(data))
 
 def make_header(data, rowitem):
-    '''
-    헤더 데이터를 받아서 rowitem을 만들어 주는 함수.
-
-    data의 예제: {'number': u'번호', 'id': u'글쓴이', 'name': u'이름', 'date': u'날짜', 'subject': u'제목'}
-
-    @type data: dict
-    @param data: 헤더 데이터
-    @type rowitem: widget.FieldRow
-    @param rowitem: 열 정보를 담고 있는 FieldRow의 자식 클래스.
-    @rtype: urwid.AttrWrap
-    @return: 헤더 rowitem.
-    '''
+    #header 형식: {'number': u'번호', 'id': u'글쓴이', 'name': u'이름', 'date': u'날짜', 'subject': u'제목'}
     return urwid.AttrWrap(make_widget(data, rowitem), 'header')
+
+def make_body(datalist, rowitem):
+    walker = urwid.SimpleListWalker([make_widget(datum, rowitem) for datum in datalist])
+    return urwid.ListBox(walker)
 
 def get_view(datalist, header, rowitem):
     '''
@@ -69,10 +62,6 @@ def get_view(datalist, header, rowitem):
     body = make_body(datalist, rowitem)
     header = make_header(header, rowitem)
     return urwid.Frame(body, header)
-
-def make_body(datalist, rowitem):
-    walker = urwid.SimpleListWalker([make_widget(datum, rowitem) for datum in datalist])
-    return urwid.ListBox(walker)
 
 # vim: set et ts=8 sw=4 sts=4:
 

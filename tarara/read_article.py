@@ -37,7 +37,7 @@ class ara_read_article(ara_form):
             self.overlay = confirm
             self.parent.run()
             if confirm.b_pressed == "Yes":
-                retvaule, result = self.server.article_manager.delete(self.session_key,self.get_selected_article_id(),self.board_name)
+                retvalue, result = self.server.article_manager.delete(self.session_key,self.get_selected_article_id(),self.board_name)
                 self.overlay = None
                 self.parent.run()
                 if retvalue:

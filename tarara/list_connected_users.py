@@ -24,10 +24,10 @@ class ara_list_connected_users(ara_form):
             self.parent.change_page('user_information', {'session_key':self.session_key})
         elif key.lower() == 'm':
             if self.timer.state:
-                self.infotext.body.set_text('(r)efresh start (m)onitoring (q)uit (Enter) query')
+                self.infotext.body.set_text('(r)efresh (m)onitoring:start (q)uit (Enter) query')
                 self.timer.cancel()
             else:
-                self.infotext.body.set_text('(r)efresh stop (m)onitoring (q)uit (Enter) query')
+                self.infotext.body.set_text('(r)efresh (m)onitoring:stop (q)uit (Enter) query')
                 self.timer.run()
         elif key.lower() == 'r':
             self.refresh_view()
@@ -49,20 +49,17 @@ class ara_list_connected_users(ara_form):
                     'action':user['current_action']}]
         else:
             self.userlistitem = [{'id':' ','nickname':'', 'ip':' ', 'time':' ','action':u'No users online.'}]
-        try:
-            userlistitem = [widget.MarkedItem('>', connected_user_rowitem(data)) for data in self.userlistitem]
-            self.userlist.get_body().body = urwid.PollingListWalker(userlistitem)
-        except:
-            pass
+        self.userlist.set_body(listview.make_body(self.userlistitem, connected_user_rowitem))
 
     def __initwidgets__(self):
 	self.header = urwid.Filler(urwid.Text(u'ARA: List connected users',align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
-        self.infotext = urwid.Filler(urwid.Text('(r)efresh start (m)onitoring (q)uit (Enter) query'))
+        self.infotext = urwid.Filler(urwid.Text('(r)efresh (m)onitoring:start (q)uit (Enter) query'))
 
-        self.refresh_view()
+        self.userlistitem = [{'id':'dummy','nickname':'dummy', 'ip':'0.0.0.0', 'time':'local','action':u'dummy'}]
         self.userlistheader = {'id':'ID', 'nickname':'Nickname','ip':'IP Address', 'time':'Login Time', 'action':'Action'}
         self.userlist = listview.get_view(self.userlistitem, self.userlistheader, connected_user_rowitem)
+        self.refresh_view()
 
         content = [('fixed',1, self.header),('fixed',1,self.infotext), self.userlist]
         self.mainpile = urwid.Pile(content)

@@ -80,11 +80,13 @@ class ara_list_article(ara_form):
                 # XXX Temporary hack. After we implement read_status_manager properly, remove it.
                 if not article.has_key('read_status'): 
                     article['read_status'] = 'N'
-
-                itemlist += [{'new':article['read_status'], 'number':str(article['id']), \
-                    'author':article['author_username'], 'title':article['title'], \
-                    'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), \
-                    'vote':str(article['vote'])}]
+                if article['deleted']:
+                    itemlist += [{'new':'', 'number':'', 'author':'', 'title':'Deleted article.', 'date':'', 'hit':'', 'vote':''}]
+                else:
+                    itemlist += [{'new':article['read_status'], 'number':str(article['id']), \
+                        'author':article['author_username'], 'title':article['title'], \
+                        'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), \
+                        'vote':str(article['vote'])}]
             self.hasarticle = True
         header = {'new':'N', 'number':'#', 'author':'Author', 'title':'Title', 'date':'Date', 'hit':'Hit', 'vote':'Vote'}
 
