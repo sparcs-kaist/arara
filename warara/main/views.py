@@ -11,9 +11,9 @@ from django.core.cache import cache
 import arara
 
 def index(request):
-    r = {}
-    r['counter_today'] = 1048576
-    r['counter_total'] = 2147483647
+    server = arara.get_server()
+    ret, r = server.login_manager.total_visitor()
+    assert ret, r
     rendered = render_to_string('index.html', r)
     return HttpResponse(rendered)
 
