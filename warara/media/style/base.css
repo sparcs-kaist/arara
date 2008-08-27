@@ -570,7 +570,7 @@ form {
     background: url('/media/image/small_btn_bg.png') repeat-x bottom;
     border:1px solid #dadada;
     height: 1.9em;
-    width: 4.2em;
+    min-width: 4.2em;
     vertical-align:top;
 }
 
@@ -583,7 +583,8 @@ form {
 .big_btn {
     background: url('/media/image/big_btn_bg.png') repeat-x bottom;
     border:1px solid #dadada;
-    height:33px;
+    height: 3em;
+    min-width: 6em;
     vertical-align:top;
 }
 
