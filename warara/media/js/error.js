@@ -8,6 +8,6 @@ $(document).ready(function(){
         if($("#error_alert").text() == "ALEADY_LOGGED_IN"){
         $("#error_notice").hide();
         alert("aleady loggen in");
-        history.go(-1);
+        location.href = "/main";
         }
 		});

@@ -437,32 +437,33 @@ input.button_exit{
 }   
 
 /* message css */
+
 #message_popup {
-    display: none;
     width: 40em;
     background-color: white;
 	position: absolute;
 	right: 0%;
 	top: 0%;
+	display: none;
 }
 
-#message_popup #message_content {
+#message_popup_content {
 	width: 40em;
 }
 
-#message_popup .message_content A:visited, .message_content A:link {
+#message_popup_content A:visited, .message_content A:link {
     text-decoration: none;
     color: #666;
 }
 
-#message_popup #message_head {
+#message_popup_head {
 	background: url(/media/image/head_background.png) repeat;
 	width: 40em;
 	height: 3.2em;
 	color: white;
 }
 
-#message_popup #message_head .main_head {
+#message_popup_head .main_head {
 	font-size: 1.5em;
 	font-weight: bold;
 	color: white;
@@ -472,7 +473,7 @@ input.button_exit{
 	float: left;
 }
 
-#message_popup #message_head .sub_head {
+#message_popup_head .sub_head {
 	font-size: 1em;
 	color: white;
 	position: relative;
@@ -484,56 +485,43 @@ form {
     display: inline;
 }
 
-#message_popup #message_menu {
-	position: relative;
-	float: right;
-	margin: 0.5em;
-	padding: 0.5em;
-	background: url(/media/image/black_transparent.png) repeat;
+#message_popup_head #message_menu span{
 	color: white;
 }
-
-#message_popup #message_menu a{
-	color: white;
-}
-
-#message_popup #message_menu span{
-	color: white;
-}
-#message_popup #message_send_receiver {
+#message_popup_content #message_send_receiver {
 	clear: both;
 	width: 94%;
 	margin: 1em 3%;
 	text-align: left;
 }
 
-#message_popup #message_send_receiver .sendto{
+#message_popup_content #message_send_receiver .sendto{
 	float: left;
 	width: 15%;
 	margin-bottom: 1em;
 }
 
-#message_popup #message_send_receiver .doublemarginshet{
+#message_popup_content #message_send_receiver .doublemarginshet{
 	float: right;
 	width: 84%;
 }
 
-#message_popup #message_send_receiver input {
+#message_popup_content #message_send_receiver input {
 	width: 100%;
 	border: 1px solid #ccc;
 }
 
-#message_popup #message_send_text {
+#message_popup_content #message_send_text {
 	margin 1em 0%;
 	text-align: center;
 }
-#message_popup #message_send_text textarea {
+#message_popup_content #message_send_text textarea {
 	width: 94%;
 	height: 400px;
 	border: 1px solid #ccc;
 }
 
-#message_popup #message_send_buttons {
+#message_popup_content #message_send_buttons {
 	width: 100%;
 	margin: 1em 0em;
 	padding: 0.3em 0em;
@@ -542,18 +530,18 @@ form {
 	vertical-align: middle;
 }
 
-#message_popup #message_send_buttons input {
+#message_popup_content #message_send_buttons input {
 	width: 4em;
 	height: 2em;
 }
 
-#message_popup #message_send_buttons span .message_send_submit {
+#message_popup_content #message_send_buttons span .message_send_submit {
 	height: 3em;
 	width: 6em;
 	margin-left: 42%;
 }
 
-#message_popup #message_send_buttons .message_send_cancel {
+#message_popup_content #message_send_buttons .message_send_cancel {
 	position: relative;
 	top: 0.5em;
 }

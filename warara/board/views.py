@@ -50,8 +50,6 @@ def get_article_list(request, r, mode):
     page_range_no = math.ceil(float(page_no) / page_range_length)
 
     article_list = article_result['hit']
-    ret, r['board_dict'] = server.board_manager.get_board(r['board_name'])
-    assert ret, board_dict
     for i in range(len(article_list)):
         if article_list[i].get('deleted', 0):
             article_list[i]['title'] = 'deleted'

@@ -38,5 +38,14 @@ $(document).ready(function() {
 				$("input[name='delete_file']").val($("input[name='delete_file']").val() + "&" + $file_anchor.attr("rel"));
 				});
 			});
-	});
 
+    $("#article_write_title input[name='title']").focus();
+
+    $(document).keypress(function(event){
+		if($focus_input || event.altKey || event.ctrlKey){
+		return;
+		}
+        switch(event.which){
+        }
+    });
+});

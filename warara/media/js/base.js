@@ -27,17 +27,22 @@ $(document).ready(function(){
 
     var username;
     $(".username").click(function(event) {
-		if(!$(this).hasClass("username")){
+        $show_user_popup($(this));
+        event.stopPropagation(); 
+    });
+
+    $show_user_popup = function($tu){
+		if(!$tu.hasClass("username")){
 		return;
 		}
-        username = $(this).text();
+        username = $tu.text();
         $("#user_popup #user_popup_username").text("User: " + username);
 
-        $("#user_popup").css("top", $(this).offset()["top"] + $(this).height());
-        $("#user_popup").css("left", $(this).offset()["left"]);
+        $("#user_popup").css("top", $tu.offset()["top"] + $tu.height());
+        $("#user_popup").css("left", $tu.offset()["left"]);
 
-		$popup_y_coor = $(this).offset()["top"];
-		$popup_x_coor = $(this).offset()["left"];
+		$popup_y_coor = $tu.offset()["top"];
+		$popup_x_coor = $tu.offset()["left"];
 
         $("#user_popup").show("fast");
 
@@ -46,11 +51,14 @@ $(document).ready(function(){
 				case 27: //esc
 				$("#user_popup").hide("fast");
 				tb_remove();
+                if($("#user_popup .highlight").length){
+                $focus_user_popup();
+                }
 				break;
 				}
 				});
-        event.stopPropagation(); 
-    });
+
+    }
 
     $("#user_popup_send_message").click(function(event) {
         show_message_box(username, event);
@@ -114,7 +122,6 @@ $(document).ready(function(){
 
     function show_message_box(username, event) {
 		if(event.shiftKey){
-			$("#user_popup .thickbox").removeClass("thickbox");
 			message_popup.show(); 
 		}
         $("#message_receiver_field").val(username);
@@ -128,7 +135,9 @@ $(document).ready(function(){
 				$("#message_popup").hide("fast");
 				break;
 				case 70: //f
+                if($("#message_popup:visible").length){
 				$("#message_text_field").focus();
+                }
 				break;
 				}
 				});
@@ -146,21 +155,10 @@ $(document).ready(function(){
         event.preventDefault();
     });
 
-	/* 로그인 css absolute show로 바꿈
-    $("#login_toggle").toggle(
-        function () {
-            $("#login_textfield").show();
-        },
-        function () {
-            $("#login_textfield").hide();
-        }
-    );
-	*/
-
 //인풋에 포커스 있을때 단축키 작동안함
 	$focus_input = 0;
 
-	$("input").focus(function(){
+	$("input[type='text']").focus(function(){
 			$focus_input = 1
 			if($(this).attr("type") == "checkbox"){
 			$focus_input = 0
@@ -232,6 +230,23 @@ $(document).ready(function(){
 //단축키 작동
 	var cursor_bl = 0; //cursor_board_list
 	var cursor_tm = 0; //cursor_topmenu
+    var cursor_up = 0; //cursor_user_popup
+    var a_up_length = 0;
+
+    $focus_user_popup = function(){
+        if(cursor_up){
+            cursor_up = 0;
+			$(".hidden_highlight").removeClass("hidden_highlight").addClass("row_highlight");
+			$(".highlight").removeClass("highlight");
+			return;
+        }
+        cursor_up = 1;
+        $(".highlight").removeClass("highlight");
+        $(".row_highlight").removeClass("row_highlight").addClass("hidden_highlight");
+        $("#user_popup li.user_popup_function:visible").eq(cursor_up-1).addClass("highlight");
+        a_up_length = $("#user_popup li.user_popup_function:visible").length;
+    }
+
 	function focus_topmenu(){
 		if(cursor_tm){
 			cursor_tm = 0;
@@ -273,13 +288,23 @@ $(document).ready(function(){
 		return cursor;
 	}
 	function update_highlight(div, cursor){
-		$(div + " a[class='highlight']").removeClass("highlight");
-		$(div + " a:visible").eq(cursor-1).addClass("highlight");
+		$(div + ".highlight").removeClass("highlight");
+		$(div + ":visible").eq(cursor-1).addClass("highlight");
 	}
 	function focus_content(){
 		$(".highlight").removeClass("highlight");
 		$(".hidden_highlight").removeClass("hidden_highlight").addClass("row_highlight");
 	}
+    function popup_function(event){
+        $fn = $("#user_popup li.user_popup_function a").eq(cursor_up-1).attr("id");
+        if($fn == "user_popup_send_message"){
+            event.shiftKey = 1;
+            show_message_box(username, event);
+            cursor_up = 0;
+            $(".highlight").removeClass("highlight");
+            $("#user_popup").hide();
+        }
+    }
 
 	$(document).keypress(function(event){
 			if(!$("#menu a[class='highlight']").length){
@@ -295,11 +320,11 @@ $(document).ready(function(){
 			switch(event.which){
 			case 106: //j
 			cursor_bl = move_next(cursor_bl, a_bl_length);
-			update_highlight("#menu", cursor_bl);
+			update_highlight("#menu a", cursor_bl);
 			break;
 			case 107: //k
 			cursor_bl = move_prev(cursor_bl, a_bl_length);
-			update_highlight("#menu", cursor_bl);
+			update_highlight("#menu a", cursor_bl);
 			break;
 			case 32: //spacs
 			location.href = $("#menu a[class!='hidden']").eq(cursor_bl-1).attr("href");
@@ -320,11 +345,11 @@ $(document).ready(function(){
 			switch(event.which){
 			case 107: //j
 			cursor_tm = move_next(cursor_tm, a_tm_length);
-			update_highlight("#top_menu", cursor_tm);
+			update_highlight("#top_menu a", cursor_tm);
 			break;
 			case 106: //k
 			cursor_tm = move_prev(cursor_tm, a_tm_length);
-			update_highlight("#top_menu", cursor_tm);
+			update_highlight("#top_menu a", cursor_tm);
 			break;
 			case 32: //spacs
             if($("#top_menu a[name='login']").hasClass("highlight")){
@@ -344,6 +369,37 @@ $(document).ready(function(){
 			break;
 			}
 			});
+    $(document).keypress(function(event){
+            if(!$("#user_popup li.highlight").length){
+            cursor_up = 0;
+            return;
+            }
+			if($focus_input || !cursor_up){
+			return;
+			}
+			if(event.ctrlKey || event.altKey){
+			return;
+			}
+			switch(event.which){
+			case 106:
+			cursor_up = move_next(cursor_up, a_up_length);
+			update_highlight("#user_popup li.user_popup_function", cursor_up);
+			break;
+			case 107:
+			cursor_up = move_prev(cursor_up, a_up_length);
+			update_highlight("#user_popup li.user_popup_function", cursor_up);
+			break;
+            case 32:
+            case 39:
+            event.preventDefault();
+            popup_function(event);
+            break;
+            case 27:
+            focus_user_popup();
+            break;
+            }
+    });
+
 	$(document).keypress(function(event){
 			if(event.ctrlKey || event.altKey){
 			return;
@@ -368,6 +424,15 @@ $(document).ready(function(){
 			case 120: //x
 			focus_content();
 			break;
+            case 44:
+            $(document).scrollTop($(document).scrollTop() - 50);
+            break;
+            case 46:
+            $(document).scrollTop($(document).scrollTop() + 50);
+            break;
+            case 101:
+            $("#header input[name='ksearch']").focus();
+            break;
 			}
 			});
 });

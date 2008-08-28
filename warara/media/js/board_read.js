@@ -13,8 +13,7 @@ $(document).ready(function(){
         switch (event.which) {
             case 108:  // list
                 var list_link = $("#list_link").attr("href");
-                //location.href = list_link;
-                history.go(-1);
+                location.href = list_link;
                 break;
         }
     });
@@ -71,5 +70,17 @@ $(document).ready(function(){
             $(this).width(this_width);
         }
     });
+
+    $(document).keypress(function(event){
+		if($focus_input || event.altKey || event.ctrlKey){
+		return;
+		}
+            switch(event.which){
+                case 113:
+                    location.href = $("#list_link").attr("href");
+                    break;
+                    }
+                    });
+
 });
 

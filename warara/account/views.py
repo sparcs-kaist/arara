@@ -24,37 +24,10 @@ def register(request):
         user_information_dic = {'username':username, 'password':password, 'nickname':nickname, 'email':email, 'signature':signature, 'self_introduction':introduction, 'default_language':language}
         ret, message = server.member_manager.register(user_information_dic)
         assert ret, message
-        send_mail(email, username, message)
         return HttpResponseRedirect("/")
     
     rendered = render_to_string('account/register.html', r)
     return HttpResponse(rendered)
-
-'''
-def send_mail(email, username, confirm_key):
-    sender = 'root_id@sparcs.org' #pv457, no_reply, ara, ara_admin
-    receiver = email
-    content = render_to_string('account/send_mail.html', {'username':username, 'confirm_key':confirm_key})
-    subject = "confirm" + username
-    msg = EmailMultiAlternatives(subject, '', sender, [receiver])
-    msg.attach_alternative(content, "text/html")
-    msg.send()
-'''
-
-def send_mail(email, username, confirm_key):
-    HOST = 'smtp.naver.com'
-    sender = 'root_id@sparcs.org'
-    content = render_to_string('account/send_mail.html', {'username':username, 'confirm_key':confirm_key})
-    title = "confirm"
-    msg = MIMEText(content, _subtype="html", _charset='euc_kr')
-    msg['Subject'] = title
-    msg['From'] = sender
-    msg['To'] = email
-    s = smtplib.SMTP()
-    s.connect(HOST)
-    s.login('newtron_star', 'q1q1q1')
-    s.sendmail(sender, [email], msg.as_string())
-    s.quit()
 
 def confirm_user(request, username, confirm_key):
     server = arara.get_server()

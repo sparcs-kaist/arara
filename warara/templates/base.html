@@ -104,9 +104,9 @@
 	    <div id="user_popup">
 		<ul>
 		    <li id="user_popup_username"></li>
-			<li class="{% if not logged_in %} hidden{% endif %}"><a id="user_popup_send_message" class="thickbox" href="#TB_inline?height=550&width=480&inlineId=message_popup&modal=true">Send Message</a></li>
-			<li><a id="user_popup_user_information" class="thickbox" href="#TB_inline?height=550&width=480&inlineId=user_information_popup&modal=true">User Information</a></li>
-		    <li class="{% if not logged_in %}hidden{% endif %}"><a id="user_popup_add_blacklist" href="#">Add Blacklist</a></li>
+			<li class="user_popup_function{% if not logged_in %} hidden{% endif %}"><a id="user_popup_send_message" class="thickbox" href="#TB_inline?height=550&width=480&inlineId=message_popup&modal=true">Send Message</a></li>
+			<li class="user_popup_function"><a id="user_popup_user_information" class="thickbox" href="#TB_inline?height=550&width=480&inlineId=user_information_popup&modal=true">User Information</a></li>
+		    <li class="user_popup_function{% if not logged_in %} hidden{% endif %}"><a id="user_popup_add_blacklist" href="#">Add Blacklist</a></li>
 		</ul>
 	    </div>
 	    
@@ -119,7 +119,7 @@
 	    </div>
 	    
 	    <div id="message_popup">
-			<div id="message_head">
+			<div id="message_popup_head">
 				<span class="main_head">
 					send a message
 				</span>
@@ -127,7 +127,7 @@
 					send a message
 				</span>
 			</div>
-			<div id="message_content" class="message_content">
+			<div id="message_popup_content" class="message_content">
 				<form action="/message/send/" method="POST">
 					<div id="message_send_receiver">
 						<div class="sendto">send to : </div>

@@ -66,8 +66,9 @@
     <a href="/board/{{board_name}}?page_no={{last_page.no}}">{{last_page.mark}}</a>
     {% endifequal %}
 </div>
+{% if logged_in %}
 <div id="board_buttons" class="width_full">
-    <div id="board_write" class="small_btn{% if not logged_in %} hidden{% endif %}{% if board_dict.read_only %} hidden{% endif %}">
+    <div id="board_write" class="small_btn{% if board_dict.read_only %} hidden{% endif %}">
         <a href="/board/{{board_name}}/write/">write</a>
     </div>
     <form name="board_search" method="GET" action="/board/{{board_name}}/search">
@@ -81,4 +82,5 @@
         <input class="small_btn" type="submit" value="search" id="board_search_submit"></input>
     </form>
 </div>
+{%endif%}
 {% endblock board_content %}

@@ -1,5 +1,5 @@
 $(document).ready(function(){
-        $("#message_send_buttons input[name='submit']").click(function(event){
+        $("#message_send_buttons input[name='message_submit']").click(function(event){
             var receiver = $("input[name='receiver']").val();
             var receiver_type = $("input[name='receiver_type']").val();
             $.post("/account/register/" + receiver_type + "check/", 
@@ -9,7 +9,7 @@ $(document).ready(function(){
                     document.message_send.submit();
                 }
                 else{
-                    alert(receiver + "is not exist");
+                    alert(receiver + " is not exist");
                 }
                 });
             event.preventDefault();
