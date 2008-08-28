@@ -335,7 +335,7 @@ body {
 }
 
 .uip_list_name {
-    width: 20%;
+    width: 21%;
     background: url(/media/image/base/square_small.png) no-repeat top left;
     border-bottom: 1px #CCCCCC solid;
     padding: 0.5em 0 0 0.7em; 
@@ -345,7 +345,7 @@ body {
 }
 
 .uip_list_content {
-    width: 75%;
+    width: 74%;
     margin: 1.2em 0 0.2em 0.3em;
     padding: 0;
     float: left;
