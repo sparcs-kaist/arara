@@ -46,13 +46,15 @@ $(document).ready(function(){
         $("#email").keydown(function(event) {
             email = $("#email").val();
             if(event.keyCode == 09) {
-                $.post("/account/register/emailcheck/", {check_email_field: email},
-                    function(data, textStatus) {
-                        $("#email").parent().children("label").children("span.feedback").text(data);
-                    }
-                );
                 if ((document.form.email.value.indexOf('@') == -1 ) || (document.form.email.value.indexOf('.') == -1)) {
                     $("#email").parent().children("label").children("span.feedback").text("The e-mail form is not proper");
+                }
+                else {
+                    $.post("/account/register/emailcheck/", {check_email_field: email},
+                        function(data, textStatus) {
+                            $("#email").parent().children("label").children("span.feedback").text(data);
+                        }
+                    );
                 }
             }
         });
