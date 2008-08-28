@@ -1,9 +1,4 @@
 /* Common */
-#contempo_process {
-    font-weight: bold;
-}
-
-/* Register Agreement */
 .account_head_block {
     width: 96%;
     background: url(/media/image/head_background.png) repeat top left;
@@ -34,6 +29,11 @@
     color: white;
 }
 
+#contempo_process {
+    font-weight: bold;
+}
+
+/* Register Agreement */
 #agreement_sub_title {
     min-height: 1.6em; 
     background: #E0E0E0 url(/media/image/base/square.png) no-repeat top left;
@@ -80,7 +80,7 @@
 
 #register_disagree {
     position: relative;
-    top: 0.45em;
+    top: 0.55em;
 }
 
 #register_disagree input {
@@ -91,44 +91,75 @@
 }
 
 /* Account Register*/
-.account_content fieldset {
-    margin: 1em 0;
-    padding: 1em;
-    border: 1px solid;
-}
-
-.account_content legend {
-    font-weight: bold;
-}
-
-.account_content label {
+#account_information_content {
+    width: 67.5em;
+    margin: 0 0 0 1.3em;
     float: left;
+}
+
+#account_user_content {
+    float: left;
+    width: 100%;
+}
+
+.regi_acc_subtitle {
+    width: 100%;
+    border-top: 1px #65AA5C solid;
+    border-bottom: 1px #CCCCCC solid;
+    background: url(/media/image/base/square.png) no-repeat top left #E0E0E0;
+    clear: both;
+}
+
+.regi_acc_subtitle_name {
+    border-bottom: 5px #DADADA solid;
+    padding: 0.5em 0 0 0.7em;
+    vertical-align: bottom;
+}
+
+#account_user_content label {
     width: 10em;
     display: block;
+    background: url(/media/image/base/square_small.png) no-repeat top left;
+    border-bottom: 1px #CCCCCC solid;
+    padding: 0.5em 0 0 0.7em; 
+    margin: 0.7em 0 0 0;
+    float: left;
+    clear: left;
 }
 
-.account_content textarea {
-    width: 300px;
-    height: 100px;
+#account_user_content input {
+    float: left;
+    margin: 0.66em 0 0.3em 0.5em;
 }
 
-.account_content input:focus, textarea:focus {
+#account_user_content textarea {
+    width: 40em;
+    height: 8em;
+    float: left;
+    margin: 0.66em 0 0 0.5em;
+}
+
+#account_user_content select {
+    float: left;
+    margin: 0.66em 0 0 0.5em;
+}
+
+#account_user_content input:focus, textarea:focus {
     background: #BBBDCC;
 }
 
 .required {
     font-size: 0.75em;
     color: #760000;
-}
-
-.account_content p {
-    position: relative;
+    clear: left;
+    float: left;
+    margin-bottom: 1.7em;
 }
 
 .feedback {
     position: absolute;
     margin-left: 11em;
-    left: 200px;
+    left: 15em;
     font-weight: bold;
     color: red;
     padding-left: 18px;
@@ -138,3 +169,34 @@
     width: 10em;
 }
 
+#register_buttons {
+    width: 100%
+    padding: 0.3em 0;
+    vertical-align: center;
+    clear: left;
+    margin: 0 0 2em 0;
+}
+
+#register_submit {
+    margin: 0 0 0 40%
+}
+
+#register_submit input {
+    background: url('/media/image/big_btn_bg.png') repeat-x bottom;
+    border:1px solid #dadada;
+    height: 3em;
+    padding: 0 1%;
+    vertical-align: top;
+}
+
+#register_cancel {
+    position: relative;
+    top: 0.45em;
+}
+
+#register_cancel input {
+    background: url('/media/image/small_btn_bg.png') repeat-x bottom;
+    border:1px solid #dadada;
+    height: 1.9em;
+    vertical-align: top;
+}

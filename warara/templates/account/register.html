@@ -16,59 +16,61 @@
 	    <span id="contempo_process">Step 2 : Account register</span>
 	</div>
     </div>
-    <div id="agreement_subtitle_bottom"><div id="agreement_sub_title">User Agreement</div></div>
-    <form action="/account/register/" method="post" name="form">
-        <h1>User Registration</h1>
-        <fieldset id="information">
-            <legend>User information</legend>
-            <div>
-	    <label for="id">ID:<span class="feedback"></span></label>
-	    <input name="id" id="id" type="text" class="required_field" />
-            </div>
-	    <div>
-	    <label for="nickname">Nickname:<span class="feedback"></span></label>
-	    <input name="nickname" id="nickname" type="text" class="required_field" />
-            </div>
-            <div>
-            <label for="email">E-mail address:<span class="feedback"></span></label>
-            <input name="email" id="email" type="text" class="required_field" />
-	    <br />
-            <em class="required">(We will send you user registration confirmation to here)</em>
-            </div>
-        </fieldset>
-        <fieldset id="password_fieldset">
-            <legend>Password</legend>
-            <p>
-	    <label for="password_field">Password:<span class="feedback"></span></label>
-            <input name="password" id="password_field" type="password" class="required_field" />
-            </p>
-            <p>
-            <label for="re_password_field">Re-enter password:<span class="feedback"></span></label>
-            <input name="re_password" id="re_password_field" type="password" class="required_field" />
-            </p>
-        </fieldset>
-        <fieldset id="setting">
-            <legend>ARA Setting</legend>
-            <p>
-            <label for="sig">Signature:</label>
-            <textarea name="sig" id="sig" cols="50" rows="10"></textarea>
-            </p>
-            <p>
-            <label for="introduce">Introduction:</label>
-            <textarea name="introduce" id="introduce" cols="50" rows="10"></textarea>
-            </p>
-            <p>
-            <label for="language">Language:</label>
-            <select name="language" id="laguage" />
-                <option value="eng">English</option>
-                <option value="kor">Korean</option>
-            </select>
-            </p>
-    	</fieldset>
-	<p>
+    <form action="/account/register/" method="post" name="form" id="account_information_content">
+	<span id="account_user_content">
+	    <span id="information">
+		<div class="regi_acc_subtitle"><div class="regi_acc_subtitle_name">User information</div></div>
+	    	<div>
+	            <label for="id">ID<span class="feedback"></span></label>
+	            <input name="id" id="id" type="text" class="required_field" />
+	    	</div>
+	    	<div>
+	            <label for="nickname">Nickname<span class="feedback"></span></label>
+	            <input name="nickname" id="nickname" type="text" class="required_field" />
+	    	</div>
+	    	<div>
+	            <label for="email">E-mail address<span class="feedback"></span></label>
+	            <input name="email" id="email" type="text" class="required_field" />
+	            <br />
+	            <em class="required">(We will send you user registration confirmation to here)</em>
+	    	</div>
+	    </span>
+	    <span id="password_fieldset">
+	    	<div class="regi_acc_subtitle" id="password_field"><div class="regi_acc_subtitle_name">Password</div></div>
+	        <div>
+		    <label for="password_field">Password<span class="feedback"></span></label>
+		    <input name="password" id="password_field" type="password" class="required_field" />
+	        </div>
+	        <div>
+		    <label for="re_password_field">Re-enter password<span class="feedback"></span></label>
+		    <input name="re_password" id="re_password_field" type="password" class="required_field" />
+	            <em class="required"></em>
+	        </div>
+	    </span>
+	    <span id="setting">
+	    	<div class="regi_acc_subtitle"><div class="regi_acc_subtitle_name">ARA Setting</div></div>
+	    	<div>
+	            <label for="sig">Signature</label>
+	            <textarea name="sig" id="sig" cols="50" rows="10"></textarea>
+	    	</div>
+	    	<div>
+	            <label for="introduce">Introduction</label>
+	            <textarea name="introduce" id="introduce" cols="50" rows="10"></textarea>
+	    	</div>
+	    	<div>
+	            <label for="language">Language</label>
+	            <select name="language" id="laguage" />
+		    <option value="eng">English</option>
+		    <option value="kor">Korean</option>
+	            </select>
+	    	</div>
+	    </span>
+        </span>
+	<div id="register_buttons">
 	<label for="register_submit"><span class="feedback"></span></label>
-	<input value="Done" name="done" id="register_submit" class="submit" type="submit" />
-	</p>
+	<span id="register_submit"><input value="Done" name="done" class="submit" type="submit" /></span>
+	<span id="register_cancel"><input value="Cancel" name="cancel" type="button" onClick="location.href='/main/'" /></span>
+	</div>
     </form>
 </div>
 {% endblock %}
