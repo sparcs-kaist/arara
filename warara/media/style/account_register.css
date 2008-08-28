@@ -165,6 +165,15 @@
     padding-left: 18px;
 }
 
+#register_buttons .feedback { 
+    position: absolute;
+    margin: 0.6em 0 0 11em;
+    left: 28em;
+    font-weight: bold;
+    color: red;
+    padding-left: 18px;
+}
+
 * html .feedback {
     width: 10em;
 }
