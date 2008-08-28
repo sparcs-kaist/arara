@@ -56,6 +56,8 @@ class ara_read_article(ara_form):
                 else:
                     self.overlay = None
                     self.parent.run()
+        elif key == 'g':
+            self.article_list.set_focus(0)
         else:
             self.mainpile.keypress(size, key)
 

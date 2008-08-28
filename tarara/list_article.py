@@ -41,11 +41,14 @@ class ara_list_article(ara_form):
 
     def __initwidgets__(self):
         self.keymap = {
+            'n': 'down',
             'j': 'down',
+            'p': 'up',
             'k': 'up',
             'N': 'page down',
             'P': 'page up',
             ' ': 'enter',
+            'ctrl p': 'w',
         }
 
         retvalue, boardinfo = self.server.board_manager.get_board(self.board_name)
