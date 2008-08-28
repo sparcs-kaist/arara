@@ -5,47 +5,55 @@
 {% endblock %}
 
 {% block content %}
-<a href="/account/">My Account</a>
-<a href="/account/account_modify/">Account Modify</a>
-<a href="/account/password_modify/">Password Modify</a>
-<a href="/account/account_remove/">Account Remove</a>
     {% block myaccount_content %}
-    <div id="myaccount_content" class="account_content">
-        <h1>My Account</h1>
-        <fieldset id="myaccount">
-            <legend>My information</legend>
-            <dl>
-                <dt>ID:</dt>
-		<dd>{{username}}</dd>
-            </dl>
-            <dl>
-                <dt>Nickname:</dt>
-		<dd>{{nickname}}</dd>
-            </dl>
-        </fieldset>
-        <fieldset id="mysetting">
-            <legend>My ARA setting </legend>
-            <dl>
-                <dt>Signature:</dt>
-		<dd>{{signature|linebreaksbr}}</dd>
-            </dl>
-            <dl>
-                <dt>Introduction:</dt>
-		<dd>{{self_introduction|linebreaksbr}}</dd>
-            </dl>
-            <dl>
-                <dt>Language:</dt>
-		<dd>{{default_language}}</dd>
-            </dl>
-            <dl>
-                <dt>Last login IP:</dt>
-		<dd>{{last_login_ip}}</dd>
-            </dl>
-            <dl>
-                <dt>Last logout time:</dt>
-		<dd>{{last_logout_time}}</dd>
-            </dl>
-        </fieldset>
+    <div id="myaccount_head_content" class="account_content">
+	<div class="account_head_block">
+	    <div class="account_head">MY ACCOUNT</div>
+	    <div class="account_administer">
+		<span id="contempo_acc_admin"><a href="/account/">My Account</a></span><span>|</span>
+		<span><a href="/account/account_modify/">Account Modify</a></span><span>|</span>
+
+		<span><a href="/account/password_modify/">Password Modify</a></span><span>|</span>
+
+		<span><a href="/account/account_remove/">Account Remove</a></span>
+	    </div>
+	</div>
+	<div id="account_information_content">
+	    <div id="myaccount">
+		<div class="acc_subtitle"><div class="acc_subtitle_name">My information</div></div>
+		<div>
+		    <span class="my_acc_info_name">ID:</span>
+		    <span class="my_acc_info_content">{{username}}</span>
+		</div>
+		<div>
+		    <span class="my_acc_info_name">Nickname:</span>
+		    <span class="my_acc_info_content">{{nickname}}</span>
+		</div>
+	    </div>
+	    <div id="mysetting">
+	        <div class="acc_subtitle"><div class="acc_subtitle_name">My ARA setting</div></div>
+	        <div>
+	    	    <span class="my_acc_info_name">Signature:</span>
+		    <span class="my_acc_info_content">{{signature|linebreaksbr}}</span>
+		</div>
+		<div>
+		    <span class="my_acc_info_name">Introduction:</span>
+		    <span class="my_acc_info_content">{{self_introduction|linebreaksbr}}</span>
+		</div>
+		<div>
+		    <span class="my_acc_info_name">Language:</span>
+		    <span class="my_acc_info_content">{{default_language}}</span>
+		</div>
+	        <div>
+		    <span class="my_acc_info_name">Last login IP:</span>
+		    <span class="my_acc_info_content">{{last_login_ip}}</span>
+		</div>
+		<div>
+		    <span class="my_acc_info_name">Last logout time:</span>
+		    <span class="my_acc_info_content">{{last_logout_time}}</span>
+		</div>
+	    </div>
+	</div>
     </div>
     {% endblock %}
 {% endblock %}

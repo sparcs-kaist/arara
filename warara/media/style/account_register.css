@@ -102,7 +102,7 @@
     width: 100%;
 }
 
-.regi_acc_subtitle {
+.acc_subtitle {
     width: 100%;
     border-top: 1px #65AA5C solid;
     border-bottom: 1px #CCCCCC solid;
@@ -110,7 +110,7 @@
     clear: both;
 }
 
-.regi_acc_subtitle_name {
+.acc_subtitle_name {
     border-bottom: 5px #DADADA solid;
     padding: 0.5em 0 0 0.7em;
     vertical-align: bottom;
@@ -208,4 +208,52 @@
     border:1px solid #dadada;
     height: 1.9em;
     vertical-align: top;
+}
+
+/* Account Common */
+.account_administer {
+    float: right;
+    margin: 0.95em;
+    padding: 0.5em;
+    background: url(/media/image/black_transparent.png) repeat;
+    color: white;
+    vertical-align: center;
+}
+
+.account_administer a {
+    color: white;
+}
+
+#contempo_acc_admin {
+    font-weight: bold;
+}
+
+/* My Account */
+.my_acc_info_name {
+    width: 10em;
+    display: block;
+    background: url(/media/image/base/square_small.png) no-repeat top left;
+    border-bottom: 1px #CCCCCC solid;
+    padding: 0.5em 0 0 0.7em; 
+    margin: 0.7em 0 0 0;
+    float: left;
+    clear: left;
+}
+
+.my_acc_info_content {
+    float: left;
+    margin: 1.13em 0 0 0.3em;
+}
+
+#myaccount {
+    width: 100%;
+    float: left;
+    clear: both;
+    margin-bottom: 1.3em;
+}
+
+#mysettin {
+    width: 100%;
+    float: left;
+    clear: both;
 }
