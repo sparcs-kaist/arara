@@ -33,18 +33,21 @@ class ara_change_password(ara_form):
         retvalue = None
         if button == self.okbutton.body:
             if self.newpwedit.body.get_edit_text() == self.confirmedit.body.get_edit_text():
-                retvalue =  self.server.member_manager.modify_password(self.session_key, {
+                retvalue, message = self.server.member_manager.modify_password(self.session_key, {
                     'username':self.server.member_manager.get_info(self.session_key)[1]['username'],
                     'current_password':self.oldpwedit.body.get_edit_text(),
                     'new_password':self.newpwedit.body.get_edit_text()})
-                if retvalue[0] == True:
+                if retvalue:
                     confirm = widget.Dialog("Password changed.", ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
                     self.overlay = confirm
                     self.parent.run()
-                    if confirm.b_pressed == "OK":
-                        self.parent.change_page("user_preferences",{'session_key':self.session_key})
-                    else:
-                        pass
+                    self.parent.change_page("user_preferences",{'session_key':self.session_key})
+                else:
+                    confirm = widget.Dialog(message, ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
+                    self.overlay = confirm
+                    self.parent.run()
+                    self.overlay = None
+                    self.parent.run()
         elif button == self.cancelbutton.body:
             self.parent.change_page("user_preferences", {'session_key':self.session_key})
 
