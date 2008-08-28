@@ -10,37 +10,50 @@
 
 {% block myaccount_content %}
 <div id="myaccount_modify_content" class="account_content">
-    <form action="/account/account_modify/" method="post">
-	<h1>My Account Modify</h1>
-	<fieldset id="myinformation">
-	    <legend>My information</legend>
-	    <p>
-	    <label for="mynickname">Nickname:<span class="feedback"></span></label>
-	    <input name="mynickname" id="mynickname" type="text" class="required_field" value={{nickname}} />
-	    </p>
-	</fieldset>
-	<fieldset id="mysetting">
-	    <legend>My ARA Setting</legend>
-	    <p>
-	    <label for="mysig">Signature:</label>
-	    <textarea name="mysig" id="mysig" cols="50" rows="10">{{signature}}</textarea>
-	    </p>
-	    <p>
-	    <label for="myintroduce">Introduction:</label>
-	    <textarea name="myintroduce" id="myintroduce" cols="50" rows="10">{{self_introduction}}</textarea>
-	    </p>
-	    <p>
-	    <label for="mylanguage">Language:</label>
-	    <select name="mylanguage" id="mylanguage" />
-		<option value="eng">English</option>
-		<option value="kor">Korean</option>
-	    </select>
-	    </p>
-	</fieldset>
-	<p>
-	<label for="account_modify_submit"><span class="feedback"></span></label>
-	<input value="Done" name="done" id="account_modify_submit" class="submit" type="submit" />
-	</p>
+    <div class="account_head_block">
+	<div class="account_head">MY ACCOUNT MODIFY</div>
+	<div class="account_administer">
+	    <span><a href="/account/">My Account</a></span><span>|</span>
+	    <span id="contempo_acc_admin"><a href="/account/account_modify/">Account Modify</a></span><span>|</span>
+
+	    <span><a href="/account/password_modify/">Password Modify</a></span><span>|</span>
+
+	    <span><a href="/account/account_remove/">Account Remove</a></span>
+	</div>
+    </div>
+    <form action="/account/account_modify/" method="post" id="account_information_content">
+	<span id="account_user_content">
+	    <div id="myaccount_modify">
+	    	<div class="acc_subtitle"><div class="acc_subtitle_name">My information</div></div>
+	        <div>
+		    <label for="mynickname">Nickname:<span class="feedback"></span></label>
+		    <input name="mynickname" id="mynickname" type="text" class="required_field" value={{nickname}} />
+		</div>
+	    </div>
+	    <div id="mysetting_modify">
+	    	<div class="acc_subtitle"><div class="acc_subtitle_name">My ARA setting</div></div>
+	        <div>
+		    <label for="mysig">Signature:</label>
+		    <textarea name="mysig" id="mysig" cols="50" rows="10">{{signature}}</textarea>
+	    	</div>
+	        <div>
+		    <label for="myintroduce">Introduction:</label>
+		    <textarea name="myintroduce" id="myintroduce" cols="50" rows="10">{{self_introduction}}</textarea>
+	        </div>
+	        <div>
+		    <label for="mylanguage">Language:</label>
+		    <select name="mylanguage" id="mylanguage" />
+			<option value="eng">English</option>
+			<option value="kor">Korean</option>
+		    </select>
+	        </div>
+	    </div>
+	</span>
+	<div id="register_buttons">
+	<label for="register_submit"><span class="feedback" id="regist_btn_feedback"></span></label>
+	<span id="register_submit"><input value="Done" name="done" class="submit" type="submit" /></span>
+	<span id="register_cancel"><input value="Cancel" name="cancel" type="button" onClick="location.href='/account/'" /></span>
+	</div>
     </form>
 </div>
 {% endblock %}

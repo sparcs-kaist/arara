@@ -1,4 +1,10 @@
 /* Common */
+#account_information_content {
+    width: 67.5em;
+    margin: 0 0 0 1.3em;
+    float: left;
+}
+
 .account_head_block {
     width: 96%;
     background: url(/media/image/head_background.png) repeat top left;
@@ -90,13 +96,7 @@
     vertical-align: top;
 }
 
-/* Account Register*/
-#account_information_content {
-    width: 67.5em;
-    margin: 0 0 0 1.3em;
-    float: left;
-}
-
+/* Account Register and modify*/
 #account_user_content {
     float: left;
     width: 100%;
@@ -168,7 +168,7 @@
 #register_buttons .feedback { 
     position: absolute;
     margin: 0.6em 0 0 11em;
-    left: 28em;
+    left: 29em;
     font-weight: bold;
     color: red;
     padding-left: 18px;
@@ -252,8 +252,24 @@
     margin-bottom: 1.3em;
 }
 
-#mysettin {
+#mysetting {
     width: 100%;
     float: left;
     clear: both;
 }
+
+/* Account modify */
+#myaccount_modify {
+    width: 100%;
+    float: left;
+    clear: both;
+    margin-bottom: 1.3em;
+}
+
+#mysetting_modify {
+    width: 100%;
+    float: left;
+    clear: both;
+    margin-bottom: 1.3em;
+}
+
