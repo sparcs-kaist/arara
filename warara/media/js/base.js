@@ -466,7 +466,7 @@ $(document).ready(function(){
 			});
 
     $(document).keypress(function(event){
-        if($("#u_info_pop_head:visible").length){
+        if($("#user_information_popup:visible").length){
             switch(event.which){
                 case 66:
                     add_blacklist();
@@ -479,7 +479,7 @@ $(document).ready(function(){
     });
 
     $(document).keyup(function(event){
-        if($("#message_popup_head:visible").length){
+        if($("#message_popup:visible").length){
             switch(event.which){
             case 27:
             $("#message_popup").hide("fast");

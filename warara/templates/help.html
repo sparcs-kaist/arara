@@ -14,12 +14,12 @@
 
 <div id="help_top_menu">
     <ul>
-        <li class="first_li"><a href="/help/base" name="base">base</a></li>
-        <li><a href="/help/account" name="account">account</a></li>
-        <li><a href="/help/article" name="article">article</a></li>
-        <li><a href="/help/message" name="message">message</a></li>
-        <li><a href="/help/blacklist" name="blacklist">blacklist</a></li>
-        <li><a href="/help/help" name="help">help</a></li>
+        <li class="first_li"><a rel="base" href="/help/base" name="base">base</a></li>
+        <li><a rel="account" href="/help/account" name="account">account</a></li>
+        <li><a rel="article" href="/help/article" name="article">article</a></li>
+        <li><a rel="message" href="/help/message" name="message">message</a></li>
+        <li><a rel="blacklist" href="/help/blacklist" name="blacklist">blacklist</a></li>
+        <li><a rel="help" href="/help/help" name="help">help</a></li>
     </ul>
 </div>
 
@@ -42,6 +42,7 @@
         <li>f : 메세지보내기 팝업창이 떠있을때 내용 쓰는 textarea로 포커스</li>
         <li>B : 유저정보 팝업창이 떠있을때 블랙리스트에 추카</li>
         <li>, . : 위아래로 스크롤</li>
+        <li>esc : 단축키가 먹히지 않을때 누르면 50% 확률로 단축키가 먹히게 만들 수 있다.</li>
     </ul>
     <h1>인덱스 페이지</h1>
     <h3>단축키</h3>
@@ -61,6 +62,7 @@
         <li>s : 검색방법 컨트롤로 커서 이동. 이미 커서가 있을시 검색창에 포커스 생긴다.</li>
         <li>space, ' : 컴색방법에 커서가 있을때 검색방법 on/off 바꿈.</li>
         <li>q : index페이지로 이동</li>
+        <li>R : 글쓰기 페이지로 이동</li>
     </ul>
 </div>
 
@@ -110,6 +112,12 @@
 </div>
 
 <div id="help_help" class="hidden">
+    <h1>도움말 페이지</h1>
+    <h3>단축키</h3>
+    <ul>
+        <li>j, k : 도움말 메뉴 커서를 왼쪽, 오른쪽으로 옮김</li>
+        <li>x : 도움말 메뉴에 커서가 없을때 커서 생기게 한다.</li>
+    </ul>
 </div>
 
 {% endblock content %}

@@ -21,8 +21,16 @@
 	color: red;
 }
 
-#help_top_menu ul a:hover {
+#help_top_menu li a.row_highlight{
+	border: 1px solid red;
+}
+
+#help_top_menu li a.selected{
 	background-color: #0f4;
+}
+
+#help_top_menu ul a:hover {
+	border: 1px solid blue;
 }
 
 #help_top_menu ul .first_li a {
