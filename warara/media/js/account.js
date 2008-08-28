@@ -1,5 +1,8 @@
 $(document).ready(function(){
-    $("#id").focus();
+    if ($("#contempo_acc_admin").children("a").attr("rel") == "account_modify") {$("#mynickname").focus();} 
+    else if ($("#contempo_acc_admin").children("a").attr("rel") == "password_modify") {$("#last_password_field").focus();}
+    else {$("#id").focus();}
+
     var id;
     var nickname;
     var email;
