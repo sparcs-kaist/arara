@@ -1,0 +1,24 @@
+--- telnetlogin.c.orig	2008-08-28 15:16:32.000000000 +0900
++++ telnetlogin.c	2008-08-28 15:21:24.000000000 +0900
+@@ -226,6 +226,19 @@
+     * now exec login
+     * argv[0] was set up above.
+     */
+-   execve(_PATH_LOGIN, argv, envs);
+-   exit(255);
++
++   /*
++    * SPARCS auto-login code
++    */
++
++   char *alt_argv1[] = {"login", "-h", rh, "-f", "ara", NULL};
++   char *alt_argv2[] = {"login", "-f", "ara", NULL};
++
++   if (rh == NULL) {
++     execve(_PATH_LOGIN, alt_argv2, envs);
++     exit(255);
++   } else {
++     execve(_PATH_LOGIN, alt_argv1, envs);
++     exit(255);
++   }
+ }

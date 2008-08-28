@@ -1,4 +1,4 @@
 # Configuration file for TARAra
 
-XMLRPC_HOST = "localhost"
+XMLRPC_HOST = "nan.sparcs.org"
 XMLRPC_PORT = "8000"
