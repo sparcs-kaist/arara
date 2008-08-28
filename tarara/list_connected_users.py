@@ -20,7 +20,10 @@ class connected_user_rowitem(widget.FieldRow):
 
 class ara_list_connected_users(ara_form):
     def keypress(self, size, key):
+        if key in self.keymap:
+            key = self.keymap[key]
         if key.lower() == 'q':
+            self.timer.cancel()
             self.parent.change_page('user_information', {'session_key':self.session_key})
         elif key.lower() == 'm':
             if self.timer.state:
@@ -34,6 +37,7 @@ class ara_list_connected_users(ara_form):
         elif key == 'enter':
             # self.userlist.get_body().get_focus()[0].w.w.widget_list : 현재 활성화된 항목
             username = self.userlist.get_body().get_focus()[0].w.w.widget_list[0].get_text()[0]
+            self.timer.cancel()
             self.parent.change_page('query_user', {'session_key':self.session_key, 'default_user':username})
         else:
             self.mainpile.keypress(size, key)
@@ -52,6 +56,12 @@ class ara_list_connected_users(ara_form):
         self.userlist.set_body(listview.make_body(self.userlistitem, connected_user_rowitem))
 
     def __initwidgets__(self):
+        self.keymap = {
+            'j': 'down',
+            'k': 'up',
+            'N': 'page down',
+            'P': 'page up',
+        }
 	self.header = urwid.Filler(urwid.Text(u'ARA: List connected users',align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
         self.infotext = urwid.Filler(urwid.Text('(r)efresh (m)onitoring:start (q)uit (Enter) query'))

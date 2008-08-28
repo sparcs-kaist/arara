@@ -31,9 +31,11 @@ class ara_list_pm(ara_form):
         message_item = []
         if len(message_list) < 1:
             # If no message...
+            self.hasmessage = False
             message_item = [{'new':'', 'number':'', 'author':'','title':'No private messages. Have a nice day.','date':''}]
         else:
             # Otherwise...
+            self.hasmessage = True
             for msg in message_list:
                 message_item += [{'new':str(msg['read_status']), 'number':str(msg['id']), 'author':msg['from'], 'title':msg['message'], 'date':msg['sent_time'].strftime("%m/%d")}]
         self.pmlist.set_body(listview.make_body(message_item, pmlist_rowitem))
@@ -51,9 +53,11 @@ class ara_list_pm(ara_form):
         message_item = []
         if len(message_list) < 1:
             # If no message...
+            self.hasmessage = False
             message_item = [{'new':'', 'number':'', 'author':'','title':'No private messages. Have a nice day.','date':''}]
         else:
             # Otherwise...
+            self.hasmessage = True
             for msg in message_list:
                 message_item += [{'new':str(msg['read_status']), 'number':str(msg['id']), 'author':msg['to'], 'title':msg['message'], 'date':msg['sent_time'].strftime("%m/%d")}]
         self.pmlist.set_body(listview.make_body(message_item, pmlist_rowitem))
@@ -69,7 +73,8 @@ class ara_list_pm(ara_form):
         elif key == 'q':
             self.parent.change_page("main", {'session_key':self.session_key})
         elif mainpile_focus == self.pmlist and key=='enter':
-            pm_id = int(self.pmlist.get_body().get_focus()[0].w.w.widget_list[0].get_text()[0])
+            if self.hasmessage:
+                pm_id = int(self.pmlist.get_body().get_focus()[0].w.w.widget_list[0].get_text()[0])
         else:
             self.mainpile.keypress(size, key)
 
