@@ -77,11 +77,11 @@ mikkang
 >>> print member[u'layout']
 aaa
 
-# Searh Test
+# Register one user, ggingkkang for search test
+
 >>> server.member_manager.search_user(session_key, u'mikkang')
 (True, [{'username': u'mikkang', 'nickname': u'ggingkkang'}])
 
-# Register one user, ggingkkang for search test
 >>> user_reg_dic = {'username':u'ggingkkang', 'password':u'xx', 'nickname':u'mikkang', 'email':u'ggingkkang@sparcs.org', 'signature':u'', 'self_introduction':u'', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
@@ -95,11 +95,24 @@ True
 >>> ret, session_key_ggingkkang = server.login_manager.login(u'ggingkkang', u'xx', u'143.248.234.140')
 >>> ret
 True
+
+# Searh Test
+
 >>> server.member_manager.search_user(unicode(session_key), u'mikkang')
 (True, [{'username': u'mikkang', 'nickname': u'ggingkkang'}, {'username': u'ggingkkang', 'nickname': u'mikkang'}])
 
+>>> server.member_manager.search_user(session_key, u'mikkang', u'username')
+(True, [{'username': u'mikkang', 'nickname': u'ggingkkang'}])
+
+>>> server.member_manager.search_user(session_key, u'mikkang', u'nickname')
+(True, [{'username': u'ggingkkang', 'nickname': u'mikkang'}])
+
+>>> server.member_manager.search_user(session_key, u'mikkang', u'wrong_key')
+(False, 'INCORRECT_SEARCH_KEY')
+
 >>> server.member_manager.remove_user(session_key)
 (True, 'OK')
+
 >>> server.member_manager.is_sysop(session_key)
 False
 

@@ -573,23 +573,36 @@ class MemberManager(object):
         
     @require_login
     @log_method_call
-    def search_user(self, session_key, search_user):
+    def search_user(self, session_key, search_user, search_key=None):
         '''
         member_dic 에서 찾고자 하는 username와 nickname에 해당하는 user를 찾아주는 함수
+        search_key 가 username 또는 nickname 으로 주어질 경우 해당하는 search key로만 찾는다
 
         @type  session_key: string
         @param session_key: User Key
         @type  search_user_info: string
         @param search_user_info: User Info(username or nickname)
+        @type  search_key: string
+        @param search_key: Search key
         @rtype: dictionary 
         @return:
             1. 성공시: True, {'username':'kmb1109','nickname':'mikkang'} 
-            2. 실패시: False, 'NOT_EXIST_USER'
+            2. 실패시: 
+                1. 존재하지 않는 사용자: False, 'NOT_EXIST_USER'
+                2. 잘못된 검색 키:False, 'INCORRECT_SEARCH_KEY'
         '''
 
         try:
             session = model.Session()
-            user = session.query(model.User).filter(or_(model.users_table.c.username==search_user, model.users_table.c.nickname==search_user)).all()
+            if not search_key:
+                user = session.query(model.User).filter(or_(model.users_table.c.username==search_user, model.users_table.c.nickname==search_user)).all()
+            else:
+                if search_key=='username':
+                    user = session.query(model.User).filter_by(username=search_user).all()
+                elif search_key=='nickname':
+                    user = session.query(model.User).filter_by(nickname=search_user).all()
+                else:
+                    return False, 'INCORRECT_SEARCH_KEY'
             user_dict_list = self._get_dict_list(user, USER_SEARCH_WHITELIST)
             session.close()
             return True, user_dict_list
