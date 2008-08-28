@@ -21,7 +21,7 @@ class ara_read_article(ara_form):
             if not self.is_selected_deleted():
                 self.parent.change_page("post_article", {'session_key':self.session_key, 'board_name':self.board_name,
                     'mode':'modify', 'article_id':self.get_selected_article_id()})
-        elif key == 'r':
+        elif key.lower() == 'r':
             if not self.is_selected_deleted():
                 self.parent.change_page("post_article", {'session_key':self.session_key, 'board_name':self.board_name,
                     'mode':'reply', 'article_id':self.get_selected_article_id()})
@@ -136,6 +136,8 @@ class ara_read_article(ara_form):
         self.keymap = {
             'j': 'down',
             'k': 'up',
+            'b': 'page up',
+            'f': 'page down',
         }
         retvalue, self.thread = self.server.article_manager.read(self.session_key, self.board_name, self.article_id)
         assert retvalue, self.thread
