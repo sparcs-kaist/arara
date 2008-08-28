@@ -10,23 +10,44 @@
 
 {% block myaccount_content %}
 <div id="myaccount_modify_content" class="account_content">
-    <form action="/account/account_remove/" method="post">
-	<h1>My Account Remove</h1>
-	<fieldset id="myaccountremove">
-	    <legend>Caution</legend>
+    <div class="account_head_block">
+	<div class="account_head">MY ACCOUNT REMOVE</div>
+	<div class="account_administer">
+	    <span><a href="/account/">My Account</a></span><span>|</span>
+	    <span><a href="/account/account_modify/">Account Modify</a></span><span>|</span>
+
+	    <span><a href="/account/password_modify/">Password Modify</a></span><span>|</span>
+
+	    <span id="contempo_acc_admin"><a href="/account/account_remove/">Account Remove</a></span>
+	</div>
+    </div>
+    <div id="account_information_content">
+	<div id="myaccountremove">
+	    <div class="acc_subtitle"><div class="acc_subtitle_name">Caution</div></div>
 	    	<ul>
 		    <p>Though you remove your account, followings will still be valid for another user.</p>
 		    <li>The articles that you wrote.</li>
 		    <li>The messages that another user recieved after you wrote.</li>
 		    <li>etc.</li>
 		</ul>
-        </fieldset>
-        <input id="remove_button" type="button" value="Remove" class="button" />
-        <div id="confirm_remove" style="display: none">
-            <p> Are you sure remove your account? </p>
-            <input id="dont_remove" type="button" value="No" class="button" />
-            <input id="remove_submit" type="submit" value="Yes" class="submit" />
         </div>
+    </div>
+    <form action="/account/account_remove/" method="post" id="acc_rm_submit">
+	<div id="acc_rm_remind">
+	    <div>If you remove, you couldn't restore the account again. Are you sure?</div>
+	    <div>Current account : {{username}} {{nickname}}</div>
+	</div>
+	<div id="account_rm_buttons">
+	    <div id="acc_remove_buttons">
+		<input id="remove_button" type="button" value="Remove" class="button" />
+		<input value="Cancel" name="cancel" type="button" onClick="location.href='/account/'" />
+	    </div>
+	    <div id="confirm_remove" style="display: none">
+		<p> Are you sure remove your account? </p>
+		<span id="account_rm_submit"><input value="Yes, Remove" name="remove" class="submit" type="submit" id="remove_submit" /></span>
+		<span id="account_rm_cancel"><input value="No, Cancel" name="cancel" type="button" onClick="location.href='/account/'" id="dont_remove" /></span>
+	    </div>
+	</div>
     </form>
 </div>
 {% endblock %}

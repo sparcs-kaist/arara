@@ -1,10 +1,10 @@
 $(document).ready(function() {
     $("#remove_button").click(function(event) {
-        $("#confirm_remove").slideDown(1000);
-        $("#remove_button").slideUp(1000);
+        $("#confirm_remove").show("slow");
+        $("#acc_remove_buttons").hide("slow");
     });
     $("#dont_remove").click(function(event) {
-        $("#remove_button").slideDown(1000);
-        $("#confirm_remove").slideUp(1000);
+        $("#acc_remove_buttons").show("slow");
+        $("#confirm_remove").hide("slow");
     });
 });
