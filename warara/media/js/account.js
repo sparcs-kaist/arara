@@ -65,14 +65,14 @@ $(document).ready(function(){
             if (!$(this).val()) {
                 $(this).parent().children("label").children("span.feedback")
                     .text("The field is empty");
-                $(".submit").parent().children("label").children("span.feedback").text("Please confirm your form");
+                $(".submit").parent().parent().children("label").children("span.feedback").text("Please confirm your form");
                 event.preventDefault();
             }
         });
         if (!($("#password_field").val() == $("#re_password_field").val())) {
             $("#password_field").parent().children("label").children("span.feedback")
                 .text("The password doesn't matched with the re-enter");
-            $(".submit").parent().children("label").children("span.feedback").text("Please confirm your form");
+            $(".submit").parent().parent().children("label").children("span.feedback").text("Please confirm your form");
             event.preventDefault();
         }
         if ((document.form.email.value.indexOf('@') == -1 ) || (document.form.email.value.indexOf('.') == -1)) {
