@@ -100,36 +100,34 @@ $(document).ready(function(){
                     break;
             }
         }
-		if(!$("#article_table tr.row_highlight").length){
-		return;
+		if($("#article_table tr.row_highlight").length){
+            switch (event.which) {
+                case 13:  // enter
+                case 32:  // space
+                case 39:
+                    event.preventDefault();
+                    read_article();
+                    break;
+                case 106:  // j
+                    cursor_pos += 1;
+                    if (cursor_pos >= row_count) cursor_pos = row_count - 1;
+                    update_table(cursor_pos);
+                    break;
+                case 107:  // k
+                    cursor_pos -= 1;
+                    if (cursor_pos < 1) cursor_pos = 1;
+                    update_table(cursor_pos);
+                    break;
+                case 98:
+                    $show_user_popup($("#article_table tr .username").eq(cursor_pos-1));
+                    $focus_user_popup();
+                    break;
+                case 82:
+                    location.href = $("#board_write a").attr("href");
+                    break;
+                default:
+                    //alert(event.which);
+            }
 		}
-	
-        switch (event.which) {
-            case 13:  // enter
-            case 32:  // space
-            case 39:
-                event.preventDefault();
-                read_article();
-                break;
-            case 106:  // j
-                cursor_pos += 1;
-                if (cursor_pos >= row_count) cursor_pos = row_count - 1;
-                update_table(cursor_pos);
-                break;
-            case 107:  // k
-                cursor_pos -= 1;
-                if (cursor_pos < 1) cursor_pos = 1;
-                update_table(cursor_pos);
-                break;
-            case 98:
-                $show_user_popup($("#article_table tr .username").eq(cursor_pos-1));
-                $focus_user_popup();
-                break;
-            case 82:
-                location.href = $("#board_write a").attr("href");
-                break;
-            default:
-                //alert(event.which);
-        }
     });
 });

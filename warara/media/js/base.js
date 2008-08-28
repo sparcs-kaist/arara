@@ -66,18 +66,30 @@ $(document).ready(function(){
     });
 
     $("#user_popup_user_information").click(function(event) {
+            show_user_info_popup(event);
+    });
+
+    function show_user_info_popup(event){
         $("#user_information_popup_content").contents().remove();
         if(event.shiftKey) {
-            $("#user_popup .thickbox").removeClass("thickbox");
             $("#user_information_popup").show("fast"); 
         }
-        $.post("/main/", {query_user_name: username},
+        $.post("/main/userinfo/", {query_user_name: username},
             function(data, textStatus) {
-                $(data).appendTo("#user_information_popup_content");
+                if(data == 0){
+                    alert("알수없는에러");
+                    $("#user_information_popup").hide();
+                }
+                else{
+                    $(data).appendTo("#user_information_popup_content");
+                }
             }
         );
         $(document).keyup(function(event) {
             if(event.keyCode == 27) {
+                if($("#u_info_pop_head:visible").length){
+                    $(".hidden_highlight").removeClass("hidden_highlight").addClass("row_highlight");
+                    }
                 $("#user_information_popup").hide("fast");
             }
         });
@@ -87,11 +99,7 @@ $(document).ready(function(){
             $("#user_information_popup").hide("fast");
         });
         $("#u_info_add_blacklist").click(function(event) {
-            $.post("/blacklist/add/", {blacklist_id: username},
-                function(data, textStatus) {
-                    alert("Added " + username + " to blacklist.");
-                }
-            );
+            add_blacklist();
             event.preventDefault();
         });
         $("#u_info_send_message").click(function(event) {
@@ -101,14 +109,29 @@ $(document).ready(function(){
             event.preventDefault();
             $("#message_receiver_field").val(username);
         });
-    });
-
-    $("#user_popup_add_blacklist").click(function(event) {
-        $.post("/blacklist/add/", {blacklist_id: username},
-            function(data) {
+    }
+    function add_blacklist(){
+        $.post("/blacklist/add/", {blacklist_id: username, ajax:1},
+            function(data, textStatus) {
+                if(data == "ALREADY_ADDED"){
+                alert("already added");
+                }
+                else if(data == "CANNOT_ADD_YOURSELF"){
+                alert("cannot add yourself");
+                }
+                else if(data == 1){
                 alert("Added " + username + " to blacklist.");
+                }
+                else{
+                alert("알수없는에러");
+                }
+                $(".hidden_highlight").removeClass("hidden_highlight").addClass("row_highlight");
             }
         );
+    }
+
+    $("#user_popup_add_blacklist").click(function(event) {
+        add_black_list();
         event.preventDefault();
     });
 
@@ -129,28 +152,22 @@ $(document).ready(function(){
 		$("input[name='message_popup_exit']").click(function(event){
 				$("#message_popup").hide();
 				});
-		$(document).keyup(function(event){
-				switch(event.which){
-				case 27:
-				$("#message_popup").hide("fast");
-				break;
-				case 70: //f
-                if($("#message_popup:visible").length){
-				$("#message_text_field").focus();
-                }
-				break;
-				}
-				});
     }
 
     $("#message_popup input.message_send_submit").click(function(event) {
 		tb_remove();
         $.post("/message/send/", {receiver: $("#message_receiver_field").val(), text: $("#message_text_field").val(), ajax:"1"},
             function(data){
-                alert(data);
-				$("#user_popup").hide();
-				$("#message_popup").hide("fast");
-				$("#message_text_field").val("");
+                if(data == 1){
+                    alert("Message send successful!");
+                    $(".hidden_highlight").removeClass("hidden_highlight").addClass("row_highlight")
+                    $("#user_popup").hide();
+                    $("#message_popup").hide("fast");
+                    $("#message_text_field").val("");
+                }
+                else{
+                alert("알수없는에러");
+                }
             });
         event.preventDefault();
     });
@@ -159,19 +176,19 @@ $(document).ready(function(){
 	$focus_input = 0;
 
 	$("input[type='text']").focus(function(){
-			$focus_input = 1
-			if($(this).attr("type") == "checkbox"){
-			$focus_input = 0
-			}
+			$focus_input = 1;
 			});
+    $("input[type='password']").focus(function(){
+            $focus_input = 1;
+            });
 	$("textarea").focus(function(){
-			$focus_input = 1
+			$focus_input = 1;
 			});
 	$("input").blur(function(){
-			$focus_input = 0
+			$focus_input = 0;
 			});
 	$("textarea").blur(function(){
-			$focus_input = 0
+			$focus_input = 0;
 			});
 
     //png fix
@@ -297,12 +314,19 @@ $(document).ready(function(){
 	}
     function popup_function(event){
         $fn = $("#user_popup li.user_popup_function a").eq(cursor_up-1).attr("id");
+        cursor_up = 0;
+        $(".highlight").removeClass("highlight");
+        $("#user_popup").hide();
         if($fn == "user_popup_send_message"){
             event.shiftKey = 1;
             show_message_box(username, event);
-            cursor_up = 0;
-            $(".highlight").removeClass("highlight");
-            $("#user_popup").hide();
+        }
+        else if($fn == "user_popup_user_information"){
+            event.shiftKey = 1;
+            show_user_info_popup(event);
+        }
+        else if($fn == "user_popup_add_blacklist"){
+            add_blacklist();
         }
     }
 
@@ -440,4 +464,33 @@ $(document).ready(function(){
             break;
 			}
 			});
+
+    $(document).keypress(function(event){
+        if($("#u_info_pop_head:visible").length){
+            switch(event.which){
+                case 66:
+                    add_blacklist();
+                    $(".hidden_highlight").removeClass("hidden_highlight").addClass("row_highlight");
+                    $("#user_information_popup").hide("fast");
+                    event.preventDefault();
+                    break;
+            }
+        }
+    });
+
+    $(document).keyup(function(event){
+        if($("#message_popup_head:visible").length){
+            switch(event.which){
+            case 27:
+            $("#message_popup").hide("fast");
+            $(".hidden_highlight").removeClass("hidden_highlight").addClass("row_highlight");
+            break;
+            case 70: //f
+            if($("#message_popup_content:visible").length){
+            $("#message_text_field").focus();
+            }
+            break;
+            }
+        }
+    });
 });

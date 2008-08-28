@@ -52,18 +52,8 @@ def main(request):
     assert suc, ret
     r['weekly_best_list'] = enumerate(ret)
 
-    if request.method == 'POST':
-        session_key, r = warara.check_logged_in(request)
-        server = arara.get_server()
-        query_user_name = request.POST['query_user_name']
-        ret, information = server.member_manager.query_by_username(session_key, query_user_name)
-        assert ret, information
-        rendered = render_to_string('account/another_user_account.html', information)
-        return HttpResponse(rendered)
-
-    else:
-        rendered = render_to_string('main.html', r)
-        return HttpResponse(rendered)
+    rendered = render_to_string('main.html', r)
+    return HttpResponse(rendered)
 
 def help(request):
     server = arara.get_server() 
@@ -72,6 +62,20 @@ def help(request):
     rendered = render_to_string('help.html', r)
     return HttpResponse(rendered)
 
+def get_user_info(request):
+    if request.method == 'POST':
+        session_key, r = warara.check_logged_in(request)
+        server = arara.get_server()
+        query_user_name = request.POST['query_user_name']
+        ret, information = server.member_manager.query_by_nick(session_key, query_user_name)
+        if not ret:
+            return HttpResponse(0);
+        else:
+            rendered = render_to_string('account/another_user_account.html', information)
+            return HttpResponse(rendered)
+    else:
+        return HttpResponse("Linear Algebra")
+    assert ret, information
 
 def wrap_error(f):
     def check_error(*args, **argv):

@@ -131,7 +131,7 @@ def password_modify(request):
             assert ret, message
             return HttpResponseRedirect("/account/")
         else:
-            rendered = render_to_string('account/myacc_pw_modify.html')
+            rendered = render_to_string('account/myacc_pw_modify.html', r)
             return HttpResponse(rendered)
 
     else:

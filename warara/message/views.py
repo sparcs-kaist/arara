@@ -163,7 +163,7 @@ def send_(request):
         return HttpResponse(rendered)
 
     if "ajax" in request.POST:
-        return HttpResponse("Message send successful!")
+        return HttpResponse(1)
     r['url'] = '/message/outbox'
     return HttpResponseRedirect(r['url'])
 

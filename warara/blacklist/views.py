@@ -16,6 +16,11 @@ def add(request):
         server = arara.get_server()
         sess = request.session["arara_session_key"]
         ret, message = server.blacklist_manager.add(sess, blacklist_id)
+        if request.POST.get('ajax', 0):
+            if not ret:
+                return HttpResponse(message)
+            else:
+                return HttpResponse(1)
         assert ret, message
         return HttpResponseRedirect("/blacklist/")
     else:
