@@ -327,6 +327,7 @@ $(document).ready(function(){
 			update_highlight("#menu a", cursor_bl);
 			break;
 			case 32: //spacs
+            case 39:
 			location.href = $("#menu a[class!='hidden']").eq(cursor_bl-1).attr("href");
 			break;
 			}
@@ -352,6 +353,7 @@ $(document).ready(function(){
 			update_highlight("#top_menu a", cursor_tm);
 			break;
 			case 32: //spacs
+            case 39:
             if($("#top_menu a[name='login']").hasClass("highlight")){
                 $("#login_box").show();
                 $("#login_username_field").focus();

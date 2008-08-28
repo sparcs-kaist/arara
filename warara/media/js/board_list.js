@@ -84,6 +84,7 @@ $(document).ready(function(){
                     update_search_method(cursor_sm);
                     break;
                 case 32:
+                case 39:
                     $sm = $("#board_buttons a[name='search_method_select']").eq(cursor_sm);
                     toggle_search_method($sm);
                     event.preventDefault();
@@ -106,6 +107,7 @@ $(document).ready(function(){
         switch (event.which) {
             case 13:  // enter
             case 32:  // space
+            case 39:
                 event.preventDefault();
                 read_article();
                 break;

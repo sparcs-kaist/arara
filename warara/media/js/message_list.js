@@ -162,6 +162,7 @@ $(document).ready(function() {
 			switch(event.which){
 			case 13:
 			case 32:
+            case 39:
             case 105:
 				read_message(cursor_pos);
 				break;

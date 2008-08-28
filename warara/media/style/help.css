@@ -3,7 +3,7 @@
 	padding 0;
 	list-style: none;
 	float: left;
-	background-color: #036;
+	background-color: #7f7;
 }
 
 #help_top_menu ul li{
@@ -16,13 +16,13 @@
 	float: left;
 	padding: 0 2em;
 	line-height: 2.1em;
-	background-color: #036;
+	background-color: #7f7;
 	text-decoration: none;
-	color: #fff;
+	color: red;
 }
 
 #help_top_menu ul a:hover {
-	background-color: #630;
+	background-color: #0f4;
 }
 
 #help_top_menu ul .first_li a {
