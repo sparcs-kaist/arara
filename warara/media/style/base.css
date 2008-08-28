@@ -297,6 +297,7 @@ body {
     right: 0%;
     top: 0%;
     background-color: white;
+    overflow: hidden;
 }
 #user_information_popup_content {
     margin: 0;
@@ -309,6 +310,7 @@ body {
 }
 
 #u_info_pop_head {
+    width: 95%;
     font-size: 1.5em;
     color: #FFFFFF;
     font-weight: bold;
@@ -318,7 +320,7 @@ body {
 }
 
 .uip_subtitle {
-    width: 100%;
+    width: 97%;
     border-top: 1px #65AA5C solid;
     border-bottom: 1px #CCCCCC solid;
     background: url(/media/image/base/square.png) no-repeat top left #E0E0E0;
@@ -343,7 +345,7 @@ body {
 }
 
 .uip_list_content {
-    width: 77%;
+    width: 75%;
     margin: 1.2em 0 0.2em 0.3em;
     padding: 0;
     float: left;
