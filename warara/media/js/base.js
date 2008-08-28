@@ -353,6 +353,9 @@ $(document).ready(function(){
 			update_highlight("#top_menu a", cursor_tm);
 			break;
 			case 32: //spacs
+            if($("#login_box:visible").length){
+                break;
+            }
             case 39:
             if($("#top_menu a[name='login']").hasClass("highlight")){
                 $("#login_box").show();

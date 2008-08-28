@@ -34,7 +34,10 @@
         <li>y : 커서가 탑 메뉴로 이동한다. 다시 누르면 커서가 컨텐츠로 이동한다.</li>
         <li>x : 커서가 컨텐츠로 이동한다. t, y와 다르게 토글이 아님</li>
         <li>j, k : 커서가 게시판 목록이나 탑 메뉴에 있을때 상하 또는 좌우로 이동한다.</li>
-        <li>space : 커서가 있는 곳의 링크로 연결된다.</li>
+        <li>space : 커서가 있는 곳의 링크로 연결된다. (단, 브라우저 자체커서로 인해 엉뚱한 결과가 발생할 수 있음)</li>
+        <li>' : space와 같은 기능을 합니다.</li>
+        <li>e : ksearch에 포커스 생긴다.</li>
+        <li>b : 커서가 유저팝업 앵커를 포함하고 있을때 유저팝업창을 띄운다.</li>
     </ul>
     <h1>인덱스 페이지</h1>
     <h3>단축키</h3>
@@ -48,9 +51,23 @@
 </div>
 
 <div id="help_article" class="hidden">
+    <h1>글목록 페이지</h1>
+    <h3>단축키</h3>
+    <ul>
+        <li>s : 검색방법 컨트롤로 커서 이동. 이미 커서가 있을시 검색창에 포커스 생긴다.</li>
+        <li>space, ' : 컴색방법에 커서가 있을때 검색방법 on/off 바꿈.</li>
+        <li>q : index페이지로 이동</li>
+    </ul>
 </div>
 
 <div id="help_message" class="hidden">
+    <h1>쪽지 페이지 일반</h1>
+    <h3>단축키</h3>
+    <ul>
+        <li>u : inbox로 이동</li>
+        <li>o : outbox로 이동</li>
+        <li>s : send로 이동</li>
+    </ul>
     <h1>쪽지 목록 페이지</h1>
     <h3>일반</h3>
     <ul>
@@ -74,7 +91,13 @@
     <ul>
         <li>q : 쪽지 목록 페이지로 이동</li>
         <li>d : 현재 쪽지 삭제</li>
-        <li>(inbox) r, m : 답장보내기 페이지로 이동</li>
+        <li>(inbox) r, m : 답장보내기에 커서 포커스</li>
+    </ul>
+    <h1>쪽지 보내기 페이지</h1>
+    <h3>단축키</h3>
+    <ul>
+        <li>c : receiver type을 바꾼다(input/textarea에 focus가 없어야 작동)</li>
+        <li>shift + enter : 쪽지를 보낸다</li>
     </ul>
 
 </div>

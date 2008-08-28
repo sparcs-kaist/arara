@@ -12,4 +12,6 @@ $(document).ready(function(){
                 event.returnValue = false;
             }
 			});
+
+        var cursor = 0;
         });
