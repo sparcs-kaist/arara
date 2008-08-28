@@ -9,20 +9,11 @@ import widget
 
 class ara_welcome(ara_form):
     def get_banner(self):
-	banner = self.server.notice_manager.get_welcome()
-	if banner[0] == False:
-            return u"오늘의 환영 인사는 없습니다."
-        else:
+	retvalue, banner = self.server.notice_manager.get_welcome()
+        if retvalue:
             return banner[1]
-
-    def get_ip(self):
-        return "127.0.0.1"
-
-    def get_location(self):
-        return "Web"
-
-    def get_date(self):
-        return "Today"
+        else:
+            return u"오늘의 환영 인사는 없습니다."
 
     def keypress(self, size, key):
         if "enter" in key:
@@ -30,9 +21,11 @@ class ara_welcome(ara_form):
 
     def __initwidgets__(self):
         self.banner = urwid.Filler(urwid.Text(self.get_banner()))
+        retvalue, myinfo = self.server.member_manager.get_info(self.session_key)
+        assert retvalue, myinfo
 
-        logintext = "Last login: %(IP)s/%(location)s at %(date)s"
-        logindata = {"IP": self.get_ip(), "location": self.get_location(), "date":self.get_date()}
+        logintext = "Last login: %(IP)s at %(date)s"
+        logindata = {"IP": myinfo['last_login_ip'], "date":myinfo['last_logout_time'].strftime("%Y/%m/%d %H:%M:%S")}
         self.logininfo = urwid.Filler(urwid.Text(logintext % logindata))
 
         self.entertext = urwid.Filler(urwid.Text("Press [Enter] key to continue"))
