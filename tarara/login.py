@@ -60,7 +60,7 @@ class ara_login(ara_form):
                     retvalue, session_key = self.login(self.idedit.body.get_edit_text(), self.pwedit.body.get_edit_text(), self.get_remote_ip())
                     assert retvalue, session_key
                     if retvalue:
-                        self.parent.change_page("welcome", {'session_key':session_key[1]})
+                        self.parent.change_page("welcome", {'session_key':session_key})
             elif curfocus == 1:
                 langindex = self.langlist.w.get_focus().get_focus().get_focus()[1]
             elif curfocus == 2:
