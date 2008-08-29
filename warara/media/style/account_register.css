@@ -303,3 +303,12 @@
     height: 3em;
     vertical-align: top;
 }
+
+#acc_rm_nick {
+    color : #666666;
+    font-weight: bold;
+}
+
+#acc_rm_user {
+    font-family: verdana;
+}

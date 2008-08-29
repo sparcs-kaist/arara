@@ -35,7 +35,7 @@
     <form action="/account/account_remove/" method="post" id="acc_rm_submit">
 	<div id="acc_rm_remind">
 	    <div>If you remove, you couldn't restore the account again. Are you sure?</div>
-	    <div>Current account : {{username}} {{nickname}}</div>
+	    <div>Current account : <span id="acc_rm_nick" class="username"> {{nickname}}</span><span id="acc_rm_user"> {{username}}</span></div>
 	</div>
 	<div id="account_rm_buttons">
 	    <div id="acc_remove_buttons">

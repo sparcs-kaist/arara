@@ -146,7 +146,8 @@ def account_remove(request):
             assert ret, message
             return HttpResponseRedirect("/")
         else:
-            account = {}
+            ret, account = server.member_manager.get_info(session_key)
+            assert ret, account
             account['logged_in'] = True
             rendered = render_to_string('account/myaccount_remove.html', account)
             return HttpResponse(rendered)
