@@ -10,13 +10,11 @@ import widget
 class ara_user_information(ara_form):
     menu = [
         "List (c)onnected users",
-        "(M)onitor connected users",
         "Q(u)ery user",
         "(Q)uit menu",
     ]
     menudesc = [
         "Show information about\ncurrent users",
-        "Monitor current users\n",
         "Query about user's last used\nIP, introduction, etc.",
         "Return to main menu",
     ]
@@ -25,24 +23,19 @@ class ara_user_information(ara_form):
         if key.lower() == 'c':
             self.menulist.set_focus(0)
             self.parent.change_page("list_connected_users", {'session_key':self.session_key})
-        elif key.lower() == 'm':
-            self.menulist.set_focus(1)
         elif key.lower() == 'u':
-            self.menulist.set_focus(2)
+            self.menulist.set_focus(1)
             self.parent.change_page("query_user", {'session_key':self.session_key, 'default_user':''})
         elif key.lower() == 'q':
-            self.menulist.set_focus(3)
+            self.menulist.set_focus(2)
             self.parent.change_page("main", {'session_key':self.session_key})
         elif key == "enter":
             pos = self.menulist.get_focus()[1]
             if pos == 0:
                 self.parent.change_page("list_connected_users", {'session_key':self.session_key})
             elif pos == 1:
-                # TODO: 연결된 사용자 관찰하기
-                pass
-            elif pos == 2:
                 self.parent.change_page("query_user", {'session_key':self.session_key, 'default_user':''})
-            elif pos == 3:
+            elif pos == 2:
                 self.parent.change_page("main", {'session_key':self.session_key})
         else:
             self.mainpile.keypress(size, key)
