@@ -40,40 +40,37 @@ True
 
 # Read_Status_Manager check!
 
->>> server.read_status_manager.check_stat(session_key, u'garbages', 1)
+>>> server.read_status_manager.check_stat(session_key, 1)
 (True, 'N')
->>> server.read_status_manager.check_stats(session_key, u'garbages', [1,2])
+>>> server.read_status_manager.check_stats(session_key, [1,2])
 (True, ['N', 'N'])
->>> server.read_status_manager.mark_as_read(session_key, u'garbages', 1)
+>>> server.read_status_manager.mark_as_read(session_key, 1)
 (True, 'OK')
->>> server.read_status_manager.mark_as_viewed(session_key, u'garbages', 2)
+>>> server.read_status_manager.mark_as_viewed(session_key, 2)
 (True, 'OK')
->>> server.read_status_manager.check_stats(session_key, u'garbages', [1,2])
+>>> server.read_status_manager.check_stats(session_key, [1,2])
 (True, ['R', 'V'])
 
 Error Test
 
->>> server.read_status_manager.check_stat(session_key, u'garbages', 3)
+>>> server.read_status_manager.check_stat(session_key, 3)
 (False, 'ARTICLE_NOT_EXIST')
->>> server.read_status_manager.check_stat('asdfasdf', u'garbages', 1)
+>>> server.read_status_manager.check_stat('asdfasdf', 1)
 (False, 'NOT_LOGGEDIN')
 
->>> server.read_status_manager.check_stat(session_key, u'NOTEXISTBOARD', 1)
-(False, 'BOARD_NOT_EXIST')
-
->>> server.read_status_manager.check_stats(session_key, u'garbages', [1,2,3])
+>>> server.read_status_manager.check_stats(session_key, [1,2,3])
 (False, 'ARTICLE_NOT_EXIST')
->>> server.read_status_manager.check_stats('asdfasdf', u'garbages', [1,2])
+>>> server.read_status_manager.check_stats('asdfasdf', [1,2])
 (False, 'NOT_LOGGEDIN')
 
->>> server.read_status_manager.mark_as_read(session_key, u'garbages', 3)
+>>> server.read_status_manager.mark_as_read(session_key, 3)
 (False, 'ARTICLE_NOT_EXIST')
->>> server.read_status_manager.mark_as_read('asdfasdf', u'garbages', 1)
+>>> server.read_status_manager.mark_as_read('asdfasdf', 1)
 (False, 'NOT_LOGGEDIN')
 
->>> server.read_status_manager.mark_as_viewed(session_key, u'garbages', 3)
+>>> server.read_status_manager.mark_as_viewed(session_key, 3)
 (False, 'ARTICLE_NOT_EXIST')
->>> server.read_status_manager.mark_as_viewed('asdfasdf', u'garbages', 2)
+>>> server.read_status_manager.mark_as_viewed('asdfasdf', 2)
 (False, 'NOT_LOGGEDIN')
 
 #Reset the database

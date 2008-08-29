@@ -133,7 +133,7 @@ class ReadStatusManager(object):
             return_list.append(filtered_dict)
         return return_list
 
-    def _check_article_exist(self, board, no_data):
+    def _check_article_exist(self, no_data):
         session = model.Session()
         top_article = session.query(model.Article).from_statement(
                 select(
@@ -151,7 +151,7 @@ class ReadStatusManager(object):
                 return False, 'ARTICLE_NOT_EXIST'
         return True, 'OK'
 
-    def _initialize_data(self, user, board):
+    def _initialize_data(self, user):
         session = model.Session()
         if not self.read_status.has_key(user.id):
             self.read_status[user.id] = {}
@@ -160,26 +160,20 @@ class ReadStatusManager(object):
             session.close()
             if read_status_dict_list:
                 for item in read_status_dict_list:
-                    self.read_status[user.id][item['board_id']] = item['read_status_data']
+                    self.read_status[user.id] = item['read_status_data']
                 return True, 'OK'
             else:
                 status_dict = {}
                 read_status_class = ReadStatus()
-                status_dict[board.id] = read_status_class
+                status_dict = read_status_class
                 self.read_status[user.id] = status_dict
                 return True, 'OK'
-        elif not self.read_status[user.id].has_key(board.id):
-            status_dict = {}
-            read_status_class = ReadStatus()
-            status_dict[board.id] = read_status_class
-            self.read_status[user.id] = status_dict
-            return True, 'OK'
         else:
             return False, 'ALREADY_ADDED'
 
     @require_login
     @log_method_call
-    def check_stat(self, session_key, board_name, no):
+    def check_stat(self, session_key, no):
         '''
         읽은 글인지의 여부를 체크
 
@@ -188,8 +182,6 @@ class ReadStatusManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @type  board_name: string
-        @param board_name: board Name
         @type  no: integer
         @param no: Article Number
         @rtype: string
@@ -205,24 +197,20 @@ class ReadStatusManager(object):
 
         ret, user_info = self.login_manager.get_session(session_key)
         if ret:
-            try:
-                session = model.Session()
-                user = session.query(model.User).filter_by(username=user_info['username']).one()
-                board = session.query(model.Board).filter_by(board_name=board_name).one()
-                session.close()
-            except InvalidRequestError:
-                return False, 'BOARD_NOT_EXIST'
-            ret, _ = self._initialize_data(user, board)
-            ret, msg = self._check_article_exist(board, no)
+            session = model.Session()
+            user = session.query(model.User).filter_by(username=user_info['username']).one()
+            session.close()
+            ret, _ = self._initialize_data(user)
+            ret, msg = self._check_article_exist(no)
             if ret:
-                status = self.read_status[user.id][board.id].get(no)
+                status = self.read_status[user.id].get(no)
                 return True, status
             else:
                 return ret, msg
 
     @require_login
     @log_method_call
-    def check_stats(self, session_key, board_name, no_list):
+    def check_stats(self, session_key, no_list):
         '''
         복수개의 글의 읽은 여부를 체크
 
@@ -231,8 +219,6 @@ class ReadStatusManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @type  board_name: string
-        @param board_name: board Name
         @type  no_list: list
         @param no_list: Article Numbers
         @rtype: list
@@ -244,24 +230,20 @@ class ReadStatusManager(object):
         '''
         ret, user_info = self.login_manager.get_session(session_key)
         if ret:
-            try:
-                session = model.Session()
-                user = session.query(model.User).filter_by(username=user_info['username']).one()
-                board = session.query(model.Board).filter_by(board_name=board_name).one()
-                session.close()
-            except InvalidRequestError:
-                return False, 'BOARD_NOT_EXIST'
-            ret, _ = self._initialize_data(user, board)
-            ret, msg = self._check_article_exist(board, no_list)
+            session = model.Session()
+            user = session.query(model.User).filter_by(username=user_info['username']).one()
+            session.close()
+            ret, _ = self._initialize_data(user)
+            ret, msg = self._check_article_exist(no_list)
             if ret:
-                status = self.read_status[user.id][board.id].get_range(no_list)
+                status = self.read_status[user.id].get_range(no_list)
                 return True, status
             else:
                 return ret, msg
 
     @require_login
     @log_method_call
-    def mark_as_read_list(self, session_key, board_name, no_list):
+    def mark_as_read_list(self, session_key, no_list):
         '''
         읽은 글로 복수개의 글을 등록하기
 
@@ -270,8 +252,6 @@ class ReadStatusManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @type  board_name: string
-        @param board_name: board Name
         @type  no : integer
         @param no : Article Number
         @rtype: string
@@ -284,24 +264,20 @@ class ReadStatusManager(object):
         '''
         ret, user_info = self.login_manager.get_session(session_key)
         if ret:
-            try:
-                session = model.Session()
-                user = session.query(model.User).filter_by(username=user_info['username']).one()
-                board = session.query(model.Board).filter_by(board_name=board_name).one()
-                session.close()
-            except InvalidRequestError:
-                return False, 'BOARD_NOT_EXIST'
-            ret, _ = self._initialize_data(user, board)
-            ret, msg = self._check_article_exist(board, no_list)
+            session = model.Session()
+            user = session.query(model.User).filter_by(username=user_info['username']).one()
+            session.close()
+            ret, _ = self._initialize_data(user)
+            ret, msg = self._check_article_exist(no_list)
             if ret:
-                status = self.read_status[user.id][board.id].set_range(no_list, 'R')
+                status = self.read_status[user.id].set_range(no_list, 'R')
                 return True, 'OK'
             else:
                 return ret, msg
 
     @require_login
     @log_method_call
-    def mark_as_read(self, session_key, board_name, no):
+    def mark_as_read(self, session_key, no):
         '''
         읽은 글로 등록하기
 
@@ -310,8 +286,6 @@ class ReadStatusManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @type  board_name: string
-        @param board_name: board Name
         @type  no : integer
         @param no : Article Number
         @rtype: string
@@ -324,31 +298,25 @@ class ReadStatusManager(object):
         '''
         ret, user_info = self.login_manager.get_session(session_key)
         if ret:
-            try:
-                session = model.Session()
-                user = session.query(model.User).filter_by(username=user_info['username']).one()
-                board = session.query(model.Board).filter_by(board_name=board_name).one()
-                session.close()
-            except InvalidRequestError:
-                return False, 'BOARD_NOT_EXIST'
-            ret, _ = self._initialize_data(user, board)
-            ret, msg = self._check_article_exist(board, no)
+            session = model.Session()
+            user = session.query(model.User).filter_by(username=user_info['username']).one()
+            session.close()
+            ret, _ = self._initialize_data(user)
+            ret, msg = self._check_article_exist(no)
             if ret:
-                status = self.read_status[user.id][board.id].set(no, 'R')
+                status = self.read_status[user.id].set(no, 'R')
                 return True, 'OK'
             else:
                 return ret, msg
 
     @require_login
     @log_method_call
-    def mark_as_viewed(self, session_key, board_name, no):
+    def mark_as_viewed(self, session_key, no):
         '''
         통과한 글로 등록하기
 
         @type  session_key: string
         @param session_key: User Key
-        @type  board_name: string
-        @param board_name: board Name
         @type  no : integer
         @param no : Article Number
         @rtype: string
@@ -361,17 +329,13 @@ class ReadStatusManager(object):
         '''
         ret, user_info = self.login_manager.get_session(session_key)
         if ret:
-            try:
-                session = model.Session()
-                user = session.query(model.User).filter_by(username=user_info['username']).one()
-                board = session.query(model.Board).filter_by(board_name=board_name).one()
-                session.close()
-            except InvalidRequestError:
-                return False, 'BOARD_NOT_EXIST'
-            ret, _ = self._initialize_data(user, board)
-            ret, msg = self._check_article_exist(board, no)
+            session = model.Session()
+            user = session.query(model.User).filter_by(username=user_info['username']).one()
+            session.close()
+            ret, _ = self._initialize_data(user)
+            ret, msg = self._check_article_exist(no)
             if ret:
-                status = self.read_status[user.id][board.id].set(no, 'V')
+                status = self.read_status[user.id].set(no, 'V')
                 return True, 'OK'
             else:
                 return ret, msg

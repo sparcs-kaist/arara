@@ -307,7 +307,7 @@ class ArticleManager(object):
             article_list = session.query(model.Article).filter_by(root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
             article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
             for article in article_dict_list:
-                ret, msg = self.read_status_manager.check_stat(session_key, board_name, article['id'])
+                ret, msg = self.read_status_manager.check_stat(session_key, article['id'])
                 if ret:
                     article['read_status'] = msg
             ret_dict['hit'] = article_dict_list
@@ -425,7 +425,7 @@ class ArticleManager(object):
                         if not article.has_key('type'):
                             article['type'] = 'normal'
                         article_id_list.append(article['id']) 
-                ret, msg = self.read_status_manager.check_stats(session_key, board_name, article_id_list)
+                ret, msg = self.read_status_manager.check_stats(session_key, article_id_list)
                 if ret:
                     for index, article in enumerate(article_dict_list):
                         article['read_status'] = msg[index]
@@ -480,7 +480,7 @@ class ArticleManager(object):
                     blacklist_users.add(blacklist_item['blacklisted_user_username'])
             try:
                 article = session.query(model.Article).filter_by(id=no).one()
-                ret, msg = self.read_status_manager.check_stat(session_key, board_name, no)
+                ret, msg = self.read_status_manager.check_stat(session_key, no)
                 if ret:
                     if msg == 'N':
                         article.hit += 1
@@ -497,7 +497,7 @@ class ArticleManager(object):
                 else:
                     item['blacklisted'] = False
                 article_id_list.append(item['id'])
-            ret, msg = self.read_status_manager.mark_as_read_list(session_key, board_name, article_id_list)
+            ret, msg = self.read_status_manager.mark_as_read_list(session_key, article_id_list)
             if not ret:
                 session.close()
                 return ret, msg
