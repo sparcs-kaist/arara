@@ -10,14 +10,14 @@ from helpviewer import *
 
 class ara_main(ara_form):
     menu = [
-        "(N)ew article",
-        "(S)elect board",
-        "(P)rivate message",
-        "(U)ser preferences",
+        "(N)ew Article",
+        "(S)elect Board",
+        "(P)rivate Message",
+        "(U)ser Preferences",
         "User (I)nformation",
         "(H)elp",
         "(A)bout ARA",
-        "(W)elcome screen",
+        "(W)elcome Screen",
         "(Q)uit",
     ]
 
@@ -159,7 +159,7 @@ class ara_main(ara_form):
 	tbtext = urwid.Filler(urwid.Text(u"Today Best", align='center'))
         retvalue, self.tblist_raw = self.server.article_manager.get_today_best_list()
         assert retvalue
-	tbitems = ["%(title)s (%(nickname)s, %(date)s)" % {"title":text['title'],
+        tbitems = ["%(title)s (%(nickname)s, %(date)s)" % {"title":text['title'],
             'nickname':text['author_nickname'],'date':text['date'].strftime("%Y/%m/%d")} for text in self.tblist_raw]
         tbitems = [widget.Item(w, None, 'selected') for w in tbitems]
         self.tblist = urwid.ListBox(urwid.SimpleListWalker(tbitems))
@@ -168,7 +168,7 @@ class ara_main(ara_form):
 	wbtext = urwid.Filler(urwid.Text(u"Weekly Best", align='center'))
         retvalue, self.wblist_raw = self.server.article_manager.get_weekly_best_list()
         assert retvalue
-	wbitems = ["%(title)s (%(nickname)s, %(date)s)" % {"title":text['title'],
+        wbitems = ["%(title)s (%(nickname)s, %(date)s)" % {"title":text['title'],
             'nickname':text['author_nickname'],'date':text['date'].strftime("%Y/%m/%d")} for text in self.wblist_raw]
         wbitems = [widget.Item(w, None, 'selected') for w in wbitems]
         self.wblist = urwid.ListBox(urwid.SimpleListWalker(wbitems))

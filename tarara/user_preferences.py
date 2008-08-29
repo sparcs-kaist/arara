@@ -12,7 +12,7 @@ class ara_user_preferences(ara_form):
         "Change (B)asic information",
         "Change (P)assword",
         "View/edit B(l)acklist",
-        "Change (I)ntroduction/Signature",
+        "Change (I)ntro/Sig",
         "(Z)ap Board",
         "(D)elete account",
         "(Q)uit menu",
