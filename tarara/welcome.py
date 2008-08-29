@@ -21,12 +21,16 @@ class ara_welcome(ara_form):
 
     def __initwidgets__(self):
         self.banner = urwid.Filler(urwid.Text(self.get_banner()))
-        retvalue, myinfo = self.server.member_manager.get_info(self.session_key)
-        assert retvalue, myinfo
 
-        logintext = "Last login: %(IP)s at %(date)s"
-        logindata = {"IP": myinfo['last_login_ip'], "date":myinfo['last_logout_time'].strftime("%Y/%m/%d %H:%M:%S")}
-        self.logininfo = urwid.Filler(urwid.Text(logintext % logindata))
+        if self.session_key == 'guest':
+            logintext = "You are in guest mode."
+            self.logininfo = urwid.Filler(urwid.Text(logintext))
+        else:
+            logintext = "Last login: %(IP)s at %(date)s"
+            retvalue, myinfo = self.server.member_manager.get_info(self.session_key)
+            assert retvalue, myinfo
+            logindata = {"IP": myinfo['last_login_ip'], "date":myinfo['last_logout_time'].strftime("%Y/%m/%d %H:%M:%S")}
+            self.logininfo = urwid.Filler(urwid.Text(logintext % logindata))
 
         self.entertext = urwid.Filler(urwid.Text("Press [Enter] key to continue"))
 

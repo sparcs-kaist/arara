@@ -37,6 +37,13 @@ class ara_main(ara_form):
             self.overlay = None
             self.parent.run()
 
+    def notify_guest(self):
+        confirm = widget.Dialog("Not available in guest mode.", ["OK"], ('menu', 'bg', 'bgf'), 35, 5, self)
+        self.overlay = confirm
+        self.parent.run()
+        self.overlay = None
+        self.parent.run()
+
     def confirm_quit(self):
         confirm = widget.Dialog("Really quit?", ["Yes", "No"], ('menu', 'bg', 'bgf'), 30, 5, self)
         self.overlay = confirm
@@ -62,14 +69,23 @@ class ara_main(ara_form):
             self.menulist.set_focus(1)
             self.parent.change_page("list_boards", {'session_key':self.session_key})
         elif key.lower() == 'p':
-            self.menulist.set_focus(2)
-            self.parent.change_page("list_pm", {'session_key':self.session_key})
+            if self.session_key == 'guest':
+                self.notify_guest()
+            else:
+                self.menulist.set_focus(2)
+                self.parent.change_page("list_pm", {'session_key':self.session_key})
         elif key.lower() == 'u':
-            self.menulist.set_focus(3)
-            self.parent.change_page("user_preferences", {'session_key':self.session_key})
+            if self.session_key == 'guest':
+                self.notify_guest()
+            else:
+                self.menulist.set_focus(3)
+                self.parent.change_page("user_preferences", {'session_key':self.session_key})
         elif key.lower() == 'i':
-            self.menulist.set_focus(4)
-            self.parent.change_page("user_information", {'session_key':self.session_key})
+            if self.session_key == 'guest':
+                self.notify_guest()
+            else:
+                self.menulist.set_focus(4)
+                self.parent.change_page("user_information", {'session_key':self.session_key})
         elif key.lower() == 'h':
             self.menulist.set_focus(5)
             self.show_help()
@@ -92,11 +108,20 @@ class ara_main(ara_form):
                 elif pos == 1:
                     self.parent.change_page("list_boards", {'session_key':self.session_key})
                 elif pos == 2:
-                    self.parent.change_page("list_pm", {'session_key':self.session_key})
+                    if self.session_key == 'guest':
+                        self.notify_guest()
+                    else:
+                        self.parent.change_page("list_pm", {'session_key':self.session_key})
                 elif pos == 3:
-                    self.parent.change_page("user_preferences", {'session_key':self.session_key})
+                    if self.session_key == 'guest':
+                        self.notify_guest()
+                    else:
+                        self.parent.change_page("user_preferences", {'session_key':self.session_key})
                 elif pos == 4:
-                    self.parent.change_page("user_information", {'session_key':self.session_key})
+                    if self.session_key == 'guest':
+                        self.notify_guest()
+                    else:
+                        self.parent.change_page("user_information", {'session_key':self.session_key})
                 elif pos == 5:
                     self.show_help()
                 elif pos == 6:
@@ -106,15 +131,18 @@ class ara_main(ara_form):
                 elif pos == 8:
                     self.confirm_quit()
             elif maincolumn_focus == self.bests:
-                bests_focus = self.bests.get_focus()
-                if bests_focus == self.todaybest:
-                    selected = self.tblist_raw[self.tblist.get_focus()[1]]
-                    self.parent.change_page("read_article", {'session_key':self.session_key,
-                        'board_name':selected['board_name'], 'article_id':selected['id']})
-                elif bests_focus == self.weeklybest:
-                    selected = self.wblist_raw[self.wblist.get_focus()[1]]
-                    self.parent.change_page("read_article", {'session_key':self.session_key,
-                        'board_name':selected['board_name'], 'article_id':selected['id']})
+                if self.session_key == 'guest':
+                    self.notify_guest()
+                else:
+                    bests_focus = self.bests.get_focus()
+                    if bests_focus == self.todaybest:
+                        selected = self.tblist_raw[self.tblist.get_focus()[1]]
+                        self.parent.change_page("read_article", {'session_key':self.session_key,
+                            'board_name':selected['board_name'], 'article_id':selected['id']})
+                    elif bests_focus == self.weeklybest:
+                        selected = self.wblist_raw[self.wblist.get_focus()[1]]
+                        self.parent.change_page("read_article", {'session_key':self.session_key,
+                            'board_name':selected['board_name'], 'article_id':selected['id']})
         else:
             self.mainpile.keypress(size, key)
 

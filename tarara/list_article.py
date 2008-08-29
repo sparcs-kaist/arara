@@ -19,6 +19,16 @@ class articlelist_rowitem(widget.FieldRow):
         ('vote',4, 'left'),
     ]
 
+class articlelist_rowitem_guest(widget.FieldRow):
+    fields = [
+        ('number', 4, 'left'),
+        ('author',12, 'left'),
+        ('title',0, 'left'),
+        ('date',5, 'left'),
+        ('hit',7, 'left'),
+        ('vote',4, 'left'),
+    ]
+
 class ara_list_article(ara_form):
     def __init__(self, parent, session_key = None, board_name = None):
         self.board_name = board_name
@@ -27,12 +37,12 @@ class ara_list_article(ara_form):
     def keypress(self, size, key):
         if key in self.keymap:
             key = self.keymap[key]
-        if key == "enter":
+        if key == "enter" and not self.session_key == 'guest':
             # self.boardlist.get_body().get_focus()[0].w.w.widget_list : 현재 활성화된 항목
             if self.hasarticle:
                 article_id = int(self.articlelist.get_body().get_focus()[0].w.w.widget_list[0].get_text()[0])
                 self.parent.change_page("read_article", {'session_key':self.session_key, 'board_name':self.board_name, 'article_id':article_id})
-        elif key == 'w' and not self.readonly:
+        elif key == 'w' and not self.readonly and not self.session_key == 'guest':
             self.parent.change_page('post_article', {'session_key':self.session_key, 'board_name':self.board_name, 'mode':'post', 'article_id':''})
         elif key == 'q':
             self.parent.change_page("main", {'session_key':self.session_key})
@@ -58,10 +68,13 @@ class ara_list_article(ara_form):
 	self.header = urwid.Filler(urwid.Text(u"ARA: Article list",align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
         self.infotext1 = urwid.Filler(urwid.Text("(N)ext/(P)revious Page (Number+Enter) Jump to article"))
-        if self.readonly:
-            self.infotext2 = urwid.Filler(urwid.Text("(Enter,space) Read (f)ind (/)Find next (?) Find previous (h)elp (q)uit"))
+        if self.session_key == 'guest':
+            self.infotext2 = urwid.Filler(urwid.Text("(f)ind (/)Find next (?) Find previous (h)elp (q)uit"))
         else:
-            self.infotext2 = urwid.Filler(urwid.Text("(Enter,space) Read (w)rite (f)ind (/)Find next (?) Find previous (h)elp (q)uit"))
+            if self.readonly:
+                self.infotext2 = urwid.Filler(urwid.Text("(Enter,space) Read (f)ind (/)Find next (?) Find previous (h)elp (q)uit"))
+            else:
+                self.infotext2 = urwid.Filler(urwid.Text("(Enter,space) Read (w)rite (f)ind (/)Find next (?) Find previous (h)elp (q)uit"))
 
         # Acquire articles
         cols, rows = self.parent.ui.get_cols_rows()
@@ -96,7 +109,10 @@ class ara_list_article(ara_form):
             self.hasarticle = True
         header = {'new':'N', 'number':'#', 'author':'Author', 'title':'Title', 'date':'Date', 'hit':'Hit', 'vote':'Vote'}
 
-        self.articlelist = listview.get_view(itemlist, header, articlelist_rowitem)
+        if self.session_key == 'guest':
+            self.articlelist = listview.get_view(itemlist, header, articlelist_rowitem_guest)
+        else:
+            self.articlelist = listview.get_view(itemlist, header, articlelist_rowitem)
 
         content = [('fixed',1, self.header),('fixed',1,self.infotext1),('fixed',1,self.infotext2),self.articlelist,]
         self.mainpile = urwid.Pile(content)

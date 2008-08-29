@@ -57,8 +57,9 @@ class ara_login(ara_form):
                 if (curpos == self.idedit) & (self.idedit.body.get_edit_text().strip() != ""):
                     self.idpwpile.set_focus(1)
                 elif (curpos == self.pwedit) & (self.pwedit.body.get_edit_text().strip() != ""):
-                    session_key = self.login(self.idedit.body.get_edit_text(), self.pwedit.body.get_edit_text(), self.get_remote_ip())
-                    if session_key[0] != False:
+                    retvalue, session_key = self.login(self.idedit.body.get_edit_text(), self.pwedit.body.get_edit_text(), self.get_remote_ip())
+                    assert retvalue, session_key
+                    if retvalue:
                         self.parent.change_page("welcome", {'session_key':session_key[1]})
             elif curfocus == 1:
                 langindex = self.langlist.w.get_focus().get_focus().get_focus()[1]
@@ -67,8 +68,8 @@ class ara_login(ara_form):
                 if row ==0:
                     self.parent.change_page("join", {})
                 elif row == 1:
-                    session_key = self.server.login_manager.guest_login(self.get_remote_ip())
-                    ara_welcome(session_key[1]).main()
+                    session_key = 'guest'
+                    self.parent.change_page("welcome", {'session_key':session_key})
         else:
             self.mainpile.keypress(size, key)
 
