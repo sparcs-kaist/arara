@@ -10,10 +10,10 @@
 
 {% block content %}
 <form action="/account/login/" method="post">
-    <label for="username_field">Username:</label>
+    <label for="username_field">{% trans "Username:" %}</label>
     <input type="text" id="username_field" name="username" />
-    <label for="password_field">Password:</label>
+    <label for="password_field">{% trans "Password:" %}</label>
     <input type="password" id="password_field" name="password" />
-    <input type="submit" value="Login" />
+    <input type="submit" value="{% trans "Login" %}" />
 </form>
 {% endblock %}

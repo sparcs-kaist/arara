@@ -11,24 +11,27 @@
 {% endblock %}
 
 {% block main_head %}
-messages
+{% load i18n %}
+{% trans "messages" %}
 {% endblock %}
 {% block sub_head %}
-messages
+{% load i18n %}
+{% trans "messages" %}
 {% endblock %}
 {% block message_content %}
+{% load i18n %}
 <div id="message_page_length_selector">
     <span class="display_message_num">
-        {% ifequal message_list_type 'inbox'%}{{num_new_message}} new message(s) /{% endifequal %} {{num_message}} message(s)
+        {% ifequal message_list_type 'inbox'%}{{num_new_message}}{% trans " new message(s) /" %}{% endifequal %} {{num_message}}{% trans " message(s)" %}
     </span>
     <span class="selector">
-        한번에
+	    {% trans "한번에" %}
         <select name="page_length">
             {% for pli in page_length_list %}
             <option value="{{pli}}"{% ifequal pli page_length %} selected="selected"{%endifequal%}>{{pli}}</option>
             {% endfor %}
         </select>
-        개씩 보기
+        {% trans "개씩 보기" %}
     </span>
 </div>
 
@@ -50,10 +53,10 @@ messages
                 {{person_type}}
             </th>
             <th class="message_list_table_th_text">
-                text
+                {% trans "text" %}
             </th>
             <th>
-                time
+                {% trans "time" %}
             </th>
         </tr>
         </thead>
@@ -115,8 +118,8 @@ messages
     <input type="hidden" value="{{message_list_type}}" name="message_list_type">
     <input type="hidden" value="{{message_no_strlist}}" name="message_no_strlist">
     <input type="hidden" value=1 name="flag_del_enm" id="flag_del_enm">
-	<input type="submit" class="small_btn" value="delete">
-    <a class="big_btn" href="/message/send/">send</a>
+    <input type="submit" class="small_btn" value="{% trans "delete" %}">
+	<a class="big_btn" href="/message/send/">{% trans "send" %}</a>
 </div>
 </form>
 {% endblock message_content %}

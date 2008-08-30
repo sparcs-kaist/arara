@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block content %}
+{% load i18n %}
 <div id="message_head">
     <span class="main_head">
         {% block main_head %}{% endblock %}
@@ -19,9 +20,9 @@
 
     <div id="message_menu">
         <span>
-        <a name="inbox" href="/message/inbox/">inbox</a> | 
-        <a name="outbox" href="/message/outbox/">outbox</a> | 
-        <a name="send" href="/message/send/">send</a>
+        <a name="inbox" href="/message/inbox/">{% trans "inbox" %}</a> | 
+        <a name="outbox" href="/message/outbox/">{% trans "outbox" %}</a> | 
+        <a name="send" href="/message/send/">{% trans "send" %}</a>
         </span>
     </div>
 </div>

@@ -12,6 +12,7 @@
 {% endblock script %}
 
 {% block article_content %}
+{% load i18n %}
 
 {% for article in article_read_list %}
 <div class="article article_depth_{{article.depth}}">
@@ -24,8 +25,8 @@
         <span class="user_nickname username">{{article.author_nickname}}</span>
         <span class="user_name">{{article.author_username}}</span>
         <span class="article_date">{{article.date|date:"Y/m/d H:i:s"}}</span>
-        <span class="vote">vote: {{article.vote}} |</span>
-        <span class="hit">hit: {{article.hit}} |</span>
+	<span class="vote">{% trans "vote: " %}{{article.vote}} |</span>
+        <span class="hit">{% trans "hit: " %}{{article.hit}} |</span>
         <div class="clear_float"></div>
     </div>
     {% else %}
@@ -34,7 +35,7 @@
         <span class="article_info">
             <span class="user_nickname username">{{article.author_nickname}}</span>
             <span class="user_name">{{article.author_username}}</span> |
-            <span class="vote">vote:{{article.vote}} </span> |
+            <span class="vote">{% trans "vote: " %}{{article.vote}} </span> |
             <span class="article_date">{{article.date|date:"Y/m/d H:i:s"}}</span>
         </span>
         <div class="clear_float"></div>
@@ -45,12 +46,12 @@
             {% if not article.blacklisted %}
             {{article.content|safe|linebreaksbr}}
             {% else %}
-            BLACKLISTED
+            {% trans "BLACKLISTED" %}
             {% endif %}
         </div>
         <div class="article_file">
             {% if article.attach %}
-            file(s) : 
+            {% trans "file(s) : " %}
             {% endif %}
             {% for file in article.attach %}
             <a href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" target="_blank">{{file.filename}}</a>
@@ -58,12 +59,12 @@
         </div>
         <div class="article_read_buttons">
             {% if not article.deleted %}
-            <a class="article_reply_show" href="#">reply</a>
+            <a class="article_reply_show" href="#">{% trans "reply" %}</a>
             {% if article.flag_modify %}
-            <a class="article_modify" href="/board/{{board_name}}/write?article_id={{article.id}}">modify</a>
-            <a class="article_delete" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/delete/">delete</a>
+            <a class="article_modify" href="/board/{{board_name}}/write?article_id={{article.id}}">{% trans "modify" %}</a>
+            <a class="article_delete" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/delete/">{% trans "delete" %}</a>
             {% endif %}
-            <a class="article_vote" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/vote">vote</a>
+            <a class="article_vote" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/vote">{% trans "vote" %}</a>
             {% endif %}
         </div>
         <div class="clear_float"></div>
@@ -77,7 +78,7 @@
                 <input type="hidden" value="{{article_no}}" name="article_no"></input>
                 <div class="article_write_file">
                     <div class="file_line">
-                        <span class="article_write_file_caption">file 1</span>
+                        <span class="article_write_file_caption">{% trans "file 1" %}</span>
                         <div class="file_upload_p">
                             <div class="file_upload_t">
                                 <input type="file" name="file1" class="file_upload" size=5></input>
@@ -85,15 +86,15 @@
                             <div class="file_upload_f">
                                 <input name="file1_fi" class="file_input_f"></input> <!-- file1 fake input -->
                                 <div class="file_search_button">
-                                    search
+                                    {% trans "search" %}
                                 </div>
                             </div>
                             <input type="button" name="file_input_add" class="small_btn" value="+"></input>
                         </div>
                     </div>
                 </div>
-                <input type="submit" class="write_reply small_btn" name="submit" value="write" />
-                <input type="button" class="cancel_reply small_btn" value="cancel"></input>
+		<input type="submit" class="write_reply small_btn" name="submit" value="{% trans "write" %}" />
+		<input type="button" class="cancel_reply small_btn" value="{% trans "cancel" %}"></input>
                 <div class="clear_float"></div>
             </form>
         </div>
@@ -103,7 +104,7 @@
 
 <div id="file_line_model">
     <div class="file_line">
-        <span class="article_write_file_caption">file 1</span>
+        <span class="article_write_file_caption">{% trans "file 1" %}</span>
         <div class="file_upload_p">
             <div class="file_upload_t">
                 <input type="file" name="file1" class="file_upload" size=95></input>
@@ -111,7 +112,7 @@
             <div class="file_upload_f">
                 <input name="file1_fi" class="file_input_f"></input> <!-- file1 fake input -->
                 <div class="file_search_button">
-                    search
+                    {% trans "search" %}
                 </div>
             </div>
             <input type="button" name="file_input_delete" class="small_btn" value="-"></input>
@@ -119,8 +120,8 @@
     </div>
 </div>
 <div id="article_nav_buttons">
-    <a class="btn" id="list_link" href="/board/{{board_name}}?page_no={{page_no}}">list</a>
-    <a class="btn" id="write_link" href="/board/{{board_name}}/write">write</a>
+    <a class="btn" id="list_link" href="/board/{{board_name}}?page_no={{page_no}}">{% trans "list" %}</a>
+    <a class="btn" id="write_link" href="/board/{{board_name}}/write">{% trans "write" %}</a>
 </div>
 
 {% endblock article_content %}

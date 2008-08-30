@@ -9,50 +9,51 @@
 {% endblock %}
 
 {% block myaccount_content %}
+{% load i18n %}
 <div id="myaccount_modify_content" class="account_content">
     <div class="account_head_block">
-	<div class="account_head">MY ACCOUNT MODIFY</div>
+	<div class="account_head">{% trans "MY ACCOUNT MODIFY" %}</div>
 	<div class="account_administer">
-	    <span><a href="/account/">My Account</a></span><span>|</span>
-	    <span id="contempo_acc_admin"><a rel="account_modify" href="/account/account_modify/">Account Modify</a></span><span>|</span>
+	    <span><a href="/account/">{% trans "My Account" %}</a></span><span>|</span>
+	    <span id="contempo_acc_admin"><a rel="account_modify" href="/account/account_modify/">{% trans "Account Modify" %}</a></span><span>|</span>
 
-	    <span><a href="/account/password_modify/">Password Modify</a></span><span>|</span>
+	    <span><a href="/account/password_modify/">{% trans "Password Modify" %}</a></span><span>|</span>
 
-	    <span><a href="/account/account_remove/">Account Remove</a></span>
+	    <span><a href="/account/account_remove/">{% trans "Account Remove" %}</a></span>
 	</div>
     </div>
     <form action="/account/account_modify/" method="post" id="account_information_content">
 	<span id="account_user_content">
 	    <div id="myaccount_modify">
-	    	<div class="acc_subtitle"><div class="acc_subtitle_name">My information</div></div>
+	    	<div class="acc_subtitle"><div class="acc_subtitle_name">{% trans "My information" %}</div></div>
 	        <div>
-		    <label for="mynickname">Nickname:<span class="feedback"></span></label>
+		    <label for="mynickname">{% trans "Nickname" %}<span class="feedback"></span></label>
 		    <input name="mynickname" id="mynickname" type="text" class="required_field" value={{nickname}} />
 		</div>
 	    </div>
 	    <div id="mysetting_modify">
-	    	<div class="acc_subtitle"><div class="acc_subtitle_name">My ARA setting</div></div>
+	    	<div class="acc_subtitle"><div class="acc_subtitle_name">{% trans "My ARA setting" %}</div></div>
 	        <div>
-		    <label for="mysig">Signature:</label>
+		    <label for="mysig">{% trans "Signature" %}</label>
 		    <textarea name="mysig" id="mysig" cols="50" rows="10">{{signature}}</textarea>
 	    	</div>
 	        <div>
-		    <label for="myintroduce">Introduction:</label>
+		    <label for="myintroduce">{% trans "Introduction" %}</label>
 		    <textarea name="myintroduce" id="myintroduce" cols="50" rows="10">{{self_introduction}}</textarea>
 	        </div>
 	        <div>
-		    <label for="mylanguage">Language:</label>
+		    <label for="mylanguage">{% trans "Language" %}</label>
 		    <select name="mylanguage" id="mylanguage" />
 			<option value="eng">English</option>
-			<option value="kor">Korean</option>
+			<option value="kor">한국어</option>
 		    </select>
 	        </div>
 	    </div>
 	</span>
 	<div id="register_buttons">
 	<label for="register_submit"><span class="feedback" id="regist_btn_feedback"></span></label>
-	<span id="register_submit"><input value="Done" name="done" class="submit" type="submit" /></span>
-	<span id="register_cancel"><input value="Cancel" name="cancel" type="button" onClick="location.href='/account/'" /></span>
+	<span id="register_submit"><input value="{% trans "Done" %}" name="done" class="submit" type="submit" /></span>
+	<span id="register_cancel"><input value="{% trans "Cancel" %}" name="cancel" type="button" onClick="location.href='/account/'" /></span>
 	</div>
     </form>
 </div>

@@ -1,5 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{% load i18n %}
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <link rel="stylesheet" href="/media/style/index.css"></link>
@@ -13,11 +14,11 @@
 		    <form id="login" action="/account/login/" method="post">
 			<div id="input_wrapper">
 				<div id="username">
-				    <label for="username">ID</label>
+				    <label for="username">{% trans "ID" %}</label>
 				    <input type="text" id="username" name="username">
 				</div>
 				<div id="password">
-				    <label for="password">PASSWORD</label>
+				    <label for="password">{% trans "PASSWORD" %}</label>
 				    <input type="password" id="password" name="password">
 				</div>
 			</div>
@@ -25,17 +26,17 @@
 			<input type="image" src="/media/image/login.jpg" alt="LOGIN">
 		    </form>
 		    <div id="navigation">
-			<p id="register"><a href="/account/register/agreement/">REGISTER</a></p>
-			<p id="guest"><a href="/main/">GUEST</a></p>
+			<p id="register"><a href="/account/register/agreement/">{% trans "REGISTER" %}</a></p>
+			<p id="guest"><a href="/main/">{% trans "GUEST" %}</a></p>
 		    </div>
 	    </div>
             <div id="footer_wrapper">
 		<div id="footer">
-		    All copyrights reserved by SPARCS
+		    {% trans "All copyrights reserved by SPARCS" %}
 		</div>
                 <div id="counter">
-                    <p>TODAY : <span>{{today_visitor_count}}</span></p>
-                    <p>TOTAL : <span>{{total_visitor_count}}</span></p>
+                    <p>{% trans "TODAY" %} : <span>{{today_visitor_count}}</span></p>
+                    <p>{% trans "TOTAL" %} : <span>{{total_visitor_count}}</span></p>
                 </div>
             </div>
         </div>

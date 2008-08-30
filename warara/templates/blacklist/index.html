@@ -7,24 +7,25 @@
 <script type="text/javascript" src="/media/js/blacklist.js"></script>
 {% endblock %}
 {% block content %}
+{% load i18n %}
     <div id="blacklist">
     <div id="mypage">
-	<div id="blacklist_mypage_head">BLACKLIST</div>
+	    <div id="blacklist_mypage_head">{% trans "BLACKLIST" %}</div>
 	<div id="blacklist_mypage_content">
         <form id="blacklist_delete_form" action="/blacklist/delete/" method="post">
             <input type="hidden" id="username" name="username" />
         </form>
         <form action="/blacklist/add/" method="post">
             <input type="text" name="blacklist_id" id="blacklist_mypage_add" />
-	    <input type="submit" value="add" class="small_btn" />
+	    <input type="submit" value="{% trans "add" %}" class="small_btn" />
     	</form>
         <form action="/blacklist/update/" method="post" id="bl_mypage_chart" name="bl_mypage_chart">
             <table>
                 <tr>
 		    <th class="th" name="del_checkbox"><input type="checkbox" id="check_all_bl" /></th>
-		    <th class="th" name="chart_username">USERNAME</th>
-		    <th class="th" name="block_art">ARTICLE</th>
-		    <th class="th" name="block_mes">MESSAGE</th>
+		    <th class="th" name="chart_username">{% trans "USERNAME" %}</th>
+		    <th class="th" name="block_art">{% trans "ARTICLE" %}</th>
+		    <th class="th" name="block_mes">{% trans "MESSAGE" %}</th>
 		    <th class="th" name="del_ea"><img src="/media/image/delete_button.png" alt="delete"></th>
                 </tr>
                 {% for b in blacklist %}
@@ -38,17 +39,17 @@
                 {% endfor %}
 	    </table>
 	    <input type="hidden" name="bl_submit_chooser" id="bl_submit_chooser" />
-            <input type="submit" name="delete" value="Delete" id="bl_delete_submit" class="small_btn" id="bl_mypage_modify" />
-            <input type="submit" name="done" value="Done" id="bl_update_submit" class="small_btn" />
+            <input type="submit" name="delete" value="{% trans "Delete" %}" id="bl_delete_submit" class="small_btn" id="bl_mypage_modify" />
+            <input type="submit" name="done" value="{% trans "Done" %}" id="bl_update_submit" class="small_btn" />
         </form>
 	</div>
     </div>
     <div id="search_user">
-	<div id="blacklist_user_search_head">USER SEARCH</div>
+	<div id="blacklist_user_search_head">{% trans "USER SEARCH" %}</div>
 	<div id="blacklist_user_search_content">
         <form id="search_form" action="/blacklist/" method="get">
             <input type="text" name="search" id="bl_search_text_field" />
-            <input type="submit" value="search" class="small_btn" />
+            <input type="submit" value="{% trans "search" %}" class="small_btn" />
     	</form>
 	<div id="searching_results">
 	    {% for result in search_result %}<p class="username">{{result.username}}</p>{% endfor %}

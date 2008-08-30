@@ -11,18 +11,21 @@
 {% endblock script %}
 
 {% block main_head %}
-send a message
+{% load i18n %}
+{% trans "send a message" %}
 {% endblock %}
 {% block sub_head %}
-send a message
+{% load i18n %}
+{% trans "send a message" %}
 {% endblock %}
 {% block message_content %}
+{% load i18n %}
 <form action="/message/send/" method="POST" name="message_send">
     <div id="message_send_receiver">
-        <div class="sendto">send to : </div>
+        <div class="sendto">{% trans "send to : " %}</div>
         <div class="doublemarginshet">
         <input id="send_receiver" type="text" name="receiver" value="{{default_receiver}}"></input>
-        <a href="#" name="select_receiver_type"><span rel="nickname" class="select_type type_nickname">nickname</span><span rel="id" class="select_type type_id">id</span></a>
+        <a href="#" name="select_receiver_type"><span rel="nickname" class="select_type type_nickname">{% trans "nickname" %}</span><span rel="id" class="select_type type_id">{% trans "id" %}</span></a>
         <input type="hidden" name="receiver_type" value="nickname"></input>
         </div>
     </div>
@@ -31,10 +34,10 @@ send a message
     </div>
     <div id="message_send_buttons">
         <span class="message_send_submit">
-            <input type="submit" name="message_submit" class="message_send_submit big_btn" value="send"></input>
+		<input type="submit" name="message_submit" class="message_send_submit big_btn" value="{% trans "send" %}"></input>
         </span>
         <span class="message_send_cancel">
-            <input type="button" name="cancel" value="cancel" class="small_btn"></input>
+		<input type="button" name="cancel" value="{% trans "cancel" %}" class="small_btn"></input>
         </span>
     </div>
 </form>

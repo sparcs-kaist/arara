@@ -5,27 +5,28 @@
 {% endblock %}
 
 {% block content %}
+{% load i18n %}
 <div id="register_content">
     <div class="account_head_block">
-	<div class="account_head">REGISTRATION AGREEMENT</div>
+	<div class="account_head">{% trans "REGISTRATION AGREEMENT" %}</div>
 	<div class="register_process">
-	    <span id="contempo_process">Step 1 : Regisgtration agreement</span>
+	    <span id="contempo_process">{% trans "Step 1 : Regisgtration agreement" %}</span>
 	    <span>|</span>
-	    <span>Step 2 : Account register</span>
+	    <span>{% trans "Step 2 : Account register" %}</span>
 	</div>
     </div>
-    <div id="agreement_subtitle_bottom"><div id="agreement_sub_title">User Agreement</div></div>
+    <div id="agreement_subtitle_bottom"><div id="agreement_sub_title">{% trans "User Agreement" %}</div></div>
     <div id="agreement_content">
         <textarea name="agreement" id="agreement" readonly />
 -- User Agreement --
 Glad to see you
 <!--It will be modified-->
 	</textarea>
-	<div>Want you create an account, you should check Agree.</div>
+	<div>{% trans "Want you create an account, you should check Agree." %}</div>
     </div>
     <div id="register_agree_buttons">
-	<span id="register_agree"><input type="button" value="agree" onClick="location.href='/account/register/'" /></span>
-	<span id="register_disagree"><input type="button" value="disagree" onClick="location.href='/main/'" /></span>
+	    <span id="register_agree"><input type="button" value="{% trans "agree" %}" onClick="location.href='/account/register/'" /></span>
+	    <span id="register_disagree"><input type="button" value="{% trans "disagree" %}" onClick="location.href='/main/'" /></span>
     </div>
 </div>
 {% endblock %}

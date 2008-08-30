@@ -11,17 +11,18 @@
 {% endblock style %}
 
 {% block board_content %}
+{% load i18n %}
 <div id="article_write_head">
     <span class="main_head">
-        write an article
+        {% trans "write an article" %}
     </span>
     <span class="sub_head">
-        write an article
+        {% trans "write an article" %}
     </span>
 </div>
 <form name="article_write" action="/board/{{board_name}}/write/" method="POST" enctype="multipart/form-data">
     <div id="article_write_title">
-        <caption>title : </caption>
+        <caption>{% trans "title : " %}</caption>
         <input type="text" value="{{default_title}}" name="title"></input>
     </div>
     <div id="article_write_text">
@@ -29,7 +30,7 @@
     </div>
     {% if article.attach %}
     <div id="article_delete_file">
-        <caption>file(s) : </caption>
+        <caption>{% trans "file(s) : " %}</caption>
         {% for file in article.attach %}
         <span name="aritcle_file">
             <a name="file_name" rel="{{file.file_id}}" href="/board/{{board_name}}/0/{{article.id}}/file/{{file.file_id}}" target="_blank">{{file.filename}}</a>
@@ -41,7 +42,7 @@
     {% endif %}
     <div id="article_write_file">
         <div class="file_line">
-            <span class="article_write_file_caption">file 1</span>
+            <span class="article_write_file_caption">{% trans "file 1" %}</span>
             <div class="file_upload_p">
                 <div class="file_upload_t">
                     <input type="file" name="file1" class="file_upload" size=95></input>
@@ -49,7 +50,7 @@
                 <div class="file_upload_f">
                     <input name="file1_fi" class="file_input_f"></input> <!-- file1 fake input -->
                     <div class="file_search_button">
-                        search
+                        {% trans "search" %}
                     </div>
                 </div>
                 <input type="button" name="file_input_add" class="small_btn" value="+"></input>
@@ -58,7 +59,7 @@
     </div>
     <div id="file_line_model">
         <div class="file_line">
-            <span class="article_write_file_caption">file 1</span>
+            <span class="article_write_file_caption">{% trans "file 1" %}</span>
             <div class="file_upload_p">
                 <div class="file_upload_t">
                     <input type="file" name="file1" class="file_upload" size=95></input>
@@ -66,7 +67,7 @@
                 <div class="file_upload_f">
                     <input name="file1_fi" class="file_input_f"></input> <!-- file1 fake input -->
                     <div class="file_search_button">
-                        search
+                        {% trans "search" %}
                     </div>
                 </div>
                 <input type="button" name="file_input_delete" class="small_btn" value="-"></input>
@@ -74,9 +75,9 @@
         </div>
     </div>
     <div id="article_write_buttons">
-        <input type="button" value="preview" class="small_btn"></input>
+	    <input type="button" value="{% trans "preview" %}" class="small_btn"></input>
         <input type="submit" value="{{t_write}}" name="article_write" class="big_btn"></input>
-        <input type="button" value="cancel" name="cancel" class="small_btn"></input>
+	<input type="button" value="{% trans "cancel" %}" name="cancel" class="small_btn"></input>
         <input type="hidden" value="{{t_write}}" name="write_type"></input>
         <input type="hidden" value="{{article_no}}" name="article_no"></input>
         <input type="hidden" value="{{board_name}}" name="board_name"></input>

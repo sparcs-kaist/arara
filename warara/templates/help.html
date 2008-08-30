@@ -11,15 +11,16 @@
 {% endblock script %}
 
 {% block content %}
+{% load i18n %}
 
 <div id="help_top_menu">
     <ul>
-        <li class="first_li"><a rel="base" href="/help/base" name="base">base</a></li>
-        <li><a rel="account" href="/help/account" name="account">account</a></li>
-        <li><a rel="article" href="/help/article" name="article">article</a></li>
-        <li><a rel="message" href="/help/message" name="message">message</a></li>
-        <li><a rel="blacklist" href="/help/blacklist" name="blacklist">blacklist</a></li>
-        <li><a rel="help" href="/help/help" name="help">help</a></li>
+        <li class="first_li"><a rel="base" href="/help/base" name="base">{% trans "base" %}</a></li>
+        <li><a rel="account" href="/help/account" name="account">{% trans "account" %}</a></li>
+        <li><a rel="article" href="/help/article" name="article">{% trans "article" %}</a></li>
+        <li><a rel="message" href="/help/message" name="message">{% trans "message" %}</a></li>
+        <li><a rel="blacklist" href="/help/blacklist" name="blacklist">{% trans "blacklist" %}</a></li>
+        <li><a rel="help" href="/help/help" name="help">{% trans "help" %}</a></li>
     </ul>
 </div>
 
@@ -53,6 +54,22 @@
 </div>
 
 <div id="help_account" class="hidden">
+	<h1>Account</h1>
+	<h3>Register Agreement</h3>
+	<ul>
+		<li>Before filling out register document, </li>
+	</ul>
+	<h3>Registeragreement</h3>
+	<ul>
+
+	</ul>
+	<h3>myaccount</h3>
+	<ul>
+	</ul>
+	<h4>content modify</h4>
+	<h4>password modify</h4>
+	<h4>remove modify</h4>
+	<h3>Another user's information</h3>
 </div>
 
 <div id="help_article" class="hidden">
@@ -109,6 +126,11 @@
 </div>
 
 <div id="help_blacklist" class="hidden">
+<h3>Blacklist functtion</h3>
+<h3>Adding blacklist</h3>
+<h4>Click done</h4>
+<h4>Click username</h4>
+<h5>user searching area</h5>
 </div>
 
 <div id="help_help" class="hidden">

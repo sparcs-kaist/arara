@@ -9,21 +9,22 @@
 {% endblock %}
 
 {% block myaccount_content %}
+{% load i18n %}
 <div id="myaccount_modify_content" class="account_content">
     <div class="account_head_block">
-	<div class="account_head">MY ACCOUNT REMOVE</div>
+	<div class="account_head">{% trans "MY ACCOUNT REMOVE" %}</div>
 	<div class="account_administer">
-	    <span><a href="/account/">My Account</a></span><span>|</span>
-	    <span><a href="/account/account_modify/">Account Modify</a></span><span>|</span>
+	    <span><a href="/account/">{% trans "My Account" %}</a></span><span>|</span>
+	    <span><a href="/account/account_modify/">{% trans "Account Modify" %}</a></span><span>|</span>
 
-	    <span><a href="/account/password_modify/">Password Modify</a></span><span>|</span>
+	    <span><a href="/account/password_modify/">{% trans "Password Modify" %}</a></span><span>|</span>
 
-	    <span id="contempo_acc_admin"><a href="/account/account_remove/">Account Remove</a></span>
+	    <span id="contempo_acc_admin"><a href="/account/account_remove/">{% trans "Account Remove" %}</a></span>
 	</div>
     </div>
     <div id="account_information_content">
 	<div id="myaccountremove">
-	    <div class="acc_subtitle"><div class="acc_subtitle_name">Caution</div></div>
+	    <div class="acc_subtitle"><div class="acc_subtitle_name">{% trans "Caution" %}</div></div>
 	    	<ul>
 		    <p>Though you remove your account, followings will still be valid for another user.</p>
 		    <li>The articles that you wrote.</li>
@@ -34,18 +35,18 @@
     </div>
     <form action="/account/account_remove/" method="post" id="acc_rm_submit">
 	<div id="acc_rm_remind">
-	    <div>If you remove, you couldn't restore the account again. Are you sure?</div>
-	    <div>Current account : <span id="acc_rm_nick" class="username"> {{nickname}}</span><span id="acc_rm_user"> {{username}}</span></div>
+	    <div>{% trans "If you remove, you couldn't restore the account again. Are you sure?" %}</div>
+	    <div>{% trans "Current account : " %}<span id="acc_rm_nick" class="username"> {{nickname}}</span><span id="acc_rm_user"> {{username}}</span></div>
 	</div>
 	<div id="account_rm_buttons">
 	    <div id="acc_remove_buttons">
-		<input id="remove_button" type="button" value="Remove" class="button" />
-		<input value="Cancel" name="cancel" type="button" onClick="location.href='/account/'" />
+		    <input id="remove_button" type="button" value="{% trans "Remove" %}" class="button" />
+		    <input value="{% trans "Cancel" %}" name="cancel" type="button" onClick="location.href='/account/'" />
 	    </div>
 	    <div id="confirm_remove" style="display: none">
-		<p> Are you sure remove your account? </p>
-		<span id="account_rm_submit"><input value="Yes, Remove" name="remove" class="submit" type="submit" id="remove_submit" /></span>
-		<span id="account_rm_cancel"><input value="No, Cancel" name="cancel" type="button" onClick="location.href='/account/'" id="dont_remove" /></span>
+		<p> {% trans "Are you sure remove your account?" %} </p>
+		<span id="account_rm_submit"><input value="{% trans "Yes, Remove" %}" name="remove" class="submit" type="submit" id="remove_submit" /></span>
+		<span id="account_rm_cancel"><input value="{% trans "No, Cancel" %}" name="cancel" type="button" onClick="location.href='/account/'" id="dont_remove" /></span>
 	    </div>
 	</div>
     </form>
