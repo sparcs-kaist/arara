@@ -8,6 +8,11 @@ import urwid
 from ara_form import *
 import widget
 
+import gettext
+LOCALE_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'locale')
+t = gettext.translation('ara', LOCALE_PATH)
+_ = t.ugettext
+
 class ara_login(ara_form):
     def get_remote_ip(self):
         try:
@@ -25,27 +30,27 @@ class ara_login(ara_form):
     def login(self, id, password, ip):
         retvalue = None
         try:
-            retvalue = self.server.login_manager.login(id, password, ip)
+            retvalue, message = self.server.login_manager.login(id, password, ip)
         except:
-            retvalue= [False, 'SERVER_ERROR']
-        if retvalue[0] == True:
+            retvalue, message = [False, 'SERVER_ERROR']
+        if retvalue == True:
             pass
         else:
-            if retvalue[1] == 'WRONG_USERNAME':
-                self.errormessage.body.set_text(u"ID가 ㅇ벗습니다.")
-            elif retvalue[1] == 'WRONG_PASSWORD':
-                self.errormessage.body.set_text(u"비밀번호가 틀렸습니다.")
-            elif retvalue[1] == 'DATABASE_ERROR':
-                self.errormessage.body.set_text(u"데이터베이스 오류가 발생했습니다.")
-            elif retvalue[1] == 'SERVER_ERROR':
-                self.errormessage.body.set_text(u"XML-RPC 서버가 죽었습니다. 잠시 후에 시도해 주십시오.")
+            if message  == 'WRONG_USERNAME':
+                self.errormessage.body.set_text(_("Specified ID doesn't exist."))
+            elif message == 'WRONG_PASSWORD':
+                self.errormessage.body.set_text(_("Wrong password."))
+            elif message == 'DATABASE_ERROR':
+                self.errormessage.body.set_text(_("Database error."))
+            elif message == 'SERVER_ERROR':
+                self.errormessage.body.set_text(_("XML-RPC server problem. Try again after several minutes."))
             else:
-                self.errormessage.body.set_text(u"정의되지 않은 오류입니다.")
+                self.errormessage.body.set_text(_("Undefined error."))
                 assert("Undefined error")
             self.idedit.body.set_edit_text("")
             self.pwedit.body.set_edit_text("")
             self.idpwpile.set_focus(0)
-        return retvalue
+        return retvalue, message
 
     def keypress(self, size, key):
         curfocus = self.bottomcolumn.get_focus_column()
@@ -58,7 +63,6 @@ class ara_login(ara_form):
                     self.idpwpile.set_focus(1)
                 elif (curpos == self.pwedit) & (self.pwedit.body.get_edit_text().strip() != ""):
                     retvalue, session_key = self.login(self.idedit.body.get_edit_text(), self.pwedit.body.get_edit_text(), self.get_remote_ip())
-                    assert retvalue, session_key
                     if retvalue:
                         self.parent.change_page("welcome", {'session_key':session_key})
             elif curfocus == 1:
