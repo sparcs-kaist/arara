@@ -319,6 +319,21 @@ u'serialx is...2'
 >>> l['hit'][0]['author_username']
 u'mikkang'
 
+# Not Read Article List Test!
+
+>>> _, l = server.article_manager.not_read_article_list(session_key_combacsa)
+>>> ret
+True
+>>> l['hit']
+[110, 109, 108, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87]
+
+>>> _, _ = server.article_manager.read(session_key_combacsa, u'garbages', 110)
+>>> _, l = server.article_manager.not_read_article_list(session_key_combacsa)
+>>> ret
+True
+
+>>> l['hit']
+[109, 108, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87]
 
 Fin!
 

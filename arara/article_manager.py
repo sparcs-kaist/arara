@@ -270,10 +270,12 @@ class ArticleManager(object):
         else:
             return False, 'DATABASE_ERROR'
         
+
+    @log_method_call
     @require_login
     def not_read_article_list(self, session_key, page=1, page_length=20):
         '''
-        사용자가 안 읽은 글들을 불러오는 함수
+        사용자가 안 읽은 글들의 no을 리던해주는 함수
 
         @type  session_key: string
         @param session_key: User Key
@@ -293,7 +295,20 @@ class ArticleManager(object):
         ret_dict = {}
         try:
             session = model.Session()
-            article_count = session.query(model.Article).filter_by(root_id=None).count()
+            offset = page_length * (page - 1)
+            last = offset + page_length
+            article_list = session.query(model.Article).filter_by(root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
+            article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
+            article_number = []
+            for article in article_dict_list:
+                article_number.append(article['id'])
+            ret, read_stats_list = self.read_status_manager.check_stats(session_key, article_number)
+            #not_read_article = filter(lambda x : x = 'N', read_stats_list) 
+            not_read_article_number = []
+            for i in range(len(read_stats_list)):
+                if read_stats_list[i] == 'N':
+                    not_read_article_number.append(article_number[i])
+            article_count = len(not_read_article_number) 
             last_page = int(article_count / page_length)
             if article_count % page_length != 0:
                 last_page += 1
@@ -302,15 +317,7 @@ class ArticleManager(object):
             if page > last_page:
                 session.close()
                 return False, 'WRONG_PAGENUM'
-            offset = page_length * (page - 1)
-            last = offset + page_length
-            article_list = session.query(model.Article).filter_by(root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
-            article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
-            for article in article_dict_list:
-                ret, msg = self.read_status_manager.check_stat(session_key, article['id'])
-                if ret:
-                    article['read_status'] = msg
-            ret_dict['hit'] = article_dict_list
+            ret_dict['hit'] = not_read_article_number
             ret_dict['last_page'] = last_page
             ret_dict['results'] = article_count 
             session.close()
@@ -321,7 +328,7 @@ class ArticleManager(object):
             return False, 'DATABASE_ERROR'
 
 
-
+    @log_method_call
     @require_login
     def new_article_list(self, session_key, page=1, page_length=20):
         '''
