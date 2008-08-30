@@ -1,0 +1,565 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-08-31 04:54+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: templates/base.html:24
+msgid "웹아라"
+msgstr "웹아라"
+
+#: templates/base.html:25
+msgid "웹아라old"
+msgstr "웹아라old"
+
+#: templates/base.html:26
+msgid "구름"
+msgstr "구름"
+
+#: templates/base.html:57 templates/account/login.html:13
+msgid "Username:"
+msgstr "아이디"
+
+#: templates/base.html:59 templates/account/login.html:15
+msgid "Password:"
+msgstr "비밀번호"
+
+#: templates/base.html:62 templates/base.html.py:65
+#: templates/account/login.html:17
+msgid "Login"
+msgstr "로그인"
+
+#: templates/base.html:66
+msgid "Logout"
+msgstr "로그아웃"
+
+#: templates/base.html:67
+msgid "Account"
+msgstr "계정 관리"
+
+#: templates/base.html:68
+msgid "Register"
+msgstr "회원가입"
+
+#: templates/base.html:69
+msgid "Message"
+msgstr "쪽지"
+
+#: templates/base.html:70
+msgid "Blacklist"
+msgstr "블랙리스트"
+
+#: templates/base.html:71
+msgid "Help"
+msgstr "도움말"
+
+#: templates/base.html:100 templates/index.html:35
+msgid "All copyrights reserved by SPARCS"
+msgstr "모든 저작권은 SPARCS에 있습니다."
+
+#: templates/base.html:107
+msgid "Send Message"
+msgstr "쪽지 보내기"
+
+#: templates/base.html:108
+msgid "User Information"
+msgstr "사용자 정보 보기"
+
+#: templates/base.html:109
+msgid "Add Blacklist"
+msgstr "블랙리스트 추가하기"
+
+#: templates/base.html:114
+msgid "Member Information"
+msgstr "사용자 정보 보기"
+
+#: templates/base.html:116
+msgid "send message"
+msgstr "쪽지 보내기"
+
+#: templates/base.html:117
+msgid "add blacklist"
+msgstr "블랙리스트 추가하기"
+
+#: templates/base.html:118
+msgid "close"
+msgstr "닫기"
+
+#: templates/base.html:124 templates/base.html.py:127
+#: templates/message/send.html:15 templates/message/send.html.py:19
+msgid "send a message"
+msgstr "쪽지 보내기"
+
+#: templates/base.html:133 templates/message/send.html:25
+msgid "send to : "
+msgstr "받는 사용자 : "
+
+#: templates/base.html:143 templates/message/base.html:25
+#: templates/message/list.html:122 templates/message/send.html:37
+msgid "send"
+msgstr "쪽지 보내기"
+
+#: templates/base.html:146 templates/board/read.html:97
+#: templates/board/write.html:80 templates/message/send.html:40
+msgid "cancel"
+msgstr "취소"
+
+#: templates/error.html:13
+msgid "에러가 발생했습니다. 시샵에게 문의하세요."
+msgstr "에러가 발생했습니다. 시샵에게 문의 부탁드립니다."
+
+#: templates/help.html:18
+msgid "base"
+msgstr "기본적인 작동법"
+
+#: templates/help.html:19
+msgid "account"
+msgstr "계정 관리"
+
+#: templates/help.html:20
+msgid "article"
+msgstr "게시판"
+
+#: templates/help.html:21
+msgid "message"
+msgstr "쪽지"
+
+#: templates/help.html:22
+msgid "blacklist"
+msgstr "블랙리스트"
+
+#: templates/help.html:23
+msgid "help"
+msgstr "도움말"
+
+#: templates/index.html:17 templates/account/another_user_account.html:5
+#: templates/account/myaccount_frame.html:26
+#: templates/account/register.html:25
+msgid "ID"
+msgstr "아이디"
+
+#: templates/index.html:21
+msgid "PASSWORD"
+msgstr "비밀번호"
+
+#: templates/index.html:29
+msgid "REGISTER"
+msgstr "회원가입"
+
+#: templates/index.html:30
+msgid "GUEST"
+msgstr "손님"
+
+#: templates/index.html:38
+msgid "TODAY"
+msgstr "오늘 방문자 수"
+
+#: templates/index.html:39
+msgid "TOTAL"
+msgstr "총 방문자 수"
+
+#: templates/main.html:15
+msgid "Today's Best"
+msgstr "오늘의 인기글"
+
+#: templates/main.html:22 templates/main.html.py:32 templates/main.html:48
+#: templates/main.html.py:58 templates/board/read.html:67
+msgid "vote"
+msgstr "추천"
+
+#: templates/main.html:41
+msgid "Weekly Best"
+msgstr "이번주의 인기글"
+
+#: templates/account/another_user_account.html:3
+msgid "'s information"
+msgstr "님의 정보"
+
+#: templates/account/another_user_account.html:9
+#: templates/account/myaccount_frame.html:30
+#: templates/account/myaccount_modify.html:30
+#: templates/account/register.html:29
+msgid "Nickname"
+msgstr "별명"
+
+#: templates/account/another_user_account.html:14
+#: templates/account/myaccount_frame.html:37
+#: templates/account/myaccount_modify.html:37
+#: templates/account/register.html:54
+msgid "Signature"
+msgstr "서명"
+
+#: templates/account/another_user_account.html:18
+msgid "Self Introduction"
+msgstr "자기 소개"
+
+#: templates/account/another_user_account.html:22
+msgid "Last Login IP"
+msgstr "지난번 접속 IP"
+
+#: templates/account/myacc_pw_modify.html:15
+msgid "MY PASSWORD MODIFY"
+msgstr "내 비밀번호 수정"
+
+#: templates/account/myacc_pw_modify.html:17
+#: templates/account/myaccount_frame.html:14
+#: templates/account/myaccount_modify.html:17
+#: templates/account/myaccount_remove.html:17
+msgid "My Account"
+msgstr "내 계정"
+
+#: templates/account/myacc_pw_modify.html:18
+#: templates/account/myaccount_frame.html:15
+#: templates/account/myaccount_modify.html:18
+#: templates/account/myaccount_remove.html:18
+msgid "Account Modify"
+msgstr "정보 수정"
+
+#: templates/account/myacc_pw_modify.html:20
+#: templates/account/myaccount_frame.html:17
+#: templates/account/myaccount_modify.html:20
+#: templates/account/myaccount_remove.html:20
+msgid "Password Modify"
+msgstr "비밀번호 수정"
+
+#: templates/account/myacc_pw_modify.html:21
+#: templates/account/myaccount_frame.html:19
+#: templates/account/myaccount_modify.html:22
+#: templates/account/myaccount_remove.html:22
+msgid "Account Remove"
+msgstr "계정 삭제"
+
+#: templates/account/myacc_pw_modify.html:27
+#: templates/account/register.html:40 templates/account/register.html.py:42
+msgid "Password"
+msgstr "비밀번호"
+
+#: templates/account/myacc_pw_modify.html:29
+msgid "Current password"
+msgstr "현재 비밀번호"
+
+#: templates/account/myacc_pw_modify.html:33
+msgid "New password"
+msgstr "새 비밀번호"
+
+#: templates/account/myacc_pw_modify.html:37
+msgid "Re-enter new password"
+msgstr "비밀번호 재입력"
+
+#: templates/account/myacc_pw_modify.html:44
+#: templates/account/myaccount_modify.html:55
+#: templates/account/register.html:72 templates/blacklist/index.html:43
+msgid "Done"
+msgstr "확인"
+
+#: templates/account/myacc_pw_modify.html:45
+#: templates/account/myaccount_modify.html:56
+#: templates/account/myaccount_remove.html:44
+#: templates/account/register.html:73
+msgid "Cancel"
+msgstr "취소"
+
+#: templates/account/myaccount_frame.html:12
+msgid "MY ACCOUNT"
+msgstr "내 계정"
+
+#: templates/account/myaccount_frame.html:24
+#: templates/account/myaccount_modify.html:28
+msgid "My information"
+msgstr "내 정보"
+
+#: templates/account/myaccount_frame.html:35
+#: templates/account/myaccount_modify.html:35
+msgid "My ARA setting"
+msgstr "내 아라 설정"
+
+#: templates/account/myaccount_frame.html:41
+#: templates/account/myaccount_modify.html:41
+#: templates/account/register.html:58
+msgid "Introduction"
+msgstr "자기 소개"
+
+#: templates/account/myaccount_frame.html:45
+#: templates/account/myaccount_modify.html:45
+#: templates/account/register.html:62
+msgid "Language"
+msgstr "언어설정"
+
+#: templates/account/myaccount_frame.html:49
+msgid "Last login IP"
+msgstr "마지막 접속 IP"
+
+#: templates/account/myaccount_frame.html:53
+msgid "Last logout time"
+msgstr "마지막 로그아웃 시각"
+
+#: templates/account/myaccount_modify.html:15
+msgid "MY ACCOUNT MODIFY"
+msgstr "내 계정정보 수정"
+
+#: templates/account/myaccount_remove.html:15
+msgid "MY ACCOUNT REMOVE"
+msgstr "내 계정 삭제"
+
+#: templates/account/myaccount_remove.html:27
+msgid "Caution"
+msgstr "경고"
+
+#: templates/account/myaccount_remove.html:38
+msgid "If you remove, you couldn't restore the account again. Are you sure?"
+msgstr "계정을 삭제하면 다시 복구해드릴 수 없습니다. 정말 삭제하시겠습니까?"
+
+#: templates/account/myaccount_remove.html:39
+msgid "Current account : "
+msgstr "현재 계정 : "
+
+#: templates/account/myaccount_remove.html:43
+msgid "Remove"
+msgstr "계정 삭제"
+
+#: templates/account/myaccount_remove.html:47
+msgid "Are you sure remove your account?"
+msgstr "정말 계정을 삭제하시겠습니까?"
+
+#: templates/account/myaccount_remove.html:48
+msgid "Yes, Remove"
+msgstr "네, 삭제합니다"
+
+#: templates/account/myaccount_remove.html:49
+msgid "No, Cancel"
+msgstr "아니오, 취소합니다"
+
+#: templates/account/register.html:13
+msgid "USER REGISTRATION"
+msgstr "사용자 약관"
+
+#: templates/account/register.html:15
+#: templates/account/register_agreement.html:13
+msgid "Step 1 : Regisgtration agreement"
+msgstr "절차 1: 가입 약관"
+
+#: templates/account/register.html:17
+#: templates/account/register_agreement.html:15
+msgid "Step 2 : Account register"
+msgstr "절차 2 : 계정 등록"
+
+#: templates/account/register.html:23
+msgid "User information"
+msgstr "사용자 정보"
+
+#: templates/account/register.html:33
+msgid "E-mail address"
+msgstr "이메일 주소"
+
+#: templates/account/register.html:36
+msgid "(We will send you user registration confirmation to here)"
+msgstr "(이 이메일 주소로 가입 확인서를 보내드립니다.)"
+
+#: templates/account/register.html:46
+msgid "Re-enter password"
+msgstr "비밀번호 재입력"
+
+#: templates/account/register.html:52
+msgid "ARA Setting"
+msgstr "아라 설정"
+
+#: templates/account/register_agreement.html:11
+msgid "REGISTRATION AGREEMENT"
+msgstr "가입 약관"
+
+#: templates/account/register_agreement.html:18
+msgid "User Agreement"
+msgstr "사용자 약관"
+
+#: templates/account/register_agreement.html:25
+msgid "Want you create an account, you should check Agree."
+msgstr "계정을 만들기 위해선 동의를 누르셔야 합니다."
+
+#: templates/account/register_agreement.html:28
+msgid "agree"
+msgstr "동의합니다"
+
+#: templates/account/register_agreement.html:29
+msgid "disagree"
+msgstr "동의하지 않습니다"
+
+#: templates/blacklist/index.html:13
+msgid "BLACKLIST"
+msgstr "블랙리스트"
+
+#: templates/blacklist/index.html:20
+msgid "add"
+msgstr "추가"
+
+#: templates/blacklist/index.html:26
+msgid "USERNAME"
+msgstr "아이디"
+
+#: templates/blacklist/index.html:27
+msgid "ARTICLE"
+msgstr "글차단"
+
+#: templates/blacklist/index.html:28
+msgid "MESSAGE"
+msgstr "쪽지차단"
+
+#: templates/blacklist/index.html:42
+msgid "Delete"
+msgstr "삭제"
+
+#: templates/blacklist/index.html:48
+msgid "USER SEARCH"
+msgstr "사용자 찾기"
+
+#: templates/blacklist/index.html:52 templates/board/list.html:83
+#: templates/board/read.html:89 templates/board/read.html.py:115
+#: templates/board/write.html:53 templates/board/write.html.py:70
+msgid "search"
+msgstr "검색"
+
+#: templates/board/list.html:28
+msgid "id "
+msgstr "번호"
+
+#: templates/board/list.html:29
+msgid "title"
+msgstr "제목"
+
+#: templates/board/list.html:30
+msgid "author"
+msgstr "글쓴이"
+
+#: templates/board/list.html:31
+msgid "date"
+msgstr "날짜"
+
+#: templates/board/list.html:73 templates/board/read.html:96
+#: templates/board/read.html.py:124
+msgid "write"
+msgstr "글쓰기"
+
+#: templates/board/read.html:28 templates/board/read.html.py:38
+msgid "vote: "
+msgstr "추천수"
+
+#: templates/board/read.html:29
+msgid "hit: "
+msgstr "조회수"
+
+#: templates/board/read.html:49
+msgid "BLACKLISTED"
+msgstr "블랙리스트로 차단된 글입니다."
+
+#: templates/board/read.html:54 templates/board/write.html:33
+msgid "file(s) : "
+msgstr "파일(들) : "
+
+#: templates/board/read.html:62
+msgid "reply"
+msgstr "답글쓰기"
+
+#: templates/board/read.html:64
+msgid "modify"
+msgstr "수정"
+
+#: templates/board/read.html:65 templates/message/list.html:121
+#: templates/message/read.html:54 templates/message/read.html.py:63
+msgid "delete"
+msgstr "삭제"
+
+#: templates/board/read.html:81 templates/board/read.html.py:107
+#: templates/board/write.html:45 templates/board/write.html.py:62
+msgid "file 1"
+msgstr "파일 1"
+
+#: templates/board/read.html:123 templates/message/read.html:52
+#: templates/message/read.html.py:62
+msgid "list"
+msgstr "목록"
+
+#: templates/board/write.html:17 templates/board/write.html.py:20
+msgid "write an article"
+msgstr "글쓰기"
+
+#: templates/board/write.html:25
+msgid "title : "
+msgstr "제목 : "
+
+#: templates/board/write.html:78
+msgid "preview"
+msgstr "미리보기"
+
+#: templates/message/base.html:23
+msgid "inbox"
+msgstr "받은 쪽지함"
+
+#: templates/message/base.html:24
+msgid "outbox"
+msgstr "보낸 쪽지함"
+
+#: templates/message/list.html:15 templates/message/list.html.py:19
+msgid "messages"
+msgstr "쪽지"
+
+#: templates/message/list.html:25
+msgid " new message(s) /"
+msgstr " 개의 새 쪽지(들) /"
+
+#: templates/message/list.html:25
+msgid " message(s)"
+msgstr " 개의 쪽지(들)"
+
+#: templates/message/list.html:28
+msgid "한번에"
+msgstr "한번에"
+
+#: templates/message/list.html:34
+msgid "개씩 보기"
+msgstr "개씩 보기"
+
+#: templates/message/list.html:56
+msgid "text"
+msgstr "쪽지 제목"
+
+#: templates/message/list.html:59
+msgid "time"
+msgstr "보낸 시간"
+
+#: templates/message/read.html:15
+msgid "read a message"
+msgstr "쪽지 읽기"
+
+#: templates/message/read.html:43
+msgid "reply to a message"
+msgstr "답장 보내기"
+
+#: templates/message/send.html:28
+msgid "nickname"
+msgstr "별명"
+
+#: templates/message/send.html:28
+msgid "id"
+msgstr "아이디"
+
+#~ msgid "English"
+#~ msgstr "영어"
+
+#~ msgid "Korean"
+#~ msgstr "한국어"
+
+#~ msgid "ID:"
+#~ msgstr "아이디"
+
+#~ msgid "Nickname:"
+#~ msgstr "닉네임"
