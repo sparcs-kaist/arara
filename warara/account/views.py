@@ -57,6 +57,7 @@ def login(request):
         server = arara.get_server()
         ret, session_key = server.login_manager.login(username, password, client_ip)
         assert ret, session_key
+        request.session["django_language"] = "ko"
         request.session["arara_session_key"] = session_key
         request.session["arara_username"] = username
         return HttpResponseRedirect(current_page)
