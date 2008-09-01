@@ -7,6 +7,7 @@ import urwid
 from ara_form import *
 import widget
 import listview
+from translation import _
 
 class articlelist_rowitem(widget.FieldRow):
     fields = [
@@ -65,16 +66,16 @@ class ara_list_article(ara_form):
         assert retvalue, boardinfo
         self.readonly = boardinfo['read_only']
 
-	self.header = urwid.Filler(urwid.Text(u"ARA: Article list",align='center'))
+	self.header = urwid.Filler(urwid.Text(_('ARA: Article list'),align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
-        self.infotext1 = urwid.Filler(urwid.Text("(N)ext/(P)revious Page (Number+Enter) Jump to article"))
+        self.infotext1 = urwid.Filler(urwid.Text(_('(N)ext/(P)revious Page (Number+Enter) Jump to article')))
         if self.session_key == 'guest':
-            self.infotext2 = urwid.Filler(urwid.Text("(f)ind (/)Find next (?) Find previous (h)elp (q)uit"))
+            self.infotext2 = urwid.Filler(urwid.Text(_('(f)ind (/)Find next (?) Find previous (h)elp (q)uit')))
         else:
             if self.readonly:
-                self.infotext2 = urwid.Filler(urwid.Text("(Enter,space) Read (f)ind (/)Find next (?) Find previous (h)elp (q)uit"))
+                self.infotext2 = urwid.Filler(urwid.Text(_('(Enter,space) Read (f)ind (/)Find next (?) Find previous (h)elp (q)uit')))
             else:
-                self.infotext2 = urwid.Filler(urwid.Text("(Enter,space) Read (w)rite (f)ind (/)Find next (?) Find previous (h)elp (q)uit"))
+                self.infotext2 = urwid.Filler(urwid.Text(_('(Enter,space) Read (w)rite (f)ind (/)Find next (?) Find previous (h)elp (q)uit')))
 
         # Acquire articles
         cols, rows = self.parent.ui.get_cols_rows()
@@ -88,7 +89,7 @@ class ara_list_article(ara_form):
         itemlist = []
         if len(articles) < 1:
             # If no article found, make sure that itemlist display "No article found"
-            itemlist += [{'new':'', 'number':'', 'author':'','title':'No article found. Have a nice day.','date':'','hit':'','vote':''}]
+            itemlist += [{'new':'', 'number':'', 'author':'','title':_('No article found. Have a nice day.'),'date':'','hit':'','vote':''}]
             self.hasarticle = False
         else:
             # Otherwise add all articles into itemlist
@@ -107,7 +108,7 @@ class ara_list_article(ara_form):
                         'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), \
                         'vote':str(article['vote'])}]
             self.hasarticle = True
-        header = {'new':'N', 'number':'#', 'author':'Author', 'title':'Title', 'date':'Date', 'hit':'Hit', 'vote':'Vote'}
+        header = {'new':'N', 'number':'#', 'author':_('Author'), 'title':_('Title'), 'date':_('Date'), 'hit':_('Hit'), 'vote':_('Vote')}
 
         if self.session_key == 'guest':
             self.articlelist = listview.get_view(itemlist, header, articlelist_rowitem_guest)
@@ -116,8 +117,5 @@ class ara_list_article(ara_form):
 
         content = [('fixed',1, self.header),('fixed',1,self.infotext1),('fixed',1,self.infotext2),self.articlelist,]
         self.mainpile = urwid.Pile(content)
-
-if __name__=="__main__":
-    ara_list_article().main()
 
 # vim: set et ts=8 sw=4 sts=4:

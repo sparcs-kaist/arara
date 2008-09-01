@@ -7,11 +7,7 @@ import urwid.curses_display
 import urwid
 from ara_form import *
 import widget
-
-import gettext
-LOCALE_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'locale')
-t = gettext.translation('ara', LOCALE_PATH)
-_ = t.ugettext
+from translation import _
 
 class ara_login(ara_form):
     def get_remote_ip(self):
@@ -106,8 +102,5 @@ class ara_login(ara_form):
         self.mainpile = urwid.Pile(content)
 
         self.keymap = {'left':'', 'right':''}
-
-if __name__ == "__main__":
-    ara_login().main()
 
 # vim: set et ts=8 sw=4 sts=4:

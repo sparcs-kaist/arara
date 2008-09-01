@@ -6,6 +6,7 @@ import urwid.curses_display
 import urwid
 from ara_form import *
 import widget
+from translation import _
 
 class ara_write_pm(ara_form):
     def __init__(self, parent, session_key = None, mode='write', reply_to = ""):
@@ -23,7 +24,7 @@ class ara_write_pm(ara_form):
             body = self.bodyedit.body.get_edit_text()
             retvalue = self.server.messaging_manager.send_message(self.session_key, to, body)
             if retvalue[0]:
-                confirm = widget.Dialog("Message sent.", ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
+                confirm = widget.Dialog(_('Message sent.'), [_('OK')], ('menu', 'bg', 'bgf'), 30, 5, self)
                 self.overlay = confirm
                 self.parent.run()
                 self.parent.change_page("list_pm",{'session_key':self.session_key})
@@ -40,23 +41,23 @@ class ara_write_pm(ara_form):
             assert("Call for undefined button")
 
     def __initwidgets__(self):
-        self.idedit = urwid.Edit(caption="To (Enter ID): ", wrap='clip')
+        self.idedit = urwid.Edit(caption=_('To (Enter ID): '), wrap='clip')
         if self.mode == 'reply':
-            header = urwid.Filler(urwid.Text(u"ARA: Reply private message", align='center'))
+            header = urwid.Filler(urwid.Text(_('ARA: Reply private message'), align='center'))
             self.idedit.set_edit_text(self.reply_to)
         elif self.mode == 'write':
-            header = urwid.Filler(urwid.Text(u"ARA: Write private message", align='center'))
+            header = urwid.Filler(urwid.Text(_('ARA: Write private message'), align='center'))
 
-	self.btnsearch = urwid.Button("Search by nickname")
+	self.btnsearch = urwid.Button(_('Search by nickname'))
         self.idcolumn = urwid.Filler(urwid.Columns([('weight',60,self.idedit),('weight',40,self.btnsearch)]))
 
-        bodytext = urwid.Filler(urwid.Text('Body'))
+        bodytext = urwid.Filler(urwid.Text(_('Body')))
         self.bodyedit = urwid.Filler(urwid.Edit(multiline = True, wrap='clip'))
 
-	self.btnhelp = urwid.Button("Help", self.on_button_clicked)
-	self.btnpreview = urwid.Button("Preview", self.on_button_clicked)
-	self.btnokay = urwid.Button("Send", self.on_button_clicked)
-	self.btncancel = urwid.Button("Cancel", self.on_button_clicked)
+	self.btnhelp = urwid.Button(_('Help'), self.on_button_clicked)
+	self.btnpreview = urwid.Button(_('Preview'), self.on_button_clicked)
+	self.btnokay = urwid.Button(_('Send'), self.on_button_clicked)
+	self.btncancel = urwid.Button(_('Cancel'), self.on_button_clicked)
 
         self.bottomcolumn = urwid.Filler(urwid.Columns([
             ('weight',40,urwid.Text(' ')),
@@ -74,8 +75,5 @@ class ara_write_pm(ara_form):
                 ('fixed',1,widget.dash),
                 ('fixed',1,self.bottomcolumn)]
         self.mainpile = urwid.Pile(content)
-
-if __name__=="__main__":
-    ara_write_pm().main()
 
 # vim: set et ts=8 sw=4 sts=4:

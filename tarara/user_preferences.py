@@ -6,32 +6,33 @@ import urwid.curses_display
 import urwid
 from ara_form import *
 import widget
+from translation import _
 
 class ara_user_preferences(ara_form):
     menu = [
-        "Change (B)asic information",
-        "Change (P)assword",
-        "View/edit B(l)acklist",
-        "Change (I)ntro/Sig",
-        "(Z)ap Board",
-        "(D)elete account",
-        "(Q)uit menu",
+        _('Change (B)asic information'),
+        _('Change (P)assword'),
+        _('View/edit B(l)acklist'),
+        _('Change (I)ntro/Sig'),
+        _('(Z)ap Board'),
+        _('(D)elete account'),
+        _('(Q)uit menu'),
     ]
     menudesc = [
-        "Change basic information\nlike nickname and email",
-        "Change password\n",
-        "View and edit your blacklist\n",
-        "Change intruduction and\nsignature used in the articles",
-        "Zap board\n",
-        "Delete your ARA account\n",
-        "Return to main menu\n",
+        _('Change basic information\nlike nickname and email'),
+        _('Change password\n'),
+        _('View and edit your blacklist\n'),
+        _('Change intruduction and\nsignature used in the articles'),
+        _('Zap board\n'),
+        _('Delete your ARA account\n'),
+        _('Return to main menu\n'),
     ]
 
     def delete_account(self):
-        confirm = widget.Dialog("Do you want to delete your ARA account?", ["OK","Cancel"], ('menu', 'bg', 'bgf'), 45, 5, self)
+        confirm = widget.Dialog(_('Do you want to delete your ARA account?'), [_('OK'),_('Cancel')], ('menu', 'bg', 'bgf'), 45, 5, self)
         self.overlay = confirm
         self.parent.run()
-        if confirm.b_pressed == "OK":
+        if confirm.b_pressed == _('OK'):
             self.server.remove_user(self.session_key)
             sys.exit(0)
         else:
@@ -81,7 +82,7 @@ class ara_user_preferences(ara_form):
             self.mainpile.keypress(size, key)
 
     def __initwidgets__(self):
-	self.header = urwid.Filler(urwid.Text(u"ARA: User Preferences", align='center'))
+	self.header = urwid.Filler(urwid.Text(_('ARA: User Preferences'), align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
         menuitems = [widget.Item(" * "+w+"\n", None, 'selected') for w in self.menu]
         self.menulist = urwid.ListBox(urwid.SimpleListWalker(menuitems))
@@ -91,14 +92,11 @@ class ara_user_preferences(ara_form):
 
         self.maincolumn = urwid.Columns([('weight',40,self.menulist),('weight',60,self.menudesclist)])
 
-        infotext = urwid.Filler(urwid.Text("  * Use [Tab] or arrow key to move each items"))
+        infotext = urwid.Filler(urwid.Text(_('  * Use [Tab] or arrow key to move each items')))
 
         content = [('fixed',1, self.header),('fixed',1,widget.blanktext),
                 self.maincolumn,('fixed',1,widget.dash),
                 ('fixed',1,infotext),]
         self.mainpile = urwid.Pile(content)
-
-if __name__=="__main__":
-    ara_user_information().main()
 
 # vim: set et ts=8 sw=4 sts=4:

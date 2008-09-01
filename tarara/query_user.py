@@ -6,6 +6,7 @@ import urwid.curses_display
 import urwid
 from ara_form import *
 import widget
+from translation import _
 
 class ara_query_user(ara_form):
     def __init__(self, parent, session_key = None, default_user = ''):
@@ -45,11 +46,11 @@ class ara_query_user(ara_form):
     def query_information(self, id):
         retvalue, data = self.server.member_manager.query_by_username(self.session_key, id)
         if retvalue:
-            self.idtext.body.set_text(' * ID: %s' % data['username'])
-            self.nicktext.body.set_text(' * Nickname: %s' % data['nickname'])
-            self.introtext.body.set_text(' * Introduction:\n%s' % data['self_introduction'])
-            self.sigtext.body.set_text(' * Signature:\n%s' % data['signature'])
-            self.lasttext.body.set_text(' * Last usage: %s' % data['last_login_ip'])
+            self.idtext.body.set_text(_(' * ID: %s') % data['username'])
+            self.nicktext.body.set_text(_(' * Nickname: %s') % data['nickname'])
+            self.introtext.body.set_text(_(' * Introduction:\n%s') % data['self_introduction'])
+            self.sigtext.body.set_text(_(' * Signature:\n%s') % data['signature'])
+            self.lasttext.body.set_text(_(' * Last usage: %s') % data['last_login_ip'])
         else:
             self.idtext.body.set_text(data)
             self.nicktext.body.set_text('')
@@ -58,12 +59,12 @@ class ara_query_user(ara_form):
             self.lasttext.body.set_text('')
 
     def __initwidgets__(self):
-	self.header = urwid.Filler(urwid.Text(u"ARA: Query User",align='center'))
+	self.header = urwid.Filler(urwid.Text(_('ARA: Query User'),align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
-        self.idedit = urwid.Filler(urwid.Edit(caption=" * Enter ID: ", wrap='clip'))
+        self.idedit = urwid.Filler(urwid.Edit(caption=_(' * Enter ID: '), wrap='clip'))
         self.idedit.body.set_edit_text(self.default_user)
-        self.btnsearch = urwid.Filler(urwid.Button("Search", self.on_button_clicked))
-        self.btncancel = urwid.Filler(urwid.Button("Cancel", self.on_button_clicked))
+        self.btnsearch = urwid.Filler(urwid.Button(_('Search'), self.on_button_clicked))
+        self.btncancel = urwid.Filler(urwid.Button(_('Cancel'), self.on_button_clicked))
 
         self.buttoncolumn = urwid.Columns([('weight', 60, self.idedit), ('weight', 20, self.btnsearch),('weight',20,self.btncancel)])
 
@@ -73,7 +74,7 @@ class ara_query_user(ara_form):
 	self.sigtext = urwid.Filler(urwid.Text(''))
 	self.lasttext = urwid.Filler(urwid.Text(''))
 
-	actiontext = urwid.Filler(urwid.Text(' * Enter user ID and press [Search]'))
+	actiontext = urwid.Filler(urwid.Text(_(' * Enter user ID and press [Search]')))
 
         content = [('fixed',1, self.header), ('fixed',1,widget.blanktext),
             ('fixed',1,self.buttoncolumn), ('fixed',1,widget.dash),
@@ -85,8 +86,5 @@ class ara_query_user(ara_form):
         self.mainpile = urwid.Pile(content)
         if self.default_user != '':
             self.query_information(self.idedit.body.get_edit_text())
-
-if __name__=="__main__":
-    ara_query_user().main()
 
 # vim: set et ts=8 sw=4 sts=4:

@@ -7,18 +7,19 @@ import urwid
 from ara_form import *
 import widget
 from helpviewer import *
+from translation import _
 
 class ara_main(ara_form):
     menu = [
-        "(N)ew Article",
-        "(S)elect Board",
-        "(P)rivate Message",
-        "(U)ser Preferences",
-        "User (I)nformation",
-        "(H)elp",
-        "(A)bout ARA",
-        "(W)elcome Screen",
-        "(Q)uit",
+        _('(N)ew Article'),
+        _('(S)elect Board'),
+        _('(P)rivate Message'),
+        _('(U)ser Preferences'),
+        _('User (I)nformation'),
+        _('(H)elp'),
+        _('(A)bout ARA'),
+        _('(W)elcome Screen'),
+        _('(Q)uit'),
     ]
 
     def show_help(self):
@@ -38,17 +39,17 @@ class ara_main(ara_form):
             self.parent.run()
 
     def notify_guest(self):
-        confirm = widget.Dialog("Not available in guest mode.", ["OK"], ('menu', 'bg', 'bgf'), 35, 5, self)
+        confirm = widget.Dialog(_('Not available in guest mode.'), [_('Ok')], ('menu', 'bg', 'bgf'), 35, 5, self)
         self.overlay = confirm
         self.parent.run()
         self.overlay = None
         self.parent.run()
 
     def confirm_quit(self):
-        confirm = widget.Dialog("Really quit?", ["Yes", "No"], ('menu', 'bg', 'bgf'), 30, 5, self)
+        confirm = widget.Dialog(_('Really quit?'), [_('Yes'), _('No')], ('menu', 'bg', 'bgf'), 30, 5, self)
         self.overlay = confirm
         self.parent.run()
-        if confirm.b_pressed == "Yes":
+        if confirm.b_pressed == _('Yes'):
             self.server.login_manager.logout(self.session_key)
             sys.exit(0)
         else:
@@ -151,12 +152,12 @@ class ara_main(ara_form):
             'j':'down',
             'k':'up',
         }
-	self.header = urwid.Filler(urwid.Text(u"ARA: Main Menu", align='center'))
+	self.header = urwid.Filler(urwid.Text(_('ARA: Main Menu'), align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
         menuitems = [widget.Item(" * "+w+"\n", None, 'selected') for w in self.menu]
         self.menulist = urwid.ListBox(urwid.SimpleListWalker(menuitems))
 
-	tbtext = urwid.Filler(urwid.Text(u"Today Best", align='center'))
+	tbtext = urwid.Filler(urwid.Text(_('Today Best'), align='center'))
         retvalue, self.tblist_raw = self.server.article_manager.get_today_best_list()
         assert retvalue
         tbitems = ["%(title)s (%(nickname)s, %(date)s)" % {"title":text['title'],
@@ -165,7 +166,7 @@ class ara_main(ara_form):
         self.tblist = urwid.ListBox(urwid.SimpleListWalker(tbitems))
 	self.todaybest = urwid.Pile([('fixed',1,tbtext), self.tblist])
 
-	wbtext = urwid.Filler(urwid.Text(u"Weekly Best", align='center'))
+	wbtext = urwid.Filler(urwid.Text(_('Weekly Best'), align='center'))
         retvalue, self.wblist_raw = self.server.article_manager.get_weekly_best_list()
         assert retvalue
         wbitems = ["%(title)s (%(nickname)s, %(date)s)" % {"title":text['title'],
@@ -176,8 +177,8 @@ class ara_main(ara_form):
 
 	self.bests = urwid.Pile([self.todaybest, self.weeklybest])
 	self.copyrightnotice = urwid.Filler(urwid.Text(
-u"""  * Press [Tab] to jump between menu, today best, weekly best
- ARAra Release 1.0                                Copyright (C) 2008, SPARCS"""))
+_("""  * Press [Tab] to jump between menu, today best, weekly best
+ ARAra Release 1.0                                Copyright (C) 2008, SPARCS""")))
 
         self.maincolumn = urwid.Columns([('weight',40,self.menulist),('weight',60,self.bests)])
 
@@ -192,8 +193,5 @@ u"""  * Press [Tab] to jump between menu, today best, weekly best
             "j":"down",
             "k":"up",
             }
-
-if __name__=="__main__":
-    ara_main().main()
 
 # vim: set et ts=8 sw=4 sts=4:

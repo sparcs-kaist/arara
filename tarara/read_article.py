@@ -7,6 +7,7 @@ import urwid
 from ara_form import *
 import widget
 from string import Template
+from translation import _
 
 class ara_read_article(ara_form):
     def get_selected_article_id(self):
@@ -31,24 +32,24 @@ class ara_read_article(ara_form):
             if not self.is_selected_deleted():
                 retvalue = self.server.article_manager.vote_article(self.session_key, self.board_name, self.get_selected_article_id())
                 if retvalue[0]:
-                    confirm = widget.Dialog("Voted.", ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
+                    confirm = widget.Dialog(_('Voted.'), [_('OK')], ('menu', 'bg', 'bgf'), 30, 5, self)
                 else:
-                    confirm = widget.Dialog(retvalue[1], ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
+                    confirm = widget.Dialog(retvalue[1], [_('OK')], ('menu', 'bg', 'bgf'), 30, 5, self)
                 self.overlay = confirm
                 self.parent.run()
                 self.overlay = None
                 self.parent.run()
         elif key == 'd':
             if not self.is_selected_deleted():
-                confirm = widget.Dialog("Really delete?", ["Yes", "No"], ('menu', 'bg', 'bgf'), 30, 5, self)
+                confirm = widget.Dialog(_('Really delete?'), [_('Yes'), _('No')], ('menu', 'bg', 'bgf'), 30, 5, self)
                 self.overlay = confirm
                 self.parent.run()
-                if confirm.b_pressed == "Yes":
+                if confirm.b_pressed == _('Yes'):
                     retvalue, result = self.server.article_manager.delete(self.session_key,self.board_name, self.get_selected_article_id())
                     if retvalue:
-                        notice = widget.Dialog("Article deleted.", ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
+                        notice = widget.Dialog(_('Article deleted.'), [_('OK')], ('menu', 'bg', 'bgf'), 30, 5, self)
                     else:
-                        notice = widget.Dialog(result, ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
+                        notice = widget.Dialog(result, [_('OK')], ('menu', 'bg', 'bgf'), 30, 5, self)
                     self.overlay = notice
                     self.parent.run()
                     self.overlay = None
@@ -65,15 +66,15 @@ class ara_read_article(ara_form):
         self.board_name = board_name
         self.article_id = article_id
 
-        self.title_template = Template("Title: ${TITLE}")
-        self.author_template = Template("Author: ${AUTHOR} (${NICKNAME})")
-        self.info_template = Template("Date: ${DATE} Hit: ${HIT} Reply: ${REPLY} Vote: ${VOTE}")
-        self.deleted_article_template = "Deleted article"
+        self.title_template = Template(_('Title: ${TITLE}'))
+        self.author_template = Template(_('Author: ${AUTHOR} (${NICKNAME})'))
+        self.info_template = Template(_('Date: ${DATE} Hit: ${HIT} Reply: ${REPLY} Vote: ${VOTE}'))
+        self.deleted_article_template = _('Deleted article')
 
-        self.reply_template = Template("Reply by ${AUTHOR}(${NICKNAME}) on ${DATE} Vote: ${VOTE}")
-        self.deleted_reply_template = Template("Deleted reply, written on ${DATE}")
+        self.reply_template = Template(_('Reply by ${AUTHOR}(${NICKNAME}) on ${DATE} Vote: ${VOTE}'))
+        self.deleted_reply_template = Template(_('Deleted reply, written on ${DATE}'))
 
-        self.attach_template = Template("Attachment: ${SERVER_ADDRESS}/board/${BOARD_NAME}/${ROOT_ID}/${ARTICLE_ID}/file/${FILE_ID}\n")
+        self.attach_template = Template(_('Attachment: ${SERVER_ADDRESS}/board/${BOARD_NAME}/${ROOT_ID}/${ARTICLE_ID}/file/${FILE_ID}\n'))
         ara_form.__init__(self, parent, session_key)
 
     def get_article_body(self):
@@ -146,15 +147,12 @@ class ara_read_article(ara_form):
         assert self.article_threads
         self.article_list = urwid.ListBox(urwid.SimpleListWalker(self.article_threads))
 
-	self.header = urwid.Filler(urwid.Text(u"ARA: Read article",align='center'))
-        functext = urwid.Filler(urwid.Text('(n)ext/(p)revious (b)lock (e)dit (d)elete (f)old/retract (r)eply (v)ote (q)uit'))
+	self.header = urwid.Filler(urwid.Text(_('ARA: Read article'),align='center'))
+        functext = urwid.Filler(urwid.Text(_('(n)ext/(p)revious (b)lock (e)dit (d)elete (f)old/retract (r)eply (v)ote (q)uit')))
 
         content = [self.article_list, ('fixed',1,urwid.AttrWrap(functext, 'reversed'))]
         self.mainpile = urwid.Pile(content)
 
         return self.mainpile
-
-if __name__=="__main__":
-    ara_read_article().main()
 
 # vim: set et ts=8 sw=4 sts=4:

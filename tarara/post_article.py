@@ -6,6 +6,7 @@ import urwid.curses_display
 import urwid
 from ara_form import *
 import widget
+from translation import _
 
 class ara_post_article(ara_form):
     def __init__(self, parent, session_key = None, board_name = None, mode='post', article_id = 0):
@@ -31,10 +32,10 @@ class ara_post_article(ara_form):
             else:
                 return
             if retvalue:
-                confirm = widget.Dialog("Article posted.", ["OK"], ('menu', 'bg', 'bgf'), 30, 5, self)
+                confirm = widget.Dialog(_('Article posted.'), [_('OK')], ('menu', 'bg', 'bgf'), 30, 5, self)
                 self.overlay = confirm
                 self.parent.run()
-                if confirm.b_pressed == "OK":
+                if confirm.b_pressed == _('OK'):
                     self.parent.change_page("list_article",{'session_key':self.session_key, 'board_name':self.board_name})
             else:
                 #self.overlay = None
@@ -53,22 +54,22 @@ class ara_post_article(ara_form):
 
     def __initwidgets__(self):
         if self.mode == 'modify':
-            self.header = urwid.Filler(urwid.Text(u"ARA: Modify Article  Current board: %s" % self.board_name, align='center'))
+            self.header = urwid.Filler(urwid.Text(_('ARA: Modify Article  Current board: %s') % self.board_name, align='center'))
         elif self.mode == 'reply':
-            self.header = urwid.Filler(urwid.Text(u"ARA: Reply Article  Current board: %s" % self.board_name, align='center'))
+            self.header = urwid.Filler(urwid.Text(_('ARA: Reply Article  Current board: %s') % self.board_name, align='center'))
 	else:
-            self.header = urwid.Filler(urwid.Text(u"ARA: Post Article  Current board: %s" % self.board_name, align='center'))
+            self.header = urwid.Filler(urwid.Text(_('ARA: Post Article  Current board: %s') % self.board_name, align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
 
-        self.titleedit = urwid.Filler(urwid.Edit(caption="Title: ", wrap='clip'))
-        bodytext = urwid.Filler(urwid.Text('Body'))
+        self.titleedit = urwid.Filler(urwid.Edit(caption=_('Title: '), wrap='clip'))
+        bodytext = urwid.Filler(urwid.Text(_('Body')))
         self.bodyedit = urwid.Filler(urwid.Edit(multiline = True, wrap='clip'))
 
-	self.chkinclude = urwid.CheckBox("Include in search")
-	self.btnhelp = urwid.Button("Help", self.on_button_clicked)
-	self.btnpreview = urwid.Button("Preview", self.on_button_clicked)
-	self.btnokay = urwid.Button("OK", self.on_button_clicked)
-	self.btncancel = urwid.Button("Cancel", self.on_button_clicked)
+	self.chkinclude = urwid.CheckBox(_('Include in search'))
+	self.btnhelp = urwid.Button(_('Help'), self.on_button_clicked)
+	self.btnpreview = urwid.Button(_('Preview'), self.on_button_clicked)
+	self.btnokay = urwid.Button(_('OK'), self.on_button_clicked)
+	self.btncancel = urwid.Button(_('Cancel'), self.on_button_clicked)
 
         self.bottomcolumn = urwid.Filler(urwid.Columns([
             ('weight',40,self.chkinclude),
@@ -94,8 +95,5 @@ class ara_post_article(ara_form):
             self.titleedit.body.set_edit_text("Re: " + original_article[1][0]['title'])
 
         self.mainpile = urwid.Pile(content)
-
-if __name__=="__main__":
-    ara_post_article().main()
 
 # vim: set et ts=8 sw=4 sts=4:

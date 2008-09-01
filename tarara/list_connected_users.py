@@ -8,6 +8,7 @@ import widget
 import listview
 from ara_form import *
 import timer
+from translation import _
 
 class connected_user_rowitem(widget.FieldRow):
     fields = [
@@ -27,10 +28,10 @@ class ara_list_connected_users(ara_form):
             self.parent.change_page('user_information', {'session_key':self.session_key})
         elif key.lower() == 'm':
             if self.timer.state:
-                self.infotext.body.set_text('(r)efresh (m)onitoring:start (q)uit (Enter) query')
+                self.infotext.body.set_text(_('(r)efresh (m)onitoring:start (q)uit (Enter) query'))
                 self.timer.cancel()
             else:
-                self.infotext.body.set_text('(r)efresh (m)onitoring:stop (q)uit (Enter) query')
+                self.infotext.body.set_text(_('(r)efresh (m)onitoring:stop (q)uit (Enter) query'))
                 self.timer.start()
         elif key.lower() == 'r':
             self.refresh_view()
@@ -52,7 +53,7 @@ class ara_list_connected_users(ara_form):
                     'ip':user['ip'], 'time':user['logintime'].strftime('%m/%d %H:%M:%S'),
                     'action':user['current_action']}]
         else:
-            self.userlistitem = [{'id':' ','nickname':'', 'ip':' ', 'time':' ','action':u'No users online.'}]
+            self.userlistitem = [{'id':' ','nickname':'', 'ip':' ', 'time':' ','action':_('No users online.')}]
         self.userlist.set_body(listview.make_body(self.userlistitem, connected_user_rowitem))
 
     def __initwidgets__(self):
@@ -62,12 +63,12 @@ class ara_list_connected_users(ara_form):
             'N': 'page down',
             'P': 'page up',
         }
-	self.header = urwid.Filler(urwid.Text(u'ARA: List connected users',align='center'))
+	self.header = urwid.Filler(urwid.Text(_('ARA: List connected users'),align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
-        self.infotext = urwid.Filler(urwid.Text('(r)efresh (m)onitoring:start (q)uit (Enter) query'))
+        self.infotext = urwid.Filler(urwid.Text(_('(r)efresh (m)onitoring:start (q)uit (Enter) query')))
 
         self.userlistitem = [{'id':'dummy','nickname':'dummy', 'ip':'0.0.0.0', 'time':'local','action':u'dummy'}]
-        self.userlistheader = {'id':'ID', 'nickname':'Nickname','ip':'IP Address', 'time':'Login Time', 'action':'Action'}
+        self.userlistheader = {'id':_('ID'), 'nickname':_('Nickname'),'ip':_('IP Address'), 'time':_('Login Time'), 'action':_('Action')}
         self.userlist = listview.get_view(self.userlistitem, self.userlistheader, connected_user_rowitem)
         self.refresh_view()
 
@@ -77,8 +78,5 @@ class ara_list_connected_users(ara_form):
         self.timer = timer.Timer(10.0, self.refresh_view)
 
         return self.mainpile
-
-if __name__=="__main__":
-    ara_list_connectusers().main()
 
 # vim: set et ts=8 sw=4 sts=4:

@@ -7,6 +7,7 @@ import urwid
 from ara_form import *
 import widget
 import listview
+from translation import _
 
 class pmlist_rowitem(widget.FieldRow):
     fields = [
@@ -19,7 +20,7 @@ class pmlist_rowitem(widget.FieldRow):
 
 class ara_list_pm(ara_form):
     def display_inbox(self):
-        self.list_header = {'new':'N', 'number':'#', 'author':'Author', 'title':'Title', 'date':'Date'}
+        self.list_header = {'new':'N', 'number':'#', 'author':_('Author'), 'title':_('Title'), 'date':_('Date')}
         self.pmlist.set_header(listview.make_header(self.list_header, pmlist_rowitem))
 
         # Acqure messages
@@ -32,7 +33,7 @@ class ara_list_pm(ara_form):
         if len(message_list) < 1:
             # If no message...
             self.hasmessage = False
-            message_item = [{'new':'', 'number':'', 'author':'','title':'No private messages. Have a nice day.','date':''}]
+            message_item = [{'new':'', 'number':'', 'author':'','title':_('No private messages. Have a nice day.'),'date':''}]
         else:
             # Otherwise...
             self.hasmessage = True
@@ -41,7 +42,7 @@ class ara_list_pm(ara_form):
         self.pmlist.set_body(listview.make_body(message_item, pmlist_rowitem))
 
     def display_outbox(self):
-        self.list_header = {'new':'N', 'number':'#', 'author':'Recepient', 'title':'Title', 'date':'Date'}
+        self.list_header = {'new':'N', 'number':'#', 'author':_('Recepient'), 'title':_('Title'), 'date':_('Date')}
         self.pmlist.set_header(listview.make_header(self.list_header, pmlist_rowitem))
 
         # Acquire messages
@@ -54,7 +55,7 @@ class ara_list_pm(ara_form):
         if len(message_list) < 1:
             # If no message...
             self.hasmessage = False
-            message_item = [{'new':'', 'number':'', 'author':'','title':'No private messages. Have a nice day.','date':''}]
+            message_item = [{'new':'', 'number':'', 'author':'','title':_('No private messages. Have a nice day.'),'date':''}]
         else:
             # Otherwise...
             self.hasmessage = True
@@ -91,25 +92,22 @@ class ara_list_pm(ara_form):
             'N':'page down',
             'P':'page up',
         }
-	self.header = urwid.Filler(urwid.Text(u"ARA: Private message",align='center'))
+	self.header = urwid.Filler(urwid.Text(_('ARA: Private message'),align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
-        self.infotext = urwid.Filler(urwid.Text(" (N)ext/(P)revious Page (w)rite (B)lock (h)elp (q)uit"))
+        self.infotext = urwid.Filler(urwid.Text(_(' (N)ext/(P)revious Page (w)rite (B)lock (h)elp (q)uit')))
 
         itemlist = [{'new':'N', 'number':'1', 'author':'dummy','title':'item','date':'1/1'}]
-        self.list_header = {'new':'N', 'number':'#', 'author':'Author', 'title':'Title', 'date':'Date'}
+        self.list_header = {'new':'N', 'number':'#', 'author':_('Author'), 'title':_('Title'), 'date':_('Date')}
 
         self.pmlist = listview.get_view(itemlist, self.list_header, pmlist_rowitem)
 
-        self.inboxbutton = urwid.Filler(urwid.Button("Inbox", self.on_button_pressed))
-        self.outboxbutton = urwid.Filler(urwid.Button("Outbox", self.on_button_pressed))
+        self.inboxbutton = urwid.Filler(urwid.Button(_('Inbox'), self.on_button_pressed))
+        self.outboxbutton = urwid.Filler(urwid.Button(_('Outbox'), self.on_button_pressed))
         self.buttoncolumn = widget.EasyColumn(self.inboxbutton, self.outboxbutton, 50, 50)
 
         content = [('fixed',1, self.header),('fixed',1,self.infotext),('fixed',1,self.buttoncolumn),self.pmlist,]
         self.mainpile = urwid.Pile(content)
 
         self.display_inbox()
-
-if __name__=="__main__":
-    ara_list_pm().main()
 
 # vim: set et ts=8 sw=4 sts=4:

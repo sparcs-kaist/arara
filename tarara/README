@@ -21,3 +21,7 @@ This is telnet ARAra client.
 
 == Individual files ==
 To be continued.
+
+== Translation ==
+* Do 'pygettext -d ara *.py' in the source folder.
+* Translate ara.pot file.

@@ -52,7 +52,4 @@ class ara_blacklist(ara_form):
         content = [('fixed',1, self.header),self.blacklist_, ('fixed',1,widget.dash),('fixed',1,buttoncolumn)]
         self.mainpile = urwid.Pile(content)
 
-if __name__=="__main__":
-    ara_blacklist().main()
-
 # vim: set et ts=8 sw=4 sts=4:

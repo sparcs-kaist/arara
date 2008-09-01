@@ -7,6 +7,7 @@ import urwid
 from ara_form import *
 import widget
 import listview
+from translation import _
 
 class boardlist_rowitem(widget.FieldRow):
     fields = [
@@ -43,25 +44,22 @@ class ara_list_boards(ara_form):
         retvalue, boardlist = self.server.board_manager.get_board_list()
         assert retvalue, boardlist
 
-	self.header = urwid.Filler(urwid.Text(u"ARA: List boards",align='center'))
+	self.header = urwid.Filler(urwid.Text(_('ARA: List boards'),align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
-        self.boardnameedit = urwid.Filler(urwid.Edit(caption=" * Enter board name: ", wrap='clip'))
+        self.boardnameedit = urwid.Filler(urwid.Edit(caption=_(' * Enter board name: '), wrap='clip'))
         itemlist = []
         if len(boardlist) > 0:
-            boardcounttext = urwid.Filler(urwid.Text(' * There are %s boards.' % len(boardlist)))
+            boardcounttext = urwid.Filler(urwid.Text(_(' * There are %s boards.') % len(boardlist)))
             for data in boardlist:
                 itemlist += [{'name':data['board_name'], 'desc':data['board_description']}]
         else:
-            boardcounttext = urwid.Filler(urwid.Text(' * No boards found. Have a nice day.'))
-            itemlist = [{'name':'', 'desc':u'No boards found. Have a nice day.'}]
+            boardcounttext = urwid.Filler(urwid.Text(_(' * No boards found. Have a nice day.')))
+            itemlist = [{'name':'', 'desc':_('No boards found. Have a nice day.')}]
 
-        header = {'name':'Name', 'desc':'Description'}
+        header = {'name':_('Name'), 'desc':_('Description')}
         self.boardlist = listview.get_view(itemlist, header, boardlist_rowitem)
 
         content = [('fixed',1, self.header),('fixed',1,self.boardnameedit),('fixed',1,boardcounttext),self.boardlist]
         self.mainpile = urwid.Pile(content)
-
-if __name__=="__main__":
-    ara_list_boards().main()
 
 # vim: set et ts=8 sw=4 sts=4:

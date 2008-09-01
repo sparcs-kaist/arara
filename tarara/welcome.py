@@ -6,6 +6,7 @@ import urwid.curses_display
 import urwid
 from ara_form import *
 import widget
+from translation import _
 
 class ara_welcome(ara_form):
     def get_banner(self):
@@ -13,7 +14,7 @@ class ara_welcome(ara_form):
         if retvalue:
             return banner[1]
         else:
-            return u"오늘의 환영 인사는 없습니다."
+            return _('No welcome message for today.')
 
     def keypress(self, size, key):
         if "enter" in key:
@@ -23,21 +24,18 @@ class ara_welcome(ara_form):
         self.banner = urwid.Filler(urwid.Text(self.get_banner()))
 
         if self.session_key == 'guest':
-            logintext = "You are in guest mode."
+            logintext = _('You are in guest mode.')
             self.logininfo = urwid.Filler(urwid.Text(logintext))
         else:
-            logintext = "Last login: %(IP)s at %(date)s"
+            logintext = _('Last login: %(IP)s at %(date)s')
             retvalue, myinfo = self.server.member_manager.get_info(self.session_key)
             assert retvalue, myinfo
             logindata = {"IP": myinfo['last_login_ip'], "date":myinfo['last_logout_time'].strftime("%Y/%m/%d %H:%M:%S")}
             self.logininfo = urwid.Filler(urwid.Text(logintext % logindata))
 
-        self.entertext = urwid.Filler(urwid.Text("Press [Enter] key to continue"))
+        self.entertext = urwid.Filler(urwid.Text(_('Press [Enter] key to continue')))
 
         content = [self.banner,('fixed',1, self.logininfo),('fixed',1,widget.blank), ("fixed", 1, self.entertext)]
         self.mainpile = urwid.Pile(content)
-
-if __name__=="__main__":
-    ara_welcome().main()
 
 # vim: set et ts=8 sw=4 sts=4:
