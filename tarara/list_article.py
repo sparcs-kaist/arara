@@ -49,8 +49,9 @@ class ara_list_article(ara_form):
             key = self.keymap[key]
         if key == "enter" and not self.session_key == 'guest':
             # self.boardlist.get_body().get_focus()[0].w.w.widget_list : 현재 활성화된 항목
-            if self.hasarticle:
-                article_id = int(self.articlelist.get_body().get_focus()[0].w.w.widget_list[0].get_text()[0])
+            article_id = self.articlelist.get_body().get_focus()[0].w.w.widget_list[0].get_text()[0]
+            if article_id != '':
+                article_id = int(article_id)
                 self.parent.change_page("read_article", {'session_key':self.session_key, 'board_name':self.board_name, 'article_id':article_id})
         elif key == 'w' and not self.readonly and not self.session_key == 'guest':
             self.parent.change_page('post_article', {'session_key':self.session_key, 'board_name':self.board_name, 'mode':'post', 'article_id':''})

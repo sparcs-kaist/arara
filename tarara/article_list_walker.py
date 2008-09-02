@@ -2,6 +2,7 @@
 import urwid
 import xmlrpclib
 from configuration import *
+from translation import _
 
 class ArticleListWalker(urwid.ListWalker):
     def __init__(self, session_key, board_name, callback):
@@ -23,20 +24,27 @@ class ArticleListWalker(urwid.ListWalker):
             assert result, article_list
             self.cached_page += article_list['hit']
             self.last_page = article_list['last_page']
+            self.has_article = True
+        if self.cached_page == []:
+            self.cached_page = [{'new':'', 'number':'', 'author':'','title':_('No article found. Have a nice day.'),'date':'','hit':'','vote':''}]
+            self.has_article = False
 
     def make_widget(self, article):
         if not article.has_key('read_status') and self.session_key != 'guest': 
             article['read_status'] = 'N'
-        if self.session_key != 'guest':
-            if article['deleted']:
-                item = {'new':article['read_status'], 'number':str(article['id']), 'author':'', 'title':'Deleted article.', 'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), 'vote':str(article['vote'])}
+        if self.has_article:
+            if self.session_key != 'guest':
+                if article['deleted']:
+                    item = {'new':article['read_status'], 'number':str(article['id']), 'author':'', 'title':'Deleted article.', 'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), 'vote':str(article['vote'])}
+                else:
+                    item = {'new':article['read_status'], 'number':str(article['id']), 'author':article['author_username'], 'title':article['title'], 'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), 'vote':str(article['vote'])}
             else:
-                item = {'new':article['read_status'], 'number':str(article['id']), 'author':article['author_username'], 'title':article['title'], 'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), 'vote':str(article['vote'])}
+                if article['deleted']:
+                    item = {'number':str(article['id']), 'author':'', 'title':'Deleted article.', 'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), 'vote':str(article['vote'])}
+                else:
+                    item = {'number':str(article['id']), 'author':article['author_username'], 'title':article['title'], 'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), 'vote':str(article['vote'])}
         else:
-            if article['deleted']:
-                item = {'number':str(article['id']), 'author':'', 'title':'Deleted article.', 'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), 'vote':str(article['vote'])}
-            else:
-                item = {'number':str(article['id']), 'author':article['author_username'], 'title':article['title'], 'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), 'vote':str(article['vote'])}
+            item = self.cached_page[0]
         return self.callback(item)
 
     def get_focus(self):
@@ -47,12 +55,11 @@ class ArticleListWalker(urwid.ListWalker):
         self._modified()
 
     def get_next(self, position):
+        if not self.has_article:
+            return None, None
         pos = self.cached_page.index(position)
         if pos < len(self.cached_page)-1:
-            try:
-                focus = self.cached_page[pos + 1]
-            except:
-                return None, None
+            focus = self.cached_page[pos + 1]
         else:
             last_page = self.fetched_page[len(self.fetched_page)-1]
             if last_page >= self.last_page:
@@ -69,12 +76,11 @@ class ArticleListWalker(urwid.ListWalker):
         return widget, focus
 
     def get_prev(self, position):
+        if not self.has_article:
+            return None, None
         pos = self.cached_page.index(position)
         if pos > 0:
-            try:
-                focus = self.cached_page[pos - 1]
-            except:
-                return None, None
+            focus = self.cached_page[pos - 1]
         else:
             first_page = self.fetched_page[0]
             if first_page <= 1:
