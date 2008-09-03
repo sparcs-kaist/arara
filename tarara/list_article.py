@@ -9,6 +9,7 @@ import widget
 import listview
 from translation import _
 from article_list_walker import ArticleListWalker
+from article_search_walker import ArticleSearchWalker
 
 class articlelist_rowitem(widget.FieldRow):
     fields = [
@@ -88,6 +89,8 @@ class ara_list_article(ara_form):
                 self.infotext2 = urwid.Filler(urwid.Text(_('(Enter,space) Read (w)rite (f)ind (/)Find next (?) Find previous (h)elp (q)uit')))
         
         # ArticleListWalker
+        # TODO: 검색 시 ArticleSearchWalker를 사용하도록 변경.
+        # ArticleSearchWalker(self.session_key, self.board_name, self.make_widget, False, {'title':'a'})
         if self.session_key == 'guest':
             body = urwid.ListBox(ArticleListWalker(self.session_key, self.board_name, self.make_widget_guest))
             header = {'number':'#', 'author':_('Author'), 'title':_('Title'), 'date':_('Date'), 'hit':_('Hit'), 'vote':_('Vote')}
