@@ -58,6 +58,21 @@ class ara_list_article(ara_form):
             self.parent.change_page('post_article', {'session_key':self.session_key, 'board_name':self.board_name, 'mode':'post', 'article_id':''})
         elif key == 'q':
             self.parent.change_page("main", {'session_key':self.session_key})
+        elif key == 'f':
+            input_dialog = widget.Dialog(_('Search term:'), [_('OK'), _('Cancel')], ('menu','bg','bgf'), 30, 7, self, 'Text')
+            self.overlay = input_dialog
+            self.parent.run()
+            if input_dialog.b_pressed == _('OK'):
+                search_term = input_dialog.edit_text
+            else:
+                search_term = ''
+            self.overlay = None
+            self.parent.run()
+            if search_term.strip() == '':
+                return
+            listbody = urwid.ListBox(ArticleSearchWalker(self.session_key, self.board_name,
+                self.make_widget, False, {'title':search_term}))
+            self.articlelist.set_body(listbody)
         else:
             self.mainpile.keypress(size, key)
 
@@ -81,16 +96,15 @@ class ara_list_article(ara_form):
         self.header = urwid.AttrWrap(self.header, 'reversed')
         self.infotext1 = urwid.Filler(urwid.Text(_('(N)ext/(P)revious Page (Number+Enter) Jump to article')))
         if self.session_key == 'guest':
-            self.infotext2 = urwid.Filler(urwid.Text(_('(f)ind (/)Find next (?) Find previous (h)elp (q)uit')))
+            self.infotext2 = urwid.Filler(urwid.Text(_('(h)elp (q)uit')))
         else:
             if self.readonly:
-                self.infotext2 = urwid.Filler(urwid.Text(_('(Enter,space) Read (f)ind (/)Find next (?) Find previous (h)elp (q)uit')))
+                self.infotext2 = urwid.Filler(urwid.Text(_('(Enter,space) Read (f)ind (h)elp (q)uit')))
             else:
-                self.infotext2 = urwid.Filler(urwid.Text(_('(Enter,space) Read (w)rite (f)ind (/)Find next (?) Find previous (h)elp (q)uit')))
+                self.infotext2 = urwid.Filler(urwid.Text(_('(Enter,space) Read (w)rite (f)ind (h)elp (q)uit')))
         
         # ArticleListWalker
         # TODO: 검색 시 ArticleSearchWalker를 사용하도록 변경.
-        # ArticleSearchWalker(self.session_key, self.board_name, self.make_widget, False, {'title':'a'})
         if self.session_key == 'guest':
             body = urwid.ListBox(ArticleListWalker(self.session_key, self.board_name, self.make_widget_guest))
             header = {'number':'#', 'author':_('Author'), 'title':_('Title'), 'date':_('Date'), 'hit':_('Hit'), 'vote':_('Vote')}

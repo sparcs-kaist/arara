@@ -81,22 +81,25 @@ class PasswordEdit(urwid.Edit):
 
 class Dialog(urwid.WidgetWrap):
     """
-    Creates a BoxWidget that displays a message
+    Creates a BoxWidget that displays a message, an edit field (optionally)
+    and some buttons on top of another BoxWidget.
+
     Attributes:
+
     b_pressed -- Contains the label of the last button pressed or None if no
                  button has been pressed.
     edit_text -- After a button is pressed, this contains the text the user
                  has entered in the edit field
     """
-    
-    b_pressed = None
-    edit_text = None
+   
+    b_pressed = None;
+    edit_text = None;
 
-    _blank = urwid.Text("")
-    _edit_widget = None
-    _mode = None
+    _blank = urwid.Text("");
+    _edit_widget = None;
 
-    def __init__(self, msg, buttons, attr, width, height, body, ):
+    def __init__(self, msg, buttons, attr, width, height, body, edit=None,
+                 edit_text=""):
         """
         msg -- content of the message widget, one of:
                    plain string -- string is displayed
@@ -104,44 +107,65 @@ class Dialog(urwid.WidgetWrap):
                    [markupA, markupB, ... ] -- list items joined together
         buttons -- a list of strings with the button labels
         attr -- a tuple (background, button, active_button) of attributes
-        width -- width of the message widget
         height -- height of the message widget
+        width -- width of the message widget
         body -- widget displayed beneath the message widget
+        edit -- If \"Text\" or \"Int\", a corresponding edit widget will be
+                displayed under the message, Otherwise, the edit widget will be
+                omitted.
+        edit_text -- default value to be edited
         """
 
         #Text widget containing the message:
-        msg_widget = urwid.Padding(urwid.Text(msg), 'center', width - 4)
+        msg_widget = urwid.Padding(urwid.Text(msg), 'center', width - 4);
 
         #GridFlow widget containing all the buttons:
-        button_widgets = []
+        button_widgets = [];
 
         for button in buttons:
             button_widgets.append(urwid.AttrWrap(
-                urwid.Button(button, self._action), attr[1], attr[2]))
+                urwid.Button(button, self._action), attr[1], attr[2]));
 
-        button_grid = urwid.GridFlow(button_widgets, 12, 2, 1, 'center')
+        button_grid = urwid.GridFlow(button_widgets, 12, 2, 1, 'center');
 
-        #Combine message widget and button widget:
-        widget_list = [msg_widget, self._blank, button_grid]
-        self._combined = urwid.AttrWrap(Border(urwid.Filler(
-            urwid.Pile(widget_list, 2))), attr[0])
-        
+        #Combine message widget, button widget and (possibly) edit widget:
+        if edit == "Text": #with text edit
+            self._edit_widget = urwid.Edit("", edit_text);
+            edit_pad = urwid.Padding(urwid.AttrWrap(
+                self._edit_widget, attr[1], attr[2]), 'center', width - 4);
+            widget_list = [msg_widget, self._blank, edit_pad, self._blank,
+                           button_grid];
+                       
+        elif edit == "Int": #with integer edit
+            self._edit_widget = urwid.IntEdit("", edit_text);
+            edit_pad = urwid.Padding(urwid.AttrWrap(
+                self._edit_widget, attr[1], attr[2]), 'center', width - 4);
+            widget_list = [msg_widget, self._blank, edit_pad, self._blank,
+                           button_grid];
+           
+        else: #plain message without edit widget:
+            widget_list = [msg_widget, self._blank, button_grid];
+
+           
+        combined = urwid.AttrWrap(Border(urwid.Filler(urwid.Pile(widget_list, 2))),
+                                  attr[0]);
+
         #Place the dialog widget on top of body:
-        overlay = urwid.Overlay(self._combined, body, 'center', width,
-                                'middle', height)
+        overlay = urwid.Overlay(combined, body, 'center', width,
+                                'middle', height);
         self.quit = False
        
-        urwid.WidgetWrap.__init__(self, overlay)
+        urwid.WidgetWrap.__init__(self, overlay);
 
     def _action(self, button):
         """
         Function called when a button is pressed.
         Should not be called manually.
         """
-        
-        self.b_pressed = button.get_label()
+       
+        self.b_pressed = button.get_label();
         if self._edit_widget:
-            self.edit_text = self._edit_widget.get_edit_text()
+            self.edit_text = self._edit_widget.get_edit_text();
         self.quit = True
 
 def EasyColumn(widget1, widget2,ratio1=60, ratio2=40):
