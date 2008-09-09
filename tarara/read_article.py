@@ -129,7 +129,7 @@ class ara_read_article(ara_form):
                     article_pile = urwid.Pile([('fixed',1,article_info),('fixed',1,article_title),article_body])
                 indented_pile = widget.IndentColumn(article_pile, article['depth']-1)
 
-            indented_pile = widget.NonTextItem(indented_pile,None,'article_selected')
+            indented_pile = widget.MarkedItem('>', indented_pile)
             article_list.append(indented_pile)
         return article_list
 
