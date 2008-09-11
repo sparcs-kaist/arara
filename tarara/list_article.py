@@ -59,6 +59,8 @@ class ara_list_article(ara_form):
         elif key == 'q':
             self.parent.change_page("main", {'session_key':self.session_key})
         elif key == 'f':
+            if self.session_key == 'guest':
+                return
             input_dialog = widget.Dialog(_('Search term:'), [_('OK'), _('Cancel')], ('menu','bg','bgf'), 30, 7, self, 'Text')
             self.overlay = input_dialog
             self.parent.run()
@@ -66,13 +68,13 @@ class ara_list_article(ara_form):
                 search_term = input_dialog.edit_text
             else:
                 search_term = ''
-            self.overlay = None
-            self.parent.run()
             if search_term.strip() == '':
                 return
             listbody = urwid.ListBox(ArticleSearchWalker(self.session_key, self.board_name,
                 self.make_widget, False, {'title':search_term}))
             self.articlelist.set_body(listbody)
+            self.overlay = None
+            self.parent.run()
         else:
             self.mainpile.keypress(size, key)
 
