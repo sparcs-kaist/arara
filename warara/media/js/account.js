@@ -84,4 +84,59 @@ $(document).ready(function(){
             event.preventDefault();
         }
     });
+
+    //shortcut
+
+    $cursor_atm = 0;
+    $select_atm = ".account_head_block a";
+    $length_atm = $($select_atm).length;
+    $($select_atm).eq(0).addClass("hidden_highlight");
+
+    $update_focus = function(ex_div, cursor){
+        $(ex_div + ".row_highlight").removeClass("row_highlight");
+        $(ex_div).eq(cursor).addClass("row_highlight");
+    }
+
+    $move_next = function(ex_div, cursor, length){
+        if(cursor < length-1){
+            cursor++;
+        }
+        return cursor;
+    }
+
+    $move_prev = function(ex_div, cursor, length){
+        if(cursor > 0){
+            cursor--;
+        }
+        return cursor;
+    }
+    $(document).keypress(function(event){
+            if($focus_input){
+            return;
+            }
+            if(event.altKey || event.ctrlKey){
+            return;
+            }
+            if($($select_atm + ".row_highlight").length){
+                switch(event.which){
+                    case 106:
+                        $cursor_atm = $move_prev($select_atm, $cursor_atm, $length_atm);
+                        $update_focus($select_atm, $cursor_atm);
+                        break;
+                    case 107:
+                        $cursor_atm = $move_next($select_atm, $cursor_atm, $length_atm);
+                        $update_focus($select_atm, $cursor_atm);
+                        break;
+                    case 32:
+                        location = $($select_atm).eq($cursor_atm).attr("href");
+                        event.preventDefault();
+                        break;
+                    } 
+            }
+            switch(event.which){
+                case 115:
+                    $update_focus($select_atm, $cursor_atm);
+                    break;
+            }
+            });
 });

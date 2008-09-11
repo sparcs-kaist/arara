@@ -308,7 +308,7 @@ $(document).ready(function(){
 		$(div + ".highlight").removeClass("highlight");
 		$(div + ":visible").eq(cursor-1).addClass("highlight");
 	}
-	function focus_content(){
+	$focus_content = function(){
 		$(".highlight").removeClass("highlight");
 		$(".hidden_highlight").removeClass("hidden_highlight").addClass("row_highlight");
 	}
@@ -451,7 +451,7 @@ $(document).ready(function(){
 			focus_topmenu();
 			break;
 			case 120: //x
-			focus_content();
+			$focus_content();
 			break;
             case 44:
             $(document).scrollTop($(document).scrollTop() - 50);

@@ -312,3 +312,8 @@
 #acc_rm_user {
     font-family: verdana;
 }
+
+/* focus top menu*/
+.account_head_block .row_highlight {
+	color: #9f4
+}
