@@ -14,6 +14,8 @@ def index(request):
     server = arara.get_server()
     ret, r = server.login_manager.total_visitor()
     assert ret, r
+    if request.session.get('django_language', 0):
+        request.session["django_language"] = "en"
     rendered = render_to_string('index.html', r)
     return HttpResponse(rendered)
 

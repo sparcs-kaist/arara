@@ -57,7 +57,12 @@ def login(request):
         server = arara.get_server()
         ret, session_key = server.login_manager.login(username, password, client_ip)
         assert ret, session_key
-        request.session["django_language"] = "ko"
+        ret, User_Info = server.member_manager.get_info(session_key)
+        assert ret, User_Info
+        if User_Info['default_language'] == "kor":
+            request.session["django_language"] = "ko"
+        elif User_Info['default_language'] == "eng":
+            request.session["django_language"] = "en"
         request.session["arara_session_key"] = session_key
         request.session["arara_username"] = username
         return HttpResponseRedirect(current_page)
@@ -110,6 +115,10 @@ def account_modify(request):
             modified_information_dic = {'nickname': nickname, 'signature': signature, 'self_introduction': introduction, 'default_language': language, 'widget': 0, 'layout': 0}
             ret, message = server.member_manager.modify(session_key, modified_information_dic)
             assert ret, message
+            if language == "kor":
+                request.session["django_language"] = "ko"
+            elif language == "eng":
+                request.session["django_language"] = "en"
             return HttpResponseRedirect("/account/")
         else:
             account['logged_in'] = True
