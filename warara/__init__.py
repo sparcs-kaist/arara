@@ -10,6 +10,7 @@ def check_logged_in(request):
         sess = ""
         r['logged_in'] = False
         r['username'] = ""
+        request.session['django_language']="en"
 
     return sess, r
 
