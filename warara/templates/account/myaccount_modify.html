@@ -44,8 +44,8 @@
 	        <div>
 		    <label for="mylanguage">{% trans "Language" %}</label>
 		    <select name="mylanguage" id="mylanguage" />
-			<option value="eng">English</option>
-			<option value="kor">한국어</option>
+			    <option value="eng" {% ifequal default_language "eng" %}selected{% endifequal %}>English</option>
+			    <option value="kor" {% ifequal default_language "kor" %}selected{% endifequal %}>한국어</option>
 		    </select>
 	        </div>
 	    </div>
