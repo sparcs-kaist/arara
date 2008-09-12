@@ -66,7 +66,7 @@
 			    <a name="logout" href="/account/logout/" class="{% if not logged_in %}hidden{% endif %}">{% trans "Logout" %}</a>
 			    <a name="account" href="/account/" class="{% if not logged_in %}hidden{% endif %}">{% trans "Account" %}</a>
 			    <a name="register" href="/account/register/agreement" class="{% if logged_in %}hidden{% endif %}">{% trans "Register" %}</a>
-			    <a href="/message/inbox/" name="top_menu_message" class="{% if not logged_in %}hidden{% endif %}">{% trans "Message" %}</a>
+				<a href="/message/inbox/" name="top_menu_message" class="{% if not logged_in %}hidden{%else%}{%if new_message%}new_message{%endif%}{% endif %}">{% trans "Message" %}</a>
 			    <a name="blacklist" href="/blacklist/" class="{% if not logged_in %}hidden{% endif %}">{% trans "Blacklist" %}</a>
 			    <a href="/main/help">{% trans "Help" %}</a>
 			</div>

@@ -151,6 +151,10 @@ def send_(request):
     receiver = request.POST.get('receiver', '')
     text = request.POST.get('text', '')
     receiver_type = request.POST.get('receiver_type', 'nickname')
+    if receiver_type == "nickname":
+        ret, user = server.member_manager.search_user(sess, receiver, receiver_type)
+        assert ret, user
+        receiver = user['username']
 
     ret, message = server.messaging_manager.send_message(sess, receiver, text)
     assert ret, message
@@ -266,6 +270,6 @@ def wrap_error(f):
 
 inbox = wrap_error(inbox)
 outbox = wrap_error(outbox)
-send = wrap_error(send)
+#send = wrap_error(send)
 read = wrap_error(read)
 delete = wrap_error(delete)

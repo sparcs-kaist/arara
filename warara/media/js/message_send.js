@@ -9,7 +9,7 @@ $(document).ready(function(){
                     document.message_send.submit();
                 }
                 else{
-                    alert(receiver + " is not exist");
+                    alert(receiver_type + " " + receiver + " is not exist");
                 }
                 });
             event.preventDefault();

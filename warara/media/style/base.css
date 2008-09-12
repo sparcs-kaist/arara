@@ -240,6 +240,10 @@ body {
 	height: 1.6em;
 }
 
+#top_menu .new_message {
+	color: red;
+}
+
 
 /* Popup menu styles */
 .username {

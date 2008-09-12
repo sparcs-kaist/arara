@@ -221,6 +221,11 @@ def nickname_check(request):
         r = {}
         check_nickname_field = request.POST['check_field']
         ret = server.member_manager.is_registered_nickname(check_nickname_field)
+        if(request.POST.get('from_message_send', 0)):
+            if ret:
+                return HttpResponse(1)
+            else:
+                return HttpResponse(0)
         if ret:
             r = 'The nickname is not available'
         else:

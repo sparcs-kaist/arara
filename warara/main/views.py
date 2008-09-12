@@ -54,6 +54,15 @@ def main(request):
     assert suc, ret
     r['weekly_best_list'] = enumerate(ret)
 
+    #message_check
+    ret, message_result = server.messaging_manager.receive_list(sess, 1, 1);
+    assert ret, message_result
+
+    if message_result['new_message_count']:
+        r['new_message'] = True
+    else:
+        r['new_message'] = False
+
     rendered = render_to_string('main.html', r)
     return HttpResponse(rendered)
 
