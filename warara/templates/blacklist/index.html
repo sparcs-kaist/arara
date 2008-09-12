@@ -23,7 +23,7 @@
             <table>
                 <tr>
 		    <th class="th" name="del_checkbox"><input type="checkbox" id="check_all_bl" /></th>
-		    <th class="th" name="chart_username">{% trans "USERNAME" %}</th>
+		    <th class="th" name="chart_username">{% trans "NICKNAME (ID)" %}</th>
 		    <th class="th" name="block_art">{% trans "ARTICLE" %}</th>
 		    <th class="th" name="block_mes">{% trans "MESSAGE" %}</th>
 		    <th class="th" name="del_ea"><img src="/media/image/delete_button.png" alt="delete"></th>
@@ -31,7 +31,7 @@
                 {% for b in blacklist %}
                 <tr>
 			<td class="del_cb"><input type="checkbox" name="bl_{{b.blacklisted_user_username}}_delete" class="del_cb_each" value="{{b.blacklisted_user_username}}" /></td>
-                    <td><span class="username">{{b.blacklisted_user_username}}</span></td>
+                    <td><span class="username">{{b.blacklisted_user_nickname}}</span><span> ({{b.blacklisted_user_username}})</span></td>
                     <td><input type="checkbox" name="blacklist_article_{{b.blacklisted_user_username}}" {% if b.block_article %}checked="on"{% else %}{% endif %}/></td>
                     <td><input type="checkbox" name="blacklist_message_{{b.blacklisted_user_username}}" {% if b.block_message%}checked="on"{% else %}{% endif %}/></td>
                     <td class="del_ea"><input type="image" src="/media/image/delete_button.png" class="delete_user" name="{{b.blacklisted_user_username}}" alt="delete" /></td>
@@ -52,7 +52,7 @@
             <input type="submit" value="{% trans "search" %}" class="small_btn" />
     	</form>
 	<div id="searching_results">
-	    {% for result in search_result %}<p class="username">{{result.username}}</p>{% endfor %}
+	    {% for result in search_result %}<p><span class="username">{{result.nickname}}</span><span> ({{result.username}})</span></p>{% endfor %}
         </div>
     	</div>
     </div>
