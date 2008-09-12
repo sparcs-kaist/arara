@@ -35,6 +35,8 @@ $(document).ready(function(){
             $("#help_top_menu a[rel='" + $help + "']").addClass("selected");
 			$("#help_content").contents().remove();
 			$("#help_content").append($("#help_" + $help).contents().clone());
+            $("#help_title").contents().remove();
+            $("#help_title").append($("#help_top_menu a[rel='" + $help + "']").contents().clone());
         }
 
         $(document).keypress(function(event){
@@ -58,6 +60,7 @@ $(document).ready(function(){
                 case 39:
                     $content_title = $("#help_top_menu a").eq(cursor).attr("rel");
                     update_content($content_title);
+                    event.preventDefault();
                     break;
             }
         });

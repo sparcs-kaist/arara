@@ -589,3 +589,7 @@ form {
 .iepngfix{
 	behavior: url(/media/thirdparty/iepngfix/iepngfix.htc);
 }
+
+.clear_float {
+	clear: both;
+}

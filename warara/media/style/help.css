@@ -1,32 +1,45 @@
-#help_top_menu ul {
-	margin: 0;
-	padding 0;
-	list-style: none;
+#help_top_menu {
+	background: url(/media/image/head_background.png) repeat;
+	width: 100%;
+}
+
+#help_title {
+	padding: 0.2em 1em;
 	float: left;
-	background-color: #7f7;
+	font-size: 2em;
+	color: white;
+}
+
+#help_top_menu ul {
+	margin: 0.2em 0em;
+	list-style: none;
+	float: right;
+	position: relative;
+	top: 0.5em;
 }
 
 #help_top_menu ul li{
 	float: left;
 	list-style: none;
+	color: white;
+	line-height: 2em;
 }
 
 #help_top_menu ul a{
 	display: block;
 	float: left;
-	padding: 0 2em;
-	line-height: 2.1em;
-	background-color: #7f7;
+	padding: 0em 1em;
+	line-height: 2em;
 	text-decoration: none;
-	color: red;
+	color: white;
 }
 
 #help_top_menu li a.row_highlight{
-	border: 1px solid red;
+	color: #9f4;
 }
 
 #help_top_menu li a.selected{
-	background-color: #0f4;
+	font-weight: bold;
 }
 
 #help_top_menu ul a:hover {
@@ -38,5 +51,11 @@
 }
 
 #help_content{
+	clear: both;
+	width: 98%;
+	padding-left: 2%;
+}
+
+.clear{
 	clear: both;
 }

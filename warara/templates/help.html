@@ -14,14 +14,16 @@
 {% load i18n %}
 
 <div id="help_top_menu">
+    <div id="help_title"></div>
     <ul>
-        <li class="first_li"><a rel="base" href="/help/base" name="base">{% trans "base" %}</a></li>
-        <li><a rel="account" href="/help/account" name="account">{% trans "account" %}</a></li>
-        <li><a rel="article" href="/help/article" name="article">{% trans "article" %}</a></li>
-        <li><a rel="message" href="/help/message" name="message">{% trans "message" %}</a></li>
-        <li><a rel="blacklist" href="/help/blacklist" name="blacklist">{% trans "blacklist" %}</a></li>
+        <li class="first_li"><a rel="base" href="/help/base" name="base">{% trans "base" %}</a> |</li>
+        <li><a rel="account" href="/help/account" name="account">{% trans "account" %}</a> |</li>
+        <li><a rel="article" href="/help/article" name="article">{% trans "article" %}</a> |</li>
+        <li><a rel="message" href="/help/message" name="message">{% trans "message" %}</a> |</li>
+        <li><a rel="blacklist" href="/help/blacklist" name="blacklist">{% trans "blacklist" %}</a> |</li>
         <li><a rel="help" href="/help/help" name="help">{% trans "help" %}</a></li>
     </ul>
+    <div class="clear"></div>
 </div>
 
 <div id="help_content">
