@@ -1,10 +1,21 @@
 $(document).ready(function(){
+    $("#more_link").hide();
+    $("#more_link_over").click(function(event) {
+        $("#more_link").show();
+        $("#more_link_over").hide();
+    });
+    $("#less_link_over").click(function(event) {
+        $("#more_link").hide();
+        $("#more_link_over").show();
+    });
+
     var user_popup = $("#user_popup");
     user_popup.addClass("absolute");
     var message_popup = $("#message_popup");
     message_popup.addClass("absolute");
 
 	$("input[name='current_page_url']").val(location.pathname);
+
 
     $("#user_popup li").hover(
     function(event) {
