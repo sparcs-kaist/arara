@@ -167,7 +167,7 @@ $(document).ready(function(){
 
     $("#message_popup input.message_send_submit").click(function(event) {
 		tb_remove();
-        $.post("/message/send/", {receiver: $("#message_receiver_field").val(), text: $("#message_text_field").val(), ajax:"1"},
+        $.post("/message/send/", {receiver: $("#message_receiver_field").val(), text: $("#message_text_field").val(), ajax:"1", receiver_type:"nickname"},
             function(data){
                 if(data == 1){
                     alert("Message send successful!");
