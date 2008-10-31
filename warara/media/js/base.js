@@ -142,7 +142,7 @@ $(document).ready(function(){
     }
 
     $("#user_popup_add_blacklist").click(function(event) {
-        add_black_list();
+        add_blacklist();
         event.preventDefault();
     });
 
