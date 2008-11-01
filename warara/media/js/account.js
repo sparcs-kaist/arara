@@ -49,7 +49,7 @@ $(document).ready(function(){
         $("#email").keydown(function(event) {
             email = $("#email").val();
             if(event.keyCode == 09) {
-                if ((document.form.email.value.indrxOf('@') == -1 ) || (document.form.email.value.indexOf('.') == -1)) {
+                if ((document.form.email.value.indexOf('@') == -1 ) || (document.form.email.value.indexOf('.') == -1)) {
                     $("#email").parent().children("label").children("span.feedback").text("The e-mail form is not proper");
                 }
                 else {
