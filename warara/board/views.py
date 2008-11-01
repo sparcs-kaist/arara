@@ -82,6 +82,11 @@ def get_article_list(request, r, mode):
         r['prev_page_group'] = {'mark':r['prev'], 'no':page_o.page(page_o.previous_page_number()).end_index()}
         r['first_page'] = {'mark':r['prev_group'], 'no':1}
 
+    #read_only_control
+    ret, board_dict = server.board_manager.get_board(r['board_name'])
+    assert ret, board_dict
+    r['board_dict'] = board_dict
+
 def list(request, board_name):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request)
@@ -178,7 +183,6 @@ def read(request, board_name, article_id):
     r['board_name'] = board_name
     username = request.session['arara_username']
     r['article_id'] = article_id
-    ret, list = server.board_manager.get_board_list()
 
     for article in article_list:
         if article['author_username'] == username:
