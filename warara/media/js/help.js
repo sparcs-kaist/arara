@@ -56,6 +56,9 @@ $(document).ready(function(){
                     move_next();
                     break;
 
+                case 113:
+                    location.href = "/main";
+
                 case 32:
                 case 39:
                     $content_title = $("#help_top_menu a").eq(cursor).attr("rel");

@@ -1,4 +1,3 @@
-
 $(document).ready(function(){
     $(".article_reply").hide();
     $(".article_reply_show").click(function(event) {
@@ -70,6 +69,20 @@ $(document).ready(function(){
             $(this).width(this_width);
         }
     });
+
+    $(".article_vote").click(function(event){
+            var vote_url = $(this).attr("href")
+            $.get(vote_url, {precheck:1}, function(data){
+                data = parseInt(data);
+                if(!data){
+                alert("Already voted!");
+                }
+                else{
+                location.href = vote_url;
+                }
+                });
+            event.preventDefault();
+            });
 
     $(document).keypress(function(event){
 		if($focus_input || event.altKey || event.ctrlKey){

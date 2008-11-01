@@ -226,6 +226,8 @@ def vote(request, board_name, root_id, article_no):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request)
     ret, message = server.article_manager.vote_article(sess, board_name, int(article_no))
+    if not ret and request.GET.get('precheck', 0):
+        return HttpResponse(0);
     assert ret, message
 
     return HttpResponseRedirect('/board/%s/%s' % (board_name, root_id))
