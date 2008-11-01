@@ -15,7 +15,10 @@ def add(request):
         blacklist_id = request.POST['blacklist_id']
         server = arara.get_server()
         sess = request.session["arara_session_key"]
-        ret, message = server.blacklist_manager.add(sess, blacklist_id)
+        ret, id_converting = server.member_manager.search_user(sess, blacklist_id) 
+        if ret:
+            converted_id =  id_converting[0]['username']
+        ret, message = server.blacklist_manager.add(sess, converted_id)
         if request.POST.get('ajax', 0):
             if not ret:
                 return HttpResponse(message)
@@ -104,6 +107,6 @@ def wrap_error(f):
 
 index = wrap_error(index)
 get_various_info = wrap_error(get_various_info)
-add = wrap_error(add)
+#add = wrap_error(add)
 delete = wrap_error(delete)
 update = wrap_error(update)
