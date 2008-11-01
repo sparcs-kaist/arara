@@ -59,7 +59,7 @@
 {% else %}
     <div id="message_send_buttons">
         <ul>
-            <li><a name="message_read_move_to_list" href="../">{% trans "list" %}</a></li>
+            <li><a name="message_read_move_to_list" href="../?page_length={{page_length}}&page_no={{page_no}}">{% trans "list" %}</a></li>
             <li><a name="message_read_delete" href="/message/delete/?del_msg_no={{message.id}}&message_list_type={{message_list_type}}">{% trans "delete" %}</a></li>
         </ul>
     </div>

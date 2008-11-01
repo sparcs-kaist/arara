@@ -177,8 +177,8 @@ def read(request, message_list_type, message_id):
 
     r = {}
     r['logged_in'] = True
-    r['next'] = 'a'
-    r['prev'] = 'a'
+    r['page_length'] = request.GET.get('page_length', 10)
+    r['page_no'] = request.GET.get('page_no', 1)
     message_id = int(message_id)
     if message_list_type == 'inbox':
         ret, r['message'] = server.messaging_manager.read_received_message(sess, message_id)
@@ -186,8 +186,6 @@ def read(request, message_list_type, message_id):
         ret, r['message'] = server.messaging_manager.read_sent_message(sess, message_id)
     assert ret, r['message']
 
-    r['prev_message'] = {'mark':r['prev'], 'msg_no':''}
-    r['next_message'] = {'mark':r['next'], 'msg_no':''}
     r['message_id'] = message_id
     r['message_list_type'] = message_list_type
 

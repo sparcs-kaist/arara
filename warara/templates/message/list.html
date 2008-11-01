@@ -74,7 +74,7 @@
                 {% endifequal %}
             </td>
             <td name="text"{%ifequal message.read_status 'N'%} class="new_message"{%endifequal%}>
-                <a href="/message/{{message_list_type}}/{{message.id}}">{{message.message}}</a>
+                <a href="/message/{{message_list_type}}/{{message.id}}?page_length={{page_length}}&page_no={{page_no}}">{{message.message}}</a>
             </td>
             <td>
                 {{message.time}}
