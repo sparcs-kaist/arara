@@ -238,16 +238,35 @@ $(document).ready(function(){
 		event.stopPropagation();
     });
 
+    //login error check
+    $("#login_box input[type='submit']").click(function(event){
+            var login_username = $("#login_box input[name='username']").val();
+            var login_password = $("#login_box input[name='password']").val();
+            $.post("/account/login/", {username:login_username, password:login_password, precheck:1}
+                , function(data){
+                if(data == "WRONG_USERNAME"){
+                alert("Id doesn't exist");
+                }
+                else if(data == "WRONG_PASSWORD"){
+                alert("Enter the correct password");
+                }
+                else{
+                document.login.submit();
+                }
+                });
+            event.preventDefault();
+            });
+
 	//logout function
     function logout(){
 			$.get("/account/logout", function(data){
                 $("#top_menu a.hidden").removeClass("hidden");
-				$("a[name='logout']").hide();
-				$("a[name='login']").show();
-				$("a[name='account']").hide();
-				$("a[name='register']").show();
-				$("a[name='top_menu_message']").hide();
-				$("a[name='blacklist']").hide();
+				$("#top_menu a[name='logout']").hide();
+				$("#top_menu a[name='login']").show();
+				$("#top_menu a[name='account']").hide();
+				$("#top_menu a[name='register']").show();
+				$("#top_menu a[name='top_menu_message']").hide();
+				$("#top_menu a[name='blacklist']").hide();
 				});
     }
 	$("a[name='logout']").click(function(event){

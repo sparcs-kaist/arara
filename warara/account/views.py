@@ -52,10 +52,12 @@ def login(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        current_page = request.POST['current_page_url']
+        current_page = request.POST.get('current_page_url', 0)
         client_ip = request.META['REMOTE_ADDR']
         server = arara.get_server()
         ret, session_key = server.login_manager.login(username, password, client_ip)
+        if request.POST.get('precheck', 0):
+                return HttpResponse(session_key);
         assert ret, session_key
         ret, User_Info = server.member_manager.get_info(session_key)
         assert ret, User_Info
@@ -186,7 +188,7 @@ def wrap_error(f):
 
     return check_error
 
-login = wrap_error(login)
+#login = wrap_error(login)
 logout = wrap_error(logout)
 account = wrap_error(account)
 register = wrap_error(register)
