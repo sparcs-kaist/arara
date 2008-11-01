@@ -192,6 +192,9 @@ $(document).ready(function(){
     $("input[type='password']").focus(function(){
             $focus_input = 1;
             });
+    $("input[type='submit']").focus(function(){
+            $focus_input = 1;
+            });
 	$("textarea").focus(function(){
 			$focus_input = 1;
 			});

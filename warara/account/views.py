@@ -67,6 +67,9 @@ def login(request):
             request.session["django_language"] = "en"
         request.session["arara_session_key"] = session_key
         request.session["arara_username"] = username
+
+        if current_page.find('register')+1:
+            return HttpResponseRedirect('/main')
         return HttpResponseRedirect(current_page)
 
     return HttpResponseRedirect('/')
