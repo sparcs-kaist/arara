@@ -208,9 +208,9 @@ def id_check(request):
             else:
                 return HttpResponse(0)
         if ret:
-            r = 'The ID is not available'
+            r = 1
         else:
-            r = 'The ID is available'
+            r = 0
         return HttpResponse(r)
     else:
         return HttpResponse('Must use POST')
@@ -227,9 +227,9 @@ def nickname_check(request):
             else:
                 return HttpResponse(0)
         if ret:
-            r = 'The nickname is not available'
+            r = 1
         else:
-            r = 'The nickname is available'
+            r = 0
         return HttpResponse(r)
     else:
         return HttpResponse('Must use POST')
@@ -241,9 +241,9 @@ def email_check(request):
         check_email_field = request.POST['check_email_field']
         ret = server.member_manager.is_registered_email(check_email_field)
         if ret:
-            r = 'The email is not available'
+            r = 1
         else:
-            r = 'The email is available'
+            r = 0
         return HttpResponse(r)
     else:
         return HttpResponse('Must use POST')

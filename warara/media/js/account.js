@@ -14,48 +14,64 @@ $(document).ready(function(){
                 if (!$(this).val()) {
                     $(this).parent().children("label").children("span.feedback").text("The field is empty");
                 }
-                else
+                else {
                     $(this).parent().children("label").children("span.feedback").text("");
+                }
             }
         });
         $("#re_password_field").keyup(function(event) {
             if (!($("#password_field").val() == $("#re_password_field").val())) {
                 $("#password_field").parent().children("label").children("span.feedback")
                     .text("The password doesn't matched with the re-enter");
+                $textPasswordTest = 1;
             }
-            else
+            else {
                 $("#password_field").parent().children("label").children("span.feedback").text("");
+                $textPasswordTest = 0;
+            }
         });
         $("#id").keydown(function(event) {
             id = $("#id").val(); 
-            if(event.keyCode == 09) {
+            if (event.keyCode == 09) {
                 $.post("/account/register/idcheck/", {check_field: id},
                     function(data, textStatus) {
-                        $("#id").parent().children("label").children("span.feedback").text(data);
+                        $idDupleTest = data;
+                        if ($idDupleTest == 1)
+                            {$("#id").parent().children("label").children("span.feedback").text("The ID is not available");}
+                        else 
+                            {$("#id").parent().children("label").children("span.feedback").text("The ID is available");}
                     }
                 );
             }
         });
         $("#nickname").keydown(function(event) {
             nickname = $("#nickname").val();
-            if(event.keyCode == 09) {
+            if (event.keyCode == 09) {
                 $.post("/account/register/nicknamecheck/", {check_field: nickname},
                     function(data, textStatus) {
-                        $("#nickname").parent().children("label").children("span.feedback").text(data);
+                        $nickDupleTest = data;
+                        if ($nickDupleTest == 1)
+                            {$("#nickname").parent().children("label").children("span.feedback").text("The nickname is not available");}
+                        else 
+                            {$("#nickname").parent().children("label").children("span.feedback").text("The nickname is available");}
                     }
                 );
             }
         });
         $("#email").keydown(function(event) {
             email = $("#email").val();
-            if(event.keyCode == 09) {
+            if (event.keyCode == 09) {
                 if ((document.form.email.value.indexOf('@') == -1 ) || (document.form.email.value.indexOf('.') == -1)) {
                     $("#email").parent().children("label").children("span.feedback").text("The e-mail form is not proper");
                 }
                 else {
                     $.post("/account/register/emailcheck/", {check_email_field: email},
                         function(data, textStatus) {
-                            $("#email").parent().children("label").children("span.feedback").text(data);
+                            $emailDupleTest = data;
+                            if ($emailDupleTest == 1)
+                                {$("#email").parent().children("label").children("span.feedback").text("The email is not available");}
+                            else 
+                                {$("#email").parent().children("label").children("span.feedback").text("The email is available");}
                         }
                     );
                 }
@@ -80,6 +96,10 @@ $(document).ready(function(){
         }
         if ((document.form.email.value.indexOf('@') == -1 ) || (document.form.email.value.indexOf('.') == -1)) {
             $("#email").parent().children("label").children("span.feedback").text("The e-mail form is not proper");
+            $(".submit").parent().parent().children("label").children("span.feedback").text("Please confirm your form");
+            event.preventDefault();
+        }
+        if ($idDupleTest == 1 || $nickDupleTest == 1 || $emailDupleTest == 1) {
             $(".submit").parent().parent().children("label").children("span.feedback").text("Please confirm your form");
             event.preventDefault();
         }
