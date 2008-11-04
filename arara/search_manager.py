@@ -129,6 +129,9 @@ class SearchManager(object):
         전체검색이 아닐경우 query_dic에
         'title', 'content', 'author_nickname', 'author_username', 'date'중
         최소 한가지 이상의 조건을 넣어 보내면 주어진 조건에 대하여 AND 검색된다.
+        
+        (2008/11/05 02:04:pipoket)
+        현재 OR검색이 수행되도록 변경하였음. 테스트 수정중
 
         전체검색을 하고 싶으면 all_flag를 true로 하면 된다.
         
@@ -223,12 +226,12 @@ class SearchManager(object):
         else:
             if query_dict.has_key('title'):
                 query_text = self._get_query_text(query_dict, 'title')
-                query = query.filter(
-                        model.articles_table.c.title.like(query_text))
+                query = query.filter(or_(
+                        model.articles_table.c.title.like(query_text)))
             if query_dict.has_key('content'):
                 query_text = self._get_query_text(query_dict, 'content')
-                query = query.filter(
-                        model.articles_table.c.content.like(query_text))
+                query = query.filter(or_(
+                        model.articles_table.c.content.like(query_text)))
             if query_dict.has_key('author_nickname'):
                 query_text = self._get_query_text(query_dict, 'author_nickname')
                 try:
@@ -246,8 +249,8 @@ class SearchManager(object):
             if query_dict.has_key('author_username'):
                 query_text = self._get_query_text(query_dict, 'author_username')
                 try:
-                    user_list = session.query(model.User).filter(
-                            model.users_table.c.username.like(query_text)).all()
+                    user_list = session.query(model.User).filter(or_(
+                            model.users_table.c.username.like(query_text))).all()
                 except Exception:
                     session.close()
                     raise
