@@ -771,10 +771,10 @@ class ArticleManager(object):
         
         @type  session_key: string
         @param session_key: User Key
-        @type  no: number
-        @param no: Article Number
         @type board_name: string
         @param board_name : BBS Name
+        @type  no: number
+        @param no: Article Number
         @rtype: boolean, string 
         @return:
             1. Delete 성공: True, 'OK'
