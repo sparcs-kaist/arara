@@ -248,6 +248,11 @@ True
 >>> article[4]['depth']
 5
 
+# Test for reply_count function
+>>> ret, list = server.article_manager.article_list(session_key, u'garbages', 1, 5)
+>>> list['hit'][0]['reply_count']
+4
+
 # adding blacklist to test blacklist function
 
 >>> server.blacklist_manager.add(session_key, u'serialx')
