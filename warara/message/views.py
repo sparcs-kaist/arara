@@ -152,11 +152,9 @@ def send_(request):
     text = request.POST.get('text', '')
     receiver_type = request.POST.get('receiver_type', 'nickname')
     if receiver_type == "nickname":
-        ret, user = server.member_manager.search_user(sess, receiver, receiver_type)
-        assert ret, user
-        receiver = user['username']
-
-    ret, message = server.messaging_manager.send_message(sess, receiver, text)
+        ret, message = server.messaging_manager.send_message_by_nickname(sess, receiver, text)
+    else:
+        ret, message = server.messaging_manager.send_message_by_username(sess, receiver, text)
     assert ret, message
 
     if not ret:

@@ -20,10 +20,12 @@ def get_article_list(request, r, mode):
     
     page_no = request.GET.get('page_no', 1)
     r['page_no'] = int(page_no)
+    if not r.get('selected_method_list', 0):
+        r['selected_method_list'] = ['title', 'content', 'author_nickname', 'author_username']
+        r['search_method_list'] = [{'val':'title', 'text':'title'}, {'val':'content', 'text':'content'},
+                {'val':'author_nickname', 'text':'nickname'}, {'val':'author_username', 'text':'id'}]
+        
     page_length = 20
-    r['selected_method_list'] = ['title', 'content', 'author_nickname', 'author_username']
-    r['search_method_list'] = [{'val':'title', 'text':'title'}, {'val':'content', 'text':'content'},
-            {'val':'author_nickname', 'text':'nickname'}, {'val':'author_username', 'text':'id'}]
     if mode == 'list':
         ret, article_result = server.article_manager.article_list(sess, r['board_name'], r['page_no'])
     elif mode == 'read':
@@ -31,19 +33,7 @@ def get_article_list(request, r, mode):
         r['page_no'] = article_result['current_page']
         article_result['last_page'] = 1
     elif mode == 'search':
-        search_word = request.GET.get('search_word', '')
-        r['selected_method_list'] = []
-        search_method = {}
-        for method in r['search_method_list']:
-            if request.GET.get(method['val'], 0):
-                r['selected_method_list'].append(method['val'])
-                if method['val'] == 'all':
-                    search_method['query'] = search_word
-                    break;
-                search_method[method['val']] = search_word
-        if page_no:
-            page_no = 1
-        ret, article_result = server.search_manager.search(sess, False, r['board_name'], search_method, page_no, page_length)
+        ret, article_result = server.search_manager.search(sess, False, r['board_name'], r['search_method'], page_no, page_length)
     assert ret, article_result
 
     page_range_length = 10
@@ -244,12 +234,31 @@ def search(request, board_name):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request);
     r['board_name'] = board_name
+
+    r['selected_method_list'] = ['title', 'content', 'author_nickname', 'author_username']
+    r['search_method_list'] = [{'val':'title', 'text':'title'}, {'val':'content', 'text':'content'},
+            {'val':'author_nickname', 'text':'nickname'}, {'val':'author_username', 'text':'id'}]
+    search_word = request.GET.get('search_word', '')
+    r['selected_method_list'] = []
+
+    r['chosen_search_method'] = request.GET.get('chosen_search_method', '')
+    if r['chosen_search_method']:
+        r['search_method'] = dict(zip(r['chosen_search_method'].split('|'), [search_word for x in range(100)]))
+        r['selected_method_list'] = r['chosen_search_method'].split('|')
+    else:
+        r['search_method'] = {}
+        for method in r['search_method_list']:
+            if request.GET.get(method['val'], 0):
+                r['chosen_search_method'] = r['chosen_search_method'] + '|' + method['val']
+                r['selected_method_list'].append(method['val'])
+                r['search_method'][method['val']] = search_word
+        r['chosen_search_method'] = r['chosen_search_method'].strip('|')
     get_article_list(request, r, 'search')
 
     r['method'] = 'search'
     path = request.get_full_path()
     path = path.split('?')[0]
-    r['path'] = path + "?search_word=" + request.GET.get('search_word', '') + "&search_method=" + request.GET.get('search_method', 'all')
+    r['path'] = path + "?search_word=" + search_word + "&chosen_search_method=" + r['chosen_search_method']
     rendered = render_to_string('board/list.html', r)
     return HttpResponse(rendered)
 
@@ -284,8 +293,8 @@ def wrap_error(f):
 
     return check_error
 
-list = wrap_error(list)
-read = wrap_error(read)
+#list = wrap_error(list)
+#read = wrap_error(read)
 vote = wrap_error(vote)
 index = wrap_error(index)
 write = wrap_error(write)
