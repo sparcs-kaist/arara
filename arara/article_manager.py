@@ -60,18 +60,29 @@ class ArticleManager(object):
             return False, 'BOARD_NOT_EXIST'
 
     def _article_thread_to_list(self, article_thread):
+        queue = []
+        depth_ret = {}
+        queue.append({article_thread: 1})
+        while queue:
+            for item in queue:
+                depth = item.values()[0]
+                depth_ret[item.keys()[0]] = depth
+            depth += 1
+            length = len(queue)
+            for i in range(length):
+                parent_article = queue.pop(0).keys()[0]
+                for child in parent_article.children:
+                    queue.append({child: depth})
         stack = []
         ret = []
-        stack.append((article_thread, 1))
+        stack.append(article_thread)
         while stack:
-            a, depth = stack.pop()
+            a = stack.pop()
             d = self._get_dict(a, READ_ARTICLE_WHITELIST)
-            d['depth'] = depth
+            d['depth'] = depth_ret[a]
             ret.append(filter_dict(d, READ_ARTICLE_WHITELIST))
             for child in a.children[::-1]:
-                if depth < 12:
-                    depth += 1
-                stack.append((child, depth))
+                stack.append(child)
         return ret
 
     def _get_today_best_article(self, session_key, board=None, count=5):
