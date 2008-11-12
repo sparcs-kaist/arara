@@ -698,6 +698,8 @@ class ArticleManager(object):
                                         user_info['ip'],
                                         article)
                 article.reply_count += 1
+                if article.root:
+                    article.root.reply_count += 1
                 session.save(new_reply)
                 session.commit()
                 session.close()
