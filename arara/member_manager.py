@@ -597,9 +597,9 @@ class MemberManager(object):
             if not search_key:
                 user = session.query(model.User).filter(or_(model.users_table.c.username==search_user, model.users_table.c.nickname==search_user)).all()
             else:
-                if search_key=='username':
+                if search_key.lower() == u'username':
                     user = session.query(model.User).filter_by(username=search_user).all()
-                elif search_key=='nickname':
+                elif search_key.lower() == u'nickname':
                     user = session.query(model.User).filter_by(nickname=search_user).all()
                 else:
                     return False, 'INCORRECT_SEARCH_KEY'
