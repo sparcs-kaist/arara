@@ -96,7 +96,7 @@ True
 >>> ret
 True
 
-# Searh Test
+# Search Test
 
 >>> server.member_manager.search_user(unicode(session_key), u'mikkang')
 (True, [{'username': u'mikkang', 'nickname': u'ggingkkang'}, {'username': u'ggingkkang', 'nickname': u'mikkang'}])
