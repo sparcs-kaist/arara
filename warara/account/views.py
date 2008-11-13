@@ -24,7 +24,7 @@ def register(request):
         user_information_dic = {'username':username, 'password':password, 'nickname':nickname, 'email':email, 'signature':signature, 'self_introduction':introduction, 'default_language':language}
         ret, message = server.member_manager.register(user_information_dic)
         assert ret, message
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect("/main/")
     
     rendered = render_to_string('account/register.html', r)
     return HttpResponse(rendered)
