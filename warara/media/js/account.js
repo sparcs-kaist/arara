@@ -9,14 +9,12 @@ $(document).ready(function(){
     
     $("input.required_field").focus(function() {
         $(this).parent().children("label").children("span.feedback").text("");
-        $("input.required_field").keyup(function(event) {
-            if (!(event.keyCode == 09)) {
-                if (!$(this).val()) {
-                    $(this).parent().children("label").children("span.feedback").text("The field is empty");
-                }
-                else {
-                    $(this).parent().children("label").children("span.feedback").text("");
-                }
+        $("input.required_field").blur(function(event) {
+            if (!$(this).val()) {
+                $(this).parent().children("label").children("span.feedback").text("The field is empty");
+            }
+            else {
+                $(this).parent().children("label").children("span.feedback").text("");
             }
         });
         $("#re_password_field").keyup(function(event) {
@@ -30,9 +28,9 @@ $(document).ready(function(){
                 $textPasswordTest = 0;
             }
         });
-        $("#id").keydown(function(event) {
+        $("#id").blur(function(event) {
             id = $("#id").val(); 
-            if (event.keyCode == 09) {
+            if (id != "") {
                 $.post("/account/register/idcheck/", {check_field: id},
                     function(data, textStatus) {
                         $idDupleTest = data;
@@ -44,9 +42,9 @@ $(document).ready(function(){
                 );
             }
         });
-        $("#nickname").keydown(function(event) {
+        $("#nickname").blur(function(event) {
             nickname = $("#nickname").val();
-            if (event.keyCode == 09) {
+            if (nickname != "") {
                 $.post("/account/register/nicknamecheck/", {check_field: nickname},
                     function(data, textStatus) {
                         $nickDupleTest = data;
@@ -58,9 +56,9 @@ $(document).ready(function(){
                 );
             }
         });
-        $("#email").keydown(function(event) {
+        $("#email").blur(function(event) {
             email = $("#email").val();
-            if (event.keyCode == 09) {
+            if (email != "") {
                 if ((document.form.email.value.indexOf('@') == -1 ) || (document.form.email.value.indexOf('.') == -1)) {
                     $("#email").parent().children("label").children("span.feedback").text("The e-mail form is not proper");
                 }
