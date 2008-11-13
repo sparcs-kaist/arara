@@ -390,7 +390,8 @@ $(document).ready(function(){
 			}
 			});
 	$(document).keypress(function(event){
-			if(!$("#top_menu a[class='highlight']").length){
+			//if(!$("#top_menu a[class='highlight']").length){
+            if($("#top_menu a").find(".highlight").length){
 			cursor_tm=0;
 			return;
 			}

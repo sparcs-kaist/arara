@@ -72,14 +72,8 @@ $(document).ready(function(){
 
     $(".article_vote").click(function(event){
             var vote_url = $(this).attr("href")
-            $.get(vote_url, {precheck:1}, function(data){
-                data = parseInt(data);
-                if(!data){
-                alert("Already voted!");
-                }
-                else{
-                location.href = vote_url;
-                }
+            $.get(vote_url, function(data){
+                alert(data);
                 });
             event.preventDefault();
             });
