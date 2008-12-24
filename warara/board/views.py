@@ -91,6 +91,12 @@ def write(request, board_name):
     if request.method == 'POST':
         return write_(request, board_name)
 
+    if request.GET.get('multi', 0):
+        article_dic={'title':'test title', 'content':'test content'}
+        ret, article_id = server.article_manager.write_article(sess, board_name, article_dic)
+        assert ret, article_id
+        return HttpResponseRedirect('/' + board_name)
+
     sess, r = warara.check_logged_in(request)
     article_id = request.GET.get('article_id', 0)
     r['t_write'] = 'write'
@@ -300,7 +306,7 @@ def wrap_error(f):
 #read = wrap_error(read)
 vote = wrap_error(vote)
 index = wrap_error(index)
-write = wrap_error(write)
+#write = wrap_error(write)
 reply = wrap_error(reply)
 delete = wrap_error(delete)
 #search = wrap_error(search)

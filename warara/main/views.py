@@ -109,6 +109,6 @@ def wrap_error(f):
 
     return check_error
 
-index = wrap_error(index)
+#index = wrap_error(index)
 help = wrap_error(help)
 main = wrap_error(main)
