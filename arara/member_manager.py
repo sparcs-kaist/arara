@@ -158,6 +158,8 @@ class MemberManager(object):
             session.close()
             return False, 'DATABASE_ERROR'
 
+        #If everything is clear, send validation mail to user.
+        self.send_mail(user.email, user.username, user_activation.activation_code)
         session.close()
         return True, activation_code
 
@@ -179,7 +181,7 @@ class MemberManager(object):
         '''
 
         try:
-            HOST = 'smtp.naver.com'
+            HOST = 'localhost'
             sender = 'root_id@sparcs.org'
             content = 'You have been successfully registered as the ARAra member.<br />To use your account, you have to activate it.<br />Please click the link below on any web browser to activate your account.<br /><br />'
             confirm_url = 'http://nan.sparcs.org:8080/account/confirm/%s/%s' % (username, confirm_key)
@@ -191,7 +193,6 @@ class MemberManager(object):
             msg['To'] = email
             s = smtplib.SMTP()
             s.connect(HOST)
-            s.login('newtron_star', 'q1q1q1')
             s.sendmail(sender, [email], msg.as_string())
             s.quit()
         except Exception:
