@@ -439,6 +439,10 @@ class ArticleManager(object):
                 article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
                 article_id_list = []
                 for article in article_dict_list:
+		    if item['author_username'] in blacklist_users:
+			item['blacklisted'] = True
+		    else:
+			item['blacklisted'] = False
                     if article.has_key('id'):
                         if not article.has_key('type'):
                             article['type'] = 'normal'
