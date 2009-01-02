@@ -19,6 +19,10 @@ a {
     background-color: #fff;
 }
 
+#body_wrapper {
+    background-color: #f0f0f0;
+}
+
 #header_wrapper {
     width: 100%;
     background-color: #999;
@@ -28,17 +32,15 @@ a {
     float: left;
     width: 14%;
     max-width: 14%;
-    background-color: #f0f0f0;
-
-	height: 40em;
-	min-height: 48em; /*임시*/
+    min-height: 48em; /*임시*/
 }
 
 #content_wrapper {
-	position: relative;
+    position: relative;
     float: right;
     width: 86%;
     max-width: 86%;
+    background-color: white;
 }
 
 #footer_wrapper {
