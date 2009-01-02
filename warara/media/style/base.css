@@ -19,6 +19,10 @@ a {
     background-color: #fff;
 }
 
+#body_wrapper, #menu_wrapper, #content_wrapper {
+    min-height: 48em;
+}
+
 #body_wrapper {
     background-color: #f0f0f0;
 }
@@ -32,7 +36,6 @@ a {
     float: left;
     width: 14%;
     max-width: 14%;
-    min-height: 48em; /*임시*/
 }
 
 #content_wrapper {
