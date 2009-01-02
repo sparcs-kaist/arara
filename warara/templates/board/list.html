@@ -48,6 +48,7 @@
         </tbody>
     </table>
 </div>
+{% block page_list %}
 <div id="board_pages" class="width_full">
     {% ifequal method 'search' %}
     <a href="{{path}}&page_no={{first_page.no}}">{{first_page.mark}}</a>
@@ -67,6 +68,7 @@
     <a href="/board/{{board_name}}?page_no={{last_page.no}}">{{last_page.mark}}</a>
     {% endifequal %}
 </div>
+{% endblock %}
 {% if logged_in %}
 <div id="board_buttons" class="width_full">
     <div id="board_write" class="small_btn{% if board_dict.read_only %} hidden{% endif %}">
