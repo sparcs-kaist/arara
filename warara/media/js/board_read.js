@@ -75,6 +75,7 @@ $(document).ready(function(){
             $.get(vote_url, function(data){
                 alert(data);
                 });
+            location.href("");
             event.preventDefault();
             });
 
