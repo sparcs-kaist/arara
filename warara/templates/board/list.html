@@ -52,7 +52,7 @@
 <div id="board_pages" class="width_full">
     {% ifequal method 'search' %}
     <a href="{{path}}&page_no={{first_page.no}}">{{first_page.mark}}</a>
-    <a href="{{path}}&page_no={{prev_page_group_no}}">{{prev_page_group.mark}}</a>
+    <a href="{{path}}&page_no={{prev_page_group.no}}">{{prev_page_group.mark}}</a>
     {% for page in page_list %}
     <a href="{{path}}&page_no={{page}}">{{page}}</a>
     {% endfor %}
@@ -60,7 +60,7 @@
     <a href="{{path}}&page_no={{last_page.no}}">{{last_page.mark}}</a>
     {% else %}
     <a href="/board/{{board_name}}?page_no={{first_page.no}}">{{first_page.mark}}</a>
-    <a href="/board/{{board_name}}?page_no={{prev_page_group_no}}">{{prev_page_group.mark}}</a>
+    <a href="/board/{{board_name}}?page_no={{prev_page_group.no}}">{{prev_page_group.mark}}</a>
     {% for page in page_list %}
     <a href="/board/{{board_name}}?page_no={{page}}">{{page}}</a>
     {% endfor %}

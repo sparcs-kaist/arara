@@ -105,6 +105,7 @@ $(document).ready(function(){
                 case 13:  // enter
                 case 32:  // space
                 case 39:
+                case 105:
                     event.preventDefault();
                     read_article();
                     break;

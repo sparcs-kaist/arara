@@ -33,6 +33,7 @@ def get_article_list(request, r, mode):
         r['page_no'] = article_result['current_page']
         article_result['last_page'] = 1
     elif mode == 'search':
+        page_no = int(page_no)
         ret, article_result = server.search_manager.search(sess, False, r['board_name'], r['search_method'], page_no, page_length)
     assert ret, article_result
 
@@ -58,18 +59,18 @@ def get_article_list(request, r, mode):
             r['search_method_list'][i]['selected'] = False
 
     #pagination
-    r['next'] = 'a'
-    r['prev'] = 'a'
-    r['next_group'] = 'a'
-    r['prev_group'] = 'a'
+    r['next'] = '〉'
+    r['prev'] = '〈'
+    r['next_group'] = '》'
+    r['prev_group'] = '《'
     r['page_num'] = article_result['last_page']
     page_o = Paginator([x+1 for x in range(r['page_num'])],10)
     r['page_list'] = page_o.page(page_range_no).object_list
     if page_o.page(page_range_no).has_next():
-        r['next_page_group'] = {'mark':r['next'], 'no':page_o.page(page_o.next_page_number()).start_index()}
+        r['next_page_group'] = {'mark':r['next'], 'no':page_o.page(page_o.page(page_range_no).next_page_number()).start_index()}
         r['last_page'] = {'mark':r['next_group'], 'no':r['page_num']}
     if page_o.page(page_range_no).has_previous():
-        r['prev_page_group'] = {'mark':r['prev'], 'no':page_o.page(page_o.previous_page_number()).end_index()}
+        r['prev_page_group'] = {'mark':r['prev'], 'no':page_o.page(page_o.page(page_range_no).previous_page_number()).end_index()}
         r['first_page'] = {'mark':r['prev_group'], 'no':1}
 
     #read_only_control
@@ -92,10 +93,14 @@ def write(request, board_name):
         return write_(request, board_name)
 
     if request.GET.get('multi', 0):
+        sess, r = warara.check_logged_in(request)
+        rec_num = request.GET['multi']
         article_dic={'title':'test title', 'content':'test content'}
-        ret, article_id = server.article_manager.write_article(sess, board_name, article_dic)
-        assert ret, article_id
-        return HttpResponseRedirect('/' + board_name)
+        for i in range(int(rec_num)):
+            ret, article_id = server.article_manager.write_article(sess, board_name, article_dic)
+            assert ret, article_id
+
+        return HttpResponseRedirect('../')
 
     sess, r = warara.check_logged_in(request)
     article_id = request.GET.get('article_id', 0)

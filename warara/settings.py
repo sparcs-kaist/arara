@@ -17,10 +17,6 @@ DATABASE_HOST = ''             # Set to empty string for localhost. Not used wit
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
 # EMAIL SETTINGS
-EMAIL_HOST = 'sparcs.kaist.ac.kr'
-EMAIL_PORT = 25
-EMAIL_HOST_USER = 'arara'
-EMAIL_HOST_PASSWORD = 'tnfqkrtm'
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

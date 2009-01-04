@@ -26,30 +26,8 @@ def register(request):
         assert ret, message
         return HttpResponseRedirect("/main/")
     
-    email = request.GET.get("email", 0)
-    if email:
-        user_information_dic = {'email':email}
-        send_email(user_information_dic)
-        return HttpResponse("success")
     rendered = render_to_string('account/register.html', r)
     return HttpResponse(rendered)
-
-def send_email(user_info):
-    import smtplib
-    from email.MIMEText import MIMEText
-
-    host = 'newtron_star:q1q1q1@smtp.naver.com'
-    content = 'testmail'
-    sender = 'root@sparcs.org'
-
-    msg = MIMEText(content, _charset='euc-kr')
-    msg['Subject'] = 'testmail subject'
-    msg['From'] = sender
-    msg['To'] = user_info['email']
-
-    smtp = smtplib.SMTP(host)
-    s.sendmail(sender, [user_info['email']], msg.as_string())
-    s.quit()
 
 def confirm_user(request, username, confirm_key):
     server = arara.get_server()

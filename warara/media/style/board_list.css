@@ -2,6 +2,10 @@
     width: 100%;
 }
 
+#content {
+	padding-top: 0.68em;
+}
+
 .full {
     width: 100%;
 }
@@ -11,7 +15,7 @@
 }
 
 #article_table_list th, td {
-    padding: 0.5em 1em;
+    padding: 0.35em 1em;
 }
 
 .column.cursor_col{
