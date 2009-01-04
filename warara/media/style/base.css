@@ -24,11 +24,13 @@ a {
 }
 
 #body_wrapper {
+    float: left;
     background-color: #f0f0f0;
 }
 
 #header_wrapper {
     width: 100%;
+    float: left;
     background-color: #999;
 }
 
