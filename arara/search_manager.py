@@ -205,7 +205,7 @@ class SearchManager(object):
                 session.close()
                 return False, 'BOARD_NOT_EXIST'
                 
-        query = session.query(model.Article).filter_by(is_searchable=True)
+        query = session.query(model.Article).filter_by(is_searchable=True, root_id=None)
 
         if board:
             query = query.filter_by(board_id=board.id)
