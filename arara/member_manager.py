@@ -158,8 +158,9 @@ class MemberManager(object):
             session.close()
             return False, 'DATABASE_ERROR'
 
-        #If everything is clear, send validation mail to user.
-        self.send_mail(user.email, user.username, user_activation.activation_code)
+        # If everything is clear, send validation mail to user.
+        # Frontend should send the email I guess, so quoted the line below 090105
+        # self.send_mail(user.email, user.username, user_activation.activation_code)
         session.close()
         return True, activation_code
 
