@@ -224,44 +224,23 @@ class SearchManager(object):
                         model.User.username.like(query_text),
                         model.User.nickname.like(query_text)))
         else:
-            if query_dict.has_key('title'):
-                query_text = self._get_query_text(query_dict, 'title')
-                query = query.filter(or_(
-                        model.articles_table.c.title.like(query_text)))
-            if query_dict.has_key('content'):
-                query_text = self._get_query_text(query_dict, 'content')
-                query = query.filter(or_(
-                        model.articles_table.c.content.like(query_text)))
-            if query_dict.has_key('author_nickname'):
-                query_text = self._get_query_text(query_dict, 'author_nickname')
-                try:
-                    user_list = session.query(model.User).filter(
-                            model.users_table.c.nickname.like(query_text)).all()
-                except Exception:
-                    session.close()
-                    raise
-                if len(user_list) > 0:
-                    for one_user in user_list:
-                        query = query.filter(or_(
-                            model.articles_table.c.author_id==one_user.id))
+            condition = None
+            refer_dict = {'title': model.articles_table.c.title.like,
+                    'content': model.articles_table.c.content.like,
+                    'author_nickname': model.User.nickname.like,
+                    'author_username': model.User.username.like,
+                    'date': model.articles_table.c.date}
+            for key in query_dict.keys():
+                if key.upper() == "DATE":
+                    continue #TODO: DATE SEARCH DISABLED!
+
+                query_text = self._get_query_text(query_dict, key)
+                if condition:
+                    condition = or_(condition, refer_dict[key](query_text))
                 else:
-                    query = query.filter_by(author_id=-1)
-            if query_dict.has_key('author_username'):
-                query_text = self._get_query_text(query_dict, 'author_username')
-                try:
-                    user_list = session.query(model.User).filter(or_(
-                            model.users_table.c.username.like(query_text))).all()
-                except Exception:
-                    session.close()
-                    raise
-                if len(user_list) > 0:
-                    for one_user in user_list:
-                        query = query.filter(or_(
-                            model.articles_table.c.author_id==one_user.id))
-                else:
-                    query = query.filter_by(author_id=-1)
-            if query_dict.has_key('date'):
-                pass
+                    condition = refer_dict[key](query_text)
+
+            query = query.join('author').filter(condition)
 
         article_count = query.count()
         last_page = int(article_count / page_length)
