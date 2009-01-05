@@ -570,6 +570,7 @@ class ArticleManager(object):
             if ret:
                 ret_dict['hit'] = below_article_dict_list['hit']
                 ret_dict['current_page'] = page_position
+                ret_dict['last_page'] = below_article_dict_list['last_page']
                 ret_dict['results'] = below_article_dict_list['results'] 
                 session.close()
                 return True, ret_dict
