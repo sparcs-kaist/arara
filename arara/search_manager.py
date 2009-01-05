@@ -205,7 +205,7 @@ class SearchManager(object):
                 session.close()
                 return False, 'BOARD_NOT_EXIST'
                 
-        query = session.query(model.Article).filter_by(is_searchable=True, root_id=None)
+        query = session.query(model.Article).filter_by(is_searchable=True)
 
         if board:
             query = query.filter_by(board_id=board.id)
@@ -242,6 +242,27 @@ class SearchManager(object):
 
             query = query.join('author').filter(condition)
 
+        result = query.order_by(model.Article.id.desc()).all()
+
+        # Extract root article number from total result
+        root_num = set()
+        for one_article in result[::-1]:
+            if one_article.root:
+                if not set([one_article.root.id]).issubset(root_num): # If root_num not exist
+                    root_num.add(one_article.root.id)
+            else:
+                if not set([one_article.id]).issubset(root_num):
+                    root_num.add(one_article.id)
+
+        # Now we have all the root id we need. Query them!
+        condition = None
+        for one_id in root_num:
+            if condition:
+                condition = or_(condition, model.Article.id == one_id)
+            else:
+                condition = model.Article.id == one_id
+
+        query = session.query(model.Article).filter(condition)
         article_count = query.count()
         last_page = int(article_count / page_length)
         if article_count % page_length != 0:
@@ -254,6 +275,7 @@ class SearchManager(object):
         offset = page_length * (page - 1)
         last = offset + page_length
         result = query[offset:last].order_by(model.Article.id.desc()).all()
+
         end_time = time.time()
 
         search_dict_list = self._get_dict_list(result, SEARCH_ARTICLE_WHITELIST)
