@@ -21,7 +21,7 @@ True
 
 # Register one user, combacsa.
 
->>> user_reg_dic = {'username':u'combacsa', 'password':u'combacsa', 'nickname':u'combacsa', 'email':u'combacsa', 'signature':u'combacsa', 'self_introduction':u'combacsa', 'default_language':u'english' }
+>>> user_reg_dic = {'username':u'combacsa', 'password':u'combacsa', 'nickname':u'combacsa', 'email':u'combacsa@example.com', 'signature':u'combacsa', 'self_introduction':u'combacsa', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
@@ -33,7 +33,7 @@ True
 
 # Register one user, mikkang
 
->>> user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
+>>> user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang@example.com', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
@@ -45,7 +45,7 @@ True
 
 # Register one user, serialx
 
->>> user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'english' }
+>>> user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx@example.com', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
@@ -95,7 +95,7 @@ True
 # List the article (should only be one article in the list
 
 >>> server.article_manager.article_list(session_key, u'garbages')
-(True, {'last_page': 1, 'hit': [{'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is...', 'deleted': False, 'read_status': 'R', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'type': 'normal', 'id': 1}], 'results': 1})
+(True, {'last_page': 1, 'hit': [{'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'serialx is...', 'deleted': False, 'read_status': 'R', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'type': 'normal', 'id': 1}], 'results': 1})
 
 # Test for pagination with mikkang session_key
 
@@ -118,75 +118,64 @@ True
 # Now testing search_manager
 
 # Registering dummy article to the K-Search is not appropriate.
-#>>> server.search_manager.register_article()
+#>>> [x['id'] for x in server.search_manager.register_article()
 
 # Search article with title
->>> server.search_manager.search(session_key, False, u'garbages', {u'title': u'serialx'}, 1, 2)
-(True, {'last_page': 101, 'search_time': '0.0', 'hit': [{'author_username': u'combacsa', 'hit': 0, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'combacsa', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 202}, {'author_username': u'combacsa', 'hit': 0, 'title': u'serialx is... 98', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'combacsa', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 201}], 'results': 201})
+>>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'serialx'}, 1, 2)[1]['hit']]
+[202, 201]
 
 # Search article with title AND EXACT author_username
->>> server.search_manager.search(session_key, False, u'garbages', {u'title': u'serialx', u'author_username': u'mikkang'}, 1, 2)
-(True, {'last_page': 51, 'search_time': '0.0', 'hit': [{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 102}, {'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 98', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 101}], 'results': 101})
+>>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'88', u'author_username': u'mikkang'}, 1, 2)[1]['hit']]
+[191, 102]
 
->>> server.search_manager.search(session_key, False, u'garbages', {u'title': u'serialx', u'author_username': u'combacsa'}, 1, 2)
-(True, {'last_page': 50, 'search_time': '0.0', 'hit': [{'author_username': u'combacsa', 'hit': 0, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'combacsa', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 202}, {'author_username': u'combacsa', 'hit': 0, 'title': u'serialx is... 98', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'combacsa', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 201}], 'results': 100})
+>>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'88', u'author_username': u'combacsa'}, 1, 2)[1]['hit']]
+[202, 201]
 
 # Search article with title AND AMBIGUOUS author_username
 # Result should be same with above two tests.
->>> server.search_manager.search(session_key, False, u'garbages', {u'title': u'serialx', u'author_username': u'ikka'}, 1, 2)
-(True, {'last_page': 51, 'search_time': '0.0', 'hit': [{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 102}, {'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 98', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 101}], 'results': 101})
->>> server.search_manager.search(session_key, False, u'garbages', {u'title': u'serialx', u'author_username': u'omb'}, 1, 2)
-(True, {'last_page': 50, 'search_time': '0.0', 'hit': [{'author_username': u'combacsa', 'hit': 0, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'combacsa', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 202}, {'author_username': u'combacsa', 'hit': 0, 'title': u'serialx is... 98', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'combacsa', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 201}], 'results': 100})
+>>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'88', u'author_username': u'ikka'}, 1, 2)[1]['hit']]
+[191, 102]
+
+>>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'88', u'author_username': u'omb'}, 1, 2)[1]['hit']]
+[202, 201]
 
 # Search article with title AND EXACT author_nickname
->>> server.search_manager.search(session_key, False, u'garbages', {u'title': u'serialx', u'author_username': u'mikkang'}, 1, 2)
-(True, {'last_page': 51, 'search_time': '0.0', 'hit': [{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 102}, {'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 98', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 101}], 'results': 101})
->>> server.search_manager.search(session_key, False, u'garbages', {u'title': u'serialx', u'author_username': u'combacsa'}, 1, 2)
-(True, {'last_page': 50, 'search_time': '0.0', 'hit': [{'author_username': u'combacsa', 'hit': 0, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'combacsa', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 202}, {'author_username': u'combacsa', 'hit': 0, 'title': u'serialx is... 98', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'combacsa', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 201}], 'results': 100})
+>>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'88', u'author_username': u'mikkang'}, 1, 2)[1]['hit']]
+[191, 102]
+
+>>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'88', u'author_username': u'combacsa'}, 1, 2)[1]['hit']]
+[202, 201]
 
 # Search article with title AND AMBIGUOUS author_nickname
->>> server.search_manager.search(session_key, False, u'garbages', {u'title': u'serialx', u'author_nickname': u'ikka'}, 1, 2)
-(True, {'last_page': 51, 'search_time': '0.0', 'hit': [{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 102}, {'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is... 98', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 101}], 'results': 101})
->>> server.search_manager.search(session_key, False, u'garbages', {u'title': u'serialx', u'author_nickname': u'omb'}, 1, 2)
-(True, {'last_page': 50, 'search_time': '0.0', 'hit': [{'author_username': u'combacsa', 'hit': 0, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'combacsa', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 202}, {'author_username': u'combacsa', 'hit': 0, 'title': u'serialx is... 98', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'combacsa', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 201}], 'results': 100})
+>>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'88', u'author_nickname': u'ikka'}, 1, 2)[1]['hit']]
+[191, 102]
+
+>>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'88', u'author_nickname': u'omb'}, 1, 2)[1]['hit']]
+[202, 201]
 
 # Search article with title AND EXACT content
->>> server.search_manager.search(session_key, False, u'garbages', {u'title': u'serialx', u'content': u'black'}, 1, 20)
-(True, {'last_page': 1, 'search_time': '0.0', 'hit': [{'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'black polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 1}], 'results': 1})
+>>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'98', u'content': u'black'}, 1, 2)[1]['hit']]
+[201, 101]
 
 # Search article with title AND AMBIGUOUS content
 # Result should be same with above one test.
->>> server.search_manager.search(session_key, False, u'garbages', {u'title': u'serialx', u'content': u'lac'}, 1, 20)
-(True, {'last_page': 1, 'search_time': '0.0', 'hit': [{'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'black polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 1}], 'results': 1})
+>>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'98', u'content': u'lac'}, 1, 2)[1]['hit']]
+[201, 101]
 
 # Search article with EXACT title AND AMBIGUOUS content AND AMBIGUOUS author_username
->>> server.search_manager.search(session_key, False, u'garbages', {u'title': u'serialx', u'content': u'lac', u'author_username': u'mikk'}, 1, 20)
-(True, {'last_page': 1, 'search_time': '0.0', 'hit': [{'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'black polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'id': 1}], 'results': 1})
-
-# Search article with the same method above but this should return empty result
->>> server.search_manager.search(session_key, False, u'garbages', {u'title': u'serialx', u'content': u'lac', u'author_username': u'bacsa'}, 1, 20)
-(True, {'last_page': 1, 'search_time': '0.0', 'hit': [], 'results': 0})
-
-# Now search the article with NOT EXISTING USERNAME
-# This should return empty result, NOT exception or False.
->>> server.search_manager.search(session_key, False, u'garbages', {u'title': u'serialx', u'author_username': u'ideal_society'}, 1, 20)
-(True, {'last_page': 1, 'search_time': '0.0', 'hit': [], 'results': 0})
-
-
-# Now search the article with NOT EXISTING NICKNAME
-# This should return empty result, NOT exception or False.
->>> server.search_manager.search(session_key, False, u'garbages', {u'title': u'serialx', u'author_nickname': u'ideal_society'}, 1, 20)
-(True, {'last_page': 1, 'search_time': '0.0', 'hit': [], 'results': 0})
+>>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'99', u'content': u'lac', u'author_username': u'mikk'}, 1, 2)[1]['hit']]
+[202, 102]
 
 # Now search the article with all_flag ON WITH BOARD_NAME
->>> server.search_manager.search(session_key, True, u'garbages', {u'query': u'serialx'}, 1, 2)
-(True, {'last_page': 101, 'search_time': '0.0', 'hit': [{'author_username': u'combacsa', 'hit': 0, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'combacsa', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 202}, {'author_username': u'combacsa', 'hit': 0, 'title': u'serialx is... 98', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'combacsa', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 201}], 'results': 201})
->>> server.search_manager.search(session_key, True, u'KAIST', {u'query': u'serialx'}, 1, 2)
-(True, {'last_page': 1, 'search_time': '0.0', 'hit': [{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'black polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 203}], 'results': 1})
+>>> [x['id'] for x in server.search_manager.search(session_key, True, u'garbages', {u'query': u'serialx'}, 1, 2)[1]['hit']]
+[202, 201]
+
+>>> [x['id'] for x in server.search_manager.search(session_key, True, u'KAIST', {u'query': u'serialx'}, 1, 2)[1]['hit']]
+[203]
 
 # Now search the article with all_flag OFF WITHOUT BOARD_NAME
->>> server.search_manager.search(session_key, True, u'no_board', {u'query': u'serialx'}, 1, 2)
-(True, {'last_page': 101, 'search_time': '0.0', 'hit': [{'author_username': u'mikkang', 'hit': 0, 'title': u'serialx is...', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'content': u'black polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 203}, {'author_username': u'combacsa', 'hit': 0, 'title': u'serialx is... 99', 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'combacsa', 'content': u'polarbear', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 0, 'vote': 0, 'id': 202}], 'results': 202})
+>>> [x['id'] for x in server.search_manager.search(session_key, True, u'no_board', {u'query': u'serialx'}, 1, 2)[1]['hit']]
+[203, 202]
 
 # Restore time.time
 >>> time.time = org_time
