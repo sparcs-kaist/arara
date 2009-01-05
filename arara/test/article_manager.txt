@@ -277,6 +277,9 @@ True
 >>> l['hit'][0]['id']
 94
 
+>>> l['last_page']
+11
+
 >>> ret, l = server.article_manager.article_list_below(session_key, u'garbages', 84, 10)
 >>> l['hit'][0]['id']
 84
