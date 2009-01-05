@@ -23,7 +23,7 @@ True
 (True, 'OK')
 
 # Register one user, serialx
->>> user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'english' }
+>>> user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx@example.com', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True

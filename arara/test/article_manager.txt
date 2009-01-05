@@ -29,7 +29,7 @@ True
 
 # Register one user, combacsa.
 
->>> user_reg_dic = {'username':u'combacsa', 'password':u'combacsa', 'nickname':u'combacsa', 'email':u'combacsa', 'signature':u'combacsa', 'self_introduction':u'combacsa', 'default_language':u'english' }
+>>> user_reg_dic = {'username':u'combacsa', 'password':u'combacsa', 'nickname':u'combacsa', 'email':u'combacsa@example.com', 'signature':u'combacsa', 'self_introduction':u'combacsa', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
@@ -41,7 +41,7 @@ True
 
 # Register one user, mikkang
 
->>> user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
+>>> user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang@example.com', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
@@ -53,7 +53,7 @@ True
 
 # Register one user, serialx
 
->>> user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'english' }
+>>> user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx@example.com', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
@@ -103,7 +103,7 @@ True
 # List the article (should only be one article in the list
 
 >>> server.article_manager.article_list(session_key, u'garbages')
-(True, {'last_page': 1, 'hit': [{'author_username': u'mikkang', 'hit': 1, 'title': u'serialx is...', 'deleted': False, 'read_status': 'R', 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'type': 'normal', 'id': 1}], 'results': 1})
+(True, {'last_page': 1, 'hit': [{'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'serialx is...', 'deleted': False, 'read_status': 'R', 'last_modified_date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'date': datetime.datetime(1971, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'type': 'normal', 'id': 1}], 'results': 1})
 
 # Test for pagination
 

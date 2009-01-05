@@ -7,7 +7,7 @@
 
 # Register one user, mikkang
 
->>> user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
+>>> user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang@example.com', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True
