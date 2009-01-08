@@ -20,6 +20,7 @@
 {% endblock %}
 {% block message_content %}
 {% load i18n %}
+{{message_list}}
 <div id="message_page_length_selector">
     <span class="display_message_num">
         {% ifequal message_list_type 'inbox'%}{{num_new_message}}{% trans " new message(s) /" %}{% endifequal %} {{num_message}}{% trans " message(s)" %}

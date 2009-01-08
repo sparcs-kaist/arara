@@ -1,9 +1,6 @@
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
-from django.core.mail import EmailMultiAlternatives
-from email.MIMEText import MIMEText
 
-import smtplib
 import arara
 import warara
 

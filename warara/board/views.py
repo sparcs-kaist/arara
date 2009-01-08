@@ -31,7 +31,6 @@ def get_article_list(request, r, mode):
     elif mode == 'read':
         ret, article_result = server.article_manager.article_list_below(sess, r['board_name'], r['article_id'])
         r['page_no'] = article_result['current_page']
-        article_result['last_page'] = 1
     elif mode == 'search':
         page_no = int(page_no)
         ret, article_result = server.search_manager.search(sess, False, r['board_name'], r['search_method'], page_no, page_length)

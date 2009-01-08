@@ -48,7 +48,6 @@
         </tbody>
     </table>
 </div>
-{% block page_list %}
 <div id="board_pages" class="width_full">
     {% ifequal method 'search' %}
     <a href="{{path}}&page_no={{first_page.no}}">{{first_page.mark}}</a>
@@ -68,10 +67,9 @@
     <a href="/board/{{board_name}}?page_no={{last_page.no}}">{{last_page.mark}}</a>
     {% endifequal %}
 </div>
-{% endblock %}
 {% if logged_in %}
 <div id="board_buttons" class="width_full">
-    <div id="board_write" class="small_btn{% if board_dict.read_only %} hidden{% endif %}">
+    <div id="board_write" class="{% if board_dict.read_only %} hidden{% endif %}">
 	    <a href="/board/{{board_name}}/write/">{% trans "write" %}</a>
     </div>
     <form name="board_search" method="GET" action="/board/{{board_name}}/search">
@@ -82,7 +80,7 @@
             </span>
         {% endfor %}
         <input type="text" name="search_word" class="small_form"></input>
-	<input class="small_btn" type="submit" value="{% trans "search" %}" id="board_search_submit"></input>
+	<input class="" type="submit" value="{% trans "search" %}" id="board_search_submit"></input>
     </form>
 </div>
 {%endif%}
