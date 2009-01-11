@@ -2,7 +2,8 @@ body {
     margin: 0;
     padding: 0;
     font-size: 75%;
-    text-align: center;
+    height: 100%;
+    background-color: #bbb;
 }
 
 a {
@@ -10,10 +11,12 @@ a {
 }
 
 #wrapper {
-    float: left;
-    width: 100%;
+    width: 85em;
+    max-width: 100%;
+    min-width: 61.25em;
     margin: 0 auto;
     background-color: #fff;
+    min-height: 100%;
 }
 
 /* IE hack */
@@ -24,23 +27,26 @@ a {
 
 #content_wrapper {
     float: left;
-    width: 700px;
+    width: 100%;
+    background-color: white;
 }
 
 #postcard {
     float: left;
+    margin-left: 50px;
 }
 
-#logo {
-    float: left;
-    right: 50%;
-    margin: 0 0 0 200px;
+#logo, #postcard {
+    margin-top: 30px;
+}
+
+#logo, #login, #navigation {
+    float: right;
+    margin-right: 30px;
 }
 
 #login {
     float: right;
-    left: 50%;
-    margin: 0 50px 0 0;
 }
 
 #input_wrapper {
@@ -71,7 +77,6 @@ a {
     clear: both;
     float: right;
     width: 15em;
-    margin: 0 100px 0 0;
 }
 
 #navigation p {
