@@ -13,7 +13,6 @@
 {% block article_content %}
 {% load i18n %}
 
-{{article_read_list}}
 {% for article in article_read_list %}
 <div class="article article_depth_{{article.depth}}">
     {% for depth in article.depth_list %}
