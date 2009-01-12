@@ -30,7 +30,10 @@ class ara_welcome(ara_form):
             logintext = _('Last login: %(IP)s at %(date)s')
             retvalue, myinfo = self.server.member_manager.get_info(self.session_key)
             assert retvalue, myinfo
-            logindata = {"IP": myinfo['last_login_ip'], "date":myinfo['last_logout_time'].strftime("%Y/%m/%d %H:%M:%S")}
+            if myinfo['last_logout_time'] == 'NOT AVAILABLE':
+                logindata = {'IP': myinfo['last_login_ip'], 'date':'Unknown'}
+            else:
+                logindata = {'IP': myinfo['last_login_ip'], 'date':myinfo['last_logout_time'].strftime("%Y/%m/%d %H:%M:%S")}
             self.logininfo = urwid.Filler(urwid.Text(logintext % logindata))
 
         self.entertext = urwid.Filler(urwid.Text(_('Press [Enter] key to continue')))
