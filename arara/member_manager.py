@@ -160,7 +160,8 @@ class MemberManager(object):
 
         # If everything is clear, send validation mail to user.
         # Frontend should send the email I guess, so quoted the line below 090105
-        # self.send_mail(user.email, user.username, user_activation.activation_code)
+        # Re-uncommented by combacsa, 090112. Frontend never send the email.
+        self.send_mail(user.email, user.username, user_activation.activation_code)
         session.close()
         return True, activation_code
 
@@ -185,7 +186,7 @@ class MemberManager(object):
             HOST = 'localhost'
             sender = 'root_id@sparcs.org'
             content = 'You have been successfully registered as the ARAra member.<br />To use your account, you have to activate it.<br />Please click the link below on any web browser to activate your account.<br /><br />'
-            confirm_url = 'http://nan.sparcs.org:8080/account/confirm/%s/%s' % (username, confirm_key)
+            confirm_url = 'http://143.248.234.124/account/confirm/%s/%s' % (username, confirm_key)
             confirm_link = '<a href=\'%s\'>%s</a>' % (confirm_url, confirm_url)
             title = "[ARAra] Please activate your account"
             msg = MIMEText(content+confirm_link, _subtype="html", _charset='euc_kr')

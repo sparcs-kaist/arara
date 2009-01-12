@@ -374,7 +374,7 @@ mapper(Blacklist, blacklist_table, properties={
 
 #TEST_DATABASE_FILENAME = 'test.db'
 #CONNECTION_STRING = 'sqlite:///%s' % TEST_DATABASE_FILENAME
-CONNECTION_STRING = 'mysql://arara:newaraarara@mir.sparcs.org/arara?charset=utf8&use_unicode=1'
+CONNECTION_STRING = 'mysql://arara:together@swingfixer-server.kaist.ac.kr/arara?charset=utf8&use_unicode=1'
 
 engine = None
 
