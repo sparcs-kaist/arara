@@ -253,6 +253,9 @@ $(document).ready(function(){
                 else if(data == "WRONG_PASSWORD"){
                 alert("Enter the correct password");
                 }
+                else if(data == "NOT_ACTIVATED"){
+                alert("Please check your E-mail");
+                }
                 else{
                 document.login.submit();
                 }
