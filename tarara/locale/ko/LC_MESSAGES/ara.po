@@ -1,0 +1,727 @@
+# Translation of ara into Korean.
+# Copyright (C) 2009, SPARCS.
+# Park Shinjo <peremen@gmail.com>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ara\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-01-12 19:49+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Park Shinjo <peremen@sparcs.org>\n"
+"Language-Team: Korean <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: article_search_walker.py:20 article_list_walker.py:29
+msgid "No article found. Have a nice day."
+msgstr "글이 없습니다."
+
+#: main.py:14
+msgid "(N)ew Article"
+msgstr "새 글(N)"
+
+#: main.py:15
+msgid "(S)elect Board"
+msgstr "게시판 선택(S)"
+
+#: main.py:16
+msgid "(P)rivate Message"
+msgstr "쪽지(P)"
+
+#: main.py:17
+msgid "(U)ser Preferences"
+msgstr "사용자 환경 설정(U)"
+
+#: main.py:18
+msgid "User (I)nformation"
+msgstr "사용자 정보(I)"
+
+#: main.py:19
+msgid "(H)elp"
+msgstr "도움말(H)"
+
+#: main.py:20
+msgid "(A)bout ARA"
+msgstr "아라 정보(A)"
+
+#: main.py:21
+msgid "(W)elcome Screen"
+msgstr "시작 화면 보기(W)"
+
+#: main.py:22
+msgid "(Q)uit"
+msgstr "끝내기(Q)"
+
+#: main.py:42
+msgid "Not available in guest mode."
+msgstr "손님 모드에서는 사용할 수 없습니다."
+
+#: main.py:42
+msgid "Ok"
+msgstr "확인"
+
+#: main.py:49
+msgid "Really quit?"
+msgstr "정말 끝내시겠습니까?"
+
+#: main.py:49 main.py:52 read_article.py:44 read_article.py:47
+msgid "Yes"
+msgstr "예"
+
+#: main.py:49 read_article.py:44
+msgid "No"
+msgstr "아니오"
+
+#: main.py:155
+msgid "ARA: Main Menu"
+msgstr "아라: 초기 화면"
+
+#: main.py:160
+msgid "Today Best"
+msgstr "투데이 베스트"
+
+#: main.py:169
+msgid "Weekly Best"
+msgstr "위클리 베스트"
+
+#: main.py:180
+msgid ""
+"  * Press [Tab] to jump between menu, today best, weekly best\n"
+" ARAra Release 1.0                                Copyright (C) 2008, SPARCS"
+msgstr ""
+
+#: read_article.py:35
+msgid "Voted."
+msgstr "투표하였습니다."
+
+#: read_article.py:35 read_article.py:37 read_article.py:50 read_article.py:52
+#: sig_intro.py:22 sig_intro.py:25 sig_intro.py:47 change_password.py:42
+#: change_password.py:47 change_password.py:77 post_article.py:35
+#: post_article.py:38 post_article.py:71 user_preferences.py:32
+#: user_preferences.py:35 list_article.py:64 list_article.py:67
+#: helpviewer.py:35 change_basic_info.py:19 change_basic_info.py:22
+#: change_basic_info.py:34 change_basic_info.py:37 change_basic_info.py:73
+#: write_pm.py:27 join.py:86 join.py:89 join.py:92 join.py:95
+msgid "OK"
+msgstr "확인"
+
+#: read_article.py:44
+msgid "Really delete?"
+msgstr "정말 삭제하시겠습니까?"
+
+#: read_article.py:50
+msgid "Article deleted."
+msgstr "글을 지웠습니다."
+
+#: read_article.py:69
+msgid "Title: ${TITLE}"
+msgstr "제목: ${TITLE}"
+
+#: read_article.py:70
+msgid "Author: ${AUTHOR} (${NICKNAME})"
+msgstr "작성자: ${AUTHOR} (${NICKNAME})"
+
+#: read_article.py:71
+msgid "Date: ${DATE} Hit: ${HIT} Reply: ${REPLY} Vote: ${VOTE}"
+msgstr "날짜: ${DATE} 조회: ${HIT} 답글: ${REPLY} 투표: ${VOTE}"
+
+#: read_article.py:72
+msgid "Deleted article"
+msgstr "삭제된 글"
+
+#: read_article.py:74
+msgid "Reply by ${AUTHOR}(${NICKNAME}) on ${DATE} Vote: ${VOTE}"
+msgstr "${AUTHOR}(${NICKNAME}) 님이 쓴 답글, 날짜: ${DATE} 추천: ${VOTE}"
+
+#: read_article.py:75
+msgid "Deleted reply, written on ${DATE}"
+msgstr "삭제된 답글, 날짜: ${DATE}"
+
+#: read_article.py:77
+msgid ""
+"Attachment: ${SERVER_ADDRESS}/board/${BOARD_NAME}/${ROOT_ID}/${ARTICLE_ID}/"
+"file/${FILE_ID}\n"
+msgstr ""
+"첨부 파일: ${SERVER_ADDRESS}/board/${BOARD_NAME}/${ROOT_ID}/${ARTICLE_ID}/"
+"file/${FILE_ID}\n"
+
+#: read_article.py:150
+msgid "ARA: Read article"
+msgstr "아라: 글 읽기"
+
+#: read_article.py:151
+msgid ""
+"(n)ext/(p)revious (b)lock (e)dit (d)elete (f)old/retract (r)eply (v)ote (q)"
+"uit"
+msgstr ""
+"다음(n)/이전(p) 차단(b) 편집(e) 삭제(d) 접기/펴기(f) 답글(r) 추천(v) 종료(q)"
+
+#: sig_intro.py:22
+msgid "Sig/intro changed."
+msgstr ""
+
+#: sig_intro.py:37
+msgid "ARA: Change Introduction & Signature"
+msgstr "아라: 시그와 자기 소개"
+
+#: sig_intro.py:42
+msgid "Signature"
+msgstr "시그"
+
+#: sig_intro.py:44
+msgid "Introduction"
+msgstr "자기 소개"
+
+#: sig_intro.py:48 change_password.py:78 post_article.py:72 query_user.py:67
+#: user_preferences.py:32 list_article.py:64 change_basic_info.py:74
+#: write_pm.py:60 join.py:135
+msgid "Cancel"
+msgstr "취소"
+
+#: change_password.py:42
+msgid "Password changed."
+msgstr "암호를 바꿨습니다."
+
+#: change_password.py:60
+msgid "ARA: Change Password"
+msgstr "아라: 암호 바꾸기"
+
+#: change_password.py:63
+msgid "Old password:"
+msgstr "이전 암호:"
+
+#: change_password.py:64
+msgid ""
+"Please enter your\n"
+"old password"
+msgstr ""
+
+#: change_password.py:67
+#, fuzzy
+msgid "New password:"
+msgstr "새 암호:"
+
+#: change_password.py:68 join.py:113
+msgid ""
+"Minimum password length\n"
+"is 4 characters"
+msgstr ""
+
+#: change_password.py:71
+msgid ""
+"Confirm\n"
+"new password:"
+msgstr ""
+"새 암호\n"
+"확인:"
+
+#: change_password.py:72
+msgid ""
+"Re-enter your new\n"
+"password"
+msgstr ""
+
+#: change_password.py:81 change_basic_info.py:77
+msgid ""
+"  * Press [Enter] to proceed to the next item, [Shift+Enter] - previous "
+"item\n"
+"  * Press [Tab] to directly jump to OK or Cancel button"
+msgstr ""
+
+#: list_boards.py:47
+msgid "ARA: List boards"
+msgstr "아라: 게시판 목록"
+
+#: list_boards.py:49
+msgid " * Enter board name: "
+msgstr " * 게시판 이름 입력: "
+
+#: list_boards.py:52
+#, python-format
+msgid " * There are %s boards."
+msgstr " * 총 %s개의 게시판이 있습니다."
+
+#: list_boards.py:56
+msgid " * No boards found. Have a nice day."
+msgstr " * 게시판이 없습니다."
+
+#: list_boards.py:57
+msgid "No boards found. Have a nice day."
+msgstr "게시판이 없습니다."
+
+#: list_boards.py:59
+msgid "Name"
+msgstr "이름"
+
+#: list_boards.py:59
+msgid "Description"
+msgstr "설명"
+
+#: post_article.py:35
+msgid "Article posted."
+msgstr "글이 올라갔습니다."
+
+#: post_article.py:57
+#, python-format
+msgid "ARA: Modify Article  Current board: %s"
+msgstr "아라: 글 수정하기 현재 게시판: %s"
+
+#: post_article.py:59
+#, python-format
+msgid "ARA: Reply Article  Current board: %s"
+msgstr "아라: 답글 달기 현재 게시판: %s"
+
+#: post_article.py:61
+#, python-format
+msgid "ARA: Post Article  Current board: %s"
+msgstr "아라: 글 쓰기 현재 게시판: %s"
+
+#: post_article.py:64
+msgid "Title: "
+msgstr "제목: "
+
+#: post_article.py:65 write_pm.py:54
+msgid "Body"
+msgstr "내용"
+
+#: post_article.py:68
+msgid "Include in search"
+msgstr "검색에 포함시키기"
+
+#: post_article.py:69 write_pm.py:57
+msgid "Help"
+msgstr "도움말"
+
+#: post_article.py:70 write_pm.py:58
+msgid "Preview"
+msgstr "미리 보기"
+
+#: login.py:36
+msgid "Specified ID doesn't exist."
+msgstr "ID가 ㅇ벗습니다."
+
+#: login.py:38
+msgid "Wrong password."
+msgstr "암호가 틀렸습니다."
+
+#: login.py:40
+msgid "Database error."
+msgstr "데이터베이스 오류입니다."
+
+#: login.py:42
+msgid "XML-RPC server problem. Try again after several minutes."
+msgstr "XML-RPC 서버가 뒈졌습니다. 나중에 다시 시도하십시오."
+
+#: login.py:44
+msgid "Undefined error."
+msgstr "지정되지 않은 오류입니다."
+
+#: user_information.py:13
+msgid "List (c)onnected users"
+msgstr "접속한 사용자 보기(C)"
+
+#: user_information.py:14
+msgid "Q(u)ery user"
+msgstr "사용자 조회(U)"
+
+#: user_information.py:15 user_preferences.py:19
+msgid "(Q)uit menu"
+msgstr "메뉴 끝내기(Q)"
+
+#: user_information.py:18
+msgid ""
+"Show information about\n"
+"current users"
+msgstr ""
+
+#: user_information.py:19
+msgid ""
+"Query about user's last used\n"
+"IP, introduction, etc."
+msgstr ""
+
+#: user_information.py:20
+msgid "Return to main menu"
+msgstr "메인 메뉴로 돌아갑니다"
+
+#: user_information.py:45
+msgid "ARA: User Information"
+msgstr "아라: 사용자 정보"
+
+#: user_information.py:55 user_preferences.py:95
+msgid "  * Use [Tab] or arrow key to move each items"
+msgstr ""
+
+#: query_user.py:49
+#, python-format
+msgid " * ID: %s"
+msgstr ""
+
+#: query_user.py:50
+#, python-format
+msgid " * Nickname: %s"
+msgstr ""
+
+#: query_user.py:51
+#, python-format
+msgid ""
+" * Introduction:\n"
+"%s"
+msgstr ""
+
+#: query_user.py:52
+#, python-format
+msgid ""
+" * Signature:\n"
+"%s"
+msgstr ""
+
+#: query_user.py:53
+#, python-format
+msgid " * Last usage: %s"
+msgstr ""
+
+#: query_user.py:62
+msgid "ARA: Query User"
+msgstr ""
+
+#: query_user.py:64
+msgid " * Enter ID: "
+msgstr ""
+
+#: query_user.py:66
+msgid "Search"
+msgstr ""
+
+#: query_user.py:77
+msgid " * Enter user ID and press [Search]"
+msgstr ""
+
+#: user_preferences.py:13
+msgid "Change (B)asic information"
+msgstr ""
+
+#: user_preferences.py:14
+#, fuzzy
+msgid "Change (P)assword"
+msgstr "암호가 틀렸습니다."
+
+#: user_preferences.py:15
+msgid "View/edit B(l)acklist"
+msgstr ""
+
+#: user_preferences.py:16
+msgid "Change (I)ntro/Sig"
+msgstr ""
+
+#: user_preferences.py:17
+msgid "(Z)ap Board"
+msgstr ""
+
+#: user_preferences.py:18
+msgid "(D)elete account"
+msgstr ""
+
+#: user_preferences.py:22
+msgid ""
+"Change basic information\n"
+"like nickname and email"
+msgstr ""
+
+#: user_preferences.py:23
+#, fuzzy
+msgid "Change password\n"
+msgstr "암호가 틀렸습니다."
+
+#: user_preferences.py:24
+msgid "View and edit your blacklist\n"
+msgstr ""
+
+#: user_preferences.py:25
+msgid ""
+"Change intruduction and\n"
+"signature used in the articles"
+msgstr ""
+
+#: user_preferences.py:26
+msgid "Zap board\n"
+msgstr ""
+
+#: user_preferences.py:27
+msgid "Delete your ARA account\n"
+msgstr ""
+
+#: user_preferences.py:28
+msgid "Return to main menu\n"
+msgstr ""
+
+#: user_preferences.py:32
+msgid "Do you want to delete your ARA account?"
+msgstr ""
+
+#: user_preferences.py:85
+msgid "ARA: User Preferences"
+msgstr "아라: 사용자 환경 설정"
+
+#: list_article.py:64
+msgid "Search term:"
+msgstr "찾을 단어:"
+
+#: list_article.py:97
+msgid "ARA: Article list"
+msgstr "아라: 글 목록"
+
+#: list_article.py:99
+msgid "(N)ext/(P)revious Page (Number+Enter) Jump to article"
+msgstr ""
+
+#: list_article.py:101
+msgid "(h)elp (q)uit"
+msgstr ""
+
+#: list_article.py:104
+msgid "(Enter,space) Read (f)ind (h)elp (q)uit"
+msgstr ""
+
+#: list_article.py:106
+msgid "(Enter,space) Read (w)rite (f)ind (h)elp (q)uit"
+msgstr ""
+
+#: list_article.py:112 list_article.py:116 list_pm.py:23 list_pm.py:100
+msgid "Author"
+msgstr "작성자"
+
+#: list_article.py:112 list_article.py:116 list_pm.py:23 list_pm.py:45
+#: list_pm.py:100
+msgid "Title"
+msgstr "제목"
+
+#: list_article.py:112 list_article.py:116 list_pm.py:23 list_pm.py:45
+#: list_pm.py:100
+msgid "Date"
+msgstr "날짜"
+
+#: list_article.py:112 list_article.py:116
+msgid "Hit"
+msgstr "조회"
+
+#: list_article.py:112 list_article.py:116
+msgid "Vote"
+msgstr "투표"
+
+#: change_basic_info.py:19
+msgid ""
+"Nickname is in use.\n"
+"Try another one."
+msgstr ""
+
+#: change_basic_info.py:31
+msgid "Nickname changed."
+msgstr "별명을 바꿨습니다."
+
+#: change_basic_info.py:46
+msgid "ARA: Change Basic Information"
+msgstr "아라: 기본 정보 바꾸기"
+
+#: change_basic_info.py:51
+#, python-format
+msgid "ID: %s"
+msgstr ""
+
+#: change_basic_info.py:52
+msgid ""
+"ID and E-Mail couldn't be edited\n"
+"Displayed for your information"
+msgstr ""
+
+#: change_basic_info.py:55
+#, python-format
+msgid "E-Mail: %s"
+msgstr ""
+
+#: change_basic_info.py:58
+msgid "Nickname: "
+msgstr "별명:"
+
+#: change_basic_info.py:60 join.py:109
+msgid ""
+"You can't use duplicated\n"
+"nickname or other's ID"
+msgstr ""
+
+#: change_basic_info.py:63 join.py:124
+msgid "Language:"
+msgstr "언어:"
+
+#: change_basic_info.py:68 join.py:129
+msgid ""
+"Select your favorite\n"
+"interface language"
+msgstr ""
+
+#: list_pm.py:36 list_pm.py:58
+msgid "No private messages. Have a nice day."
+msgstr "쪽지가 없습니다."
+
+#: list_pm.py:45
+msgid "Recepient"
+msgstr "받는 사람"
+
+#: list_pm.py:95
+msgid "ARA: Private message"
+msgstr "아라: 쪽지"
+
+#: list_pm.py:97
+msgid " (N)ext/(P)revious Page (w)rite (B)lock (h)elp (q)uit"
+msgstr "다음(N)/이전(P) 쪽 쓰기(W) 차단(B) 도움말(H) 종료(Q)"
+
+#: list_pm.py:104
+msgid "Inbox"
+msgstr "받은 쪽지함"
+
+#: list_pm.py:105
+msgid "Outbox"
+msgstr "보낸 쪽지함"
+
+#: write_pm.py:27
+msgid "Message sent."
+msgstr "메시지를 보냈습니다."
+
+#: write_pm.py:44
+msgid "To (Enter ID): "
+msgstr ""
+
+#: write_pm.py:46
+msgid "ARA: Reply private message"
+msgstr "아라: 쪽지에 답하기"
+
+#: write_pm.py:49
+msgid "ARA: Write private message"
+msgstr "아라: 쪽지 쓰기"
+
+#: write_pm.py:51
+msgid "Search by nickname"
+msgstr "별명으로 검색"
+
+#: write_pm.py:59
+msgid "Send"
+msgstr "보내기"
+
+#: join.py:85
+msgid ""
+"Account created.\n"
+"Please confirm it."
+msgstr ""
+
+#: join.py:101
+msgid "ARA: Join"
+msgstr "아라: 회원 가입"
+
+#: join.py:104
+msgid "ID:"
+msgstr "ID:"
+
+#: join.py:105
+msgid ""
+"ID's length should be\n"
+"between 4 and 10 chars"
+msgstr ""
+
+#: join.py:108
+msgid "Nickname:"
+msgstr "별명:"
+
+#: join.py:112
+msgid "Password:"
+msgstr "암호:"
+
+#: join.py:116
+msgid ""
+"Confirm\n"
+"Password:"
+msgstr ""
+
+#: join.py:117
+msgid ""
+"Type password here\n"
+"once again"
+msgstr ""
+
+#: join.py:120
+msgid "E-Mail:"
+msgstr "전자 우편:"
+
+#: join.py:121
+msgid ""
+"We'll send confirmation\n"
+"mail to this address"
+msgstr ""
+
+#: join.py:134
+msgid "Join"
+msgstr "가입"
+
+#: join.py:138
+msgid ""
+"  * Press [Enter] to proceed to the next item, [Shift+Enter] - previous "
+"item.\n"
+"  * Press [Tab] to directly jump to Join or Cancel button.\n"
+"  * Please be patient after click Join button. We'll send confirmation "
+"mail.\n"
+"  * After join, you should activate your ID via link on the mail."
+msgstr ""
+
+#: list_connected_users.py:31 list_connected_users.py:68
+msgid "(r)efresh (m)onitoring:start (q)uit (Enter) query"
+msgstr ""
+
+#: list_connected_users.py:34
+msgid "(r)efresh (m)onitoring:stop (q)uit (Enter) query"
+msgstr ""
+
+#: list_connected_users.py:56
+msgid "No users online."
+msgstr "온라인 사용자가 없습니다."
+
+#: list_connected_users.py:66
+msgid "ARA: List connected users"
+msgstr "아라: 현재 접속자 목록"
+
+#: list_connected_users.py:71
+msgid "ID"
+msgstr "ID"
+
+#: list_connected_users.py:71
+msgid "Nickname"
+msgstr "별명"
+
+#: list_connected_users.py:71
+msgid "IP Address"
+msgstr "IP 주소"
+
+#: list_connected_users.py:71
+msgid "Login Time"
+msgstr "로그인 시간"
+
+#: list_connected_users.py:71
+msgid "Action"
+msgstr "동작"
+
+#: welcome.py:17
+msgid "No welcome message for today."
+msgstr "오늘의 환영 인사는 없습니다."
+
+#: welcome.py:27
+msgid "You are in guest mode."
+msgstr "현재 손님 모드입니다."
+
+#: welcome.py:30
+#, python-format
+msgid "Last login: %(IP)s at %(date)s"
+msgstr "마지막 로그인: %(date)s에 %(IP)s에서"
+
+#: welcome.py:39
+msgid "Press [Enter] key to continue"
+msgstr "계속하려면 [Enter] 키를 누르십시오"
