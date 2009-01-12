@@ -71,9 +71,19 @@ $(document).ready(function(){
     });
 
     $(".article_vote").click(function(event){
-            var vote_url = $(this).attr("href")
+            var vote_url = $(this).attr("href");
+            $vote_num = $(".vote_num_" + $(this).attr("rel"));
             $.get(vote_url, function(data){
+                if(data == "OK"){
+                alert("Successfully voted");
+                $vote_num.text(parseInt($vote_num.text())+1);
+                }
+                else if(data == "ALREADY_VOTED"){
+                alert("You voted already");
+                }
+                else{
                 alert(data);
+                }
                 });
             event.preventDefault();
             });

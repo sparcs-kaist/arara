@@ -24,7 +24,7 @@
         <span class="user_nickname username">{{article.author_nickname}}</span>
         <span class="user_name">{{article.author_username}}</span>
         <span class="article_date">{{article.date|date:"Y/m/d H:i:s"}}</span>
-	<span class="vote">{% trans "vote: " %}{{article.vote}} |</span>
+        <span class="vote">{% trans "vote: " %}<span class="vote_num_{{article.id}}">{{article.vote}}</span> |</span>
         <span class="hit">{% trans "hit: " %}{{article.hit}} |</span>
         <div class="clear_float"></div>
     </div>
@@ -34,7 +34,7 @@
         <span class="article_info">
             <span class="user_nickname username">{{article.author_nickname}}</span>
             <span class="user_name">{{article.author_username}}</span> |
-            <span class="vote">{% trans "vote: " %}{{article.vote}} </span> |
+            <span class="vote">{% trans "vote: " %}<span class="vote_num_{{article.id}}">{{article.vote}}</span> </span> |
             <span class="article_date">{{article.date|date:"Y/m/d H:i:s"}}</span>
         </span>
         <div class="clear_float"></div>
@@ -63,7 +63,7 @@
             <a class="article_modify" href="/board/{{board_name}}/write?article_id={{article.id}}">{% trans "modify" %}</a>
             <a class="article_delete" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/delete/">{% trans "delete" %}</a>
             {% endif %}
-            <a class="article_vote" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/vote">{% trans "vote" %}</a>
+            <a class="article_vote" rel="{{article.id}}" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/vote">{% trans "vote" %}</a>
             {% endif %}
         </div>
         <div class="clear_float"></div>

@@ -210,7 +210,7 @@ $(document).ready(function(){
 
 	//ksearch
 	$("input[name='ksearch_submit']").click(function(event){
-			window.open("http://nan.sparcs.org:9000/search?q=" + $("input[name='ksearch']").val());
+			window.open("http://ksearch.sparcs.org/search?q=" + $("input[name='ksearch']").val());
 			event.preventDefault();
 			});
 	
