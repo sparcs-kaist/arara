@@ -38,7 +38,7 @@
             <tr>
                 <td class="column cursor_col">{{article.read_status}}</td>
                 <td class="column id_col">{{article.id}}</td>
-                <td class="column title_col">{% if logged_in %}<a href="/board/{{board_name}}/{{article.id}}?page_no={{page_no}}">{{article.title}}</a> {%if article.reply_count%}[{{article.reply_count}}]{%endif%}{% else %}{{article.title}}{% if article.reply_count%} [{{article.reply_count}}]{% endif %}{% endif %}</td>
+                <td class="column title_col{%if article.deleted%} deleted{%endif%}">{% if logged_in %}<a href="/board/{{board_name}}/{{article.id}}?page_no={{page_no}}">{{article.title}}</a> {%if article.reply_count%}[{{article.reply_count}}]{%endif%}{% else %}{{article.title}}{% if article.reply_count%} [{{article.reply_count}}]{% endif %}{% endif %}</td>
                 <td class="column author_col"><span class="username">{{article.author_nickname}}</span></td>
                 <td class="column date_col">{{article.date|date:"Y/m/d"}}</td>
                 <td class="column vote_col">{{article.vote}}</td>
@@ -61,7 +61,7 @@
     <a href="/board/{{board_name}}?page_no={{first_page.no}}">{{first_page.mark}}</a>
     <a href="/board/{{board_name}}?page_no={{prev_page_group.no}}">{{prev_page_group.mark}}</a>
     {% for page in page_list %}
-    <a href="/board/{{board_name}}?page_no={{page}}">{{page}}</a>
+    <a href="/board/{{board_name}}?page_no={{page}}"{%ifequal page page_no%} class="bold"{%endifequal%}>{{page}}</a>
     {% endfor %}
     <a href="/board/{{board_name}}?page_no={{next_page_group.no}}">{{next_page_group.mark}}</a>
     <a href="/board/{{board_name}}?page_no={{last_page.no}}">{{last_page.mark}}</a>

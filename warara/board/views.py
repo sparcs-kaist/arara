@@ -173,12 +173,14 @@ def read(request, board_name, article_id):
                     article_list[i]['content'] = insert_image_tag + article_list[i]['content']
 
         #article_list[i]['content'] = render_bbcode(article_list[i]['content'], 'UTF-8')
-        article_list[i]['depth_list'] = [x+1 for x in range(article_list[i]['depth']-2)]
         if article_list[i]['deleted']: #deleted article access
             article_list[i]['author_nickname'] = ''
             article_list[i]['author_username'] = ''
             article_list[i]['content'] = 'deleted'
             article_list[i]['title'] = 'deleted'
+        if article_list[i]['depth'] > 12: #set depth 12 which has bigger depth than 12
+            article_list[i]['depth'] = 12
+        article_list[i]['depth_list'] = [x+1 for x in range(article_list[i]['depth']-2)]
 
     r['board_name'] = board_name
     username = request.session['arara_username']

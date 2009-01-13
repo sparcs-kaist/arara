@@ -82,13 +82,28 @@ $(document).ready(function(){
                 alert("You voted already");
                 }
                 else{
-                alert(data);
+                alert("Unknown error");
                 }
                 });
             event.preventDefault();
             });
 
+    $focus_textarea_reply = 0;
+    $("textarea[name='content']").focus(function(){
+            $focus_textarea_reply = $(this);
+            });
+
     $(document).keypress(function(event){
+        if($focus_textarea_reply){
+        switch(event.which){
+            case 13:
+                if(confirm("send")){
+                    $focus_textarea_reply.parent().parent().parent().submit();
+                    break;
+                }
+                event.preventDefault();
+            }
+            }
 		if($focus_input || event.altKey || event.ctrlKey){
 		return;
 		}

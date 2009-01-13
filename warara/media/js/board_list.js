@@ -1,13 +1,6 @@
 $(document).ready(function(){
     var cursor_pos = 1;
     var row_count = $("#article_table tr").length;
-    $.history.init(function(hash) {
-        if (hash) {
-            cursor_pos = parseInt(hash);
-            if (cursor_pos == -1)
-                cursor_pos = row_count - 1;
-        }
-    });
 	if(!$logged_in){
 	cursor_pos = -1;
 	}
@@ -18,7 +11,7 @@ $(document).ready(function(){
         $("#article_table tr").eq(cursor_pos).addClass("row_highlight");
     }
     function read_article() {
-        $.history.load(cursor_pos);
+        //$.history.load(cursor_pos);
         var article_link = $("#article_table tr").eq(cursor_pos).children(".title_col").children("a").attr("href");
         location.href = article_link;
     }
@@ -54,7 +47,7 @@ $(document).ready(function(){
 		if($focus_input || event.altKey || event.ctrlKey){
 		return;
 		}
-        if(!$("#list_link").attr("href")){
+        if(!$("#list_link").attr("href")){ //move to main page when user press q in article_list page
         switch(event.which){
             case 113:
                 location.href = "/main";
@@ -97,6 +90,7 @@ $(document).ready(function(){
                     $(".highlight").removeClass("highlight");
                     $(".row_highlight").removeClass("row_highlight").addClass("hidden_highlight");
                     $("#board_buttons a[name='search_method_select']").eq(cursor_sm).addClass("highlight");
+                    location.href = "#search_method_select";
                     break;
             }
         }

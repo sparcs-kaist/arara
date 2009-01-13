@@ -76,6 +76,24 @@ $(document).ready(function(){
             }
         });
     }); 
+    //alert if there exists the same nickname as entered nickname
+        $("#register_submit input[name='done']").click(function(event){
+            var nickname = $("#mynickname").val();
+            if (nickname == $("#mynickname").attr("rel")){
+            return;
+            }
+            $.post("/account/register/nickname" + "check/", 
+                {check_field:nickname, from_message_send:1}, 
+                function(data){
+                if(data == 1){
+                    alert("nickname " + nickname + " is already exist");
+                }
+                else{
+                    $("#account_information_content").submit();
+                }
+                });
+            event.preventDefault();
+        });
 
     $(".submit").click(function(event) {
         $("input.required_field").each(function(i) {
@@ -102,6 +120,7 @@ $(document).ready(function(){
             event.preventDefault();
         }
     });
+
 
     //shortcut
 

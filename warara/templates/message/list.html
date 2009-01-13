@@ -16,7 +16,11 @@
 {% endblock %}
 {% block sub_head %}
 {% load i18n %}
-{% trans "messages" %}
+{% ifequal message_list_type 'inbox'%}
+{% trans "inbox" %}
+{% else %}
+{% trans "outbox" %}
+{% endifequal %}
 {% endblock %}
 {% block message_content %}
 {% load i18n %}

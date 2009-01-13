@@ -127,3 +127,9 @@ td {
 	color: #222;
 	font-weight: bold;
 }
+
+.deleted{
+	-moz-opacity: 0.5;
+	filter:alpha(opacity:50);
+	opacity:0.5;
+}

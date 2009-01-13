@@ -39,13 +39,40 @@ $(document).ready(function() {
 				});
 			});
 
+    $focus_input_title = 0;
+    $focus_textarea_text = 0;
+    $("#article_write_title input[name='title']").focus(function(){
+            $focus_input_title = 1;
+            });
+    $("#article_write_title input[name='title']").blur(function(){
+            $focus_input_title = 0;
+            });
+    $("#article_write_text textarea[name='text']").focus(function(){
+            $focus_textarea_text = 1;
+            });
+    $("#article_write_text textarea[name='text']").blur(function(){
+            $focus_textarea_text = 0;
+            });
     $("#article_write_title input[name='title']").focus();
-
+    
     $(document).keypress(function(event){
+        if((event.shiftKey && $focus_textarea_text) || $focus_input_title){
+        switch(event.which){
+            case 13:
+                if(confirm("send")){
+                    $("form[name='article_write']").submit();
+                    break;
+                }
+                event.preventDefault();
+            }
+            }
 		if($focus_input || event.altKey || event.ctrlKey){
 		return;
 		}
         switch(event.which){
-        }
+            case 113:
+                location.href = "../";
+                break;
+                }
     });
 });
