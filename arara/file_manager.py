@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import md5 as hashlib
+import time
 
 from sqlalchemy import and_, or_, not_
 from sqlalchemy.exceptions import InvalidRequestError
@@ -61,7 +62,8 @@ class FileManager(object):
         article = session.query(model.Article).filter_by(id=article_id).one()
         filepath_to_save = u''+str(article.board.board_name) + '/' +str(article.date.year) + '/' + str(article.date.month) + '/' + str(article.date.day)
         try:
-            ghost_filename = u''+hashlib.md5(filename.encode('utf-8') + str(article.author.id) + str(article.board.id) + str(article.id)).hexdigest()
+            # Generate unique filename by putting timestamp at the end of the hasing string
+            ghost_filename = u''+hashlib.md5(filename.encode('utf-8') + str(article.author.id) + str(article.board.id) + str(article.id) + str(time.time())).hexdigest()
             file = model.File(filename, ghost_filename, filepath_to_save, article.author, article.board, article)
             session.save(file)
             session.commit()
