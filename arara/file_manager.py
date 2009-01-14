@@ -54,7 +54,7 @@ class FileManager(object):
         #그 경로의 파일이 있다고 가정하고 저장
 
         DANGER_FILE = ('php', 'asp', 'php3', 'php4', 'htaccess', 'js')
-        file_ext = filename.split('.',1)[-1]
+        file_ext = filename.split('.')[-1]
         if file_ext in DANGER_FILE:
             return False, 'DANGER_FILE_DETECTED'
         
