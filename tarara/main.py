@@ -39,7 +39,7 @@ class ara_main(ara_form):
             self.parent.run()
 
     def notify_guest(self):
-        confirm = widget.Dialog(_('Not available in guest mode.'), [_('Ok')], ('menu', 'bg', 'bgf'), 35, 5, self)
+        confirm = widget.Dialog(_('Not available in guest mode.'), [_('Ok')], ('menu', 'bg', 'bgf'), 30, 6, self)
         self.overlay = confirm
         self.parent.run()
         self.overlay = None
