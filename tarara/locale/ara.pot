@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-12 20:29+0900\n"
+"POT-Creation-Date: 2009-01-15 23:57+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,80 +18,6 @@ msgstr ""
 
 #: article_search_walker.py:20 article_list_walker.py:29
 msgid "No article found. Have a nice day."
-msgstr ""
-
-#: main.py:14
-msgid "(N)ew Article"
-msgstr ""
-
-#: main.py:15
-msgid "(S)elect Board"
-msgstr ""
-
-#: main.py:16
-msgid "(P)rivate Message"
-msgstr ""
-
-#: main.py:17
-msgid "(U)ser Preferences"
-msgstr ""
-
-#: main.py:18
-msgid "User (I)nformation"
-msgstr ""
-
-#: main.py:19
-msgid "(H)elp"
-msgstr ""
-
-#: main.py:20
-msgid "(A)bout ARA"
-msgstr ""
-
-#: main.py:21
-msgid "(W)elcome Screen"
-msgstr ""
-
-#: main.py:22
-msgid "(Q)uit"
-msgstr ""
-
-#: main.py:42
-msgid "Not available in guest mode."
-msgstr ""
-
-#: main.py:42
-msgid "Ok"
-msgstr ""
-
-#: main.py:49
-msgid "Really quit?"
-msgstr ""
-
-#: main.py:49 main.py:52 read_article.py:44 read_article.py:47
-msgid "Yes"
-msgstr ""
-
-#: main.py:49 read_article.py:44
-msgid "No"
-msgstr ""
-
-#: main.py:155
-msgid "ARA: Main Menu"
-msgstr ""
-
-#: main.py:160
-msgid "Today Best"
-msgstr ""
-
-#: main.py:169
-msgid "Weekly Best"
-msgstr ""
-
-#: main.py:180
-msgid ""
-"  * Press [Tab] to jump between menu, today best, weekly best\n"
-" ARAra Release 1.0                                Copyright (C) 2008, SPARCS"
 msgstr ""
 
 #: read_article.py:35
@@ -111,6 +37,14 @@ msgstr ""
 
 #: read_article.py:44
 msgid "Really delete?"
+msgstr ""
+
+#: read_article.py:44 read_article.py:47 main.py:49 main.py:52
+msgid "Yes"
+msgstr ""
+
+#: read_article.py:44 main.py:49
+msgid "No"
 msgstr ""
 
 #: read_article.py:50
@@ -292,26 +226,6 @@ msgstr ""
 
 #: post_article.py:70 write_pm.py:58
 msgid "Preview"
-msgstr ""
-
-#: login.py:36
-msgid "Specified ID doesn't exist."
-msgstr ""
-
-#: login.py:38
-msgid "Wrong password."
-msgstr ""
-
-#: login.py:40
-msgid "Database error."
-msgstr ""
-
-#: login.py:42
-msgid "XML-RPC server problem. Try again after several minutes."
-msgstr ""
-
-#: login.py:44
-msgid "Undefined error."
 msgstr ""
 
 #: user_information.py:13
@@ -505,6 +419,30 @@ msgstr ""
 msgid "Vote"
 msgstr ""
 
+#: login.py:36
+msgid "Specified ID doesn't exist."
+msgstr ""
+
+#: login.py:38
+msgid "Wrong password."
+msgstr ""
+
+#: login.py:40
+msgid "Database error."
+msgstr ""
+
+#: login.py:42
+msgid "XML-RPC server problem. Try again after several minutes."
+msgstr ""
+
+#: login.py:44
+msgid "Account not verified. Please confirm it."
+msgstr ""
+
+#: login.py:46
+msgid "Undefined error."
+msgstr ""
+
 #: change_basic_info.py:19
 msgid ""
 "Nickname is in use.\n"
@@ -577,6 +515,72 @@ msgstr ""
 
 #: list_pm.py:105
 msgid "Outbox"
+msgstr ""
+
+#: main.py:14
+msgid "(N)ew Article"
+msgstr ""
+
+#: main.py:15
+msgid "(S)elect Board"
+msgstr ""
+
+#: main.py:16
+msgid "(P)rivate Message"
+msgstr ""
+
+#: main.py:17
+msgid "(U)ser Preferences"
+msgstr ""
+
+#: main.py:18
+msgid "User (I)nformation"
+msgstr ""
+
+#: main.py:19
+msgid "(H)elp"
+msgstr ""
+
+#: main.py:20
+msgid "(A)bout ARA"
+msgstr ""
+
+#: main.py:21
+msgid "(W)elcome Screen"
+msgstr ""
+
+#: main.py:22
+msgid "(Q)uit"
+msgstr ""
+
+#: main.py:42
+msgid "Not available in guest mode."
+msgstr ""
+
+#: main.py:42
+msgid "Ok"
+msgstr ""
+
+#: main.py:49
+msgid "Really quit?"
+msgstr ""
+
+#: main.py:155
+msgid "ARA: Main Menu"
+msgstr ""
+
+#: main.py:160
+msgid "Today Best"
+msgstr ""
+
+#: main.py:169
+msgid "Weekly Best"
+msgstr ""
+
+#: main.py:180
+msgid ""
+"  * Press [Tab] to jump between menu, today best, weekly best\n"
+" ARAra Release 1.0                                Copyright (C) 2008, SPARCS"
 msgstr ""
 
 #: write_pm.py:27

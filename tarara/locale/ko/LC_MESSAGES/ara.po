@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ara\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-12 19:49+0900\n"
+"POT-Creation-Date: 2009-01-15 23:57+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Park Shinjo <peremen@sparcs.org>\n"
 "Language-Team: Korean <LL@li.org>\n"
@@ -17,80 +17,6 @@ msgstr ""
 #: article_search_walker.py:20 article_list_walker.py:29
 msgid "No article found. Have a nice day."
 msgstr "글이 없습니다."
-
-#: main.py:14
-msgid "(N)ew Article"
-msgstr "새 글(N)"
-
-#: main.py:15
-msgid "(S)elect Board"
-msgstr "게시판 선택(S)"
-
-#: main.py:16
-msgid "(P)rivate Message"
-msgstr "쪽지(P)"
-
-#: main.py:17
-msgid "(U)ser Preferences"
-msgstr "사용자 환경 설정(U)"
-
-#: main.py:18
-msgid "User (I)nformation"
-msgstr "사용자 정보(I)"
-
-#: main.py:19
-msgid "(H)elp"
-msgstr "도움말(H)"
-
-#: main.py:20
-msgid "(A)bout ARA"
-msgstr "아라 정보(A)"
-
-#: main.py:21
-msgid "(W)elcome Screen"
-msgstr "시작 화면 보기(W)"
-
-#: main.py:22
-msgid "(Q)uit"
-msgstr "끝내기(Q)"
-
-#: main.py:42
-msgid "Not available in guest mode."
-msgstr "손님 모드에서는 사용할 수 없습니다."
-
-#: main.py:42
-msgid "Ok"
-msgstr "확인"
-
-#: main.py:49
-msgid "Really quit?"
-msgstr "정말 끝내시겠습니까?"
-
-#: main.py:49 main.py:52 read_article.py:44 read_article.py:47
-msgid "Yes"
-msgstr "예"
-
-#: main.py:49 read_article.py:44
-msgid "No"
-msgstr "아니오"
-
-#: main.py:155
-msgid "ARA: Main Menu"
-msgstr "아라: 초기 화면"
-
-#: main.py:160
-msgid "Today Best"
-msgstr "투데이 베스트"
-
-#: main.py:169
-msgid "Weekly Best"
-msgstr "위클리 베스트"
-
-#: main.py:180
-msgid ""
-"  * Press [Tab] to jump between menu, today best, weekly best\n"
-" ARAra Release 1.0                                Copyright (C) 2008, SPARCS"
-msgstr ""
 
 #: read_article.py:35
 msgid "Voted."
@@ -110,6 +36,14 @@ msgstr "확인"
 #: read_article.py:44
 msgid "Really delete?"
 msgstr "정말 삭제하시겠습니까?"
+
+#: read_article.py:44 read_article.py:47 main.py:49 main.py:52
+msgid "Yes"
+msgstr "예"
+
+#: read_article.py:44 main.py:49
+msgid "No"
+msgstr "아니오"
 
 #: read_article.py:50
 msgid "Article deleted."
@@ -297,26 +231,6 @@ msgstr "도움말"
 #: post_article.py:70 write_pm.py:58
 msgid "Preview"
 msgstr "미리 보기"
-
-#: login.py:36
-msgid "Specified ID doesn't exist."
-msgstr "ID가 ㅇ벗습니다."
-
-#: login.py:38
-msgid "Wrong password."
-msgstr "암호가 틀렸습니다."
-
-#: login.py:40
-msgid "Database error."
-msgstr "데이터베이스 오류입니다."
-
-#: login.py:42
-msgid "XML-RPC server problem. Try again after several minutes."
-msgstr "XML-RPC 서버가 뒈졌습니다. 나중에 다시 시도하십시오."
-
-#: login.py:44
-msgid "Undefined error."
-msgstr "지정되지 않은 오류입니다."
 
 #: user_information.py:13
 msgid "List (c)onnected users"
@@ -511,6 +425,30 @@ msgstr "조회"
 msgid "Vote"
 msgstr "투표"
 
+#: login.py:36
+msgid "Specified ID doesn't exist."
+msgstr "ID가 ㅇ벗습니다."
+
+#: login.py:38
+msgid "Wrong password."
+msgstr "암호가 틀렸습니다."
+
+#: login.py:40
+msgid "Database error."
+msgstr "데이터베이스 오류입니다."
+
+#: login.py:42
+msgid "XML-RPC server problem. Try again after several minutes."
+msgstr "XML-RPC 서버가 뒈졌습니다. 나중에 다시 시도하십시오."
+
+#: login.py:44
+msgid "Account not verified. Please confirm it."
+msgstr "계정이 확인되지 않았습니다. 확인해 주십시오."
+
+#: login.py:46
+msgid "Undefined error."
+msgstr "지정되지 않은 오류입니다."
+
 #: change_basic_info.py:19
 msgid ""
 "Nickname is in use.\n"
@@ -584,6 +522,72 @@ msgstr "받은 쪽지함"
 #: list_pm.py:105
 msgid "Outbox"
 msgstr "보낸 쪽지함"
+
+#: main.py:14
+msgid "(N)ew Article"
+msgstr "새 글(N)"
+
+#: main.py:15
+msgid "(S)elect Board"
+msgstr "게시판 선택(S)"
+
+#: main.py:16
+msgid "(P)rivate Message"
+msgstr "쪽지(P)"
+
+#: main.py:17
+msgid "(U)ser Preferences"
+msgstr "사용자 환경 설정(U)"
+
+#: main.py:18
+msgid "User (I)nformation"
+msgstr "사용자 정보(I)"
+
+#: main.py:19
+msgid "(H)elp"
+msgstr "도움말(H)"
+
+#: main.py:20
+msgid "(A)bout ARA"
+msgstr "아라 정보(A)"
+
+#: main.py:21
+msgid "(W)elcome Screen"
+msgstr "시작 화면 보기(W)"
+
+#: main.py:22
+msgid "(Q)uit"
+msgstr "끝내기(Q)"
+
+#: main.py:42
+msgid "Not available in guest mode."
+msgstr "손님 모드에서는 사용할 수 없습니다."
+
+#: main.py:42
+msgid "Ok"
+msgstr "확인"
+
+#: main.py:49
+msgid "Really quit?"
+msgstr "정말 끝내시겠습니까?"
+
+#: main.py:155
+msgid "ARA: Main Menu"
+msgstr "아라: 초기 화면"
+
+#: main.py:160
+msgid "Today Best"
+msgstr "투데이 베스트"
+
+#: main.py:169
+msgid "Weekly Best"
+msgstr "위클리 베스트"
+
+#: main.py:180
+msgid ""
+"  * Press [Tab] to jump between menu, today best, weekly best\n"
+" ARAra Release 1.0                                Copyright (C) 2008, SPARCS"
+msgstr ""
 
 #: write_pm.py:27
 msgid "Message sent."

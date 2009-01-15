@@ -40,6 +40,8 @@ class ara_login(ara_form):
                 self.errormessage.body.set_text(_("Database error."))
             elif message == 'SERVER_ERROR':
                 self.errormessage.body.set_text(_("XML-RPC server problem. Try again after several minutes."))
+            elif message == 'NOT_ACTIVATED':
+                self.errormessage.body.set_text(_("Account not verified. Please confirm it."))
             else:
                 self.errormessage.body.set_text(_("Undefined error."))
                 assert("Undefined error")
