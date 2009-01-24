@@ -10,6 +10,44 @@ exception InvalidOperation {
 
 typedef i32 id_t
 
+struct VisitorCount {
+    1: i32 total_visitor_count,
+    2: i32 today_visitor_count,
+}
+
+struct Session {
+    1: string username,
+    2: string user_ip,
+    3: i64 login_time,
+}
+
+struct LoggedUser {
+    1: string username,
+    2: string ip,
+    3: string current_action,
+    4: string nickname,
+    5: i64 logintime,
+}
+
+service LoginManager {
+    string guest_login(1:string guest_ip)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
+    VisitorCount total_visitor()
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
+    string login(1:string username, 2:string password, 3:string user_ip)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
+    void logout(1:string session_key)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
+    void update_session(1:string session_key)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
+    Session get_session(1:string session_key)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
+    LoggedUser get_current_online(1:string session_key)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
+    bool is_logged_in(1:string session_key)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
+}
+
 struct WrittenArticle {
     1: string title,
     2: string content
