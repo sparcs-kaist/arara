@@ -47,7 +47,8 @@ class LoginManager(object):
         @return: True, guest_key
         '''
 
-        return False, 'TEMPORARILY_DISABLED'
+        return guest_ip
+        #return False, 'TEMPORARILY_DISABLED'
         #hash = hashlib.md5('guest'+''+datetime.datetime.today().__str__()).hexdigest()
         #timestamp = datetime.datetime.isoformat(datetime.datetime.now())
         #self.session_dic[hash] = {'username': 'guest', 'ip': guest_ip, 'logintime': timestamp}
