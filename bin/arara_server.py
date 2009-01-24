@@ -8,7 +8,9 @@ import logging
 import logging.handlers
 
 PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
+THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../gen-py"))
 sys.path.append(PROJECT_PATH)
+sys.path.append(THRIFT_PATH)
 
 import arara
 import arara.model
