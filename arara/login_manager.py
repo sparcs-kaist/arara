@@ -5,8 +5,11 @@ import logging
 import datetime
 import time
 
-from arara import model
 from sqlalchemy.exceptions import InvalidRequestError
+
+from arara_thrift.ttypes import *
+
+from arara import model
 from util import is_keys_in_dict
 from util import log_method_call_with_source
 
@@ -47,8 +50,7 @@ class LoginManager(object):
         @return: True, guest_key
         '''
 
-        return guest_ip
-        #return False, 'TEMPORARILY_DISABLED'
+        raise InvalidOperation('temporarily disabled')
         #hash = hashlib.md5('guest'+''+datetime.datetime.today().__str__()).hexdigest()
         #timestamp = datetime.datetime.isoformat(datetime.datetime.now())
         #self.session_dic[hash] = {'username': 'guest', 'ip': guest_ip, 'logintime': timestamp}
