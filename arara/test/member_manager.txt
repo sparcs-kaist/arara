@@ -123,7 +123,7 @@ Add SYSOP
 (False, 'PERMISSION_DENIED')
 
 # Backdoor_confirm Test!
->>> user_reg_dic = {'username':u'mikkang20', 'password':u'mikkang', 'nickname':u'mikkang20', 'email':u'mikkang20', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
+>>> user_reg_dic = {'username':u'mikkang20', 'password':u'mikkang', 'nickname':u'mikkang20', 'email':u'mikkang20@example.com', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
 >>> server.member_manager.is_registered(user_reg_dic['username'])
 False
 >>> server.member_manager.is_registered_nickname(user_reg_dic['nickname'])

@@ -49,12 +49,12 @@ True
 
 >>> article_id = 1
 >>> server.file_manager.save_file(session_key, article_id , u'hahahah.jpg')
-(True, {'file_path': u'garbages/1970/1/1', 'saved_filename': u'a99c6ec38a09c884d8ae2ae04ebaf652'})
+(True, {'file_path': u'garbages/1970/1/1', 'saved_filename': u'2f2bea882ef178d056434f5cdb0d0909'})
 
 >>> time.time = org_time
 
 >>> server.file_manager.download_file(article_id , 1)
-(True, {'real_filename': u'hahahah.jpg', 'file_path': u'garbages/1970/1/1', 'saved_filename': u'a99c6ec38a09c884d8ae2ae04ebaf652'})
+(True, {'real_filename': u'hahahah.jpg', 'file_path': u'garbages/1970/1/1', 'saved_filename': u'2f2bea882ef178d056434f5cdb0d0909'})
 
 >>> server.file_manager.delete_file(session_key, article_id , 1)
-(True, {'file_path': u'garbages/1970/1/1', 'saved_filename': u'a99c6ec38a09c884d8ae2ae04ebaf652'})
+(True, {'file_path': u'garbages/1970/1/1', 'saved_filename': u'2f2bea882ef178d056434f5cdb0d0909'})

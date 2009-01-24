@@ -4,7 +4,9 @@ import sys
 import os
 
 PROJECT_PATH = os.path.join(os.path.dirname(__file__), '..')
+THRIFT_PATH = os.path.join(os.path.dirname(__file__), '..')
 sys.path.append(PROJECT_PATH)
+sys.path.append(THRIFT_PATH)
 
 from arara import article_manager
 from arara import blacklist_manager
@@ -15,6 +17,10 @@ from arara import notice_manager
 from arara import read_status_manager
 
 import logging
+
+LOG_FILENAME = '/tmp/arara_test.log'
+logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,)
+
 
 def suite():
     return unittest.TestSuite([
