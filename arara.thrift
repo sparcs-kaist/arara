@@ -31,35 +31,59 @@ struct ArticleList {
     3: list<Article> hit
 }
 
+
+exception DatabaseError {
+    1: string why
+}
+
+exception InvalidOperation {
+    1: string why
+}
+
+
 service ArticleManager {
-    list<Article> get_today_best_list(1:i32 count=5),
-    list<Article> get_today_best_list_specific(1:string board_name, 2:i32 count=5),
-    list<Article> get_weekly_best_list(1:i32 count=5),
-    list<Article> get_weekly_best_list_specific(1:string board_name, 2:i32 count=5),
+    list<Article> get_today_best_list(1:i32 count=5)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
+    list<Article> get_today_best_list_specific(1:string board_name, 2:i32 count=5)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
+    list<Article> get_weekly_best_list(1:i32 count=5)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
+    list<Article> get_weekly_best_list_specific(1:string board_name, 2:i32 count=5)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
     ArticleList not_read_article_list(1:string session_key,
                                       2:i32 page=1,
-                                      3:i32 page_length=20),
+                                      3:i32 page_length=20)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
     ArticleList not_article_list(1:string session_key,
                                  2:i32 page=1,
-                                 3:i32 page_length=20),
+                                 3:i32 page_length=20)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
     ArticleList article_list(1:string session_key,
                              2:string board_name,
                              3:i32 page=1,
-                             4:i32 page_length=20),
-    list<Article> read(1:string session_key, 2:string board_name, 3:id_t no),
+                             4:i32 page_length=20)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
+    list<Article> read(1:string session_key, 2:string board_name, 3:id_t no)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
     ArticleList article_list_below(1:string session_key,
                                    2:string board_name,
                                    3:id_t no,
-                                   4:i32 page_length=20),
+                                   4:i32 page_length=20)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
     void vote_article(1:string session_key, 2:string board_name,
-                      3:id_t article_no),
+                      3:id_t article_no)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
     i32 write_article(1:string session_key, 2:string board_name,
-                      3:WrittenArticle article),
+                      3:WrittenArticle article)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
     i32 write_reply(1:string session_key, 2:string board_name,
-                      3:id_t article_no, 4:WrittenArticle article),
+                      3:id_t article_no, 4:WrittenArticle article)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
     i32 modify(1:string session_key, 2:string board_name,
-               3:id_t no, 4:WrittenArticle article),
+               3:id_t no, 4:WrittenArticle article)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
     void delete_(1:string session_key,
                 2:string board_name,
-                3:id_t no),
+                3:id_t no)
+        throws (1:InvalidOperation ouch, 2:DatabaseError ouch),
 }
