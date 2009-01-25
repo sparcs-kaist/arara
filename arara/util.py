@@ -3,6 +3,12 @@
 import traceback
 import logging
 
+from arara_thrift.ttypes import *
+
+def smart_unicode(string):
+    if isinstance(string, unicode): return string
+    else: return unicode(string, 'utf-8')
+
 def update_monitor_status(function):
     def wrapper(self, session_key, *args, **kwargs):
         if 'login_manager' in self.__dict__:
@@ -32,10 +38,14 @@ def log_method_call_with_source_important(source):
                     username, user_info['current_action'])
             try:
                 ret = function(self, session_key, *args, **kwargs)
+            except InvalidOperation:
+                raise
+            except DatabaseError:
+                raise
             except:
                 logger.error("EXCEPTION(by %s) %s.%s%s:\n%s", username, source,
                         function.func_name, repr(args), traceback.format_exc())
-                return False, 'INTERNAL_SERVER_ERROR'
+                raise InvalidOperation('internal server error')
             logger.debug("RETURN(by %s) %s.%s%s=%s", username, source,
                     function.func_name, repr(args), repr(ret))
 
@@ -54,10 +64,14 @@ def log_method_call_with_source(source):
             logger.debug("CALL %s.%s%s", source, function.func_name, repr(args))
             try:
                 ret = function(self, *args, **kwargs)
+            except InvalidOperation:
+                raise
+            except DatabaseError:
+                raise
             except:
                 logger.error("EXCEPTION %s.%s%s:\n%s", source, function.func_name,
                         repr(args), traceback.format_exc())
-                return False, 'INTERNAL_SERVER_ERROR'
+                raise InvalidOperation('internal server error')
             logger.debug("RETURN %s.%s%s=%s", source, function.func_name, repr(args), repr(ret))
 
             return ret
@@ -73,7 +87,7 @@ def require_login(function):
     """
     def wrapper(self, session_key, *args):
         if not self.login_manager.is_logged_in(session_key):
-            return False, 'NOT_LOGGEDIN'
+            raise InvalidOperation('not loggedin')
         else:
             return function(self, session_key, *args)
     return wrapper

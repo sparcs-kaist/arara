@@ -17,12 +17,6 @@ struct VisitorCount {
 
 struct Session {
     1: string username,
-    2: string user_ip,
-    3: i64 login_time,
-}
-
-struct LoggedUser {
-    1: string username,
     2: string ip,
     3: string current_action,
     4: string nickname,
@@ -42,7 +36,7 @@ service LoginManager {
         throws (1:InvalidOperation ouch, 2:DatabaseError db_ouch),
     Session get_session(1:string session_key)
         throws (1:InvalidOperation ouch, 2:DatabaseError db_ouch),
-    LoggedUser get_current_online(1:string session_key)
+    list<Session> get_current_online(1:string session_key)
         throws (1:InvalidOperation ouch, 2:DatabaseError db_ouch),
     bool is_logged_in(1:string session_key)
         throws (1:InvalidOperation ouch, 2:DatabaseError db_ouch),

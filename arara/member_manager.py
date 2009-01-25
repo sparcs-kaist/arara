@@ -137,8 +137,9 @@ class MemberManager(object):
         if user_reg_dic['username'].lower() == 'sysop':
             return False, 'PERMISSION_DENIED'
 
-        activation_code = md5.md5(user_reg_dic['username']+
-                user_reg_dic['password']+user_reg_dic['nickname']).hexdigest()
+        key = (user_reg_dic['username'] +
+            user_reg_dic['password'] + user_reg_dic['nickname'])
+        activation_code = md5.md5(key).hexdigest()
         
         session = model.Session()
         try:
@@ -394,7 +395,7 @@ class MemberManager(object):
         '''
         try:
             session = model.Session()
-            username = self.login_manager.get_session(session_key)[1]['username']
+            username = self.login_manager.get_session(session_key).username
             user = session.query(model.User).filter_by(username=username).one()
             user_dict = filter_dict(user.__dict__, USER_PUBLIC_WHITELIST)
             if not user_dict['last_logout_time']:
@@ -426,8 +427,8 @@ class MemberManager(object):
                 3. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 4. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        session_info = self.login_manager.get_session(session_key)[1]
-        username = session_info['username']
+        session_info = self.login_manager.get_session(session_key)
+        username = session_info.username
         session = model.Session()
         user = session.query(model.User).filter_by(username=username).one()
         try:
@@ -471,8 +472,8 @@ class MemberManager(object):
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
                 3. 양식이 맞지 않음(부적절한 NULL값 등): 'WRONG_DICTIONARY'
         '''
-        session_info = self.login_manager.get_session(session_key)[1]
-        username = session_info['username']
+        session_info = self.login_manager.get_session(session_key)
+        username = session_info.username
 
         if not is_keys_in_dict(user_modify_dict, USER_PUBLIC_MODIFIABLE_WHITELIST):
             return False, 'WRONG_DICTIONARY'
@@ -563,7 +564,7 @@ class MemberManager(object):
         '''
 
         session = model.Session()
-        username = self.login_manager.get_session(session_key)[1]['username']
+        username = self.login_manager.get_session(session_key).username
         try:
             user = session.query(model.User).filter_by(username=username).one()
             user.activated = False
@@ -630,7 +631,7 @@ class MemberManager(object):
             2. SYSOP이 아닐시: False
         '''
 
-        if self.login_manager.get_session(session_key)[1]['username'] == 'SYSOP':
+        if self.login_manager.get_session(session_key).username == 'SYSOP':
             return True
         else:
             return False

@@ -12,6 +12,7 @@ from arara_thrift.ttypes import *
 from arara import model
 from util import is_keys_in_dict
 from util import log_method_call_with_source
+from util import smart_unicode
 
 log_method_call = log_method_call_with_source('login_manager')
 
@@ -71,9 +72,8 @@ class LoginManager(object):
         try:
             visitor = session.query(model.Visitor).one()
         except Exception, e: 
-            raise
+            raise DatabaseError(repr(e))
             session.close()
-            return False, {} 
         visitor.total = visitor.total + 1
         now = datetime.datetime.fromtimestamp(time.time())
         if not now.day == visitor.date.day:
@@ -83,7 +83,7 @@ class LoginManager(object):
         session.commit()
         session.close()
         visitor_count= {'total_visitor_count':visitor.total, 'today_visitor_count':visitor.today}
-        return True, visitor_count 
+        return VisitorCount(**visitor_count)
 
     @log_method_call
     def login(self, username, password, user_ip):
@@ -106,7 +106,9 @@ class LoginManager(object):
                 3. 데이터베이스 관련 에러: False, 'DATABASE_ERROR'
                 4. 이미 로그인된 아이디: False, 'ALREADY_LOGIN'
         '''
-        
+        username = smart_unicode(username)
+        password = smart_unicode(username)
+        user_ip = smart_unicode(username)
         ret = []
         success, msg = self.member_manager._authenticate(username, password, user_ip)
         if success:
@@ -117,8 +119,9 @@ class LoginManager(object):
             timestamp = datetime.datetime.fromtimestamp(time.time())
             self.session_dic[hash] = {'username': username, 'ip': user_ip, 'nickname': msg['nickname'], 'logintime': msg['last_login_time'], 'current_action': 'login_manager.login()'}
             self.logger.info("User '%s' has LOGGED IN from '%s' as '%s'", username, user_ip, hash)
-            return True, hash
-        return success, msg
+            return hash
+        else:
+            raise InvalidOperation(msg)
 
     def logout(self, session_key):
         '''
@@ -139,13 +142,15 @@ class LoginManager(object):
             if ret:
                 self.logger.info("User '%s' has LOGGED OUT", self.session_dic[session_key]['username'])
                 self.session_dic.pop(session_key)
-                return True, 'OK'
+                return
             else:
-                return ret, msg
+                raise InvalidOperation(msg)
         except KeyError:
-            return False, 'NOT_LOGGEDIN'
+            raise InvalidOperation('not loggedin')
 
     def _update_monitor_status(self, session_key, action):
+        '''현재 사용자가 어떤 일을 하고있는지 update 하는 메소드.'''
+        action = smart_unicode(action)
         if self.session_dic.has_key(session_key):
             self.session_dic[session_key]['current_action'] = action
             return True, 'OK'
@@ -166,7 +171,7 @@ class LoginManager(object):
                 2. 데이터베이스 관련 에러: False, 'DATABASE_ERROR'
         '''
 
-        return False, 'NOT_IMPLEMENTED'
+        raise InvalidOperation('not implemented')
 
     @log_method_call
     def get_session(self, session_key):
@@ -182,9 +187,9 @@ class LoginManager(object):
         '''
         try:
             session_info = self.session_dic[session_key]
-            return True, session_info
+            return Session(**session_info)
         except KeyError:
-            return False, 'NOT_LOGGEDIN'
+            raise InvalidOperation('not loggedin')
 
     @log_method_call
     def get_current_online(self, session_key):
@@ -203,10 +208,10 @@ class LoginManager(object):
         ret = []
         if self.session_dic.has_key(session_key):
             for user_info in self.session_dic.values():
-                ret.append(user_info)
-            return True, ret
+                ret.append(Session(**user_info))
+            return ret
         else:
-            return False, 'NOT_LOGGEDIN'
+            raise InvalidOperation('not loggedin')
 
     @log_method_call
     def is_logged_in(self, session_key):

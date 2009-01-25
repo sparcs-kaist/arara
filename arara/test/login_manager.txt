@@ -18,8 +18,6 @@
 
 >>> user_reg_dic = {'username':u'pipoket', 'password':u'pipoket', 'nickname':u'pipoket', 'email':u'pipoket@example.com', 'signature':u'pipoket', 'self_introduction':u'pipoket', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
 >>> server.member_manager.confirm(u'pipoket', unicode(register_key))
 (True, 'OK')
 
@@ -27,26 +25,24 @@ True
 
 >>> user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx@example.com', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'serialx' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
 >>> server.member_manager.confirm(u'serialx', unicode(register_key))
 (True, 'OK')
 
 # Login as both user
 
->>> ret, session_key = server.login_manager.login(u'pipoket', u'pipoket', u'143.248.234.145')
->>> ret
-True
->>> ret, session_key_serialx = server.login_manager.login(u'serialx', u'serialx', u'143.248.234.140')
->>> ret
-True
+>>> session_key = server.login_manager.login(u'pipoket', u'pipoket', u'143.248.234.145')
+>>> session_key_serialx = server.login_manager.login(u'serialx', u'serialx', u'143.248.234.140')
 
 # Wrong login test
 
 >>> server.login_manager.login(u'pipoket', u'not_test', '143.248.234.145')
-(False, 'WRONG_PASSWORD')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 >>> server.login_manager.login(u'not_test', u'test', '143.248.234.145')
-(False, 'WRONG_USERNAME')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 
 #>>> server.login_manager.login(u'pipoket', u'pipoket', u'143.248.234.145')
 #(False, 'ALREADY_LOGIN')
@@ -61,10 +57,10 @@ True
 
 # Get session test
 
->>> _, result = server.login_manager.get_session(unicode(session_key))
->>> result['ip']
+>>> result = server.login_manager.get_session(unicode(session_key))
+>>> result.ip
 u'143.248.234.145'
->>> result['username']
+>>> result.username
 u'pipoket'
 
 # Get online user info test
@@ -90,8 +86,8 @@ u'pipoket'
 >>> _ = server.login_manager.total_visitor() 
 >>> _ = server.login_manager.total_visitor() 
 >>> _ = server.login_manager.total_visitor() 
->>> server.login_manager.total_visitor() 
-(True, {'total_visitor_count': 4, 'today_visitor_count': 4})
+>>> server.login_manager.total_visitor().__dict__
+{'total_visitor_count': 4, 'today_visitor_count': 4}
 
 # Reset the database
 >>> import arara.model
