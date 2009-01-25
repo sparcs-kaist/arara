@@ -48,7 +48,7 @@ class LoginManager(object):
         @type  guest_ip: string
         @param guest_ip: Guest IP
         @rtype: string
-        @return: True, guest_key
+        @return: guest_key
         '''
 
         raise InvalidOperation('temporarily disabled')
@@ -63,10 +63,8 @@ class LoginManager(object):
         방문자 수를 1증가 시켜줌과 동시에 
         지금까지의 ARAra 총 방문자 수와 오늘 하루 방문자수를 리틴해주는 함수
 
-        @rtype: boolean, dictionary
-        @return:
-            1. 성공 시: True, {'total_visitor_count':12345, 'today_visitor_count':423}
-            2. 실패 시: False, {}
+        @rtype: arara_thrift.VisitorCount
+        @return: 방문자수와 하루 방문자수를 포함한 객체
         '''
         session = model.Session()
         try:
@@ -97,14 +95,8 @@ class LoginManager(object):
         @param password: User Password
         @type  user_ip: string
         @param user_ip: User IP
-        @rtype: boolean, string
-        @return: 
-            1. 로그인 성공 시: True, user_key
-            2. 로그인 실패 시
-                1. 아이디 존재하지 않음: False, 'WRONG_USERNAME'
-                2. 패스워드 불일치: False, 'WRONG_PASSWORD'
-                3. 데이터베이스 관련 에러: False, 'DATABASE_ERROR'
-                4. 이미 로그인된 아이디: False, 'ALREADY_LOGIN'
+        @rtype: string
+        @return: 로그인한 세션 Key
         '''
         username = smart_unicode(username)
         password = smart_unicode(password)
@@ -129,12 +121,6 @@ class LoginManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @rtype: string
-        @return:
-            1. 로그아웃 성공 시: True, 'OK'
-            2. 로그아웃 실패 시
-                1. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
-                2. 데이터베이스 관련 에러: False, 'DATABASE_ERROR'
         '''
 
         try:
@@ -163,12 +149,6 @@ class LoginManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @rtype: integer
-        @return:
-            1. 업데이트 성공 시: True, 'OK'
-            2. 업데이트 실패 시
-                1. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
-                2. 데이터베이스 관련 에러: False, 'DATABASE_ERROR'
         '''
 
         raise InvalidOperation('not implemented')
@@ -180,10 +160,8 @@ class LoginManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @rtype: dictionary
-        @return:
-            1. 로그인 되어있을 경우: True, self.session_dic {username, user_ip, login_time}
-            2. 로그인 되어있지 않을 경우: False, 'NOT_LOGGEDIN'
+        @rtype: arara_thrift.Session
+        @return: 세션 정보를 가지는 객체
         '''
         try:
             session_info = self.session_dic[session_key]
@@ -198,11 +176,8 @@ class LoginManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @rtype: list
-        @return:
-            1. 반환 성공: True, List of online users
-            2. 반환 실패
-                1. 로그인 되지 않은 사용자: False, 'NOT_LOGGEDIN'
+        @rtype: list<Session>
+        @return: 접속중인 사용자들의 Session List
         '''
 
         ret = []
@@ -221,9 +196,7 @@ class LoginManager(object):
         @type  session_key: string
         @param session_key: User Key
         @rtype: boolean
-        @return:
-            1. 로그인 되어있을 경우: True
-            2. 로그인 되어있지 않을 경우: False
+        @return: session_key 의 사용자가 로그인 해 있는지 여부
         '''
 
         if session_key in self.session_dic:
