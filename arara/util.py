@@ -30,12 +30,12 @@ def log_method_call_with_source_important(source):
                     logger.error("EXCEPTION(by %s) %s.%s%s:\n%s", username, source,
                             function.func_name, repr(args), traceback.format_exc())
                     raise InternalError()
-                ret, user_info = self.login_manager.get_session(session_key)
-                username = user_info['username']
+                user_info = self.login_manager.get_session(session_key)
+                username = user_info.username
             logger.info("CALL(by %s) %s.%s%s", username, source,
                     function.func_name, repr(args))
             logger.debug("CURRENT USER STATUS UPDATED: User '%s' calls '%s' function",
-                    username, user_info['current_action'])
+                    username, user_info.current_action)
             try:
                 ret = function(self, session_key, *args, **kwargs)
             except InvalidOperation:

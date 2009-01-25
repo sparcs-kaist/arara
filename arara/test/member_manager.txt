@@ -11,9 +11,7 @@ Register one user, combacsa. then login as existing user mikkang
 True
 >>> server.member_manager.confirm(u'combacsa', unicode(register_key))
 (True, 'OK')
->>> ret, session_key_combacsa = server.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.140')
->>> ret
-True
+>>> session_key_combacsa = server.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.140')
 
 # Register one user, mikkang
 
@@ -29,11 +27,8 @@ False
 True
 >>> server.member_manager.confirm(u'mikkang', register_key)
 (True, 'OK')
->>> ret, session_key = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.140')
->>> ret
-True
+>>> session_key = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.140')
 >>> server.login_manager.logout(session_key)
-(True, 'OK')
 
 # Register one user, serialx
 
@@ -43,14 +38,10 @@ True
 True
 >>> server.member_manager.confirm(u'serialx', unicode(register_key))
 (True, 'OK')
->>> ret, session_key_serialx = server.login_manager.login(u'serialx', u'serialx', u'143.248.234.140')
->>> ret
-True
+>>> session_key_serialx = server.login_manager.login(u'serialx', u'serialx', u'143.248.234.140')
 
 
->>> ret, session_key = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.145')
->>> ret
-True
+>>> session_key = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.145')
 >>> ret, member = server.member_manager.get_info(unicode(session_key))
 >>> print member['activated']
 True
@@ -92,9 +83,7 @@ True
 
 >>> server.member_manager.confirm(u'ggingkkang', unicode(register_key))
 (True, 'OK')
->>> ret, session_key_ggingkkang = server.login_manager.login(u'ggingkkang', u'xx', u'143.248.234.140')
->>> ret
-True
+>>> session_key_ggingkkang = server.login_manager.login(u'ggingkkang', u'xx', u'143.248.234.140')
 
 # Search Test
 
@@ -134,14 +123,10 @@ False
 >>> ret
 True
 
->>> ret, sysop_session_key = server.login_manager.login(u'SYSOP', u'SYSOP', u'143.248.234.140')
->>> ret
-True
+>>> sysop_session_key = server.login_manager.login(u'SYSOP', u'SYSOP', u'143.248.234.140')
 >>> server.member_manager.backdoor_confirm(sysop_session_key, u'mikkang20')
 (True, 'OK')
->>> ret, session_key = server.login_manager.login(u'mikkang20', u'mikkang', u'143.248.234.140')
->>> ret
-True
+>>> session_key = server.login_manager.login(u'mikkang20', u'mikkang', u'143.248.234.140')
 
 # Reset the database
 >>> import arara.model

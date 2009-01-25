@@ -312,7 +312,7 @@ class MemberManager(object):
         #
 
         session = model.Session()
-        query = session.query(model.User).filter_by(username=user_username)
+        query = session.query(model.User).filter_by(username=username)
         try:
             user = query.one()
             session.close()
@@ -341,7 +341,7 @@ class MemberManager(object):
         #
 
         session = model.Session()
-        query = session.query(model.User).filter_by(nickname=user_nickname)
+        query = session.query(model.User).filter_by(nickname=nickname)
         try:
             user = query.one()
             session.close()
