@@ -1,3 +1,4 @@
+>>> from arara_thrift.ttypes import *
 >>> import arara.model
 >>> arara.model.init_test_database()
 >>> import arara
@@ -6,11 +7,8 @@
 Register one user, combacsa. then login as existing user mikkang
 
 >>> user_reg_dic = {'username':u'combacsa', 'password':u'combacsa', 'nickname':u'combacsa', 'email':u'combacsa@example.com', 'signature':u'combacsa', 'self_introduction':u'combacsa', 'default_language':u'english' }
->>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
+>>> register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
 >>> server.member_manager.confirm(u'combacsa', unicode(register_key))
-(True, 'OK')
 >>> session_key_combacsa = server.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.140')
 
 # Register one user, mikkang
@@ -22,94 +20,83 @@ False
 False
 >>> server.member_manager.is_registered_email(user_reg_dic['email'])
 False
->>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
+>>> register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
 >>> server.member_manager.confirm(u'mikkang', register_key)
-(True, 'OK')
 >>> session_key = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.140')
 >>> server.login_manager.logout(session_key)
 
 # Register one user, serialx
 
 >>> user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx@example.com', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'english' }
->>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
+>>> register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
 >>> server.member_manager.confirm(u'serialx', unicode(register_key))
-(True, 'OK')
 >>> session_key_serialx = server.login_manager.login(u'serialx', u'serialx', u'143.248.234.140')
 
 
 >>> session_key = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.145')
->>> ret, member = server.member_manager.get_info(unicode(session_key))
->>> print member['activated']
+>>> member = server.member_manager.get_info(unicode(session_key))
+>>> print member.activated
 True
->>> print member[u'email']
+>>> print member.email
 mikkang@example.com
->>> print member[u'nickname']
+>>> print member.nickname
 mikkang
->>> print member[u'widget']
+>>> print member.widget
 0
->>> print member[u'layout']
+>>> print member.layout
 <BLANKLINE>
 >>> user_password_dic = {'username':u'mikkang', 'current_password':u'mikkang', 'new_password':u'ggingkkang'}
->>> server.member_manager.modify_password(session_key, user_password_dic)
-(True, 'OK')
+>>> server.member_manager.modify_password(session_key, UserPasswordInfo(**user_password_dic))
 >>> user_password_dic = {'username':u'mikkang', 'current_password':u'ggingkkang', 'new_password':u'mikkang'}
->>> server.member_manager.modify_password(session_key, user_password_dic)
-(True, 'OK')
+>>> server.member_manager.modify_password(session_key, UserPasswordInfo(**user_password_dic))
 >>> modify_user_reg_dic = { 'nickname':u'ggingkkang', 'signature':u'KAIST07 && JSH07 && SPARCS07', 'self_introduction':u'i am Munbeom', 'default_language':u'korean', 'widget':1, 'layout':u'aaa' }
->>> server.member_manager.modify(session_key, modify_user_reg_dic)
-(True, 'OK')
->>> ret, member = server.member_manager.get_info(unicode(session_key))
->>> print member[u'widget']
+>>> server.member_manager.modify(session_key, UserModification(**modify_user_reg_dic))
+>>> member = server.member_manager.get_info(unicode(session_key))
+>>> print member.widget
 1
->>> print member[u'layout']
+>>> print member.layout
 aaa
 
 # Register one user, ggingkkang for search test
 
 >>> server.member_manager.search_user(session_key, u'mikkang')
-(True, [{'username': u'mikkang', 'nickname': u'ggingkkang'}])
+[SearchUserResult(username=u'mikkang', nickname=u'ggingkkang')]
 
 >>> user_reg_dic = {'username':u'ggingkkang', 'password':u'xx', 'nickname':u'mikkang', 'email':u'ggingkkang@sparcs.org', 'signature':u'', 'self_introduction':u'', 'default_language':u'english' }
->>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
+>>> register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
 
 #>>> server.member_manager._send_mail(u'mikkang@sparcs.org', u'ggingang', register_key)
-#(True, 'OK')
 
 >>> server.member_manager.confirm(u'ggingkkang', unicode(register_key))
-(True, 'OK')
 >>> session_key_ggingkkang = server.login_manager.login(u'ggingkkang', u'xx', u'143.248.234.140')
 
 # Search Test
 
 >>> server.member_manager.search_user(unicode(session_key), u'mikkang')
-(True, [{'username': u'mikkang', 'nickname': u'ggingkkang'}, {'username': u'ggingkkang', 'nickname': u'mikkang'}])
+[SearchUserResult(username=u'mikkang', nickname=u'ggingkkang'), SearchUserResult(username=u'ggingkkang', nickname=u'mikkang')]
 
 >>> server.member_manager.search_user(session_key, u'mikkang', u'username')
-(True, [{'username': u'mikkang', 'nickname': u'ggingkkang'}])
+[SearchUserResult(username=u'mikkang', nickname=u'ggingkkang')]
 
 >>> server.member_manager.search_user(session_key, u'mikkang', u'nickname')
-(True, [{'username': u'ggingkkang', 'nickname': u'mikkang'}])
+[SearchUserResult(username=u'ggingkkang', nickname=u'mikkang')]
 
 >>> server.member_manager.search_user(session_key, u'mikkang', u'wrong_key')
-(False, 'INCORRECT_SEARCH_KEY')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 
 >>> server.member_manager.remove_user(session_key)
-(True, 'OK')
 
 >>> server.member_manager.is_sysop(session_key)
 False
 
 Add SYSOP
 >>> user_reg_dic = { 'username':u'SYSOP', 'password':u'SYSOP', 'nickname':u'SYSOP', 'email':u'SYSOP@sparcs.org', 'signature':u'', 'self_introduction':u'i am mikkang', 'default_language':u'english' }
->>> ret, sysop_register_key = server.member_manager.register(user_reg_dic)
->>> ret, sysop_register_key
-(False, 'PERMISSION_DENIED')
+>>> sysop_register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
+Traceback (most recent call last):
+  ...
+InvalidOperation
 
 # Backdoor_confirm Test!
 >>> user_reg_dic = {'username':u'mikkang20', 'password':u'mikkang', 'nickname':u'mikkang20', 'email':u'mikkang20@example.com', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
@@ -119,13 +106,10 @@ False
 False
 >>> server.member_manager.is_registered_email(user_reg_dic['email'])
 False
->>> ret, session_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
+>>> session_key = server.member_manager.register(UserRegistration(**user_reg_dic))
 
 >>> sysop_session_key = server.login_manager.login(u'SYSOP', u'SYSOP', u'143.248.234.140')
 >>> server.member_manager.backdoor_confirm(sysop_session_key, u'mikkang20')
-(True, 'OK')
 >>> session_key = server.login_manager.login(u'mikkang20', u'mikkang', u'143.248.234.140')
 
 # Reset the database

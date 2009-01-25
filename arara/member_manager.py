@@ -4,14 +4,17 @@ import md5
 import datetime
 import time
 import smtplib
+from email.MIMEText import MIMEText
 
 from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
 from sqlalchemy import or_, not_, and_
+from django.template.loader import render_to_string
+
+from arara_thrift.ttypes import *
 from arara import model
 from arara.util import require_login, filter_dict, is_keys_in_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
-from django.template.loader import render_to_string
-from email.MIMEText import MIMEText
+from arara.util import smart_unicode
 
 log_method_call = log_method_call_with_source('member_manager')
 log_method_call_important = log_method_call_with_source_important('member_manager')
@@ -114,37 +117,33 @@ class MemberManager(object):
         return return_list
 
     @log_method_call
-    def register(self, user_reg_dic):
+    def register(self, user_reg_info):
         '''
         DB에 회원 정보 추가. activation code를 발급한다.
 
         - Current User Dictionary { username, password, nickname, email, 
                                     signature, self_introduction, default_language }
 
-        @type  user_reg_dic: dictionary
-        @param user_reg_dic: User Dictionary
+        @type  user_reg_info: dictionary
+        @param user_reg_info: User Dictionary
         @rtype: string
-        @return:
-            1. register 성공: True, self.member_dic[user_reg_dic['username']]['activation_code']
-            2. register 실패:
-                1. 양식이 맞지 않음(부적절한 NULL값 등): 'WRONG_DICTIONARY'
-                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        @return: the activation code of the user
         '''
 
-        if not is_keys_in_dict(user_reg_dic, USER_PUBLIC_KEYS):
-            return False, 'WRONG_DICTIONARY'
+        if not is_keys_in_dict(user_reg_info.__dict__, USER_PUBLIC_KEYS):
+            raise InvalidOperation('wrong dictionary')
 
-        if user_reg_dic['username'].lower() == 'sysop':
-            return False, 'PERMISSION_DENIED'
+        if user_reg_info.username.lower() == 'sysop':
+            raise InvalidOperation('permission denied')
 
-        key = (user_reg_dic['username'] +
-            user_reg_dic['password'] + user_reg_dic['nickname'])
+        key = (user_reg_info.username +
+            user_reg_info.password + user_reg_info.nickname)
         activation_code = md5.md5(key).hexdigest()
         
         session = model.Session()
         try:
             # Register user to db
-            user = model.User(**user_reg_dic)
+            user = model.User(**user_reg_info.__dict__)
             session.save(user)
             # Register activate code to db
             user_activation = model.UserActivation(user, activation_code)
@@ -153,18 +152,18 @@ class MemberManager(object):
         except IntegrityError:
             session.rollback()
             session.close()
-            return False, 'ALREADY_ADDED'
+            raise InvalidOperation('already added')
         except InvalidRequestError:
             session.rollback()
             session.close()
-            return False, 'DATABASE_ERROR'
+            raise InternalError('database error')
 
         # If everything is clear, send validation mail to user.
         # Frontend should send the email I guess, so quoted the line below 090105
         # Re-uncommented by combacsa, 090112. Frontend never send the email.
         self._send_mail(user.email, user.username, user_activation.activation_code)
         session.close()
-        return True, activation_code
+        return activation_code
 
     
     def _send_mail(self, email, username, confirm_key):
@@ -178,29 +177,23 @@ class MemberManager(object):
         @type  confirm_key: string
         @param confirm_key: Confirm Key
         @rtype: string
-        @return:
-            1. 성공: True, 'OK' 
-            2. 실패: 
+        @return: None
         '''
 
-        try:
-            HOST = 'localhost'
-            sender = 'root_id@sparcs.org'
-            content = 'You have been successfully registered as the ARAra member.<br />To use your account, you have to activate it.<br />Please click the link below on any web browser to activate your account.<br /><br />'
-            confirm_url = 'http://143.248.234.124/account/confirm/%s/%s' % (username, confirm_key)
-            confirm_link = '<a href=\'%s\'>%s</a>' % (confirm_url, confirm_url)
-            title = "[ARAra] Please activate your account"
-            msg = MIMEText(content+confirm_link, _subtype="html", _charset='euc_kr')
-            msg['Subject'] = title
-            msg['From'] = sender
-            msg['To'] = email
-            s = smtplib.SMTP()
-            s.connect(HOST)
-            s.sendmail(sender, [email], msg.as_string())
-            s.quit()
-        except Exception:
-            raise
-        return True, 'OK'
+        HOST = 'localhost'
+        sender = 'root_id@sparcs.org'
+        content = 'You have been successfully registered as the ARAra member.<br />To use your account, you have to activate it.<br />Please click the link below on any web browser to activate your account.<br /><br />'
+        confirm_url = 'http://143.248.234.124/account/confirm/%s/%s' % (username, confirm_key)
+        confirm_link = '<a href=\'%s\'>%s</a>' % (confirm_url, confirm_url)
+        title = "[ARAra] Please activate your account"
+        msg = MIMEText(content+confirm_link, _subtype="html", _charset='euc_kr')
+        msg['Subject'] = title
+        msg['From'] = sender
+        msg['To'] = email
+        s = smtplib.SMTP()
+        s.connect(HOST)
+        s.sendmail(sender, [email], msg.as_string())
+        s.quit()
 
 
     @require_login
@@ -222,31 +215,31 @@ class MemberManager(object):
                 3. 이미 인증이 된 사용자의 경우: False, 'ALREADY_CONFIRMED'
                 4. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+        username = smart_unicode(username)
         
         if not self.is_sysop(session_key):
-            return False, 'NOT_SYSOP'
+            raise InvalidOperation('not sysop')
 
         session = model.Session()
         try:
             user = session.query(model.User).filter(model.User.username == username).one()
         except InvalidRequestError:
             session.close()
-            return False, 'USER_NOT_EXIST'
+            raise InvalidOperation('user does not exist')
         try:
             user_activation = session.query(model.UserActivation).filter_by(user_id=user.id).one()
         except InvalidRequestError:
             if user.activated == True:
                 session.close()
-                return False, 'ALREADY_CONFIRMED'
+                raise InvalidOperation('already confirmed')
             else:
                 session.close()
-                return False, 'DATABASE_ERROR'
+                raise InternalError('database error')
 
         user_activation.user.activated = True
         session.delete(user_activation)
         session.commit()
         session.close()
-        return True, 'OK'
 
     @log_method_call
     def confirm(self, username_to_confirm, confirm_key):
@@ -264,32 +257,33 @@ class MemberManager(object):
                 1. 잘못된 인증코드: False, 'WRONG_CONFIRM_KEY'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+        username_to_confirm = smart_unicode(username_to_confirm)
         
         session = model.Session()
         try:
             user = session.query(model.User).filter(model.User.username == username_to_confirm).one()
         except InvalidRequestError:
             session.close()
-            return False, 'USER_NOT_EXIST'
+            raise InvalidOperation('user does not exist')
         try:
             user_activation = session.query(model.UserActivation).filter_by(user_id=user.id).one()
         except InvalidRequestError:
             if user.activated == True:
                 session.close()
-                return False, 'ALREADY_CONFIRMED'
+                raise InvalidOperation('already confirmed')
             else:
                 session.close()
-                return False, 'DATABASE_ERROR'
+                raise InternalError('database error')
 
         if user_activation.activation_code == confirm_key:
             user_activation.user.activated = True
             session.delete(user_activation)
             session.commit()
             session.close()
-            return True, 'OK'
+            return
         else:
             session.close()
-            return False, 'WRONG_CONFIRM_KEY'
+            raise InvalidOperation('wrong confirm key')
         
 
     @log_method_call
@@ -401,23 +395,23 @@ class MemberManager(object):
             if not user_dict['last_logout_time']:
                 user_dict['last_logout_time'] = 'NOT AVAILABLE'
             session.close()
-            return True, user_dict
+            return UserInformation(**user_dict)
         except InvalidRequestError:
             session.close()
-            return False, "MEMBER_NOT_EXIST"
+            raise InvalidOperation('member does not exist')
 
     @require_login    
     @log_method_call_important
-    def modify_password(self, session_key, user_password_dict):
+    def modify_password(self, session_key, user_password_info):
         '''
         회원의 password를 수정.
 
-        ---user_password_dict {username, current_password, new_password}
+        ---user_password_info {username, current_password, new_password}
 
         @type  session_key: string
         @param session_key: User Key
-        @type  user_password_dict: Dictionary
-        @param user_password_dict: User Dictionary
+        @type  user_password_info: Dictionary
+        @param user_password_info: User Dictionary
         @rtype: string
         @return:
             1. modify 성공: True, 'OK'
@@ -432,38 +426,38 @@ class MemberManager(object):
         session = model.Session()
         user = session.query(model.User).filter_by(username=username).one()
         try:
-            if not username == user_password_dict['username']:
+            if not username == user_password_info.username:
                 raise NoPermission()
-            if not user.compare_password(user_password_dict['current_password']):
+            if not user.compare_password(user_password_info.current_password):
                 raise WrongPassword()
-            user.set_password(user_password_dict['new_password'])
+            user.set_password(user_password_info.new_password)
             session.commit()
             session.close()
-            return True, 'OK'
+            return
             
         except NoPermission:
             session.close()
-            return False, 'NO_PERMISSION'
+            raise InvalidOperation('no permission')
 
         except WrongPassword:
             session.close()
-            return False, 'WRONG_PASSWORD'
+            raise InvalidOperation('wrong password')
 
         except KeyError:
             session.close()
-            return False, 'NOT_LOGGEDIN'
+            raise NotLoggedIn()
 
 
     @require_login
     @log_method_call_important
-    def modify(self, session_key, user_modify_dict):
+    def modify(self, session_key, user_modification):
         '''
         password를 제외한 회원 정보 수정
 
         @type  session_key: string
         @param session_key: User Key
-        @type  user_reg_dict: dictionary
-        @param user_reg_dict: User Dictionary
+        @type  user_reg_infot: dictionary
+        @param user_reg_infot: User Dictionary
         @rtype: string
         @return:
             1. modify 성공: True, 'OK'
@@ -475,15 +469,16 @@ class MemberManager(object):
         session_info = self.login_manager.get_session(session_key)
         username = session_info.username
 
-        if not is_keys_in_dict(user_modify_dict, USER_PUBLIC_MODIFIABLE_WHITELIST):
-            return False, 'WRONG_DICTIONARY'
+        if not is_keys_in_dict(user_modification.__dict__,
+                               USER_PUBLIC_MODIFIABLE_WHITELIST):
+            raise InvalidOperation('wrong input')
         session = model.Session()
         user = session.query(model.User).filter_by(username=username).one()
-        for key, value in user_modify_dict.items():
+        for key, value in user_modification.__dict__.items():
             setattr(user, key, value)
         session.commit()
         session.close()
-        return True, 'OK'
+        return
 
     @require_login
     @log_method_call
@@ -505,6 +500,7 @@ class MemberManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+        username = smart_unicode(username)
         try:
             session = model.Session()
             query_user = session.query(model.User).filter_by(username=query_username).one()
@@ -512,10 +508,10 @@ class MemberManager(object):
             if not query_user_dict['last_logout_time']:
                 query_user_dict['last_logout_time'] = 'NOT AVAILABLE'
             session.close()
-            return True, query_user_dict
+            return PublicUserInformation(**query_user_dict)
         except InvalidRequestError:
             session.close()
-            return False, "QUERY_ID_NOT_EXIST"
+            raise InvalidOperation('query id does not exist')
 
     @require_login
     @log_method_call
@@ -537,17 +533,21 @@ class MemberManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+        nickname = smart_unicode(nickname)
         try:
             session = model.Session()
-            query_user = session.query(model.User).filter_by(nickname=query_nickname).one()
-            query_user_dict = filter_dict(query_user.__dict__, USER_QUERY_WHITELIST)
+            query_user = session.query(model.User).filter_by(
+                    nickname=query_nickname).one()
+            query_user_dict = filter_dict(query_user.__dict__,
+                                          USER_QUERY_WHITELIST)
             if not query_user_dict['last_logout_time']:
                 query_user_dict['last_logout_time'] = 'NOT AVAILABLE'
             session.close()
-            return True, query_user_dict
+            return PublicUserInformation(**query_user_dict)
         except InvalidRequestError:
             session.close()
-            return False, "QUERY_NICK_NOT_EXIST"
+            raise InvalidOperation('query nickname does not exist')
+
 
     @require_login
     @log_method_call_important
@@ -570,10 +570,10 @@ class MemberManager(object):
             user.activated = False
             session.commit()
             session.close()
-            return True, 'OK'
+            return
         except KeyError:
             session.close()
-            return False, 'NOT_LOGGEDIN'
+            raise NotLoggedIn()
         
     @require_login
     @log_method_call
@@ -595,27 +595,33 @@ class MemberManager(object):
                 1. 존재하지 않는 사용자: False, 'NOT_EXIST_USER'
                 2. 잘못된 검색 키:False, 'INCORRECT_SEARCH_KEY'
         '''
+        search_user = smart_unicode(search_user)
 
         try:
             session = model.Session()
             if not search_key:
-                user = session.query(model.User).filter(or_(model.users_table.c.username==search_user, model.users_table.c.nickname==search_user)).all()
+                user = session.query(model.User).filter(
+                        or_(model.users_table.c.username==search_user,
+                            model.users_table.c.nickname==search_user)).all()
             else:
                 if search_key.lower() == u'username':
-                    user = session.query(model.User).filter_by(username=search_user).all()
+                    user = session.query(model.User).filter_by(
+                            username=search_user).all()
                 elif search_key.lower() == u'nickname':
-                    user = session.query(model.User).filter_by(nickname=search_user).all()
+                    user = session.query(model.User).filter_by(
+                            nickname=search_user).all()
                 else:
-                    return False, 'INCORRECT_SEARCH_KEY'
+                    raise InvalidOperation('incorrect search key')
             user_dict_list = self._get_dict_list(user, USER_SEARCH_WHITELIST)
+            user_list = [SearchUserResult(**x) for x in user_dict_list]
             session.close()
-            return True, user_dict_list
+            return user_list
         except InvalidRequestError:
             session.close()
-            return False, 'NOT_EXIST_USER'
+            raise InvalidOperation('user does not exist')
         except AssertionError:
             session.close()
-            return False, 'INVALID_KEY'
+            raise InvalidOperation('invalid key')
 
     @require_login
     @log_method_call_important

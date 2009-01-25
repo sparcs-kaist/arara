@@ -1,6 +1,7 @@
 
 # load LoginManager & MemberManager
 
+>>> from arara_thrift.ttypes import *
 >>> import arara.model
 >>> arara.model.init_test_database()
 >>> import arara
@@ -17,16 +18,14 @@
 # Register pipoket
 
 >>> user_reg_dic = {'username':u'pipoket', 'password':u'pipoket', 'nickname':u'pipoket', 'email':u'pipoket@example.com', 'signature':u'pipoket', 'self_introduction':u'pipoket', 'default_language':u'english' }
->>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
 >>> server.member_manager.confirm(u'pipoket', unicode(register_key))
-(True, 'OK')
 
 # Register serialx
 
 >>> user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx@example.com', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'serialx' }
->>> ret, register_key = server.member_manager.register(user_reg_dic)
+>>> register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
 >>> server.member_manager.confirm(u'serialx', unicode(register_key))
-(True, 'OK')
 
 # Login as both user
 
