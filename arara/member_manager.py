@@ -32,10 +32,11 @@ USER_PUBLIC_KEYS = ['username', 'password', 'nickname', 'email',
         'signature', 'self_introduction', 'default_language']
 USER_QUERY_WHITELIST = ('username', 'nickname', 'email',
         'signature', 'self_introduction', 'last_login_ip', 'last_logout_time')
-USER_PUBLIC_WHITELIST= ('username', 'nickname', 'email', 'last_login_ip', 'last_logout_time',
-        'signature', 'self_introduction', 'default_language', 'activated', 'widget', 'layout')
-USER_PUBLIC_MODIFIABLE_WHITELIST= ('nickname', 'signature', 'self_introduction', 
-        'default_language', 'widget', 'layout')
+USER_PUBLIC_WHITELIST= ('username', 'nickname', 'email', 'last_login_ip',
+        'last_logout_time', 'signature', 'self_introduction',
+        'default_language', 'activated', 'widget', 'layout')
+USER_PUBLIC_MODIFIABLE_WHITELIST= ('nickname', 'signature',
+        'self_introduction', 'default_language', 'widget', 'layout')
 USER_SEARCH_WHITELIST = ('username', 'nickname')
 
 class MemberManager(object):
@@ -51,7 +52,10 @@ class MemberManager(object):
         self._register_sysop()
 
     def _register_sysop(self):
-        sysop_reg_dic = {'username':u'SYSOP', 'password':u'SYSOP', 'nickname':u'SYSOP', 'email':u'SYSOP@sparcs.org', 'signature':u'', 'self_introduction':u'i am mikkang', 'default_language':u'ko_KR'}
+        sysop_reg_dic = {'username':u'SYSOP', 'password':u'SYSOP',
+                'nickname':u'SYSOP', 'email':u'SYSOP@sparcs.org',
+                'signature':u'', 'self_introduction':u'i am mikkang',
+                'default_language':u'ko_KR'}
         try:
             user = model.User(**sysop_reg_dic)
             session = model.Session()
@@ -77,7 +81,7 @@ class MemberManager(object):
             return True, 'OK'
         except InvalidRequestError:
             session.close()
-            return False, 'DATABASE_ERROR'
+            return InvalidOperation('DATABASE_ERROR'
 
     @log_method_call
     def _authenticate(self, username, password, user_ip):
@@ -87,19 +91,20 @@ class MemberManager(object):
             if user.compare_password(password) and user.activated == True:
                 user.last_login_time = datetime.datetime.fromtimestamp(time.time())
                 user.last_login_ip = unicode(user_ip)
-                ret = {'last_login_time': user.last_login_time, 'nickname': user.nickname}
+                ret = {'last_login_time': user.last_login_time,
+                       'nickname': user.nickname}
                 session.commit()
                 session.close()
                 return True, ret 
             else:
                 session.close()
                 if user.activated:
-                    return False, 'WRONG_PASSWORD'
+                    return InvalidOperation('WRONG_PASSWORD'
                 else:
-                    return False, 'NOT_ACTIVATED'
+                    return InvalidOperation('NOT_ACTIVATED'
         except InvalidRequestError:
             session.close()
-            return False, 'WRONG_USERNAME'
+            return InvalidOperation('WRONG_USERNAME'
    
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
@@ -120,18 +125,16 @@ class MemberManager(object):
     def register(self, user_reg_info):
         '''
         DB에 회원 정보 추가. activation code를 발급한다.
+        예외상황:
+            1. 시샵이 아이디인 경우: InvalidOperation('permission denied')
+            2. 이미 가입한 사용자의 경우: InvalidOperation('already added')
+            3. 데이터베이스 오류: InternalError('database error')
 
-        - Current User Dictionary { username, password, nickname, email, 
-                                    signature, self_introduction, default_language }
-
-        @type  user_reg_info: dictionary
-        @param user_reg_info: User Dictionary
+        @type  user_reg_info: arara_thrift.UserRegistration
+        @param user_reg_info: 사용자의 회원가입 정보를 담은 객체
         @rtype: string
-        @return: the activation code of the user
+        @return: 사용자 인증코드
         '''
-
-        if not is_keys_in_dict(user_reg_info.__dict__, USER_PUBLIC_KEYS):
-            raise InvalidOperation('wrong dictionary')
 
         if user_reg_info.username.lower() == 'sysop':
             raise InvalidOperation('permission denied')
@@ -166,16 +169,16 @@ class MemberManager(object):
         return activation_code
 
     
-    def _send_mail(self, email, username, confirm_key):
+    def _send_mail(self, email, username, activation_code):
         '''
-        회원 가입하는 사용자 email로  confirm_key를 보내는 함수 
+        회원 가입하는 사용자 email로  activation_code를 보내는 함수 
 
         @type  email: string
-        @param email: User E-mail
+        @param email: 사용자 E-mail
         @type  username: string
         @param username: User ID
-        @type  confirm_key: string
-        @param confirm_key: Confirm Key
+        @type  activation_code: string
+        @param activation_code: Confirm Key
         @rtype: string
         @return: None
         '''
@@ -183,7 +186,7 @@ class MemberManager(object):
         HOST = 'localhost'
         sender = 'root_id@sparcs.org'
         content = 'You have been successfully registered as the ARAra member.<br />To use your account, you have to activate it.<br />Please click the link below on any web browser to activate your account.<br /><br />'
-        confirm_url = 'http://143.248.234.124/account/confirm/%s/%s' % (username, confirm_key)
+        confirm_url = 'http://143.248.234.124/account/confirm/%s/%s' % (username, activation_code)
         confirm_link = '<a href=\'%s\'>%s</a>' % (confirm_url, confirm_url)
         title = "[ARAra] Please activate your account"
         msg = MIMEText(content+confirm_link, _subtype="html", _charset='euc_kr')
@@ -201,19 +204,16 @@ class MemberManager(object):
     def backdoor_confirm(self, session_key, username):
         '''
         인증코드 없이 시샵이 사용자의 등록 할 수 있게 해준다
+        예외상황:
+            1. 시샵이 아닌 경우: InvalidOperation('not sysop')
+            2. 사용자가 없는 경우: InvalidOperation('user does not exist')
+            3. 이미 인증이 된 사용자의 경우: InvalidOperation('already confirmed')
+            4. 데이터베이스 오류: InternalError('database error')
 
         @type  session_key: string
         @param session_key: User Key
         @type  username: string
         @param username: User ID
-        @rtype: boolean, string
-        @return:
-            1. 인증 성공: True, 'OK'
-            2. 인증 실패:
-                1. 시샵이 아닌 경우: False, 'NOT_SYSOP'
-                2. 사용자가 없는 경우: False, 'USER_NOT_EXIST'
-                3. 이미 인증이 된 사용자의 경우: False, 'ALREADY_CONFIRMED'
-                4. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         username = smart_unicode(username)
         
@@ -242,20 +242,16 @@ class MemberManager(object):
         session.close()
 
     @log_method_call
-    def confirm(self, username_to_confirm, confirm_key):
+    def confirm(self, username_to_confirm, activation_code):
         '''
         인증코드(activation code) 확인.
+        예외상황:
+            1. 잘못된 인증코드 입력시: InvalidOperation('wrong activation code')
         
         @type  username_to_confirm: string
         @param username_to_confirm: Confirm Username
-        @type  confirm_key: string
-        @param confirm_key: Confirm Key
-        @rtype: boolean, string
-        @return:
-            1. 인증 성공: True, 'OK'
-            2. 인증 실패:
-                1. 잘못된 인증코드: False, 'WRONG_CONFIRM_KEY'
-                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        @type  activation_code: string
+        @param activation_code: Confirm Key
         '''
         username_to_confirm = smart_unicode(username_to_confirm)
         
@@ -275,7 +271,7 @@ class MemberManager(object):
                 session.close()
                 raise InternalError('database error')
 
-        if user_activation.activation_code == confirm_key:
+        if user_activation.activation_code == activation_code:
             user_activation.user.activated = True
             session.delete(user_activation)
             session.commit()
@@ -292,15 +288,13 @@ class MemberManager(object):
         등록된 사용자인지의 여부를 알려준다.
         Confirm은 하지 않았더라도 등록되어있으면 True를 리턴한다.
 
+        >>> member_manager.is_registered('mikkang')
+        True
+
         @type  username: string
         @param username: Username to check whether is registered or not
         @rtype: bool
-        @return:
-            1. 존재하는 사용자: True
-            2. 존재하지 않는 사용자: False
-
-        >>> member_manager.is_registered('mikkang')
-        True
+        @return: 사용자의 존재유무
         '''
         #remove quote when MD5 hash for UI is available
         #
@@ -321,15 +315,13 @@ class MemberManager(object):
         등록된 nickname인지의 여부를 알려준다.
         Confirm은 하지 않았더라도 등록되어있으면 True를 리턴한다.
 
+        >>> member_manager.is_registered_nickname('mikkang')
+        True
+
         @type  nickname: string
         @param nickname: Nickname to check whether is registered or not
         @rtype: bool
-        @return:
-            1. 존재하는 사용자: True
-            2. 존재하지 않는 사용자: False
-
-        >>> member_manager.is_registered_nickname('mikkang')
-        True
+        @return: Nickname을 사용하는 사용자의 존재유무
         '''
         #remove quote when MD5 hash for UI is available
         #
@@ -350,15 +342,13 @@ class MemberManager(object):
         등록된 이메일인지의 여부를 알려준다.
         Confirm하지 않았더라도 등록되어있으면 True를 리턴한다.
 
+        >>> member_manager.is_registered_email('pipoket@hotmail.com')
+        False
+
         @type  email: string
         @param email: E-mail to check whether registered or not.
         @rtype: bool
-        @return:
-            1. 존재하는 사용자: True
-            2. 존재하지 않는 사용자: False
-
-        >>> member_manager.is_registered_email('pipoket@hotmail.com')
-        False
+        @return: Email 주소를 가진 사용자의 존재유무
         '''
         session = model.Session()
         query = session.query(model.User).filter_by(email=email)
@@ -383,9 +373,9 @@ class MemberManager(object):
         @return:
             1. 가져오기 성공: True, user_dic
             2. 가져오기 실패:
-                1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                2. 존재하지 않는 회원: False, 'MEMBER_NOT_EXIST'
-                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN'
+                2. 존재하지 않는 회원: InvalidOperation('MEMBER_NOT_EXIST'
+                3. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
         '''
         try:
             session = model.Session()
@@ -418,8 +408,8 @@ class MemberManager(object):
             2. modify 실패:
                 1. 수정 권한 없음: 'NO_PERMISSION'
                 2. 잘못된 현재 패스워드: 'WRONG_PASSWORD'
-                3. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                4. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                3. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN'
+                4. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
         '''
         session_info = self.login_manager.get_session(session_key)
         username = session_info.username
@@ -462,8 +452,8 @@ class MemberManager(object):
         @return:
             1. modify 성공: True, 'OK'
             2. modify 실패:
-                1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN'
+                2. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
                 3. 양식이 맞지 않음(부적절한 NULL값 등): 'WRONG_DICTIONARY'
         '''
         session_info = self.login_manager.get_session(session_key)
@@ -496,9 +486,9 @@ class MemberManager(object):
         @return:
             1. 쿼리 성공: True, query_dic
             2. 쿼리 실패:
-                1. 존재하지 않는 아이디: False, 'QUERY_ID_NOT_EXIST'
-                2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 존재하지 않는 아이디: InvalidOperation('QUERY_ID_NOT_EXIST'
+                2. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN'
+                3. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
         '''
         username = smart_unicode(username)
         try:
@@ -529,9 +519,9 @@ class MemberManager(object):
         @return:
             1. 쿼리 성공: True, query_dic
             2. 쿼리 실패:
-                1. 존재하지 않는 닉네임: False, 'QUERY_NICK_NOT_EXIST'
-                2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 존재하지 않는 닉네임: InvalidOperation('QUERY_NICK_NOT_EXIST'
+                2. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN'
+                3. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
         '''
         nickname = smart_unicode(nickname)
         try:
@@ -560,7 +550,7 @@ class MemberManager(object):
         @rtype: String
         @return:
             1. 성공시: True, 'OK'
-            2. 실패시: False, 'NOT_LOGGEDIN'
+            2. 실패시: InvalidOperation('NOT_LOGGEDIN'
         '''
 
         session = model.Session()
@@ -592,8 +582,8 @@ class MemberManager(object):
         @return:
             1. 성공시: True, {'username':'kmb1109','nickname':'mikkang'} 
             2. 실패시: 
-                1. 존재하지 않는 사용자: False, 'NOT_EXIST_USER'
-                2. 잘못된 검색 키:False, 'INCORRECT_SEARCH_KEY'
+                1. 존재하지 않는 사용자: InvalidOperation('NOT_EXIST_USER'
+                2. 잘못된 검색 키:InvalidOperation('INCORRECT_SEARCH_KEY'
         '''
         search_user = smart_unicode(search_user)
 

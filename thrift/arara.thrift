@@ -113,7 +113,7 @@ service MemberManager {
     void backdoor_confirm(1:string session_key, 2:string username)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void confirm(1:string username_to_confirm, 2:string confirm_key)
+    void confirm(1:string username_to_confirm, 2:string activation_code)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     bool is_registered(1:string username)
