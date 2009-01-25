@@ -162,12 +162,12 @@ class MemberManager(object):
         # If everything is clear, send validation mail to user.
         # Frontend should send the email I guess, so quoted the line below 090105
         # Re-uncommented by combacsa, 090112. Frontend never send the email.
-        self.send_mail(user.email, user.username, user_activation.activation_code)
+        self._send_mail(user.email, user.username, user_activation.activation_code)
         session.close()
         return True, activation_code
 
     
-    def send_mail(self, email, username, confirm_key):
+    def _send_mail(self, email, username, confirm_key):
         '''
         회원 가입하는 사용자 email로  confirm_key를 보내는 함수 
 
@@ -293,13 +293,13 @@ class MemberManager(object):
         
 
     @log_method_call
-    def is_registered(self, user_username):
+    def is_registered(self, username):
         '''
         등록된 사용자인지의 여부를 알려준다.
         Confirm은 하지 않았더라도 등록되어있으면 True를 리턴한다.
 
-        @type  user_username: string
-        @param user_username: Username to check whether is registered or not
+        @type  username: string
+        @param username: Username to check whether is registered or not
         @rtype: bool
         @return:
             1. 존재하는 사용자: True
@@ -322,13 +322,13 @@ class MemberManager(object):
             return False
 
     @log_method_call
-    def is_registered_nickname(self, user_nickname):
+    def is_registered_nickname(self, nickname):
         '''
         등록된 nickname인지의 여부를 알려준다.
         Confirm은 하지 않았더라도 등록되어있으면 True를 리턴한다.
 
-        @type  user_nickname: string
-        @param user_nickname: Nickname to check whether is registered or not
+        @type  nickname: string
+        @param nickname: Nickname to check whether is registered or not
         @rtype: bool
         @return:
             1. 존재하는 사용자: True
@@ -487,7 +487,7 @@ class MemberManager(object):
 
     @require_login
     @log_method_call
-    def query_by_username(self, session_key, query_username):
+    def query_by_username(self, session_key, username):
         '''
         쿼리 함수
         
@@ -495,8 +495,8 @@ class MemberManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @type  query_username: string
-        @param query_username: User ID to send Query
+        @type  username: string
+        @param username: User ID to send Query
         @rtype: dictionary
         @return:
             1. 쿼리 성공: True, query_dic
@@ -519,7 +519,7 @@ class MemberManager(object):
 
     @require_login
     @log_method_call
-    def query_by_nick(self, session_key, query_nickname):
+    def query_by_nick(self, session_key, nickname):
         '''
         쿼리 함수
         
@@ -527,8 +527,8 @@ class MemberManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @type  query_nickname: string
-        @param query_nickname: User Nickname to send Query
+        @type  nickname: string
+        @param nickname: User Nickname to send Query
         @rtype: dictionary
         @return:
             1. 쿼리 성공: True, query_dic
@@ -625,7 +625,7 @@ class MemberManager(object):
         
         @type  session_key: string
         @param session_key: User Key
-        @rtype: String
+        @rtype: bool
         @return:
             1. SYSOP일시: True
             2. SYSOP이 아닐시: False

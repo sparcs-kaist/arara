@@ -87,7 +87,7 @@ aaa
 >>> ret
 True
 
-#>>> server.member_manager.send_mail(u'mikkang@sparcs.org', u'ggingang', register_key)
+#>>> server.member_manager._send_mail(u'mikkang@sparcs.org', u'ggingang', register_key)
 #(True, 'OK')
 
 >>> server.member_manager.confirm(u'ggingkkang', unicode(register_key))
