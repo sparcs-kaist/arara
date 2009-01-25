@@ -65,19 +65,25 @@ u'pipoket'
 
 # Get online user info test
 
->>> server.login_manager.get_current_online(session_key)
-(True, [{'username': u'pipoket', 'ip': u'143.248.234.145', 'current_action': 'login_manager.login()', 'nickname': u'pipoket', 'logintime': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000)}, {'username': u'serialx', 'ip': u'143.248.234.140', 'current_action': 'login_manager.login()', 'nickname': u'serialx', 'logintime': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000)}])
+>>> sessions = server.login_manager.get_current_online(session_key)
+>>> [x.__dict__ for x in sessions]
+[{'username': u'pipoket', 'ip': u'143.248.234.145', 'current_action': 'login_manager.login()', 'nickname': u'pipoket', 'logintime': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000)}, {'username': u'serialx', 'ip': u'143.248.234.140', 'current_action': 'login_manager.login()', 'nickname': u'serialx', 'logintime': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000)}]
 >>> server.login_manager.get_current_online(session_bee)
-(False, 'NOT_LOGGEDIN')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 
 # Logout test
 
 >>> server.login_manager.logout(unicode(session_bee))
-(False, 'NOT_LOGGEDIN')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 >>> server.login_manager.logout(unicode(session_key))
-(True, 'OK')
 >>> server.login_manager.logout(unicode(session_key))
-(False, 'NOT_LOGGEDIN')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 
 >>> time.time = org_time
 

@@ -107,8 +107,8 @@ class LoginManager(object):
                 4. 이미 로그인된 아이디: False, 'ALREADY_LOGIN'
         '''
         username = smart_unicode(username)
-        password = smart_unicode(username)
-        user_ip = smart_unicode(username)
+        password = smart_unicode(password)
+        user_ip = smart_unicode(user_ip)
         ret = []
         success, msg = self.member_manager._authenticate(username, password, user_ip)
         if success:
