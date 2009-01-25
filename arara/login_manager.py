@@ -102,18 +102,15 @@ class LoginManager(object):
         password = smart_unicode(password)
         user_ip = smart_unicode(user_ip)
         ret = []
-        success, msg = self.member_manager._authenticate(username, password, user_ip)
-        if success:
-            #for user_info in self.session_dic.values():
-            #    if user_info['username'] == username:
-            #        return False, 'ALREADY_LOGIN'
-            hash = hashlib.md5(username+password+datetime.datetime.today().__str__()).hexdigest()
-            timestamp = datetime.datetime.fromtimestamp(time.time())
-            self.session_dic[hash] = {'username': username, 'ip': user_ip, 'nickname': msg['nickname'], 'logintime': msg['last_login_time'], 'current_action': 'login_manager.login()'}
-            self.logger.info("User '%s' has LOGGED IN from '%s' as '%s'", username, user_ip, hash)
-            return hash
-        else:
-            raise InvalidOperation(msg)
+        msg = self.member_manager._authenticate(username, password, user_ip)
+        #for user_info in self.session_dic.values():
+        #    if user_info['username'] == username:
+        #        return False, 'ALREADY_LOGIN'
+        hash = hashlib.md5(username+password+datetime.datetime.today().__str__()).hexdigest()
+        timestamp = datetime.datetime.fromtimestamp(time.time())
+        self.session_dic[hash] = {'username': username, 'ip': user_ip, 'nickname': msg['nickname'], 'logintime': msg['last_login_time'], 'current_action': 'login_manager.login()'}
+        self.logger.info("User '%s' has LOGGED IN from '%s' as '%s'", username, user_ip, hash)
+        return hash
 
     def logout(self, session_key):
         '''
@@ -124,13 +121,9 @@ class LoginManager(object):
         '''
 
         try:
-            ret, msg = self.member_manager._logout_process(self.session_dic[session_key]['username'])
-            if ret:
-                self.logger.info("User '%s' has LOGGED OUT", self.session_dic[session_key]['username'])
-                self.session_dic.pop(session_key)
-                return
-            else:
-                raise InvalidOperation(msg)
+            self.member_manager._logout_process(self.session_dic[session_key]['username'])
+            self.logger.info("User '%s' has LOGGED OUT", self.session_dic[session_key]['username'])
+            self.session_dic.pop(session_key)
         except KeyError:
             raise NotLoggedIn()
 

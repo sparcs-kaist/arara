@@ -78,10 +78,10 @@ class MemberManager(object):
             user.last_logout_time = datetime.datetime.fromtimestamp(time.time())
             session.commit()
             session.close()
-            return True, 'OK'
+            return
         except InvalidRequestError:
             session.close()
-            return InvalidOperation('DATABASE_ERROR'
+            raise InvalidOperation('DATABASE_ERROR')
 
     @log_method_call
     def _authenticate(self, username, password, user_ip):
@@ -95,16 +95,16 @@ class MemberManager(object):
                        'nickname': user.nickname}
                 session.commit()
                 session.close()
-                return True, ret 
+                return ret 
             else:
                 session.close()
                 if user.activated:
-                    return InvalidOperation('WRONG_PASSWORD'
+                    raise InvalidOperation('WRONG_PASSWORD')
                 else:
-                    return InvalidOperation('NOT_ACTIVATED'
+                    raise InvalidOperation('NOT_ACTIVATED')
         except InvalidRequestError:
             session.close()
-            return InvalidOperation('WRONG_USERNAME'
+            raise InvalidOperation('WRONG_USERNAME')
    
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
