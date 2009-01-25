@@ -146,7 +146,7 @@ class LoginManager(object):
             else:
                 raise InvalidOperation(msg)
         except KeyError:
-            raise InvalidOperation('not loggedin')
+            raise NotLoggedIn()
 
     def _update_monitor_status(self, session_key, action):
         '''현재 사용자가 어떤 일을 하고있는지 update 하는 메소드.'''
@@ -189,7 +189,7 @@ class LoginManager(object):
             session_info = self.session_dic[session_key]
             return Session(**session_info)
         except KeyError:
-            raise InvalidOperation('not loggedin')
+            raise NotLoggedIn()
 
     @log_method_call
     def get_current_online(self, session_key):
@@ -211,7 +211,7 @@ class LoginManager(object):
                 ret.append(Session(**user_info))
             return ret
         else:
-            raise InvalidOperation('not loggedin')
+            raise NotLoggedIn()
 
     @log_method_call
     def is_logged_in(self, session_key):

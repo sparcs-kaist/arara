@@ -29,7 +29,7 @@ def log_method_call_with_source_important(source):
                 except AssertionError:
                     logger.error("EXCEPTION(by %s) %s.%s%s:\n%s", username, source,
                             function.func_name, repr(args), traceback.format_exc())
-                    return False, 'INTERNAL_SERVER_ERROR'
+                    raise InternalError()
                 ret, user_info = self.login_manager.get_session(session_key)
                 username = user_info['username']
             logger.info("CALL(by %s) %s.%s%s", username, source,
@@ -40,12 +40,14 @@ def log_method_call_with_source_important(source):
                 ret = function(self, session_key, *args, **kwargs)
             except InvalidOperation:
                 raise
-            except DatabaseError:
+            except InternalError:
+                raise
+            except NotLoggedIn:
                 raise
             except:
                 logger.error("EXCEPTION(by %s) %s.%s%s:\n%s", username, source,
                         function.func_name, repr(args), traceback.format_exc())
-                raise InvalidOperation('internal server error')
+                raise InternalError()
             logger.debug("RETURN(by %s) %s.%s%s=%s", username, source,
                     function.func_name, repr(args), repr(ret))
 
@@ -66,12 +68,14 @@ def log_method_call_with_source(source):
                 ret = function(self, *args, **kwargs)
             except InvalidOperation:
                 raise
-            except DatabaseError:
+            except InternalError:
+                raise
+            except NotLoggedIn:
                 raise
             except:
                 logger.error("EXCEPTION %s.%s%s:\n%s", source, function.func_name,
                         repr(args), traceback.format_exc())
-                raise InvalidOperation('internal server error')
+                raise InternalError()
             logger.debug("RETURN %s.%s%s=%s", source, function.func_name, repr(args), repr(ret))
 
             return ret
@@ -87,7 +91,7 @@ def require_login(function):
     """
     def wrapper(self, session_key, *args):
         if not self.login_manager.is_logged_in(session_key):
-            raise InvalidOperation('not loggedin')
+            raise NotLoggedIn()
         else:
             return function(self, session_key, *args)
     return wrapper

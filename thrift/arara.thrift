@@ -1,7 +1,7 @@
 namespace py arara_thrift
 
 exception InternalError {
-    1: string why
+    1: optional string why
 }
 
 exception InvalidOperation {

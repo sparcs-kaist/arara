@@ -71,19 +71,19 @@ u'pipoket'
 >>> server.login_manager.get_current_online(session_bee)
 Traceback (most recent call last):
   ...
-InvalidOperation
+NotLoggedIn
 
 # Logout test
 
 >>> server.login_manager.logout(unicode(session_bee))
 Traceback (most recent call last):
   ...
-InvalidOperation
+NotLoggedIn
 >>> server.login_manager.logout(unicode(session_key))
 >>> server.login_manager.logout(unicode(session_key))
 Traceback (most recent call last):
   ...
-InvalidOperation
+NotLoggedIn
 
 >>> time.time = org_time
 
