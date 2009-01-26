@@ -189,16 +189,16 @@ class ArticleManager(object):
         @param count: Number of today's best articles to get
         @rtype: list
         @return:
-            1. 투베를 가져오는데 성공: True, Article list of Today's Best
+            1. 투베를 가져오는데 성공: Article list of Today's Best
             2. 투베를 가져오는데 실패:
-                1. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 데이터베이스 오류: InternalError Exception 
         '''
         ret, today_best_list = self._get_today_best_article(None, None, count)
 
         if ret:
-            return True, today_best_list
+            return today_best_list
         else:
-            return False, 'DATABASE_ERROR'
+            raise InternalError("DATABASE ERROR")
 
     @log_method_call
     def get_today_best_list_specific(self, board_name, count=5):
@@ -211,23 +211,23 @@ class ArticleManager(object):
         @param count: Number of today's best articles to get
         @rtype: list
         @return:
-            1. 투베를 가져오는데 성공: True, Article list of Today's Best
+            1. 투베를 가져오는데 성공: Article list of Today's Best
             2. 투베를 가져오는데 실패:
-                1. Not Existing Board: False, 'BOARD_NOT_EXIST'
-                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. Not Existing Board: InvalidOperation Exception
+                2. 데이터베이스 오류: InternalError Exception
         '''
         session = model.Session()
         try:
             board = session.query(model.Board).filter_by(board_name=board_name).one()
         except InvalidRequestError:
-            return False, 'BOARD_NOT_EXIST'
+            raise InvalidOperaion("BOARD_NOT_EXIST")
         session.close()
         ret, today_best_list = self._get_today_best_article(None, board, count)
 
         if ret:
-            return True, today_best_list
+            return today_best_list
         else:
-            return False, 'DATABASE_ERROR'
+            raise InternalError('DATABASE_ERROR')
 
     @log_method_call
     def get_weekly_best_list(self, count=5):
@@ -240,17 +240,17 @@ class ArticleManager(object):
         @param count: Number of today's best articles to get
         @rtype: list
         @return:
-            1. 투베를 가져오는데 성공: True, Article list of Today's Best
+            1. 투베를 가져오는데 성공: Article list of Today's Best
             2. 투베를 가져오는데 실패:
-                1. Not Existing Board: False, 'BOARD_NOT_EXIST'
-                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. Not Existing Board: InvalidOperation Exception
+                2. 데이터베이스 오류: InternalError Exception
         '''
         ret, weekly_best_list = self._get_weekly_best_article(None, None, count)
 
         if ret:
-            return True, weekly_best_list
+            return weekly_best_list
         else:
-            return False, 'DATABASE_ERROR'
+            raise InternalError('DATABASE_ERROR')
 
     @log_method_call
     def get_weekly_best_list_specific(self, board_name, count=5):
@@ -263,23 +263,23 @@ class ArticleManager(object):
         @param count: Number of today's best articles to get
         @rtype: list
         @return:
-            1. 투베를 가져오는데 성공: True, Article list of Today's Best
+            1. 투베를 가져오는데 성공: Article list of Today's Best
             2. 투베를 가져오는데 실패:
-                1. Not Existing Board: False, 'BOARD_NOT_EXIST'
-                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. Not Existing Board: InvalidOperation Exception 
+                2. 데이터베이스 오류: InternalError Exception
         '''
         session = model.Session()
         try:
             board = session.query(model.Board).filter_by(board_name=board_name).one()
         except InvalidRequestError:
-            return False, 'BOARD_NOT_EXIST'
+            raise InvalidOperation('BOARD_NOT_EXIST')
         session.close()
         ret, weekly_best_list = self._get_weekly_best_article(None, board, count)
 
         if ret:
-            return True, weekly_best_list
+            return weekly_best_list
         else:
-            return False, 'DATABASE_ERROR'
+            raise InternalError('DATABASE_ERROR')
         
 
     @log_method_call
@@ -295,12 +295,12 @@ class ArticleManager(object):
         @param page: Page Number to Request
         @type  page_length: integer
         @param page_length: Count of Article on a Page
-        @rtype: boolean, list
+        @rtype: list
         @return:
-            1. 리스트 읽어오기 성공: True, Not Read Article List
+            1. 리스트 읽어오기 성공: Not Read Article List
             2. 리스트 읽어오기 실패:
-                1. 페이지 번호 오류: False, 'WRONG_PAGENUM' 
-                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 페이지 번호 오류: InvalidOperaion Exception 
+                2. 데이터베이스 오류: InternalError Exception
         '''
 
         ret_dict = {}
@@ -327,16 +327,15 @@ class ArticleManager(object):
                 last_page += 1
             if page > last_page:
                 session.close()
-                return False, 'WRONG_PAGENUM'
+                raise InvalidOperaion('WRONG_PAGENUM')
             ret_dict['hit'] = not_read_article_number
             ret_dict['last_page'] = last_page
             ret_dict['results'] = article_count 
             session.close()
-            return True, ret_dict
+            return ret_dict
         except InvalidRequestError:
-            raise
             session.close()
-            return False, 'DATABASE_ERROR'
+            raise InternalError('DATABASE_ERROR')
 
 
     @log_method_call
@@ -352,12 +351,12 @@ class ArticleManager(object):
         @param page: Page Number to Request
         @type  page_length: integer
         @param page_length: Count of Article on a Page
-        @rtype: boolean, list
+        @rtype: list
         @return:
-            1. 리스트 읽어오기 성공: True, New Article List
+            1. 리스트 읽어오기 성공: New Article List
             2. 리스트 읽어오기 실패:
-                1. 페이지 번호 오류: False, 'WRONG_PAGENUM' 
-                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 페이지 번호 오류: InvalidOperation Exception 
+                2. 데이터베이스 오류: InternalError Exception
         '''
         ret_dict = {}
         _, user_info = self.login_manager.get_session(session_key)
@@ -375,7 +374,7 @@ class ArticleManager(object):
                 last_page += 1
             if page > last_page:
                 session.close()
-                return False, 'WRONG_PAGENUM'
+                raise InvalidOperation('WRONG_PAGENUM')
             offset = page_length * (page - 1)
             last = offset + page_length
 
@@ -389,11 +388,10 @@ class ArticleManager(object):
             ret_dict['last_page'] = last_page
             ret_dict['results'] = article_count
             session.close()
-            return True, ret_dict
+            return ret_dict
         except InvalidRequestError:
-            raise
             session.close()
-            return False, 'DATABASE_ERROR'
+            raise InternalError('DATABASE_ERROR')
 
 
     @log_method_call
@@ -409,13 +407,13 @@ class ArticleManager(object):
         @param page: Page Number to Request
         @type  page_length: integer
         @param page_length: Count of Article on a Page
-        @rtype: boolean, list
+        @rtype: list
         @return:
-            1. 리스트 읽어오기 성공: True, Article List
+            1. 리스트 읽어오기 성공: Article List
             2. 리스트 읽어오기 실패:
-                1. 존재하지 않는 게시판: False, 'BOARD_NOT_EXIST'
-                2. 페이지 번호 오류: False, 'WRONG_PAGENUM' 
-                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 존재하지 않는 게시판: InvalidOperation Exception
+                2. 페이지 번호 오류: InvalidOperation Exception
+                3. 데이터베이스 오류: InternalError Exception 
         '''
         ret_dict = {}
 
@@ -437,7 +435,7 @@ class ArticleManager(object):
                     last_page += 1
                 if page > last_page:
                     session.close()
-                    return False, 'WRONG_PAGENUM'
+                    raise InvalidOperation('WRONG_PAGENUM')
                 offset = page_length * (page - 1)
                 last = offset + page_length
                 article_list = session.query(model.Article).filter_by(board_id=board.id, root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
@@ -460,14 +458,13 @@ class ArticleManager(object):
                 ret_dict['last_page'] = last_page
                 ret_dict['results'] = article_count 
                 session.close()
-                return True, ret_dict
+                return ret_dict
             else:
                 session.close()
-                return ret, 'BOARD_NOT_EXIST'
+                raise InvalidOperation('BOARD_NOT_EXIST')
         except InvalidRequestError:
-            raise
             session.close()
-            return False, 'DATABASE_ERROR'
+            raise InternalError('DATABASE_ERROR')
              
     @require_login
     @log_method_call_important
@@ -483,14 +480,14 @@ class ArticleManager(object):
         @param no: Article Number
         @type board_name: string
         @param board_name : BBS Name
-        @rtype: boolean, dictionary
+        @rtype: dictionary
         @return:
-            1. Read 성공: True, Article Dictionary
+            1. Read 성공: Article Dictionary
             2. Read 실패:
-                1. 존재하지 않는 게시물번호: False, 'ARTICLE_NOT_EXIST'
-                2. 존재하지 않는 게시판: False, 'BOARD_NOT_EXIST'
-                3. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                4. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 존재하지 않는 게시물번호: InvalidOperation Exception
+                2. 존재하지 않는 게시판: InvalidOperation Exception
+                3. 로그인되지 않은 유저: InvalidOperation Exception
+                4. 데이터베이스 오류: InternalError Exception 
         '''
 
         _, user_info = self.login_manager.get_session(session_key)
@@ -515,7 +512,7 @@ class ArticleManager(object):
             except InvalidRequestError:
                 session.rollback()
                 session.close()
-                return False, 'ARTICLE_NOT_EXIST'
+                raise InvalidOperation('ARTICLE_NOT_EXIST')
             article_dict_list = self._article_thread_to_list(article)
             article_id_list = []
             for item in article_dict_list:
@@ -527,11 +524,11 @@ class ArticleManager(object):
             ret, msg = self.read_status_manager.mark_as_read_list(session_key, article_id_list)
             if not ret:
                 session.close()
-                return ret, msg
+                raise InternalError(msg)
             session.close()
-            return True, article_dict_list
+            return article_dict_list
         else:
-            return ret, message
+            raise InvalidOperation(message)
 
     @require_login
     @log_method_call
@@ -547,6 +544,13 @@ class ArticleManager(object):
         @param no: Article No
         @type  page_length: integer
         @param page_length: Number of articles to be displayed on a page
+        @rtype: Article List
+        @return:
+            1. 목록 가져오기 성공: Article List
+            2. 목록 가져오기 실패:
+                1. 존재하지 않는 게시판: InvalidOperation Exception
+                2. 데이터베이스 오류: InternalError Exception
+
         '''
         ret_dict = {}
         ret, user_info = self.login_manager.get_session(session_key)
@@ -573,12 +577,12 @@ class ArticleManager(object):
                 ret_dict['last_page'] = below_article_dict_list['last_page']
                 ret_dict['results'] = below_article_dict_list['results'] 
                 session.close()
-                return True, ret_dict
+                return ret_dict
             else:
                 session.close()
-                return False, 'DATABASE_ERROR'
+                raise InternalError('DATABASE_ERROR')
         else:
-            return False, 'BOARD_NOT_EXIST'
+            raise InvalidOperation('BOARD_NOT_EXIST')
         
 
     @require_login
@@ -593,13 +597,13 @@ class ArticleManager(object):
         @param board_name: BBS Name
         @type  article_no: integer
         @param article_no: Article No
-        @rtype: boolean, string
+        @rtype: boolean
         @return:
-            1. 추천 성공: True, 'OK'
+            1. 추천 성공: True
             2. 추천 실패:
-                1. 존재하지 않는 게시판: False, 'BOARD_NOT_EXIST'
-                2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 존재하지 않는 게시판: InvalidOperation Exception
+                2. 로그인되지 않은 유저: InvalidOperation Exception
+                3. 데이터베이스 오류: InrernalError Exception
         '''
 
         ret, user_info = self.login_manager.get_session(session_key)
@@ -611,21 +615,21 @@ class ArticleManager(object):
                 article = session.query(model.Article).filter_by(id=article_no).one()
             except InvalidRequestError:
                 session.close()
-                return False, 'ARTICLE_NOT_EXIST'
+                raise InvalidOperation('ARTICLE_NOT_EXIST')
             user = session.query(model.User).filter_by(username=user_info['username']).one()
             vote_unique_check = session.query(model.ArticleVoteStatus).filter_by(user_id=user.id, board_id=board.id, article_id = article.id).all()
             if vote_unique_check:
                 session.close()
-                return False, 'ALREADY_VOTED'
+                raise InvalidOperation('ALREADY_VOTED')
             else:
                 article.vote += 1
                 vote = model.ArticleVoteStatus(user, board, article)
                 session.save(vote)
                 session.commit()
                 session.close()
-                return True, 'OK'
+                return True
         else:
-            return False, message
+            raise InvalidOperation('BOARD_NOT_EXIST')
 
     @require_login
     @log_method_call_important
@@ -641,14 +645,14 @@ class ArticleManager(object):
         @param article_dic: Article Dictionary
         @type board_name: string
         @param board_name : BBS Name
-        @rtype: boolean, string
+        @rtype: string
         @return:
-            1. Write 성공: True, Article Number
+            1. Write 성공: Article Number
             2. Write 실패:
-                1. 존재하지 않는 게시판: False, 'BOARD_NOT_EXIST'
-                2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                3. 읽기 전용 보드: False, 'READ_ONLY_BOARD'
-                4. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 존재하지 않는 게시판: InvalidOperation Exception
+                2. 로그인되지 않은 유저: InvalidOperation Exception
+                3. 읽기 전용 보드: InvalidOperation Exception
+                4. 데이터베이스 오류: InternalError Exception
         '''
 
         ret, user_info = self.login_manager.get_session(session_key)
@@ -672,10 +676,10 @@ class ArticleManager(object):
                 session.close()
             else:
                 session.close()
-                return False, 'READ_ONLY_BOARD'
+                raise InvalidOperation('READ_ONLY_BOARD')
         else:
-            return ret, message
-        return True, new_article.id
+            raise InvalidOperation('BOARD_NOT_EXIST')
+        return new_article.id
 
     @require_login
     @log_method_call_important
@@ -693,14 +697,14 @@ class ArticleManager(object):
         @param board_name: BBS Name
         @type article_no: integer
         @param article_no: Article No in which the reply will be added
-        @rtype: boolean, string
+        @rtype: string
         @return:
-            1. 작성 성공: True, Article Number
+            1. 작성 성공: Article Number
             2. 작성 실패:
-                1. 존재하지 않는 게시판: False, 'BOARD_NOT_EXIST'
-                2. 존재하지 않는 게시물: False, 'ARTICLE_NOT_EXIST'
-                3. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                4. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 존재하지 않는 게시판: InvalidOperation Exception
+                2. 존재하지 않는 게시물: InvalidOperation Exception
+                3. 로그인되지 않은 유저: InvalidOperation Exception
+                4. 데이터베이스 오류: InternalError Exception
         '''
 
 
@@ -726,10 +730,10 @@ class ArticleManager(object):
                 session.close()
             except InvalidRequestError:
                 session.close()
-                return False, 'ARTICLE_NOT_EXIST'
+                raise InvalidOperation('ARTICLE_NOT_EXIST')
         else:
-            return ret, message
-        return True, new_reply.id
+            raise InvalidOperation('BOARD_NOT_EXIST')
+        return new_reply.id
 
     @require_login
     @log_method_call_important
@@ -748,15 +752,15 @@ class ArticleManager(object):
         @param article_dic : Article Dictionary
         @type board_name: string
         @param board_name : BBS Name
-        @rtype: boolean, string
+        @rtype: string
         @return:
-            1. Modify 성공: True, Article Number
+            1. Modify 성공: Article Number
             2. Modify 실패:
-                1. 존재하지 않는 게시물번호: False, 'ARTICLE_NOT_EXIST'
-                2. 존재하지 않는 게시판: False, 'BOARD_NOT_EXIST'
-                3. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                4. 수정 권한이 없음: False, 'NO_PERMISSION'
-                5. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 존재하지 않는 게시물번호: InvalidOperation Exception
+                2. 존재하지 않는 게시판: InvalidOperation Exception
+                3. 로그인되지 않은 유저: InvalidOperation Exception
+                4. 수정 권한이 없음: InvalidOperation Exception
+                5. 데이터베이스 오류: InternalError Exception 
         '''
 
         ret, user_info = self.login_manager.get_session(session_key)
@@ -769,7 +773,7 @@ class ArticleManager(object):
                 article = session.query(model.Article).filter_by(board_id=board.id, id=no).one()
                 if article.deleted == True:
                     session.close()
-                    return False, "NO_PERMISSION"
+                    raise InvalidOperation("NO_PERMISSION")
                 if article.author_id == author.id:
                     article.title = article_dic['title']
                     article.content = article_dic['content']
@@ -778,13 +782,13 @@ class ArticleManager(object):
                     session.close()
                 else:
                     session.close()
-                    return False, "NO_PERMISSION"
+                    raise InvalidOperation("NO_PERMISSION")
             except InvalidRequestError:
                 session.close()
-                return False, "ARTICLE_NOT_EXIST"
+                raise InvalidOperation("ARTICLE_NOT_EXIST")
         else:
-            return ret, message
-        return True, article.id
+            raise InvalidOperation("BOARD_NOT_EXIST")
+        return article.id
 
     @require_login
     @log_method_call_important
@@ -798,15 +802,15 @@ class ArticleManager(object):
         @param board_name : BBS Name
         @type  no: number
         @param no: Article Number
-        @rtype: boolean, string 
+        @rtype: boolean 
         @return:
-            1. Delete 성공: True, 'OK'
+            1. Delete 성공: True
             2. Delete 실패:
-                1. 존재하지 않는 게시물번호: False, 'ARTICLE_NOT_EXIST'
-                2. 존재하지 않는 게시판: False, 'BOARD_NOT_EXIST'
-                3. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                4. 수정 권한이 없음: False, 'NO_PERMISSION'
-                5. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 존재하지 않는 게시물번호: InvalidOperation Exception
+                2. 존재하지 않는 게시판: InvalidOperation Exception
+                3. 로그인되지 않은 유저: InvalidOperation Exception
+                4. 수정 권한이 없음: InvalidOperation Exception
+                5. 데이터베이스 오류: InternalError Exception
         '''
 
         ret, user_info = self.login_manager.get_session(session_key)
@@ -826,12 +830,12 @@ class ArticleManager(object):
                     session.close()
                 else:
                     session.close()
-                    return False, "NO_PERMISSION"
+                    raise InvalidOperation("NO_PERMISSION")
             except InvalidRequestError:
                 session.close()
-                return False, "ARTICLE_NOT_EXIST"
+                raise InvalidOperation("ARTICLE_NOT_EXIST")
         else:
-            return ret, message
-        return True, article.id
+            raise InvalidOperation("BOARD_NOT_EXIST")
+        return True
 
 # vim: set et ts=8 sw=4 sts=4
