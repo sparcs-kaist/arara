@@ -67,7 +67,7 @@ class BlacklistManager(object):
 
     @require_login
     @log_method_call_important
-    def add(self, session_key, blacklist_username, block_article=True, block_message=True):
+    def add(self, session_key, username, block_article=True, block_message=True):
         '''
         블랙리스트 username 추가
 
@@ -75,8 +75,8 @@ class BlacklistManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @type  blacklist_username: stirng
-        @param blacklist_username: Blacklist Username
+        @type  username: stirng
+        @param username: Blacklist Username
         @rtype: boolean, string
         @return:
             1. 추가 성공: True, 'OK'
@@ -90,13 +90,13 @@ class BlacklistManager(object):
         '''
         ret, user_info = self.login_manager.get_session(session_key)
 
-        if blacklist_username == user_info['username']:
+        if username == user_info['username']:
             return False, 'CANNOT_ADD_YOURSELF'
 
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info['username']).one()
         try:
-            target_user = session.query(model.User).filter_by(username=blacklist_username).one()
+            target_user = session.query(model.User).filter_by(username=username).one()
         except InvalidRequestError:
             session.close()
             return False, 'USERNAME_NOT_EXIST'
@@ -113,7 +113,7 @@ class BlacklistManager(object):
        
     @require_login
     @log_method_call_important
-    def delete(self, session_key, blacklist_username):
+    def delete(self, session_key, username):
         '''
         블랙리스트 username 삭제 
 
@@ -122,7 +122,7 @@ class BlacklistManager(object):
 
         @type  session_key: string
         @param session_key: User Key
-        @type  blacklist_username: string
+        @type  username: string
         @param blacklist_id: Blacklist USERNAME
         @rtype: boolean, string
         @return:
@@ -138,7 +138,7 @@ class BlacklistManager(object):
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info['username']).one()
         try:
-            blacklisted_user = session.query(model.User).filter_by(username=blacklist_username).one()
+            blacklisted_user = session.query(model.User).filter_by(username=username).one()
         except InvalidRequestError:
             session.close()
             return False, 'USERNAME_NOT_EXIST'
@@ -155,7 +155,7 @@ class BlacklistManager(object):
 
     @require_login
     @log_method_call_important
-    def modify(self, session_key, blacklist_dict):
+    def modify(self, session_key, blacklist_info):
         '''
         블랙리스트 id 수정 
 
@@ -184,7 +184,7 @@ class BlacklistManager(object):
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info['username']).one()
         try:
-            target_user = session.query(model.User).filter_by(username=blacklist_dict['blacklisted_user_username']).one()
+            target_user = session.query(model.User).filter_by(username=blacklist_info['blacklisted_user_username']).one()
         except InvalidRequestError:
             session.close()
             return False, 'USERNAME_NOT_EXIST'
@@ -194,8 +194,8 @@ class BlacklistManager(object):
         except InvalidRequestError:
             session.close()
             return False, 'USERNAME_NOT_IN_BLACKLIST'
-        blacklist_to_modify.block_article = blacklist_dict['block_article']
-        blacklist_to_modify.block_message = blacklist_dict['block_message']
+        blacklist_to_modify.block_article = blacklist_info['block_article']
+        blacklist_to_modify.block_message = blacklist_info['block_message']
         blacklist_to_modify.last_modified_date = datetime.datetime.fromtimestamp(time.time())
         session.commit()
         session.close()

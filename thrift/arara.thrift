@@ -164,6 +164,19 @@ service MemberManager {
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 }
 
+struct BlacklistInformation {
+    1: string blacklisted_user_username,
+    2: bool block_article,
+    3: bool block_message,
+}
+
+service BlacklistManager {
+    void add(1:string session_key, 2:string username,
+             3:bool block_article=1, 4:bool block_message=1),
+    void delete_(1:string session_key, 2:string username),
+    void modify(1:string session_key, 2:BlacklistInformation blacklist_info),
+}
+
 struct WrittenArticle {
     1: string title,
     2: string content
