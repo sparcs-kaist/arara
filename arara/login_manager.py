@@ -102,13 +102,15 @@ class LoginManager(object):
         password = smart_unicode(password)
         user_ip = smart_unicode(user_ip)
         ret = []
-        msg = self.member_manager._authenticate(username, password, user_ip)
+        msg = self.member_manager.authenticate(username, password, user_ip)
         #for user_info in self.session_dic.values():
         #    if user_info['username'] == username:
         #        return False, 'ALREADY_LOGIN'
         hash = hashlib.md5(username+password+datetime.datetime.today().__str__()).hexdigest()
         timestamp = datetime.datetime.fromtimestamp(time.time())
-        self.session_dic[hash] = {'username': username, 'ip': user_ip, 'nickname': msg['nickname'], 'logintime': msg['last_login_time'], 'current_action': 'login_manager.login()'}
+        self.session_dic[hash] = {'username': username, 'ip': user_ip,
+                'nickname': msg.nickname, 'logintime': msg.last_login_time,
+                'current_action': 'login_manager.login()'}
         self.logger.info("User '%s' has LOGGED IN from '%s' as '%s'", username, user_ip, hash)
         return hash
 

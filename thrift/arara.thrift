@@ -24,7 +24,7 @@ struct Session {
     2: string ip,
     3: string current_action,
     4: string nickname,
-    5: i64 logintime,
+    5: double logintime,
 }
 
 service LoginManager {
@@ -54,6 +54,11 @@ service LoginManager {
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 }
 
+struct AuthenticationInfo {
+    1: double last_login_time,
+    2: string nickname,
+}
+
 struct UserRegistration {
     1: string username,
     2: string password,
@@ -69,7 +74,7 @@ struct UserInformation {
     2 : string nickname,
     3 : string email,
     4 : string last_login_ip,
-    5 : i64 last_logout_time,
+    5 : double last_logout_time,
     6 : string signature,
     7 : string self_introduction,
     8 : string default_language
@@ -107,6 +112,10 @@ struct SearchUserResult {
 }
 
 service MemberManager {
+    AuthenticationInfo authenticate(1:string username, 2:string password,
+                                    3:string user_ip)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void register(1:UserRegistration user_reg)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
@@ -164,7 +173,7 @@ struct Article {
     1:  id_t id,
     2:  string title,
     3:  string content,
-    4:  i64 date,
+    4:  double date,
     5:  i32 hit = 0,
     6:  i32 vote,
     7:  bool deleted = 0,
@@ -173,7 +182,7 @@ struct Article {
     10: string author_nickname,
     11: bool blacklisted = 0,
     12: bool is_searchable,
-    13: i64 last_modified_date,
+    13: double last_modified_date,
     14: optional i32 depth,  // Only used in the 'read' function
     15: optional string read_status,
     16: optional i32 reply_count,

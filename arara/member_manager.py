@@ -14,7 +14,7 @@ from arara_thrift.ttypes import *
 from arara import model
 from arara.util import require_login, filter_dict, is_keys_in_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
-from arara.util import smart_unicode
+from arara.util import smart_unicode, datetime2timestamp
 
 log_method_call = log_method_call_with_source('member_manager')
 log_method_call_important = log_method_call_with_source_important('member_manager')
@@ -84,18 +84,19 @@ class MemberManager(object):
             raise InvalidOperation('DATABASE_ERROR')
 
     @log_method_call
-    def _authenticate(self, username, password, user_ip):
+    def authenticate(self, username, password, user_ip):
         session = model.Session()
         try:
             user = session.query(model.User).filter_by(username=username).one()
             if user.compare_password(password) and user.activated == True:
                 user.last_login_time = datetime.datetime.fromtimestamp(time.time())
                 user.last_login_ip = unicode(user_ip)
-                ret = {'last_login_time': user.last_login_time,
+                ret = {'last_login_time': datetime2timestamp(
+                    user.last_login_time),
                        'nickname': user.nickname}
                 session.commit()
                 session.close()
-                return ret 
+                return AuthenticationInfo(**ret)
             else:
                 session.close()
                 if user.activated:

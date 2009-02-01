@@ -2,12 +2,21 @@
 
 import traceback
 import logging
+import datetime
+import time
 
 from arara_thrift.ttypes import *
 
 def smart_unicode(string):
     if isinstance(string, unicode): return string
     else: return unicode(string, 'utf-8')
+
+def datetime2timestamp(datetime_):
+    return (time.mktime(datetime_.timetuple())
+            + datetime_.microsecond / 1e6)
+
+def timestamp2datetime(timestamp):
+    return datetime.datetime.fromtimestamp(timestamp)
 
 def update_monitor_status(function):
     def wrapper(self, session_key, *args, **kwargs):

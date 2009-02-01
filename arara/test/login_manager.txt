@@ -66,7 +66,7 @@ u'pipoket'
 
 >>> sessions = server.login_manager.get_current_online(session_key)
 >>> [x.__dict__ for x in sessions]
-[{'username': u'pipoket', 'ip': u'143.248.234.145', 'current_action': 'login_manager.login()', 'nickname': u'pipoket', 'logintime': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000)}, {'username': u'serialx', 'ip': u'143.248.234.140', 'current_action': 'login_manager.login()', 'nickname': u'serialx', 'logintime': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000)}]
+[{'username': u'pipoket', 'ip': u'143.248.234.145', 'current_action': 'login_manager.login()', 'nickname': u'pipoket', 'logintime': 1.1000000000000001}, {'username': u'serialx', 'ip': u'143.248.234.140', 'current_action': 'login_manager.login()', 'nickname': u'serialx', 'logintime': 1.1000000000000001}]
 >>> server.login_manager.get_current_online(session_bee)
 Traceback (most recent call last):
   ...
