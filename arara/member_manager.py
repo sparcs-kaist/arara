@@ -3,6 +3,7 @@
 import md5
 import datetime
 import time
+import logging
 import smtplib
 from email.MIMEText import MIMEText
 

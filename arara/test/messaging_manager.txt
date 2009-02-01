@@ -197,7 +197,7 @@ Test Delete Function
 
 Register one user, dodo
 
->>> user_reg_dic = {'username':u'zzongaly', 'password':u'zzongaly', 'nickname':u'dodo', 'email':u'zzongaly', 'signature':u'mikkang friend', 'self_introduction':u'i am dodo', 'default_language':u'english' }
+>>> user_reg_dic = {'username':u'zzongaly', 'password':u'zzongaly', 'nickname':u'dodo', 'email':u'zzongaly@example.com', 'signature':u'mikkang friend', 'self_introduction':u'i am dodo', 'default_language':u'english' }
 >>> ret, register_key = server.member_manager.register(user_reg_dic)
 >>> ret
 True

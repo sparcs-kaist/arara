@@ -31,6 +31,11 @@ class ara_list_boards(ara_form):
                 retvalue, status = self.server.board_manager.get_board(boardname)
                 if retvalue:
                     self.parent.change_page("list_article", {'session_key':self.session_key, 'board_name':boardname})
+                else:
+                    confirm = widget.Dialog(_('No such board. Returning to main menu.'), [_('Ok')], ('menu', 'bg', 'bgf'), 30, 6, self)
+                    self.overlay = confirm
+                    self.parent.run()
+                    self.parent.change_page('main', {'session_key':self.session_key})
             else:
                 self.mainpile.keypress(size, key)
         else:

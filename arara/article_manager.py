@@ -420,11 +420,12 @@ class ArticleManager(object):
         try:
             session = model.Session()
             ret, _ = self._is_board_exist(board_name)
-            _, blacklist_dict_list = self.blacklist_manager.list(session_key)
+            list_success, blacklist_dict_list = self.blacklist_manager.list(session_key)
             blacklist_users = set()
-            for blacklist_item in blacklist_dict_list:
-                if blacklist_item['block_article']:
-                    blacklist_users.add(blacklist_item['blacklisted_user_username'])
+            if list_success:
+                for blacklist_item in blacklist_dict_list:
+                    if blacklist_item['block_article']:
+                        blacklist_users.add(blacklist_item['blacklisted_user_username'])
             if ret:
                 board = session.query(model.Board).filter_by(board_name=board_name).one()
                 article_count = session.query(model.Article).filter_by(board_id=board.id, root_id=None).count()
