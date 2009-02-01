@@ -44,8 +44,8 @@
     <table border="1">
         <colgroup>
             <col id="message_list_table_checkbox_col">
-            <col id="message_list_table_person_col">
             <col id="message_list_table_text_col">
+            <col id="message_list_table_person_col">
             <col id="message_list_table_time_col">
         </colgroup>
         <thead>
@@ -53,11 +53,11 @@
             <th>
                 <input type="checkbox" name="ch_del_enm" value=1></input>
             </th>
-            <th>
-                {{person_type}}
-            </th>
             <th class="message_list_table_th_text">
                 {% trans "text" %}
+            </th>
+            <th>
+                {{person_type}}
             </th>
             <th>
                 {% trans "time" %}
@@ -70,15 +70,15 @@
             <td>
                 <input type="checkbox" class="ch_del_d" name="ch_del_{{forloop.counter0}}" value="{{message.id}}"></input>
             </td>
+            <td name="text"{%ifequal message.read_status 'N'%} class="new_message"{%endifequal%}>
+                <a href="/message/{{message_list_type}}/{{message.id}}?page_length={{page_length}}&page_no={{page_no}}">{{message.message}}</a>
+            </td>
             <td>
                 {% ifequal message_list_type 'inbox' %}
                 <span class="username">{{message.from}}</span>
                 {% else %}
                 <span class="username">{{message.to}}</span>
                 {% endifequal %}
-            </td>
-            <td name="text"{%ifequal message.read_status 'N'%} class="new_message"{%endifequal%}>
-                <a href="/message/{{message_list_type}}/{{message.id}}?page_length={{page_length}}&page_no={{page_no}}">{{message.message}}</a>
             </td>
             <td>
                 {{message.time}}

@@ -1,33 +1,37 @@
 #message_info {
+    float: left;
 	width: 94%;
 	margin: 0% 3%;
 	background-color: #ddd;
 }
 
 #message_person {
-	margin: 0% 2%;
+        float: left;
+	margin: 1% 2%;
 }
 
 #message_time {
 	float: right;
-	padding: 0% 2%;
+	padding: 1% 2%;
 }
 
 #message_read_text {
+    float: left;
 	width: 94%;
 	padding: 3% 3%;
 }
 
 #message_read_text .textarea {
+    float: left;
     font-size: small;
     background-color: #fff;
     border: 0 solid #69f;
-    width: 100%;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
 div.line {
+    float: left;
 	background-color: #ddd;
 	width: 94%;
 	margin: 1% 3%;
@@ -35,16 +39,25 @@ div.line {
 }
 
 div.caption_reply {
+    float: left;
 	width: 94%;
 	margin: 1% 3%;
 }
 
+#message_content form {
+    float: left;
+	width: 94%;
+	margin: 0% 3%;
+}
+
 #message_send_text {
+    float: left;
 	margin 1em 3%;
 	text-align: center;
 }
 #message_send_text textarea {
-	width: 94%;
+    float: left;
+	width: 37.2em;
 	height: 10em;
 	border: 1px solid #ccc;
 }

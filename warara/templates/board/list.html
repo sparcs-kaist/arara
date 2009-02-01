@@ -69,19 +69,21 @@
 </div>
 {% if logged_in %}
 <div id="board_buttons" class="width_full">
+    <div id="board_search">
+	<form name="board_search" method="GET" action="/board/{{board_name}}/search">
+	    {% for smi in search_method_list %}
+	        <span class="search_method">
+		    <a href="#" rel="{{smi.val}}" name="search_method_select"{%if smi.selected%} class="selected"{%endif%}>{{smi.text}}</a>
+		    <input type="hidden" value="{{smi.val}}"{%if smi.selected%} name="{{smi.val}}"{%endif%}></input>
+		</span>
+	    {% endfor %}
+	    <input type="text" name="search_word" class="small_form" id="board_search_content"></input>
+	    <input class="" type="submit" value="{% trans "search" %}" id="board_search_submit"></input>
+	</form>
+    </div>
     <div id="board_write" class="{% if board_dict.read_only %} hidden{% endif %}">
 	    <a href="/board/{{board_name}}/write/">{% trans "write" %}</a>
     </div>
-    <form name="board_search" method="GET" action="/board/{{board_name}}/search">
-        {% for smi in search_method_list %}
-            <span class="search_method">
-                <a href="#" rel="{{smi.val}}" name="search_method_select"{%if smi.selected%} class="selected"{%endif%}>{{smi.text}}</a>
-            <input type="hidden" value="{{smi.val}}"{%if smi.selected%} name="{{smi.val}}"{%endif%}></input>
-            </span>
-        {% endfor %}
-        <input type="text" name="search_word" class="small_form"></input>
-	<input class="" type="submit" value="{% trans "search" %}" id="board_search_submit"></input>
-    </form>
 </div>
 {%endif%}
 {% endblock board_content %}

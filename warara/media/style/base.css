@@ -9,16 +9,17 @@ body {
 }
 
 a {
-	text-decoration: none;
+    text-decoration: none;
 }
 
 #wrapper {
-    width: 85em;
+    width: 100%;
     max-width: 100%;
     min-width: 61.25em;
     margin: 0 auto;
     background-color: #fff;
     min-height: 100%;
+    float: left;
 }
 
 #body_wrapper, #menu_wrapper, #content_wrapper {
@@ -27,26 +28,27 @@ a {
 
 #body_wrapper {
     float: left;
-    width: 100%;
+    width: 80.5em;
     background-color: #f0f0f0;
+    clear: both;
 }
 
 #header_wrapper {
     width: 100%;
     float: left;
-    background-color: #999;
+    background-color: #fff;
 }
 
 #menu_wrapper {
     float: left;
-    width: 14%;
+    width: 12.5em;
     max-width: 14%;
 }
 
 #content_wrapper {
     position: relative;
     float: right;
-    width: 86%;
+    width: 68em;
     max-width: 86%;
     background-color: white;
 }
@@ -54,13 +56,24 @@ a {
 #footer_wrapper {
     clear: both;
     background-color: #eee;
-    padding: 1.5em;
+    padding: 1.5em 0 1.5em 0;
+    width: 100%;
+}
+
+#footer { 
+    margin: 0 1.5em 0 1.5em;
+}
+
+#top_header_bg {
+    float: left;
+    width: 100%;
+    background-color: #eaeaea;
 }
 
 #top_header {
     float: left;
-    width: 100%;
-    background-color: #eaeaea;
+    width: 80.5em;
+    padding: 0 0 0.25em 0;
 }
 
 #top_header ul {
@@ -75,26 +88,33 @@ a {
     margin: 0.3em 0 0 0.45em;
     vertical-align: middle;
     list-style-type: none;
+    font-family: Dotum;
+    font-size: 90%;
 }
 
-#header {
-    float:left;
+#bottom_header_bg {
+    float: left;
     width: 100%;
-    height: 50px;
-    background-color: #FFFFFF;
+    background: url('/media/image/base/subtitle/subtitle_bg_bg.png') repeat-x right top;
+}
+
+#bottom_header_border {
+    float: left;
+    width: 100%;
+    background: url('/media/image/base/subtitle/subtitle_bg_border.png') repeat-x right bottom;
 }
 
 #bottom_header {
-	position: relative;
     float: left;
-    width: 100%;
+    width: 80.5em;
     height: 3.315em;
     background: url('/media/image/base/subtitle/subtitle_bg.png');
 }
 
 #subtitle_wrapper {
     float:left;
-    width: 14%;
+    width: 13.2em;
+    max-width: 19%;
 }
 
 #subtitle_logo {
@@ -102,13 +122,13 @@ a {
     width: 5.2em;
     height: 1.3em;
     background: url('/media/image/base/subtitle/subtitle.png') no-repeat;
-    margin: 1.06em 1.25em 0.56em 1.7em;
+    margin: 1.5em 0 0 1.1em;
 }
 
 #subtitle_folding {
-	position: absolute;
-	bottom: -3%;
-	right: 100%;
+    position: absolute;
+    bottom: -4%;
+    right: 100%;
     width: 0.65em;
     height: 0.65em;
     background: url('/media/image/base/subtitle/subtitle_folding.png') no-repeat right bottom;
@@ -124,21 +144,31 @@ a {
 #bbstitle_wrapper {
     float:left;
     height:100%;
-	width: 50%;
+    width: 50%;
 }
 
 #bbsname {
-    font-size: 150%;
+    float: left;
+    font-size: 130%;
+    font-family: Dotum;
     font-weight: bold;
-    color: #333333;
+    color: #000;
+    margin: 0.67em 0 0 0.5em;
+}
+
+.board_description {
+    float: left;
+    font-family: Gulim;
+    margin: 1em 0 0 0.8em;
+    color: #828282;
 }
 
 #bbstitle_dingbet {
     float:left;
-	display: inline;
+    display: inline;
     width: 1.31em;
     height: 1.1em;
-    margin: 0.78em 0.68em 0 0.8em;
+    margin: 1.1em 0 0 0.5em;
     background: url('/media/image/base/subtitle/subtitle_maintitle.png') no-repeat left;
 }
 
@@ -146,26 +176,19 @@ a {
     float:left;
     width: 90%;
     height: 100%;
-	position: relative;
-	top: 10%;
-}
-
-#bbstitle span{
-	margin-right: 1em;
-}
-
-#bbstitle span.board_description {
+    position: relative;
+    top: 10%;
 }
 
 #menu {
-    padding: 1.3em;
+    padding: 1.2em;
 }
 
 #content {
-	position: relative;
-    padding: 1.68em 0em;
-	padding-left: 2%;
-	width: 98%;
+    height: 100%;
+    width: 66.2em;
+    float: left;
+    padding: 0.8em;
 }
 
 #menu ul {
@@ -176,35 +199,44 @@ a {
 }
 
 #menu li {
-    margin: 0 0 0.35em 0;
-    font-family: Verdana;
+    margin: 0 0 0.6em 0;
     list-style-type: none;
+    font-family: Gulim;
+    font-size: 90%;
 }
 
+
 #header {
-	background-color: white;
+    float:left;
+    width: 80.5em;
+    background-color: #FFFFFF;
+    padding: 0.9em 0 0 0;
+    height: 4.1em;
 }
 
 #header h1 {
     float: left;
     font-size: 3em;
-    margin: 0em 0%;
-    padding: 0.8% 4%;
-    background: url('/media/image/base/header/raw_ara_w_main_header_webara_logo.png') no-repeat 20% 50%;
+    margin: 0;
+    padding: 0.8% 2%;
+    background: url('/media/image/base/header/raw_ara_w_main_header_webara_logo.png') no-repeat 17% 40%;
 }
 
 #header h1 a {
+    float: left;
     text-decoration: none;
     color: black;
+    margin: 0 0 0 0.53em;
 }
+
 #header h1 a img {
     border: 0;
 }
 
 /* IE hack */
 * {
-    color:#666666;
-    font-family: Verdana, 굴림
+    color: #666666;
+    font-family: Verdana, 굴림;
 }
 
 body {
@@ -212,47 +244,49 @@ body {
 }
 
 #wrapper {
+    width: 100%;
     text-align: left;
 }
 
 /* top menu style */
 #top_menu_wrapper{
-	position: relative;
-    float:right;
-    width:85.3%;
-    height: 2.77em;
-   	margin-top: 0.52em;
-    border-bottom: 1px solid #cccccc;
+    position: relative;
+    float: right;
+    width: 67.3em;
+    height: 2.8em;
+    margin-top: 0.43em;
     background-color: white;
+    border-bottom: 1px solid #cccccc;
 }
 
-#top_menu_wrapper span, #top_menu_wrapper a {
+#top_menu_wrapper a {
     text-decoration: none;
-    color:#828282;
+    color: #828282;
 }
 
 #top_menu {
-	position: absolute;
-	top: 0%;
-	right: 0%;
+    position: absolute;
+    top: 0%;
+    right: 0%;
     height: 100%;
-    font-size: 120%;
     width: 48%;
     text-align: right;
     margin-top: 0.5em;
-	padding-right: 1%;
 }
 
 #top_menu a {
-    margin: 0 0 0 3%;
+    margin: 0.8em 0 0 0.5em;
+    float: right;
+    font-family: Gulim;
+    font-size: 100%;
 }
 
 #top_menu .small_btn {
-	height: 1.6em;
+    height: 1.6em;
 }
 
 #top_menu .new_message {
-	color: red;
+    color: red;
 }
 
 
@@ -267,13 +301,12 @@ body {
 }
 
 #user_popup {
-    width: 15em;
-    border: 1px solid #333;
-    border-top: 1px solid #999;
-    border-bottom: 0;
-    background-color: white;
+    width: 10em;
+    border: 1px solid #CCCCCC;
+    background-color: #F0F0F0;
     cursor: default;
     display: none;
+    padding: 0.3em 0.4em 0.3em 0.4em;
 }
 
 .absolute {
@@ -291,8 +324,9 @@ body {
 }
 
 #user_popup li {
-    border-bottom: 1px solid #999;
     padding: 0.2em;
+    font-family: Gulim;
+    font-size: 89%;
     list-style-type: none;
 }
 
@@ -387,70 +421,72 @@ body {
 }
 
 #login_box {
-	position: absolute;
-	right: 0%;
-	z-index: 2;
-	width: 40em;
-	background-color: white;
-	text-align: right;
+    position: absolute;
+    right: 0%;
+    z-index: 2;
+    margin: 0.4em 0 0 0;
+    width: 40em;
+    background-color: white;
+    text-align: right;
+    display: none;
 }
 
 #login_box form{
-	display: inline;
+    display: inline;
 }
 
 input.button_exit{
-	position: absolute;
-	right: 0x;
-	top: 0;
+    position: absolute;
+    right: 0x;
+    top: 0;
 }
 
 .highlight{
-	background-color: #ccd;
+    background-color: #ccd;
 }
 
 #ksearch {
     float: right;
-    padding-right: 2em;
-    width: 25em;
+    width: 28em;
     height: 3.2em;
-    background: url('/media/image/base/ksearch/ksearch_bg.png') repeat left top;
+    background: url('/media/image/base/ksearch/ksearch_bg.png') repeat right top;
 }
 
 #ksearch_bg_bottom {
-    float: right;
-    width: 23.5em;
-	padding-left: 1.5em;
+    float: left;
+    width: 28em;
     height: 3.2em;
     background: url('/media/image/base/ksearch/ksearch_bg_bottom.png') no-repeat left bottom;
 }
 
 #ksearch .ksearch {
-    float:right;
-	border: none;
-	padding-top: 0.5em;
-	width: 84%;
+    float: left;
+    border: none;
+    padding-top: 0.5em;
+    width: 83%;
 }
 
 #ksearch .q {
-	border:1px solid #aaaaaa;
-	width: 80%;
-	position: relative;
-	top: -0.25em;
+    float: left;
+    border:1px solid #aaaaaa;
+    width: 18.5em;
+    margin: 0 0.15em 0 0.3em;
+    position: relative;
+    top: 0.3em;
 }
 
 #ksearch_logo {
-    float:left;
-	margin: 1em 0em 0em 0em;
-	width: 3.5em;
-	height: 1em;
-	background: url('/media/image/base/ksearch/ksearch.png') no-repeat;
+    float: left;
+    margin: 1.2em 0 0 1em;
+    width: 3.5em;
+    height: 1em;
+    background: url('/media/image/base/ksearch/ksearch.png') no-repeat;
 }
 
 #ksearch .ksearch_submit {
-	position: relative;
-	padding-top: 1%;
-	width: 15%;
+    position: relative;
+    padding-top: 1%;
+    width: 15%;
 }   
 
 /* message css */

@@ -1,4 +1,9 @@
 /* Common */
+#account_content {
+    float: left;
+    margin: 0.8em 0 0 0.8em;
+}
+
 #account_information_content {
     width: 67.5em;
     margin: 0 0 0 1.3em;
@@ -6,14 +11,14 @@
 }
 
 .account_head_block {
-    width: 96%;
+    width: 66.7em;
     background: url(/media/image/head_background.png) repeat top left;
     float: left;
     margin-bottom: 1.3em; 
 }
 
 .account_head {
-    font-size: 1.5em;
+    font-size: 1.3em;
     color: #FFFFFF;
     font-weight: bold;
     font-family: tahoma;
@@ -24,7 +29,8 @@
 
 .register_process {
     float: right;
-    margin: 0.95em;
+    font-size: 0.9em;
+    margin: 0.8em 0.8em 0 0;
     padding: 0.5em;
     background: url(/media/image/black_transparent.png) repeat;
     color: white;
@@ -50,7 +56,7 @@
 }
 
 #agreement_subtitle_bottom {
-    width: 67.3em;
+    width: 65.3em;
     margin: 0 0 0 1.4em;
     border-bottom: 1px #CCCCCC solid;
 }
@@ -103,17 +109,18 @@
 }
 
 .acc_subtitle {
-    width: 100%;
-    border-top: 1px #65AA5C solid;
+    width: 65.3em;
     border-bottom: 1px #CCCCCC solid;
-    background: url(/media/image/base/square.png) no-repeat top left #E0E0E0;
     clear: both;
 }
 
 .acc_subtitle_name {
+    min-height: 1.6em; 
+    background: #E0E0E0 url(/media/image/base/square.png) no-repeat top left;
+    border-top: 1px #65AA5C solid;
     border-bottom: 5px #DADADA solid;
-    padding: 0.5em 0 0 0.7em;
-    vertical-align: bottom;
+    padding: 0.5em 0 0 0.8em;
+    clear: left;
 }
 
 #account_user_content label {
@@ -133,8 +140,8 @@
 }
 
 #account_user_content textarea {
-    width: 40em;
-    height: 8em;
+    width: 43em;
+    height: 6em;
     float: left;
     margin: 0.66em 0 0 0.5em;
 }
@@ -213,8 +220,9 @@
 /* Account Common */
 .account_administer {
     float: right;
-    margin: 0.95em;
+    margin: 0.8em 0.8em 0 0;
     padding: 0.5em;
+    font-size: 0.9em;
     background: url(/media/image/black_transparent.png) repeat;
     color: white;
     vertical-align: center;
@@ -275,9 +283,10 @@
 
 /* Account remove */
 #acc_rm_submit {
-    width: 96.2%;
+    width: 65.4em;
     text-align: center;
     background-color: #EAEAEA;
+    margin: 0 0 0 1.4em;
     float: left;
     clear: left;
 }

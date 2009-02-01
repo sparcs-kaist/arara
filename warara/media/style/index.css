@@ -3,7 +3,6 @@ body {
     padding: 0;
     font-size: 75%;
     height: 100%;
-    background-color: #bbb;
 }
 
 a {
@@ -11,12 +10,13 @@ a {
 }
 
 #wrapper {
-    width: 85em;
+    width: 100%;
     max-width: 100%;
     min-width: 61.25em;
     margin: 0 auto;
     background-color: #fff;
     min-height: 100%;
+    float: left;
 }
 
 /* IE hack */
@@ -27,31 +27,32 @@ a {
 
 #content_wrapper {
     float: left;
-    width: 100%;
+    width: 85em;
     background-color: white;
+}
+
+#content_img {
+    float: left;
+    width: 100%;
 }
 
 #postcard {
     float: left;
-    margin-left: 50px;
+    margin: 2em 0 0 2em;
 }
 
-#logo, #postcard {
-    margin-top: 30px;
-}
-
-#logo, #login, #navigation {
+#logo {
     float: right;
-    margin-right: 30px;
+    margin: 3em 3em 0 0;
 }
 
-#login {
+#login, #navigation {
+    both: clear;
     float: right;
 }
 
 #input_wrapper {
-    clear: both;
-    float: left;
+    float: right;
     width: 20em;
 }
 
@@ -73,6 +74,10 @@ a {
     margin: 0.2em;
 }
 
+#login_img {
+    float: left;
+}
+
 #navigation {
     clear: both;
     float: right;
@@ -89,6 +94,11 @@ a {
     float: left;
     width: 100%;
     background-color: #eee;
+}
+
+#footer_content {
+    float: left;
+    width: 85em;
 }
 
 #footer {

@@ -9,8 +9,9 @@
 {% endblock %}
 
 {% block content %}
-    {% block myaccount_content %}
-    {% load i18n %}
+<div id="account_content">
+{% block myaccount_content %}
+{% load i18n %}
     <div id="myaccount_head_content" class="account_content">
 	<div class="account_head_block">
 		<div class="account_head">{% trans "MY ACCOUNT" %}</div>
@@ -60,5 +61,6 @@
 	    </div>
 	</div>
     </div>
-    {% endblock %}
+{% endblock %}
+</div>
 {% endblock %}

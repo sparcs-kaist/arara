@@ -3,6 +3,7 @@
 {% load i18n %}
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
+	<script type="text/javascript" src="/media/js/index.js"></script>
         <link rel="stylesheet" href="/media/style/index.css"></link>
 		<script type="text/javascript">
 			document.onkeypress = function(){
@@ -16,35 +17,41 @@
     <body>
         <div id="wrapper">
             <div id="content_wrapper">
+		<div id="content_img">
 		    <p id="postcard"><img src="/media/image/postcard.jpg" alt="아라 POSTCARD"></p>
 		    <p id="logo"><img src="/media/image/base/header/raw_ara_w_main_header_webara_title.png" alt="아라 LOGO"></p>
-		    <form id="login" action="/account/login/" method="post">
+	    	</div>
+		<div id="login">
+		    <form action="/account/login/" method="post">
+			<input type="image" src="/media/image/login.png" alt="LOGIN" id="login_img" />
 			<div id="input_wrapper">
-				<div id="username">
+			    <div id="username">
 				    <label for="username">{% trans "ID" %}</label>
-				    <input type="text" id="username" name="username">
-				</div>
-				<div id="password">
-				    <label for="password">{% trans "PASSWORD" %}</label>
-				    <input type="password" id="password" name="password">
-				</div>
+				    <input type="text" id="username_text" name="username">
+			    </div>
+			    <div id="password">
+			        <label for="password">{% trans "PASSWORD" %}</label>
+			        <input type="password" id="password_text" name="password">
+			    </div>
 			</div>
 			<input type="hidden" name="current_page_url" value="/main/"></input>
-			<input type="image" src="/media/image/login.png" alt="LOGIN">
-		    </form>
-		    <div id="navigation">
-			<p id="register"><a href="/account/register/agreement/">{% trans "REGISTER" %}</a></p>
-			<p id="guest"><a href="/main/">{% trans "GUEST" %}</a></p>
-		    </div>
+		   </form>
+		</div>
+		<div id="navigation">
+		    <p id="register"><a href="/account/register/agreement/">{% trans "REGISTER" %}</a></p>
+		    <p id="guest"><a href="/main/">{% trans "GUEST" %}</a></p>
+		</div>
 	    </div>
             <div id="footer_wrapper">
-		<div id="footer">
-		    {% trans "All copyrights reserved by SPARCS" %}
-		</div>
-                <div id="counter">
-                    <p>{% trans "TODAY" %} : <span>{{today_visitor_count}}</span></p>
-                    <p>{% trans "TOTAL" %} : <span>{{total_visitor_count}}</span></p>
-                </div>
+		<div id="footer_content">
+			<div id="footer">
+			    {% trans "All copyrights reserved by SPARCS" %}
+			</div>
+			<div id="counter">
+			    <p>{% trans "TODAY" %} : <span>{{today_visitor_count}}</span></p>
+			    <p>{% trans "TOTAL" %} : <span>{{total_visitor_count}}</span></p>
+			</div>
+    		</div>
             </div>
         </div>
     </body>

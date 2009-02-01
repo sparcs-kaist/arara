@@ -1,5 +1,11 @@
+#message_content_wrapper {
+    float: left;
+    margin: 0.8em 0 0 0.8em;
+}
+
 #message_content {
-	width: 40em;
+    float: left;
+    width: 40em;
 }
 
 .message_content A:visited, .message_content A:link {
@@ -8,28 +14,27 @@
 }
 
 #message_head {
-	background: url(/media/image/head_background.png) repeat;
-	width: 40em;
-	height: 3.2em;
-	color: white;
+    width: 40em;
+    background: url(/media/image/head_background.png) repeat top left;
+    float: left;
 }
 
 #message_head .main_head {
-	font-size: 1.5em;
-	font-weight: bold;
-	color: white;
-	padding: 0.4em;
-	padding-left: 1em;
-	position: relative;
-	float: left;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #FFFFFF;
+    font-family: tahoma;
+    margin: 0;
+    padding: 0.7em 0 0.7em 0.7em;
+    float: left;
 }
 
 #message_head .sub_head {
-	font-size: 1em;
-	color: white;
-	position: relative;
-	float: left;
-	padding-top: 1.1em;
+    font-size: 0.8em;
+    color: white;
+    font-family: tahoma;
+    float: left;
+    margin: 1.36em 0 0 0.3em;
 }
 
 form {
@@ -37,18 +42,18 @@ form {
 }
 
 #message_menu {
-	position: relative;
-	float: right;
-	margin: 0.5em;
-	padding: 0.5em;
-	background: url(/media/image/black_transparent.png) repeat;
-	color: white;
+    position: relative;
+    float: right;
+    margin: 0.5em;
+    padding: 0.5em;
+    background: url(/media/image/black_transparent.png) repeat;
+    color: white;
 }
 
 #message_menu a{
-	color: white;
+    color: white;
 }
 
 #message_menu span{
-	color: white;
+    color: white;
 }

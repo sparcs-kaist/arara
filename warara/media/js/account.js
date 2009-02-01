@@ -20,7 +20,7 @@ $(document).ready(function(){
         $("#re_password_field").keyup(function(event) {
             if (!($("#password_field").val() == $("#re_password_field").val())) {
                 $("#password_field").parent().children("label").children("span.feedback")
-                    .text("The password doesn't matched with the re-enter");
+                    .text("The password are not matched with the re-entered");
                 $textPasswordTest = 1;
             }
             else {

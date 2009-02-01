@@ -1,13 +1,18 @@
 /* My page */
+#blacklist {
+    float: left;
+    margin: 0.8em 0 0 0.8em;
+}
+
 #mypage {
     width: 30em;
     float: left;
-    margin: 0 4.2% 4% 0;
+    margin: 0 2.5em 3em 0;
 }
 
 #blacklist_mypage_head {
     width: 100%;
-    font-size: 1.5em;
+    font-size: 1.3em;
     color: #FFFFFF;
     font-weight: bold;
     font-family: tahoma;
@@ -57,13 +62,14 @@
     min-height: 2.3em;
 }
 
-th[name="del_checkbox"] {
-    width: 10%;
-    padding: 0.4em 0 0 0.6em;
+.th {
+    font-weight: normal;
+    text-align: left;
+    padding: 0.5em 0 0 0.9em;
 }
 
 th[name="chart_username"] {
-    width: 35%;
+    width: 55%;
     padding: 0.3em 0 0 0.6em;
 }
 
@@ -109,7 +115,7 @@ th[name="del_ea"] {
 
 #blacklist_user_search_head {
     width: 98%;
-    font-size: 1.5em;
+    font-size: 1.3em;
     color: #FFFFFF;
     font-weight: bold;
     font-family: tahoma;

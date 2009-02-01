@@ -10,6 +10,7 @@
 
 {% block content %}
 {% load i18n %}
+<div id="message_content_wrapper">
 <div id="message_head">
     <span class="main_head">
         {% block main_head %}{% endblock %}
@@ -29,5 +30,6 @@
 <div id="message_content" class="message_content">
     {% block message_content %}
     {% endblock message_content %}
+</div>
 </div>
 {% endblock content %}

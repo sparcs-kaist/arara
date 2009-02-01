@@ -1,9 +1,10 @@
 #board_content {
+    float: left;
     width: 100%;
 }
 
 #content {
-	padding-top: 0.68em;
+    padding-top: 0em;
 }
 
 .full {
@@ -14,32 +15,45 @@
     padding: 0.1em 1em;
 }
 
+#article_table th {
+    text-align: left;
+    font-weight: normal;
+    padding: 0.5em 0 0 0.9em;
+}
+
 #article_table_list th, td {
     padding: 0.35em 1em;
 }
 
 .column.cursor_col{
-	border-left: 1px solid white;
-    width: 1%;
+    border-left: 1px solid white;
+    width: 0.5%;
+    font-family: Verdana;
 }
 .column.id_col{
     width: 5%;
+    font-family: Verdana;
 }
 .column.author_col{
     width: 10%;
+    font-family: Gulim;
 }
 .column.date_col{
     width: 10%;
+    font-family: Verdana;
 }
 .column.vote_col{
     width: 1%;
-	padding-right: 0em;
+    padding-right: 0em;
+    font-family: Verdana;
 }
 .column.hit_col{
     width: 2%;
+    font-family: Verdana;
 }
 .column.title_col{
-	width: 50%;
+    width: 50%;
+    font-family: Gulim;
 }
 
 .column {
@@ -72,60 +86,57 @@ td {
 }
 
 #board_pages {
+    float: right;
     text-align: center;
-    margin:10px;
-}
-
-#board_buttons {
-	text-align: right;
+    margin: 0.5em 0 1.5em 0;
     width: 100%;
 }
 
-#board_buttons form {
-	display: inline;
-	position: relative;
-    width: 50%;
+#board_buttons {
+    float: right;
     text-align: right;
-    float:right;
 }
 
 #board_write {
-	position: relative;
-	float: right;
-	text-align: center;
+    float: left;
+    text-align: center;
+    height: 3em;
 }
 
 #board_write a{
-	display: -moz-inline-stack;
-	display: inline-block;
-	position: relative;
-	text-align: center;
-	padding: 0.2em 1em;
-	line-height: 150%;
-	background-color: #f6f6f6;
-	border: 1px solid #ccc;
-	margin-left: 0.5em;
+    padding: 0.3em 0.8em 0.3em 0.8em;
+    float: left;
+    background-color: #f6f6f6;
+    border: 1px solid #ccc;
+    margin-left: 0.3em;
+}
+
+#board_search {
+    float: left;
+}
+
+#board_search_content {
+    float: left;
 }
 
 #board_search_submit {
-	display: -moz-inline-stack;
-	display: inline-block;
-	position: relative;
-	text-align: center;
-	line-height: 150%;
-	background-color: #f6f6f6;
-	border: 1px solid #ccc;
+    padding: 0.3em 0.6em 0.1em 0.6em;
+    float: left;
+    background-color: #f6f6f6;
+    border: 1px solid #ccc;
 }
 
 .search_method a {
-	color: #aaa;
-	margin: 0em 0.1em;
-	line-height: 180%;
+    float: left;
+    color: #aaa;
+    margin: 0.4em 0.6em 0 0;
+    font-family: Dotum;
+    font-weight: lighter;
 }
 
 .search_method a.selected {
-	color: #222;
-	font-weight: bold;
+    color: #222;
+    font-weight: bold;
 }
 
 .deleted{
@@ -133,3 +144,9 @@ td {
 	filter:alpha(opacity:50);
 	opacity:0.5;
 }
+
+/* Blacklisted article*/
+.blacklisted_title {
+    font-weight: bold;
+}
+

@@ -32,7 +32,7 @@
 
 #message_list_table table {
     border: 0em;
-	border-top: 1px solid green;
+    border-top: 1px solid green;
     border-collapse: collapse;
 }
 
@@ -41,39 +41,42 @@
 
 #message_list_table table td, table th {
     margin: 0;
-    padding: 3px 5px;
-	border: 1px solid #fff;
+    padding: 0.6em 0 0.5em 0.9em;
+    border: 1px solid #fff;
     border-bottom: 1px solid #b5b5b5;
-	overflow: hidden;
+    overflow: hidden;
 }
 
 #message_list_table th {
-	background: #e0e0e0 url(/media/image/base/square.png) no-repeat 0% 0%;
-	border-top: 1px solid green;
-	border-bottom: 5px solid #dadada;
+    background: #e0e0e0 url(/media/image/base/square.png) no-repeat 0% 0%;
+    border-top: 1px solid green;
+    border-bottom: 5px solid #dadada;
+    font-weight: normal;
+    text-align: left;
+    padding: 0.7em 0 0.2em 0.9em;
+    min-height: 2.3em;
 }
 
 #message_list_table table tr {
     border: 0;
+    text-align: left;
 }
 
 #message_list_table_checkbox_col {
-	text-align: center;
-	width: 10%;
+    width: 10%;
 }
 
 #message_list_table_person_col {
-	width: 25%;
+    width: 25%;
 }
 
 #message_list_table_text_col {
-	color: #333;
-	width: 70%;
+    color: #333;
+    width: 70%;
 }
 
 #message_list_table_time_col {
-	text-align: right;
-	width: 25%;
+    width: 25%;
 }
 
 #message_page_move a.makered {
@@ -84,16 +87,8 @@
     background-color: #ddf;
 }
 
-#message_list_table th{
-	text-align: center;
-}
-
 #message_list_table_text_col {
 	overflow-x: hidden;
-}
-
-#message_list_table .new_message {
-	font-weight: bold;
 }
 
 #message_page_move {

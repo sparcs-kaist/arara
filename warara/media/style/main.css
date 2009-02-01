@@ -7,6 +7,7 @@
     background: #F7F7F7 url(/media/image/base/index/raw_ara_w_main_best_titlebar.png) no-repeat top left;
     border-bottom: 1px solid #EAEAEA;
     padding : 7px 0 0 10px;
+    font-weight: bold;
 }
 
 .best_articles {
@@ -18,6 +19,10 @@
 
 .best_articles_content_margin {
     margin: 10px;
+}
+
+.best_articles_content_margin li {
+    font-family: Dotum;
 }
 
 .best_articles dd {
@@ -35,6 +40,7 @@
 
 .best_articles_content_first li{
     list-style: none;
+    width: 100%;
 }
 
 #today_best_article_first {

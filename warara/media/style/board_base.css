@@ -1,8 +1,12 @@
+#board_content {
+    margin: 1.5em 0 0 0.8em;
+}
+
 #bbstitle_dingbet {
-    float:left;
-    width:17px;
-    height:13px;
-    margin:11px 8px 0px 10px;
+    float: left;
+    width: 17px;
+    height: 13px;
+    margin: 1.1em 0 0 0.5em;
     background: url('/media/image/base/subtitle/subtitle_bbstitle.png');
 }
 
