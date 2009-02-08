@@ -185,7 +185,7 @@ service BlacklistManager {
              3:bool block_article=1, 4:bool block_message=1),
     void delete_(1:string session_key, 2:string username),
     void modify(1:string session_key, 2:BlacklistRequest blacklist_info),
-    BlacklistInformation list(1:string session_key), 
+    BlacklistInformation list_(1:string session_key), 
 }
 
 struct WrittenArticle {
