@@ -236,12 +236,20 @@ struct Article {
     15: optional string read_status,
     16: optional i32 reply_count,
     17: optional string type
+    18: optional string board_name,
 }
 
 struct ArticleList {
     1: i32 last_page,
     2: i32 results,
-    3: list<Article> hit
+    3: list<Article> hit,
+    4: optional i32 current_page,
+}
+
+struct ArticleNumberList {
+    1: i32 last_page,
+    2: i32 results,
+    3: list<i32> hit,
 }
 
 service ArticleManager {

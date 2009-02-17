@@ -24,8 +24,8 @@ logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,)
 
 def suite():
     return unittest.TestSuite([
-                               #doctest.DocFileSuite(
-                               #    'test/article_manager.txt'),
+                               doctest.DocFileSuite(
+                                   'test/article_manager.txt'),
                                doctest.DocFileSuite(
                                    'test/member_manager.txt'),
                                doctest.DocFileSuite(

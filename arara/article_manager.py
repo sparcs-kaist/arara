@@ -8,6 +8,9 @@ from sqlalchemy import and_, or_, not_
 from arara import model
 from arara.util import require_login, filter_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
+from arara.util import datetime2timestamp
+
+from arara_thrift.ttypes import *
 
 log_method_call = log_method_call_with_source('article_manager')
 log_method_call_important = log_method_call_with_source_important('article_manager')
@@ -192,7 +195,10 @@ class ArticleManager(object):
         ret, today_best_list = self._get_today_best_article(None, None, count)
 
         if ret:
-            return today_best_list
+            for article in today_best_list:
+                article['date'] = datetime2timestamp(article['date'])
+                article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
+            return [Article(**d) for d in today_best_list]
         else:
             raise InternalError("DATABASE ERROR")
 
@@ -221,7 +227,10 @@ class ArticleManager(object):
         ret, today_best_list = self._get_today_best_article(None, board, count)
 
         if ret:
-            return today_best_list
+            for article in today_best_list:
+                article['date'] = datetime2timestamp(article['date'])
+                article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
+            return [Article(**d) for d in today_best_list]
         else:
             raise InternalError('DATABASE_ERROR')
 
@@ -244,7 +253,10 @@ class ArticleManager(object):
         ret, weekly_best_list = self._get_weekly_best_article(None, None, count)
 
         if ret:
-            return weekly_best_list
+            for article in weekly_best_list:
+                article['date'] = datetime2timestamp(article['date'])
+                article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
+            return [Article(**d) for d in weekly_best_list]
         else:
             raise InternalError('DATABASE_ERROR')
 
@@ -273,7 +285,10 @@ class ArticleManager(object):
         ret, weekly_best_list = self._get_weekly_best_article(None, board, count)
 
         if ret:
-            return weekly_best_list
+            for article in weekly_best_list:
+                article['date'] = datetime2timestamp(article['date'])
+                article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
+            return [Article(**d) for d in weekly_best_list]
         else:
             raise InternalError('DATABASE_ERROR')
         
@@ -309,7 +324,7 @@ class ArticleManager(object):
             article_number = []
             for article in article_dict_list:
                 article_number.append(article['id'])
-            ret, read_stats_list = self.read_status_manager.check_stats(session_key, article_number)
+            read_stats_list = self.read_status_manager.check_stats(session_key, article_number)
             #not_read_article = filter(lambda x : x = 'N', read_stats_list) 
             not_read_article_number = []
             for i in range(len(read_stats_list)):
@@ -328,7 +343,7 @@ class ArticleManager(object):
             ret_dict['last_page'] = last_page
             ret_dict['results'] = article_count 
             session.close()
-            return ret_dict
+            return ArticleNumberList(**ret_dict)
         except InvalidRequestError:
             session.close()
             raise InternalError('DATABASE_ERROR')
@@ -355,11 +370,11 @@ class ArticleManager(object):
                 2. 데이터베이스 오류: InternalError Exception
         '''
         ret_dict = {}
-        _, user_info = self.login_manager.get_session(session_key)
+        user_info = self.login_manager.get_session(session_key)
 
         try:
             session = model.Session()
-            user = session.query(model.User).filter_by(username=user_info['username']).one()
+            user = session.query(model.User).filter_by(username=user_info.username).one()
             article_count = article_list = session.query(model.Article).filter(and_(
                                 model.articles_table.c.root_id==None,
                                 model.articles_table.c.last_modified_date > user.last_logout_time)).count()
@@ -379,12 +394,16 @@ class ArticleManager(object):
                     model.articles_table.c.last_modified_date > user.last_logout_time))[offset:last].order_by(model.Article.id.desc()).all()
             article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
             for article in article_dict_list:
-                    article['read_status'] = 'N'
-            ret_dict['hit'] = article_dict_list
+                article['read_status'] = 'N'
+
+                article['date'] = datetime2timestamp(article['date'])
+                article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
+
+            ret_dict['hit'] = [Article(**d) for d in article_dict_list]
             ret_dict['last_page'] = last_page
             ret_dict['results'] = article_count
             session.close()
-            return ret_dict
+            return ArticleList(**ret_dict)
         except InvalidRequestError:
             session.close()
             raise InternalError('DATABASE_ERROR')
@@ -411,57 +430,58 @@ class ArticleManager(object):
                 2. 페이지 번호 오류: InvalidOperation Exception
                 3. 데이터베이스 오류: InternalError Exception 
         '''
-        ret_dict = {}
 
         try:
             session = model.Session()
-            ret, _ = self._is_board_exist(board_name)
-            list_success, blacklist_dict_list = self.blacklist_manager.list(session_key)
+            self._is_board_exist(board_name)
+            blacklist_dict_list = self.blacklist_manager.list_(session_key)
             blacklist_users = set()
-            if list_success:
-                for blacklist_item in blacklist_dict_list:
-                    if blacklist_item['block_article']:
-                        blacklist_users.add(blacklist_item['blacklisted_user_username'])
-            if ret:
-                board = session.query(model.Board).filter_by(board_name=board_name).one()
-                article_count = session.query(model.Article).filter_by(board_id=board.id, root_id=None).count()
-                last_page = int(article_count / page_length)
-                if article_count % page_length != 0:
-                    last_page += 1
-                elif article_count == 0:
-                    last_page += 1
-                if page > last_page:
-                    session.close()
-                    raise InvalidOperation('WRONG_PAGENUM')
-                offset = page_length * (page - 1)
-                last = offset + page_length
-                article_list = session.query(model.Article).filter_by(board_id=board.id, root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
-                article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
-                article_id_list = []
-                for article in article_dict_list:
-		    if article['author_username'] in blacklist_users:
-			article['blacklisted'] = True
-		    else:
-			article['blacklisted'] = False
-                    if article.has_key('id'):
-                        if not article.has_key('type'):
-                            article['type'] = 'normal'
-                        article_id_list.append(article['id']) 
-                ret, msg = self.read_status_manager.check_stats(session_key, article_id_list)
-                if ret:
-                    for index, article in enumerate(article_dict_list):
-                        article['read_status'] = msg[index]
-                ret_dict['hit'] = article_dict_list
-                ret_dict['last_page'] = last_page
-                ret_dict['results'] = article_count 
+            for blacklist_item in blacklist_dict_list:
+                if blacklist_item.block_article:
+                    blacklist_users.add(blacklist_item.blacklisted_user_username)
+            board = session.query(model.Board).filter_by(board_name=board_name).one()
+            article_count = session.query(model.Article).filter_by(board_id=board.id, root_id=None).count()
+            last_page = int(article_count / page_length)
+            if article_count % page_length != 0:
+                last_page += 1
+            elif article_count == 0:
+                last_page += 1
+            if page > last_page:
                 session.close()
-                return ret_dict
-            else:
-                session.close()
-                raise InvalidOperation('BOARD_NOT_EXIST')
+                raise InvalidOperation('WRONG_PAGENUM')
+            offset = page_length * (page - 1)
+            last = offset + page_length
+            article_list = session.query(model.Article).filter_by(board_id=board.id, root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
+            article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
+            article_id_list = []
+            for article in article_dict_list:
+                if article['author_username'] in blacklist_users:
+                    article['blacklisted'] = True
+                else:
+                    article['blacklisted'] = False
+                if article.has_key('id'):
+                    if not article.has_key('type'):
+                        article['type'] = 'normal'
+                    article_id_list.append(article['id']) 
+
+                article['date'] = datetime2timestamp(article['date'])
+                article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
+            msg = self.read_status_manager.check_stats(session_key, article_id_list)
+            for index, article in enumerate(article_dict_list):
+                article['read_status'] = msg[index]
+            ret_dict = {}
+            ret_dict['hit'] = [Article(**d) for d in article_dict_list]
+            ret_dict['last_page'] = last_page
+            ret_dict['results'] = article_count 
+            article_list = ArticleList(**ret_dict)
+            session.close()
+            return article_list
         except InvalidRequestError:
             session.close()
             raise InternalError('DATABASE_ERROR')
+        except Exception:
+            session.close()
+            raise
              
     @require_login
     @log_method_call_important
@@ -487,45 +507,41 @@ class ArticleManager(object):
                 4. 데이터베이스 오류: InternalError Exception 
         '''
 
-        _, user_info = self.login_manager.get_session(session_key)
-        ret, message = self._is_board_exist(board_name)
+        user_info = self.login_manager.get_session(session_key)
+        self._is_board_exist(board_name)
         
-        if ret:
-            session = model.Session()
-            board = session.query(model.Board).filter_by(board_name=board_name)
-            user = session.query(model.User).filter_by(username=user_info['username']).one()
-            _, blacklist_dict_list = self.blacklist_manager.list(session_key)
-            blacklist_users = set()
-            for blacklist_item in blacklist_dict_list:
-                if blacklist_item['block_article']:
-                    blacklist_users.add(blacklist_item['blacklisted_user_username'])
-            try:
-                article = session.query(model.Article).filter_by(id=no).one()
-                ret, msg = self.read_status_manager.check_stat(session_key, no)
-                if ret:
-                    if msg == 'N':
-                        article.hit += 1
-                        session.commit()
-            except InvalidRequestError:
-                session.rollback()
-                session.close()
-                raise InvalidOperation('ARTICLE_NOT_EXIST')
-            article_dict_list = self._article_thread_to_list(article)
-            article_id_list = []
-            for item in article_dict_list:
-                if item['author_username'] in blacklist_users:
-                    item['blacklisted'] = True
-                else:
-                    item['blacklisted'] = False
-                article_id_list.append(item['id'])
-            ret, msg = self.read_status_manager.mark_as_read_list(session_key, article_id_list)
-            if not ret:
-                session.close()
-                raise InternalError(msg)
+        session = model.Session()
+        board = session.query(model.Board).filter_by(board_name=board_name)
+        user = session.query(model.User).filter_by(username=user_info.username).one()
+        blacklist_dict_list = self.blacklist_manager.list_(session_key)
+        blacklist_users = set()
+        for blacklist_item in blacklist_dict_list:
+            if blacklist_item.block_article:
+                blacklist_users.add(blacklist_item.blacklisted_user_username)
+        try:
+            article = session.query(model.Article).filter_by(id=no).one()
+            msg = self.read_status_manager.check_stat(session_key, no)
+            if msg == 'N':
+                article.hit += 1
+                session.commit()
+        except InvalidRequestError:
+            session.rollback()
             session.close()
-            return article_dict_list
-        else:
-            raise InvalidOperation(message)
+            raise InvalidOperation('ARTICLE_NOT_EXIST')
+        article_dict_list = self._article_thread_to_list(article)
+        article_id_list = []
+        for item in article_dict_list:
+            if item['author_username'] in blacklist_users:
+                item['blacklisted'] = True
+            else:
+                item['blacklisted'] = False
+            article_id_list.append(item['id'])
+            item['date'] = datetime2timestamp(item['date'])
+            item['last_modified_date'] = datetime2timestamp(item['last_modified_date'])
+
+        self.read_status_manager.mark_as_read_list(session_key, article_id_list)
+        session.close()
+        return [Article(**d) for d in article_dict_list]
 
     @require_login
     @log_method_call
@@ -550,36 +566,33 @@ class ArticleManager(object):
 
         '''
         ret_dict = {}
-        ret, user_info = self.login_manager.get_session(session_key)
-        ret, message = self._is_board_exist(board_name)
+        user_info = self.login_manager.get_session(session_key)
+        self._is_board_exist(board_name)
 
-        if ret:
-            session = model.Session()
-            board = session.query(model.Board).filter_by(board_name=board_name).one()
-            total_article_count = session.query(model.Article).filter_by(board_id=board.id, root_id=None).count()
-            remaining_article_count = session.query(model.Article).filter(and_(
-                    model.articles_table.c.board_id==board.id,
-                    model.articles_table.c.root_id==None,
-                    model.articles_table.c.id < no)).count()
-            position_no = total_article_count - remaining_article_count
-            page_position = 0
-            while True:
-                page_position += 1
-                if position_no <= (page_length * page_position):
-                    break
-            ret, below_article_dict_list = self.article_list(session_key, board_name, page_position, page_length)
-            if ret:
-                ret_dict['hit'] = below_article_dict_list['hit']
-                ret_dict['current_page'] = page_position
-                ret_dict['last_page'] = below_article_dict_list['last_page']
-                ret_dict['results'] = below_article_dict_list['results'] 
-                session.close()
-                return ret_dict
-            else:
-                session.close()
-                raise InternalError('DATABASE_ERROR')
-        else:
-            raise InvalidOperation('BOARD_NOT_EXIST')
+        session = model.Session()
+        board = session.query(model.Board).filter_by(board_name=board_name).one()
+        total_article_count = session.query(model.Article).filter_by(board_id=board.id, root_id=None).count()
+        remaining_article_count = session.query(model.Article).filter(and_(
+                model.articles_table.c.board_id==board.id,
+                model.articles_table.c.root_id==None,
+                model.articles_table.c.id < no)).count()
+        position_no = total_article_count - remaining_article_count
+        page_position = 0
+        while True:
+            page_position += 1
+            if position_no <= (page_length * page_position):
+                break
+        try:
+            below_article_dict_list = self.article_list(session_key, board_name, page_position, page_length)
+        except Exception:
+            session.close()
+            raise
+        ret_dict['hit'] = below_article_dict_list.hit
+        ret_dict['current_page'] = page_position
+        ret_dict['last_page'] = below_article_dict_list.last_page
+        ret_dict['results'] = below_article_dict_list.results
+        session.close()
+        return ArticleList(**ret_dict)
         
 
     @require_login
@@ -603,30 +616,27 @@ class ArticleManager(object):
                 3. 데이터베이스 오류: InrernalError Exception
         '''
 
-        ret, user_info = self.login_manager.get_session(session_key)
-        ret, message = self._is_board_exist(board_name)
-        if ret:
-            session = model.Session()
-            board = session.query(model.Board).filter_by(board_name=board_name).one()
-            try:
-                article = session.query(model.Article).filter_by(id=article_no).one()
-            except InvalidRequestError:
-                session.close()
-                raise InvalidOperation('ARTICLE_NOT_EXIST')
-            user = session.query(model.User).filter_by(username=user_info['username']).one()
-            vote_unique_check = session.query(model.ArticleVoteStatus).filter_by(user_id=user.id, board_id=board.id, article_id = article.id).all()
-            if vote_unique_check:
-                session.close()
-                raise InvalidOperation('ALREADY_VOTED')
-            else:
-                article.vote += 1
-                vote = model.ArticleVoteStatus(user, board, article)
-                session.save(vote)
-                session.commit()
-                session.close()
-                return True
+        user_info = self.login_manager.get_session(session_key)
+        self._is_board_exist(board_name)
+        session = model.Session()
+        board = session.query(model.Board).filter_by(board_name=board_name).one()
+        try:
+            article = session.query(model.Article).filter_by(id=article_no).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('ARTICLE_NOT_EXIST')
+        user = session.query(model.User).filter_by(username=user_info.username).one()
+        vote_unique_check = session.query(model.ArticleVoteStatus).filter_by(user_id=user.id, board_id=board.id, article_id = article.id).all()
+        if vote_unique_check:
+            session.close()
+            raise InvalidOperation('ALREADY_VOTED')
         else:
-            raise InvalidOperation('BOARD_NOT_EXIST')
+            article.vote += 1
+            vote = model.ArticleVoteStatus(user, board, article)
+            session.save(vote)
+            session.commit()
+            session.close()
+            return
 
     @require_login
     @log_method_call_important
@@ -702,31 +712,28 @@ class ArticleManager(object):
         '''
 
 
-        ret, user_info = self.login_manager.get_session(session_key)
-        ret, message = self._is_board_exist(board_name)
-        if ret:
-            session = model.Session()
-            author = session.query(model.User).filter_by(username=user_info['username']).one()
-            board = session.query(model.Board).filter_by(board_name=board_name).one()
-            try:
-                article = session.query(model.Article).filter_by(board_id=board.id, id=article_no).one()
-                new_reply = model.Article(board,
-                                        reply_dic['title'],
-                                        reply_dic['content'],
-                                        author,
-                                        user_info['ip'],
-                                        article)
-                article.reply_count += 1
-                if article.root:
-                    article.root.reply_count += 1
-                session.save(new_reply)
-                session.commit()
-                session.close()
-            except InvalidRequestError:
-                session.close()
-                raise InvalidOperation('ARTICLE_NOT_EXIST')
-        else:
-            raise InvalidOperation('BOARD_NOT_EXIST')
+        user_info = self.login_manager.get_session(session_key)
+        self._is_board_exist(board_name)
+        session = model.Session()
+        author = session.query(model.User).filter_by(username=user_info.username).one()
+        board = session.query(model.Board).filter_by(board_name=board_name).one()
+        try:
+            article = session.query(model.Article).filter_by(board_id=board.id, id=article_no).one()
+            new_reply = model.Article(board,
+                                    reply_dic.title,
+                                    reply_dic.content,
+                                    author,
+                                    user_info.ip,
+                                    article)
+            article.reply_count += 1
+            if article.root:
+                article.root.reply_count += 1
+            session.save(new_reply)
+            session.commit()
+            session.close()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('ARTICLE_NOT_EXIST')
         return new_reply.id
 
     @require_login
@@ -757,36 +764,33 @@ class ArticleManager(object):
                 5. 데이터베이스 오류: InternalError Exception 
         '''
 
-        ret, user_info = self.login_manager.get_session(session_key)
-        ret, message = self._is_board_exist(board_name)
-        if ret:
-            session = model.Session()
-            author = session.query(model.User).filter_by(username=user_info['username']).one()
-            board = session.query(model.Board).filter_by(board_name=board_name).one()
-            try:
-                article = session.query(model.Article).filter_by(board_id=board.id, id=no).one()
-                if article.deleted == True:
-                    session.close()
-                    raise InvalidOperation("NO_PERMISSION")
-                if article.author_id == author.id:
-                    article.title = article_dic['title']
-                    article.content = article_dic['content']
-                    article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
-                    session.commit()
-                    session.close()
-                else:
-                    session.close()
-                    raise InvalidOperation("NO_PERMISSION")
-            except InvalidRequestError:
+        user_info = self.login_manager.get_session(session_key)
+        self._is_board_exist(board_name)
+        session = model.Session()
+        author = session.query(model.User).filter_by(username=user_info.username).one()
+        board = session.query(model.Board).filter_by(board_name=board_name).one()
+        try:
+            article = session.query(model.Article).filter_by(board_id=board.id, id=no).one()
+            if article.deleted == True:
                 session.close()
-                raise InvalidOperation("ARTICLE_NOT_EXIST")
-        else:
-            raise InvalidOperation("BOARD_NOT_EXIST")
+                raise InvalidOperation("NO_PERMISSION")
+            if article.author_id == author.id:
+                article.title = article_dic['title']
+                article.content = article_dic['content']
+                article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
+                session.commit()
+                session.close()
+            else:
+                session.close()
+                raise InvalidOperation("NO_PERMISSION")
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation("ARTICLE_NOT_EXIST")
         return article.id
 
     @require_login
     @log_method_call_important
-    def delete(self, session_key, board_name, no):
+    def delete_(self, session_key, board_name, no):
         '''
         DB에 해당하는 글 삭제
         
@@ -807,29 +811,26 @@ class ArticleManager(object):
                 5. 데이터베이스 오류: InternalError Exception
         '''
 
-        ret, user_info = self.login_manager.get_session(session_key)
-        ret, message = self._is_board_exist(board_name)
-        if ret:
-            session = model.Session()
-            author = session.query(model.User).filter_by(username=user_info['username']).one()
-            board = session.query(model.Board).filter_by(board_name=board_name).one()
-            try:
-                article = session.query(model.Article).filter_by(board_id=board.id, id=no).one()
-                if article.author_id == author.id:
-                    article.deleted = True
-                    article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
-                    if article.root:
-                        article.root.reply_count -= 1
-                    session.commit()
-                    session.close()
-                else:
-                    session.close()
-                    raise InvalidOperation("NO_PERMISSION")
-            except InvalidRequestError:
+        user_info = self.login_manager.get_session(session_key)
+        self._is_board_exist(board_name)
+        session = model.Session()
+        author = session.query(model.User).filter_by(username=user_info.username).one()
+        board = session.query(model.Board).filter_by(board_name=board_name).one()
+        try:
+            article = session.query(model.Article).filter_by(board_id=board.id, id=no).one()
+            if article.author_id == author.id:
+                article.deleted = True
+                article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
+                if article.root:
+                    article.root.reply_count -= 1
+                session.commit()
                 session.close()
-                raise InvalidOperation("ARTICLE_NOT_EXIST")
-        else:
-            raise InvalidOperation("BOARD_NOT_EXIST")
+            else:
+                session.close()
+                raise InvalidOperation("NO_PERMISSION")
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation("ARTICLE_NOT_EXIST")
         return True
 
 # vim: set et ts=8 sw=4 sts=4
