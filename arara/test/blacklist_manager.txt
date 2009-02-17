@@ -48,30 +48,30 @@ InvalidOperation
 Traceback (most recent call last):
   ...
 InvalidOperation
->>> ret = server.blacklist_manager.list(session_key)
+>>> ret = server.blacklist_manager.list_(session_key)
 >>> [x.__dict__ for x in ret]
-[{'blacklisted_user_nickname': u'combacsa', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'block_article': True, 'blacklisted_user_username': u'combacsa', 'block_message': True, 'blacklisted_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}])
+[{'blacklisted_user_nickname': u'combacsa', 'last_modified_date': 1.1000000000000001, 'block_article': True, 'blacklisted_user_username': u'combacsa', 'block_message': True, 'blacklisted_date': 1.1000000000000001, 'id': 1}]
 >>> blacklist_dict = {'blacklisted_user_username': u'combacsa', 'block_article': 'False', 'block_message': 'True'}
 >>> server.blacklist_manager.modify(session_key, BlacklistRequest(**blacklist_dict))
->>> ret = server.blacklist_manager.list(session_key)
+>>> ret = server.blacklist_manager.list_(session_key)
 >>> [x.__dict__ for x in ret]
-[{'blacklisted_user_nickname': u'combacsa', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'block_article': True, 'blacklisted_user_username': u'combacsa', 'block_message': True, 'blacklisted_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'id': 1}]
+[{'blacklisted_user_nickname': u'combacsa', 'last_modified_date': 1.1000000000000001, 'block_article': True, 'blacklisted_user_username': u'combacsa', 'block_message': True, 'blacklisted_date': 1.1000000000000001, 'id': 1}]
 >>> blacklist_dict = {'blacklisted_user_username': u'pv457', 'block_article': 'False', 'block_message': 'True'}
 >>> server.blacklist_manager.modify(session_key, BlacklistRequest(**blacklist_dict))
 Traceback (most recent call last):
   ...
 InvalidOperation
->>> server.blacklist_manager.delete(session_key, u'combacsa')
+>>> server.blacklist_manager.delete_(session_key, u'combacsa')
 >>> blacklist_dict = {'blacklisted_user_username': u'combacsa', 'block_article': 'False', 'block_message': 'True'}
 >>> server.blacklist_manager.modify(session_key, BlacklistRequest(**blacklist_dict))
 Traceback (most recent call last):
   ...
 InvalidOperation
->>> server.blacklist_manager.delete(session_key, u'combacsa')
+>>> server.blacklist_manager.delete_(session_key, u'combacsa')
 Traceback (most recent call last):
   ...
 InvalidOperation
->>> server.blacklist_manager.delete(session_key, u'pv457')
+>>> server.blacklist_manager.delete_(session_key, u'pv457')
 Traceback (most recent call last):
   ...
 InvalidOperation

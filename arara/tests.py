@@ -28,8 +28,8 @@ def suite():
                                #    'test/article_manager.txt'),
                                doctest.DocFileSuite(
                                    'test/member_manager.txt'),
-                               #doctest.DocFileSuite(
-                               #    'test/blacklist_manager.txt'),
+                               doctest.DocFileSuite(
+                                   'test/blacklist_manager.txt'),
                                #doctest.DocFileSuite(
                                #    'test/messaging_manager.txt'),
                                doctest.DocFileSuite(

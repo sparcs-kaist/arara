@@ -91,15 +91,15 @@ class BlacklistManager(object):
                 5. 로그인되지 않은 사용자: NotLoggedIn Exception
                 6. 데이터베이스 오류: InternalError Exception 
         '''
-        ret, user_info = self.login_manager.get_session(session_key)
+        user_info = self.login_manager.get_session(session_key)
 
         username = smart_unicode(username)
 
-        if username == user_info['username']:
+        if username == user_info.username:
             raise InvalidOperation('cannot add yourself')
 
         session = model.Session()
-        user = session.query(model.User).filter_by(username=user_info['username']).one()
+        user = session.query(model.User).filter_by(username=user_info.username).one()
         try:
             target_user = session.query(model.User).filter_by(username=username).one()
         except InvalidRequestError:
@@ -118,7 +118,7 @@ class BlacklistManager(object):
        
     @require_login
     @log_method_call_important
-    def delete(self, session_key, username):
+    def delete_(self, session_key, username):
         '''
         블랙리스트 username 삭제 
 
@@ -138,12 +138,12 @@ class BlacklistManager(object):
                 3. 데이터베이스 오류: InternalError Exception
         '''
         
-        ret, user_info =  self.login_manager.get_session(session_key)
+        user_info =  self.login_manager.get_session(session_key)
 
         username = smart_unicode(username)
 
         session = model.Session()
-        user = session.query(model.User).filter_by(username=user_info['username']).one()
+        user = session.query(model.User).filter_by(username=user_info.username).one()
         try:
             blacklisted_user = session.query(model.User).filter_by(username=username).one()
         except InvalidRequestError:
@@ -185,12 +185,12 @@ class BlacklistManager(object):
         #if not is_keys_in_dict(blacklist_dict, BLACKLIST_DICT):
         #    return False, 'WRONG_DICTIONARY'
 
-        ret, user_info = self.login_manager.get_session(session_key)
+        user_info = self.login_manager.get_session(session_key)
 
         session = model.Session()
-        user = session.query(model.User).filter_by(username=user_info['username']).one()
+        user = session.query(model.User).filter_by(username=user_info.username).one()
         try:
-            target_user = session.query(model.User).filter_by(username=blacklist_info['blacklisted_user_username']).one()
+            target_user = session.query(model.User).filter_by(username=blacklist_info.blacklisted_user_username).one()
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('username not exist')
@@ -200,8 +200,8 @@ class BlacklistManager(object):
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('username not in blacklist')
-        blacklist_to_modify.block_article = blacklist_info['block_article']
-        blacklist_to_modify.block_message = blacklist_info['block_message']
+        blacklist_to_modify.block_article = blacklist_info.block_article
+        blacklist_to_modify.block_message = blacklist_info.block_message
         blacklist_to_modify.last_modified_date = datetime.datetime.fromtimestamp(time.time())
         session.commit()
         session.close()
@@ -209,7 +209,7 @@ class BlacklistManager(object):
 
     @require_login
     @log_method_call
-    def list(self,session_key):
+    def list_(self,session_key):
         '''
         블랙리스트로 설정한 사람의 목록을 보여줌
 
@@ -228,22 +228,25 @@ class BlacklistManager(object):
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
 
-        ret, user_info = self.login_manager.get_session(session_key)
+        user_info = self.login_manager.get_session(session_key)
 
         try:
             session = model.Session()
-            user = session.query(model.User).filter_by(username=user_info['username']).one()
+            user = session.query(model.User).filter_by(username=user_info.username).one()
             blacklist_list = session.query(model.Blacklist).filter_by(user_id=user.id).all()
             blacklist_dict_list = self._get_dict_list(blacklist_list, BLACKLIST_LIST_DICT)
             session.close()
         except:
             raise InternalError('database error')
             session.close()
-        blacklist_dict_list['last_modified_date'] = \
-                datetime2timestamp(blacklist_dict_list['last_modified_date'])
-        blacklist_dict_list['blacklisted_date'] = \
-                datetime2timestamp(blacklist_dict_list['blacklisted_date'])
-        return blacklist_dict_list
+        blacklist_list = []
+        for d in blacklist_dict_list:
+            d['last_modified_date'] = \
+                    datetime2timestamp(d['last_modified_date'])
+            d['blacklisted_date'] = \
+                    datetime2timestamp(d['blacklisted_date'])
+            blacklist_list.append(BlacklistInformation(**d))
+        return blacklist_list
 
 
 # vim: set et ts=8 sw=4 sts=4
