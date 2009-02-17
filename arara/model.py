@@ -374,7 +374,8 @@ mapper(Blacklist, blacklist_table, properties={
 
 #TEST_DATABASE_FILENAME = 'test.db'
 #CONNECTION_STRING = 'sqlite:///%s' % TEST_DATABASE_FILENAME
-CONNECTION_STRING = 'mysql://arara:together@localhost/arara?charset=utf8&use_unicode=1'
+import settings
+CONNECTION_STRING = settings.DB_CONNECTION_STRING
 
 engine = None
 
@@ -384,8 +385,8 @@ def get_engine():
     if not engine:
         from sqlalchemy import create_engine
         engine = create_engine(CONNECTION_STRING, encoding='utf-8',
-                                convert_unicode=True, pool_size=5,
-                                max_overflow=10, echo=False)
+                                convert_unicode=True, assert_unicode=None,
+                                pool_size=50, max_overflow=100, echo=False)
     return engine
 
 Session = None

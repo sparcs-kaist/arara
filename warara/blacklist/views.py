@@ -107,6 +107,6 @@ def wrap_error(f):
 
 index = wrap_error(index)
 get_various_info = wrap_error(get_various_info)
-#add = wrap_error(add)
+add = wrap_error(add)
 delete = wrap_error(delete)
 update = wrap_error(update)

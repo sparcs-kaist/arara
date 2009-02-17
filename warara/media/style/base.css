@@ -186,9 +186,9 @@ a {
 
 #content {
     height: 100%;
-    width: 66.2em;
+    width: 67em;
     float: left;
-    padding: 0.8em;
+    padding: 0.8em 0 0 0.8em;
 }
 
 #menu ul {
@@ -218,8 +218,8 @@ a {
     float: left;
     font-size: 3em;
     margin: 0;
-    padding: 0.8% 2%;
-    background: url('/media/image/base/header/raw_ara_w_main_header_webara_logo.png') no-repeat 17% 40%;
+    padding: 0.8% 0.3% 0.8% 2%;
+    background: url('/media/image/base/header/raw_ara_w_main_header_webara_logo.png') no-repeat 20% 40%;
 }
 
 #header h1 a {
@@ -231,6 +231,11 @@ a {
 
 #header h1 a img {
     border: 0;
+}
+
+#beta_png {
+    float: left;
+    margin: 0.13em 0 0 0;
 }
 
 /* IE hack */

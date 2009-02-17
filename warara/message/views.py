@@ -266,6 +266,6 @@ def wrap_error(f):
 
 inbox = wrap_error(inbox)
 outbox = wrap_error(outbox)
-#send = wrap_error(send)
+send = wrap_error(send)
 read = wrap_error(read)
 delete = wrap_error(delete)

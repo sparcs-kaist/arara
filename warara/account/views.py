@@ -188,10 +188,10 @@ def wrap_error(f):
 
     return check_error
 
-#login = wrap_error(login)
+login = wrap_error(login)
 logout = wrap_error(logout)
 account = wrap_error(account)
-#register = wrap_error(register)
+register = wrap_error(register)
 agreement = wrap_error(agreement)
 confirm_user = wrap_error(confirm_user)
 account_modify = wrap_error(account_modify)

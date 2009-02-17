@@ -43,7 +43,12 @@ a {
 
 #logo {
     float: right;
-    margin: 3em 3em 0 0;
+    margin: 3em 0em 0 0;
+}
+
+#index_beta_png {
+    float: right;
+    margin: 2.3em 3em 0 0;
 }
 
 #login, #navigation {

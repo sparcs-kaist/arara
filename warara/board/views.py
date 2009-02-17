@@ -149,6 +149,8 @@ def write_(request, board_name):
     if request.FILES:
         file = {}
         for key, file_ob in request.FILES.items():
+            if file_ob.size > 100*1024*1024:
+                continue
             ret, file = server.file_manager.save_file(sess, int(article_id), file_ob.name)
             assert ret, file
             if not os.path.isdir('files/%s' % file['file_path']):
@@ -302,12 +304,12 @@ def wrap_error(f):
 
     return check_error
 
-#list = wrap_error(list)
-#read = wrap_error(read)
+list = wrap_error(list)
+read = wrap_error(read)
 vote = wrap_error(vote)
 index = wrap_error(index)
-#write = wrap_error(write)
+write = wrap_error(write)
 reply = wrap_error(reply)
 delete = wrap_error(delete)
-#search = wrap_error(search)
+search = wrap_error(search)
 file_download = wrap_error(file_download)
