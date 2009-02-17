@@ -1,5 +1,6 @@
 # Bootstrap test
 
+>>> from arara_thrift.ttypes import *
 >>> import arara.model
 >>> arara.model.init_test_database()
 >>> import arara
@@ -7,71 +8,77 @@
 
 # Login as SYSOP and create 'garbage' board
 
->>> ret, session_key_sysop = server.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123')
->>> ret
-True
+>>> session_key_sysop = server.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123')
 
 >>> server.board_manager.add_board(session_key_sysop, u'garbages', u'Garbage Board')
-(True, 'OK')
 
 # Register one user, mikkang
 
 >>> user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang@example.com', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
->>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
+>>> register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
 >>> server.member_manager.confirm(u'mikkang', register_key)
-(True, 'OK')
->>> ret, session_key = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.140')
->>> ret
-True
+>>> session_key = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.140')
 
 # Write an article
 
->>> article_dic = {'title': u'serialx is...', 'content': u'polarbear'}
->>> server.article_manager.write_article(session_key, u'garbages', article_dic)
-(True, 1)
+>>> article = Article(**{'title': u'serialx is...', 'content': u'polarbear'})
+>>> server.article_manager.write_article(session_key, u'garbages', article)
+1
 
 # Write one more article
 
->>> article_dic = {'title': u'serialx is...', 'content': u'polarbear'}
->>> server.article_manager.write_article(session_key, u'garbages', article_dic)
-(True, 2)
+>>> article = Article(**{'title': u'serialx is...', 'content': u'polarbear'})
+>>> server.article_manager.write_article(session_key, u'garbages', article)
+2
 
 # Read_Status_Manager check!
 
 >>> server.read_status_manager.check_stat(session_key, 1)
-(True, 'N')
+'N'
 >>> server.read_status_manager.check_stats(session_key, [1,2])
-(True, ['N', 'N'])
+['N', 'N']
 >>> server.read_status_manager.mark_as_read(session_key, 1)
-(True, 'OK')
 >>> server.read_status_manager.mark_as_viewed(session_key, 2)
-(True, 'OK')
 >>> server.read_status_manager.check_stats(session_key, [1,2])
-(True, ['R', 'V'])
+['R', 'V']
 
 Error Test
 
 >>> server.read_status_manager.check_stat(session_key, 3)
-(False, 'ARTICLE_NOT_EXIST')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 >>> server.read_status_manager.check_stat('asdfasdf', 1)
-(False, 'NOT_LOGGEDIN')
+Traceback (most recent call last):
+  ...
+NotLoggedIn
 
 >>> server.read_status_manager.check_stats(session_key, [1,2,3])
-(False, 'ARTICLE_NOT_EXIST')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 >>> server.read_status_manager.check_stats('asdfasdf', [1,2])
-(False, 'NOT_LOGGEDIN')
+Traceback (most recent call last):
+  ...
+NotLoggedIn
 
 >>> server.read_status_manager.mark_as_read(session_key, 3)
-(False, 'ARTICLE_NOT_EXIST')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 >>> server.read_status_manager.mark_as_read('asdfasdf', 1)
-(False, 'NOT_LOGGEDIN')
+Traceback (most recent call last):
+  ...
+NotLoggedIn
 
 >>> server.read_status_manager.mark_as_viewed(session_key, 3)
-(False, 'ARTICLE_NOT_EXIST')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 >>> server.read_status_manager.mark_as_viewed('asdfasdf', 2)
-(False, 'NOT_LOGGEDIN')
+Traceback (most recent call last):
+  ...
+NotLoggedIn
 
 #Reset the database
 >>> import arara.model

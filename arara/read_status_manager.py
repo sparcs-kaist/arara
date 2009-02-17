@@ -8,6 +8,8 @@ from arara import model
 from arara.util import require_login
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 
+from arara_thrift.ttypes import *
+
 log_method_call = log_method_call_with_source('read_status_manager')
 log_method_call_important = log_method_call_with_source_important('read_status_manager')
 
@@ -145,11 +147,10 @@ class ReadStatusManager(object):
             for no in no_data:
                 if no > top_article.id:
                     
-                    return False, 'ARTICLE_NOT_EXIST'
+                    raise InvalidOperation('ARTICLE_NOT_EXIST')
         else:
             if no_data > top_article.id:
-                return False, 'ARTICLE_NOT_EXIST'
-        return True, 'OK'
+                raise InvalidOperation('ARTICLE_NOT_EXIST')
 
     def _initialize_data(self, user):
         session = model.Session()
@@ -195,18 +196,14 @@ class ReadStatusManager(object):
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
 
-        ret, user_info = self.login_manager.get_session(session_key)
-        if ret:
-            session = model.Session()
-            user = session.query(model.User).filter_by(username=user_info['username']).one()
-            session.close()
-            ret, _ = self._initialize_data(user)
-            ret, msg = self._check_article_exist(no)
-            if ret:
-                status = self.read_status[user.id].get(no)
-                return True, status
-            else:
-                return ret, msg
+        user_info = self.login_manager.get_session(session_key)
+        session = model.Session()
+        user = session.query(model.User).filter_by(username=user_info.username).one()
+        session.close()
+        ret, _ = self._initialize_data(user)
+        self._check_article_exist(no)
+        status = self.read_status[user.id].get(no)
+        return status
 
     @require_login
     @log_method_call
@@ -228,18 +225,14 @@ class ReadStatusManager(object):
                 1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        ret, user_info = self.login_manager.get_session(session_key)
-        if ret:
-            session = model.Session()
-            user = session.query(model.User).filter_by(username=user_info['username']).one()
-            session.close()
-            ret, _ = self._initialize_data(user)
-            ret, msg = self._check_article_exist(no_list)
-            if ret:
-                status = self.read_status[user.id].get_range(no_list)
-                return True, status
-            else:
-                return ret, msg
+        user_info = self.login_manager.get_session(session_key)
+        session = model.Session()
+        user = session.query(model.User).filter_by(username=user_info.username).one()
+        session.close()
+        ret, _ = self._initialize_data(user)
+        self._check_article_exist(no_list)
+        status = self.read_status[user.id].get_range(no_list)
+        return status
 
     @require_login
     @log_method_call
@@ -262,18 +255,13 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        ret, user_info = self.login_manager.get_session(session_key)
-        if ret:
-            session = model.Session()
-            user = session.query(model.User).filter_by(username=user_info['username']).one()
-            session.close()
-            ret, _ = self._initialize_data(user)
-            ret, msg = self._check_article_exist(no_list)
-            if ret:
-                status = self.read_status[user.id].set_range(no_list, 'R')
-                return True, 'OK'
-            else:
-                return ret, msg
+        user_info = self.login_manager.get_session(session_key)
+        session = model.Session()
+        user = session.query(model.User).filter_by(username=user_info.username).one()
+        session.close()
+        ret, _ = self._initialize_data(user)
+        self._check_article_exist(no_list)
+        status = self.read_status[user.id].set_range(no_list, 'R')
 
     @require_login
     @log_method_call
@@ -296,18 +284,13 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        ret, user_info = self.login_manager.get_session(session_key)
-        if ret:
-            session = model.Session()
-            user = session.query(model.User).filter_by(username=user_info['username']).one()
-            session.close()
-            ret, _ = self._initialize_data(user)
-            ret, msg = self._check_article_exist(no)
-            if ret:
-                status = self.read_status[user.id].set(no, 'R')
-                return True, 'OK'
-            else:
-                return ret, msg
+        user_info = self.login_manager.get_session(session_key)
+        session = model.Session()
+        user = session.query(model.User).filter_by(username=user_info.username).one()
+        session.close()
+        ret, _ = self._initialize_data(user)
+        self._check_article_exist(no)
+        status = self.read_status[user.id].set(no, 'R')
 
     @require_login
     @log_method_call
@@ -327,18 +310,13 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        ret, user_info = self.login_manager.get_session(session_key)
-        if ret:
-            session = model.Session()
-            user = session.query(model.User).filter_by(username=user_info['username']).one()
-            session.close()
-            ret, _ = self._initialize_data(user)
-            ret, msg = self._check_article_exist(no)
-            if ret:
-                status = self.read_status[user.id].set(no, 'V')
-                return True, 'OK'
-            else:
-                return ret, msg
+        user_info = self.login_manager.get_session(session_key)
+        session = model.Session()
+        user = session.query(model.User).filter_by(username=user_info.username).one()
+        session.close()
+        ret, _ = self._initialize_data(user)
+        self._check_article_exist(no)
+        status = self.read_status[user.id].set(no, 'V')
 
     @log_method_call
     def save_to_database(self, user_id=None, session_key=None):
@@ -349,9 +327,9 @@ class ReadStatusManager(object):
             if ret:
                 pass
             else:
-                return False, 'NOT_LOGGEDIN'
+                raise InvalidOperation('NOT_LOGGEDIN')
         else:
-            return False, 'WRONG_REQUEST'
+            raise InvalidOperation('WRONG_REQUEST')
 
 
 # vim: set et ts=8 sw=4 sts=4

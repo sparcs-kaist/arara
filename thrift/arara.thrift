@@ -204,6 +204,15 @@ service BoardManager {
     void delete_board(1:string session_key, 2:string board_name),
 }
 
+service ReadStatusManager {
+    string check_stat(1:string session_key, 2:i32 no),
+    list<string> check_stats(1:string session_key, 2:list<i32> no_list),
+    void mark_as_read_list(1:string session_key, 2:list<i32> no_list),
+    void mark_as_read(1:string session_key, 2:i32 no),
+    void mark_as_viewed(1:string session_key, 2:i32 no),
+    void save_to_database(1:string user_id="", 2:string session_key=""),
+}
+
 struct WrittenArticle {
     1: string title,
     2: string content

@@ -53,11 +53,7 @@ class ArticleManager(object):
         self.file_manager = file_manager
 
     def _is_board_exist(self, board_name):
-        ret, _ = self.board_manager.get_board(board_name)
-        if ret:
-            return True, 'OK'
-        else:
-            return False, 'BOARD_NOT_EXIST'
+        self.board_manager.get_board(board_name)
 
     def _article_thread_to_list(self, article_thread):
         queue = []
@@ -656,30 +652,27 @@ class ArticleManager(object):
                 4. 데이터베이스 오류: InternalError Exception
         '''
 
-        ret, user_info = self.login_manager.get_session(session_key)
-        ret, message = self._is_board_exist(board_name)
-        if ret:
-            session = model.Session()
-            author = session.query(model.User).filter_by(username=user_info['username']).one()
-            board = session.query(model.Board).filter_by(board_name=board_name).one()
-            if not board.read_only:
-                new_article = model.Article(board,
-                                            article_dic['title'],
-                                            article_dic['content'],
-                                            author,
-                                            user_info['ip'],
-                                            None)
-                session.save(new_article)
-                if article_dic.has_key('is_searchable'):
-                    if not article_dic['is_searchable']:
-                        new_article.is_searchable = False
-                session.commit()
-                session.close()
-            else:
-                session.close()
-                raise InvalidOperation('READ_ONLY_BOARD')
+        user_info = self.login_manager.get_session(session_key)
+        self._is_board_exist(board_name)
+        session = model.Session()
+        author = session.query(model.User).filter_by(username=user_info.username).one()
+        board = session.query(model.Board).filter_by(board_name=board_name).one()
+        if not board.read_only:
+            new_article = model.Article(board,
+                                        article_dic.title,
+                                        article_dic.content,
+                                        author,
+                                        user_info.ip,
+                                        None)
+            session.save(new_article)
+            if article_dic.__dict__.has_key('is_searchable'):
+                if not article_dic.is_searchable:
+                    new_article.is_searchable = False
+            session.commit()
+            session.close()
         else:
-            raise InvalidOperation('BOARD_NOT_EXIST')
+            session.close()
+            raise InvalidOperation('READ_ONLY_BOARD')
         return new_article.id
 
     @require_login
