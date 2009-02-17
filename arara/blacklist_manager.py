@@ -3,13 +3,13 @@
 import datetime
 import time
 
-from arara_thrift.ttypes import *
-
 from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
 from arara import model
 from arara.util import filter_dict, require_login, is_keys_in_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 from arara.util import smart_unicode, datetime2timestamp
+
+from arara_thrift.ttypes import *
 
 log_method_call = log_method_call_with_source('blacklist_manager')
 log_method_call_important = log_method_call_with_source_important('blacklist_manager')

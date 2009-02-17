@@ -42,8 +42,8 @@ def suite():
                                #    'test/read_status_manager.txt'),
                                #doctest.DocFileSuite(
                                #    'test/file_manager.txt'),
-                               #doctest.DocFileSuite(
-                               #    'test/board_manager.txt'),
+                               doctest.DocFileSuite(
+                                   'test/board_manager.txt'),
                                #doctest.DocFileSuite(
                                #    'test/search_manager.txt'),
                                #doctest.DocTestSuite(blacklist_manager),

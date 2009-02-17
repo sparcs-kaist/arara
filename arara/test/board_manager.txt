@@ -1,5 +1,5 @@
 # Set the test database
-
+>>> from arara_thrift.ttypes import *
 >>> import arara.model
 >>> arara.model.init_test_database()
 >>> import arara
@@ -8,108 +8,122 @@
 # Register one user, mikkang
 
 >>> user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang@example.com', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
->>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
+>>> register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
 >>> server.member_manager.confirm(u'mikkang', register_key)
-(True, 'OK')
->>> ret, session_key = server.login_manager.login(u'mikkang', u'mikkang', '143.248.234.140')
->>> ret
-True
+>>> session_key = server.login_manager.login(u'mikkang', u'mikkang', '143.248.234.140')
 
 # Login as sysop
 
->>> ret, session_key_sysop = server.login_manager.login(u'SYSOP', u'SYSOP', '143.234.234.234')
->>> ret
-True
+>>> session_key_sysop = server.login_manager.login(u'SYSOP', u'SYSOP', '143.234.234.234')
 
 # Now test board_manager
 # Get the initial board list
 
 >>> server.board_manager.get_board_list()
-(True, [])
+[]
 
 # Add one board 'garbages'
 
 >>> server.board_manager.add_board(session_key_sysop, u'garbages', u'Garbages Board')
-(True, 'OK')
 >>> server.board_manager.add_board(session_key_sysop, u'garbages', u'Garbages Board')
-(False, 'ALREADY_ADDED')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 >>> server.board_manager.get_board_list()
-(True, [{'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board'}])
+[Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board')]
 
 # Add another board 'ToSysop'
 
 >>> server.board_manager.add_board(session_key_sysop, u'ToSysop', u'The comments to SYSOP')
-(True, 'OK')
 
 >>> server.board_manager.get_board_list()
-(True, [{'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board'}, {'read_only': False, 'board_name': u'ToSysop', 'board_description': u'The comments to SYSOP'}])
+[Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board'), Board(read_only=False, board_name=u'ToSysop', board_description=u'The comments to SYSOP')]
 
 # Check if you can get each board
 
 >>> server.board_manager.get_board(u'garbages')
-(True, {'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board'})
+Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board')
 
 >>> server.board_manager.get_board(u'ToSysop')
-(True, {'read_only': False, 'board_name': u'ToSysop', 'board_description': u'The comments to SYSOP'})
+Board(read_only=False, board_name=u'ToSysop', board_description=u'The comments to SYSOP')
 
 >>> server.board_manager.get_board(u'garbage_bag_board')
-(False, 'BOARD_NOT_EXIST')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 
 # Try to add new board with normal user session
 
 >>> server.board_manager.add_board(session_key, u'I WANT THIS BOARD', u'MY BOARD')
-(False, 'NO_PERMISSION')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 
 >>> server.board_manager.get_board(u'I WANT THIS BOARD')
-(False, 'BOARD_NOT_EXIST')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 
 # Try to delete the board
 
 >>> server.board_manager.delete_board(session_key_sysop, u'ToSysop')
-(True, 'OK')
 >>> server.board_manager.delete_board(session_key_sysop, u'chaos')
-(False, 'BOARD_NOT_EXIST')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 
 
 >>> server.board_manager.get_board(u'ToSysop')
-(False, 'BOARD_NOT_EXIST')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 
 >>> server.board_manager.get_board_list()
-(True, [{'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board'}])
+[Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board')]
 
 # Try to delete the other remaining board with normal user session
 
 >>> server.board_manager.delete_board(session_key, u'garbages')
-(False, 'NO_PERMISSION')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 
 >>> server.board_manager.get_board(u'garbages')
-(True, {'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board'})
+Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board')
 
 >>> server.board_manager.get_board_list()
-(True, [{'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board'}])
+[Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board')]
 
 # Read Only Test!
 
 >>> server.board_manager.add_read_only_board(session_key_sysop, u'garbages')
-(True, 'OK')
 >>> server.board_manager.add_read_only_board(session_key, u'garbages')
-(False, 'NO_PERMISSION')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 >>> server.board_manager.add_read_only_board(session_key_sysop, u'garbages')
-(False, 'ALEARDY_READ_ONLY_BOARD')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 >>> server.board_manager.add_read_only_board(session_key_sysop, u'chaos')
-(False, 'BOARD_NOT_EXIST')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 
 
 >>> server.board_manager.return_read_only_board(session_key_sysop, u'garbages')
-(True, 'OK')
 >>> server.board_manager.return_read_only_board(session_key, u'garbages')
-(False, 'NO_PERMISSION')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 >>> server.board_manager.return_read_only_board(session_key_sysop, u'chaos')
-(False, 'BOARD_NOT_EXIST')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 >>> server.board_manager.return_read_only_board(session_key_sysop, u'garbages')
-(False, 'NOT_READ_ONLY_BOARD')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 
 >>> class A(object):
 ...     pass

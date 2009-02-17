@@ -188,6 +188,22 @@ service BlacklistManager {
     list<BlacklistInformation> list_(1:string session_key), 
 }
 
+struct Board {
+    1: string read_only,
+    2: string board_name,
+    3: string board_description,
+}
+
+service BoardManager {
+    void add_board(1:string session_key, 2:string board_name,
+                   3:string board_description),
+    Board get_board(1: string board_name),
+    list<Board> get_board_list(),
+    void add_read_only_board(1:string session_key, 2:string board_name),
+    void return_read_only_board(1:string session_key, 2:string board_name),
+    void delete_board(1:string session_key, 2:string board_name),
+}
+
 struct WrittenArticle {
     1: string title,
     2: string content
