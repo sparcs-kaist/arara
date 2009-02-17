@@ -190,7 +190,7 @@ class MemberManager(object):
             HOST = 'localhost'
             sender = 'root_id@sparcs.org'
             content = 'You have been successfully registered as the ARAra member.<br />To use your account, you have to activate it.<br />Please click the link below on any web browser to activate your account.<br /><br />'
-            confirm_url = 'http://' + SERVER_ADDRESS + '/account/confirm/%s/%s' % (username, confirm_key)
+            confirm_url = 'http://' + SERVER_ADDRESS + '/account/confirm/%s/%s' % (username, activation_code)
             confirm_link = '<a href=\'%s\'>%s</a>' % (confirm_url, confirm_url)
             title = "[ARAra] Please activate your account"
             msg = MIMEText(content+confirm_link, _subtype="html", _charset='euc_kr')
