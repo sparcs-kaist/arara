@@ -9,7 +9,6 @@ from email.MIMEText import MIMEText
 
 from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
 from sqlalchemy import or_, not_, and_
-from django.template.loader import render_to_string
 
 from arara_thrift.ttypes import *
 from arara import model

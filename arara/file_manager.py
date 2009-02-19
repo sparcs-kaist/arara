@@ -7,6 +7,7 @@ import time
 from sqlalchemy import and_, or_, not_
 from sqlalchemy.exceptions import InvalidRequestError
 from arara import model
+from arara_thrift.ttypes import *
 from arara.util import require_login
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 
@@ -43,20 +44,21 @@ class FileManager(object):
         @param article_id: Article Number
         @type  filename: string
         @param filename: File Name
-        @rtype: boolean, string, string
+        @rtype: dictionary
         @return:
-            1. 저장 성공: True, 'garbages/2008/8/7', 'adfasdfasdfadf' 
+            1. 저장 성공: {'file_path': blah1, 'saved_filename': blah2}
             2. 저장 실패:
-                1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                2. 위험한 파일: False, 'DANGER_FILE_DETECTED'
-                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 로그인되지 않은 유저: NotLoggedIn Exception
+                2. 위험한 파일: InvalidOperation Exception
+                3. 데이터베이스 오류: InternalError Exception
         '''
         #그 경로의 파일이 있다고 가정하고 저장
 
-        DANGER_FILE = ('php', 'asp', 'php3', 'php4', 'htaccess', 'js')
+        DANGER_FILE = ('php', 'asp', 'php3', 'php4', 'htaccess', 'js',
+                'html', 'htm', '.htaccess', 'jsp')
         file_ext = filename.split('.')[-1]
         if file_ext in DANGER_FILE:
-            return False, 'DANGER_FILE_DETECTED'
+            return InvalidOperation('danger file detected')
         
         session = model.Session()
         article = session.query(model.Article).filter_by(id=article_id).one()
@@ -68,10 +70,10 @@ class FileManager(object):
             session.save(file)
             session.commit()
             session.close()
-            return True, {'file_path': filepath_to_save, 'saved_filename': ghost_filename}
+            return FileInfo(filepath_to_save, ghost_filename)
         except Exception: 
             session.close()
-            raise
+            raise InternalError('database error')
 
     @log_method_call
     def download_file(self, article_id, file_id):
@@ -82,19 +84,19 @@ class FileManager(object):
         @param article_id: Article Number 
         @type  filename: string
         @param filename: File Name
-        @rtype: boolean, string
+        @rtype: dictionary
         @return:
-            1. 경로 찾기 성공: True, 'garbages/2008/8/7', 'asdfasdfasdfasdf' 
+            1. 경로 찾기 성공: {'file_path': blah, 'saved_filename': blah, 'real_filename': blah}
             2. 경로 찾기 실패:
-                1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 로그인되지 않은 유저: NotLoggedIn Exception
+                2. 데이터베이스 오류: InternalError Exception
         '''
         session = model.Session()
         try:
             article = session.query(model.Article).filter_by(id = article_id).one()
         except InvalidRequestError:
             session.close()
-            return False, 'ARTICLE_NOT_EXIST'
+            raise InvalidOperation('article not exist')
         try:
             file = session.query(model.File).filter(
                     and_(model.file_table.c.id == file_id,
@@ -105,13 +107,13 @@ class FileManager(object):
                     )).one()
         except InvalidRequestError:
             session.close()
-            return False, 'FILE_NOT_FOUND'
+            raise InvalidOperation('file not found')
         download_path = file.filepath
         ghost_filename = file.saved_filename
         real_filename = file.filename
         session.commit()
         session.close()
-        return True, {'file_path': download_path, 'saved_filename': ghost_filename, 'real_filename': real_filename}
+        return DownloadFileInfo(download_path, ghost_filename, real_filename)
 
     @require_login
     @log_method_call_important
@@ -125,9 +127,9 @@ class FileManager(object):
         @param article_id: Article Number 
         @type  filename: string
         @param filename: File Name
-        @rtype: boolean, string
+        @rtype: dictionary
         @return:
-            1. 성공: True, 'garbages/2008/8/7' 
+            1. 성공: {'file_path': 'blah/blah', 'saved_filename': 'blah'}
             2. 실패:
                 1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
@@ -139,7 +141,7 @@ class FileManager(object):
             article = session.query(model.Article).filter_by(id = article_id).one()
         except InvalidRequestError:
             session.close()
-            return False, 'ARTICLE_NOT_EXIST'
+            raise InvalidOperation('article not exist')
         try:
             file = session.query(model.File).filter(
                     and_(model.file_table.c.id == file_id,
@@ -150,11 +152,10 @@ class FileManager(object):
                     )).one()
         except InvalidRequestError:
             session.close()
-            return False, 'FILE_NOT_FOUND'
+            raise InvalidOperation('file not found')
         file.deleted = True
         download_path = file.filepath
         ghost_filename = file.saved_filename
         session.commit()
         session.close()
-        return True, {'file_path': download_path, 'saved_filename': ghost_filename}
-
+        return FileInfo(download_path, ghost_filename)

@@ -1,237 +1,217 @@
-
-Bootstrap test
-
+>>> from arara_thrift.ttypes import *
 >>> import arara.model
 >>> arara.model.init_test_database()
 >>> import arara
 >>> server = arara.get_namespace()
 
-Register one user, combacsa. then login as existing user mikkang
+# Register one user, combacsa. then login as existing user mikkang
 
 >>> user_reg_dic = {'username':u'combacsa', 'password':u'combacsa', 'nickname':u'combacsa', 'email':u'combacsa@example.com', 'signature':u'combacsa', 'self_introduction':u'combacsa', 'default_language':u'english' }
->>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
+>>> register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
 >>> server.member_manager.confirm(u'combacsa', unicode(register_key))
-(True, 'OK')
->>> ret, session_key_combacsa = server.login_manager.login(u'combacsa', u'combacsa', '143.248.234.140')
->>> ret
-True
+>>> session_key_combacsa = server.login_manager.login(u'combacsa', u'combacsa', '143.248.234.140')
 
 # Register one user, mikkang
 
 >>> user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang@example.com', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
->>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
+>>> register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
 >>> server.member_manager.confirm(u'mikkang', unicode(register_key))
-(True, 'OK')
->>> ret, session_key = server.login_manager.login(u'mikkang', u'mikkang', '143.248.234.140')
->>> ret
-True
+>>> session_key = server.login_manager.login(u'mikkang', u'mikkang', '143.248.234.140')
 
 # Register one user, serialx
 
 >>> user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx@example.com', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'english' }
->>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
+>>> register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
 >>> server.member_manager.confirm(u'serialx', unicode(register_key))
-(True, 'OK')
->>> ret, session_key_serialx = server.login_manager.login(u'serialx', u'serialx', '143.248.234.140')
->>> ret
-True
+>>> session_key_serialx = server.login_manager.login(u'serialx', u'serialx', '143.248.234.140')
 
-Fake time
+# Fake time
 
 >>> import time
 >>> def stub_time():
-...     return 1.1
+...     return 31536001.100000001
 >>> org_time = time.time
 >>> time.time = stub_time
 
-#Login existing user mikkang
+# Login existing user mikkang
 
 >>> server.member_manager.is_registered(u'mikkang')
 True
->>> ret, mikkang_session_key = server.login_manager.login(u'mikkang', u'mikkang', '143.248.234.141')
->>> ret
-True
+>>> mikkang_session_key = server.login_manager.login(u'mikkang', u'mikkang', '143.248.234.141')
 
-#Login existing user serialx
+# Login existing user serialx
 
->>> ret, serialx_session_key = server.login_manager.login(u'serialx', u'serialx', '143.248.234.140')
->>> ret
-True
+>>> serialx_session_key = server.login_manager.login(u'serialx', u'serialx', '143.248.234.140')
 
 >>> server.messaging_manager.receive_list(mikkang_session_key)
-(True, {'last_page': 1, 'hit': [], 'results': 0, 'new_message_count': 0})
+MessageList(last_page=1, hit=[], results=0, new_message_count=0)
 
 >>> server.messaging_manager.send_message(serialx_session_key, u'mikkang', u'hello')
-(True, 'OK')
 
 >>> server.messaging_manager.receive_list(serialx_session_key)
-(True, {'last_page': 1, 'hit': [], 'results': 0, 'new_message_count': 0})
+MessageList(last_page=1, hit=[], results=0, new_message_count=0)
 
 >>> server.messaging_manager.receive_list(mikkang_session_key)
-(True, {'last_page': 1, 'hit': [{'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello', 'id': 1}], 'results': 1, 'new_message_count': 1})
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=1, new_message_count=1)
 
 >>> server.messaging_manager.sent_list(mikkang_session_key)
-(True, {'last_page': 1, 'hit': [], 'results': 0})
+MessageList(last_page=1, hit=[], results=0, new_message_count=0)
 
 >>> server.messaging_manager.send_message(serialx_session_key, u'mikkang', u'hello2')
-(True, 'OK')
 >>> server.messaging_manager.receive_list(mikkang_session_key)
-(True, {'last_page': 1, 'hit': [{'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello2', 'id': 2}, {'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello', 'id': 1}], 'results': 2, 'new_message_count': 2})
-
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=2)
 
 # now add serialx to blacklist to check blacklist function
 >>> server.blacklist_manager.add(mikkang_session_key, u'serialx')
-(True, 'OK')
 
 # check blacklist function
 >>> server.messaging_manager.receive_list(mikkang_session_key)
-(True, {'last_page': 1, 'hit': [{'from': u'serialx', 'blacklisted': True, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello2', 'id': 2}, {'from': u'serialx', 'blacklisted': True, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello', 'id': 1}], 'results': 2, 'new_message_count': 2})
+MessageList(last_page=1, hit=[Message(blacklisted=True, sent_time=31536001.100000001, read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=True, sent_time=31536001.100000001, read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=2)
 
 # now change blacklist status of serialx (block article only)
->>> server.blacklist_manager.modify(mikkang_session_key, {'blacklisted_user_username': u'serialx', 'block_article': True, 'block_message': False})
-(True, 'OK')
+>>> req = {'blacklisted_user_username': u'serialx', 'block_article': True, 'block_message': False}
+>>> server.blacklist_manager.modify(mikkang_session_key, BlacklistRequest(**req))
 
 # check whether message is blocked or not. at this time, nothing should be blocked.
 >>> server.messaging_manager.receive_list(mikkang_session_key)
-(True, {'last_page': 1, 'hit': [{'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello2', 'id': 2}, {'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello', 'id': 1}], 'results': 2, 'new_message_count': 2})
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=2)
 
 # now change blacklist status of serialx again (block message only)
->>> server.blacklist_manager.modify(mikkang_session_key, {'blacklisted_user_username': u'serialx', 'block_article': False, 'block_message': True})
-(True, 'OK')
+>>> req = {'blacklisted_user_username': u'serialx', 'block_article': False, 'block_message': True}
+>>> server.blacklist_manager.modify(mikkang_session_key, BlacklistRequest(**req))
 
 # check whether message is blocked or not. now, it should be blocked.
 >>> server.messaging_manager.receive_list(mikkang_session_key)
-(True, {'last_page': 1, 'hit': [{'from': u'serialx', 'blacklisted': True, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello2', 'id': 2}, {'from': u'serialx', 'blacklisted': True, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello', 'id': 1}], 'results': 2, 'new_message_count': 2})
+MessageList(last_page=1, hit=[Message(blacklisted=True, sent_time=31536001.100000001, read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=True, sent_time=31536001.100000001, read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=2)
 
-# because it's too poor to keep serialx rot in blacklist, delete serialx from blacklist
->>> server.blacklist_manager.delete(mikkang_session_key, u'serialx')
-(True, 'OK')
+# because it's too poor to keep serialx rot in blacklist, delete serialx from_ blacklist
+>>> server.blacklist_manager.delete_(mikkang_session_key, u'serialx')
 
 # re-receive list to check blacklist function
 >>> server.messaging_manager.receive_list(mikkang_session_key)
-(True, {'last_page': 1, 'hit': [{'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello2', 'id': 2}, {'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello', 'id': 1}], 'results': 2, 'new_message_count': 2})
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=2)
 
 >>> server.messaging_manager.sent_list(serialx_session_key)
-(True, {'last_page': 1, 'hit': [{'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello2', 'id': 2}, {'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello', 'id': 1}], 'results': 2})
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=0)
 
 >>> server.messaging_manager.sent_list(mikkang_session_key)
-(True, {'last_page': 1, 'hit': [], 'results': 0})
+MessageList(last_page=1, hit=[], results=0, new_message_count=0)
 
 >>> server.messaging_manager.read_received_message(mikkang_session_key, 1)
-(True, {'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello', 'id': 1})
+Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')
 
 >>> server.messaging_manager.read_received_message(mikkang_session_key, 2)
-(True, {'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'mikkang', 'message': u'hello2', 'id': 2})
+Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2')
 
 Test Delete Function
 
 >>> server.messaging_manager.delete_received_message(mikkang_session_key, 2)
-(True, 'OK')
 
 >>> server.messaging_manager.read_received_message(mikkang_session_key, 2)
-(False, 'MSG_NOT_EXIST')
+Traceback (most recent call last):
+    ...
+InvalidOperation
 
 >>> server.messaging_manager.receive_list(mikkang_session_key)
-(True, {'last_page': 1, 'hit': [{'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'mikkang', 'message': u'hello', 'id': 1}], 'results': 1, 'new_message_count': 0})
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'R', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=1, new_message_count=0)
 
 >>> server.messaging_manager.sent_list(serialx_session_key)
-(True, {'last_page': 1, 'hit': [{'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'mikkang', 'message': u'hello2', 'id': 2}, {'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'mikkang', 'message': u'hello', 'id': 1}], 'results': 2})
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'R', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'R', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=0)
 
 >>> server.messaging_manager.delete_sent_message(serialx_session_key, 2)
-(True, 'OK')
-
 >>> server.messaging_manager.sent_list(serialx_session_key)
-(True, {'last_page': 1, 'hit': [{'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'mikkang', 'message': u'hello', 'id': 1}], 'results': 1})
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'R', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=1, new_message_count=0)
 
 >>> server.messaging_manager.receive_list(mikkang_session_key)
-(True, {'last_page': 1, 'hit': [{'from': u'serialx', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'mikkang', 'message': u'hello', 'id': 1}], 'results': 1, 'new_message_count': 0})
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'R', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=1, new_message_count=0)
 
 # Test for a lot of message
 >>> for i in range(100):
-...	ret, _ = server.messaging_manager.send_message(mikkang_session_key, u'serialx', unicode(i))
+...	server.messaging_manager.send_message(mikkang_session_key, u'serialx', unicode(i))
 
 >>> server.messaging_manager.read_received_message(serialx_session_key, 92)
-(True, {'from': u'mikkang', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'90', 'id': 92})
+Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=92, to=u'serialx', from_=u'mikkang', message=u'90')
 
 >>> server.messaging_manager.receive_list(serialx_session_key, 1, 10)
-(True, {'last_page': 10, 'hit': [{'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'99', 'id': 101}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'98', 'id': 100}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'97', 'id': 99}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'96', 'id': 98}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'95', 'id': 97}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'94', 'id': 96}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'93', 'id': 95}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'92', 'id': 94}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'91', 'id': 93}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'serialx', 'message': u'90', 'id': 92}], 'results': 100, 'new_message_count': 99})
+MessageList(last_page=10, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=101, to=u'serialx', from_=u'mikkang', message=u'99'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=100, to=u'serialx', from_=u'mikkang', message=u'98'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=99, to=u'serialx', from_=u'mikkang', message=u'97'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=98, to=u'serialx', from_=u'mikkang', message=u'96'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=97, to=u'serialx', from_=u'mikkang', message=u'95'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=96, to=u'serialx', from_=u'mikkang', message=u'94'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=95, to=u'serialx', from_=u'mikkang', message=u'93'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=94, to=u'serialx', from_=u'mikkang', message=u'92'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=93, to=u'serialx', from_=u'mikkang', message=u'91'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'R', id=92, to=u'serialx', from_=u'mikkang', message=u'90')], results=100, new_message_count=99)
 >>> server.messaging_manager.receive_list(serialx_session_key, 10, 10)
-(True, {'last_page': 10, 'hit': [{'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'9', 'id': 11}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'8', 'id': 10}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'7', 'id': 9}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'6', 'id': 8}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'5', 'id': 7}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'4', 'id': 6}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'3', 'id': 5}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'2', 'id': 4}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'1', 'id': 3}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'0', 'id': 2}], 'results': 100, 'new_message_count': 99})
+MessageList(last_page=10, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=11, to=u'serialx', from_=u'mikkang', message=u'9'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=10, to=u'serialx', from_=u'mikkang', message=u'8'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=9, to=u'serialx', from_=u'mikkang', message=u'7'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=8, to=u'serialx', from_=u'mikkang', message=u'6'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=7, to=u'serialx', from_=u'mikkang', message=u'5'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=6, to=u'serialx', from_=u'mikkang', message=u'4'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=5, to=u'serialx', from_=u'mikkang', message=u'3'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=4, to=u'serialx', from_=u'mikkang', message=u'2'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=3, to=u'serialx', from_=u'mikkang', message=u'1'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=2, to=u'serialx', from_=u'mikkang', message=u'0')], results=100, new_message_count=99)
 >>> server.messaging_manager.receive_list(serialx_session_key, 12, 10)
-(False, 'WRONG_PAGENUM')
+Traceback (most recent call last):
+    ...
+InvalidOperation
 
 # Now Send message to myself and test delete
 >>> server.messaging_manager.send_message(serialx_session_key, u'serialx', u'send this to me')
-(True, 'OK')
 >>> server.messaging_manager.read_received_message(serialx_session_key, 102)
-(True, {'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'serialx', 'message': u'send this to me', 'id': 102})
+Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=102, to=u'serialx', from_=u'serialx', message=u'send this to me')
 
 >>> server.messaging_manager.sent_list(serialx_session_key)
-(True, {'last_page': 1, 'hit': [{'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'serialx', 'message': u'send this to me', 'id': 102}, {'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'mikkang', 'message': u'hello', 'id': 1}], 'results': 2})
-
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'R', id=102, to=u'serialx', from_=u'serialx', message=u'send this to me'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'R', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=0)
 >>> server.messaging_manager.delete_received_message(serialx_session_key, 102)
-(True, 'OK')
-
 >>> server.messaging_manager.read_received_message(serialx_session_key, 102)
-(False, 'MSG_NOT_EXIST')
+Traceback (most recent call last):
+    ...
+InvalidOperation
 
 >>> server.messaging_manager.delete_sent_message(serialx_session_key, 102)
-(True, 'OK')
-
 >>> server.messaging_manager.sent_list(serialx_session_key)
-(True, {'last_page': 1, 'hit': [{'from': u'serialx', 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'R', 'to': u'mikkang', 'message': u'hello', 'id': 1}], 'results': 1})
-
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'R', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=1, new_message_count=0)
 >>> server.messaging_manager.delete_received_message(serialx_session_key, 102)
-(False, 'MSG_NOT_EXIST')
+Traceback (most recent call last):
+    ...
+InvalidOperation
 
 >>> server.messaging_manager.delete_sent_message(serialx_session_key, 102)
-(False, 'MSG_NOT_EXIST')
+Traceback (most recent call last):
+    ...
+InvalidOperation
 
 # send_message_by_username, send_message_by_nickname Test!!
 
 Register one user, dodo
 
 >>> user_reg_dic = {'username':u'zzongaly', 'password':u'zzongaly', 'nickname':u'dodo', 'email':u'zzongaly@example.com', 'signature':u'mikkang friend', 'self_introduction':u'i am dodo', 'default_language':u'english' }
->>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
+>>> register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
 >>> server.member_manager.confirm(u'zzongaly', unicode(register_key))
-(True, 'OK')
->>> ret, zzongaly_session_key = server.login_manager.login(u'zzongaly', u'zzongaly', '143.248.234.140')
->>> ret
-True
+>>> zzongaly_session_key = server.login_manager.login(u'zzongaly', u'zzongaly', '143.248.234.140')
 
 >>> server.messaging_manager.send_message_by_username(mikkang_session_key, u'zzongaly', u'hi dodo username test')
-(True, 'OK')
-
 >>> server.messaging_manager.send_message_by_nickname(mikkang_session_key, u'dodo', u'hi dodo nickname test')
-(True, 'OK')
 
 >>> server.messaging_manager.receive_list(zzongaly_session_key)
-(True, {'last_page': 1, 'hit': [{'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'zzongaly', 'message': u'hi dodo nickname test', 'id': 103}, {'from': u'mikkang', 'blacklisted': False, 'sent_time': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'read_status': u'N', 'to': u'zzongaly', 'message': u'hi dodo username test', 'id': 102}], 'results': 2, 'new_message_count': 2})
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=103, to=u'zzongaly', from_=u'mikkang', message=u'hi dodo nickname test'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=102, to=u'zzongaly', from_=u'mikkang', message=u'hi dodo username test')], results=2, new_message_count=2)
 
 # Test Errors
 
 >>> server.messaging_manager.send_message(u'asdf', u'mikkang', u'hello')
-(False, 'NOT_LOGGEDIN')
+Traceback (most recent call last):
+    ...
+NotLoggedIn
 >>> server.messaging_manager.send_message(serialx_session_key, u'asdf', u'hello')
-(False, 'USER_NOT_EXIST')
+Traceback (most recent call last):
+    ...
+InvalidOperation
 >>> server.messaging_manager.read_received_message(mikkang_session_key, 3)
-(False, 'MSG_NOT_EXIST')
+Traceback (most recent call last):
+    ...
+InvalidOperation
 >>> server.messaging_manager.read_received_message(u'asdf', 2)
-(False, 'NOT_LOGGEDIN')
+Traceback (most recent call last):
+    ...
+NotLoggedIn
 >>> server.messaging_manager.delete_received_message(mikkang_session_key, 109)
-(False, 'MSG_NOT_EXIST')
+Traceback (most recent call last):
+    ...
+InvalidOperation
 >>> server.messaging_manager.delete_received_message(serialx_session_key, 109)
-(False, 'MSG_NOT_EXIST')
+Traceback (most recent call last):
+    ...
+InvalidOperation
 >>> server.messaging_manager.delete_received_message(mikkang_session_key, 8989)
-(False, 'MSG_NOT_EXIST')
+Traceback (most recent call last):
+    ...
+InvalidOperation
 
 >>> time.time = org_time
 

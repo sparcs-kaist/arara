@@ -182,10 +182,18 @@ struct BlacklistInformation {
 
 service BlacklistManager {
     void add(1:string session_key, 2:string username,
-             3:bool block_article=1, 4:bool block_message=1),
-    void delete_(1:string session_key, 2:string username),
-    void modify(1:string session_key, 2:BlacklistRequest blacklist_info),
-    list<BlacklistInformation> list_(1:string session_key), 
+             3:bool block_article=1, 4:bool block_message=1)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void delete_(1:string session_key, 2:string username)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void modify(1:string session_key, 2:BlacklistRequest blacklist_info)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<BlacklistInformation> list_(1:string session_key) 
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 }
 
 struct Board {
@@ -196,21 +204,45 @@ struct Board {
 
 service BoardManager {
     void add_board(1:string session_key, 2:string board_name,
-                   3:string board_description),
-    Board get_board(1: string board_name),
-    list<Board> get_board_list(),
-    void add_read_only_board(1:string session_key, 2:string board_name),
-    void return_read_only_board(1:string session_key, 2:string board_name),
-    void delete_board(1:string session_key, 2:string board_name),
+                   3:string board_description)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    Board get_board(1: string board_name)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<Board> get_board_list()
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void add_read_only_board(1:string session_key, 2:string board_name)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void return_read_only_board(1:string session_key, 2:string board_name)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void delete_board(1:string session_key, 2:string board_name)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 }
 
 service ReadStatusManager {
-    string check_stat(1:string session_key, 2:i32 no),
-    list<string> check_stats(1:string session_key, 2:list<i32> no_list),
-    void mark_as_read_list(1:string session_key, 2:list<i32> no_list),
-    void mark_as_read(1:string session_key, 2:i32 no),
-    void mark_as_viewed(1:string session_key, 2:i32 no),
-    void save_to_database(1:string user_id="", 2:string session_key=""),
+    string check_stat(1:string session_key, 2:i32 no)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<string> check_stats(1:string session_key, 2:list<i32> no_list)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void mark_as_read_list(1:string session_key, 2:list<i32> no_list)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void mark_as_read(1:string session_key, 2:i32 no)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void mark_as_viewed(1:string session_key, 2:i32 no)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void save_to_database(1:string user_id="", 2:string session_key="")
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 }
 
 struct WrittenArticle {
@@ -316,4 +348,123 @@ service ArticleManager {
                 3:id_t no)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+}
+
+struct FileInfo {
+    1:string file_path,
+    2:string saved_filename,
+}
+
+struct DownloadFileInfo {
+    1:string file_path,
+    2:string saved_filename,
+    3:string real_filename,
+}
+
+service FileManager {
+    FileInfo save_file(1:string session_key,
+                2:i32 article_id,
+                3:string filename)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    DownloadFileInfo download_file(1:string session_key,
+                2:i32 article_id,
+                3:i32 file_id)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    FileInfo delete_file(1:string session_key,
+                2:i32 article_id,
+                3:i32 file_id)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+}
+
+struct Message {
+    1:i32 id,
+    2:string from_,
+    3:string to,
+    4:string message,
+    5:double sent_time,
+    6:string read_status,
+    7:optional bool blacklisted = 0,
+}
+
+struct MessageList {
+    1:list<Message> hit,
+    2:i32 last_page,
+    3:i32 results,
+    4:optional i32 new_message_count = 0,
+}
+
+service MessagingManager {
+    MessageList sent_list(1:string session_key,
+                2:i32 page=1,
+                3:i32 page_length=20)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    MessageList receive_list(1:string session_key,
+                2:i32 page=1,
+                3:i32 page_length=20)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void send_message_by_username(1:string session_key,
+                2:string to_username,
+                3:string msg)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void send_message_by_nickname(1:string session_key,
+                2:string to_nickname,
+                3:string message)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void send_message(1:string session_key,
+                2:string to_data,
+                3:string msg)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void read_received_message(1:string session_key,
+                2:i32 msg_no)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void read_sent_message(1:string session_key,
+                2:i32 msg_no)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void delete_received_message(1:string session_key,
+                2:i32 msg_no)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void delete_sent_message(1:string session_key,
+                2:i32 msg_no)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+}
+
+struct ArticleSearchResult {
+    1:list<Article> hit,
+    2:i32 results,
+    3:double search_time,
+    4:i32 last_page,
+}
+
+struct SearchQuery {
+    1:string query = '',
+    2:string title = '',
+    3:string content = '',
+    4:string author_nickname = '',
+    5:string author_username = '',
+    6:string date = '',
+}
+
+service SearchManager {
+    void register_article(),
+    void ksearch(1:string query_text,
+                2:i32 page = 1
+                3:i32 page_length = 20),
+    ArticleSearchResult search(1:string session_key,
+                2:bool all_flag,
+                3:string board_name,
+                4:SearchQuery query_dict,
+                5:i32 page = 1,
+                6:i32 page_length = 20),
 }

@@ -1,3 +1,4 @@
+>>> from arara_thrift.ttypes import *
 >>> import arara.model
 >>> arara.model.init_test_database()
 >>> import arara
@@ -5,23 +6,15 @@
 
 # Login as SYSOP and create 'garbage' board
 
->>> ret, session_key_sysop = server.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123')
->>> ret
-True
+>>> session_key_sysop = server.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123')
 
 >>> server.board_manager.add_board(unicode(session_key_sysop), u'garbages', u'Garbage Board')
-(True, 'OK')
 
 # Register one user, mikkang
 >>> user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang@example.com', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
->>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
+>>> register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
 >>> server.member_manager.confirm(u'mikkang', unicode(register_key))
-(True, 'OK')
->>> ret, session_key = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.140')
->>> ret
-True
+>>> session_key = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.140')
 
 # Faking time.time (to check time field)
 
@@ -34,27 +27,27 @@ True
 # Testing File Manager!
 
 >>> server.board_manager.get_board_list()
-(True, [{'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbage Board'}])
+[Board(read_only=False, board_name=u'garbages', board_description=u'Garbage Board')]
 
 # Write an article
 
 >>> article_dic = {'title': u'serialx is...', 'content': u'polarbear'}
->>> server.article_manager.write_article(session_key, u'garbages', article_dic)
-(True, 1)
+>>> server.article_manager.write_article(session_key, u'garbages', WrittenArticle(**article_dic))
+1
 
 # Read the article
 
 >>> server.article_manager.read(session_key, u'garbages', 1)
-(True, [{'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'root_id': 1, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'serialx is...', 'id': 1}])
+[Article(board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'polarbear', vote=0, depth=1, reply_count=None, last_modified_date=1.1000000000000001, date=1.1000000000000001, type=None, id=1)]
 
 >>> article_id = 1
 >>> server.file_manager.save_file(session_key, article_id , u'hahahah.jpg')
-(True, {'file_path': u'garbages/1970/1/1', 'saved_filename': u'2f2bea882ef178d056434f5cdb0d0909'})
+FileInfo(file_path=u'garbages/1970/1/1', saved_filename=u'2f2bea882ef178d056434f5cdb0d0909')
 
 >>> time.time = org_time
 
 >>> server.file_manager.download_file(article_id , 1)
-(True, {'real_filename': u'hahahah.jpg', 'file_path': u'garbages/1970/1/1', 'saved_filename': u'2f2bea882ef178d056434f5cdb0d0909'})
+DownloadFileInfo(real_filename=u'hahahah.jpg', file_path=u'garbages/1970/1/1', saved_filename=u'2f2bea882ef178d056434f5cdb0d0909')
 
 >>> server.file_manager.delete_file(session_key, article_id , 1)
-(True, {'file_path': u'garbages/1970/1/1', 'saved_filename': u'2f2bea882ef178d056434f5cdb0d0909'})
+FileInfo(file_path=u'garbages/1970/1/1', saved_filename=u'2f2bea882ef178d056434f5cdb0d0909')

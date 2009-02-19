@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 import xmlrpclib
 import time
+import logging
 
 from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy import and_, or_, not_
 
 from arara.util import require_login, filter_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
+from arara_thrift.ttypes import *
 from arara import model
 
 log_method_call = log_method_call_with_source('search_manager')
@@ -15,7 +17,7 @@ log_method_call_important = log_method_call_with_source_important('search_manage
 READ_ARTICLE_WHITELIST = ('id', 'title', 'contsent', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable')
 SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'author_nickname', 'vote', 'hit', 'content')
-SEARCH_DICT = ('title', 'content', 'author_nickname', 'author_username', 'date')
+SEARCH_DICT = ('title', 'content', 'author_nickname', 'author_username', 'date', 'query')
 api_server_address = 'http://nan.sparcs.org:9000/api'
 api_key = '54ebf56de7684dba0d69bffc9702e1b4'
 
@@ -52,7 +54,7 @@ class SearchManager(object):
         return_list = []
         for item in raw_list:
             filtered_dict = self._get_dict(item, whitelist)
-            return_list.append(filtered_dict)
+            return_list.append(Article(**filtered_dict))
         return return_list
 
     def _set_board_manager(self, board_manager):
@@ -62,28 +64,33 @@ class SearchManager(object):
         self.login_manager = login_manager
 
     def register_article(self):
-        ret, sess = self.login_manager.login('SYSOP', 'SYSOP', '234.234.234.234')
-        if not ret:
-            return False, 'NO_PERMISSION'
+        sess = self.login_manager.login('SYSOP', 'SYSOP', '234.234.234.234')
         #XXX SYSOP LOGIN MUST BE IMPLEMENTED HERE 
-        ret, board_list = self.board_manager.get_board_list()
+        board_list = self.board_manager.get_board_list()
         if not ret:
-            return False, 'DATABASE_ERROR'
+            raise InternalError('database error')
 
         for board_info in board_list:
-            session = model.Session()
-            board_name = board_info['board_name']
-            board = session.query(model.Board).filter_by(board_name=board_name).one()
-            article_count = session.query(model.Article).filter_by(board_id=board.id).count()
-            for article_no in range(1, article_count):
-                article = session.query(model.Article).filter_by(id=article_no).one()
-                article_dict = self._get_dict(article, READ_ARTICLE_WHITELIST)
-                if article_dict['is_searchable']:
-                    ksearch = xmlrpclib.Server(api_server_address)
-                    uri = 'http://ara.kaist.ac.kr/' + board_name + '/' + str(article_no)
-                    result = ksearch.index(api_key, 'ara', uri, article_dict['title'], article_dict['content'], 1.0, board_name)
-                    assert result == 'OK'
-            session.close()
+            try:
+                session = model.Session()
+                board_name = board_info['board_name']
+                board = session.query(model.Board).filter_by(board_name=board_name).one()
+                article_count = session.query(model.Article).filter_by(board_id=board.id).count()
+                for article_no in range(1, article_count):
+                    article = session.query(model.Article).filter_by(id=article_no).one()
+                    article_dict = self._get_dict(article, READ_ARTICLE_WHITELIST)
+                    if article_dict['is_searchable']:
+                        ksearch = xmlrpclib.Server(api_server_address)
+                        uri = 'http://ara.kaist.ac.kr/' + board_name + '/' + str(article_no)
+                        result = ksearch.index(api_key, 'ara', uri, article_dict['title'], article_dict['content'], 1.0, board_name)
+                        assert result == 'OK'
+                session.close()
+            except AssertionError:
+                session.close()
+                raise InternalError('error on ksearch')
+            except Exception:
+                session.close()
+                raise InternalError('unknown error during article registration')
 
     @require_login
     @log_method_call
@@ -98,6 +105,7 @@ class SearchManager(object):
         @type  page_length: integer
         @param page_length: Count of Articles on a page
         '''
+        raise InternalError('Please Re-Implement this Method!')
         search_manager = xmlrpclib.Server('http://nan.sparcs.org:9000/api')
         query = str(query_text) + ' source:arara'
         result = search_manager.search('00000000000000000000000000000000', query)
@@ -106,7 +114,7 @@ class SearchManager(object):
                 parsed_uri = one_result['uri'].rsplit('/', 2)
                 one_result['id'] = parsed_uri[::-1][0]
                 one_result['board_name'] = parsed_uri[::-1][1]
-        return True, result
+        return result
 
     @log_method_call
     def _search_via_ksearch(self, query_text, page=1, page_length=20):
@@ -169,27 +177,34 @@ class SearchManager(object):
         @param page: Page Number to Request
         @type  page_length: integer
         @param page_length: Count of Article on a page
-        @rtype: boolean, dictionary
+        @rtype: dictionary
         @return:
-            1. 검색성공: True, Search Result Dictionary ('hit': '검색결과', 'results': '결과 수', 'search_time': '검색 소요 시간', 'last_page': '마지막 페이지 번호')
+            1. 검색성공: Search Result Dictionary ('hit': '검색결과', 'results': '결과 수', 'search_time': '검색 소요 시간', 'last_page': '마지막 페이지 번호')
             2. 검색 실패:
-                1. 잘못된 query_dic: False, 'WRONG_DICTIONARY'
-                2. 존재하지 않는 게시판: False, 'BOARD_NOT_EXIST'
-                3. 잘못된 페이지번호: False, 'WRONG_PAGENUM'
-                4. 잘못된 날짜 형식: False, 'WRONG_DATE'
-                5. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                6. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 잘못된 query_dic: InvalidOperation Exception
+                2. 존재하지 않는 게시판: InvalidOperation Exception
+                3. 잘못된 페이지번호: InvalidOperation Exception
+                4. 잘못된 날짜 형식: InvalidOperation Exception
+                5. 로그인되지 않은 유저: NotLoggedIn Exception
+                6. 데이터베이스 오류: InternalError Exception
         '''
-        if not len(query_dict) > 0:
-            return False, 'WRONG_DICTIONARY'
+        query_dict = query_dict.__dict__
 
-        for key in query_dict.keys():
-            if all_flag:
-                if not key == 'query':
-                    return False, 'WRONG_DICTIONARY'
-            else:
+        if not len(query_dict) > 0:
+            raise InvalidOperation('wrong dictionary')
+
+        if all_flag:
+            if not (query_dict.has_key('query') and query_dict['query']):
+                raise InvalidOperation('wrong dictionary')
+            tmp_query = query_dict['query']
+            query_dict = {'query': tmp_query}
+        else:
+            del query_dict['query']
+            for key in query_dict.keys():
+                if not query_dict[key]:
+                    del query_dict[key]
                 if not key in SEARCH_DICT:
-                    return False, 'WRONG_DICTIONARY'
+                    raise InvalidOperation('wrong dictionary')
 
         session = model.Session()
         ret_dict = {}
@@ -203,7 +218,7 @@ class SearchManager(object):
                 board = session.query(model.Board).filter_by(board_name=board_name).one()
             except InvalidRequestError:
                 session.close()
-                return False, 'BOARD_NOT_EXIST'
+                raise InvalidOperation('board not exist')
                 
         query = session.query(model.Article).filter_by(is_searchable=True)
 
@@ -214,6 +229,7 @@ class SearchManager(object):
             query_text = query_dict['query']
             ret, result = self._search_via_ksearch(query, page, page_length)
             if ret:
+                #XXX Should be re-implemented
                 return ret, result
             else:
                 # I think K-Search is dead, so let's search it by query.
@@ -271,7 +287,7 @@ class SearchManager(object):
             last_page += 1
         if page > last_page:
             session.close()
-            return False, 'WRONG_PAGENUM'
+            raise InvalidOperation('wrong pagenum')
         offset = page_length * (page - 1)
         last = offset + page_length
         result = query[offset:last].order_by(model.Article.id.desc()).all()
@@ -284,7 +300,7 @@ class SearchManager(object):
         ret_dict['search_time'] = str(end_time-start_time)
         ret_dict['last_page'] = last_page
         session.close()
-        return True, ret_dict
+        return ArticleSearchResult(**ret_dict)
 
     def _get_query_text(self, query_dict, key):
         query_text = unicode('%' + query_dict[key] + '%')

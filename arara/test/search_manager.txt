@@ -1,181 +1,180 @@
-# load Search Manager
+# load LoginManager & MemberManager
 
+>>> from arara_thrift.ttypes import *
 >>> import arara.model
 >>> arara.model.init_test_database()
 >>> import arara
 >>> server = arara.get_namespace()
 
-# To test search manager, we have to write some article to the board.
-# So, let's copy some of the test module from the article_manager.txt
-####################################### QUOTE ############################################
-# Login as SYSOP and create 'garbage', 'KAIST' board
+# Login as SYSOP and create 'garbage' and 'KAIST' board
 
->>> ret, session_key_sysop = server.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123')
->>> ret
-True
+>>> session_key_sysop = server.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123')
 
 >>> server.board_manager.add_board(unicode(session_key_sysop), u'garbages', u'Garbage Board')
-(True, 'OK')
->>> server.board_manager.add_board(unicode(session_key_sysop), u'KAIST', u'The KAIST Board')
-(True, 'OK')
+>>> server.board_manager.add_board(unicode(session_key_sysop), u'KAIST', u'KAIST Board')
+
+# Read Only Board Test
+
+>>> server.board_manager.add_read_only_board(session_key_sysop, u'garbages')
+
+>>> article = Article(**{'title': u'serialx is...', 'content': u'polarbear'})
+>>> server.article_manager.write_article(session_key_sysop, u'garbages', article)
+Traceback (most recent call last):
+  ...
+InvalidOperation
+
+>>> server.board_manager.return_read_only_board(session_key_sysop, u'garbages')
+
 
 # Register one user, combacsa.
 
 >>> user_reg_dic = {'username':u'combacsa', 'password':u'combacsa', 'nickname':u'combacsa', 'email':u'combacsa@example.com', 'signature':u'combacsa', 'self_introduction':u'combacsa', 'default_language':u'english' }
->>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
+>>> register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
 >>> server.member_manager.confirm(u'combacsa', unicode(register_key))
-(True, 'OK')
->>> ret, session_key_combacsa = server.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.140')
->>> ret
-True
+>>> session_key_combacsa = server.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.140')
 
 # Register one user, mikkang
 
 >>> user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang@example.com', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
->>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
+>>> register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
 >>> server.member_manager.confirm(u'mikkang', unicode(register_key))
-(True, 'OK')
->>> ret, session_key = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.140')
->>> ret
-True
+>>> session_key = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.140')
 
 # Register one user, serialx
 
 >>> user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx@example.com', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'english' }
->>> ret, register_key = server.member_manager.register(user_reg_dic)
->>> ret
-True
+>>> register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
 >>> server.member_manager.confirm(u'serialx', unicode(register_key))
-(True, 'OK')
->>> ret, session_key_serialx = server.login_manager.login(u'serialx', u'serialx', u'143.248.234.140')
->>> ret
-True
+>>> session_key_serialx = server.login_manager.login(u'serialx', u'serialx', u'143.248.234.140')
 
 # Faking time.time (to check time field)
 
 >>> import time
 >>> def stub_time():
-...     return 1.1
+...     return 31536001.1
 >>> org_time = time.time
 >>> time.time = stub_time
 
 # now Testing Article Manager!
 
 >>> server.board_manager.get_board_list()
-(True, [{'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbage Board'}, {'read_only': False, 'board_name': u'KAIST', 'board_description': u'The KAIST Board'}])
+[Board(read_only=False, board_name=u'garbages', board_description=u'Garbage Board')]
 
-# Write an article on garbage board
+# Write an article
 
->>> article_dic = {'title': u'serialx is...', 'content': u'black polarbear'}
->>> server.article_manager.write_article(session_key, u'garbages', article_dic)
-(True, 1)
+>>> article_dic = {'title': u'serialx is...', 'content': u'polarbear'}
+>>> server.article_manager.write_article(session_key, u'garbages', Article(**article_dic))
+1
 
 # Read the article
 
 >>> server.article_manager.read(session_key, u'garbages', 1)
-(True, [{'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'root_id': 1, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'black polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'serialx is...', 'id': 1}])
+[Article(board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status=None, root_id=1, is_searchable=False, author_nickname=u'mikkang', content=u'polarbear', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=1)]
 
 # Reply to the article
 
->>> reply_dic = {'title':u'dummy', 'content': u'asdf'}
+>>> reply_dic = WrittenArticle(**{'title':u'dummy', 'content': u'asdf'})
 >>> server.article_manager.write_reply(session_key, u'garbages', 24, reply_dic)
-(False, 'ARTICLE_NOT_EXIST')
+Traceback (most recent call last):
+  ...
+InvalidOperation
 >>> server.article_manager.write_reply(session_key, u'garbages', 1, reply_dic)
-(True, 2)
+2
 
 # Read the article again
 
 >>> server.article_manager.read(session_key, u'garbages', 1)
-(True, [{'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'root_id': 1, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'black polarbear', 'vote': 0, 'depth': 1, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'serialx is...', 'id': 1}, {'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'root_id': 1, 'deleted': False, 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'asdf', 'vote': 0, 'depth': 2, 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'title': u'dummy', 'id': 2}])
+[Article(board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status=None, root_id=1, is_searchable=False, author_nickname=u'mikkang', content=u'polarbear', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=1), Article(board_name=None, author_username=u'mikkang', hit=0, blacklisted=False, title=u'dummy', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'asdf', vote=0, depth=2, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=2)]
 
 # List the article (should only be one article in the list
 
 >>> server.article_manager.article_list(session_key, u'garbages')
-(True, {'last_page': 1, 'hit': [{'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'serialx is...', 'deleted': False, 'read_status': 'R', 'last_modified_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'author_nickname': u'mikkang', 'date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'reply_count': 1, 'vote': 0, 'type': 'normal', 'id': 1}], 'results': 1})
+ArticleList(last_page=1, hit=[Article(board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status='R', root_id=None, is_searchable=None, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=1, last_modified_date=31536001.100000001, date=31536001.100000001, type='normal', id=1)], results=1, current_page=None)
 
 # Test for pagination with mikkang session_key
 
 >>> for i in range(100):
-...     article_dic = {u'title': u'serialx is... ' + unicode(i), u'content': u'polarbear'}
-...     _ = server.article_manager.write_article(session_key, u'garbages', article_dic)
+...     article_dic = {'title': u'serialx is... ' + unicode(str(i)), 'content': u'polarbear'}
+...     _ = server.article_manager.write_article(session_key, u'garbages', Article(**article_dic))
 
 # Test for pagination with combacsa session_key
 >>> for i in range(100):
-...     article_dic = {u'title': u'serialx is... ' + unicode(i), u'content': u'polarbear'}
-...     _ = server.article_manager.write_article(session_key_combacsa, u'garbages', article_dic)
+...     article_dic = {'title': u'serialx is... ' + unicode(str(i)), 'content': u'polarbear'}
+...     _ = server.article_manager.write_article(session_key_combacsa, u'garbages', Article(**article_dic))
 
 # Write an article on KAIST board
 >>> article_dic = {'title': u'serialx is...', 'content': u'black polarbear'}
->>> server.article_manager.write_article(session_key, u'KAIST', article_dic)
-(True, 203)
+>>> server.article_manager.write_article(session_key, u'KAIST', Article(**article_dic))
+203
 
 ##################################### END QUOTE ##########################################
 
 # Now testing search_manager
 
 # Registering dummy article to the K-Search is not appropriate.
-#>>> [x['id'] for x in server.search_manager.register_article()
+#>>> [x.id for x in server.search_manager.register_article()
 
 # Search article with title
->>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'serialx'}, 1, 2)[1]['hit']]
-[202, 201]
+#>>> server.search_manager.search(session_key, False, u'garbages', SearchQuery(**{'title': u'serialx'}))
+#
+#>>> [x.id for x in server.search_manager.search(session_key, False, u'garbages', SearchQuery(**{'title': u'serialx'}), 1, 2).hit]
+#[202, 201]
+#
+## Search article with title AND EXACT author_username
+#>>> [x.id for x in server.search_manager.search(session_key, False, u'garbages', SearchQuery(**{'title': u'88', 'author_username': u'mikkang'}), 1, 2).hit]
+#[191, 102]
+#
+#>>> [x.id for x in server.search_manager.search(session_key, False, u'garbages', SearchQuery(**{'title': u'88', 'author_username': u'combacsa'}), 1, 2).hit]
+#[202, 201]
+#
+## Search article with title AND AMBIGUOUS author_username
+## Result should be same with above two tests.
+#>>> [x.id for x in server.search_manager.search(session_key, False, u'garbages', SearchQuery(**{'title': u'88', 'author_username': u'ikka'}), 1, 2).hit]
+#[191, 102]
+#
+#>>> [x.id for x in server.search_manager.search(session_key, False, u'garbages', SearchQuery(**{'title': u'88', 'author_username': u'omb'}), 1, 2).hit]
+#[202, 201]
+#
+## Search article with title AND EXACT author_nickname
+#>>> [x.id for x in server.search_manager.search(session_key, False, u'garbages', SearchQuery(**{'title': u'88', 'author_username': u'mikkang'}), 1, 2).hit]
+#[191, 102]
+#
+#>>> [x.id for x in server.search_manager.search(session_key, False, u'garbages', SearchQuery(**{'title': u'88', 'author_username': u'combacsa'}), 1, 2).hit]
+#[202, 201]
+#
+## Search article with title AND AMBIGUOUS author_nickname
+#>>> [x.id for x in server.search_manager.search(session_key, False, u'garbages', SearchQuery(**{'title': u'88', 'author_nickname': u'ikka'}), 1, 2).hit]
+#[191, 102]
+#
+#>>> [x.id for x in server.search_manager.search(session_key, False, u'garbages', SearchQuery(**{'title': u'88', 'author_nickname': u'omb'}), 1, 2).hit]
+#[202, 201]
+#
+## Search article with title AND EXACT content
+#>>> [x.id for x in server.search_manager.search(session_key, False, u'garbages', SearchQuery(**{'title': u'98', 'content': u'black'}), 1, 2).hit]
+#[201, 101]
+#
+## Search article with title AND AMBIGUOUS content
+## Result should be same with above one test.
+#>>> [x.id for x in server.search_manager.search(session_key, False, u'garbages', SearchQuery(**{'title': u'98', 'content': u'lac'}), 1, 2).hit]
+#[201, 101]
+#
+## Search article with EXACT title AND AMBIGUOUS content AND AMBIGUOUS author_username
+#>>> [x.id for x in server.search_manager.search(session_key, False, u'garbages', SearchQuery(**{'title': u'99', 'content': u'lac', 'author_username': u'mikk'}), 1, 2).hit]
+#[202, 102]
+#
+## Now search the article with all_flag ON WITH BOARD_NAME
+#>>> [x.id for x in server.search_manager.search(session_key, True, u'garbages', SearchQuery(**{'query': u'serialx'}), 1, 2).hit]
+#[202, 201]
+#
 
-# Search article with title AND EXACT author_username
->>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'88', u'author_username': u'mikkang'}, 1, 2)[1]['hit']]
-[191, 102]
+>>> server.search_manager.search(session_key, True, u'KAIST', SearchQuery(**{'query': u'serialx'}), 1, 2)
 
->>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'88', u'author_username': u'combacsa'}, 1, 2)[1]['hit']]
-[202, 201]
-
-# Search article with title AND AMBIGUOUS author_username
-# Result should be same with above two tests.
->>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'88', u'author_username': u'ikka'}, 1, 2)[1]['hit']]
-[191, 102]
-
->>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'88', u'author_username': u'omb'}, 1, 2)[1]['hit']]
-[202, 201]
-
-# Search article with title AND EXACT author_nickname
->>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'88', u'author_username': u'mikkang'}, 1, 2)[1]['hit']]
-[191, 102]
-
->>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'88', u'author_username': u'combacsa'}, 1, 2)[1]['hit']]
-[202, 201]
-
-# Search article with title AND AMBIGUOUS author_nickname
->>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'88', u'author_nickname': u'ikka'}, 1, 2)[1]['hit']]
-[191, 102]
-
->>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'88', u'author_nickname': u'omb'}, 1, 2)[1]['hit']]
-[202, 201]
-
-# Search article with title AND EXACT content
->>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'98', u'content': u'black'}, 1, 2)[1]['hit']]
-[201, 101]
-
-# Search article with title AND AMBIGUOUS content
-# Result should be same with above one test.
->>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'98', u'content': u'lac'}, 1, 2)[1]['hit']]
-[201, 101]
-
-# Search article with EXACT title AND AMBIGUOUS content AND AMBIGUOUS author_username
->>> [x['id'] for x in server.search_manager.search(session_key, False, u'garbages', {u'title': u'99', u'content': u'lac', u'author_username': u'mikk'}, 1, 2)[1]['hit']]
-[202, 102]
-
-# Now search the article with all_flag ON WITH BOARD_NAME
->>> [x['id'] for x in server.search_manager.search(session_key, True, u'garbages', {u'query': u'serialx'}, 1, 2)[1]['hit']]
-[202, 201]
-
->>> [x['id'] for x in server.search_manager.search(session_key, True, u'KAIST', {u'query': u'serialx'}, 1, 2)[1]['hit']]
+>>> [x.id for x in server.search_manager.search(session_key, True, u'KAIST', SearchQuery(**{'query': u'serialx'}), 1, 2).hit]
 [203]
 
 # Now search the article with all_flag OFF WITHOUT BOARD_NAME
->>> [x['id'] for x in server.search_manager.search(session_key, True, u'no_board', {u'query': u'serialx'}, 1, 2)[1]['hit']]
-[203, 202]
+#>>> [x.id for x in server.search_manager.search(session_key, True, u'no_board', SearchQuery(**{'query': u'serialx'}), 1, 2).hit]
+#[203, 202]
 
 # Restore time.time
 >>> time.time = org_time
