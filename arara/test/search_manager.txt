@@ -11,19 +11,7 @@
 >>> session_key_sysop = server.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123')
 
 >>> server.board_manager.add_board(unicode(session_key_sysop), u'garbages', u'Garbage Board')
->>> server.board_manager.add_board(unicode(session_key_sysop), u'KAIST', u'KAIST Board')
-
-# Read Only Board Test
-
->>> server.board_manager.add_read_only_board(session_key_sysop, u'garbages')
-
->>> article = Article(**{'title': u'serialx is...', 'content': u'polarbear'})
->>> server.article_manager.write_article(session_key_sysop, u'garbages', article)
-Traceback (most recent call last):
-  ...
-InvalidOperation
-
->>> server.board_manager.return_read_only_board(session_key_sysop, u'garbages')
+>>> server.board_manager.add_board(unicode(session_key_sysop), u'KAIST', u'The KAIST Board')
 
 
 # Register one user, combacsa.
@@ -58,7 +46,7 @@ InvalidOperation
 # now Testing Article Manager!
 
 >>> server.board_manager.get_board_list()
-[Board(read_only=False, board_name=u'garbages', board_description=u'Garbage Board')]
+[Board(read_only=False, board_name=u'garbages', board_description=u'Garbage Board'), Board(read_only=False, board_name=u'KAIST', board_description=u'The KAIST Board')]
 
 # Write an article
 
@@ -69,7 +57,7 @@ InvalidOperation
 # Read the article
 
 >>> server.article_manager.read(session_key, u'garbages', 1)
-[Article(board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status=None, root_id=1, is_searchable=False, author_nickname=u'mikkang', content=u'polarbear', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=1)]
+[Article(board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'polarbear', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=1)]
 
 # Reply to the article
 
@@ -84,12 +72,12 @@ InvalidOperation
 # Read the article again
 
 >>> server.article_manager.read(session_key, u'garbages', 1)
-[Article(board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status=None, root_id=1, is_searchable=False, author_nickname=u'mikkang', content=u'polarbear', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=1), Article(board_name=None, author_username=u'mikkang', hit=0, blacklisted=False, title=u'dummy', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'asdf', vote=0, depth=2, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=2)]
+[Article(board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'polarbear', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=1), Article(board_name=None, author_username=u'mikkang', hit=0, blacklisted=False, title=u'dummy', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'asdf', vote=0, depth=2, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=2)]
 
 # List the article (should only be one article in the list
 
 >>> server.article_manager.article_list(session_key, u'garbages')
-ArticleList(last_page=1, hit=[Article(board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status='R', root_id=None, is_searchable=None, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=1, last_modified_date=31536001.100000001, date=31536001.100000001, type='normal', id=1)], results=1, current_page=None)
+ArticleList(last_page=1, hit=[Article(board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status='R', root_id=None, is_searchable=True, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=1, last_modified_date=31536001.100000001, date=31536001.100000001, type='normal', id=1)], results=1, current_page=None)
 
 # Test for pagination with mikkang session_key
 
@@ -167,7 +155,7 @@ ArticleList(last_page=1, hit=[Article(board_name=None, author_username=u'mikkang
 #[202, 201]
 #
 
->>> server.search_manager.search(session_key, True, u'KAIST', SearchQuery(**{'query': u'serialx'}), 1, 2)
+#>>> server.search_manager.search(session_key, True, u'KAIST', SearchQuery(**{'query': u'serialx'}), 1, 2)
 
 >>> [x.id for x in server.search_manager.search(session_key, True, u'KAIST', SearchQuery(**{'query': u'serialx'}), 1, 2).hit]
 [203]

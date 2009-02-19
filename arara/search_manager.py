@@ -194,7 +194,7 @@ class SearchManager(object):
             raise InvalidOperation('wrong dictionary')
 
         if all_flag:
-            if not (query_dict.has_key('query') and query_dict['query']):
+            if (not 'query' in query_dict) or (not query_dict['query']):
                 raise InvalidOperation('wrong dictionary')
             tmp_query = query_dict['query']
             query_dict = {'query': tmp_query}
@@ -221,9 +221,11 @@ class SearchManager(object):
                 raise InvalidOperation('board not exist')
                 
         query = session.query(model.Article).filter_by(is_searchable=True)
+        logging.error(repr(query.all()))
 
         if board:
             query = query.filter_by(board_id=board.id)
+        logging.error(repr(query.all()))
 
         if all_flag:
             query_text = query_dict['query']

@@ -24,26 +24,26 @@ logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,)
 
 def suite():
     return unittest.TestSuite([
-                               ##doctest.DocFileSuite(
-                               ##    'test/article_manager.txt'),
-                               ##doctest.DocFileSuite(
-                               ##    'test/member_manager.txt'),
-                               ##doctest.DocFileSuite(
-                               ##    'test/blacklist_manager.txt'),
-                               ##doctest.DocFileSuite(
-                               ##    'test/messaging_manager.txt'),
-                               ##doctest.DocFileSuite(
-                               ##    'test/login_manager.txt'),
+                               doctest.DocFileSuite(
+                                   'test/article_manager.txt'),
+                               doctest.DocFileSuite(
+                                   'test/member_manager.txt'),
+                               doctest.DocFileSuite(
+                                   'test/blacklist_manager.txt'),
+                               doctest.DocFileSuite(
+                                   'test/messaging_manager.txt'),
+                               doctest.DocFileSuite(
+                                   'test/login_manager.txt'),
                                #doctest.DocFileSuite(
                                #    'test/model.txt'),
                                #doctest.DocFileSuite(
                                #    'test/notice_manager.txt'),
-                               ##doctest.DocFileSuite(
-                               ##    'test/read_status_manager.txt'),
-                               ##doctest.DocFileSuite(
-                               ##    'test/file_manager.txt'),
-                               ##doctest.DocFileSuite(
-                               ##    'test/board_manager.txt'),
+                               doctest.DocFileSuite(
+                                   'test/read_status_manager.txt'),
+                               doctest.DocFileSuite(
+                                   'test/file_manager.txt'),
+                               doctest.DocFileSuite(
+                                   'test/board_manager.txt'),
                                doctest.DocFileSuite(
                                    'test/search_manager.txt'),
                                #doctest.DocTestSuite(sysop_manager),

@@ -262,7 +262,7 @@ struct Article {
     9:  string author_username,
     10: string author_nickname,
     11: bool blacklisted = 0,
-    12: bool is_searchable,
+    12: bool is_searchable = 1,
     13: double last_modified_date,
     14: optional i32 depth,  // Only used in the 'read' function
     15: optional string read_status,
