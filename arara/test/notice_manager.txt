@@ -1,14 +1,13 @@
 
-Bootstrap test
+# Bootstrap test
 
 >>> import arara
+>>> from arara_thrift.ttypes import *
 >>> server = arara.get_namespace()
 
 >>> server.member_manager.is_registered(u'SYSOP')
 True
->>> ret, SYSOP_session_key = server.login_manager.login(u'SYSOP', u'SYSOP', '143.248.234.145')
->>> ret
-True
+>>> SYSOP_session_key = server.login_manager.login(u'SYSOP', u'SYSOP', '143.248.234.145')
 
 >>> import datetime
 >>> import time
@@ -21,33 +20,27 @@ Fake time
 >>> org_time = time.time
 >>> time.time = stub_time
 
->>> notice_reg_dic = { 'content':u'hahahah', 'due_date':datetime.datetime.fromtimestamp(time.time()), 'weight':'3' }
->>> server.notice_manager.add_welcome(SYSOP_session_key, notice_reg_dic)
-(True, 'OK')
->>> server.notice_manager.add_banner(SYSOP_session_key, notice_reg_dic)
-(True, 'OK')
+>>> notice_reg_dic = { 'content':u'hahahah', 'due_date':time.time(), 'weight':'3' }
+>>> server.notice_manager.add_welcome(SYSOP_session_key, WrittenNotice(**notice_reg_dic))
+>>> server.notice_manager.add_banner(SYSOP_session_key, WrittenNotice(**notice_reg_dic))
 
->>> notice_reg_dic = { 'content':u'hahahah', 'due_date':datetime.datetime.fromtimestamp(time.time()), 'weight':'1' }
->>> server.notice_manager.add_banner(SYSOP_session_key, notice_reg_dic)
-(True, 'OK')
->>> notice_reg_dic = { 'content':u'hahahah', 'due_date':datetime.datetime.fromtimestamp(time.time()), 'weight':'2' }
->>> server.notice_manager.add_banner(SYSOP_session_key, notice_reg_dic)
-(True, 'OK')
+>>> notice_reg_dic = { 'content':u'hahahah', 'due_date':time.time(), 'weight':'1' }
+>>> server.notice_manager.add_banner(SYSOP_session_key, WrittenNotice(**notice_reg_dic))
+>>> notice_reg_dic = { 'content':u'hahahah', 'due_date':time.time(), 'weight':'2' }
+>>> server.notice_manager.add_banner(SYSOP_session_key, WrittenNotice(**notice_reg_dic))
 
 
 >>> server.notice_manager.get_banner()
-(True, u'hahahah')
+u'hahahah'
 >>> server.notice_manager.get_welcome()
-(True, u'hahahah')
+u'hahahah'
 
 >>> server.notice_manager.list_banner(SYSOP_session_key)
-(True, [{'due_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'weight': 3, 'id': 1, 'content': u'hahahah', 'valid': True, 'issued_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000)}, {'due_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'weight': 1, 'id': 2, 'content': u'hahahah', 'valid': True, 'issued_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000)}, {'due_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'weight': 2, 'id': 3, 'content': u'hahahah', 'valid': True, 'issued_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000)}])
+[Notice(due_date=datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), weight=3, issued_date=datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), content=u'hahahah', valid=True, id=1), Notice(due_date=datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), weight=1, issued_date=datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), content=u'hahahah', valid=True, id=2), Notice(due_date=datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), weight=2, issued_date=datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), content=u'hahahah', valid=True, id=3)]
 >>> server.notice_manager.list_welcome(SYSOP_session_key)
-(True, [{'due_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), 'weight': 3, 'id': 1, 'content': u'hahahah', 'valid': True, 'issued_date': datetime.datetime(1970, 1, 1, 9, 0, 1, 100000)}])
+[Notice(due_date=datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), weight=3, issued_date=datetime.datetime(1970, 1, 1, 9, 0, 1, 100000), content=u'hahahah', valid=True, id=1)]
 
 >>> server.notice_manager.remove_banner(SYSOP_session_key, 1)
-(True, 'OK')
 >>> server.notice_manager.remove_welcome(SYSOP_session_key, 1)
-(True, 'OK')
 
 >>> time.time = org_time

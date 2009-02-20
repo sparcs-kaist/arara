@@ -36,8 +36,8 @@ def suite():
                                    'test/login_manager.txt'),
                                #doctest.DocFileSuite(
                                #    'test/model.txt'),
-                               #doctest.DocFileSuite(
-                               #    'test/notice_manager.txt'),
+                               doctest.DocFileSuite(
+                                   'test/notice_manager.txt'),
                                doctest.DocFileSuite(
                                    'test/read_status_manager.txt'),
                                doctest.DocFileSuite(

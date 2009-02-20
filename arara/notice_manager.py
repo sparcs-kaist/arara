@@ -4,14 +4,15 @@
 import random
 from sqlalchemy.exceptions import InvalidRequestError
 from arara import model
+from arara_thrift.ttypes import *
 from arara.util import require_login, filter_dict, is_keys_in_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
+from arara.util import timestamp2datetime
 
 
 log_method_call = log_method_call_with_source('notice_manager')
 log_method_call_important = log_method_call_with_source_important('notice_manager')
 
-NOTICE_PUBLIC_KEYS = ('id', 'content', 'issued_date', 'due_date', 'valid', 'weight')
 NOTICE_QUERY_WHITELIST = ('id', 'content', 'issued_date', 'due_date', 'valid', 'weight')
 NOTICE_PUBLIC_WHITELIST= ('id', 'content', 'issued_date', 'due_date', 'valid', 'weight')
 NOTICE_ADD_WHITELIST = ('content','due_date','weight')
@@ -43,7 +44,7 @@ class NoticeManager(object):
         return_list = []
         for item in raw_list:
             filtered_dict = self._get_dict(item, whitelist)
-            return_list.append(filtered_dict)
+            return_list.append(Notice(**filtered_dict))
         return return_list
 
     @log_method_call
@@ -54,25 +55,25 @@ class NoticeManager(object):
         >>> notice.get_banner()
         '<html> .... '
 
-        @rtype: boolean, string
+        @rtype: string
         @return:
-            1. 배너가 있을 때: True, 랜덤하게 선택된 배너(html)
-            2. 배너가 없을 때: False, 'NO_BANNER'
+            1. 배너가 있을 때: 랜덤하게 선택된 배너(html)
+            2. 배너가 없을 때: InvalidOperation Exception
         '''
         session = model.Session()
         available_banner = session.query(model.Banner).filter_by(valid=True).all()
-        available_banner_dict_list = self._get_dict_list(available_banner, NOTICE_PUBLIC_KEYS)
+        available_banner_dict_list = self._get_dict_list(available_banner, NOTICE_PUBLIC_WHITELIST)
         if available_banner_dict_list:
             weight_banner = []
             for index in range(len(available_banner_dict_list)):
-                for weight in range(available_banner_dict_list[index]['weight']):
+                for weight in range(available_banner_dict_list[index].weight):
                     weight_banner.append(index)
             n = random.choice(weight_banner)
             session.close()
-            return True, available_banner_dict_list[n]['content']
+            return available_banner_dict_list[n].content
         else:
             session.close()
-            return False, 'NO_BANNER'
+            raise InvalidOperation('no banner')
 
     @log_method_call
     def get_welcome(self):
@@ -82,25 +83,25 @@ class NoticeManager(object):
         >>> notice.get_welcome()
         '<html> .... '
 
-        @rtype: boolean, string
+        @rtype: string
         @return:
-            1. welcome 있을 때: True, 랜덤하게 선택된 welcome(html)
-            2. welcome 없을 때: False, 'NO_WELCOME'
+            1. welcome 있을 때: 랜덤하게 선택된 welcome(html)
+            2. welcome 없을 때: InvalidOperation Exception
         '''
         session = model.Session()
         available_welcome= session.query(model.Welcome).filter_by(valid=True).all()
-        available_welcome_dict_list = self._get_dict_list(available_welcome, NOTICE_PUBLIC_KEYS)
+        available_welcome_dict_list = self._get_dict_list(available_welcome, NOTICE_PUBLIC_WHITELIST)
         if available_welcome_dict_list:
             weight_welcome = []
             for index in range(len(available_welcome_dict_list)):
-                for weight in range(available_welcome_dict_list[index]['weight']):
+                for weight in range(available_welcome_dict_list[index].weight):
                     weight_welcome.append(index)
             n = random.choice(weight_welcome)
             session.close()
-            return True, available_welcome_dict_list[n]['content']
+            return available_welcome_dict_list[n].content
         else:
             session.close()
-            return False, 'NO_WELCOME'
+            raise InvalidOperation('no welcome')
 
     @require_login
     @log_method_call_important
@@ -113,25 +114,25 @@ class NoticeManager(object):
 
         @rtype: list
         @return:
-            1. banner 페이지가 있을 때: True, banner 페이지들의 목록(text)
+            1. banner 페이지가 있을 때: banner 페이지들의 목록(text)
             2. banner 페이지가 없을 때: 
-                1. banner가 없을때  : False, 'NO_BANNER'
-                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
-            3. 시삽이 아닐 때: False, 'NOT_SYSOP'
+                1. banner가 없을때  : InvalidOperation Exception
+                2. 데이터베이스 오류: InternalError Exception
+            3. 시삽이 아닐 때: InvalidOperation Exception
         '''
         if not self.member_manager.is_sysop(session_key):
-            return False, 'NOT_SYSOP'
+            raise InvalidOperation('not sysop')
 
         session = model.Session()
         banner = session.query(model.Banner).all()
-        banner_dict_list = self._get_dict_list(banner, NOTICE_PUBLIC_KEYS)
+        banner_dict_list = self._get_dict_list(banner, NOTICE_PUBLIC_WHITELIST)
 
         if banner_dict_list:
             session.close()
-            return True, banner_dict_list
+            return banner_dict_list
         else:    
             session.close()
-            return False, 'NO_BANNER'
+            raise InvalidOperation('no banner')
 
     @require_login
     @log_method_call_important
@@ -152,17 +153,17 @@ class NoticeManager(object):
         '''
         
         if not self.member_manager.is_sysop(session_key):
-            return False, 'NOT_SYSOP'
+            raise InvalidOperation('not sysop')
         session = model.Session()
         welcome= session.query(model.Welcome).all()
-        welcome_dict_list = self._get_dict_list(welcome, NOTICE_PUBLIC_KEYS)
+        welcome_dict_list = self._get_dict_list(welcome, NOTICE_PUBLIC_WHITELIST)
 
         if welcome_dict_list:
             session.close()
-            return True, welcome_dict_list
+            return welcome_dict_list
         else:    
             session.close()
-            return False, 'NO_WELCOME'
+            raise InvalidOperation('no welcome')
         
 
     @require_login    
@@ -172,28 +173,32 @@ class NoticeManager(object):
         관리자용 배너 추가 함수
 
         >>> notice_reg_dic = { 'content':'hahahah', 'due_date':'2008,7,14', 'weight':'1' }
-        >>> notice.add_banner(SYSOP_session_key, notice_reg_dic)
-        True, 'OK'
+        >>> notice.add_banner(SYSOP_session_key, WrittenNotice(**notice_reg_dic))
         >>> notice.add_banner(user_session_key, notice_reg_dic)
-        False, 'NOT_SYSOP'
+        Traceback (most recent calls top):
+            ...
+        InvalidOperation
         
         @type  session_key: string
         @param session_key: User Key
         @type  notice_reg_dic: dictionary
         @param notice_reg_dic: Notice Dictionary
-        @rtype: string
+        @rtype: void
         @return:
-            1. 배너 페이지 추가에 성공하였을 때: True, 'OK'
+            1. 배너 페이지 추가에 성공하였을 때: void
             2. 배너 페이지 추가에 실패하였을 때:
-                1. 시삽이 아닐 때: False, 'NOT_SYSOP'
-                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 시삽이 아닐 때: InvalidOperation Exception
+                2. 데이터베이스 오류: InternalError Exception
         '''
+        notice_reg_dic = notice_reg_dic.__dict__
+        notice_reg_dic['due_date'] = timestamp2datetime(
+                notice_reg_dic['due_date'])
 
         if not is_keys_in_dict(notice_reg_dic, NOTICE_ADD_WHITELIST):
-            return False, 'WRONG_DICTIONARY'
+            raise InvalidOperation('wrong dictionary')
 
         if not self.member_manager.is_sysop(session_key):
-            return False, 'NOT_SYSOP'
+            raise InvalidOperation('not sysop')
 
         session = model.Session()
         try:
@@ -202,12 +207,11 @@ class NoticeManager(object):
             session.save(banner)
             session.commit()
             session.close()
-            return True, 'OK' 
+            return
         except Exception, e:
-            raise
             session.rollback()
             session.close()
-            return False, e
+            raise InternalError('database error')
 
     @require_login    
     @log_method_call_important
@@ -217,27 +221,33 @@ class NoticeManager(object):
 
         >>> notice_reg_dic = { 'content':'hahahah', 'due_date':'2008,7,14', 'weight':'1' }
         >>> notice.add_welcome(SYSOP_session_key, notice_reg_dic)
-        True, 'OK'
         >>> notice.add_welcome(user_session_key, notice_reg_dic)
-        False, 'NOT_SYSOP'
+        Traceback (most recent calls top):
+            ...
+        InvalidOperation
         
         @type  session_key: string
         @param session_key: User Key
         @type  notice_reg_dic: dictionary
         @param notice_reg_dic: Notice Dictionary
-        @rtype: string
+        @rtype: void
         @return:
-            1. welcome 페이지 추가에 성공하였을 때: True, 'OK'
+            1. welcome 페이지 추가에 성공하였을 때: void
             2. welcome 페이지 추가에 실패하였을 때:
-                1. 시삽이 아닐 때: False, 'NOT_SYSOP'
-                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 시삽이 아닐 때: InvalidOperation Exception
+                2. 데이터베이스 오류: InternalError Exception
         '''
 
+        notice_reg_dic = notice_reg_dic.__dict__
+
+        notice_reg_dic['due_date'] = timestamp2datetime(
+                notice_reg_dic['due_date'])
+
         if not is_keys_in_dict(notice_reg_dic, NOTICE_ADD_WHITELIST):
-            return False, 'WRONG_DICTIONARY'
+            raise InvalidOperation('wrong dictionary')
 
         if not self.member_manager.is_sysop(session_key):
-            return False, 'NOT_SYSOP'
+            raise InvalidOperation('not sysop')
 
         session = model.Session()
         try:
@@ -246,11 +256,11 @@ class NoticeManager(object):
             session.save(welcome)
             session.commit()
             session.close()
-            return True, 'OK' 
+            return
         except Exception, e:
             session.rollback()
             session.close()
-            return False, e
+            raise InternalError('database error')
 
     @require_login 
     @log_method_call_important
@@ -259,36 +269,39 @@ class NoticeManager(object):
         관리자용 배너 제거 함수
 
         >>> notice.remove_banner(SYSOP_session_key, 33)
-        True, 'OK'
         >>> notice.remove_banner(user_session_key, 33)
-        False, 'NOT_SYSOP'
+        Traceback (most recent call top):
+            ...
+        InvalidOperation
         >>> notice.remove_banner(SYSOP_session_key, -1)
-        False, 'NOT_EXIST_BANNER'
+        Traceback (most recent call top):
+            ...
+        InvalidOperation
 
-        @rtype: string
+        @rtype: void
         @return:
-            1. 배너 제거에 성공하였을 때: True, 'OK'
+            1. 배너 제거에 성공하였을 때: void
             2. 배너 제거에 실패하였을 때:
-                1. 시삽이 아닐 때: False, 'NOT_SYSOP'
-                2. 존재하지 않는 배너번호일 때: False, 'NOT_EXIST_BANNER'
-                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 시삽이 아닐 때: InvalidOperation Exception
+                2. 존재하지 않는 배너번호일 때: InvalidOperation Exception 
+                3. 데이터베이스 오류: InternalError Exception
         '''
         
         if not self.member_manager.is_sysop(session_key):
-            return False, 'NOT_SYSOP'
+            raise InvalidOperation('not sysop')
         try:
             session = model.Session()
             invalid_banner= session.query(model.Banner).filter_by(id = id).one()
             if invalid_banner:
                 invalid_banner.valid = 'False'
                 session.close()
-                return True, 'OK' 
+                return
             else:
                 session.close()
-                return False, 'NOT_EXIST_WELCOME'
+                raise InvalidOperation('not exist welcome')
         except Exception:
             session.close()
-            return False, 'DATABASE_ERROR'
+            raise InternalError('database error')
     
     @require_login 
     @log_method_call_important
@@ -297,35 +310,38 @@ class NoticeManager(object):
         관리자용 welcome 제거 함수
 
         >>> notice.remove_welcome(SYSOP_session_key, 33)
-        True, 'OK'
         >>> notice.remove_welcome(user_session_key, 33)
-        False, 'NOT_SYSOP'
+        Traceback (most recent call top):
+            ...
+        InvalidOperation
         >>> notice.remove_welcome(SYSOP_session_key, -1)
-        False, 'NOT_EXIST_WELCOME'
+        Traceback (most recent call top):
+            ...
+        InvalidOperation
 
-        @rtype: string
+        @rtype: void
         @return:
-            1. welcome 제거에 성공하였을 때: True, 'OK'
+            1. welcome 제거에 성공하였을 때: void
             2. welcome 제거에 실패하였을 때:
                 1. 시삽이 아닐 때: False, 'NOT_SYSOP'
-                2. 존재하지 않는 welcome번호일 때: False, 'NOT_EXIST_WELCOME'
-                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                2. 존재하지 않는 welcome번호일 때: InvalidOperation Exception
+                3. 데이터베이스 오류: InternalError Exception
         '''
         
         if not self.member_manager.is_sysop(session_key):
-            return False, 'NOT_SYSOP'
+            raise InvalidOperation('not sysop')
         try:
             session = model.Session()
             invalid_welcome= session.query(model.Welcome).filter_by(id = id).one()
             if invalid_welcome:
                 invalid_welcome.valid = 'False'
                 session.close()
-                return True, 'OK' 
+                return
             else:
                 session.close()
-                return False, 'NOT_EXIST_WELCOME'
+                raise InvalidOperation('not exist welcome')
         except:
             session.close()
-            return False, 'DATABASE_ERROR'
+            raise InternalError('database error')
 
 # vim: set et ts=8 sw=4 sts=4

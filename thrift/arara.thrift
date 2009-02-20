@@ -457,14 +457,66 @@ struct SearchQuery {
 }
 
 service SearchManager {
-    void register_article(),
+    void register_article()
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void ksearch(1:string query_text,
                 2:i32 page = 1
-                3:i32 page_length = 20),
+                3:i32 page_length = 20)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     ArticleSearchResult search(1:string session_key,
                 2:bool all_flag,
                 3:string board_name,
                 4:SearchQuery query_dict,
                 5:i32 page = 1,
-                6:i32 page_length = 20),
+                6:i32 page_length = 20)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+}
+
+struct Notice {
+    1:i32 id,
+    2:string content,
+    3:double issued_date,
+    4:double due_date,
+    5:bool valid,
+    6:i32 weight,
+}
+
+struct WrittenNotice {
+    1:string content,
+    2:double due_date,
+    3:i32 weight,
+}
+
+service NoticeManager {
+    string get_banner()
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    string get_welcome()
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<Notice> list_banner(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<Notice> list_welcome(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void add_banner(1:string session_key,
+                    2:WrittenNotice notice_reg_dic)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void add_welcome(1:string session_key,
+                    2:WrittenNotice notice_reg_dic)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void remove_banner(1:string session_key,
+                    2:i32 id)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void remove_welcome(1:string session_key,
+                    2:i32 id)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 }
