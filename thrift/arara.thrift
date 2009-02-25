@@ -197,7 +197,7 @@ service BlacklistManager {
 }
 
 struct Board {
-    1: string read_only,
+    1: bool read_only,
     2: string board_name,
     3: string board_description,
 }
