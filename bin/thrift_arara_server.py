@@ -190,6 +190,14 @@ if __name__ == '__main__':
     
     servers = []
 
+    def exception_handler(type_, value, traceback_):
+        import traceback
+        error_msg = ''.join(traceback.format_exception(type_, value, traceback_))
+        print >> sys.stderr, error_msg
+        print >> sys.stdout, error_msg
+
+    sys.excepthook = exception_handler
+
     print args[0]
     server = open_server(args[0], options.port)
 
