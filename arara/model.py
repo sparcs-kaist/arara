@@ -372,10 +372,10 @@ mapper(Blacklist, blacklist_table, properties={
 })
 
 
-#TEST_DATABASE_FILENAME = 'test.db'
-#CONNECTION_STRING = 'sqlite:///%s' % TEST_DATABASE_FILENAME
 import settings
 CONNECTION_STRING = settings.DB_CONNECTION_STRING
+#TEST_DATABASE_FILENAME = 'test.db'
+#CONNECTION_STRING = 'sqlite:///%s' % TEST_DATABASE_FILENAME
 
 engine = None
 
@@ -384,9 +384,13 @@ def get_engine():
     global engine
     if not engine:
         from sqlalchemy import create_engine
-        engine = create_engine(CONNECTION_STRING, encoding='utf-8',
+        if CONNECTION_STRING.startswith('mysql'):
+            engine = create_engine(CONNECTION_STRING, encoding='utf-8',
                                 convert_unicode=True, assert_unicode=None,
                                 pool_size=50, max_overflow=100, echo=False)
+        else:
+            engine = create_engine(CONNECTION_STRING, encoding='utf-8',
+                                convert_unicode=True, assert_unicode=None)
     return engine
 
 Session = None

@@ -13,17 +13,6 @@ THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../gen-py
 sys.path.append(THRIFT_PATH)
 sys.path.append(PROJECT_PATH)
 
-import arara_thrift.LoginManager
-import arara_thrift.ArticleManager
-import arara_thrift.BlacklistManager
-import arara_thrift.BoardManager
-import arara_thrift.MemberManager
-import arara_thrift.LoginManager
-import arara_thrift.MessagingManager
-import arara_thrift.NoticeManager
-import arara_thrift.ReadStatusManager
-import arara_thrift.SearchManager
-import arara_thrift.FileManager
 from arara_thrift.ttypes import *
 from thrift.protocol import TBinaryProtocol
 from thrift.transport.TTransport import TTransportException
@@ -34,6 +23,7 @@ from thrift.server import TServer
 import arara
 import arara.model
 
+from arara import MAPPING, DEPENDENCY, PORT, CLASSES, connect_thrift_server
 from thirdparty import wsgiserver
 
 from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
@@ -50,76 +40,7 @@ logging.getLogger('').setLevel(logging.NOTSET)
 logging.getLogger('').addHandler(handler_for_debug)
 logging.getLogger('').addHandler(handler_for_info)
 
-
-arara.model.init_database()
-namespace = arara.get_namespace()
     
-from arara.article_manager import ArticleManager
-from arara.blacklist_manager import BlacklistManager
-from arara.board_manager import BoardManager
-from arara.member_manager import MemberManager
-from arara.login_manager import LoginManager
-from arara.messaging_manager import MessagingManager
-from arara.notice_manager import NoticeManager
-from arara.read_status_manager import ReadStatusManager
-from arara.search_manager import SearchManager
-from arara.file_manager import FileManager
-
-MAPPING = [(LoginManager, arara_thrift.LoginManager),
-           (MemberManager, arara_thrift.MemberManager),
-           (BlacklistManager, arara_thrift.BlacklistManager),
-           (BoardManager, arara_thrift.BoardManager),
-           (ReadStatusManager, arara_thrift.ReadStatusManager),
-           (ArticleManager, arara_thrift.ArticleManager),
-           (MessagingManager, arara_thrift.MessagingManager),
-           (NoticeManager, arara_thrift.NoticeManager),
-           (ReadStatusManager, arara_thrift.ReadStatusManager),
-           (SearchManager, arara_thrift.SearchManager),
-           (FileManager, arara_thrift.FileManager)
-           ]
-
-DEPENDENCY = {LoginManager: [MemberManager],
-              MemberManager: [LoginManager],
-              BlacklistManager: [MemberManager, LoginManager],
-              BoardManager: [LoginManager],
-              ReadStatusManager: [LoginManager, MemberManager],
-              ArticleManager: [LoginManager, BlacklistManager,
-                               ReadStatusManager, BoardManager,
-                               FileManager],
-              MessagingManager: [LoginManager, MemberManager,
-                                 BlacklistManager],
-              NoticeManager: [LoginManager, MemberManager],
-              ReadStatusManager: [LoginManager, MemberManager],
-              SearchManager: [BoardManager, LoginManager],
-              FileManager: [LoginManager]
-              }
-
-PORT = {LoginManager: 1,
-        MemberManager: 2,
-        BlacklistManager: 3,
-        BoardManager: 4,
-        ReadStatusManager: 5,
-        ArticleManager: 6,
-        MessagingManager: 7,
-        NoticeManager: 8,
-        ReadStatusManager: 9,
-        SearchManager: 10,
-        FileManager: 11,
-        }
-
-CLASSES = {'LoginManager': LoginManager,
-           'MemberManager': MemberManager,
-           'BlacklistManager': BlacklistManager,
-           'BoardManager': BoardManager,
-           'ReadStatusManager': ReadStatusManager,
-           'ArticleManager': ArticleManager,
-           'MessagingManager': MessagingManager,
-           'NoticeManager': NoticeManager,
-           'ReadStatusManager': ReadStatusManager,
-           'SearchManager': SearchManager,
-           'FileManager': FileManager,
-        }
-
 def open_thrift_server(processor, handler, port):
     handler_instance = handler()
     processor_ = processor.Processor(handler_instance)
@@ -128,14 +49,6 @@ def open_thrift_server(processor, handler, port):
     pfactory = TBinaryProtocol.TBinaryProtocolFactory()
     server = TServer.TThreadedServer(processor_, transport, tfactory, pfactory)
     return server, handler_instance
-
-def connect_thrift_server(host, port, thrift_class):
-    transport = TSocket.TSocket(host, port)
-    transport = TTransport.TBufferedTransport(transport)
-    protocol = TBinaryProtocol.TBinaryProtocol(transport)
-    client = thrift_class.Client(protocol)
-    transport.open()
-    return client
 
 def setter_name(class_):
     """AbcdEfg -> _set_abcd_efg"""
@@ -170,7 +83,7 @@ def resolve_dependencies(base_class, instance, base_port):
         while True:
             try:
                 client = connect_thrift_server('localhost',
-                        dependency_port, dependency_thrift_class)
+                        base_port, dependency_class)
                 setter = setter_name(dependency_class)
                 setter_method = getattr(instance, setter)
                 setter_method(client)
@@ -188,7 +101,7 @@ if __name__ == '__main__':
     options, args = parser.parse_args()
     print "Opening ARAra Thrift middleware on port starting from", options.port, "..."
     
-    servers = []
+    arara.model.init_database()
 
     def exception_handler(type_, value, traceback_):
         import traceback
