@@ -1,6 +1,8 @@
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
 
+from arara_thrift.ttypes import *
+
 import arara
 import warara
 
@@ -19,8 +21,7 @@ def register(request):
         introduction = request.POST['introduce']
         language = request.POST['language']
         user_information_dic = {'username':username, 'password':password, 'nickname':nickname, 'email':email, 'signature':signature, 'self_introduction':introduction, 'default_language':language}
-        ret, message = server.member_manager.register(user_information_dic)
-        assert ret, message
+        message = server.member_manager.register(UserRegistration(**user_information_dic))
         return HttpResponseRedirect("/main/")
     
     rendered = render_to_string('account/register.html', r)
@@ -30,7 +31,7 @@ def confirm_user(request, username, confirm_key):
     server = arara.get_server()
 
     if request.method == 'POST':
-        ret, mes = server.member_manager.confirm(username, confirm_key)
+        mes = server.member_manager.confirm(username, confirm_key)
         return HttpResponse(mes)
 
     rendered = render_to_string('account/mail_confirm.html')
@@ -52,15 +53,13 @@ def login(request):
         current_page = request.POST.get('current_page_url', 0)
         client_ip = request.META['REMOTE_ADDR']
         server = arara.get_server()
-        ret, session_key = server.login_manager.login(username, password, client_ip)
+        session_key = server.login_manager.login(username, password, client_ip)
         if request.POST.get('precheck', 0):
                 return HttpResponse(session_key);
-        assert ret, session_key
-        ret, User_Info = server.member_manager.get_info(session_key)
-        assert ret, User_Info
-        if User_Info['default_language'] == "kor":
+        User_Info = server.member_manager.get_info(session_key)
+        if User_Info.default_language == "kor":
             request.session["django_language"] = "ko"
-        elif User_Info['default_language'] == "eng":
+        elif User_Info.default_language == "eng":
             request.session["django_language"] = "en"
         request.session["arara_session_key"] = session_key
         request.session["arara_username"] = username
@@ -79,11 +78,10 @@ def logout(request):
     session_key, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
         server = arara.get_server()
-        ret, account = server.login_manager.logout(session_key)
+        account = server.login_manager.logout(session_key)
         del request.session['arara_session_key']
         del request.session['arara_username']
         request.session.clear()
-        assert ret, account
         return HttpResponseRedirect(current_page)
     else:
         if request.session.get('arara_session_key', 0):
@@ -95,10 +93,9 @@ def account(request):
     session_key, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
         server = arara.get_server()
-        ret, account = server.member_manager.get_info(session_key)
-        assert ret, account
+        account = server.member_manager.get_info(session_key)
 
-        account['logged_in'] = True
+        account.logged_in = True
         rendered = render_to_string('account/myaccount_frame.html', account)
     else:
         assert None, "NOT_LOGGED_IN"
@@ -108,22 +105,21 @@ def account_modify(request):
     session_key, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
         server = arara.get_server()
-        ret, account = server.member_manager.get_info(session_key)
+        account = server.member_manager.get_info(session_key)
         if request.method == 'POST':
             nickname = request.POST['mynickname']
             signature = request.POST['mysig']
             introduction = request.POST['myintroduce']
             language = request.POST['mylanguage']
             modified_information_dic = {'nickname': nickname, 'signature': signature, 'self_introduction': introduction, 'default_language': language, 'widget': 0, 'layout': 0}
-            ret, message = server.member_manager.modify(session_key, modified_information_dic)
-            assert ret, message
+            server.member_manager.modify(session_key, modified_information_dic)
             if language == "kor":
                 request.session["django_language"] = "ko"
             elif language == "eng":
                 request.session["django_language"] = "en"
             return HttpResponseRedirect("/account/")
         else:
-            account['logged_in'] = True
+            account.logged_in = True
             rendered = render_to_string('account/myaccount_modify.html', account)
             return HttpResponse(rendered)
     else:
@@ -139,8 +135,7 @@ def password_modify(request):
             last_password = request.POST['last_password']
             password = request.POST['password']
             user_information_dic = {'username':username, 'current_password':last_password, 'new_password':password}
-            ret, message = server.member_manager.modify_password(session_key, user_information_dic)
-            assert ret, message
+            server.member_manager.modify_password(session_key, user_information_dic)
             return HttpResponseRedirect("/account/")
         else:
             rendered = render_to_string('account/myacc_pw_modify.html', r)
@@ -154,13 +149,12 @@ def account_remove(request):
     if r['logged_in'] == True:
         server = arara.get_server()
         if request.method == 'POST':
-            ret, message = server.member_manager.remove_user(session_key)
-            assert ret, message
+            server.member_manager.remove_user(session_key)
             return HttpResponseRedirect("/")
         else:
-            ret, account = server.member_manager.get_info(session_key)
+            account = server.member_manager.get_info(session_key)
             assert ret, account
-            account['logged_in'] = True
+            account.logged_in = True
             rendered = render_to_string('account/myaccount_remove.html', account)
             return HttpResponse(rendered)
     else:
@@ -188,15 +182,15 @@ def wrap_error(f):
 
     return check_error
 
-login = wrap_error(login)
-logout = wrap_error(logout)
-account = wrap_error(account)
-register = wrap_error(register)
-agreement = wrap_error(agreement)
-confirm_user = wrap_error(confirm_user)
-account_modify = wrap_error(account_modify)
-account_remove = wrap_error(account_remove)
-password_modify = wrap_error(password_modify)
+#login = wrap_error(login)
+#logout = wrap_error(logout)
+#account = wrap_error(account)
+#register = wrap_error(register)
+#agreement = wrap_error(agreement)
+#confirm_user = wrap_error(confirm_user)
+#account_modify = wrap_error(account_modify)
+#account_remove = wrap_error(account_remove)
+#password_modify = wrap_error(password_modify)
 
 def id_check(request):
     if request.method == 'POST':

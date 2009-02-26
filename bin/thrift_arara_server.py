@@ -1,6 +1,10 @@
 #!/usr/bin/python
 import os
 import sys
+# XXX(serialx): ugly hack for the unicode
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 import optparse
 import traceback
 import xmlrpclib

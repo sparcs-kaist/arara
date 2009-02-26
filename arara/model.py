@@ -8,7 +8,7 @@ from sqlalchemy.orm import *
 
 def smart_unicode(string):
     if type(string) == str:
-        return unicode(string, 'UTF-8')
+        return unicode(string, 'UTF-8', 'replace')
     else:
         return unicode(string)
 

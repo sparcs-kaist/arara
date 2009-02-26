@@ -1,6 +1,11 @@
 #!/usr/bin/python
 import os
 import sys
+# XXX(serialx): ugly hack for the unicode
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
+sys.path.append('./gen-py')
 import optparse
 
 PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))

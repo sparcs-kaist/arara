@@ -7,8 +7,7 @@ import warara
 def index(request):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request)
-    ret, board_list = server.board_manager.get_board_list()
-    assert ret, board_list
+    board_list = server.board_manager.get_board_list()
     r['board_list'] = board_list
 
     rendered = render_to_string('sysop/index.html', r)
@@ -17,26 +16,22 @@ def index(request):
 def add_board(request):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request)
-    ret, msg = server.board_manager.add_board(sess, request.POST['add_board_name'], request.POST['add_board_description'])
-    assert ret, msg
+    msg = server.board_manager.add_board(sess, request.POST['add_board_name'], request.POST['add_board_description'])
     return HttpResponseRedirect('/sysop/')
 
 def remove_board(request):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request)
-    ret, board_list = server.board_manager.get_board_list()
-    assert ret, board_list
+    board_list = server.board_manager.get_board_list()
     for board in board_list:
         if request.POST.get(board['board_name'], None):
-            ret, msg = server.board_manager.delete_board(sess, board['board_name'])
-            assert ret, msg
+            msg = server.board_manager.delete_board(sess, board['board_name'])
     return HttpResponseRedirect('/sysop/')
 
 def confirm_user(request):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request)
-    ret, msg = server.member_manager.backdoor_confirm(sess, request.POST['confirm_username'])
-    assert ret, msg
+    msg = server.member_manager.backdoor_confirm(sess, request.POST['confirm_username'])
     return HttpResponseRedirect('/sysop/')
 
 def wrap_error(f):
@@ -59,7 +54,7 @@ def wrap_error(f):
 
     return check_error
 
-index = wrap_error(index)
-add_board = wrap_error(add_board)
-remove_board = wrap_error(remove_board)
-confirm_user = wrap_error(confirm_user)
+#index = wrap_error(index)
+#add_board = wrap_error(add_board)
+#remove_board = wrap_error(remove_board)
+#confirm_user = wrap_error(confirm_user)

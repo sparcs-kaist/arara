@@ -64,18 +64,19 @@ def inbox(request):
     r['page_no'] = int(page)
     page_length = request.GET.get('page_length', 10)
     page_length = int(page_length)
-    ret, r['message_result'] = server.messaging_manager.receive_list(sess, page, page_length)
-    if not ret:
+    try:
+        r['message_result'] = server.messaging_manager.receive_list(sess, page, page_length)
+    except Exception:
         page = int(page)
         while page>0:
             page -= 1
-            ret, r['message_result'] = server.messaging_manager.receive_list(sess, page, page_length)
-            if ret:
+            try:
+                r['message_result'] = server.messaging_manager.receive_list(sess, page, page_length)
+            except Exception:
                 break;
-    assert ret, r['message_result']
-    r['message_list'] = r['message_result']['hit']
+    r['message_list'] = r['message_result'].hit
     r = get_various_info(request, r)
-    r['num_new_message'] = r['message_result']['new_message_count']
+    r['num_new_message'] = r['message_result'].new_message_count
     r['page_length'] = int(page_length)
     r['message_list_type'] = 'inbox'
     r['person_type'] = 'sender'
@@ -95,16 +96,17 @@ def outbox(request):
     r['page_no'] = int(page)
     page_length = request.GET.get('page_length', 10)
     page_length = int(page_length)
-    ret, r['message_result'] = server.messaging_manager.sent_list(sess, page, page_length)
-    if not ret:
+    try:
+        r['message_result'] = server.messaging_manager.sent_list(sess, page, page_length)
+    except Exception:
         page = int(page)
         while page>0:
             page -= 1
-            ret, r['message_result'] = server.messaging_sent.receive_list(sess, page, page_length)
-            if ret:
+            try:
+                r['message_result'] = server.messaging_sent.receive_list(sess, page, page_length)
+            except Exception:
                 break;
-    assert ret, r['message_result']
-    r['message_list'] = r['message_result']['hit']
+    r['message_list'] = r['message_result'].hit
     r = get_various_info(request, r)
     r['page_length'] = int(page_length)
     r['message_list_type'] = 'outbox'
@@ -127,9 +129,8 @@ def send(request, msg_no=0):
     msg_no = int(msg_no)
 
     if msg_no:
-        ret, message = server.messaging_manager.read_received_message(sess, msg_no)
-        assert ret, message
-        r['default_receiver'] = message['from']
+        message = server.messaging_manager.read_received_message(sess, msg_no)
+        r['default_receiver'] = message.from_
 
     if request.GET.get('multi', 0): #for test only
         multi = request.GET['multi']
@@ -137,7 +138,7 @@ def send(request, msg_no=0):
         rc = request.GET.get('rc', 'SYSOP')
         con = request.GET.get('con', 'almond chocoball')
         for i in range(multi):
-            ret, message = server.messaging_manager.send_message(sess, rc, con)
+            message = server.messaging_manager.send_message(sess, rc, con)
         return HttpResponseRedirect('/message/outbox/')
 
     rendered = render_to_string('message/send.html', r)
@@ -151,13 +152,12 @@ def send_(request):
     receiver = request.POST.get('receiver', '')
     text = request.POST.get('text', '')
     receiver_type = request.POST.get('receiver_type', 'nickname')
-    if receiver_type == "nickname":
-        ret, message = server.messaging_manager.send_message_by_nickname(sess, receiver, text)
-    else:
-        ret, message = server.messaging_manager.send_message_by_username(sess, receiver, text)
-    assert ret, message
-
-    if not ret:
+    try:
+        if receiver_type == "nickname":
+            message = server.messaging_manager.send_message_by_nickname(sess, receiver, text)
+        else:
+            message = server.messaging_manager.send_message_by_username(sess, receiver, text)
+    except:
         r['e'] = message
         if "ajax" in request.POST:
             return HttpResponse(message)
@@ -179,10 +179,9 @@ def read(request, message_list_type, message_id):
     r['page_no'] = request.GET.get('page_no', 1)
     message_id = int(message_id)
     if message_list_type == 'inbox':
-        ret, r['message'] = server.messaging_manager.read_received_message(sess, message_id)
+        r['message'] = server.messaging_manager.read_received_message(sess, message_id)
     elif message_list_type == 'outbox':
-        ret, r['message'] = server.messaging_manager.read_sent_message(sess, message_id)
-    assert ret, r['message']
+        r['message'] = server.messaging_manager.read_sent_message(sess, message_id)
 
     r['message_id'] = message_id
     r['message_list_type'] = message_list_type
@@ -212,9 +211,9 @@ def delete(request):
 
     if del_msg_no:
         if flag_inbox:
-            ret, msg = server.messaging_manager.delete_received_message(sess, del_msg_no)
+            msg = server.messaging_manager.delete_received_message(sess, del_msg_no)
         else:
-            ret, msg = server.messaging_manager.delete_sent_message(sess, del_msg_no)
+            msg = server.messaging_manager.delete_sent_message(sess, del_msg_no)
     elif request.method == "POST":
         flag_del_enm = request.POST.get('flag_del_enm', 0) #flag_delete_entire_message
         flag_del_enm = int(flag_del_enm)
@@ -223,9 +222,9 @@ def delete(request):
             if del_msg_no:
                 del_msg_no = int(del_msg_no)
                 if flag_inbox:
-                    ret, msg = server.messaging_manager.delete_received_message(sess, int(del_msg_no));
+                    msg = server.messaging_manager.delete_received_message(sess, int(del_msg_no));
                 else:
-                    ret, msg = server.messaging_manager.delete_sent_message(sess, int(del_msg_no));
+                    msg = server.messaging_manager.delete_sent_message(sess, int(del_msg_no));
                 flag_del_enm=0
 
         if flag_del_enm and request.POST.get('ch_del_enm', 0):
@@ -234,11 +233,10 @@ def delete(request):
                 if del_msg_no:
                     del_msg_no = int(del_msg_no)
                     if flag_inbox:
-                        ret, msg = server.messaging_manager.delete_received_message(sess, int(del_msg_no))
+                        msg = server.messaging_manager.delete_received_message(sess, int(del_msg_no))
                     else:
-                        ret, msg = server.messaging_manager.delete_received_message(sess, int(del_msg_no))
+                        msg = server.messaging_manager.delete_received_message(sess, int(del_msg_no))
                 
-    assert ret, msg
 
     return HttpResponseRedirect("/message/%s/?page_no=%s" %
             (request.POST.get('message_list_type', 'inbox'),
@@ -264,8 +262,8 @@ def wrap_error(f):
 
     return check_error
 
-inbox = wrap_error(inbox)
-outbox = wrap_error(outbox)
-send = wrap_error(send)
-read = wrap_error(read)
-delete = wrap_error(delete)
+#inbox = wrap_error(inbox)
+#outbox = wrap_error(outbox)
+#send = wrap_error(send)
+#read = wrap_error(read)
+#delete = wrap_error(delete)

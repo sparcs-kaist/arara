@@ -12,8 +12,7 @@ import arara
 
 def index(request):
     server = arara.get_server()
-    ret, r = server.login_manager.total_visitor()
-    assert ret, r
+    r = server.login_manager.total_visitor()
     if request.session.get('django_language', 0):
         request.session["django_language"] = "en"
     rendered = render_to_string('index.html', r)
@@ -27,39 +26,38 @@ def main(request):
     max_length = 20 #todays, weekly best max string length
     ret = cache.get('today_best_list')
     if not ret:
-        suc, ret = server.article_manager.get_today_best_list(5)
+        ret = server.article_manager.get_today_best_list(5)
+        for item in ret:
+            pass
+            #item.date = datetime.datetime.fromtimestamp(item.date)
         cache.set('todays_best_list', ret, 60)
-    if not suc: #XXX
-        rendered = render_to_string('main.html', r)
-        return HttpResponse(rendered)
     for i, tb in enumerate(ret):
         if i==0:
             max_length = 50
-        if len(tb['title']) > max_length:
-            ret[i]['title'] = ret[i]['title'][0:max_length]
-            ret[i]['title'] += '...'
+        if len(str(tb.title)) > max_length:
+            ret[i].title = ret[i].title[0:max_length]
+            ret[i].title += '...'
         max_length = 20
-    assert suc, ret
     r['todays_best_list'] = enumerate(ret)
     ret = cache.get('weekly_best_list')
     if not ret:
-        suc, ret = server.article_manager.get_weekly_best_list(5)
+        ret = server.article_manager.get_weekly_best_list(5)
+        for item in ret:
+            item.date = datetime.datetime.fromtimestamp(item.date)
         cache.set('weekly_best_list', ret, 60)
     for i, tb in enumerate(ret):
         if i==0:
             continue
-        if len(tb['title']) > max_length:
-            ret[i]['title'] = ret[i]['title'][0:max_length]
-            ret[i]['title'] += '...'
-    assert suc, ret
+        if len(tb.title) > max_length:
+            ret[i].title = ret[i].title[0:max_length]
+            ret[i].title += '...'
     r['weekly_best_list'] = enumerate(ret)
 
     #message_check
     if r['logged_in']:
-        ret, message_result = server.messaging_manager.receive_list(sess, 1, 1);
-        assert ret, message_result
+        message_result = server.messaging_manager.receive_list(sess, 1, 1);
 
-        if message_result['new_message_count']:
+        if message_result.new_message_count:
             r['new_message'] = True
         else:
             r['new_message'] = False
@@ -79,12 +77,9 @@ def get_user_info(request):
         session_key, r = warara.check_logged_in(request)
         server = arara.get_server()
         query_user_name = request.POST['query_user_name']
-        ret, information = server.member_manager.query_by_nick(session_key, query_user_name)
-        if not ret:
-            return HttpResponse(0);
-        else:
-            rendered = render_to_string('account/another_user_account.html', information)
-            return HttpResponse(rendered)
+        information = server.member_manager.query_by_nick(session_key, query_user_name)
+        rendered = render_to_string('account/another_user_account.html', information)
+        return HttpResponse(rendered)
     else:
         return HttpResponse("Linear Algebra")
     assert ret, information
@@ -109,6 +104,6 @@ def wrap_error(f):
 
     return check_error
 
-index = wrap_error(index)
-help = wrap_error(help)
-main = wrap_error(main)
+#index = wrap_error(index)
+#help = wrap_error(help)
+#main = wrap_error(main)

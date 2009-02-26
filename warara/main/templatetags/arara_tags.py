@@ -13,7 +13,7 @@ class BoardListUpdateNode(template.Node):
 
         board_list = cache.get('board_list')
         if not board_list:
-            suc, board_list = server.board_manager.get_board_list()
+            board_list = server.board_manager.get_board_list()
             cache.set('board_list', board_list, 10)
         context["board_list"] = board_list
         return ""
@@ -22,5 +22,5 @@ class BoardListUpdateNode(template.Node):
 def do_get_board_description(value, arg):
     "Get board name and board description"
     server = arara.get_server()
-    suc, board = server.board_manager.get_board(value)
-    return board['board_description']
+    board = server.board_manager.get_board(value)
+    return board.board_description
