@@ -17,10 +17,9 @@ def add(request):
         blacklist_id = request.POST['blacklist_id']
         server = arara.get_server()
         sess = request.session["arara_session_key"]
-        id_converting = server.member_manager.search_user(sess, blacklist_id) 
-        if ret:
-            converted_id =  id_converting[0].username
-        server.blacklist_manager.add(sess, converted_id)
+        id_converting = server.member_manager.search_user(sess, blacklist_id, "") 
+        converted_id =  id_converting[0].username
+        server.blacklist_manager.add(sess, converted_id, True, True) 
         if request.POST.get('ajax', 0):
             return HttpResponse(1)
         return HttpResponseRedirect("/blacklist/")
@@ -38,27 +37,30 @@ def delete(request):
 def update(request):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
-    blacklist = server.blacklist_manager.list(sess)
+    blacklist = server.blacklist_manager.list_(sess)
     bl_submit_chooser = request.POST['bl_submit_chooser']
     if bl_submit_chooser == "update":
         for b in blacklist:
-            article_bl_key = 'blacklist_article_%s' % b['blacklisted_user_username']
+            article_bl_key = 'blacklist_article_%s' % b.blacklisted_user_username
             if article_bl_key in request.POST:
-                b['block_article'] = True
+                b.block_article = True
             else:
-                b['block_article'] = False
-            message_bl_key = 'blacklist_message_%s' % b['blacklisted_user_username']
+                b.block_article = False
+            message_bl_key = 'blacklist_message_%s' % b.blacklisted_user_username
             if message_bl_key in request.POST:
-                b['block_message'] = True
+                b.block_message = True
             else:
-                b['block_message'] = False
+                b.block_message = False
 
-            server.blacklist_manager.modify(sess, BlacklistRequest(**b))
+            server.blacklist_manager.modify(sess, BlacklistRequest(
+                blacklisted_user_username = b.blacklisted_user_username,
+                block_article = b.block_article,
+                block_message = b.block_message))
     if bl_submit_chooser == "delete":
         for b in blacklist:
-            delete_user = request.POST.get('bl_%s_delete' % b['blacklisted_user_username'], "")
+            delete_user = request.POST.get('bl_%s_delete' % b.blacklisted_user_username, "")
             if delete_user != "":
-                server.blacklist_manager.delete_(sess, BlacklistRequest(**delete_user))
+                server.blacklist_manager.delete_(sess, delete_user)
 
     return HttpResponseRedirect("/blacklist/")
 
@@ -68,7 +70,7 @@ def index(request):
     r = {}
     sess = request.session["arara_session_key"]
     r['logged_in'] = True
-    blacklist = server.blacklist_manager.list(sess)
+    blacklist = server.blacklist_manager.list_(sess)
     r['blacklist'] = blacklist
 
     if 'search' in request.GET:

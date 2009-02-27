@@ -2,6 +2,7 @@
 import datetime
 import time
 import xmlrpclib
+import logging
 
 from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy import and_, or_, not_
@@ -23,9 +24,6 @@ SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_
                     'deleted', 'author_username', 'author_nickname', 'vote', 'hit', 'content')
 BEST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'author_nickname', 'vote', 'hit', 'last_page', 'board_name')
-
-class NotLoggedIn(Exception):
-    pass
 
 class ArticleManager(object):
     '''
@@ -434,7 +432,11 @@ class ArticleManager(object):
         try:
             session = model.Session()
             self._is_board_exist(board_name)
-            blacklist_dict_list = self.blacklist_manager.list_(session_key)
+            try:
+                blacklist_dict_list = self.blacklist_manager.list_(session_key)
+            except NotLoggedIn:
+                blacklist_dict_list = []
+                pass
             blacklist_users = set()
             for blacklist_item in blacklist_dict_list:
                 if blacklist_item.block_article:
@@ -466,9 +468,14 @@ class ArticleManager(object):
 
                 article['date'] = datetime2timestamp(article['date'])
                 article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
-            msg = self.read_status_manager.check_stats(session_key, article_id_list)
-            for index, article in enumerate(article_dict_list):
-                article['read_status'] = msg[index]
+            try:
+                msg = self.read_status_manager.check_stats(session_key, article_id_list)
+                for index, article in enumerate(article_dict_list):
+                    article['read_status'] = msg[index]
+            except NotLoggedIn:
+                for index, article in enumerate(article_dict_list):
+                    article['read_status'] = 'N'
+                
             ret_dict = {}
             ret_dict['hit'] = [Article(**d) for d in article_dict_list]
             ret_dict['last_page'] = last_page
@@ -775,8 +782,8 @@ class ArticleManager(object):
                 session.close()
                 raise InvalidOperation("NO_PERMISSION")
             if article.author_id == author.id:
-                article.title = article_dic['title']
-                article.content = article_dic['content']
+                article.title = article_dic.title
+                article.content = article_dic.content
                 article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
                 session.commit()
                 session.close()

@@ -53,7 +53,11 @@ def login(request):
         current_page = request.POST.get('current_page_url', 0)
         client_ip = request.META['REMOTE_ADDR']
         server = arara.get_server()
-        session_key = server.login_manager.login(username, password, client_ip)
+        try:
+            session_key = server.login_manager.login(username, password, client_ip)
+        except InvalidOperation, e:
+            return HttpResponse('<script>alert("Login failed!"); history.back()</script>');
+
         if request.POST.get('precheck', 0):
                 return HttpResponse(session_key);
         User_Info = server.member_manager.get_info(session_key)

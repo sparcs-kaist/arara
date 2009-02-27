@@ -156,18 +156,11 @@ def send_(request):
     
     receiver = request.POST.get('receiver', '')
     text = request.POST.get('text', '')
-    receiver_type = request.POST.get('receiver_type', 'nickname')
-    try:
-        if receiver_type == "nickname":
-            message = server.messaging_manager.send_message_by_nickname(sess, receiver, text)
-        else:
-            message = server.messaging_manager.send_message_by_username(sess, receiver, text)
-    except:
-        r['e'] = message
-        if "ajax" in request.POST:
-            return HttpResponse(message)
-        rendered = render_to_string('message/error.html', r)
-        return HttpResponse(rendered)
+    receiver_type = request.POST.get('receiver_type', 'username')
+    if receiver_type == "nickname":
+        server.messaging_manager.send_message_by_nickname(sess, receiver, text)
+    else:
+        server.messaging_manager.send_message_by_username(sess, receiver, text)
 
     if "ajax" in request.POST:
         return HttpResponse(1)
@@ -187,6 +180,7 @@ def read(request, message_list_type, message_id):
         r['message'] = server.messaging_manager.read_received_message(sess, message_id)
     elif message_list_type == 'outbox':
         r['message'] = server.messaging_manager.read_sent_message(sess, message_id)
+    r['message'].sent_time = datetime.datetime.fromtimestamp(r['message'].sent_time)
 
     r['message_id'] = message_id
     r['message_list_type'] = message_list_type
