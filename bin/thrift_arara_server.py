@@ -50,7 +50,7 @@ def open_thrift_server(processor, handler, port):
     processor_ = processor.Processor(handler_instance)
     transport = TSocket.TServerSocket(port)
     tfactory = TTransport.TBufferedTransportFactory()
-    pfactory = TBinaryProtocol.TBinaryProtocolFactory()
+    pfactory = TBinaryProtocol.TBinaryProtocolAcceleratedFactory()
     server = TServer.TThreadedServer(processor_, transport, tfactory, pfactory)
     return server, handler_instance
 

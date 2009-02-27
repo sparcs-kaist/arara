@@ -28,8 +28,7 @@ def main(request):
     if not ret:
         ret = server.article_manager.get_today_best_list(5)
         for item in ret:
-            pass
-            #item.date = datetime.datetime.fromtimestamp(item.date)
+            item.date = datetime.datetime.fromtimestamp(item.date)
         cache.set('todays_best_list', ret, 60)
     for i, tb in enumerate(ret):
         if i==0:

@@ -87,7 +87,7 @@ from thrift.server import TServer
 def connect_thrift_server(host, base_port, class_):
     transport = TSocket.TSocket(host, base_port + PORT[class_])
     transport = TTransport.TBufferedTransport(transport)
-    protocol = TBinaryProtocol.TBinaryProtocol(transport)
+    protocol = TBinaryProtocol.TBinaryProtocolAccelerated(transport)
     client = dict(MAPPING)[class_].Client(protocol)
     transport.open()
     return client

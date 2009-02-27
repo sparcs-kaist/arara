@@ -70,7 +70,7 @@ class LoginManager(object):
         try:
             visitor = session.query(model.Visitor).one()
         except Exception, e: 
-            raise DatabaseError(repr(e))
+            raise InternalError(repr(e))
             session.close()
         visitor.total = visitor.total + 1
         now = datetime.datetime.fromtimestamp(time.time())
