@@ -1,6 +1,8 @@
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
 
+from arara_thrift.ttypes import *
+
 import arara
 
 
@@ -51,12 +53,12 @@ def update(request):
             else:
                 b['block_message'] = False
 
-            server.blacklist_manager.modify(sess, b)
+            server.blacklist_manager.modify(sess, BlacklistRequest(**b))
     if bl_submit_chooser == "delete":
         for b in blacklist:
             delete_user = request.POST.get('bl_%s_delete' % b['blacklisted_user_username'], "")
             if delete_user != "":
-                server.blacklist_manager.delete(sess, delete_user)
+                server.blacklist_manager.delete_(sess, BlacklistRequest(**delete_user))
 
     return HttpResponseRedirect("/blacklist/")
 
@@ -71,7 +73,7 @@ def index(request):
 
     if 'search' in request.GET:
         search_user_info = request.GET['search']
-        user_id = server.member_manager.search_user(sess, search_user_info)
+        user_id = server.member_manager.search_user(sess, search_user_info, "")
         r['search_result'] = user_id
 
     rendered = render_to_string('blacklist/index.html', r)

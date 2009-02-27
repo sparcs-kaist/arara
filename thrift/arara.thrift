@@ -422,11 +422,11 @@ service MessagingManager {
                 3:string msg)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void read_received_message(1:string session_key,
+    Message read_received_message(1:string session_key,
                 2:i32 msg_no)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void read_sent_message(1:string session_key,
+    Message read_sent_message(1:string session_key,
                 2:i32 msg_no)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),

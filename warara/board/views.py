@@ -100,7 +100,7 @@ def write(request, board_name):
         rec_num = request.GET['multi']
         article_dic={'title':'test title', 'content':'test content'}
         for i in range(int(rec_num)):
-            article_id = server.article_manager.write_article(sess, board_name, article_dic)
+            article_id = server.article_manager.write_article(sess, board_name, WrittenArticle(**article_dic))
 
         return HttpResponseRedirect('../')
 
@@ -132,7 +132,7 @@ def write_(request, board_name):
     article_dic['title'] = request.POST.get('title', '')
     if request.POST.get('write_type', 0) == 'modify':
         article_no = request.POST.get('article_no', 0)
-        article_id = server.article_manager.modify(sess, board_name, int(article_no), article_dic)
+        article_id = server.article_manager.modify(sess, board_name, int(article_no), WrittenArticle(**article_dic))
 
         delete_file = request.POST.get('delete_file', 0) #delete_file
         if delete_file:
@@ -210,7 +210,7 @@ def reply(request, board_name, article_id):
     reply_dic['title'] = request.POST.get('title', '')
     root_id = request.POST.get('root_id', '')
 
-    article_id = server.article_manager.write_reply(sess, board_name, int(article_id), reply_dic)
+    article_id = server.article_manager.write_reply(sess, board_name, int(article_id), WrittenArticle(**reply_dic))
 
     #upload file
     if request.FILES:

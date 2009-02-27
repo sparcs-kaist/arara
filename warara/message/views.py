@@ -23,8 +23,8 @@ def get_various_info(request, r):
     r['mppp'] = 10 #number of pagegroup per page
 
     page_group_no = math.ceil(float(page_no)/page_range_length)
-    r['page_num'] = r['message_result']['last_page']
-    r['num_message'] = r['message_result']['results']
+    r['page_num'] = r['message_result'].last_page
+    r['num_message'] = r['message_result'].results
     page_o = Paginator([x+1 for x in range(r['page_num'])], 10)
     if page_o.num_pages < page_group_no:
         page_group_no = page_o.num_pages
@@ -39,16 +39,16 @@ def get_various_info(request, r):
 
     r['message_no_strlist'] = ''
     for message in r['message_list']:
-        r['message_no_strlist'] = '|'.join([r['message_no_strlist'], str(message['id'])])
+        r['message_no_strlist'] = '|'.join([r['message_no_strlist'], str(message.id)])
 
     r['page_length_list'] = [5, 10, 20]
     r['time_now'] = datetime.datetime.now()
 
     for i, message in enumerate(r['message_list']):
-        if message['sent_time'].strftime('%Y%m%d') == r['time_now'].strftime('%Y%m%d'):
-            r['message_list'][i]['time'] = message['sent_time'].strftime('%H:%M:%S')
+        if message.sent_time.strftime('%Y%m%d') == r['time_now'].strftime('%Y%m%d'):
+            r['message_list'][i].time = message.sent_time.strftime('%H:%M:%S')
         else:
-            r['message_list'][i]['time'] = message['sent_time'].strftime('%Y/%m/%d')
+            r['message_list'][i].time = message.sent_time.strftime('%Y/%m/%d')
 
     return r
 
@@ -73,7 +73,10 @@ def inbox(request):
             try:
                 r['message_result'] = server.messaging_manager.receive_list(sess, page, page_length)
             except Exception:
-                break;
+                raise
+    if 'message_result' in r:
+        for message in r['message_result'].hit:
+            message.sent_time = datetime.datetime.fromtimestamp(message.sent_time)
     r['message_list'] = r['message_result'].hit
     r = get_various_info(request, r)
     r['num_new_message'] = r['message_result'].new_message_count
@@ -106,6 +109,8 @@ def outbox(request):
                 r['message_result'] = server.messaging_sent.receive_list(sess, page, page_length)
             except Exception:
                 break;
+    for message in r['message_result'].hit:
+        message.sent_time = datetime.datetime.fromtimestamp(message.sent_time)
     r['message_list'] = r['message_result'].hit
     r = get_various_info(request, r)
     r['page_length'] = int(page_length)
@@ -188,10 +193,10 @@ def read(request, message_list_type, message_id):
 
     if message_list_type == 'inbox':
         r['person_type'] = 'sender'
-        r['person'] = r['message']['from']
+        r['person'] = r['message'].from_
     elif message_list_type == 'outbox':
         r['person_type'] = 'receiver'
-        r['person'] = r['message']['to']
+        r['person'] = r['message'].to
 
     rendered = render_to_string('message/read.html', r)
     return HttpResponse(rendered)
@@ -200,7 +205,7 @@ def delete(request):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
     ret, msg = 1, 1
-    del_msg_no = request.GET.get('del_msg_no', 0)
+    del_msg_no = int(request.GET.get('del_msg_no', 0))
     if request.POST.get('message_list_type', 0) == 'inbox':
         flag_inbox = 1
     elif request.GET.get('message_list_type', 0) == 'inbox':

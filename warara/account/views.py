@@ -112,7 +112,7 @@ def account_modify(request):
             introduction = request.POST['myintroduce']
             language = request.POST['mylanguage']
             modified_information_dic = {'nickname': nickname, 'signature': signature, 'self_introduction': introduction, 'default_language': language, 'widget': 0, 'layout': 0}
-            server.member_manager.modify(session_key, modified_information_dic)
+            server.member_manager.modify(session_key, UserModification(**modified_information_dic))
             if language == "kor":
                 request.session["django_language"] = "ko"
             elif language == "eng":
@@ -135,7 +135,7 @@ def password_modify(request):
             last_password = request.POST['last_password']
             password = request.POST['password']
             user_information_dic = {'username':username, 'current_password':last_password, 'new_password':password}
-            server.member_manager.modify_password(session_key, user_information_dic)
+            server.member_manager.modify_password(session_key, UserPasswordInfo(**user_information_dic))
             return HttpResponseRedirect("/account/")
         else:
             rendered = render_to_string('account/myacc_pw_modify.html', r)
