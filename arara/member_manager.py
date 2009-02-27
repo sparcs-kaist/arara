@@ -75,7 +75,7 @@ class MemberManager(object):
         session = model.Session()
         try:
             user = session.query(model.User).filter_by(username=username).one()
-            user.last_logout_time = datetime2timestamp(datetime.datetime.fromtimestamp(time.time()))
+            user.last_logout_time = datetime.datetime.fromtimestamp(time.time())
             session.commit()
             session.close()
             return
