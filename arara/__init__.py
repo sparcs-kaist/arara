@@ -131,21 +131,42 @@ class Namespace(object):
 
 
 class Server(object):
-    def __init__(self):
+    def __getattr__(self, name):
         def connect(class_):
             return connect_thrift_server(ARARA_SERVER_HOST,
                                          ARARA_SERVER_BASE_PORT,
                                          class_)
-        self.login_manager = connect(LoginManager)
-        self.member_manager = connect(MemberManager)
-        self.blacklist_manager = connect(BlacklistManager)
-        self.board_manager = connect(BoardManager)
-        self.read_status_manager = connect(ReadStatusManager)
-        self.article_manager = connect(ArticleManager)
-        self.messaging_manager = connect(MessagingManager)
-        self.notice_manager = connect(NoticeManager)
-        self.search_manager = connect(SearchManager)
-        self.file_manager = connect(FileManager)
+        if name == 'login_manager':
+            login_manager = connect(LoginManager)
+            return login_manager
+        if name == 'member_manager':
+            member_manager = connect(MemberManager)
+            return member_manager
+        if name == 'blacklist_manager':
+            blacklist_manager = connect(BlacklistManager)
+            return blacklist_manager
+        if name == 'board_manager':
+            board_manager = connect(BoardManager)
+            return board_manager
+        if name == 'read_status_manager':
+            read_status_manager = connect(ReadStatusManager)
+            return read_status_manager
+        if name == 'article_manager':
+            article_manager = connect(ArticleManager)
+            return article_manager
+        if name == 'messaging_manager':
+            messaging_manager = connect(MessagingManager)
+            return messaging_manager
+        if name == 'notice_manager':
+            notice_manager = connect(NoticeManager)
+            return notice_manager
+        if name == 'search_manager':
+            search_manager = connect(SearchManager)
+            return search_manager
+        if name == 'file_manager':
+            file_manager = connect(FileManager)
+            return file_manager
+        raise AttributeError()
 
 namespace = None
 server = None
