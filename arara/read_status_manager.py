@@ -145,7 +145,7 @@ class ReadStatusManager(object):
                     )[0]
         except IndexError:
             session.close()
-            raise InvalidOperation(ARTICLE_NOT_EXIST)
+            raise InvalidOperation('ARTICLE_NOT_EXIST')
         session.close()
         if type(no_data) == list:
             for no in no_data:
