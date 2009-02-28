@@ -475,6 +475,9 @@ class ArticleManager(object):
             except NotLoggedIn:
                 for index, article in enumerate(article_dict_list):
                     article['read_status'] = 'N'
+            except InvalidOperation:
+                for index, article in enumerate(article_dict_list):
+                    article['read_status'] = 'N'
                 
             ret_dict = {}
             ret_dict['hit'] = [Article(**d) for d in article_dict_list]
