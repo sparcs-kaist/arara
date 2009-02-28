@@ -137,11 +137,15 @@ class ReadStatusManager(object):
 
     def _check_article_exist(self, no_data):
         session = model.Session()
-        top_article = session.query(model.Article).from_statement(
-                select(
-                    [model.articles_table],
-                    select([func.max(model.articles_table.c.id)]).label('top_article_id')==model.articles_table.c.id)
-                )[0]
+        try:
+            top_article = session.query(model.Article).from_statement(
+                    select(
+                        [model.articles_table],
+                        select([func.max(model.articles_table.c.id)]).label('top_article_id')==model.articles_table.c.id)
+                    )[0]
+        except IndexError:
+            session.close()
+            raise InvalidOperation(ARTICLE_NOT_EXIST)
         session.close()
         if type(no_data) == list:
             for no in no_data:
