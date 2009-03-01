@@ -168,7 +168,7 @@ class MessagingManager(object):
         received_messages = session.query(model.Message).filter(
                 and_(model.message_table.c.to_id==to_user.id, 
                     not_(model.message_table.c.received_deleted==True)
-                    ))[offset:last].order_by(model.Message.id.desc()).all()
+                    )).order_by(model.Message.id.desc())[offset:last].all()
         received_messages_dict_list = self._get_dict_list(received_messages, MESSAGE_WHITELIST, blacklist_users)
         ret_dict['hit'] = received_messages_dict_list
         ret_dict['last_page'] = last_page
