@@ -1,10 +1,41 @@
-<html>
-    <head>
-    <script type="text/javascript" src="/media/thirdparty/jquery-latest.min.js"></script>
-    <script type="text/javascript" src="/media/thirdparty/jquery.history.js"></script>
-    <script type="text/javascript" src="/media/js/mail_confirm.js"></script>
-    </head>
-    <body>
-        ...
-    </body>
-</html>
+{% extends "base.html" %}
+
+{% block style %}
+<link rel="stylesheet" href="/media/style/account_register.css" />
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript" src="/media/thirdparty/jquery-latest.min.js"></script>
+<script type="text/javascript" src="/media/thirdparty/jquery.history.js"></script>
+{% endblock %}
+
+{% block content %}
+{% load i18n %}
+<div id="account_content" class="account_content">
+	<div class="account_head_block"><div class="account_head">RESET E-MAIL ADDRESS</div></div>
+	<form action="/account/mail_confirm/" method="post" name="form" id="account_information_content">
+		<span id="account_user_content">
+			<span id="information">
+				<div class="acc_subtitle"><div class ="acc_subtitle_name">User Information</div></div>
+				<div>
+				    <label for="id">ID</label>
+				    <input name="id" id="id" type="text" value="{{username}}" readonly />
+				</div>
+				<div>
+				    <label for="nickname">Nickname</label>
+				    <input name="nickname" id="nickname" type="text" value="{{nickname}}" readonly />
+				</div>
+				<div>
+				    <label for="email">E-mail address</label>
+				    <input name="email" id="email" type="text" />
+				    <em class="required">(We will resend you user registration confirmation to here)</em>
+				</div>
+			</span>
+		</span>
+		<div id="register_buttons">
+		<span id="register_submit"><input value="Resend" name="resend" type="submit" /></span>
+		<span id="register_cancel"><input value="Cancel" name="cancel" type="button" onClick="location.href='/main/'" /></span>
+		</div>
+	</form>
+</div>
+{% endblock %}
