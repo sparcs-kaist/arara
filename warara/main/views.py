@@ -12,10 +12,10 @@ import arara
 
 def index(request):
     server = arara.get_server()
-    r = server.login_manager.total_visitor()
     if request.session.get('django_language', 0):
         request.session["django_language"] = "en"
-    rendered = render_to_string('index.html', r)
+    r = server.login_manager.total_visitor()
+    rendered = render_to_string('index.html', r.__dict__)
     return HttpResponse(rendered)
 
 @warara.cache_page(60)
