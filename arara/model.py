@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
+import crypt
 import time
 import md5
 
@@ -31,14 +32,27 @@ class User(object):
         self.last_login_ip = u''
         self.is_sysop = False
 
+    def crypt_password(self, raw_password):
+        import random
+        salt = chr(random.randrange(64, 126)) + chr(random.randrange(64, 126))
+        pw = crypt.crypt(raw_password, salt)
+        asc1 = pw[1:2]
+        asc2 = pw[3:4]
+        i = ord(asc1) + ord(asc2)
+        while True:
+           pw = crypt.crypt(pw, pw)
+           i += 1
+           if not(i % 13 != 0):
+               break
+
+        return pw
+
     def set_password(self, password):
-        self.password = smart_unicode(md5.md5(password).hexdigest())
+        self.password = smart_unicode(self.crypt_password(password))
 
     def compare_password(self, password):
-        if smart_unicode(md5.md5(password).hexdigest()) == smart_unicode(self.password):
-            return True
-        else:
-            return False
+        return smart_unicode(crypt.crypt(password, self.password)) \
+                == smart_unicode(self.password)
 
     def __repr__(self):
         return "<User('%s', '%s')>" % (self.username, self.nickname)
@@ -178,7 +192,7 @@ users_table = Table('users', metadata,
     Column('id', Integer, primary_key=True),
     Column('username', Unicode(40), unique=True),
     Column('password', Unicode(50)),
-    Column('nickname', Unicode(40), unique=True),
+    Column('nickname', Unicode(40)),
     Column('email', Unicode(60), unique=True),
     Column('signature', Unicode(80)),
     Column('self_introduction', Unicode(100)),

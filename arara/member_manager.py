@@ -102,12 +102,12 @@ class MemberManager(object):
             else:
                 session.close()
                 if user.activated:
-                    raise InvalidOperation('WRONG_PASSWORD')
+                    raise InvalidOperation('wrong password')
                 else:
-                    raise InvalidOperation('NOT_ACTIVATED')
+                    raise InvalidOperation('not activated')
         except InvalidRequestError:
             session.close()
-            raise InvalidOperation('WRONG_USERNAME')
+            raise InvalidOperation('wrong username')
    
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
@@ -496,6 +496,7 @@ class MemberManager(object):
                 3. 올바르지 않은 이메일 주소: InvalidOperation('wrong email address')
                 3. 데이터베이스 오류: InternalError('database error')
         '''
+        session = model.Session()
         session_info = self.login_manager.get_session(session_key)
         username = session_info.username
         if new_email:
@@ -609,8 +610,7 @@ class MemberManager(object):
         except KeyError:
             session.close()
             raise NotLoggedIn()
-        
-    @require_login
+
     @log_method_call
     def search_user(self, session_key, search_user, search_key=None):
         '''
