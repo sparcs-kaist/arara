@@ -431,6 +431,7 @@ body {
     z-index: 2;
     margin: 0.4em 0 0 0;
     width: 40em;
+    _width: 41em;
     background-color: white;
     text-align: right;
     display: none;

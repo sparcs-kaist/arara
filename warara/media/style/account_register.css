@@ -2,12 +2,15 @@
 #account_content {
     float: left;
     margin: 0.8em 0 0 0.8em;
+    _display: inline;
 }
 
 #account_information_content {
     width: 67.5em;
     margin: 0 0 0 1.3em;
     float: left;
+    _display: inline;
+    _width: 98%;
 }
 
 .account_head_block {
@@ -289,6 +292,8 @@
     margin: 0 0 0 1.4em;
     float: left;
     clear: left;
+    _display: inline;
+    _width: 64em;
 }
 
 #acc_rm_remind {
@@ -325,4 +330,10 @@
 /* focus top menu*/
 .account_head_block .row_highlight {
 	color: #9f4
+}
+
+
+#myaccount_modify_content {
+    _display: inline;
+    _width: 98%;
 }

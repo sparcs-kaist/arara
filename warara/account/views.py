@@ -53,13 +53,18 @@ def login(request):
         current_page = request.POST.get('current_page_url', 0)
         client_ip = request.META['REMOTE_ADDR']
         server = arara.get_server()
+
         try:
             session_key = server.login_manager.login(username, password, client_ip)
         except InvalidOperation, e:
-            return HttpResponse('<script>alert("Login failed!"); history.back()</script>');
+            if request.POST.get('precheck', 0):
+                return HttpResponse("LOGIN_FAILED")
+            else:
+                return HttpResponse('<script>alert("Login failed!"); history.back()</script>');
 
         if request.POST.get('precheck', 0):
-                return HttpResponse(session_key);
+            return HttpResponse("OK")
+
         User_Info = server.member_manager.get_info(session_key)
         if User_Info.default_language == "kor":
             request.session["django_language"] = "ko"
@@ -100,7 +105,7 @@ def account(request):
         account = server.member_manager.get_info(session_key)
 
         account.logged_in = True
-        rendered = render_to_string('account/myaccount_frame.html', account)
+        rendered = render_to_string('account/myaccount_frame.html', account.__dict__)
     else:
         assert None, "NOT_LOGGED_IN"
     return HttpResponse(rendered)
@@ -124,7 +129,7 @@ def account_modify(request):
             return HttpResponseRedirect("/account/")
         else:
             account.logged_in = True
-            rendered = render_to_string('account/myaccount_modify.html', account)
+            rendered = render_to_string('account/myaccount_modify.html', account.__dict__)
             return HttpResponse(rendered)
     else:
         assert None, "NOT_LOGGED_IN"
@@ -157,9 +162,8 @@ def account_remove(request):
             return HttpResponseRedirect("/")
         else:
             account = server.member_manager.get_info(session_key)
-            assert ret, account
             account.logged_in = True
-            rendered = render_to_string('account/myaccount_remove.html', account)
+            rendered = render_to_string('account/myaccount_remove.html', account.__dict__)
             return HttpResponse(rendered)
     else:
         assert None, "NOT_LOGGED_IN"

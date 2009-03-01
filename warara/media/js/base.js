@@ -256,6 +256,9 @@ $(document).ready(function(){
                 else if(data == "NOT_ACTIVATED"){
                 alert("Please check your E-mail");
                 }
+                else if(data == "LOGIN_FAILED"){
+                alert("Login failed!");
+                }
                 else{
                 document.login.submit();
                 }
