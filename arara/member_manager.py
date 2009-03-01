@@ -90,21 +90,22 @@ class MemberManager(object):
         session = model.Session()
         try:
             user = session.query(model.User).filter_by(username=username).one()
-            if user.compare_password(password) and user.activated == True:
-                user.last_login_time = datetime.datetime.fromtimestamp(time.time())
-                user.last_login_ip = unicode(user_ip)
-                ret = {'last_login_time': datetime2timestamp(
-                    user.last_login_time),
-                       'nickname': user.nickname}
-                session.commit()
-                session.close()
-                return AuthenticationInfo(**ret)
+            if user.compare_password(password):
+                if user.activated:
+                    user.last_login_time = datetime.datetime.fromtimestamp(time.time())
+                    user.last_login_ip = unicode(user_ip)
+                    ret = {'last_login_time': datetime2timestamp(
+                        user.last_login_time),
+                           'nickname': user.nickname}
+                    session.commit()
+                    session.close()
+                    return AuthenticationInfo(**ret)
+                else:
+                    session.close()
+                    raise InvalidOperation('not activated\n%s\n%s' % (user.username, user.nickname))
             else:
                 session.close()
-                if user.activated:
-                    raise InvalidOperation('wrong password')
-                else:
-                    raise InvalidOperation('not activated\n%s\n%s' % (user.username, user.nickname))
+                raise InvalidOperation('wrong password')
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('wrong username')
