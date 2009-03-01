@@ -174,6 +174,7 @@ class ReadStatusManager(object):
                 self.read_status[user.id] = status_dict
                 return True, 'OK'
         else:
+            session.close()
             return False, 'ALREADY_ADDED'
 
     @require_login

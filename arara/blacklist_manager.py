@@ -237,8 +237,8 @@ class BlacklistManager(object):
             blacklist_dict_list = self._get_dict_list(blacklist_list, BLACKLIST_LIST_DICT)
             session.close()
         except:
-            raise InternalError('database error')
             session.close()
+            raise InternalError('database error')
         blacklist_list = []
         for d in blacklist_dict_list:
             d['last_modified_date'] = \

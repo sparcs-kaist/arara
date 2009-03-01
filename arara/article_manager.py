@@ -220,6 +220,7 @@ class ArticleManager(object):
         try:
             board = session.query(model.Board).filter_by(board_name=board_name).one()
         except InvalidRequestError:
+            session.close()
             raise InvalidOperaion("BOARD_NOT_EXIST")
         session.close()
         ret, today_best_list = self._get_today_best_article(None, board, count)
@@ -278,6 +279,7 @@ class ArticleManager(object):
         try:
             board = session.query(model.Board).filter_by(board_name=board_name).one()
         except InvalidRequestError:
+            session.close()
             raise InvalidOperation('BOARD_NOT_EXIST')
         session.close()
         ret, weekly_best_list = self._get_weekly_best_article(None, board, count)

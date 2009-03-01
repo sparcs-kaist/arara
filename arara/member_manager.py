@@ -63,8 +63,10 @@ class MemberManager(object):
             user.activated = True
             user.is_sysop = True
             session.commit()
+            session.close()
         except IntegrityError:
             session.rollback()
+            session.close()
             pass
 
     def _set_login_manager(self, login_manager):
@@ -534,8 +536,8 @@ class MemberManager(object):
                 3. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
         '''
         username = smart_unicode(username)
+        session = model.Session()
         try:
-            session = model.Session()
             query_user = session.query(model.User).filter_by(username=query_username).one()
             query_user_dict = filter_dict(query_user.__dict__, USER_QUERY_WHITELIST)
             if not query_user_dict['last_logout_time']:
@@ -567,8 +569,8 @@ class MemberManager(object):
                 3. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
         '''
         nickname = smart_unicode(nickname)
+        session = model.Session()
         try:
-            session = model.Session()
             query_user = session.query(model.User).filter_by(
                     nickname=query_nickname).one()
             query_user_dict = filter_dict(query_user.__dict__,
@@ -630,8 +632,8 @@ class MemberManager(object):
         '''
         search_user = smart_unicode(search_user)
 
+        session = model.Session()
         try:
-            session = model.Session()
             if not search_key:
                 user = session.query(model.User).filter(
                         or_(model.users_table.c.username==search_user,
@@ -644,6 +646,7 @@ class MemberManager(object):
                     user = session.query(model.User).filter_by(
                             nickname=search_user).all()
                 else:
+                    session.close()
                     raise InvalidOperation('incorrect search key')
             user_dict_list = self._get_dict_list(user, USER_SEARCH_WHITELIST)
             user_list = [SearchUserResult(**x) for x in user_dict_list]
