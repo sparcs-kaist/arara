@@ -58,9 +58,19 @@ def login(request):
             session_key = server.login_manager.login(username, password, client_ip)
         except InvalidOperation, e:
             if request.POST.get('precheck', 0):
-                return HttpResponse("LOGIN_FAILED")
+                return HttpResponse(e)
             else:
-                return HttpResponse('<script>alert("Login failed!"); history.back()</script>');
+                #XXX: (pipoket) Ugly hack for showing nickname while not logged in.
+                print e.why
+                splited = e.why.splitlines()
+                if splited[0] == 'not activated':
+                    username = splited[1]
+                    nickname = splited[2]
+                    rendered = render_to_string('account/mail_confirm.html', {
+                        'username': username, 'nickname': nickname})
+                    return HttpResponse(rendered)
+                else:
+                    return HttpResponse('<script>alert("Login failed!"); history.back()</script>');
 
         if request.POST.get('precheck', 0):
             return HttpResponse("OK")
@@ -253,3 +263,7 @@ def email_check(request):
         return HttpResponse(r)
     else:
         return HttpResponse('Must use POST')
+
+def mail_resend(request):
+    rendered = render_to_string('account/mail_confirm.html')
+    return HttpResponse(rendered)
