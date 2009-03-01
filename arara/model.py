@@ -51,8 +51,7 @@ class User(object):
         self.password = smart_unicode(self.crypt_password(password))
 
     def compare_password(self, password):
-        return smart_unicode(crypt.crypt(password, self.password)) \
-                == smart_unicode(self.password)
+        return smart_unicode(crypt.crypt(password, self.password)) == smart_unicode(self.password)
 
     def __repr__(self):
         return "<User('%s', '%s')>" % (self.username, self.nickname)
