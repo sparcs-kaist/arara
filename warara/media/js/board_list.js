@@ -1,5 +1,10 @@
 $(document).ready(function(){
     var cursor_pos = 1;
+    if($("#root_article_info").length){ //if it is a read page
+    $root_article_id = parseInt($("#root_article_info").attr("rel"));
+    cursor_pos = parseInt($("td.id_col[rel='" + $root_article_id + "']").parent().attr("rel"));
+    $root_article_pos = cursor_pos; //naming
+    }
     var row_count = $("#article_table tr").length;
 	if(!$logged_in){
 	cursor_pos = -1;

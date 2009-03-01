@@ -155,6 +155,7 @@ def write_(request, board_name):
             if not os.path.isdir('files/%s' % file.file_path):
                 os.makedirs('files/%s' % file.file_path)
             fp = open('files/%s/%s' % (file.file_path, file.saved_filename), 'wb')
+
             fp.write(file_ob.read())
 
     return HttpResponseRedirect('/board/%s/%s' % (board_name, str(article_id)))

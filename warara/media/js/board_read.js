@@ -5,6 +5,8 @@ $(document).ready(function(){
         event.preventDefault();
     });
 
+    $root_article_id = parseInt($("#root_article_info").attr("rel"));
+    $row_count = $("#article_table tr").length;
     $(document).keypress(function(event) {
         if($focus_input || event.altKey || event.ctrlKey){
         return;
@@ -70,6 +72,17 @@ $(document).ready(function(){
         }
     });
 
+    $move_article_read = function($article_pos){
+        if($article_pos > 0 && $article_pos <= $row_count){
+            var article_link = $("#article_table tr").eq($article_pos).children(".title_col").children("a").attr("href");
+            location.href = article_link;
+        }
+        else if($article_pos == 0){
+        }
+        else if($article_pos > $row_count){
+        }
+    }
+
     $(".article_vote").click(function(event){
             var vote_url = $(this).attr("href");
             $vote_num = $(".vote_num_" + $(this).attr("rel"));
@@ -95,8 +108,12 @@ $(document).ready(function(){
 
     $(document).keypress(function(event){
         if($focus_textarea_reply){
+        var enterwithshiftkey = event.shiftKey;
         switch(event.which){
             case 13:
+                if(!enterwithshiftkey){
+                    break;
+                }
                 if(confirm("send")){
                     $focus_textarea_reply.parent().parent().parent().submit();
                     break;

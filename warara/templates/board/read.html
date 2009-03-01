@@ -20,7 +20,7 @@
     {% endfor %}
     {% ifequal article.id article.root_id %}
     <h1 class="root_article_title"><a href="#">{{article.title}}</a></h1>
-    <div id="root_article_info">
+    <div id="root_article_info" rel="{{article.id}}">
         <span class="user_nickname username">{{article.author_nickname}}</span>
         <span class="user_name">{{article.author_username}}</span>
         <span class="article_date">{{article.date|date:"Y/m/d H:i:s"}}</span>

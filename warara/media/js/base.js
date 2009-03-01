@@ -489,10 +489,10 @@ $(document).ready(function(){
 			case 120: //x
 			$focus_content();
 			break;
-            case 44:
+            case 46:
             $(document).scrollTop($(document).scrollTop() - 50);
             break;
-            case 46:
+            case 44:
             $(document).scrollTop($(document).scrollTop() + 50);
             break;
             case 101:
