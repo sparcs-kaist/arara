@@ -104,7 +104,7 @@ class MemberManager(object):
                 if user.activated:
                     raise InvalidOperation('wrong password')
                 else:
-                    raise InvalidOperation('not activated')
+                    raise InvalidOperation('not activated\n%s\n%s' % (user.username, user.nickname))
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('wrong username')
