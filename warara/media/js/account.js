@@ -37,7 +37,7 @@ $(document).ready(function(){
                         if ($idDupleTest == 1)
                             {$("#id").parent().children("label").children("span.feedback").text("The ID is not available");}
                         else 
-                            {$("#id").parent().children("label").children("span.feedback").text("The ID is available");}
+                            {$("#id").parent().children("label").children("span.feedback").text("");}
                     }
                 );
             }
@@ -51,7 +51,7 @@ $(document).ready(function(){
                         if ($nickDupleTest == 1)
                             {$("#nickname").parent().children("label").children("span.feedback").text("The nickname is not available");}
                         else 
-                            {$("#nickname").parent().children("label").children("span.feedback").text("The nickname is available");}
+                            {$("#nickname").parent().children("label").children("span.feedback").text("");}
                     }
                 );
             }
@@ -69,7 +69,7 @@ $(document).ready(function(){
                             if ($emailDupleTest == 1)
                                 {$("#email").parent().children("label").children("span.feedback").text("The email is not available");}
                             else 
-                                {$("#email").parent().children("label").children("span.feedback").text("The email is available");}
+                                {$("#email").parent().children("label").children("span.feedback").text("");}
                         }
                     );
                 }
