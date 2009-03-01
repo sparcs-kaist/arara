@@ -113,9 +113,10 @@ u'serialx is... 80'
 6
 
 # Read the article to check read_status_manager
+# Also check the functionality of next and prev article
 
->>> _ = server.article_manager.read(session_key, u'garbages', 101)
->>> _ = server.article_manager.read(session_key, u'garbages', 102)
+>>> article_101 = server.article_manager.read(session_key, u'garbages', 101)
+>>> article_102 = server.article_manager.read(session_key, u'garbages', 102)
 
 >>> l = server.article_manager.article_list(session_key, u'garbages')
 >>> l.hit[0].read_status
@@ -146,7 +147,7 @@ InvalidOperation
 >>> server.article_manager.read(session_key, u'garbages', 1)
 [Article(board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'polarbear', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=1), Article(board_name=None, author_username=u'mikkang', hit=0, blacklisted=False, title=u'dummy', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'asdf', vote=0, depth=2, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=2)]
 >>> article_dic = {'title': u'pipoket is...', 'content': u'woodori'}
->>> server.article_manager.modify(session_key, u'garbages', 1, article_dic)
+>>> server.article_manager.modify(session_key, u'garbages', 1, WrittenArticle(**article_dic))
 1
 >>> server.article_manager.read(session_key, u'garbages', 1)
 [Article(board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'pipoket is...', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'woodori', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=1), Article(board_name=None, author_username=u'mikkang', hit=0, blacklisted=False, title=u'dummy', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'asdf', vote=0, depth=2, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=2)]

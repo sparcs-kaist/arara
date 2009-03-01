@@ -269,6 +269,8 @@ struct Article {
     16: optional i32 reply_count,
     17: optional string type
     18: optional string board_name,
+    #19: optional i32 next,
+    #20: optional i32 prev,
 }
 
 struct ArticleList {
@@ -382,11 +384,13 @@ service FileManager {
 struct Message {
     1:i32 id,
     2:string from_,
-    3:string to,
-    4:string message,
-    5:double sent_time,
-    6:string read_status,
-    7:optional bool blacklisted = 0,
+    3:string from_nickname,
+    4:string to,
+    5:string to_nickname,
+    6:string message,
+    7:double sent_time,
+    8:string read_status,
+    9:optional bool blacklisted = 0,
 }
 
 struct MessageList {

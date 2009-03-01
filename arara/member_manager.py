@@ -455,7 +455,7 @@ class MemberManager(object):
         @param user_reg_infot: User Dictionary
         @rtype: string
         @return:
-            1. modify 성공: True, 'OK'
+            1. modify 성공: void
             2. modify 실패:
                 1. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN'
                 2. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
@@ -474,6 +474,44 @@ class MemberManager(object):
         session.commit()
         session.close()
         return
+
+    @require_login
+    @log_method_call_important
+    def modify_authentication_email(self, session_key, new_email):
+        '''
+        인증되지 않은 이메일 주소의 변경
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type  new_email: string
+        @param new_email: New E-mail Address for Authentication
+        @rtype: void
+        @return:
+            1. modify 성공: void
+            2. modify 실패:
+                1. 로그인되지 않은 유저: InvalidOperation('not logged in')
+                2. 유저를 찾을 수 없음: InvalidOperation('user not found')
+                3. 올바르지 않은 이메일 주소: InvalidOperation('wrong email address')
+                3. 데이터베이스 오류: InternalError('database error')
+        '''
+        session_info = self.login_manager.get_session(session_key)
+        username = session_info.username
+        if new_email:
+            try:
+                user = session.query(model.User).filter_by(username=username).one()
+                user_activation = session.query(model.UserActivation).filter_by(id=user.id).one()
+                activation_code = user_activation.activation_code
+                if user.email != new_email:
+                    user.email = new_email
+                    send_email(user.email, user.username, activation_code)
+                    session.commit()
+                session.close()
+            except Exception:
+                session.close()
+                raise InternalError('database error')
+        else:
+            raise InvalidOperation('wrong email address')
+
 
     @require_login
     @log_method_call

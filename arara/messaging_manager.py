@@ -13,7 +13,7 @@ from arara.util import datetime2timestamp
 log_method_call = log_method_call_with_source('messaging_manager')
 log_method_call_important = log_method_call_with_source_important('messaging_manager')
 
-MESSAGE_WHITELIST = ['id', 'from_', 'to', 'message', 'sent_time', 'read_status', 'blacklisted']
+MESSAGE_WHITELIST = ['id', 'from_', 'to', 'from_nickname', 'to_nickname', 'message', 'sent_time', 'read_status', 'blacklisted']
 
 class MessagingManager(object):
     '''
@@ -36,9 +36,11 @@ class MessagingManager(object):
         item_dict = item.__dict__
         if item_dict.has_key('from_id'):
             item_dict['from_'] = item.from_user.username
+            item_dict['from_nickname'] = item.from_user.nickname
             del item_dict['from_id']
         if item_dict.has_key('to_id'):
             item_dict['to'] = item.to_user.username
+            item_dict['to_nickname'] = item.to_user.nickname
             del item_dict['to_id']
         if item_dict.has_key('sent_time'):
             item_dict['sent_time']=datetime2timestamp(
