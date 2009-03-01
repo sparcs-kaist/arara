@@ -469,6 +469,7 @@ input.button_exit{
     border: none;
     padding-top: 0.5em;
     width: 83%;
+    _display: inline;
 }
 
 #ksearch .q {
@@ -478,6 +479,7 @@ input.button_exit{
     margin: 0 0.15em 0 0.3em;
     position: relative;
     top: 0.3em;
+    _display: inline;
 }
 
 #ksearch_logo {
@@ -486,12 +488,14 @@ input.button_exit{
     width: 3.5em;
     height: 1em;
     background: url('/media/image/base/ksearch/ksearch.png') no-repeat;
+    _display: inline;
 }
 
 #ksearch .ksearch_submit {
     position: relative;
     padding-top: 1%;
     width: 15%;
+    _display: inline;
 }   
 
 /* message css */

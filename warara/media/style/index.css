@@ -56,6 +56,10 @@ a {
     float: right;
 }
 
+#navigation p {
+    _display: inline;
+}
+
 #input_wrapper {
     float: right;
     width: 20em;
@@ -119,4 +123,8 @@ a {
 
 #counter p {
     margin: 0;
+}
+
+.iepngfix{
+	behavior: url(/media/thirdparty/iepngfix/iepngfix.htc);
 }
