@@ -69,11 +69,13 @@ def inbox(request):
     except Exception:
         page = int(page)
         while page>0:
-            page -= 1
             try:
                 r['message_result'] = server.messaging_manager.receive_list(sess, page, page_length)
+                break;
             except Exception:
-                raise
+                page -= 1
+        if page <= 0:
+            assert None, "Unknown Error"
     if 'message_result' in r:
         for message in r['message_result'].hit:
             message.sent_time = datetime.datetime.fromtimestamp(message.sent_time)

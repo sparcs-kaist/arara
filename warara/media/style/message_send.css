@@ -4,6 +4,8 @@
 	width: 94%;
 	margin: 1em 3%;
 	text-align: left;
+    _display: inline;
+    _margin: 1em 2%;
 }
 
 #message_send_receiver .sendto{
