@@ -80,7 +80,7 @@ struct UserInformation {
     8 : string default_language
     9 : bool activated,
     10: i32 widget,
-    11: string layout,
+    11: i32 layout,
 }
 
 struct UserPasswordInfo {
@@ -95,7 +95,7 @@ struct UserModification {
     3: string self_introduction,
     4: string default_language,
     5: i32 widget,
-    6: string layout,
+    6: i32 layout,
 }
 
 struct PublicUserInformation {

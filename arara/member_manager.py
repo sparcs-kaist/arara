@@ -102,7 +102,7 @@ class MemberManager(object):
                     return AuthenticationInfo(**ret)
                 else:
                     session.close()
-                    raise InvalidOperation('not activated\n%s\n%s' % (user.username, user.nickname))
+                    raise InvalidOperation(u'not activated\n%s\n%s' % (user.username, user.nickname))
             else:
                 session.close()
                 raise InvalidOperation('wrong password')
@@ -151,6 +151,7 @@ class MemberManager(object):
         try:
             # Register user to db
             user = model.User(**user_reg_info.__dict__)
+            logging.warn("REGDICREGDIC :" + repr(user_reg_info))
             session.save(user)
             # Register activate code to db
             user_activation = model.UserActivation(user, activation_code)

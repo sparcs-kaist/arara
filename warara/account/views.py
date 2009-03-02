@@ -20,8 +20,8 @@ def register(request):
         signature = request.POST['sig']
         introduction = request.POST['introduce']
         language = request.POST['language']
-        user_information_dic = {'username':username, 'password':password, 'nickname':nickname, 'email':email, 'signature':signature, 'self_introduction':introduction, 'default_language':language}
-        message = server.member_manager.register(UserRegistration(**user_information_dic))
+        user_information_dict = {'username':username, 'password':password, 'nickname':nickname, 'email':email, 'signature':signature, 'self_introduction':introduction, 'default_language':language}
+        message = server.member_manager.register(UserRegistration(**user_information_dict))
         return HttpResponseRedirect("/main/")
     
     rendered = render_to_string('account/register.html', r)
