@@ -30,8 +30,13 @@ def register(request):
 def confirm_user(request, username, confirm_key):
     server = arara.get_server()
 
-    mes = server.member_manager.confirm(username, confirm_key)
-    return HttpResponse(mes)
+    try:
+        server.member_manager.confirm(username, confirm_key)
+        return HttpResponseRedirect("/main/")
+    except InvalidOperation:
+        return HttpResponse('<script>alert("Confirm failed! \\n\\n  -Wrong confirm key? \\n  -Already confirmed?\\n  -Wrong username?");</script>')
+    except InternalError:
+        return HttpResponse('<script>alert("Confirm failed! \\n\\nPlease contact ARA SYSOP.");</script>')
 
 def reconfirm_user(request, username):
     rendered = render_to_string('account/mail_confirm.html',

@@ -85,7 +85,6 @@ class MemberManager(object):
             session.close()
             raise InvalidOperation('DATABASE_ERROR')
 
-    @log_method_call
     def authenticate(self, username, password, user_ip):
         session = model.Session()
         try:
@@ -411,9 +410,9 @@ class MemberManager(object):
         @param session_key: User Key
         @type  user_password_info: Dictionary
         @param user_password_info: User Dictionary
-        @rtype: string
+        @rtype: void
         @return:
-            1. modify 성공: True, 'OK'
+            1. modify 성공: void
             2. modify 실패:
                 1. 수정 권한 없음: 'NO_PERMISSION'
                 2. 잘못된 현재 패스워드: 'WRONG_PASSWORD'

@@ -25,7 +25,7 @@ class User(object):
         self.default_language = smart_unicode(default_language)
         self.activated = False
         self.widget = 0
-        self.layout = u''
+        self.layout = 0
         self.join_time = datetime.datetime.fromtimestamp(time.time())
         self.last_login_time = None 
         self.last_logout_time = None
@@ -202,7 +202,7 @@ users_table = Table('users', metadata,
     Column('default_language', Unicode(5)),  # ko_KR, en_US
     Column('activated', Boolean),
     Column('widget', Integer),
-    Column('layout', Unicode(50)),
+    Column('layout', Integer),
     Column('join_time', DateTime),
     Column('last_login_time', DateTime),
     Column('last_logout_time', DateTime),

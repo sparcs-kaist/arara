@@ -137,11 +137,11 @@ service MemberManager {
     UserInformation get_info(1:string session_key)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    string modify_password(1:string session_key,
+    void modify_password(1:string session_key,
                            2:UserPasswordInfo user_password_info)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    string modify(1:string session_key,
+    void modify(1:string session_key,
                   2:UserModification user_modification_info)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),

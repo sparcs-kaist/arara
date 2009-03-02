@@ -83,7 +83,6 @@ class LoginManager(object):
         visitor_count= {'total_visitor_count':visitor.total, 'today_visitor_count':visitor.today}
         return VisitorCount(**visitor_count)
 
-    @log_method_call
     def login(self, username, password, user_ip):
         '''
         로그인 처리를 담당하는 함수.
