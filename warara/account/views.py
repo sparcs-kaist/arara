@@ -30,11 +30,12 @@ def register(request):
 def confirm_user(request, username, confirm_key):
     server = arara.get_server()
 
-    if request.method == 'POST':
-        mes = server.member_manager.confirm(username, confirm_key)
-        return HttpResponse(mes)
+    mes = server.member_manager.confirm(username, confirm_key)
+    return HttpResponse(mes)
 
-    rendered = render_to_string('account/mail_confirm.html')
+def reconfirm_user(request, username):
+    rendered = render_to_string('account/mail_confirm.html',
+            {'username': username})
     return HttpResponse(rendered)
 
 def agreement(request):

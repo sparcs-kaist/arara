@@ -13,5 +13,6 @@ urlpatterns = patterns('',
     (r'^password_modify/$','warara.account.views.password_modify'),
     (r'^account_remove/$','warara.account.views.account_remove'),
     (r'^confirm/(\w+)/(\w+)/$','warara.account.views.confirm_user'),
+    (r'^reconfirm/(\w+)/$','warara.account.views.reconfirm_user'),
     (r'^register/resendemail/$','warara.account.views.mail_resend'),
 )
