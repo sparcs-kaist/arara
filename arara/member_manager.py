@@ -508,8 +508,8 @@ class MemberManager(object):
                 activation_code = user_activation.activation_code
                 if user.email != new_email:
                     user.email = new_email
-                    send_email(user.email, user.username, activation_code)
                     session.commit()
+                send_email(user.email, user.username, activation_code)
                 session.close()
             except Exception:
                 session.close()
