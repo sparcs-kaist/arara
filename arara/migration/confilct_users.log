@@ -1,0 +1,72 @@
+***ALREADY ADDED*******User kaien    Traceback (most recent call last):
+  File "user_migration.py", line 64, in <module>
+    session.commit()
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/session.py", line 554, in commit
+    self.transaction.commit()
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/session.py", line 259, in commit
+    self._prepare_impl()
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/session.py", line 243, in _prepare_impl
+    self.session.flush()
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/session.py", line 786, in flush
+    self.uow.flush(self, objects)
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/unitofwork.py", line 233, in flush
+    flush_context.execute()
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/unitofwork.py", line 445, in execute
+    UOWExecutor().execute(self, tasks)
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/unitofwork.py", line 930, in execute
+    self.execute_save_steps(trans, task)
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/unitofwork.py", line 945, in execute_save_steps
+    self.save_objects(trans, task)
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/unitofwork.py", line 936, in save_objects
+    task.mapper._save_obj(task.polymorphic_tosave_objects, trans)
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/mapper.py", line 1161, in _save_obj
+    c = connection.execute(statement.values(value_params), params)
+  File "/var/lib/python-support/python2.5/sqlalchemy/engine/base.py", line 844, in execute
+    return Connection.executors[c](self, object, multiparams, params)
+  File "/var/lib/python-support/python2.5/sqlalchemy/engine/base.py", line 895, in execute_clauseelement
+    return self._execute_compiled(elem.compile(dialect=self.dialect, column_keys=keys, inline=len(params) > 1), distilled_params=params)
+  File "/var/lib/python-support/python2.5/sqlalchemy/engine/base.py", line 907, in _execute_compiled
+    self.__execute_raw(context)
+  File "/var/lib/python-support/python2.5/sqlalchemy/engine/base.py", line 916, in __execute_raw
+    self._cursor_execute(context.cursor, context.statement, context.parameters[0], context=context)
+  File "/var/lib/python-support/python2.5/sqlalchemy/engine/base.py", line 960, in _cursor_execute
+    self._handle_dbapi_exception(e, statement, parameters, cursor)
+  File "/var/lib/python-support/python2.5/sqlalchemy/engine/base.py", line 942, in _handle_dbapi_exception
+    raise exceptions.DBAPIError.instance(statement, parameters, e, connection_invalidated=is_disconnect)
+IntegrityError: (IntegrityError) (1062, "Duplicate entry 'bd42864af2405b17179bcefafeed5fee' for key 2") u'INSERT INTO user_activation (user_id, activation_code, issued_date) VALUES (%s, %s, %s)' [39080L, 'bd42864af2405b17179bcefafeed5fee', datetime.datetime(2009, 3, 3, 2, 12, 59, 652866)]
+***ALREADY ADDED*******User hanmaum  Traceback (most recent call last):
+  File "user_migration.py", line 64, in <module>
+    session.commit()
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/session.py", line 554, in commit
+    self.transaction.commit()
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/session.py", line 259, in commit
+    self._prepare_impl()
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/session.py", line 243, in _prepare_impl
+    self.session.flush()
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/session.py", line 786, in flush
+    self.uow.flush(self, objects)
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/unitofwork.py", line 233, in flush
+    flush_context.execute()
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/unitofwork.py", line 445, in execute
+    UOWExecutor().execute(self, tasks)
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/unitofwork.py", line 930, in execute
+    self.execute_save_steps(trans, task)
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/unitofwork.py", line 945, in execute_save_steps
+    self.save_objects(trans, task)
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/unitofwork.py", line 936, in save_objects
+    task.mapper._save_obj(task.polymorphic_tosave_objects, trans)
+  File "/var/lib/python-support/python2.5/sqlalchemy/orm/mapper.py", line 1161, in _save_obj
+    c = connection.execute(statement.values(value_params), params)
+  File "/var/lib/python-support/python2.5/sqlalchemy/engine/base.py", line 844, in execute
+    return Connection.executors[c](self, object, multiparams, params)
+  File "/var/lib/python-support/python2.5/sqlalchemy/engine/base.py", line 895, in execute_clauseelement
+    return self._execute_compiled(elem.compile(dialect=self.dialect, column_keys=keys, inline=len(params) > 1), distilled_params=params)
+  File "/var/lib/python-support/python2.5/sqlalchemy/engine/base.py", line 907, in _execute_compiled
+    self.__execute_raw(context)
+  File "/var/lib/python-support/python2.5/sqlalchemy/engine/base.py", line 916, in __execute_raw
+    self._cursor_execute(context.cursor, context.statement, context.parameters[0], context=context)
+  File "/var/lib/python-support/python2.5/sqlalchemy/engine/base.py", line 960, in _cursor_execute
+    self._handle_dbapi_exception(e, statement, parameters, cursor)
+  File "/var/lib/python-support/python2.5/sqlalchemy/engine/base.py", line 942, in _handle_dbapi_exception
+    raise exceptions.DBAPIError.instance(statement, parameters, e, connection_invalidated=is_disconnect)
+IntegrityError: (IntegrityError) (1062, "Duplicate entry '9abb9d8eecb5fef1fe7365ff77ae323e' for key 2") u'INSERT INTO user_activation (user_id, activation_code, issued_date) VALUES (%s, %s, %s)' [39081L, '9abb9d8eecb5fef1fe7365ff77ae323e', datetime.datetime(2009, 3, 3, 2, 13, 1, 701293)]
