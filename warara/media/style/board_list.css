@@ -13,8 +13,13 @@
     width: 100%;
 }
 
+#article_table {
+    border-collapse: collapse;
+}
+
 #article_table th, td {
     padding: 0.1em 1em;
+    border: 0;
 }
 
 #article_table th {
@@ -54,7 +59,7 @@
     font-family: Verdana;
 }
 .column.title_col{
-    width: 50%;
+    width: 70%;
     font-family: Gulim;
 }
 

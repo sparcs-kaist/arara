@@ -55,7 +55,11 @@ class User(object):
         self.password = smart_unicode(self.crypt_password(password))
 
     def compare_password(self, password):
-        return smart_unicode(self.encrypt_password(password, self.password)) == smart_unicode(self.password)
+        hash_from_user = self.encrypt_password(password, self.password)
+        hash_from_db = self.password
+        hash_from_user = smart_unicode(hash_from_user.strip())
+        hash_from_db = smart_unicode(hash_from_db.strip())
+        return hash_from_user == hash_from_db
 
     def __repr__(self):
         return "<User('%s', '%s')>" % (self.username, self.nickname)
@@ -197,8 +201,8 @@ users_table = Table('users', metadata,
     Column('password', Unicode(50)),
     Column('nickname', Unicode(40)),
     Column('email', Unicode(60), unique=True),
-    Column('signature', Unicode(80)),
-    Column('self_introduction', Unicode(100)),
+    Column('signature', Unicode(1024)),
+    Column('self_introduction', Unicode(1024)),
     Column('default_language', Unicode(5)),  # ko_KR, en_US
     Column('activated', Boolean),
     Column('widget', Integer),

@@ -69,7 +69,7 @@ def login(request):
                 return HttpResponse(e)
             else:
                 #XXX: (pipoket) Ugly hack for showing nickname while not logged in.
-                print e.why
+                # print e.why
                 splited = e.why.splitlines()
                 if splited[0] == 'not activated':
                     username = splited[1]

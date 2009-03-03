@@ -47,7 +47,7 @@ def get_article_list(request, r, mode):
             article_list[i].title = 'deleted'
             article_list[i].author_username = ''
 
-        max_length = 32 # max title string length
+        max_length = 45 # max title string length
         if len(str(article_list[i].title)) > max_length:
             article_list[i].title = article_list[i].title[0:max_length]
             article_list[i].title += "..."
@@ -228,9 +228,12 @@ def reply(request, board_name, article_id):
 def vote(request, board_name, root_id, article_no):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request)
-    message = server.article_manager.vote_article(sess, board_name, int(article_no))
+    try:
+        server.article_manager.vote_article(sess, board_name, int(article_no))
+    except InvalidOperation, e:
+        return HttpResponse("ALREADY_VOTED")
 
-    return HttpResponse(message)
+    return HttpResponse("OK")
 
 def delete(request, board_name, root_id, article_no):
     server = arara.get_server()

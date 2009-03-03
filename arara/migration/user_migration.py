@@ -33,7 +33,7 @@ try:
         id = row[0]
         username = row[1]
         password = row[2]
-        original_nickname = row[3]
+        original_nickname = row[5]
         nickname = username #XXX: Apply username on nickname to prevent duplication.
         email = row[6]
 
@@ -72,14 +72,12 @@ try:
             import traceback
             session.close()
             print "ALREADY ADDED! LOGGING!"
-            time.sleep(2)
             file.write((u"***ALREADY ADDED*******User %s " % username) + traceback.format_exc())
         except Exception, e:
             import traceback
             session.close()
             print "OTHER ERROR HAPPENED! LOGGING!"
             file.write((u"+++ERROR!!++++++++++++User %s " % username) + traceback.format_exc())
-            time.sleep(2)
 
 except KeyboardInterrupt:
     print "\nTERMINATING!!! TERMINATING!!!"

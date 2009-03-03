@@ -90,6 +90,7 @@ class MemberManager(object):
         session = model.Session()
         try:
             user = session.query(model.User).filter_by(username=username).one()
+
             if user.compare_password(password):
                 if user.activated:
                     user.last_login_time = datetime.datetime.fromtimestamp(time.time())
@@ -195,7 +196,7 @@ class MemberManager(object):
             HOST = MAIL_HOST
             sender = MAIL_SENDER
             content = 'You have been successfully registered as the ARA member.<br />To use your account, you have to activate it.<br />Please click the link below on any web browser to activate your account.<br /><br />'
-            confirm_url = 'http://' + SERVER_ADDRESS + '/account/confirm/%s/%s' % (username, activation_code)
+            confirm_url = 'http://' + SERVER_ADDRESS + '/account/confirm/%s/%s' % (username.strip(), activation_code)
             confirm_link = '<a href=\'%s\'>%s</a>' % (confirm_url, confirm_url)
             title = "[ARA] Please activate your account 아라 계정 활성화"
             msg = MIMEText(content+confirm_link, _subtype="html", _charset='euc_kr')
