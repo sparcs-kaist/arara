@@ -609,7 +609,7 @@ class MemberManager(object):
         username = self.login_manager.get_session(session_key).username
         try:
             user = session.query(model.User).filter_by(username=username).one()
-            user.activated = False
+	    session.delete(user)
             session.commit()
             session.close()
             return

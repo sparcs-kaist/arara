@@ -8,6 +8,7 @@ from sqlalchemy import and_, or_, not_
 
 from arara.util import require_login, filter_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
+from arara.util import datetime2timestamp
 from arara_thrift.ttypes import *
 from arara import model
 
@@ -41,9 +42,10 @@ class SearchManager(object):
         if item_dict.has_key('root_id'):
             if not item_dict['root_id']:
                 item_dict['root_id'] = item_dict['id']
-        if item_dict.has_key('content'):
-            if whitelist == SEARCH_ARTICLE_WHITELIST:
-                item_dict['content'] = item_dict['content'][:40]
+	if item_dict.has_key('date'):
+	    item_dict['date'] = datetime2timestamp(item_dict['date'])
+	if item_dict.has_key('last_modified_date'):
+	    item_dict['last_modified_date'] = datetime2timestamp(item_dict['last_modified_date'])
         if whitelist:
             filtered_dict = filter_dict(item_dict, whitelist)
         else:
@@ -299,7 +301,7 @@ class SearchManager(object):
         search_dict_list = self._get_dict_list(result, SEARCH_ARTICLE_WHITELIST)
         ret_dict['hit'] = search_dict_list
         ret_dict['results'] = article_count
-        ret_dict['search_time'] = str(end_time-start_time)
+        ret_dict['search_time'] = end_time-start_time
         ret_dict['last_page'] = last_page
         session.close()
         return ArticleSearchResult(**ret_dict)
