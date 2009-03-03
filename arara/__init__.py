@@ -76,7 +76,7 @@ CLASSES = {'LoginManager': LoginManager,
            'FileManager': FileManager,
         }
 
-ARARA_SERVER_HOST = 'localhost'
+ARARA_SERVER_HOST = 'juk.sparcs.org'
 ARARA_SERVER_BASE_PORT = 8000
 
 from thrift.protocol import TBinaryProtocol

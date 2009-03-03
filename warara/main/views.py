@@ -23,7 +23,7 @@ def main(request):
     server = arara.get_server() 
     sess, r = warara.check_logged_in(request)
 
-    max_length = 20 #todays, weekly best max string length
+    max_length = 45 #todays, weekly best max string length
     ret = cache.get('today_best_list')
     if not ret:
         ret = server.article_manager.get_today_best_list(5)
@@ -32,11 +32,11 @@ def main(request):
         cache.set('todays_best_list', ret, 60)
     for i, tb in enumerate(ret):
         if i==0:
-            max_length = 50
-        if len(str(tb.title)) > max_length:
-            ret[i].title = ret[i].title[0:max_length]
-            ret[i].title += '...'
-        max_length = 20
+            continue
+        title = tb.title.decode('utf-8').encode('cp949', 'ignore')
+        if len(title) > max_length:
+            title = title[0:max_length] + "...".encode('cp949')
+        ret[i].title = title.decode('cp949', 'ignore').encode('utf-8')
     r['todays_best_list'] = enumerate(ret)
     ret = cache.get('weekly_best_list')
     if not ret:
@@ -47,9 +47,11 @@ def main(request):
     for i, tb in enumerate(ret):
         if i==0:
             continue
-        if len(tb.title) > max_length:
-            ret[i].title = ret[i].title[0:max_length]
-            ret[i].title += '...'
+
+        title = tb.title.decode('utf-8').encode('cp949', 'ignore')
+        if len(title) > max_length:
+            title = title[0:max_length] + "...".encode('cp949')
+        ret[i].title = title.decode('cp949', 'ignore').encode('utf-8')
     r['weekly_best_list'] = enumerate(ret)
 
     #message_check

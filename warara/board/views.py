@@ -36,7 +36,8 @@ def get_article_list(request, r, mode):
         r['page_no'] = article_result.current_page
     elif mode == 'search':
         page_no = int(page_no)
-        article_result = server.search_manager.search(sess, False, r['board_name'], r['search_method'], page_no, page_length)
+        search_method = SearchQuery(**r['search_method'])
+        article_result = server.search_manager.search(sess, False, r['board_name'], search_method, page_no, page_length)
 
     page_range_length = 10
     page_range_no = math.ceil(float(page_no) / page_range_length)
@@ -44,13 +45,19 @@ def get_article_list(request, r, mode):
     article_list = article_result.hit
     for i in range(len(article_list)):
         if article_list[i].deleted:
-            article_list[i].title = 'deleted'
+            article_list[i].title = '-- Deleted --'
             article_list[i].author_username = ''
 
-        max_length = 45 # max title string length
-        if len(str(article_list[i].title)) > max_length:
-            article_list[i].title = article_list[i].title[0:max_length]
-            article_list[i].title += "..."
+        title = article_list[i].title.decode('utf-8').encode('cp949', 'ignore')
+        max_length = 52 # max title string length
+        overflow_flag = False
+        if len(title) > max_length:
+            title = title[0:max_length] 
+            overflow_flag = True
+        title = title.decode('cp949', 'ignore').encode('utf8', 'ignore')
+        if overflow_flag:
+            title = title + ' ...'.encode('utf8')
+        article_list[i].title = title
 
     for article in article_list:
         article.date = datetime.datetime.fromtimestamp(article.date)
