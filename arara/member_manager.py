@@ -53,8 +53,9 @@ class MemberManager(object):
 
     def _register_sysop(self):
         sysop_reg_dic = {'username':u'SYSOP', 'password':u'SYSOP',
-                'nickname':u'SYSOP', 'email':u'SYSOP@sparcs.org',
-                'signature':u'', 'self_introduction':u'i am mikkang',
+                'nickname':u'SYSOP', 'email':u'sysop@ara.kaist.ac.kr',
+                'signature':u'--\n아라 BBS 시삽 (SYStem OPerator)',
+                'self_introduction':u'아라 BBS 시삽 (SYStem OPerator)',
                 'default_language':u'ko_KR'}
         try:
             user = model.User(**sysop_reg_dic)
@@ -186,15 +187,17 @@ class MemberManager(object):
         @rtype: string
         @return: None
         '''
-        SERVER_ADDRESS = 'arara.kaist.ac.kr'
+        from arara.settings import WARARA_SERVER_ADDRESS, MAIL_HOST, MAIL_SENDER
+
+        SERVER_ADDRESS = WARARA_SERVER_ADDRESS
 
         try:
-            HOST = 'localhost'
-            sender = 'root_id@sparcs.org'
-            content = 'You have been successfully registered as the ARAra member.<br />To use your account, you have to activate it.<br />Please click the link below on any web browser to activate your account.<br /><br />'
+            HOST = MAIL_HOST
+            sender = MAIL_SENDER
+            content = 'You have been successfully registered as the ARA member.<br />To use your account, you have to activate it.<br />Please click the link below on any web browser to activate your account.<br /><br />'
             confirm_url = 'http://' + SERVER_ADDRESS + '/account/confirm/%s/%s' % (username, activation_code)
             confirm_link = '<a href=\'%s\'>%s</a>' % (confirm_url, confirm_url)
-            title = "[ARAra] Please activate your account"
+            title = "[ARA] Please activate your account 아라 계정 활성화"
             msg = MIMEText(content+confirm_link, _subtype="html", _charset='euc_kr')
             msg['Subject'] = title
             msg['From'] = sender
@@ -478,14 +481,14 @@ class MemberManager(object):
         session.close()
         return
 
-    @require_login
+    # @require_login
     @log_method_call_important
-    def modify_authentication_email(self, session_key, new_email):
+    def modify_authentication_email(self, username, new_email):
         '''
         인증되지 않은 이메일 주소의 변경
 
-        @type  session_key: string
-        @param session_key: User Key
+        @type  username: string
+        @param username: Username
         @type  new_email: string
         @param new_email: New E-mail Address for Authentication
         @rtype: void
@@ -498,19 +501,20 @@ class MemberManager(object):
                 3. 데이터베이스 오류: InternalError('database error')
         '''
         session = model.Session()
-        session_info = self.login_manager.get_session(session_key)
-        username = session_info.username
         if new_email:
             try:
+
                 user = session.query(model.User).filter_by(username=username).one()
-                user_activation = session.query(model.UserActivation).filter_by(id=user.id).one()
+                user_activation = session.query(model.UserActivation).filter_by(user=user).one()
                 activation_code = user_activation.activation_code
                 if user.email != new_email:
                     user.email = new_email
                     session.commit()
-                send_email(user.email, user.username, activation_code)
+                self._send_mail(user.email, user.username, activation_code)
                 session.close()
             except Exception:
+                import traceback
+                logging.warn(traceback.format_exc())
                 session.close()
                 raise InternalError('database error')
         else:

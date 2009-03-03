@@ -145,6 +145,10 @@ service MemberManager {
                   2:UserModification user_modification_info)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void modify_authentication_email(1:string username,
+                                       2:string new_email)
+        throws (1:InternalError ouch,
+                2:InvalidOperation invalid),
     PublicUserInformation query_by_username(1:string session_key,
                                             2:string username)
         throws (1:InvalidOperation invalid,

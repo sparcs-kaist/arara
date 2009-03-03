@@ -27,6 +27,8 @@ def register(request):
     rendered = render_to_string('account/register.html', r)
     return HttpResponse(rendered)
 
+
+
 def confirm_user(request, username, confirm_key):
     server = arara.get_server()
 
@@ -271,5 +273,16 @@ def email_check(request):
         return HttpResponse('Must use POST')
 
 def mail_resend(request):
-    rendered = render_to_string('account/mail_confirm.html')
-    return HttpResponse(rendered)
+    # XXX : Combacsa modified this code... might not work well...
+    sess, r = warara.check_logged_in(request)
+    server = arara.get_server()
+    if r['logged_in'] == True:
+        assert None, "ALEADY_LOGGED_IN"
+
+    if request.method == 'POST':
+        username  = request.POST['id']
+        new_email = request.POST['email']
+        message = server.member_manager.modify_authentication_email(username, new_email)
+        return HttpResponseRedirect("/main/")
+
+    assert None, "INTERNAL_SERVER_ERROR"
