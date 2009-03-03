@@ -36,6 +36,9 @@ def get_article_list(request, r, mode):
         r['page_no'] = article_result.current_page
     elif mode == 'search':
         page_no = int(page_no)
+        for k, v in r['search_method'].items():
+            del r['search_method'][k]
+            r['search_method'][str(k)] = v
         search_method = SearchQuery(**r['search_method'])
         article_result = server.search_manager.search(sess, False, r['board_name'], search_method, page_no, page_length)
 
