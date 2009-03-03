@@ -27,12 +27,13 @@ try:
     db = MySQLdb.connect(db='webara2g', user='pipoket', passwd='tnfqkrtm',
            host='mir.sparcs.org', use_unicode=True, charset='utf8')
     cursor = db.cursor()
-    cursor.execute("select * from users where id='combacsa'")
+    cursor.execute("select * from users")
     count = cursor.rowcount
     for i, row in enumerate(cursor):
         id = row[0]
         username = row[1]
         password = row[2]
+        original_nickname = row[3]
         nickname = username #XXX: Apply username on nickname to prevent duplication.
         email = row[6]
 
@@ -44,7 +45,7 @@ try:
         # Write original nickname to the signature
         signature = u'--\n'
         signature += u'Original Nickname: '
-        signature += row[3]
+        signature += original_nickname
      
         print "[%d %%]Processing Username: %s, nickname: %s..." % ((i*100/count*1.0), username, nickname),
         try:
