@@ -1,5 +1,7 @@
 #board_content {
 	width: 97%;
+	_width: 96%;
+	_display: inline;
 	padding: 0.5em 2%;
 	padding-right: 1%;
 	background: url("/media/image/board/read_title_bg.png") no-repeat top left;
