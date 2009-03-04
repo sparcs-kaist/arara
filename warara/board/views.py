@@ -13,6 +13,8 @@ import math
 import datetime
 import warara
 
+FILE_DIR = '/home/ara/arara/files'
+
 def index(request):
     rendered = render_to_string('board/index.html', {})
     return HttpResponse(rendered)
@@ -150,7 +152,7 @@ def write_(request, board_name):
             delete_file = delete_file.split('&')
             for file_id in delete_file:
                 file = server.file_manager.delete_file(sess, int(article_no), int(file_id))
-                os.remove("files/%s/%s" % (file.file_path, file.saved_filename))
+                os.remove("%s/%s/%s" % (FILE_DIR, file.file_path, file.saved_filename))
 
     else:
         article_id = server.article_manager.write_article(sess, board_name, WrittenArticle(**article_dic))
@@ -162,9 +164,9 @@ def write_(request, board_name):
             if file_ob.size > 100*1024*1024:
                 continue
             file = server.file_manager.save_file(sess, int(article_id), file_ob.name)
-            if not os.path.isdir('files/%s' % file.file_path):
-                os.makedirs('files/%s' % file.file_path)
-            fp = open('files/%s/%s' % (file.file_path, file.saved_filename), 'wb')
+            if not os.path.isdir('%s/%s' % (FILE_DIR, file.file_path)):
+                os.makedirs('%s/%s' % (FILE_DIR, file.file_path))
+            fp = open('%s/%s/%s' % (FILE_DIR, file.file_path, file.saved_filename), 'wb')
 
             fp.write(file_ob.read())
 
@@ -179,7 +181,7 @@ def read(request, board_name, article_id):
         article.date = datetime.datetime.fromtimestamp(article.date)
 
     for i in range(len(article_list)):
-        if 'attach' in article_list[i].__dict__: #image view
+        if 'attach' in article_list[i].__dict__ and article_list[i].attach: #image view
             for file in article_list[i].attach:
                 if file.filename.split('.')[-1].lower() in image_filetype:
                     insert_image_tag = "<p><img src=\"/board/" + board_name + "/" + str(article_list[i].root_id) + "/" + str(article_list[i].id) + "/file/" + str(file.file_id) + "\"></img></p>"
@@ -228,9 +230,9 @@ def reply(request, board_name, article_id):
         file = {}
         for key, file_ob in request.FILES.items():
             file = server.file_manager.save_file(sess, int(article_id), file_ob.name)
-            if not os.path.isdir('files/%s' % file.file_path):
-                os.makedirs('files/%s' % file.file_path)
-            fp = open('files/%s/%s' % (file.file_path, file.saved_filename), 'wb')
+            if not os.path.isdir('%s/%s' % (FILE_DIR, file.file_path)):
+                os.makedirs('%s/%s' % (FILE_DIR, file.file_path))
+            fp = open('%s/%s/%s' % (FILE_DIR, file.file_path, file.saved_filename), 'wb')
             fp.write(file_ob.read())
 
     return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(root_id)))
@@ -288,7 +290,7 @@ def file_download(request, board_name, article_root_id, article_id, file_id):
     server = arara.get_server()
     file = {}
     file= server.file_manager.download_file(int(article_id), int(file_id))
-    file_ob = open("files/%s/%s" % (file.file_path, file.saved_filename))
+    file_ob = open("%s/%s/%s" % (FILE_DIR, file.file_path, file.saved_filename))
 
     response = HttpResponse(file_ob, mimetype="application/x-forcedownload")
     response['Content-Disposition'] = "attachment; filename=" + unicode(file.real_filename).encode('euc-kr')
