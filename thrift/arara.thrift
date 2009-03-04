@@ -254,6 +254,11 @@ struct WrittenArticle {
     2: string content
 }
 
+struct AttachDict {
+    1: string filename,
+    2: i32 file_id,
+}
+
 struct Article {
     1:  id_t id,
     2:  string title,
@@ -273,6 +278,7 @@ struct Article {
     16: optional i32 reply_count,
     17: optional string type
     18: optional string board_name,
+    19: optional list<AttachDict> attach,
     #19: optional i32 next,
     #20: optional i32 prev,
 }

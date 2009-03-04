@@ -161,6 +161,7 @@ def write_(request, board_name):
         for key, file_ob in request.FILES.items():
             if file_ob.size > 100*1024*1024:
                 continue
+            print os.getcwd()
             file = server.file_manager.save_file(sess, int(article_id), file_ob.name)
             if not os.path.isdir('files/%s' % file.file_path):
                 os.makedirs('files/%s' % file.file_path)
