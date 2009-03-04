@@ -408,7 +408,7 @@ def get_engine():
         if CONNECTION_STRING.startswith('mysql'):
             engine = create_engine(CONNECTION_STRING, encoding='utf-8',
                                 convert_unicode=True, assert_unicode=None,
-                                pool_size=50, max_overflow=100, echo=False)
+                                pool_size=10, max_overflow=20, echo=False)
         else:
             engine = create_engine(CONNECTION_STRING, encoding='utf-8',
                                 convert_unicode=True, assert_unicode=None)
