@@ -579,7 +579,7 @@ class MemberManager(object):
         session = model.Session()
         try:
             query_user = session.query(model.User).filter_by(
-                    nickname=query_nickname).one()
+                    nickname=nickname).one()
             query_user_dict = filter_dict(query_user.__dict__,
                                           USER_QUERY_WHITELIST)
             if not query_user_dict['last_logout_time']:
