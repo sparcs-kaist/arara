@@ -12,5 +12,4 @@ MAIL_HOST = 'localhost'
 MAIL_SENDER = 'ara@ara.kaist.ac.kr'
 
 ARARA_SERVER_HOST = 'juk.sparcs.org'
-ARARA_SERVER_HOST = 'localhost'
 ARARA_SERVER_BASE_PORT = 8000
