@@ -10,6 +10,7 @@ from arara import model
 from arara_thrift.ttypes import *
 from arara.util import require_login
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
+from arara.server import get_server
 
 log_method_call = log_method_call_with_source('file_manager')
 log_method_call_important = log_method_call_with_source_important('file_manager')
@@ -23,7 +24,7 @@ class FileManager(object):
         pass
 
     def _is_board_exist(self, board_name):
-        ret, _ = self.board_manager.get_board(board_name)
+        ret, _ = get_server().board_manager.get_board(board_name)
         if ret:
             return True, 'OK'
         else:

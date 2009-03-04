@@ -11,6 +11,7 @@ from arara.util import log_method_call_with_source, log_method_call_with_source_
 from arara.util import datetime2timestamp
 from arara_thrift.ttypes import *
 from arara import model
+from arara.server import get_server
 
 log_method_call = log_method_call_with_source('search_manager')
 log_method_call_important = log_method_call_with_source_important('search_manager')
@@ -66,9 +67,9 @@ class SearchManager(object):
         self.login_manager = login_manager
 
     def register_article(self):
-        sess = self.login_manager.login('SYSOP', 'SYSOP', '234.234.234.234')
+        sess = get_server().login_manager.login('SYSOP', 'SYSOP', '234.234.234.234')
         #XXX SYSOP LOGIN MUST BE IMPLEMENTED HERE 
-        board_list = self.board_manager.get_board_list()
+        board_list = get_server().board_manager.get_board_list()
         if not ret:
             raise InternalError('database error')
 

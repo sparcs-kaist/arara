@@ -13,6 +13,7 @@ from arara import model
 from util import is_keys_in_dict
 from util import log_method_call_with_source
 from util import smart_unicode
+from arara.server import get_server
 
 log_method_call = log_method_call_with_source('login_manager')
 
@@ -38,7 +39,7 @@ class LoginManager(object):
             session.close()
 
     def _set_member_manager(self, member_manager):
-        self.member_manager = member_manager
+        get_server().member_manager = member_manager
 
     def guest_login(self, guest_ip):
         '''
@@ -101,7 +102,7 @@ class LoginManager(object):
         password = smart_unicode(password)
         user_ip = smart_unicode(user_ip)
         ret = []
-        msg = self.member_manager.authenticate(username, password, user_ip)
+        msg = get_server().member_manager.authenticate(username, password, user_ip)
         #for user_info in self.session_dic.values():
         #    if user_info['username'] == username:
         #        return False, 'ALREADY_LOGIN'
@@ -122,7 +123,7 @@ class LoginManager(object):
         '''
 
         try:
-            self.member_manager._logout_process(self.session_dic[session_key]['username'])
+            get_server().member_manager._logout_process(self.session_dic[session_key]['username'])
             self.logger.info("User '%s' has LOGGED OUT", self.session_dic[session_key]['username'])
             self.session_dic.pop(session_key)
         except KeyError:

@@ -10,6 +10,7 @@ from arara.util import log_method_call_with_source, log_method_call_with_source_
 from arara.util import smart_unicode, datetime2timestamp
 
 from arara_thrift.ttypes import *
+from arara.server import get_server
 
 log_method_call = log_method_call_with_source('blacklist_manager')
 log_method_call_important = log_method_call_with_source_important('blacklist_manager')
@@ -37,8 +38,8 @@ class BlacklistManager(object):
     #def _prepare_session_username(function):
     #     # Internal member_dic에 사용자 username를 강제 등록한다.
     #    def wrapper(self, session_key, *args):
-    #        if not self.member_dic.has_key(self.login_manager.get_session(session_key)[1]['username']):
-    #            self.member_dic[self.login_manager.get_session(session_key)[1]['username']] = {}
+    #        if not self.member_dic.has_key(get_server().login_manager.get_session(session_key)[1]['username']):
+    #            self.member_dic[get_server().login_manager.get_session(session_key)[1]['username']] = {}
     #        return function(self, session_key, *args)
     #    return wrapper
 
@@ -91,7 +92,7 @@ class BlacklistManager(object):
                 5. 로그인되지 않은 사용자: NotLoggedIn Exception
                 6. 데이터베이스 오류: InternalError Exception 
         '''
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
 
         username = smart_unicode(username)
 
@@ -138,7 +139,7 @@ class BlacklistManager(object):
                 3. 데이터베이스 오류: InternalError Exception
         '''
         
-        user_info =  self.login_manager.get_session(session_key)
+        user_info =  get_server().login_manager.get_session(session_key)
 
         username = smart_unicode(username)
 
@@ -185,7 +186,7 @@ class BlacklistManager(object):
         #if not is_keys_in_dict(blacklist_dict, BLACKLIST_DICT):
         #    return False, 'WRONG_DICTIONARY'
 
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
 
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info.username).one()
@@ -228,7 +229,7 @@ class BlacklistManager(object):
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
 
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
 
         try:
             session = model.Session()

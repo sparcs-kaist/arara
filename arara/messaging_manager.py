@@ -9,6 +9,7 @@ from arara_thrift.ttypes import *
 from arara.util import require_login, filter_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 from arara.util import datetime2timestamp
+from arara.server import get_server
 
 log_method_call = log_method_call_with_source('messaging_manager')
 log_method_call_important = log_method_call_with_source_important('messaging_manager')
@@ -86,7 +87,7 @@ class MessagingManager(object):
         '''
 
         ret_dict = {}
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
         sent_user = session.query(model.User).filter_by(username=user_info.username).one()
         sent_messages_count = session.query(model.Message).filter(
@@ -137,10 +138,10 @@ class MessagingManager(object):
         '''
 
         ret_dict = {}
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
         to_user = session.query(model.User).filter_by(username=user_info.username).one()
-        blacklist_dict_list = self.blacklist_manager.list_(session_key)
+        blacklist_dict_list = get_server().blacklist_manager.list_(session_key)
         blacklist_users = set()
         for blacklist_item in blacklist_dict_list:
             if blacklist_item.block_message:
@@ -198,8 +199,8 @@ class MessagingManager(object):
                 3. 데이터베이스 오류: InternalError Exception
         '''
 
-        user_info = self.login_manager.get_session(session_key)
-        if not self.member_manager.is_registered(to_username):
+        user_info = get_server().login_manager.get_session(session_key)
+        if not get_server().member_manager.is_registered(to_username):
             raise InvalidOperation('user not exist')
         session = model.Session()
         from_user = session.query(model.User).filter_by(username=user_info.username).one()
@@ -235,8 +236,8 @@ class MessagingManager(object):
                 3. 데이터베이스 오류: InternalError Exception
         '''
 
-        user_info = self.login_manager.get_session(session_key)
-        if not self.member_manager.is_registered_nickname(to_nickname):
+        user_info = get_server().login_manager.get_session(session_key)
+        if not get_server().member_manager.is_registered_nickname(to_nickname):
             raise InvalidOperation('user not exist')
         session = model.Session()
         from_user = session.query(model.User).filter_by(nickname=user_info.nickname).one()
@@ -275,12 +276,12 @@ class MessagingManager(object):
                 3. 데이터베이스 오류: InternalError Exception 
         '''
 
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         if type(to_data) == list:
             raise InvalidOperation('temporarily disabled')
             #ret = []
             #for to in to_data: 
-            #    if self.member_manager.is_registered(to):
+            #    if get_server().member_manager.is_registered(to):
             #        session = model.Session()
             #        from_user = session.query(model.User).filter_by(username=user_info.username).one()
             #        from_user_ip = user_info.ip
@@ -296,7 +297,7 @@ class MessagingManager(object):
             #        ret.append('USER_NOT_EXIST')
             #return True, ret
         else:
-            if not self.member_manager.is_registered(to_data):
+            if not get_server().member_manager.is_registered(to_data):
                 raise InvalidOperation('user not exist')
             session = model.Session()
             from_user = session.query(model.User).filter_by(username=user_info.username).one()
@@ -330,7 +331,7 @@ class MessagingManager(object):
                 3. 데이터베이스 오류: InternalError Exception
         '''
         
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
         to_user = session.query(model.User).filter_by(username=user_info.username).one()
         try:
@@ -363,7 +364,7 @@ class MessagingManager(object):
                 3. 데이터베이스 오류: InternalError Exception
         '''
         
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
         from_user = session.query(model.User).filter_by(username=user_info.username).one()
         try:
@@ -396,7 +397,7 @@ class MessagingManager(object):
                 3. 데이터베이스 오류: InternalError Exception
         '''
 
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info.username).one()
         try:
@@ -437,7 +438,7 @@ class MessagingManager(object):
                 3. 데이터베이스 오류: InternalError Exception
         '''
 
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info.username).one()
         try:

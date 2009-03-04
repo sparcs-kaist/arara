@@ -15,6 +15,7 @@ from arara import model
 from arara.util import require_login, filter_dict, is_keys_in_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 from arara.util import smart_unicode, datetime2timestamp
+from arara.server import get_server
 
 log_method_call = log_method_call_with_source('member_manager')
 log_method_call_important = log_method_call_with_source_important('member_manager')
@@ -391,7 +392,7 @@ class MemberManager(object):
         '''
         try:
             session = model.Session()
-            username = self.login_manager.get_session(session_key).username
+            username = get_server().login_manager.get_session(session_key).username
             user = session.query(model.User).filter_by(username=username).one()
             user_dict = filter_dict(user.__dict__, USER_PUBLIC_WHITELIST)
             if not user_dict['last_logout_time']:
@@ -423,7 +424,7 @@ class MemberManager(object):
                 3. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN'
                 4. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
         '''
-        session_info = self.login_manager.get_session(session_key)
+        session_info = get_server().login_manager.get_session(session_key)
         username = session_info.username
         session = model.Session()
         user = session.query(model.User).filter_by(username=username).one()
@@ -468,7 +469,7 @@ class MemberManager(object):
                 2. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
                 3. 양식이 맞지 않음(부적절한 NULL값 등): 'WRONG_DICTIONARY'
         '''
-        session_info = self.login_manager.get_session(session_key)
+        session_info = get_server().login_manager.get_session(session_key)
         username = session_info.username
 
         if not is_keys_in_dict(user_modification.__dict__,
@@ -606,7 +607,7 @@ class MemberManager(object):
         '''
 
         session = model.Session()
-        username = self.login_manager.get_session(session_key).username
+        username = get_server().login_manager.get_session(session_key).username
         try:
             user = session.query(model.User).filter_by(username=username).one()
 	    session.delete(user)
@@ -679,7 +680,7 @@ class MemberManager(object):
             2. SYSOP이 아닐시: False
         '''
 
-        if self.login_manager.get_session(session_key).username == 'SYSOP':
+        if get_server().login_manager.get_session(session_key).username == 'SYSOP':
             return True
         else:
             return False

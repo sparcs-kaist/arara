@@ -5,6 +5,7 @@ from arara.util import filter_dict, require_login
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 
 from arara_thrift.ttypes import *
+from arara.server import get_server
 
 log_method_call = log_method_call_with_source('board_manager')
 log_method_call_important = log_method_call_with_source_important('board_manager')
@@ -40,7 +41,7 @@ class BoardManager(object):
     @require_login
     @log_method_call_important
     def add_board(self, session_key, board_name, board_description):
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info.username).one()
         if not user.is_sysop:
@@ -98,7 +99,7 @@ class BoardManager(object):
                 5. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
 
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info.username).one()
         if not user.is_sysop:
@@ -139,7 +140,7 @@ class BoardManager(object):
                 5. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
 
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info.username).one()
         if not user.is_sysop:
@@ -162,7 +163,7 @@ class BoardManager(object):
     @require_login
     @log_method_call_important
     def delete_board(self, session_key, board_name):
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info.username).one()
         try:
