@@ -161,7 +161,6 @@ def write_(request, board_name):
         for key, file_ob in request.FILES.items():
             if file_ob.size > 100*1024*1024:
                 continue
-            print os.getcwd()
             file = server.file_manager.save_file(sess, int(article_id), file_ob.name)
             if not os.path.isdir('files/%s' % file.file_path):
                 os.makedirs('files/%s' % file.file_path)
@@ -182,7 +181,7 @@ def read(request, board_name, article_id):
     for i in range(len(article_list)):
         if 'attach' in article_list[i].__dict__: #image view
             for file in article_list[i].attach:
-                if file['filename'].split('.')[-1].lower() in image_filetype:
+                if file.filename.split('.')[-1].lower() in image_filetype:
                     insert_image_tag = "<p><img src=\"/board/" + board_name + "/" + str(article_list[i].root_id) + "/" + str(article_list[i].id) + "/file/" + str(file.file_id) + "\"></img></p>"
                     article_list[i].content = insert_image_tag + article_list[i].content
 

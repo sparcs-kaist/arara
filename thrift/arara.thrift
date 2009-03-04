@@ -379,9 +379,8 @@ service FileManager {
                 3:string filename)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    DownloadFileInfo download_file(1:string session_key,
-                2:i32 article_id,
-                3:i32 file_id)
+    DownloadFileInfo download_file(1:i32 article_id,
+                2:i32 file_id)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     FileInfo delete_file(1:string session_key,
