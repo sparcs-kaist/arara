@@ -21,6 +21,9 @@ import arara_thrift.ReadStatusManager
 import arara_thrift.SearchManager
 import arara_thrift.FileManager
 
+from arara import settings
+from arara.server import *
+
 MAPPING = [(LoginManager, arara_thrift.LoginManager),
            (MemberManager, arara_thrift.MemberManager),
            (BlacklistManager, arara_thrift.BlacklistManager),
@@ -29,7 +32,6 @@ MAPPING = [(LoginManager, arara_thrift.LoginManager),
            (ArticleManager, arara_thrift.ArticleManager),
            (MessagingManager, arara_thrift.MessagingManager),
            (NoticeManager, arara_thrift.NoticeManager),
-           (ReadStatusManager, arara_thrift.ReadStatusManager),
            (SearchManager, arara_thrift.SearchManager),
            (FileManager, arara_thrift.FileManager)
            ]
@@ -76,14 +78,12 @@ CLASSES = {'LoginManager': LoginManager,
            'FileManager': FileManager,
         }
 
-ARARA_SERVER_HOST = 'juk.sparcs.org'
-ARARA_SERVER_BASE_PORT = 8000
-
 from thrift.protocol import TBinaryProtocol
 from thrift.transport.TTransport import TTransportException
 from thrift.transport import TTransport
 from thrift.transport import TSocket
 from thrift.server import TServer
+
 def connect_thrift_server(host, base_port, class_):
     transport = TSocket.TSocket(host, base_port + PORT[class_])
     transport = TTransport.TBufferedTransport(transport)
@@ -130,57 +130,12 @@ class Namespace(object):
         self.article_manager._set_file_manager(self.file_manager)
 
 
-class Server(object):
-    def __getattr__(self, name):
-        def connect(class_):
-            return connect_thrift_server(ARARA_SERVER_HOST,
-                                         ARARA_SERVER_BASE_PORT,
-                                         class_)
-        if name == 'login_manager':
-            login_manager = connect(LoginManager)
-            return login_manager
-        if name == 'member_manager':
-            member_manager = connect(MemberManager)
-            return member_manager
-        if name == 'blacklist_manager':
-            blacklist_manager = connect(BlacklistManager)
-            return blacklist_manager
-        if name == 'board_manager':
-            board_manager = connect(BoardManager)
-            return board_manager
-        if name == 'read_status_manager':
-            read_status_manager = connect(ReadStatusManager)
-            return read_status_manager
-        if name == 'article_manager':
-            article_manager = connect(ArticleManager)
-            return article_manager
-        if name == 'messaging_manager':
-            messaging_manager = connect(MessagingManager)
-            return messaging_manager
-        if name == 'notice_manager':
-            notice_manager = connect(NoticeManager)
-            return notice_manager
-        if name == 'search_manager':
-            search_manager = connect(SearchManager)
-            return search_manager
-        if name == 'file_manager':
-            file_manager = connect(FileManager)
-            return file_manager
-        raise AttributeError()
-
 namespace = None
-server = None
 
 def get_namespace():
     global namespace
     if not namespace:
         namespace = Namespace()
     return namespace
-
-def get_server():
-    global server
-    if not server:
-        server = Server()
-    return server
 
 # vim: set et ts=8 sw=4 sts=4

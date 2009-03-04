@@ -10,6 +10,7 @@ from arara import model
 from arara.util import require_login, filter_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 from arara.util import datetime2timestamp
+from arara.server import get_server
 
 from arara_thrift.ttypes import *
 
@@ -324,7 +325,7 @@ class ArticleManager(object):
             article_number = []
             for article in article_dict_list:
                 article_number.append(article['id'])
-            read_stats_list = self.read_status_manager.check_stats(session_key, article_number)
+            read_stats_list = get_server().read_status_manager.check_stats(session_key, article_number)
             #not_read_article = filter(lambda x : x = 'N', read_stats_list) 
             not_read_article_number = []
             for i in range(len(read_stats_list)):
@@ -370,7 +371,7 @@ class ArticleManager(object):
                 2. 데이터베이스 오류: InternalError Exception
         '''
         ret_dict = {}
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
 
         try:
             session = model.Session()
@@ -435,7 +436,7 @@ class ArticleManager(object):
             session = model.Session()
             self._is_board_exist(board_name)
             try:
-                blacklist_dict_list = self.blacklist_manager.list_(session_key)
+                blacklist_dict_list = get_server().blacklist_manager.list_(session_key)
             except NotLoggedIn:
                 blacklist_dict_list = []
                 pass
@@ -471,7 +472,7 @@ class ArticleManager(object):
                 article['date'] = datetime2timestamp(article['date'])
                 article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
             try:
-                msg = self.read_status_manager.check_stats(session_key, article_id_list)
+                msg = get_server().read_status_manager.check_stats(session_key, article_id_list)
                 for index, article in enumerate(article_dict_list):
                     article['read_status'] = msg[index]
             except NotLoggedIn:
@@ -519,20 +520,20 @@ class ArticleManager(object):
                 4. 데이터베이스 오류: InternalError Exception 
         '''
 
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         self._is_board_exist(board_name)
         
         session = model.Session()
         board = session.query(model.Board).filter_by(board_name=board_name)
         user = session.query(model.User).filter_by(username=user_info.username).one()
-        blacklist_dict_list = self.blacklist_manager.list_(session_key)
+        blacklist_dict_list = get_server().blacklist_manager.list_(session_key)
         blacklist_users = set()
         for blacklist_item in blacklist_dict_list:
             if blacklist_item.block_article:
                 blacklist_users.add(blacklist_item.blacklisted_user_username)
         try:
             article = session.query(model.Article).filter_by(id=no).one()
-            msg = self.read_status_manager.check_stat(session_key, no)
+            msg = get_server().read_status_manager.check_stat(session_key, no)
             if msg == 'N':
                 article.hit += 1
                 session.commit()
@@ -551,7 +552,7 @@ class ArticleManager(object):
             item['date'] = datetime2timestamp(item['date'])
             item['last_modified_date'] = datetime2timestamp(item['last_modified_date'])
 
-        self.read_status_manager.mark_as_read_list(session_key, article_id_list)
+        get_server().read_status_manager.mark_as_read_list(session_key, article_id_list)
         session.close()
         return [Article(**d) for d in article_dict_list]
 
@@ -578,7 +579,7 @@ class ArticleManager(object):
 
         '''
         ret_dict = {}
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         self._is_board_exist(board_name)
 
         session = model.Session()
@@ -628,7 +629,7 @@ class ArticleManager(object):
                 3. 데이터베이스 오류: InrernalError Exception
         '''
 
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         self._is_board_exist(board_name)
         session = model.Session()
         board = session.query(model.Board).filter_by(board_name=board_name).one()
@@ -674,7 +675,7 @@ class ArticleManager(object):
                 4. 데이터베이스 오류: InternalError Exception
         '''
 
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         self._is_board_exist(board_name)
         session = model.Session()
         author = session.query(model.User).filter_by(username=user_info.username).one()
@@ -724,7 +725,7 @@ class ArticleManager(object):
         '''
 
 
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         self._is_board_exist(board_name)
         session = model.Session()
         author = session.query(model.User).filter_by(username=user_info.username).one()
@@ -776,7 +777,7 @@ class ArticleManager(object):
                 5. 데이터베이스 오류: InternalError Exception 
         '''
 
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         self._is_board_exist(board_name)
         session = model.Session()
         author = session.query(model.User).filter_by(username=user_info.username).one()
@@ -823,7 +824,7 @@ class ArticleManager(object):
                 5. 데이터베이스 오류: InternalError Exception
         '''
 
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         self._is_board_exist(board_name)
         session = model.Session()
         author = session.query(model.User).filter_by(username=user_info.username).one()

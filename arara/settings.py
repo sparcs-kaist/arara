@@ -10,3 +10,7 @@ DB_CONNECTION_STRING = 'mysql://%s:%s@%s/%s?charset=utf8&use_unicode=1' % (MYSQL
 WARARA_SERVER_ADDRESS = 'ara.kaist.ac.kr'
 MAIL_HOST = 'localhost'
 MAIL_SENDER = 'ara@ara.kaist.ac.kr'
+
+ARARA_SERVER_HOST = 'juk.sparcs.org'
+ARARA_SERVER_HOST = 'localhost'
+ARARA_SERVER_BASE_PORT = 8000
