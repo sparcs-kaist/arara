@@ -2,6 +2,7 @@
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.paginator import Paginator
+from django.core.cache import cache
 
 from thirdparty.postmarkup import render_bbcode
 
