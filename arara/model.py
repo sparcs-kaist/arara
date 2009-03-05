@@ -212,12 +212,14 @@ users_table = Table('users', metadata,
     Column('last_logout_time', DateTime),
     Column('last_login_ip', Unicode(15)),
     Column('is_sysop', Boolean),
+    mysql_engine='InnoDB'
 )
 
 user_activation_table = Table('user_activation', metadata,
     Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
     Column('activation_code', Unicode(50), unique=True),
     Column('issued_date', DateTime),
+    mysql_engine='InnoDB'
 )
 
 board_table = Table('boards', metadata,
@@ -226,6 +228,7 @@ board_table = Table('boards', metadata,
     Column('board_description', Unicode(300)),
     Column('deleted', Boolean),
     Column('read_only', Boolean),
+    mysql_engine='InnoDB'
 )
 
 articles_table = Table('articles', metadata,
@@ -244,6 +247,7 @@ articles_table = Table('articles', metadata,
     Column('reply_count', Integer, nullable=False),
     Column('is_searchable', Boolean, nullable=False),
     Column('last_modified_date', DateTime),
+    mysql_engine='InnoDB'
 )
 
 article_vote_table = Table('article_vote_status', metadata,
@@ -251,6 +255,7 @@ article_vote_table = Table('article_vote_status', metadata,
     Column('board_id', Integer, ForeignKey('boards.id'), nullable=False),
     Column('article_id', Integer, ForeignKey('articles.id'), nullable=False),
     Column('user_id', Integer, ForeignKey('users.id'), nullable=False),
+    mysql_engine='InnoDB'
 )
 
 read_status_table = Table('read_status', metadata,
@@ -258,6 +263,7 @@ read_status_table = Table('read_status', metadata,
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('board_id', Integer, ForeignKey('boards.id')),
     Column('read_status_data', PickleType),
+    mysql_engine='InnoDB'
 )
 
 blacklist_table = Table('blacklists' , metadata,
@@ -268,6 +274,7 @@ blacklist_table = Table('blacklists' , metadata,
     Column('last_modified_date', DateTime),
     Column('block_article', Boolean),
     Column('block_message', Boolean),
+    mysql_engine='InnoDB'
 )
 
 message_table = Table('messages', metadata,
@@ -280,6 +287,7 @@ message_table = Table('messages', metadata,
     Column('received_deleted', Boolean),
     Column('sent_deleted', Boolean),
     Column('read_status', Unicode(1)),
+    mysql_engine='InnoDB'
 )
 
 banner_table = Table('banners' , metadata,
@@ -289,6 +297,7 @@ banner_table = Table('banners' , metadata,
     Column('due_date', DateTime),
     Column('valid', Boolean),
     Column('weight', Integer),
+    mysql_engine='InnoDB'
 )
 
 welcome_table = Table('welcomes' , metadata,
@@ -298,6 +307,7 @@ welcome_table = Table('welcomes' , metadata,
     Column('due_date', DateTime),
     Column('valid', Boolean),
     Column('weight', Integer),
+    mysql_engine='InnoDB'
 )
 
 file_table = Table('files', metadata,
@@ -309,12 +319,14 @@ file_table = Table('files', metadata,
     Column('board_id', Integer, ForeignKey('boards.id')),
     Column('article_id', Integer, ForeignKey('articles.id')),
     Column('deleted', Boolean),
+    mysql_engine='InnoDB'
 )
 
 visitor_table = Table('visitors', metadata,
     Column('total', Integer, primary_key=True),
     Column('today', Integer),
     Column('date', DateTime),
+    mysql_engine='InnoDB'
 )
 
 
@@ -408,7 +420,7 @@ def get_engine():
         if CONNECTION_STRING.startswith('mysql'):
             engine = create_engine(CONNECTION_STRING, encoding='utf-8',
                                 convert_unicode=True, assert_unicode=None,
-                                pool_size=10, max_overflow=20, echo=False)
+                                pool_size=10, max_overflow=20, pool_recycle=5, echo=False)
         else:
             engine = create_engine(CONNECTION_STRING, encoding='utf-8',
                                 convert_unicode=True, assert_unicode=None)
