@@ -104,6 +104,8 @@ struct PublicUserInformation {
     3: string signature,
     4: string self_introduction,
     5: string last_login_ip,
+    6: double last_logout_time,
+    7: string email,
 }
 
 struct SearchUserResult {
