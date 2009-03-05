@@ -5,6 +5,7 @@ import logging
 import datetime
 import time
 
+from arara.server import get_server
 from arara_thrift.ttypes import *
 
 def smart_unicode(string):
@@ -99,7 +100,7 @@ def require_login(function):
     로그인이 되어 있을 때에만 작동하는 메소드로 만들어주는 데코레이터.
     """
     def wrapper(self, session_key, *args):
-        if not self.login_manager.is_logged_in(session_key):
+        if not get_server().login_manager.is_logged_in(session_key):
             raise NotLoggedIn()
         else:
             return function(self, session_key, *args)
