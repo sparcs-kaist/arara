@@ -224,11 +224,9 @@ class SearchManager(object):
                 raise InvalidOperation('board not exist')
                 
         query = session.query(model.Article).filter_by(is_searchable=True)
-        logging.error(repr(query.all()))
 
         if board:
             query = query.filter_by(board_id=board.id)
-        logging.error(repr(query.all()))
 
         if all_flag:
             query_text = query_dict['query']
