@@ -47,6 +47,7 @@ class MemberManager(object):
 
     def __init__(self):
         # mock data
+        self.logger = logging.getLogger('member_manager')
         self.member_dic = {}  # DB에서 member table를 read해오는 부분
         # 초기 시샵 생성
         #if not self.is_registered('SYSOP'):
@@ -153,7 +154,6 @@ class MemberManager(object):
         try:
             # Register user to db
             user = model.User(**user_reg_info.__dict__)
-            logging.warn("REGDICREGDIC :" + repr(user_reg_info))
             session.save(user)
             # Register activate code to db
             user_activation = model.UserActivation(user, activation_code)
@@ -172,6 +172,10 @@ class MemberManager(object):
         # Frontend should send the email I guess, so quoted the line below 090105
         # Re-uncommented by combacsa, 090112. Frontend never send the email.
         self._send_mail(user.email, user.username, user_activation.activation_code)
+        # pipoket: SECURITY ISSUE! PASSWORD SHOULD NOT BE LOGGED!
+        #           This logging function will log necessary information but NOT PASSWORD.
+        self.logger.info(u"USER REGISTRATION:(username=%s, nickname=%s, email=%s)" %
+                (user_reg_info.username, user_reg_info.nickname, user_reg_info.email))
         session.close()
         return activation_code
 
@@ -404,7 +408,6 @@ class MemberManager(object):
             raise InvalidOperation('member does not exist')
 
     @require_login    
-    @log_method_call_important
     def modify_password(self, session_key, user_password_info):
         '''
         회원의 password를 수정.
@@ -435,6 +438,9 @@ class MemberManager(object):
                 raise WrongPassword()
             user.set_password(user_password_info.new_password)
             session.commit()
+            # pipoket: SECURITY ISSUE! PASSWORD SHOULD NOT BE LOGGED!
+            #           This logging function will log necessary information but NOT PASSWORD.
+            self.logger.info(u"PASSWORD CHANGE:(username=%s)" % username)
             session.close()
             return
             
