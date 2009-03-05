@@ -51,10 +51,11 @@ def open_thrift_server(processor, handler, port):
     transport = TSocket.TServerSocket(port)
     tfactory = TTransport.TBufferedTransportFactory()
     pfactory = TBinaryProtocol.TBinaryProtocolAcceleratedFactory()
-    if handler.__class__.__name__ in ['ArticleManager']:
-        server = TServer.TForkingServer(processor_, transport, tfactory, pfactory)
-    else:
-        server = TServer.TThreadedServer(processor_, transport, tfactory, pfactory)
+    #if handler.__class__.__name__ in ['ArticleManager']:
+    #    server = TServer.TForkingServer(processor_, transport, tfactory, pfactory)
+    #else:
+    #    server = TServer.TThreadedServer(processor_, transport, tfactory, pfactory)
+    server = TServer.TThreadPoolServer(processor_, transport, tfactory, pfactory)
     return server, handler_instance
 
 def setter_name(class_):
