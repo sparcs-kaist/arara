@@ -7,6 +7,7 @@ from arara.util import require_login
 from arara import model
 from arara.util import require_login
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
+from arara.server import get_server
 
 from arara_thrift.ttypes import *
 
@@ -201,7 +202,7 @@ class ReadStatusManager(object):
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
 
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info.username).one()
         session.close()
@@ -230,7 +231,7 @@ class ReadStatusManager(object):
                 1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info.username).one()
         session.close()
@@ -260,7 +261,7 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info.username).one()
         session.close()
@@ -289,7 +290,7 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info.username).one()
         session.close()
@@ -315,7 +316,7 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        user_info = self.login_manager.get_session(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info.username).one()
         session.close()
@@ -328,7 +329,7 @@ class ReadStatusManager(object):
         if user_id:
             pass
         elif session_key:
-            ret, user_info = self.login_manager.get_session(session_key)
+            ret, user_info = get_server().login_manager.get_session(session_key)
             if ret:
                 pass
             else:
