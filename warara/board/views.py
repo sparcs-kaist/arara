@@ -251,7 +251,15 @@ def vote(request, board_name, root_id, article_no):
 def delete(request, board_name, root_id, article_no):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request)
-    message = server.article_manager.delete(sess, board_name, int(article_no))
+    try:
+        server.article_manager.delete_(sess, board_name, int(article_no))
+    except InvalidOperation, e:
+        if e.why == "NO_PERMISSION":
+            return HttpResponse("no permission")
+        elif e.why == "ARTICLE_NOT_EXIST":
+            return HttpResponse("article not exist")
+        else:
+            return HttoResponse("internal server error")
 
     return HttpResponseRedirect('/board/%s/%s' % (board_name, root_id))
 
