@@ -11,7 +11,7 @@ from arara.util import log_method_call_with_source, log_method_call_with_source_
 from arara.util import datetime2timestamp
 from arara_thrift.ttypes import *
 from arara import model
-from arara.setings import *
+from arara.settings import *
 from arara.server import get_server
 
 log_method_call = log_method_call_with_source('search_manager')
