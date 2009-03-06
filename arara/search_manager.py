@@ -11,6 +11,7 @@ from arara.util import log_method_call_with_source, log_method_call_with_source_
 from arara.util import datetime2timestamp
 from arara_thrift.ttypes import *
 from arara import model
+from arara.setings import *
 from arara.server import get_server
 
 log_method_call = log_method_call_with_source('search_manager')
@@ -20,8 +21,6 @@ READ_ARTICLE_WHITELIST = ('id', 'title', 'contsent', 'last_modified_date', 'dele
 SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'author_nickname', 'vote', 'hit', 'content')
 SEARCH_DICT = ('title', 'content', 'author_nickname', 'author_username', 'date', 'query')
-api_server_address = 'http://nan.sparcs.org:9000/api'
-api_key = '54ebf56de7684dba0d69bffc9702e1b4'
 
 class SearchManager(object):
     '''
@@ -83,9 +82,9 @@ class SearchManager(object):
                     article = session.query(model.Article).filter_by(id=article_no).one()
                     article_dict = self._get_dict(article, READ_ARTICLE_WHITELIST)
                     if article_dict['is_searchable']:
-                        ksearch = xmlrpclib.Server(api_server_address)
-                        uri = 'http://ara.kaist.ac.kr/' + board_name + '/' + str(article_no)
-                        result = ksearch.index(api_key, 'ara', uri, article_dict['title'], article_dict['content'], 1.0, board_name)
+                        ksearch = xmlrpclib.Server(KSEARCH_API_SERVER_ADDRESS)
+                        uri = 'http://' + WARARA_SERVER_ADDRESS + '/' + board_name + '/' + str(article_no)
+                        result = ksearch.index(KSEARCH_API_KEY, 'ara', uri, article_dict['title'], article_dict['content'], 1.0, board_name)
                         assert result == 'OK'
                 session.close()
             except AssertionError:
@@ -109,7 +108,7 @@ class SearchManager(object):
         @param page_length: Count of Articles on a page
         '''
         raise InternalError('Please Re-Implement this Method!')
-        search_manager = xmlrpclib.Server('http://nan.sparcs.org:9000/api')
+        search_manager = xmlrpclib.Server(KSEARCH_API_SERVER_ADDRESS)
         query = str(query_text) + ' source:arara'
         result = search_manager.search('00000000000000000000000000000000', query)
         for one_result in result['hits']:

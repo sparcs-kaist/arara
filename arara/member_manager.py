@@ -16,6 +16,7 @@ from arara.util import require_login, filter_dict, is_keys_in_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 from arara.util import smart_unicode, datetime2timestamp
 from arara.server import get_server
+from arara.settings import *
 
 log_method_call = log_method_call_with_source('member_manager')
 log_method_call_important = log_method_call_with_source_important('member_manager')
@@ -54,11 +55,7 @@ class MemberManager(object):
         self._register_sysop()
 
     def _register_sysop(self):
-        sysop_reg_dic = {'username':u'SYSOP', 'password':u'SYSOP',
-                'nickname':u'SYSOP', 'email':u'sysop@ara.kaist.ac.kr',
-                'signature':u'--\n아라 BBS 시삽 (SYStem OPerator)',
-                'self_introduction':u'아라 BBS 시삽 (SYStem OPerator)',
-                'default_language':u'ko_KR'}
+        sysop_reg_dic = SYSOP_REG_DIC
         try:
             user = model.User(**sysop_reg_dic)
             session = model.Session()
@@ -143,7 +140,7 @@ class MemberManager(object):
         @return: 사용자 인증코드
         '''
 
-        if user_reg_info.username.lower() == 'sysop':
+        if user_reg_info.username.lower() == SYSOP_REG_DIC['username'].lower():
             raise InvalidOperation('permission denied')
 
         key = (user_reg_info.username +
@@ -200,10 +197,10 @@ class MemberManager(object):
         try:
             HOST = MAIL_HOST
             sender = MAIL_SENDER
-            content = 'You have been successfully registered as the ARA member.<br />To use your account, you have to activate it.<br />Please click the link below on any web browser to activate your account.<br /><br />'
+            content = MAIL_CONTENT
             confirm_url = 'http://' + SERVER_ADDRESS + '/account/confirm/%s/%s' % (username.strip(), activation_code)
             confirm_link = '<a href=\'%s\'>%s</a>' % (confirm_url, confirm_url)
-            title = "[ARA] Please activate your account 아라 계정 활성화"
+            title = MAIL_TITLE
             msg = MIMEText(content+confirm_link, _subtype="html", _charset='euc_kr')
             msg['Subject'] = title
             msg['From'] = sender
@@ -686,7 +683,7 @@ class MemberManager(object):
             2. SYSOP이 아닐시: False
         '''
 
-        if get_server().login_manager.get_session(session_key).username == 'SYSOP':
+        if get_server().login_manager.get_session(session_key).username == SYSOP_REG_DIC['username']:
             return True
         else:
             return False
