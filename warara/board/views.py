@@ -14,7 +14,7 @@ import math
 import datetime
 import warara
 
-FILE_DIR = '/home/ara/arara/files'
+from arara.settings import FILE_DIR
 
 def index(request):
     rendered = render_to_string('board/index.html', {})
