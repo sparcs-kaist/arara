@@ -276,7 +276,6 @@ $(document).ready(function(){
 				$("#top_menu a[name='register']").show();
 				$("#top_menu a[name='top_menu_message']").hide();
 				$("#top_menu a[name='blacklist']").hide();
-                alert(data);
 				});
     }
 	$("a[name='logout']").click(function(event){

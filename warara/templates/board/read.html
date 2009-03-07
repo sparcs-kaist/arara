@@ -43,7 +43,7 @@
     <div class="article_content{%ifequal article.read_status "R" %} previously_read{% endifequal %}">
         <div class="{%ifequal article.id article.root_id%}article_root_text{%else%}article_text{%endifequal%}">
             {% if not article.blacklisted %}
-            {{article.content|safe|linebreaksbr}}
+            {{article.content|striptags|linebreaks}}
             {% else %}
             {% trans "BLACKLISTED" %}
             {% endif %}
