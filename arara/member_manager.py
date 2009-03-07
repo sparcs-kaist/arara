@@ -74,10 +74,12 @@ class MemberManager(object):
 
     @log_method_call
     def _logout_process(self, username):
-        session = model.Session()
         try:
+            self.logger.info("=== LOGOUT PROCESS INITIATED")
+            session = model.Session()
             user = session.query(model.User).filter_by(username=username).one()
             user.last_logout_time = datetime.datetime.fromtimestamp(time.time())
+            get_server().read_status_manager.save_to_database(username)
             session.commit()
             session.close()
             return
@@ -396,7 +398,10 @@ class MemberManager(object):
             username = get_server().login_manager.get_session(session_key).username
             user = session.query(model.User).filter_by(username=username).one()
             user_dict = filter_dict(user.__dict__, USER_PUBLIC_WHITELIST)
-            if not user_dict['last_logout_time']:
+            if user_dict['last_logout_time']:
+                user_dict['last_logout_time'] = datetime2timestamp(
+                        user_dict['last_logout_time'])
+            else:
                 user_dict['last_logout_time'] = 0
             session.close()
             return UserInformation(**user_dict)
@@ -551,7 +556,10 @@ class MemberManager(object):
         try:
             query_user = session.query(model.User).filter_by(username=query_username).one()
             query_user_dict = filter_dict(query_user.__dict__, USER_QUERY_WHITELIST)
-            if not query_user_dict['last_logout_time']:
+            if query_user_dict['last_logout_time']:
+                query_user_dict['last_logout_time'] = datetime2timestamp(
+                        query_user_dict['last_logout_time'])
+            else:
                 query_user_dict['last_logout_time'] = 0
             session.close()
             return PublicUserInformation(**query_user_dict)
@@ -586,7 +594,10 @@ class MemberManager(object):
                     nickname=nickname).one()
             query_user_dict = filter_dict(query_user.__dict__,
                                           USER_QUERY_WHITELIST)
-            if not query_user_dict['last_logout_time']:
+            if query_user_dict['last_logout_time']:
+                query_user_dict['last_logout_time'] = datetime2timestamp(
+                        query_user_dict['last_logout_time'])
+            else:
                 query_user_dict['last_logout_time'] = 0
             session.close()
             return PublicUserInformation(**query_user_dict)

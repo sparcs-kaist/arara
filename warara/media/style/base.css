@@ -62,7 +62,11 @@ a {
 
 #footer { 
     margin: 0 1.5em 0 1.5em;
-    text-align: right; 
+    text-align: center; 
+}
+
+#copyright_text {
+    font-size:1.2em;
 }
 
 #top_header_bg {

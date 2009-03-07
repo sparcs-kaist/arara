@@ -40,7 +40,7 @@ service LoginManager {
     void logout(1:string session_key)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void update_session(1:string session_key)
+    bool update_session(1:string session_key)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     Session get_session(1:string session_key)
@@ -52,6 +52,8 @@ service LoginManager {
     bool is_logged_in(1:string session_key)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    bool _update_monitor_status(1:string session_key,
+		2:string action),
 }
 
 struct AuthenticationInfo {
@@ -168,6 +170,9 @@ service MemberManager {
     bool is_sysop(1:string session_key)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void _logout_process(1:string username)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 }
 
 struct BlacklistRequest {
@@ -246,7 +251,7 @@ service ReadStatusManager {
     void mark_as_viewed(1:string session_key, 2:i32 no)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void save_to_database(1:string user_id="", 2:string session_key="")
+    void save_to_database(1:string username="")
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 }

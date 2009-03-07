@@ -10,6 +10,7 @@ DB_CONNECTION_STRING = 'mysql://%s:%s@%s/%s?charset=utf8&use_unicode=1' % (MYSQL
 # ARARA Server Setting
 ARARA_SERVER_HOST = 'juk.sparcs.org'
 ARARA_SERVER_BASE_PORT = 8000
+SESSION_EXPIRE_TIME = 3610 # seconds
 
 # Mail Server Setting
 WARARA_SERVER_ADDRESS = 'ara.kaist.ac.kr'

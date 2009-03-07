@@ -38,7 +38,7 @@
             <tr rel="{{forloop.counter}}">
                 <td class="column cursor_col">{% ifequal article.read_status 'N' %}{{article.read_status}}{%endifequal%}</td>
                 <td class="column id_col" rel="{{article.id}}">{{article.id}}</td>
-                <td class="column title_col{%if article.deleted%} deleted{%endif%}">{% if logged_in %}<a href="/board/{{board_name}}/{{article.id}}?page_no={{page_no}}">{{article.title}}</a> {%if article.reply_count%}[{{article.reply_count}}]{%endif%}{% else %}{{article.title}}{% if article.reply_count%} [{{article.reply_count}}]{% endif %}{% endif %}</td>
+                <td class="column title_col{%if article.deleted%} deleted{%endif%}">{% if logged_in %}<a href="/board/{{board_name}}/{{article.id}}/?page_no={{page_no}}">{{article.title}}</a> {%if article.reply_count%}[{{article.reply_count}}]{%endif%}{% else %}{{article.title}}{% if article.reply_count%} [{{article.reply_count}}]{% endif %}{% endif %}</td>
                 <td class="column author_col"><span class="username">{{article.author_nickname}}</span></td>
                 <td class="column date_col">{{article.date|date:"Y/m/d"}}</td>
                 <td class="column vote_col">{{article.vote}}</td>

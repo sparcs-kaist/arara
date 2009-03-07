@@ -91,6 +91,7 @@ def login(request):
         request.session["arara_session_key"] = session_key
         request.session["arara_username"] = username
 
+        request.session.set_expiry(3600)
         if current_page.find('register')+1:
             return HttpResponseRedirect('/main')
         return HttpResponseRedirect(current_page)
@@ -98,10 +99,6 @@ def login(request):
     return HttpResponseRedirect('/')
 
 def logout(request):
-    if request.session.get('arara_session_key', 0):
-        del request.session['arara_session_key']
-        del request.session['arara_username']
-        return HttpResponseRedirect("/")
     session_key, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
         server = arara.get_server()
@@ -109,7 +106,7 @@ def logout(request):
         del request.session['arara_session_key']
         del request.session['arara_username']
         request.session.clear()
-        return HttpResponseRedirect(current_page)
+        return HttpResponseRedirect('/')
     else:
         if request.session.get('arara_session_key', 0):
             del request.session['arara_session_key']

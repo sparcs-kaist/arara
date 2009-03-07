@@ -103,7 +103,15 @@ def require_login(function):
         if not get_server().login_manager.is_logged_in(session_key):
             raise NotLoggedIn()
         else:
-            return function(self, session_key, *args)
+            try:
+                assert self.login_manager._update_monitor_status(session_key, str(function.func_name))
+                assert self.login_manager.update_session(session_key)
+                return function(self, session_key, *args)
+            except AssertionError:
+                session_logger = logging.getLogger('SESSION UPDATER')
+                session_logger.error(traceback.format_exc())
+                return function(self, session_key, *args)
+
     return wrapper
 
 

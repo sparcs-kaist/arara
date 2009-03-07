@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import logging
 
 from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy.sql import func, select
@@ -106,6 +106,11 @@ class ReadStatus(object):
         self._merge(found_idx)
         self._merge(found_idx + 1)
 
+    def __repr__(self):
+        printed_str = ""
+        for item in self.data:
+            printed_str += str(item)
+        return printed_str
 
 class ReadStatusManager(object):
     '''
@@ -114,6 +119,7 @@ class ReadStatusManager(object):
 
     def __init__(self):
         self.read_status = {}
+        self.logger = logging.getLogger('read_status_manager')
 
     def _set_login_manager(self, login_manager):
         self.login_manager = login_manager
@@ -158,24 +164,18 @@ class ReadStatusManager(object):
                 raise InvalidOperation('ARTICLE_NOT_EXIST')
 
     def _initialize_data(self, user):
-        session = model.Session()
         if not self.read_status.has_key(user.id):
-            self.read_status[user.id] = {}
-            read_status = session.query(model.ReadStatus).filter_by(user_id=user.id).all()
-            read_status_dict_list = self._get_dict_list(read_status)
-            session.close()
-            if read_status_dict_list:
-                for item in read_status_dict_list:
-                    self.read_status[user.id] = item['read_status_data']
+            try:
+                session = model.Session()
+                read_status = session.query(model.ReadStatus).filter_by(user_id=user.id).one()
+                self.read_status[user.id] = read_status.read_status_data
+                session.close()
                 return True, 'OK'
-            else:
-                status_dict = {}
-                read_status_class = ReadStatus()
-                status_dict = read_status_class
-                self.read_status[user.id] = status_dict
+            except InvalidRequestError:
+                self.read_status[user.id] = ReadStatus()
+                session.close()
                 return True, 'OK'
         else:
-            session.close()
             return False, 'ALREADY_ADDED'
 
     @require_login
@@ -325,17 +325,39 @@ class ReadStatusManager(object):
         status = self.read_status[user.id].set(no, 'V')
 
     @log_method_call
-    def save_to_database(self, user_id=None, session_key=None):
-        if user_id:
+    def save_to_database(self, username):
+        import traceback
+        try:
+            session = model.Session()
+            user = session.query(model.User).filter_by(username=username).one()
+        except InvalidRequestError:
+            session.close()
+            logging.error(traceback.format_exc())
+        try:
+            read_stat = session.query(model.ReadStatus).filter_by(user_id=user.id).one()
+            read_stat.read_status_data = self.read_status[user.id]
+            session.commit()
+            session.close()
+            del self.read_status[user.id]
+        except InvalidRequestError:
+            try:
+                new_read_stat = model.ReadStatus(user, self.read_status[user.id])
+                session.save(new_read_stat)
+                session.commit()
+                session.close()
+                del self.read_status[user.id]
+            except KeyError:
+                self.read_status[user.id] = ReadStatus()
+                new_read_stat = model.ReadStatus(user, self.read_status[user.id])
+                session.save(new_read_stat)
+                session.commit()
+                session.close()
+                del self.read_status[user.id]
+        except InvalidOperation:
+            session.close()
             pass
-        elif session_key:
-            ret, user_info = get_server().login_manager.get_session(session_key)
-            if ret:
-                pass
-            else:
-                raise InvalidOperation('NOT_LOGGEDIN')
-        else:
-            raise InvalidOperation('WRONG_REQUEST')
-
+        except Exception:
+            session.close()
+            logging.error(traceback.format_exc())
 
 # vim: set et ts=8 sw=4 sts=4

@@ -3,16 +3,19 @@
 import md5 as hashlib
 import logging
 import datetime
+import thread
 import time
 
 from sqlalchemy.exceptions import InvalidRequestError
 
 from arara_thrift.ttypes import *
+from arara.model import ReadStatus
 
 from arara import model
 from util import is_keys_in_dict
 from util import log_method_call_with_source
 from util import smart_unicode
+from arara.settings import SESSION_EXPIRE_TIME
 from arara.server import get_server
 
 log_method_call = log_method_call_with_source('login_manager')
@@ -24,6 +27,7 @@ class LoginManager(object):
     
     def __init__(self):
         self.session_dic = {}
+        self.session_checker = thread.start_new_thread(self._check_session_status, tuple())
         self.logger = logging.getLogger('login_manager')
         self._create_counter_column()
 
@@ -110,7 +114,8 @@ class LoginManager(object):
         timestamp = datetime.datetime.fromtimestamp(time.time())
         self.session_dic[hash] = {'username': username, 'ip': user_ip,
                 'nickname': msg.nickname, 'logintime': msg.last_login_time,
-                'current_action': 'login_manager.login()'}
+                'current_action': 'login_manager.login()',
+                'last_action_time': datetime.datetime.fromtimestamp(time.time())}
         self.logger.info("User '%s' has LOGGED IN from '%s' as '%s'", username, user_ip, hash)
         return hash
 
@@ -123,9 +128,10 @@ class LoginManager(object):
         '''
 
         try:
-            get_server().member_manager._logout_process(self.session_dic[session_key]['username'])
-            self.logger.info("User '%s' has LOGGED OUT", self.session_dic[session_key]['username'])
-            self.session_dic.pop(session_key)
+            username = self.session_dic[session_key]['username']
+            get_server().member_manager._logout_process(username)
+            self.logger.info("User '%s' has LOGGED OUT" % username)
+            del self.session_dic[session_key]
         except KeyError:
             raise NotLoggedIn()
 
@@ -134,9 +140,27 @@ class LoginManager(object):
         action = smart_unicode(action)
         if self.session_dic.has_key(session_key):
             self.session_dic[session_key]['current_action'] = action
-            return True, 'OK'
+            return True
         else:
-            return False, 'NOT_LOGGEDIN'
+            return False
+
+    def _check_session_status(self):
+        while True:
+            logger = logging.getLogger('SESSION CLEANER')
+            logger.info("=================== SESSION CLEANING STARTED") 
+            current_time = datetime.datetime.fromtimestamp(time.time())
+            for session_key in self.session_dic.keys():
+                session_time = self.session_dic[session_key]['last_action_time']
+                username = self.session_dic[session_key]['username']
+                diff_time = current_time - session_time
+                if diff_time.seconds > SESSION_EXPIRE_TIME:
+                    logger.info("==SESSION CLEANER== TARGET DETECTED: USERNAME<%s>" % username)
+                    logger.info("==SESSION CLEANER==: SAVING READSTATUS OF %s FROM DATABASE" % username)
+                    get_server().read_status_manager.save_to_database(username)
+                    del self.session_dic[session_key]
+                    logger.warn("==SESSION CLEANER==: USERNAME<%s> SUCCESFULLY DELETED!" % username)
+            logger.info("=================== SESSION CLEANING FINISHED") 
+            time.sleep(SESSION_EXPIRE_TIME)
 
     def update_session(self, session_key):
         '''
@@ -145,9 +169,11 @@ class LoginManager(object):
         @type  session_key: string
         @param session_key: User Key
         '''
-
-        raise InvalidOperation('not implemented')
-
+        if self.session_dic.has_key(session_key):
+            self.session_dic[session_key]['last_action_time'] = datetime.datetime.fromtimestamp(time.time())
+            return True
+        else:
+            return False
     @log_method_call
     def get_session(self, session_key):
         '''
@@ -160,7 +186,14 @@ class LoginManager(object):
         '''
         try:
             session_info = self.session_dic[session_key]
-            return Session(**session_info)
+            filtered_session_info = {}
+            for k, v in session_info.items():
+                if k == 'last_action_time':
+                    continue
+                filtered_session_info[k] = v
+                if k == 'last_logout_time':
+                    filtered_session_info[k] = datetime2timestamp(v)
+            return Session(**filtered_session_info)
         except KeyError:
             raise NotLoggedIn()
 

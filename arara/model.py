@@ -116,9 +116,8 @@ class ArticleVoteStatus(object):
         self.article = article
 
 class ReadStatus(object):
-    def __init__(self, user, board, read_status_data):
+    def __init__(self, user, read_status_data):
         self.user = user
-        self.board = board
         self.read_status_data = read_status_data
 
     def __repr__(self):
@@ -261,7 +260,6 @@ article_vote_table = Table('article_vote_status', metadata,
 read_status_table = Table('read_status', metadata,
     Column('id', Integer, primary_key=True),
     Column('user_id', Integer, ForeignKey('users.id')),
-    Column('board_id', Integer, ForeignKey('boards.id')),
     Column('read_status_data', PickleType),
     mysql_engine='InnoDB'
 )
@@ -375,7 +373,6 @@ mapper(ArticleVoteStatus, article_vote_table, properties={
 
 mapper(ReadStatus, read_status_table, properties={
     'user': relation(User, backref='read_status'),
-    'board': relation(Board, backref=None),
 })
 
 mapper(Board, board_table)
