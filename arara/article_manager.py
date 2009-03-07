@@ -831,7 +831,7 @@ class ArticleManager(object):
         board = session.query(model.Board).filter_by(board_name=board_name).one()
         try:
             article = session.query(model.Article).filter_by(board_id=board.id, id=no).one()
-            if article.author_id == author.id:
+            if article.author_id == author.id or author.is_sysop:
                 article.deleted = True
                 article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
                 if article.root:
