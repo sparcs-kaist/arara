@@ -339,6 +339,8 @@ class ReadStatusManager(object):
             session.commit()
             session.close()
             del self.read_status[user.id]
+        except KeyError:
+            session.close()
         except InvalidRequestError:
             try:
                 new_read_stat = model.ReadStatus(user, self.read_status[user.id])
@@ -355,7 +357,6 @@ class ReadStatusManager(object):
                 del self.read_status[user.id]
         except InvalidOperation:
             session.close()
-            pass
         except Exception:
             session.close()
             logging.error(traceback.format_exc())
