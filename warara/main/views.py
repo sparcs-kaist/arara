@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from django.core.cache import cache
 
 import arara
+from arara.util import timestamp2datetime
 
 def index(request):
     server = arara.get_server()
@@ -79,7 +80,8 @@ def get_user_info(request):
         server = arara.get_server()
         query_user_name = request.POST['query_user_name']
         information = server.member_manager.query_by_nick(session_key, query_user_name)
-        rendered = render_to_string('account/another_user_account.html', information)
+        information.last_logout_time = timestamp2datetime(information.last_logout_time)
+        rendered = render_to_string('account/another_user_account.html', information.__dict__)
         return HttpResponse(rendered)
     else:
         return HttpResponse("Linear Algebra")

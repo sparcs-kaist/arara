@@ -2,6 +2,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
 
 from arara_thrift.ttypes import *
+from arara.util import timestamp2datetime
 
 import arara
 import warara
@@ -119,6 +120,7 @@ def account(request):
         server = arara.get_server()
         account = server.member_manager.get_info(session_key)
 
+        account.last_logout_time = timestamp2datetime(account.last_logout_time)
         account.logged_in = True
         rendered = render_to_string('account/myaccount_frame.html', account.__dict__)
     else:
