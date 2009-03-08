@@ -11,6 +11,7 @@ from django.core.cache import cache
 import arara
 from arara.util import timestamp2datetime
 
+@warara.wrap_error
 def index(request):
     server = arara.get_server()
     if request.session.get('django_language', 0):
@@ -20,6 +21,7 @@ def index(request):
     return HttpResponse(rendered)
 
 @warara.cache_page(60)
+@warara.wrap_error
 def main(request):
     server = arara.get_server() 
     sess, r = warara.check_logged_in(request)
@@ -67,6 +69,7 @@ def main(request):
     rendered = render_to_string('main.html', r)
     return HttpResponse(rendered)
 
+@warara.wrap_error
 def help(request):
     server = arara.get_server() 
     sess, r = warara.check_logged_in(request)
@@ -74,6 +77,7 @@ def help(request):
     rendered = render_to_string('help.html', r)
     return HttpResponse(rendered)
 
+@warara.wrap_error
 def get_user_info(request):
     if request.method == 'POST':
         session_key, r = warara.check_logged_in(request)
@@ -86,27 +90,3 @@ def get_user_info(request):
     else:
         return HttpResponse("Linear Algebra")
     assert ret, information
-
-def wrap_error(f):
-    def check_error(*args, **argv):
-        r = {} #render item
-        try:
-            return f(*args, **argv)
-        except StandardError, e:
-            if e.message == "NOT_LOGGED_IN":
-                r['error_message'] = e.message
-                rendered = render_to_string("error.html", r)
-                return HttpResponse(rendered)
-            elif e.message == "arara_session_key":
-                r['error_message'] = "NOT_LOGGED_IN"
-                rendered = render_to_string("error.html", r)
-                return HttpResponse(rendered)
-            else:
-                rendered = render_to_string("error.html")
-                return HttpResponse(rendered)
-
-    return check_error
-
-#index = wrap_error(index)
-#help = wrap_error(help)
-#main = wrap_error(main)

@@ -16,6 +16,7 @@ import warara
 
 from arara.settings import FILE_DIR
 
+@warara.wrap_error
 def index(request):
     rendered = render_to_string('board/index.html', {})
     return HttpResponse(rendered)
@@ -94,6 +95,7 @@ def get_article_list(request, r, mode):
     board_dict = server.board_manager.get_board(r['board_name'])
     r['board_dict'] = board_dict
 
+@warara.wrap_error
 def list(request, board_name):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request)
@@ -103,6 +105,7 @@ def list(request, board_name):
     rendered = render_to_string('board/list.html', r)
     return HttpResponse(rendered)
 
+@warara.wrap_error
 def write(request, board_name):
     server = arara.get_server()
     if request.method == 'POST':
@@ -136,6 +139,7 @@ def write(request, board_name):
     rendered = render_to_string('board/write.html', r)
     return HttpResponse(rendered)
 
+@warara.wrap_error
 def write_(request, board_name):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request)
@@ -173,6 +177,7 @@ def write_(request, board_name):
 
     return HttpResponseRedirect('/board/%s/%s' % (board_name, str(article_id)))
 
+@warara.wrap_error
 def read(request, board_name, article_id):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request)
@@ -207,6 +212,7 @@ def read(request, board_name, article_id):
     r['article_id'] = article_id
 
     for article in article_list:
+        article.title = "%s ?= %s" % (repr(article.author_username), repr(username))
         if article.author_username == username:
             article.flag_modify = 1
         else:
@@ -219,7 +225,7 @@ def read(request, board_name, article_id):
     rendered = render_to_string('board/read.html', r)
     return HttpResponse(rendered)
 
-
+@warara.wrap_error
 def reply(request, board_name, article_id):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request)
@@ -242,6 +248,7 @@ def reply(request, board_name, article_id):
 
     return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(root_id)))
 
+@warara.wrap_error
 def vote(request, board_name, root_id, article_no):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request)
@@ -252,21 +259,15 @@ def vote(request, board_name, root_id, article_no):
 
     return HttpResponse("OK")
 
+@warara.wrap_error
 def delete(request, board_name, root_id, article_no):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request)
-    try:
-        server.article_manager.delete_(sess, board_name, int(article_no))
-    except InvalidOperation, e:
-        if e.why == "NO_PERMISSION":
-            return HttpResponse("no permission")
-        elif e.why == "ARTICLE_NOT_EXIST":
-            return HttpResponse("article not exist")
-        else:
-            return HttoResponse("internal server error")
+    server.article_manager.delete_(sess, board_name, int(article_no))
 
     return HttpResponseRedirect('/board/%s/%s' % (board_name, root_id))
 
+@warara.wrap_error
 def search(request, board_name):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request);
@@ -299,6 +300,7 @@ def search(request, board_name):
     rendered = render_to_string('board/list.html', r)
     return HttpResponse(rendered)
 
+@warara.wrap_error
 def file_download(request, board_name, article_root_id, article_id, file_id):
     server = arara.get_server()
     file = {}
@@ -308,33 +310,3 @@ def file_download(request, board_name, article_root_id, article_id, file_id):
     response = HttpResponse(file_ob, mimetype="application/x-forcedownload")
     response['Content-Disposition'] = "attachment; filename=" + unicode(file.real_filename).encode('euc-kr')
     return response
-
-def wrap_error(f):
-    def check_error(*args, **argv):
-        r = {} #render item
-        try:
-            return f(*args, **argv)
-        except StandardError, e:
-            if e.message == "NOT_LOGGED_IN":
-                r['error_message'] = e.message
-                rendered = render_to_string("error.html", r)
-                return HttpResponse(rendered)
-            elif e.message == "arara_session_key":
-                r['error_message'] = "NOT_LOGGED_IN"
-                rendered = render_to_string("error.html", r)
-                return HttpResponse(rendered)
-            else:
-                rendered = render_to_string("error.html")
-                return HttpResponse(rendered)
-
-    return check_error
-
-#list = wrap_error(list)
-#read = wrap_error(read)
-#vote = wrap_error(vote)
-#index = wrap_error(index)
-#write = wrap_error(write)
-#reply = wrap_error(reply)
-#delete = wrap_error(delete)
-#search = wrap_error(search)
-#file_download = wrap_error(file_download)

@@ -1,4 +1,7 @@
 from django.core.cache import cache
+from django.template.loader import render_to_string
+from django.http import HttpResponse, HttpResponseRedirect
+from arara_thrift.ttypes import *
 
 def check_logged_in(request):
     r = {}
@@ -13,6 +16,26 @@ def check_logged_in(request):
         request.session['django_language']="en"
 
     return sess, r
+
+def wrap_error(f):
+    def check_error(*args, **argv):
+        r = {} #render item
+        try:
+            return f(*args, **argv)
+        except NotLoggedIn, e:
+            r['error_message'] = e.why
+            rendered = render_to_string("error.html", r)
+            return HttpResponse(rendered)
+        except InvalidOperation, e:
+            r['error_message'] = e.why
+            rendered = render_to_string("error.html", r)
+            return HttpResponse(rendered)
+        except InternalError, e:
+            r['error_message'] = "Internal Error"
+            rendered = render_to_string("error.html", r)
+            return HttpResponse(rendered)
+
+    return check_error
 
 def cache_page(expire=60):
     def cache_page_wrap(function):

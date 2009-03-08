@@ -52,9 +52,11 @@ def get_various_info(request, r):
 
     return r
 
+@warara.wrap_error
 def index(request):
     return HttpResponseRedirect("/message/inbox/")
 
+@warara.wrap_error
 def inbox(request):
     server = arara.get_server()
     r = {}
@@ -89,6 +91,7 @@ def inbox(request):
     rendered = render_to_string('message/list.html', r)
     return HttpResponse(rendered)
 
+@warara.wrap_error
 def outbox(request):
     server = arara.get_server()
     r = {}
@@ -122,6 +125,7 @@ def outbox(request):
     rendered = render_to_string('message/list.html', r)
     return HttpResponse(rendered)
 
+@warara.wrap_error
 def send(request, msg_no=0):
     if request.method == 'POST':
         return send_(request)
@@ -151,6 +155,7 @@ def send(request, msg_no=0):
     rendered = render_to_string('message/send.html', r)
     return HttpResponse(rendered)
 
+@warara.wrap_error
 def send_(request):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
@@ -169,6 +174,7 @@ def send_(request):
     r['url'] = '/message/outbox'
     return HttpResponseRedirect(r['url'])
 
+@warara.wrap_error
 def read(request, message_list_type, message_id):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
@@ -197,6 +203,7 @@ def read(request, message_list_type, message_id):
     rendered = render_to_string('message/read.html', r)
     return HttpResponse(rendered)
 
+@warara.wrap_error
 def delete(request):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
@@ -242,29 +249,3 @@ def delete(request):
     return HttpResponseRedirect("/message/%s/?page_no=%s" %
             (request.POST.get('message_list_type', 'inbox'),
                 request.POST.get('page_no', 1)))
-
-def wrap_error(f):
-    def check_error(*args, **argv):
-        r = {} #render item
-        try:
-            return f(*args, **argv)
-        except StandardError, e:
-            if e.message == "NOT_LOGGED_IN":
-                r['error_message'] = e.message
-                rendered = render_to_string("error.html", r)
-                return HttpResponse(rendered)
-            elif e.message == "arara_session_key":
-                r['error_message'] = "NOT_LOGGED_IN"
-                rendered = render_to_string("error.html", r)
-                return HttpResponse(rendered)
-            else:
-                rendered = render_to_string("error.html")
-                return HttpResponse(rendered)
-
-    return check_error
-
-#inbox = wrap_error(inbox)
-#outbox = wrap_error(outbox)
-#send = wrap_error(send)
-#read = wrap_error(read)
-#delete = wrap_error(delete)

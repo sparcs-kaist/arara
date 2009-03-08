@@ -1,5 +1,17 @@
 #error_notice {
-	width: 90%;
+	margin: 15% 0 0 15%; 
+	width: 50%;
 	height: 90%;
 	text-align: center;
+}
+
+#error_title {
+	padding: 10px 0 10px 0;
+	background-color: #ffaabb;
+	font-weight: bold;
+}
+
+#error_content {
+	padding: 15px 0 15px 0;
+	background-color: #eeeeee;
 }

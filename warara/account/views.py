@@ -7,6 +7,7 @@ from arara.util import timestamp2datetime
 import arara
 import warara
 
+@warara.wrap_error
 def register(request):
     sess, r = warara.check_logged_in(request)
     server = arara.get_server()
@@ -30,6 +31,7 @@ def register(request):
 
 
 
+@warara.wrap_error
 def confirm_user(request, username, confirm_key):
     server = arara.get_server()
 
@@ -41,11 +43,13 @@ def confirm_user(request, username, confirm_key):
     except InternalError:
         return HttpResponse('<script>alert("Confirm failed! \\n\\nPlease contact ARA SYSOP.");</script>')
 
+@warara.wrap_error
 def reconfirm_user(request, username):
     rendered = render_to_string('account/mail_confirm.html',
             {'username': username})
     return HttpResponse(rendered)
 
+@warara.wrap_error
 def agreement(request):
     sess, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
@@ -55,6 +59,7 @@ def agreement(request):
 
     return HttpResponse(rendered)
 
+@warara.wrap_error
 def login(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -99,6 +104,7 @@ def login(request):
 
     return HttpResponseRedirect('/')
 
+@warara.wrap_error
 def logout(request):
     session_key, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
@@ -114,6 +120,7 @@ def logout(request):
             del request.session['arara_username']
         assert None, "NOT_LOGGED_IN"
 
+@warara.wrap_error
 def account(request):
     session_key, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
@@ -127,6 +134,7 @@ def account(request):
         assert None, "NOT_LOGGED_IN"
     return HttpResponse(rendered)
 
+@warara.wrap_error
 def account_modify(request):
     session_key, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
@@ -152,6 +160,7 @@ def account_modify(request):
         assert None, "NOT_LOGGED_IN"
         return HttpResponse(rendered)
 
+@warara.wrap_error
 def password_modify(request):
     session_key, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
@@ -170,6 +179,7 @@ def password_modify(request):
     else:
         assert None, "NOT_LOGGED_IN"
 
+@warara.wrap_error
 def account_remove(request):
     session_key, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
@@ -186,36 +196,6 @@ def account_remove(request):
         assert None, "NOT_LOGGED_IN"
         return HttpResponse(rendered)
 
-def wrap_error(f):
-    def check_error(*args, **argv):
-        r = {} #render item
-        try:
-            return f(*args, **argv)
-        except StandardError, e:
-            if e.message == "NOT_LOGGED_IN":
-                r['error_message'] = e.message
-                rendered = render_to_string("error.html", r)
-                return HttpResponse(rendered)
-            elif e.message == "arara_session_key":
-                r['error_message'] = "NOT_LOGGED_IN"
-                rendered = render_to_string("error.html", r)
-                return HttpResponse(rendered)
-            else:
-                r['error_message'] = e.message
-                rendered = render_to_string("error.html", r)
-                return HttpResponse(rendered)
-
-    return check_error
-
-#login = wrap_error(login)
-#logout = wrap_error(logout)
-#account = wrap_error(account)
-#register = wrap_error(register)
-#agreement = wrap_error(agreement)
-#confirm_user = wrap_error(confirm_user)
-#account_modify = wrap_error(account_modify)
-#account_remove = wrap_error(account_remove)
-#password_modify = wrap_error(password_modify)
 
 def id_check(request):
     if request.method == 'POST':

@@ -12,6 +12,7 @@ def get_various_info(request):
     r['num_blacklist_member'] = 0
     return r
 
+@warara.wrap_error
 def add(request):
     if request.method == 'POST':
         blacklist_id = request.POST['blacklist_id']
@@ -26,6 +27,7 @@ def add(request):
     else:
         return HttpResponse('Must use POST')
 
+@warara.wrap_error
 def delete(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -34,6 +36,7 @@ def delete(request):
         server.blacklist_manager.delete(sess, username)
         return HttpResponseRedirect("/blacklist/")
 
+@warara.wrap_error
 def update(request):
     server = arara.get_server()
     sess = request.session["arara_session_key"]
@@ -64,7 +67,7 @@ def update(request):
 
     return HttpResponseRedirect("/blacklist/")
 
-
+@warara.wrap_error
 def index(request):
     server = arara.get_server()
     r = {}
@@ -80,29 +83,3 @@ def index(request):
 
     rendered = render_to_string('blacklist/index.html', r)
     return HttpResponse(rendered)
-
-def wrap_error(f):
-    def check_error(*args, **argv):
-        r = {} #render item
-        try:
-            return f(*args, **argv)
-        except StandardError, e:
-            if e.message == "NOT_LOGGED_IN":
-                r['error_message'] = e.message
-                rendered = render_to_string("error.html", r)
-                return HttpResponse(rendered)
-            elif e.message == "arara_session_key":
-                r['error_message'] = "NOT_LOGGED_IN"
-                rendered = render_to_string("error.html", r)
-                return HttpResponse(rendered)
-            else:
-                rendered = render_to_string("error.html")
-                return HttpResponse(rendered)
-
-    return check_error
-
-#index = wrap_error(index)
-#get_various_info = wrap_error(get_various_info)
-#add = wrap_error(add)
-#delete = wrap_error(delete)
-#update = wrap_error(update)
