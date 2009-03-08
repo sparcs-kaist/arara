@@ -1,3 +1,7 @@
+#board_content{
+    _width: 99%;
+}
+
 #article_write_head {
     background: url(/media/image/head_background.png) repeat;
     width: 100%;
