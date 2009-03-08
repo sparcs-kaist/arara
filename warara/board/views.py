@@ -14,7 +14,7 @@ import math
 import datetime
 import warara
 
-from arara.settings import FILE_DIR
+from arara.settings import FILE_DIR, FILE_MAXIMUM_SIZE
 
 @warara.wrap_error
 def index(request):
@@ -166,7 +166,7 @@ def write_(request, board_name):
     if request.FILES:
         file = {}
         for key, file_ob in request.FILES.items():
-            if file_ob.size > 100*1024*1024:
+            if file_ob.size > FILE_MAXIMUM_SIZE:
                 continue
             file = server.file_manager.save_file(sess, int(article_id), file_ob.name)
             if not os.path.isdir('%s/%s' % (FILE_DIR, file.file_path)):

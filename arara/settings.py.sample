@@ -35,3 +35,4 @@ KSEARCH_API_KEY = '54ebf56de7684dba0d69bffc9702e1b4'
 
 # Web Server FILEDIR Setting
 FILE_DIR = '/home/ara/arara/files'
+FILE_MAXIMUM_SIZE = 100*1024*1024
