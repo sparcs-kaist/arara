@@ -55,7 +55,7 @@ class ArticleManager(object):
         self.file_manager = file_manager
 
     def _is_board_exist(self, board_name):
-        self.board_manager.get_board(board_name)
+        get_server().board_manager.get_board(board_name)
 
     def _article_thread_to_list(self, article_thread):
         queue = []
