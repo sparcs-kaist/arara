@@ -30,16 +30,20 @@ $(document).ready(function(){
         });
         $("#id").blur(function(event) {
             id = $("#id").val(); 
-            if (id != "") {
-                $.post("/account/register/idcheck/", {check_field: id},
-                    function(data, textStatus) {
-                        $idDupleTest = data;
-                        if ($idDupleTest == 1)
-                            {$("#id").parent().children("label").children("span.feedback").text("The ID is not available");}
-                        else 
-                            {$("#id").parent().children("label").children("span.feedback").text("");}
-                    }
-                );
+            if (document.form.id.value.indexOf(' ') >= 0) {
+                $("#id").parent().children("label").children("span.feedback").text("White space in ID is not allowed");
+            }
+            else {
+                if (id != "") {
+                    $.post("/account/register/idcheck/", {check_field: id},
+                        function(data, textStatus) {
+                            $idDupleTest = data;
+                            if ($idDupleTest == 1)
+                                {$("#id").parent().children("label").children("span.feedback").text("The ID is not available");}
+                            else 
+                                {$("#id").parent().children("label").children("span.feedback").text("");}
+                        });
+                }
             }
         });
         $("#nickname").blur(function(event) {
@@ -112,6 +116,11 @@ $(document).ready(function(){
         }
         if ((document.form.email.value.indexOf('@') == -1 ) || (document.form.email.value.indexOf('.') == -1)) {
             $("#email").parent().children("label").children("span.feedback").text("The e-mail form is not proper");
+            $(".submit").parent().parent().children("label").children("span.feedback").text("Please confirm your form");
+            event.preventDefault();
+        }
+        if (document.form.id.value.indexOf(' ') >= 0) {
+            $("#id").parent().children("label").children("span.feedback").text("White space in ID is not allowed");
             $(".submit").parent().parent().children("label").children("span.feedback").text("Please confirm your form");
             event.preventDefault();
         }
