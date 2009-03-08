@@ -129,27 +129,23 @@ def account(request):
 @warara.wrap_error
 def account_modify(request):
     session_key, r = warara.check_logged_in(request)
-    if r['logged_in'] == True:
-        server = arara.get_server()
-        account = server.member_manager.get_info(session_key)
-        if request.method == 'POST':
-            nickname = request.POST['mynickname']
-            signature = request.POST['mysig']
-            introduction = request.POST['myintroduce']
-            language = request.POST['mylanguage']
-            modified_information_dic = {'nickname': nickname, 'signature': signature, 'self_introduction': introduction, 'default_language': language, 'widget': 0, 'layout': 0}
-            server.member_manager.modify(session_key, UserModification(**modified_information_dic))
-            if language == "kor":
-                request.session["django_language"] = "ko"
-            elif language == "eng":
-                request.session["django_language"] = "en"
-            return HttpResponseRedirect("/account/")
-        else:
-            account.logged_in = True
-            rendered = render_to_string('account/myaccount_modify.html', account.__dict__)
-            return HttpResponse(rendered)
+    server = arara.get_server()
+    account = server.member_manager.get_info(session_key)
+    if request.method == 'POST':
+        nickname = request.POST['mynickname']
+        signature = request.POST['mysig']
+        introduction = request.POST['myintroduce']
+        language = request.POST['mylanguage']
+        modified_information_dic = {'nickname': nickname, 'signature': signature, 'self_introduction': introduction, 'default_language': language, 'widget': 0, 'layout': 0}
+        server.member_manager.modify(session_key, UserModification(**modified_information_dic))
+        if language == "kor":
+            request.session["django_language"] = "ko"
+        elif language == "eng":
+            request.session["django_language"] = "en"
+        return HttpResponseRedirect("/account/")
     else:
-        assert None, "NOT_LOGGED_IN"
+        account.logged_in = True
+        rendered = render_to_string('account/myaccount_modify.html', account.__dict__)
         return HttpResponse(rendered)
 
 @warara.wrap_error
