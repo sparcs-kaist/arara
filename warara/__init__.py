@@ -17,6 +17,13 @@ def check_logged_in(request):
 
     return sess, r
 
+class AlreadyLoggedIn(Exception):
+    def __init__(self, why):
+        self.why = why
+
+    def __str__(self):
+        return repr(self.why)
+
 def wrap_error(f):
     def check_error(*args, **argv):
         r = {} #render item
@@ -37,6 +44,11 @@ def wrap_error(f):
         except IOError, e:
             # board/views.py:file_download() might throwgh this error
             r['error_message'] = "IO Error (File Not Found)"
+            rendered = render_to_string("error.html", r)
+            return HttpResponse(rendered)
+        except AlreadyLoggedIn, e:
+            # When a login user access registration page
+            r['error_message'] = "Already Logged In!"
             rendered = render_to_string("error.html", r)
             return HttpResponse(rendered)
 

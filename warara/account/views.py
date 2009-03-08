@@ -6,13 +6,14 @@ from arara.util import timestamp2datetime
 
 import arara
 import warara
+from warara import AlreadyLoggedIn
 
 @warara.wrap_error
 def register(request):
     sess, r = warara.check_logged_in(request)
     server = arara.get_server()
     if r['logged_in'] == True:
-        assert None, "ALEADY_LOGGED_IN"
+        raise AlreadyLoggedIn("")
 
     if request.method == 'POST':
         username = request.POST['id']
