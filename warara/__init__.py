@@ -34,6 +34,11 @@ def wrap_error(f):
             r['error_message'] = "Internal Error"
             rendered = render_to_string("error.html", r)
             return HttpResponse(rendered)
+        except IOError, e:
+            # board/views.py:file_download() might throwgh this error
+            r['error_message'] = "IO Error (File Not Found)"
+            rendered = render_to_string("error.html", r)
+            return HttpResponse(rendered)
 
     return check_error
 
