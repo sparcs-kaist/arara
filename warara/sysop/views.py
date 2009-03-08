@@ -18,7 +18,7 @@ def index(request):
 def add_board(request):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request)
-    msg = server.board_manager.add_board(sess, request.POST['add_board_name'], request.POST['add_board_description'])
+    server.board_manager.add_board(sess, request.POST['add_board_name'], request.POST['add_board_description'])
     return HttpResponseRedirect('/sysop/')
 
 @warara.wrap_error
@@ -27,8 +27,8 @@ def remove_board(request):
     sess, r = warara.check_logged_in(request)
     board_list = server.board_manager.get_board_list()
     for board in board_list:
-        if request.POST.get(board['board_name'], None):
-            msg = server.board_manager.delete_board(sess, board['board_name'])
+        if request.POST.get(board.board_name, None):
+            msg = server.board_manager.delete_board(sess, board.board_name)
     return HttpResponseRedirect('/sysop/')
 
 @warara.wrap_error

@@ -23,7 +23,7 @@ def wrap_error(f):
         try:
             return f(*args, **argv)
         except NotLoggedIn, e:
-            r['error_message'] = e.why
+            r['error_message'] = "You are not logged in!"
             rendered = render_to_string("error.html", r)
             return HttpResponse(rendered)
         except InvalidOperation, e:
