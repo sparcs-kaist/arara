@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from arara_thrift.ttypes import *
 
 import arara
+import warara
 
 
 def get_various_info(request):
