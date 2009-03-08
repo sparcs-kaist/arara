@@ -44,8 +44,7 @@ class ara_list_connected_users(ara_form):
             self.mainpile.keypress(size, key)
 
     def refresh_view(self):
-        retvalue, users = self.server.login_manager.get_current_online(self.session_key)
-        assert retvalue, users
+        users = self.server.login_manager.get_current_online(self.session_key)
         self.userlistitem = []
         if len(users) > 0:
             for user in users:

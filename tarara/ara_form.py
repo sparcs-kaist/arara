@@ -5,17 +5,18 @@ import xmlrpclib
 import os, sys
 import urwid
 
+THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../gen-py"))
 PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
+sys.path.append(THRIFT_PATH)
 sys.path.append(PROJECT_PATH)
 
 import arara
-from configuration import *
+from arara_thrift.ttypes import *
 
 class ara_form(urwid.Widget):
     def __init__(self, parent, session_key = None):
         self.keymap = {}
-        #self.server = arara.get_server()
-	self.server = xmlrpclib.Server("http://%s:%s" % (XMLRPC_HOST, XMLRPC_PORT), use_datetime = True)
+        self.server = arara.get_server()
         self.set_session_key(session_key)
         self.parent = parent
         self.overlay = None
@@ -49,5 +50,19 @@ class ara_form(urwid.Widget):
 
     def selectable(self):
         return True
+
+def wrap_error(f):
+    def check_error(*args, **argv):
+        try:
+            t = f(*args, **argv)
+            return True, t
+        except NotLoggedIn, e:
+            return False, e.why
+        except InvalidOperation, e:
+            return False, e.why
+        except InternalError, e:
+            return False, 'Internal Error'
+
+    return check_error
 
 # vim: set et ts=8 sw=4 sts=4:

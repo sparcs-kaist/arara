@@ -28,10 +28,10 @@ class ara_list_boards(ara_form):
         elif mainpile_focus == self.boardnameedit:
             if key == 'enter':
                 boardname = self.boardnameedit.body.get_edit_text()
-                retvalue, status = self.server.board_manager.get_board(boardname)
-                if retvalue:
+                try:
+                    status = self.server.board_manager.get_board(boardname)
                     self.parent.change_page("list_article", {'session_key':self.session_key, 'board_name':boardname})
-                else:
+                except InvalidOperation, e:
                     confirm = widget.Dialog(_('No such board. Returning to main menu.'), [_('Ok')], ('menu', 'bg', 'bgf'), 30, 6, self)
                     self.overlay = confirm
                     self.parent.run()
@@ -46,8 +46,7 @@ class ara_list_boards(ara_form):
             'j': 'down',
             'k': 'up',
         }
-        retvalue, boardlist = self.server.board_manager.get_board_list()
-        assert retvalue, boardlist
+        boardlist = self.server.board_manager.get_board_list()
 
 	self.header = urwid.Filler(urwid.Text(_('ARA: List boards'),align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
@@ -56,7 +55,7 @@ class ara_list_boards(ara_form):
         if len(boardlist) > 0:
             boardcounttext = urwid.Filler(urwid.Text(_(' * There are %s boards.') % len(boardlist)))
             for data in boardlist:
-                itemlist += [{'name':data['board_name'], 'desc':data['board_description']}]
+                itemlist += [{'name':data.board_name, 'desc':data.board_description}]
         else:
             boardcounttext = urwid.Filler(urwid.Text(_(' * No boards found. Have a nice day.')))
             itemlist = [{'name':'', 'desc':_('No boards found. Have a nice day.')}]

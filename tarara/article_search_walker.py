@@ -10,9 +10,8 @@ class ArticleSearchWalker(ArticleListWalker):
     def fetch_pages(self):
         self.cached_page = []
         for p in self.fetched_page:
-            result, article_list = self.server.search_manager.search(self.session_key, self.all_flag,
+            article_list = self.server.search_manager.search(self.session_key, self.all_flag,
                     self.board_name, self.query_dict, p, self.fetch_size)
-            assert result, article_list
             self.cached_page += article_list['hit']
             self.last_page = article_list['last_page']
             self.has_article = True

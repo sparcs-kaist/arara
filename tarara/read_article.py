@@ -8,6 +8,7 @@ from ara_form import *
 import widget
 from string import Template
 from translation import _
+from datetime import date
 
 class ara_read_article(ara_form):
     def get_selected_article_id(self):
@@ -30,11 +31,11 @@ class ara_read_article(ara_form):
             self.parent.change_page("list_article", {'session_key':self.session_key, 'board_name':self.board_name})
         elif key == 'v':
             if not self.is_selected_deleted():
-                retvalue = self.server.article_manager.vote_article(self.session_key, self.board_name, self.get_selected_article_id())
-                if retvalue[0]:
+                try:
+                    retvalue = self.server.article_manager.vote_article(self.session_key, self.board_name, self.get_selected_article_id())
                     confirm = widget.Dialog(_('Voted.'), [_('OK')], ('menu', 'bg', 'bgf'), 30, 5, self)
-                else:
-                    confirm = widget.Dialog(retvalue[1], [_('OK')], ('menu', 'bg', 'bgf'), 30, 5, self)
+                except InvalidOperation, e:
+                    confirm = widget.Dialog(e.why, [_('OK')], ('menu', 'bg', 'bgf'), 30, 5, self)
                 self.overlay = confirm
                 self.parent.run()
                 self.overlay = None
@@ -45,11 +46,11 @@ class ara_read_article(ara_form):
                 self.overlay = confirm
                 self.parent.run()
                 if confirm.b_pressed == _('Yes'):
-                    retvalue, result = self.server.article_manager.delete(self.session_key,self.board_name, self.get_selected_article_id())
-                    if retvalue:
+                    try:
+                        result = self.server.article_manager.delete(self.session_key,self.board_name, self.get_selected_article_id())
                         notice = widget.Dialog(_('Article deleted.'), [_('OK')], ('menu', 'bg', 'bgf'), 30, 5, self)
-                    else:
-                        notice = widget.Dialog(result, [_('OK')], ('menu', 'bg', 'bgf'), 30, 5, self)
+                    except InvalidOperation, e:
+                        notice = widget.Dialog(e.why, [_('OK')], ('menu', 'bg', 'bgf'), 30, 5, self)
                     self.overlay = notice
                     self.parent.run()
                     self.overlay = None
@@ -80,54 +81,54 @@ class ara_read_article(ara_form):
     def get_article_body(self):
         article_list = []
         for article in self.thread:
-            if article['depth'] == 1:
-                if article['deleted']:
+            if article.depth == 1:
+                if article.deleted:
                     article_title = urwid.Filler(urwid.Text(self.deleted_article_template))
                     article_info = urwid.Filler(urwid.Text(self.info_template.safe_substitute(
-                        HIT=article['hit'], REPLY=str(len(self.thread)-1), 
-                        DATE=article['date'].strftime("%Y/%m/%d %H:%M"), VOTE=str(article['vote']))))
+                        HIT=article.hit, REPLY=str(len(self.thread)-1), 
+                        DATE=date.fromtimestamp(article.date).strftime("%Y/%m/%d %H:%M"), VOTE=str(article.vote))))
                 else:
                     article_title = urwid.Filler(urwid.Text(self.title_template.safe_substitute(
-                        TITLE=article['title'])))
+                        TITLE=article.title.decode('utf-8'))))
                     article_author = urwid.Filler(urwid.Text(self.author_template.safe_substitute(
-                        AUTHOR=article['author_username'], NICKNAME=article['author_nickname'])))
+                        AUTHOR=article.author_username.decode('utf-8'), NICKNAME=article.author_nickname.decode('utf-8'))))
                     article_info = urwid.Filler(urwid.Text(self.info_template.safe_substitute(
-                        HIT=article['hit'], REPLY=str(len(self.thread)-1), 
-                        DATE=article['date'].strftime("%Y/%m/%d %H:%M"), VOTE=str(article['vote']))))
+                        HIT=article.hit, REPLY=str(len(self.thread)-1), 
+                        DATE=date.fromtimestamp(article.date).strftime("%Y/%m/%d %H:%M"), VOTE=str(article.vote))))
             else:
-                if article['deleted']:
+                if article.deleted:
                     article_info = urwid.Filler(urwid.Text(self.deleted_reply_template.safe_substitute(
-                        DATE=article['date'].strftime("%Y/%m/%d %H:%M"), VOTE=str(article['vote']))))
+                        DATE=date.fromtimestamp(article.date).strftime("%Y/%m/%d %H:%M"), VOTE=str(article.vote))))
                 else:
-                    article_title = urwid.Filler(urwid.Text(self.title_template.safe_substitute(TITLE=article['title'])))
-                    article_info = urwid.Filler(urwid.Text(self.reply_template.safe_substitute(AUTHOR=article['author_username'],
-                        NICKNAME=article['author_nickname'], DATE=article['date'].strftime("%Y/%m/%d %H:%M"),
-                        VOTE=str(article['vote']))))
+                    article_title = urwid.Filler(urwid.Text(self.title_template.safe_substitute(TITLE=article.title.decode('utf-8'))))
+                    article_info = urwid.Filler(urwid.Text(self.reply_template.safe_substitute(AUTHOR=article.author_username.decode('utf-8'),
+                        NICKNAME=article.author_nickname.decode('utf-8'), DATE=date.fromtimestamp(article.date).strftime("%Y/%m/%d %H:%M"),
+                        VOTE=str(article.vote))))
 
-            if not article['deleted']:
-                article_body = article['content']
-                if article.has_key('attach'):
+            if not article.deleted:
+                article_body = article.content
+                if article.attach:
                     article_body += '\n\n'
-                    for item in article['attach']:
+                    for item in article.attach:
                         string = self.attach_template.safe_substitute(SERVER_ADDRESS="http://nan.sparcs.org:8003",
-                                BOARD_NAME=self.board_name, ROOT_ID = article['root_id'],
-                                ARTICLE_ID = article['id'], FILE_ID = item['file_id'])
+                                BOARD_NAME=self.board_name, ROOT_ID = article.root_id,
+                                ARTICLE_ID = article.id, FILE_ID = item.file_id)
                         article_body += string
                 article_body = urwid.Text(article_body.rstrip())
 
-            if article['depth'] == 1:
-                if article['deleted']:
+            if article.depth == 1:
+                if article.deleted:
                     article_pile = urwid.Pile([('fixed',1,article_title),('fixed',1,article_info), ('fixed',1,widget.dash)])
                 else:
                     article_pile = urwid.Pile([('fixed',1,article_title),('fixed',1,article_author),
                         ('fixed',1,article_info), ('fixed',1,widget.dash), article_body])
                 indented_pile = article_pile
             else:
-                if article['deleted']:
+                if article.deleted:
                     article_pile = urwid.Pile([('fixed',1,article_info)])
                 else:
                     article_pile = urwid.Pile([('fixed',1,article_info),('fixed',1,article_title),article_body])
-                indented_pile = widget.IndentColumn(article_pile, article['depth']-1)
+                indented_pile = widget.IndentColumn(article_pile, article.depth)
 
             indented_pile = widget.MarkedItem('>', indented_pile)
             article_list.append(indented_pile)
@@ -140,8 +141,7 @@ class ara_read_article(ara_form):
             'b': 'page up',
             'f': 'page down',
         }
-        retvalue, self.thread = self.server.article_manager.read(self.session_key, self.board_name, self.article_id)
-        assert retvalue, self.thread
+        self.thread = self.server.article_manager.read(self.session_key, self.board_name, self.article_id)
 
         self.article_threads = self.get_article_body()
         assert self.article_threads

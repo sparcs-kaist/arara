@@ -24,31 +24,33 @@ class ara_login(ara_form):
         return f.read().decode('utf-8')
     
     def login(self, id, password, ip):
-        retvalue = None
+        session_key = None
         try:
-            retvalue, message = self.server.login_manager.login(id, password, ip)
-        except:
-            retvalue, message = [False, 'SERVER_ERROR']
-        if retvalue == True:
-            pass
-        else:
-            if message  == 'WRONG_USERNAME':
-                self.errormessage.body.set_text(_("Specified ID doesn't exist."))
-            elif message == 'WRONG_PASSWORD':
-                self.errormessage.body.set_text(_("Wrong password."))
-            elif message == 'DATABASE_ERROR':
-                self.errormessage.body.set_text(_("Database error."))
-            elif message == 'SERVER_ERROR':
-                self.errormessage.body.set_text(_("XML-RPC server problem. Try again after several minutes."))
-            elif message == 'NOT_ACTIVATED':
-                self.errormessage.body.set_text(_("Account not verified. Please confirm it."))
-            else:
-                self.errormessage.body.set_text(_("Undefined error."))
-                assert("Undefined error")
+            session_key = self.server.login_manager.login(id, password, ip)
+        except InternalError, e:
+            message = 'SERVER_ERROR'
+            self.errormessage.body.set_text(_("Internal Server Error."))
+        except InvalidOperation, e:
+            self.errormessage.body.set_text(e.why)
+            #
+            #if message  == 'wrong username':
+            #    self.errormessage.body.set_text(_("Specified ID doesn't exist."))
+            #elif message == 'wrong password':
+            #    self.errormessage.body.set_text(_("Wrong password."))
+            #elif message == 'database error':
+            #    self.errormessage.body.set_text(_("Database error."))
+            #elif message == 'server error':
+            #    self.errormessage.body.set_text(_("XML-RPC server problem. Try again after several minutes."))
+            #elif message == 'not activated':
+            #    self.errormessage.body.set_text(_("Account not verified. Please confirm it."))
+            #else:
+            #    self.errormessage.body.set_text(_("Undefined error."))
+            #    assert("Undefined error")
+        finally:
             self.idedit.body.set_edit_text("")
             self.pwedit.body.set_edit_text("")
             self.idpwpile.set_focus(0)
-        return retvalue, message
+        return session_key
 
     def keypress(self, size, key):
         curfocus = self.bottomcolumn.get_focus_column()
@@ -60,8 +62,8 @@ class ara_login(ara_form):
                 if (curpos == self.idedit) & (self.idedit.body.get_edit_text().strip() != ""):
                     self.idpwpile.set_focus(1)
                 elif (curpos == self.pwedit) & (self.pwedit.body.get_edit_text().strip() != ""):
-                    retvalue, session_key = self.login(self.idedit.body.get_edit_text(), self.pwedit.body.get_edit_text(), self.get_remote_ip())
-                    if retvalue:
+                    session_key = self.login(self.idedit.body.get_edit_text(), self.pwedit.body.get_edit_text(), self.get_remote_ip())
+                    if session_key:
                         self.parent.change_page("welcome", {'session_key':session_key})
             elif curfocus == 1:
                 langindex = self.langlist.w.get_focus().get_focus().get_focus()[1]
@@ -80,9 +82,9 @@ class ara_login(ara_form):
         self.errormessage = urwid.Filler(urwid.Text("", align="center"))
         self.message_ko = urwid.Filler(urwid.Text(u"[Tab] 키를 누르면 항목간을 전환할 수 있습니다", align='center'))
         self.message_en = urwid.Filler(urwid.Text(u"Press [Tab] key to jump between each items", align='center'))
-        retvalue, count = self.server.login_manager.total_visitor()
+        count = self.server.login_manager.total_visitor()
         self.counter = urwid.Filler(urwid.Text(u"Today: %s Total: %s" %
-            (count['today_visitor_count'], count['total_visitor_count']), align='center'))
+            (count.today_visitor_count, count.total_visitor_count), align='center'))
 
         self.idedit = urwid.Filler(urwid.Edit(caption="ID: ", wrap='clip'))
         self.pwedit = urwid.Filler(widget.PasswordEdit(caption="Password: ", wrap='clip'))

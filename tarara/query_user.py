@@ -44,14 +44,14 @@ class ara_query_user(ara_form):
             self.parent.change_page("user_information", {'session_key':self.session_key})
 
     def query_information(self, id):
-        retvalue, data = self.server.member_manager.query_by_username(self.session_key, id)
-        if retvalue:
+        try:
+            data = self.server.member_manager.query_by_username(self.session_key, id)
             self.idtext.body.set_text(_(' * ID: %s') % data['username'])
             self.nicktext.body.set_text(_(' * Nickname: %s') % data['nickname'])
             self.introtext.body.set_text(_(' * Introduction:\n%s') % data['self_introduction'])
             self.sigtext.body.set_text(_(' * Signature:\n%s') % data['signature'])
             self.lasttext.body.set_text(_(' * Last usage: %s') % data['last_login_ip'])
-        else:
+        except InvalidOperation, e:
             self.idtext.body.set_text(data)
             self.nicktext.body.set_text('')
             self.introtext.body.set_text('')

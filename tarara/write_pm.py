@@ -22,9 +22,14 @@ class ara_write_pm(ara_form):
         if button == self.btnokay:
             to = self.idedit.get_edit_text()
             body = self.bodyedit.body.get_edit_text()
-            retvalue = self.server.messaging_manager.send_message(self.session_key, to, body)
-            if retvalue[0]:
+            try:
+                self.server.messaging_manager.send_message(self.session_key, to, body)
                 confirm = widget.Dialog(_('Message sent.'), [_('OK')], ('menu', 'bg', 'bgf'), 30, 5, self)
+                self.overlay = confirm
+                self.parent.run()
+                self.parent.change_page("list_pm",{'session_key':self.session_key})
+            except InvalidOperation, e:
+                confirm = widget.Dialog(e.why, [_('OK')], ('menu', 'bg', 'bgf'), 30, 5, self)
                 self.overlay = confirm
                 self.parent.run()
                 self.parent.change_page("list_pm",{'session_key':self.session_key})

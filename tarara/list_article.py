@@ -90,9 +90,8 @@ class ara_list_article(ara_form):
             'ctrl p': 'w',
         }
 
-        retvalue, boardinfo = self.server.board_manager.get_board(self.board_name)
-        assert retvalue, boardinfo
-        self.readonly = boardinfo['read_only']
+        boardinfo = self.server.board_manager.get_board(self.board_name)
+        self.readonly = boardinfo.read_only
 
 	self.header = urwid.Filler(urwid.Text(_('ARA: Article list'),align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')

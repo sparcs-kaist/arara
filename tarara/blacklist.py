@@ -29,8 +29,7 @@ class ara_blacklist(ara_form):
 	self.header = urwid.Filler(urwid.Text(u"ARA: My Blacklist",align='center'))
         self.header = urwid.AttrWrap(self.header,'reversed')
 
-        retvalue, self.blacklist = self.server.blacklist_manager.list(self.session_key)
-        assert retvalue, self.blacklist
+        self.blacklist = self.server.blacklist_manager.list(self.session_key)
         userlist = []
         if len(self.blacklist) > 0:
             for user in self.blacklist:

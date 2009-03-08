@@ -24,9 +24,8 @@ class ara_list_pm(ara_form):
         self.pmlist.set_header(listview.make_header(self.list_header, pmlist_rowitem))
 
         # Acqure messages
-        ret, receive_list = self.server.messaging_manager.receive_list(self.session_key, 1, 10)
-        assert ret, receive_list
-        message_list = receive_list['hit']
+        receive_list = self.server.messaging_manager.receive_list(self.session_key, 1, 10)
+        message_list = receive_list.hit
 
         # Generate message_item
         message_item = []
@@ -46,9 +45,8 @@ class ara_list_pm(ara_form):
         self.pmlist.set_header(listview.make_header(self.list_header, pmlist_rowitem))
 
         # Acquire messages
-        ret, sent_list = self.server.messaging_manager.sent_list(self.session_key, 1, 10)
-        assert ret, sent_list
-        message_list = sent_list['hit']
+        sent_list = self.server.messaging_manager.sent_list(self.session_key, 1, 10)
+        message_list = sent_list.hit
         
         # Generate message_item
         message_item = []

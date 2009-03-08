@@ -23,21 +23,22 @@ class ara_post_article(ara_form):
             retvalue = None
             title = self.titleedit.body.get_edit_text()
             body = self.bodyedit.body.get_edit_text()
-            if self.mode == 'modify':
-                retvalue, result = self.server.article_manager.modify(self.session_key, self.board_name, self.article_id, {'title':title, 'content':body})
-            elif self.mode == 'reply':
-                retvalue, result = self.server.article_manager.write_reply(self.session_key, self.board_name, self.article_id, {'title':title, 'content':body})
-            elif self.mode == 'post':
-                retvalue, result = self.server.article_manager.write_article(self.session_key, self.board_name, {'title':title, 'content':body})
-            else:
-                return
-            if retvalue:
+            try:
+                title_content = {'title':title, 'content':body}
+                if self.mode == 'modify':
+                    result = self.server.article_manager.modify(self.session_key, self.board_name, self.article_id, **title_content)
+                elif self.mode == 'reply':
+                    result = self.server.article_manager.write_reply(self.session_key, self.board_name, self.article_id, **title_content)
+                elif self.mode == 'post':
+                    result = self.server.article_manager.write_article(self.session_key, self.board_name, **title_content)
+                else:
+                    return
                 confirm = widget.Dialog(_('Article posted.'), [_('OK')], ('menu', 'bg', 'bgf'), 30, 5, self)
                 self.overlay = confirm
                 self.parent.run()
                 if confirm.b_pressed == _('OK'):
                     self.parent.change_page("list_article",{'session_key':self.session_key, 'board_name':self.board_name})
-            else:
+            except:
                 #self.overlay = None
                 #self.parent.run()
                 pass
@@ -88,11 +89,11 @@ class ara_post_article(ara_form):
                 ('fixed',1,self.bottomcolumn)]
         if self.mode == 'modify':
             original_article = self.server.article_manager.read(self.session_key, self.board_name, int(self.article_id))
-            self.titleedit.body.set_edit_text(original_article[1][0]['title'])
-            self.bodyedit.body.set_edit_text(original_article[1][0]['content'])
+            self.titleedit.body.set_edit_text(original_article[0]['title'])
+            self.bodyedit.body.set_edit_text(original_article[0]['content'])
         elif self.mode == 'reply':
             original_article = self.server.article_manager.read(self.session_key, self.board_name, int(self.article_id))
-            self.titleedit.body.set_edit_text("Re: " + original_article[1][0]['title'])
+            self.titleedit.body.set_edit_text("Re: " + original_article[0]['title'])
 
         self.mainpile = urwid.Pile(content)
 

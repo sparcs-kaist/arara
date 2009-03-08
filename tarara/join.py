@@ -78,8 +78,8 @@ class ara_join(ara_form):
             reg_dic = {'username':self.idedit.body.get_edit_text(), 'password':self.pwedit.body.get_edit_text(),
                 'nickname':self.nickedit.body.get_edit_text(), 'email':self.emailedit.body.get_edit_text(),
                 'signature':'', 'self_introduction':'','default_language':'ko'}
-            retvalue, reg_key = self.server.member_manager.register(reg_dic)
-            if retvalue:
+            try:
+                reg_key = self.server.member_manager.register(**reg_dic)
                 self.server.member_manager.send_mail(self.emailedit.body.get_edit_text(), self.idedit.body.get_edit_text(),
                     reg_key)
                 confirm = widget.Dialog(_('Account created.\nPlease confirm it.'), 
@@ -88,9 +88,15 @@ class ara_join(ara_form):
                 self.parent.run()
                 if confirm.b_pressed == _('OK'):
                     self.parent.change_page("login",{})
-            else:
+            except InvalidOperation, e:
                 message = widget.Dialog(reg_key, [_('OK')], ('menu', 'bg', 'bgf'), 30, 6, self)
-                self.overlay = message
+                self.overlay = e.why
+                self.parent.run()
+                if message.b_pressed == _('OK'):
+                    self.parent.change_page("login",{})
+            except InternalError, e:
+                message = widget.Dialog(reg_key, [_('OK')], ('menu', 'bg', 'bgf'), 30, 6, self)
+                self.overlay = e.ouch
                 self.parent.run()
                 if message.b_pressed == _('OK'):
                     self.parent.change_page("login",{})

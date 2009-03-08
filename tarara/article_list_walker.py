@@ -3,10 +3,20 @@ import urwid
 import xmlrpclib
 from configuration import *
 from translation import _
+import os, sys
+from datetime import date
+
+THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../gen-py"))
+PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
+sys.path.append(THRIFT_PATH)
+sys.path.append(PROJECT_PATH)
+
+import arara
+from arara_thrift.ttypes import *
 
 class ArticleListWalker(urwid.ListWalker):
     def __init__(self, session_key, board_name, callback):
-	self.server = xmlrpclib.Server("http://%s:%s" % (XMLRPC_HOST, XMLRPC_PORT), use_datetime = True)
+        self.server = arara.get_server()
         self.session_key = session_key
         self.board_name = board_name
         self.callback = callback
@@ -20,29 +30,26 @@ class ArticleListWalker(urwid.ListWalker):
     def fetch_pages(self):
         self.cached_page = []
         for p in self.fetched_page:
-            result, article_list = self.server.article_manager.article_list(self.session_key, self.board_name, p, self.fetch_size)
-            assert result, article_list
-            self.cached_page += article_list['hit']
-            self.last_page = article_list['last_page']
+            article_list = self.server.article_manager.article_list(self.session_key, self.board_name, p, self.fetch_size)
+            self.cached_page += article_list.hit
+            self.last_page = article_list.last_page
             self.has_article = True
         if self.cached_page == []:
             self.cached_page = [{'new':'', 'number':'', 'author':'','title':_('No article found. Have a nice day.'),'date':'','hit':'','vote':''}]
             self.has_article = False
 
     def make_widget(self, article):
-        if not article.has_key('read_status') and self.session_key != 'guest': 
-            article['read_status'] = 'N'
         if self.has_article:
             if self.session_key != 'guest':
-                if article['deleted']:
-                    item = {'new':article['read_status'], 'number':str(article['id']), 'author':'', 'title':'Deleted article.', 'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), 'vote':str(article['vote'])}
+                if article.deleted:
+                    item = {'new':article.read_status, 'number':str(article.id), 'author':'', 'title':'Deleted article.', 'date':str(date.fromtimestamp(article.date).strftime('%m/%d')), 'hit':str(article.hit), 'vote':str(article.vote)}
                 else:
-                    item = {'new':article['read_status'], 'number':str(article['id']), 'author':article['author_username'], 'title':article['title'], 'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), 'vote':str(article['vote'])}
+                    item = {'new':article.read_status, 'number':str(article.id), 'author':article.author_username, 'title':article.title, 'date':str(date.fromtimestamp(article.date).strftime('%m/%d')), 'hit':str(article.hit), 'vote':str(article.vote)}
             else:
-                if article['deleted']:
-                    item = {'number':str(article['id']), 'author':'', 'title':'Deleted article.', 'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), 'vote':str(article['vote'])}
+                if article.deleted:
+                    item = {'number':str(article.id), 'author':'', 'title':'Deleted article.', 'date':str(date.fromtimestamp(article.date).strftime('%m/%d')), 'hit':str(article.hit), 'vote':str(article.vote)}
                 else:
-                    item = {'number':str(article['id']), 'author':article['author_username'], 'title':article['title'], 'date':str(article['date'].strftime('%m/%d')), 'hit':str(article['hit']), 'vote':str(article['vote'])}
+                    item = {'number':str(article.id), 'author':article.author_username, 'title':article.title, 'date':str(date.fromtimestamp(article.date).strftime('%m/%d')), 'hit':str(article.hit), 'vote':str(article.vote)}
         else:
             item = self.cached_page[0]
         return self.callback(item)

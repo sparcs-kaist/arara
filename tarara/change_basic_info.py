@@ -26,11 +26,13 @@ class ara_change_basic_info(ara_form):
                 return
             else:
                 self.myinfo['nickname'] = self.nickedit.body.get_edit_text()
-                retvalue =  self.server.member_manager.modify(self.session_key, self.myinfo)
-                if retvalue[0] == True:
+                try:
+                    self.server.member_manager.modify(self.session_key, self.myinfo)
                     message = _('Nickname changed.')
-                else:
-                    message = retvalue[1]
+                except InvalidOperation, e:
+                    message = e.why
+                except InternalError, e:
+                    message = e.why
                 confirm = widget.Dialog(message, [_('OK')], ('menu', 'bg', 'bgf'), 30, 6, self)
                 self.overlay = confirm
                 self.parent.run()
@@ -46,7 +48,6 @@ class ara_change_basic_info(ara_form):
 	self.header = urwid.Filler(urwid.Text(_('ARA: Change Basic Information'), align='center'))
         self.header = urwid.AttrWrap(self.header, 'reversed')
         self.myinfo = self.server.member_manager.get_info(self.session_key)
-        self.myinfo = self.myinfo[1]
 
         idtext = urwid.Filler(urwid.Text(_('ID: %s') % self.myinfo['username']))
         iddesc = urwid.Filler(urwid.Text(_('ID and E-Mail couldn\'t be edited\nDisplayed for your information')))
