@@ -212,7 +212,6 @@ def read(request, board_name, article_id):
     r['article_id'] = article_id
 
     for article in article_list:
-        article.title = "%s ?= %s" % (repr(article.author_username), repr(username))
         if article.author_username == username:
             article.flag_modify = 1
         else:
