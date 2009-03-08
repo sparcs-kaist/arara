@@ -54,7 +54,7 @@ def reconfirm_user(request, username):
 def agreement(request):
     sess, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
-        assert None, "ALREADY_LOGGED_IN"
+        raise AlreadyLoggedIn("")
     else:
         rendered = render_to_string('account/register_agreement.html')
 
@@ -118,15 +118,12 @@ def logout(request):
 @warara.wrap_error
 def account(request):
     session_key, r = warara.check_logged_in(request)
-    if r['logged_in'] == True:
-        server = arara.get_server()
-        account = server.member_manager.get_info(session_key)
+    server = arara.get_server()
+    account = server.member_manager.get_info(session_key)
 
-        account.last_logout_time = timestamp2datetime(account.last_logout_time)
-        account.logged_in = True
-        rendered = render_to_string('account/myaccount_frame.html', account.__dict__)
-    else:
-        assert None, "NOT_LOGGED_IN"
+    account.last_logout_time = timestamp2datetime(account.last_logout_time)
+    account.logged_in = True
+    rendered = render_to_string('account/myaccount_frame.html', account.__dict__)
     return HttpResponse(rendered)
 
 @warara.wrap_error
