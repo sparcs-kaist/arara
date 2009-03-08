@@ -210,6 +210,8 @@ def read(request, board_name, article_id):
     r['board_name'] = board_name
     username = request.session['arara_username']
     r['article_id'] = article_id
+    r['default_text'] = server.member_manager.get_info(sess)
+    r['default_text'] = r['default_text'].signature
 
     for article in article_list:
         if article.author_username == username:

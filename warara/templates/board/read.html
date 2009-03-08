@@ -75,7 +75,7 @@
                 <input type="hidden" name="root_id" value="{{article.root_id}}" />
                 <ul>
                     <li><input type="text" name="title" class="write_reply_title" value="{{article.title}}" /></li>
-                    <li><textarea name="content"></textarea></li>
+		    <li><textarea name="content">{{default_text}}</textarea></li>
                 </ul>
                 <input type="hidden" value="{{article_no}}" name="article_no"></input>
                 <div class="article_write_file">
