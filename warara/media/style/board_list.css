@@ -42,7 +42,7 @@
     font-family: Verdana;
 }
 .column.author_col{
-    width: 10%;
+    width: 14%;
     font-family: Gulim;
 }
 .column.date_col{
@@ -59,7 +59,7 @@
     font-family: Verdana;
 }
 .column.title_col{
-    width: 70%;
+    width: 68%;
     font-family: Gulim;
 }
 

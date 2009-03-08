@@ -183,10 +183,12 @@ def read(request, board_name, article_id):
 
     for i in range(len(article_list)):
         if 'attach' in article_list[i].__dict__ and article_list[i].attach: #image view
+            article_list[i].__dict__['image'] = []
+            insert_image_tag_list = article_list[i].__dict__['image']
             for file in article_list[i].attach:
                 if file.filename.split('.')[-1].lower() in image_filetype:
-                    insert_image_tag = "<p><img src=\"/board/" + board_name + "/" + str(article_list[i].root_id) + "/" + str(article_list[i].id) + "/file/" + str(file.file_id) + "\"></img></p>"
-                    article_list[i].content = insert_image_tag + article_list[i].content
+                    insert_image_tag = "<p><img src=\"/board/%s/%d/%d/file/%d/\"></img></p>" % (board_name, article_list[i].root_id, article_list[i].id, file.file_id)
+                    insert_image_tag_list.append(insert_image_tag)
 
         #article_list[i]['content'] = render_bbcode(article_list[i]['content'], 'UTF-8')
         if article_list[i].deleted: #deleted article access
