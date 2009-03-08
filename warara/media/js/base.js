@@ -288,6 +288,13 @@ $(document).ready(function(){
 	var cursor_tm = 0; //cursor_topmenu
     var cursor_up = 0; //cursor_user_popup
     var a_up_length = 0;
+    var hidden_cursor_bl = 1;
+
+    $("#menu li a").each(function(){ // set initial cursor_bl
+            if($(this).text() == $("#bbsname").text()){
+            hidden_cursor_bl = parseInt($(this).parent().attr("rel"));
+            }
+            });
 
     $focus_user_popup = function(){
         if(cursor_up){
@@ -319,13 +326,14 @@ $(document).ready(function(){
 	}
 	function focus_board_list(){
 		if(cursor_bl){
+            hidden_cursor_bl = cursor_bl;
 			cursor_bl = 0;
 			$(".hidden_highlight").removeClass("hidden_highlight").addClass("row_highlight");
 			$(".highlight").removeClass("highlight");
 			return;
 		}
 
-		cursor_bl = 1;
+		cursor_bl = hidden_cursor_bl;
 		$(".highlight").removeClass("highlight");
 		$(".row_highlight").removeClass("row_highlight").addClass("hidden_highlight");
 		$("#menu a[class!='hidden']").eq(cursor_bl-1).addClass("highlight");
@@ -392,6 +400,7 @@ $(document).ready(function(){
 			case 32: //spacs
             case 39:
 			location.href = $("#menu a[class!='hidden']").eq(cursor_bl-1).attr("href");
+            event.preventDefault();
 			break;
 			}
 			});
@@ -407,11 +416,11 @@ $(document).ready(function(){
 			return;
 			}
 			switch(event.which){
-			case 107: //j
+			case 106: //j
 			cursor_tm = move_next(cursor_tm, a_tm_length);
 			update_highlight("#top_menu a", cursor_tm);
 			break;
-			case 106: //k
+			case 107: //k
 			cursor_tm = move_prev(cursor_tm, a_tm_length);
 			update_highlight("#top_menu a", cursor_tm);
 			break;

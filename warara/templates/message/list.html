@@ -75,9 +75,9 @@
             </td>
             <td>
                 {% ifequal message_list_type 'inbox' %}
-                <span class="username">{{message.from_}}</span>
+                <span class="username">{{message.from_nickname}}</span>
                 {% else %}
-                <span class="username">{{message.to}}</span>
+                <span class="username">{{message.to_nickname}}</span>
                 {% endifequal %}
             </td>
             <td>

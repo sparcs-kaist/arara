@@ -32,7 +32,7 @@
     -->
 </div>
 <div id="message_read_text">
-    {{message.message}}
+    {{message.message|linebreaks}}
 </div>
 
 {% ifequal message_list_type "inbox" %}

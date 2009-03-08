@@ -110,7 +110,7 @@
 			{% get_board_list %}
 			<ul>
 			    {% for board_info in board_list %}
-			    <li><a href="/board/{{board_info.board_name}}">{{board_info.board_name}}</a></li>
+                            <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_name}}</a></li>
 			    {% endfor %}
 			</ul>
 			{% endblock %}
