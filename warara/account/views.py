@@ -107,18 +107,12 @@ def login(request):
 @warara.wrap_error
 def logout(request):
     session_key, r = warara.check_logged_in(request)
-    if r['logged_in'] == True:
-        server = arara.get_server()
-        account = server.login_manager.logout(session_key)
-        del request.session['arara_session_key']
-        del request.session['arara_username']
-        request.session.clear()
-        return HttpResponseRedirect('/')
-    else:
-        if request.session.get('arara_session_key', 0):
-            del request.session['arara_session_key']
-            del request.session['arara_username']
-        assert None, "NOT_LOGGED_IN"
+    server = arara.get_server()
+    account = server.login_manager.logout(session_key)
+    del request.session['arara_session_key']
+    del request.session['arara_username']
+    request.session.clear()
+    return HttpResponseRedirect('/')
 
 @warara.wrap_error
 def account(request):
