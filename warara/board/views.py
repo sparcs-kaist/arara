@@ -123,8 +123,8 @@ def write(request, board_name):
     sess, r = warara.check_logged_in(request)
     article_id = request.GET.get('article_id', 0)
     r['t_write'] = 'write'
-    r['default_text'] = server.member_manager.get_info(sess)
-    r['default_text'] = r['default_text'].signature
+    user_info = server.member_manager.get_info(sess)
+    r['default_text'] = user_info.signature
 
     if article_id:
         sess = request.session["arara_session_key"]
