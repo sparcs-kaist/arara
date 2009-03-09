@@ -206,7 +206,7 @@ def read(request, message_list_type, message_id):
 @warara.wrap_error
 def delete(request):
     server = arara.get_server()
-    sess = request.session["arara_session_key"]
+    sess, _ = warara.check_logged_in(request)
     ret, msg = 1, 1
     del_msg_no = int(request.GET.get('del_msg_no', 0))
     if request.POST.get('message_list_type', 0) == 'inbox':

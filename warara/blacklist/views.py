@@ -6,7 +6,6 @@ from arara_thrift.ttypes import *
 import arara
 import warara
 
-
 def get_various_info(request):
     server = arara.get_server()
     sess = test.login()
@@ -18,7 +17,7 @@ def add(request):
     if request.method == 'POST':
         blacklist_id = request.POST['blacklist_id']
         server = arara.get_server()
-        sess = request.session["arara_session_key"]
+        sess, r = warara.check_logged_in(request)
         id_converting = server.member_manager.search_user(sess, blacklist_id, "") 
         converted_id =  id_converting[0].username
         server.blacklist_manager.add(sess, converted_id, True, True) 
@@ -33,14 +32,15 @@ def delete(request):
     if request.method == 'POST':
         username = request.POST['username']
         server = arara.get_server()
-        sess = request.session["arara_session_key"]
+        sess, r = warara.check_logged_in(request)
         server.blacklist_manager.delete(sess, username)
         return HttpResponseRedirect("/blacklist/")
+    # Why not return HttpResponse('Must use POST') ? XXX combacsa
 
 @warara.wrap_error
 def update(request):
     server = arara.get_server()
-    sess = request.session["arara_session_key"]
+    sess, r = warara.check_logged_in(request)
     blacklist = server.blacklist_manager.list_(sess)
     bl_submit_chooser = request.POST['bl_submit_chooser']
     if bl_submit_chooser == "update":
@@ -71,8 +71,8 @@ def update(request):
 @warara.wrap_error
 def index(request):
     server = arara.get_server()
+    sess, _ = warara.check_logged_in(request)
     r = {}
-    sess = request.session["arara_session_key"]
     r['logged_in'] = True
     blacklist = server.blacklist_manager.list_(sess)
     r['blacklist'] = blacklist
