@@ -11,7 +11,7 @@ import datetime
 
 def get_various_info(request, r):
     server = arara.get_server()
-    sess = request.session["arara_session_key"]
+    sess, _ = warara.check_logged_in(request)
     page_no = r['page_no']
     page_no = int(page_no)
     page_range_length = 10
@@ -60,7 +60,7 @@ def index(request):
 def inbox(request):
     server = arara.get_server()
     r = {}
-    sess = request.session["arara_session_key"]
+    sess, _ = warara.check_logged_in(request)
     page = request.GET.get('page_no', 1);
     r['logged_in'] = True
     r['page_no'] = int(page)
@@ -95,7 +95,7 @@ def inbox(request):
 def outbox(request):
     server = arara.get_server()
     r = {}
-    sess = request.session["arara_session_key"]
+    sess, _ = warara.check_logged_in(request)
     if request.GET.has_key('page_no'):
         page = request.GET['page_no']
     else:
@@ -136,7 +136,7 @@ def send(request, msg_no=0):
     r['default_text'] = ''
 
     server = arara.get_server()
-    sess = request.session["arara_session_key"]
+    sess, _ = warara.check_logged_in(request)
     msg_no = int(msg_no)
 
     if msg_no:
@@ -158,7 +158,7 @@ def send(request, msg_no=0):
 @warara.wrap_error
 def send_(request):
     server = arara.get_server()
-    sess = request.session["arara_session_key"]
+    sess, _ = warara.check_logged_in(request)
     r = {}
     
     receiver = request.POST.get('receiver', '')
@@ -177,7 +177,7 @@ def send_(request):
 @warara.wrap_error
 def read(request, message_list_type, message_id):
     server = arara.get_server()
-    sess = request.session["arara_session_key"]
+    sess, _ = warara.check_logged_in(request)
 
     r = {}
     r['logged_in'] = True
