@@ -3,14 +3,11 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 # Django settings for warara project.
 
-#DEBUG = True
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
-    ('Kyuhong Byun', 'combacsa@gmail.com'),
-    ('Sung-jin Hong', 'serialx@serialx.net'),
 )
 
 MANAGERS = ADMINS
