@@ -25,28 +25,28 @@ $(document).ready(function(){
         $(this).removeClass("user_popup_menu_hover");
     });
 
-    $(".username").hover(
+    $(".nickname").hover(
     function(event) {
-        $(this).addClass("username_highlight");
+        $(this).addClass("nickname_highlight");
     },
     function(event) {
-        $(this).removeClass("username_highlight");
+        $(this).removeClass("nickname_highlight");
     });
 
 	$popup_x_coor=0;
 	$popup_y_coor=0;
 
     var username;
-    $(".username").click(function(event) {
+    $(".nickname").click(function(event) {
         $show_user_popup($(this));
         event.stopPropagation(); 
     });
 
     $show_user_popup = function($tu){
-		if(!$tu.hasClass("username")){
+		if(!$tu.hasClass("nickname")){
 		return;
 		}
-        username = $tu.text();
+        username = $tu.children("span").text();
         $("#user_popup #user_popup_username").text("User: " + username);
 
         $("#user_popup").css("top", $tu.offset()["top"] + $tu.height());
@@ -167,7 +167,7 @@ $(document).ready(function(){
 
     $("#message_popup input.message_send_submit").click(function(event) {
 		tb_remove();
-        $.post("/message/send/", {receiver: $("#message_receiver_field").val(), text: $("#message_text_field").val(), ajax:"1", receiver_type:"nickname"},
+        $.post("/message/send/", {receiver: $("#message_receiver_field").val(), text: $("#message_text_field").val(), ajax:"1", receiver_type:"username"},
             function(data){
                 if(data == 1){
                     alert("Message send successful!");

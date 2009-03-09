@@ -620,6 +620,7 @@ class MemberManager(object):
             2. 실패시: InvalidOperation('NOT_LOGGEDIN'
         '''
 
+        raise InvalidOperation('Not Allowed Right Now')
         session = model.Session()
         username = get_server().login_manager.get_session(session_key).username
         try:

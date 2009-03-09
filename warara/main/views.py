@@ -83,7 +83,7 @@ def get_user_info(request):
         session_key, r = warara.check_logged_in(request)
         server = arara.get_server()
         query_user_name = request.POST['query_user_name']
-        information = server.member_manager.query_by_nick(session_key, query_user_name)
+        information = server.member_manager.query_by_username(session_key, query_user_name)
         information.last_logout_time = timestamp2datetime(information.last_logout_time)
         rendered = render_to_string('account/another_user_account.html', information.__dict__)
         return HttpResponse(rendered)

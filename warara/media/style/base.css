@@ -301,11 +301,11 @@ body {
 
 
 /* Popup menu styles */
-.username {
+.nickname {
     cursor: help;
 }
 
-.username_highlight {
+.nickname_highlight {
     background-color: #ddf;
     text-decoration: underline;
 }

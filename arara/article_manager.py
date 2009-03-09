@@ -143,6 +143,9 @@ class ArticleManager(object):
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
         session = model.Session()
+        if item_dict.has_key('title'):
+            if not item_dict['title']:
+                item_dict['title'] = u'Untitled'
         if item_dict.has_key('author_id'):
             item_dict['author_username'] = item.author.username
             item_dict['author_nickname'] = item.author.nickname
