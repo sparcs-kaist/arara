@@ -2,18 +2,18 @@
 # MySQL Server Setting
 MYSQL_ID = "ara"
 MYSQL_PASSWD = "together"
-MYSQL_DBHOST = "juk.sparcs.org"
+MYSQL_DBHOST = "swingfixer.kaist.ac.kr"
 MYSQL_DBNAME = "arara"
 
 DB_CONNECTION_STRING = 'mysql://%s:%s@%s/%s?charset=utf8&use_unicode=1' % (MYSQL_ID, MYSQL_PASSWD, MYSQL_DBHOST, MYSQL_DBNAME)
 
 # ARARA Server Setting
-ARARA_SERVER_HOST = 'juk.sparcs.org'
+ARARA_SERVER_HOST = 'swingfixer.kaist.ac.kr'
 ARARA_SERVER_BASE_PORT = 8000
 SESSION_EXPIRE_TIME = 3610 # seconds
 
 # Mail Server Setting
-WARARA_SERVER_ADDRESS = 'ara.kaist.ac.kr'
+WARARA_SERVER_ADDRESS = 'swingfixer.kaist.ac.kr'
 MAIL_HOST = 'localhost'
 MAIL_SENDER = 'ara@ara.kaist.ac.kr'
 MAIL_CONTENT = 'You have been successfully registered as the ARA member.<br />To use your account, you have to activate it.<br />Please click the link below on any web browser to activate your account.<br /><br />'
