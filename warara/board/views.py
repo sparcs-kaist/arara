@@ -55,28 +55,6 @@ def get_article_list(request, r, mode):
             article_list[i].title = '-- Deleted --'
             article_list[i].author_username = ''
 
-        title = article_list[i].title.decode('utf-8').encode('cp949', 'ignore')
-        max_length = 52 # max title string length
-        overflow_flag = False
-        if len(title) > max_length:
-            title = title[0:max_length] 
-            overflow_flag = True
-        title = title.decode('cp949', 'ignore').encode('utf8', 'ignore')
-        if overflow_flag:
-            title = title + ' ...'.encode('utf8')
-        article_list[i].title = title
-
-        author_nickname = article_list[i].author_nickname.decode('utf-8').encode('cp949', 'ignore')
-        max_length = 12 # max author_nickname string length
-        overflow_flag = False
-        if len(author_nickname) > max_length:
-            author_nickname = author_nickname[0:max_length] 
-            overflow_flag = True
-        author_nickname = author_nickname.decode('cp949', 'ignore').encode('utf8', 'ignore')
-        if overflow_flag:
-            author_nickname = author_nickname + '..'.encode('utf8')
-        article_list[i].author_nickname = author_nickname
-
     for article in article_list:
         article.date = datetime.datetime.fromtimestamp(article.date)
 

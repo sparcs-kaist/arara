@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 import arara
 from django import template
 from django.core.cache import cache
@@ -27,3 +28,33 @@ def do_get_board_description(value, arg):
         board_description = server.board_manager.get_board(value).board_description
         cache.set('board_description.' + value, board_description, 600)
     return board_description
+
+@register.filter(name='truncatechars')
+def do_truncatechars(value, arg):
+    length = None
+    if isinstance(arg, str) or isinstance(arg, unicode):
+        length = int(arg)
+    if not isinstance(length, int):
+        return value # die silently
+    if isinstance(value, str):
+        value = unicode(value, 'utf-8') # XXX: use settings.DEFAULT_CHARSET
+    if not isinstance(value, unicode):
+        return value # die silently
+
+    lensum = 0
+    for i in range(len(value)):
+        if u'가' < value[i] < u'힣':
+            lensum += 2
+        elif u'ㄱ' < value[i] < u'ㅎ':
+            lensum += 2
+        elif u'ㅏ'< value[i] < u'ㅣ':
+            lensum += 2
+        else:
+            lensum += 1
+        if lensum > length:
+            break
+    if i==len(value)-1:
+        pass
+    else:
+        value = value[:i] + '...'
+    return value

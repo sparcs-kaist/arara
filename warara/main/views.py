@@ -33,13 +33,6 @@ def main(request):
         for item in ret:
             item.date = datetime.datetime.fromtimestamp(item.date)
         cache.set('todays_best_list', ret, 60)
-    for i, tb in enumerate(ret):
-        if i==0:
-            continue
-        title = tb.title.decode('utf-8').encode('cp949', 'ignore')
-        if len(title) > max_length:
-            title = title[0:max_length] + "...".encode('cp949')
-        ret[i].title = title.decode('cp949', 'ignore').encode('utf-8')
     r['todays_best_list'] = enumerate(ret)
     ret = cache.get('weekly_best_list')
     if not ret:
@@ -47,14 +40,6 @@ def main(request):
         for item in ret:
             item.date = datetime.datetime.fromtimestamp(item.date)
         cache.set('weekly_best_list', ret, 60)
-    for i, tb in enumerate(ret):
-        if i==0:
-            continue
-
-        title = tb.title.decode('utf-8').encode('cp949', 'ignore')
-        if len(title) > max_length:
-            title = title[0:max_length] + "...".encode('cp949')
-        ret[i].title = title.decode('cp949', 'ignore').encode('utf-8')
     r['weekly_best_list'] = enumerate(ret)
 
     #message_check
