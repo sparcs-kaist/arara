@@ -6,6 +6,7 @@ import logging
 
 from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy import and_, or_, not_
+from sqlalchemy.orm import eagerload
 from arara import model
 from arara.util import require_login, filter_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
@@ -524,15 +525,13 @@ class ArticleManager(object):
         self._is_board_exist(board_name)
         
         session = model.Session()
-        board = session.query(model.Board).filter_by(board_name=board_name)
-        user = session.query(model.User).filter_by(username=user_info.username).one()
         blacklist_dict_list = get_server().blacklist_manager.list_(session_key)
         blacklist_users = set()
         for blacklist_item in blacklist_dict_list:
             if blacklist_item.block_article:
                 blacklist_users.add(blacklist_item.blacklisted_user_username)
         try:
-            article = session.query(model.Article).filter_by(id=no).one()
+            article = session.query(model.Article).options(eagerload('children')).filter_by(id=no).one()
             msg = get_server().read_status_manager.check_stat(session_key, no)
             if msg == 'N':
                 article.hit += 1
