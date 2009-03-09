@@ -350,6 +350,7 @@ mapper(Article, articles_table, properties={
     'author':relation(User, backref='articles', lazy=False),
     'board':relation(Board, backref='articles', lazy=True),
     'children':relation(Article,
+        join_depth=3,
         primaryjoin=articles_table.c.parent_id==articles_table.c.id,
         backref=backref('parent', lazy=True,
             remote_side=[articles_table.c.id],
