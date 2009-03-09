@@ -554,7 +554,7 @@ class MemberManager(object):
         username = smart_unicode(username)
         session = model.Session()
         try:
-            query_user = session.query(model.User).filter_by(username=query_username).one()
+            query_user = session.query(model.User).filter_by(username=username).one()
             query_user_dict = filter_dict(query_user.__dict__, USER_QUERY_WHITELIST)
             if query_user_dict['last_logout_time']:
                 query_user_dict['last_logout_time'] = datetime2timestamp(
@@ -565,7 +565,7 @@ class MemberManager(object):
             return PublicUserInformation(**query_user_dict)
         except InvalidRequestError:
             session.close()
-            raise InvalidOperation('query id does not exist')
+            raise InvalidOperation('Query username does not exist')
 
     @require_login
     @log_method_call
