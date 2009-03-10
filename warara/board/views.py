@@ -26,7 +26,12 @@ def get_article_list(request, r, mode):
     sess, _ = warara.check_logged_in(request)
     
     page_no = request.GET.get('page_no', 1)
-    r['page_no'] = int(page_no)
+    try:
+        # Some crawlbot access to /?page_no= (missing page number)
+        # So we have to handle such case ...
+        r['page_no'] = int(page_no)
+    except Exception:
+        raise InvalidOperation("Wrong Pagenumber")
     if not r.get('selected_method_list', 0):
         r['selected_method_list'] = ['title', 'content', 'author_nickname', 'author_username']
         r['search_method_list'] = [{'val':'title', 'text':'title'}, {'val':'content', 'text':'content'},
