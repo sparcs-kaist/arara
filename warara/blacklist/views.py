@@ -19,6 +19,9 @@ def add(request):
         server = arara.get_server()
         sess, r = warara.check_logged_in(request)
         id_converting = server.member_manager.search_user(sess, blacklist_id, "") 
+        if len(id_converting) == 0:
+            # XXX combacsa's 땜빵.
+            raise InvalidOperation("ID not exist!")
         converted_id =  id_converting[0].username
         server.blacklist_manager.add(sess, converted_id, True, True) 
         if request.POST.get('ajax', 0):
