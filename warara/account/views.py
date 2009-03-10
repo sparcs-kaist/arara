@@ -245,5 +245,4 @@ def mail_resend(request):
         new_email = request.POST['email']
         message = server.member_manager.modify_authentication_email(username, new_email)
         return HttpResponseRedirect("/main/")
-    # XXX : Don't we have to eliminate line below?
-    assert None, "INTERNAL_SERVER_ERROR"
+    raise InvalidOperation("Request must pass through POST")
