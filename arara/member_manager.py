@@ -512,8 +512,11 @@ class MemberManager(object):
         '''
         session = model.Session()
         if new_email:
+            user_with_email = session.query(model.User).filter_by(email=new_email).all()
+            if user_with_email:
+                user_with_email = user_with_email[0]
+                raise InvalidOperation(u'Other user(username:%s) already uses %s!' % (user_with_email.username, new_email))
             try:
-
                 user = session.query(model.User).filter_by(username=username).one()
                 user_activation = session.query(model.UserActivation).filter_by(user=user).one()
                 activation_code = user_activation.activation_code
@@ -619,7 +622,6 @@ class MemberManager(object):
             1. 성공시: True, 'OK'
             2. 실패시: InvalidOperation('NOT_LOGGEDIN'
         '''
-
         raise InvalidOperation('Not Allowed Right Now')
         session = model.Session()
         username = get_server().login_manager.get_session(session_key).username

@@ -161,7 +161,9 @@ service MemberManager {
                                         2:string username)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void remove_user(1:string session_key),
+    void remove_user(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     list<SearchUserResult> search_user(1:string session_key,
                                  2:string search_user,
                                  3:string search_key="")

@@ -6,14 +6,13 @@ from arara.util import timestamp2datetime
 
 import arara
 import warara
-from warara import AlreadyLoggedIn
 
 @warara.wrap_error
 def register(request):
     sess, r = warara.check_logged_in(request)
     server = arara.get_server()
     if r['logged_in'] == True:
-        raise AlreadyLoggedIn("")
+        raise InvalidOperation("Already logged in!")
 
     if request.method == 'POST':
         username = request.POST['id']
@@ -54,7 +53,7 @@ def reconfirm_user(request, username):
 def agreement(request):
     sess, r = warara.check_logged_in(request)
     if r['logged_in'] == True:
-        raise AlreadyLoggedIn("")
+        raise InvalidOperation("Already logged in!")
     else:
         rendered = render_to_string('account/register_agreement.html')
 
@@ -235,14 +234,14 @@ def email_check(request):
 @warara.wrap_error
 def mail_resend(request):
     # XXX : Combacsa modified this code... might not work well...
+    # XXX : pipoket also modified this code :)
     sess, r = warara.check_logged_in(request)
     server = arara.get_server()
     if r['logged_in'] == True:
-        raise AlreadyLoggedIn("")
+        raise InvalidOperation("Already logged in!")
 
     if request.method == 'POST':
         username  = request.POST['id']
         new_email = request.POST['email']
         message = server.member_manager.modify_authentication_email(username, new_email)
         return HttpResponseRedirect("/main/")
-    raise InvalidOperation("Request must pass through POST")

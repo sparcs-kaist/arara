@@ -42,6 +42,7 @@ def do_truncatechars(value, arg):
         return value # die silently
 
     lensum = 0
+    i = 0
     for i in range(len(value)):
         if u'가' < value[i] < u'힣':
             lensum += 2
