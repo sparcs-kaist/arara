@@ -160,6 +160,8 @@ def password_modify(request):
         server.member_manager.modify_password(session_key, UserPasswordInfo(**user_information_dic))
         return HttpResponseRedirect("/account/")
     else:
+        if r['logged_in'] == False:
+            raise NotLoggedIn("")
         rendered = render_to_string('account/myacc_pw_modify.html', r)
         return HttpResponse(rendered)
 
