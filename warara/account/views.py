@@ -151,39 +151,30 @@ def account_modify(request):
 @warara.wrap_error
 def password_modify(request):
     session_key, r = warara.check_logged_in(request)
-    if r['logged_in'] == True:
-        server = arara.get_server()
-        if request.method == 'POST':
-            username = request.session['arara_username']
-            last_password = request.POST['last_password']
-            password = request.POST['password']
-            user_information_dic = {'username':username, 'current_password':last_password, 'new_password':password}
-            server.member_manager.modify_password(session_key, UserPasswordInfo(**user_information_dic))
-            return HttpResponseRedirect("/account/")
-        else:
-            rendered = render_to_string('account/myacc_pw_modify.html', r)
-            return HttpResponse(rendered)
-
+    server = arara.get_server()
+    if request.method == 'POST':
+        username = request.session['arara_username']
+        last_password = request.POST['last_password']
+        password = request.POST['password']
+        user_information_dic = {'username':username, 'current_password':last_password, 'new_password':password}
+        server.member_manager.modify_password(session_key, UserPasswordInfo(**user_information_dic))
+        return HttpResponseRedirect("/account/")
     else:
-        assert None, "NOT_LOGGED_IN"
+        rendered = render_to_string('account/myacc_pw_modify.html', r)
+        return HttpResponse(rendered)
 
 @warara.wrap_error
 def account_remove(request):
     session_key, r = warara.check_logged_in(request)
-    if r['logged_in'] == True:
-        server = arara.get_server()
-        if request.method == 'POST':
-            server.member_manager.remove_user(session_key)
-            return HttpResponseRedirect("/")
-        else:
-            account = server.member_manager.get_info(session_key)
-            account.logged_in = True
-            rendered = render_to_string('account/myaccount_remove.html', account.__dict__)
-            return HttpResponse(rendered)
+    server = arara.get_server()
+    if request.method == 'POST':
+        server.member_manager.remove_user(session_key)
+        return HttpResponseRedirect("/")
     else:
-        assert None, "NOT_LOGGED_IN"
+        account = server.member_manager.get_info(session_key)
+        account.logged_in = True
+        rendered = render_to_string('account/myaccount_remove.html', account.__dict__)
         return HttpResponse(rendered)
-
 
 def id_check(request):
     if request.method == 'POST':
@@ -244,12 +235,12 @@ def mail_resend(request):
     sess, r = warara.check_logged_in(request)
     server = arara.get_server()
     if r['logged_in'] == True:
-        assert None, "ALEADY_LOGGED_IN"
+        raise AlreadyLoggedIn("")
 
     if request.method == 'POST':
         username  = request.POST['id']
         new_email = request.POST['email']
         message = server.member_manager.modify_authentication_email(username, new_email)
         return HttpResponseRedirect("/main/")
-
+    # XXX : Don't we have to eliminate line below?
     assert None, "INTERNAL_SERVER_ERROR"
