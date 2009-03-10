@@ -67,7 +67,10 @@ def inbox(request):
     page_length = request.GET.get('page_length', 10)
     page_length = int(page_length)
     try:
+        # XXX combacsa: Why use try - except?
         r['message_result'] = server.messaging_manager.receive_list(sess, page, page_length)
+    except NotLoggedIn:
+        raise NotLoggedIn()
     except Exception:
         page = int(page)
         while page>0:
@@ -77,7 +80,7 @@ def inbox(request):
             except Exception:
                 page -= 1
         if page <= 0:
-            assert None, "Unknown Error"
+            raise InvalidOperation("No nonpositive page in Message")
     if 'message_result' in r:
         for message in r['message_result'].hit:
             message.sent_time = datetime.datetime.fromtimestamp(message.sent_time)
@@ -93,6 +96,7 @@ def inbox(request):
 
 @warara.wrap_error
 def outbox(request):
+    # XXX Combacsa: What about merging inbox & outbox alltogether?
     server = arara.get_server()
     r = {}
     sess, _ = warara.check_logged_in(request)
@@ -106,6 +110,8 @@ def outbox(request):
     page_length = int(page_length)
     try:
         r['message_result'] = server.messaging_manager.sent_list(sess, page, page_length)
+    except NotLoggedIn:
+        raise NotLoggedIn()
     except Exception:
         page = int(page)
         while page>0:
