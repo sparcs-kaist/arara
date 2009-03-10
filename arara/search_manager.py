@@ -274,12 +274,22 @@ class SearchManager(object):
 
         # Now we have all the root id we need. Query them!
         condition = None
-        for one_id in root_num:
-            if condition:
-                condition = or_(condition, model.Article.id == one_id)
-            else:
-                condition = model.Article.id == one_id
+        if root_num: # If there is any element in the root_num set make condition
+            for one_id in root_num:
+                if condition:
+                    condition = or_(condition, model.Article.id == one_id)
+                else:
+                    condition = (model.Article.id == one_id)
+        else: 
+            # If there is no element in the root_num set, make condition that doesn't exist
+            # Without this process, the condition would have None value so filter will be ignored
+            # That was the reason of showing all the articles if there is no articles matches with query.
+            condition = (model.Article.id == -1)
 
+        # I think previous query is not necessary. Why don't we reset "query"?
+        query = None
+
+        # Okay, I think everthing is prepared. Let's query the final result!
         query = session.query(model.Article).filter(condition)
         article_count = query.count()
         last_page = int(article_count / page_length)
