@@ -232,6 +232,7 @@ def email_check(request):
     else:
         return HttpResponse('Must use POST')
 
+@warara.wrap_error
 def mail_resend(request):
     # XXX : Combacsa modified this code... might not work well...
     sess, r = warara.check_logged_in(request)
