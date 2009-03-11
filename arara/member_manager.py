@@ -515,7 +515,8 @@ class MemberManager(object):
             user_with_email = session.query(model.User).filter_by(email=new_email).all()
             if user_with_email:
                 user_with_email = user_with_email[0]
-                raise InvalidOperation(u'Other user(username:%s) already uses %s!' % (user_with_email.username, new_email))
+                if user_with_email.username != username: # To allow send email to him/her again
+                    raise InvalidOperation(u'Other user(username:%s) already uses %s!' % (user_with_email.username, new_email))
             try:
                 user = session.query(model.User).filter_by(username=username).one()
                 user_activation = session.query(model.UserActivation).filter_by(user=user).one()
