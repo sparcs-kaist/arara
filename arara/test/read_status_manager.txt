@@ -4,6 +4,8 @@
 >>> import arara.model
 >>> arara.model.init_test_database()
 >>> import arara
+>>> import arara.server
+>>> arara.server.server = arara.get_namespace()
 >>> server = arara.get_namespace()
 
 # Login as SYSOP and create 'garbage' board

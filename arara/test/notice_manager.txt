@@ -3,6 +3,8 @@
 
 >>> import arara
 >>> from arara_thrift.ttypes import *
+>>> import arara.server
+>>> arara.server.server = arara.get_namespace()
 >>> server = arara.get_namespace()
 
 >>> server.member_manager.is_registered(u'SYSOP')

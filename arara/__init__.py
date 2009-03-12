@@ -22,7 +22,7 @@ import arara_thrift.SearchManager
 import arara_thrift.FileManager
 
 from arara import settings
-from arara.server import *
+from arara.server import get_server
 
 MAPPING = [(LoginManager, arara_thrift.LoginManager),
            (MemberManager, arara_thrift.MemberManager),

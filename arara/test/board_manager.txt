@@ -3,6 +3,8 @@
 >>> import arara.model
 >>> arara.model.init_test_database()
 >>> import arara
+>>> import arara.server
+>>> arara.server.server = arara.get_namespace()
 >>> server = arara.get_namespace()
 
 # Register one user, mikkang

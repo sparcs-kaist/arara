@@ -1,7 +1,10 @@
+#
 >>> from arara_thrift.ttypes import *
 >>> import arara.model
 >>> arara.model.init_test_database()
 >>> import arara
+>>> import arara.server
+>>> arara.server.server = arara.get_namespace()
 >>> server = arara.get_namespace()
 
 Register one user, combacsa. then login as existing user mikkang
@@ -44,7 +47,7 @@ mikkang
 >>> print member.widget
 0
 >>> print member.layout
-<BLANKLINE>
+0
 >>> user_password_dic = {'username':u'mikkang', 'current_password':u'mikkang', 'new_password':u'ggingkkang'}
 >>> server.member_manager.modify_password(session_key, UserPasswordInfo(**user_password_dic))
 >>> user_password_dic = {'username':u'mikkang', 'current_password':u'ggingkkang', 'new_password':u'mikkang'}

@@ -211,6 +211,7 @@ class LoginManager(object):
         ret = []
         if self.session_dic.has_key(session_key):
             for user_info in self.session_dic.values():
+                del user_info["last_action_time"]
                 ret.append(Session(**user_info))
             return ret
         else:
