@@ -1,4 +1,23 @@
 $(document).ready(function(){
+    // XXX(serialx): Too many quirks to be useful
+    //$(".article_reply textarea").resizable({handles: 's', grid: [50, 50]});
+    //$(".article_reply .ui-wrapper").css('height', '');
+    //$(".article_reply .ui-wrapper").css('width', '');
+
+
+    // Dynamically resize the reply textarea
+    var resize = function() {
+        var size = this.scrollHeight;
+        var minheight = 100;
+        var maxheight = 500;
+        if (size > minheight && size < maxheight)
+            $(this).height(size);
+        if (size > maxheight)
+            $(this).height(maxheight);
+    }
+
+    $(".article_reply textarea").change(resize).keyup(resize);
+
     $(".article_reply").hide();
     $(".article_reply_show").click(function(event) {
         $(this).parent().parent().children(".article_reply").toggle("fast");

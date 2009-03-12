@@ -154,7 +154,7 @@ div.article_reply {
 .article_reply textarea {
     font-size: small;
     border: 1px solid #666;
-    height: 10em;
+    height: 150px;
     width: 92%;
     overflow-x: hidden;
     overflow-y: auto;
