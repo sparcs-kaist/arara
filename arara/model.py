@@ -3,6 +3,8 @@ import datetime
 import crypt
 import time
 import md5
+import string
+import random
 
 from sqlalchemy import *
 from sqlalchemy.orm import *
@@ -12,6 +14,8 @@ def smart_unicode(string):
         return unicode(string, 'UTF-8', 'replace')
     else:
         return unicode(string)
+
+SALT_SET = string.lowercase + string.uppercase + string.digits + './'
 
 class User(object):
     def __init__(self, username, password, nickname, email, signature,
@@ -47,8 +51,7 @@ class User(object):
         return pw
 
     def crypt_password(self, raw_password):
-        import random
-        salt = chr(random.randrange(64, 126)) + chr(random.randrange(64, 126))
+        salt = ''.join(random.sample(SALT_SET, 2))
         return self.encrypt_password(raw_password, salt)
 
     def set_password(self, password):
