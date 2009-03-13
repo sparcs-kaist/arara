@@ -242,22 +242,16 @@ $(document).ready(function(){
     });
 
     //login error check
-    /*$("#login_box input[type='submit']").click(function(event){
+    $("#login_box input[type='submit']").click(function(event){
             var login_username = $("#login_box input[name='username']").val();
             var login_password = $("#login_box input[name='password']").val();
             $.post("/account/login/", {username:login_username, password:login_password, precheck:1}
                 , function(data){
-                /*if(data == "WRONG_USERNAME"){
+                if(data == "wrong username"){
                 alert("Id doesn't exist");
                 }
                 else if(data == "wrong password"){
                 alert("Enter the correct password");
-                }
-                else if(data == "not activated"){
-                alert("Please check your E-mail");
-                }
-                else if(data == "LOGIN_FAILED"){
-                alert("dataafjewiofjaweiofj");
                 }
                 else{
                 document.login.submit();
@@ -265,7 +259,7 @@ $(document).ready(function(){
                 });
             event.preventDefault();
             });
-    */
+    
 	//logout function
     function logout(){
 			$.get("/account/logout", function(data){

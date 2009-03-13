@@ -72,7 +72,7 @@ def login(request):
             session_key = server.login_manager.login(username, password, client_ip)
         except InvalidOperation, e:
             if request.POST.get('precheck', 0):
-                return HttpResponse(e)
+                return HttpResponse(e.why)
             else:
                 #XXX: (pipoket) Ugly hack for showing nickname while not logged in.
                 # print e.why
