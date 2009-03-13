@@ -8,6 +8,7 @@ import math
 import warara
 import datetime
 
+from arara_thrift.ttypes import *
 
 def get_various_info(request, r):
     server = arara.get_server()
