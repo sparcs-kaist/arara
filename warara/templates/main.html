@@ -24,11 +24,11 @@
 		</div>
 		<br /><br />
 		<li>{% if logged_in %}<a href="/board/{{todays_best.board_name}}/{{todays_best.id}}/">{{todays_best.title|truncatechars:"45"}}</a>{% else %}{{todays_best.title|truncatechars:"45"}}{% endif %}</li>
-		<img src="/media/image/base/index/raw_ara_w_main_best_number_0.png" alt="1" class="best_article_number_first iepngfix">
+		<img src="/media/image/base/index/raw_ara_w_main_best_number_0.png" alt="1" class="best_article_number_first iepngfix" />
 	    </ul>
 	    {% else %}
 	    <dl class="best_articles_content">	
-	    <img src="/media/image/base/index/raw_ara_w_main_best_number_{{no}}.png" alt="{{no|add:"1"}}" class="best_article_number iepngfix">
+	    <img src="/media/image/base/index/raw_ara_w_main_best_number_{{no}}.png" alt="{{no|add:"1"}}" class="best_article_number iepngfix" />
             <dt>{% if logged_in %}<a href="/board/{{todays_best.board_name}}/{{todays_best.id}}/">{{todays_best.title|truncatechars:"45"}}</a>{% else %}{{todays_best.title|truncatechars:"45"}}{% endif %}</dt>
 		<dd>{% trans "vote" %} {{todays_best.vote}} | {{todays_best.date|date:"m.d H:i"}}</dd>
 	    </dl>
@@ -50,11 +50,11 @@
 		</div>
 		<br /><br />
 		<li>{% if logged_in %}<a href="/board/{{weekly_best.board_name}}/{{weekly_best.id}}/">{{weekly_best.title}}</a>{% else %}{{weekly_best.title}}{% endif %}</li>
-	    	<img src="/media/image/base/week_best_number_0.png" alt="1" class="best_article_number_first iepngfix">
+	    	<img src="/media/image/base/week_best_number_0.png" alt="1" class="best_article_number_first iepngfix" />
 	    </ul>
 	    {% else %}
 	    <dl class="best_articles_content">	
-	    <img src="/media/image/base/week_best_number_{{no}}.png" alt="{{no|add:"1"}}" class="best_article_number iepngfix">
+	    <img src="/media/image/base/week_best_number_{{no}}.png" alt="{{no|add:"1"}}" class="best_article_number iepngfix" />
 		<dt>{% if logged_in %}<a href="/board/{{weekly_best.board_name}}/{{weekly_best.id}}/">{{weekly_best.title}}</a>{% else %}{{weekly_best.title|truncatechars:"10"}}{% endif %}</dt>
 		<dd>{% trans "vote" %} {{weekly_best.vote}} | {{weekly_best.date|date:"m.d H:i"}}</dd>
 	    </dl>
@@ -67,7 +67,7 @@
     <div id="weekly_best_table" class="best_articles_table">
         <div class="best_articles_caption">{% trans "Banner"%}</div>
 	<div class="best_articles_content_margin">
-	    <img src="/media/image/banner_1.png" alt="banner">
+	    <img src="/media/image/banner_1.png" alt="banner" />
 	</div>
     </div>
 </div>
