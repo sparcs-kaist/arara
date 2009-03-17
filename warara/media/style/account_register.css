@@ -3,6 +3,7 @@
     float: left;
     margin: 0.8em 0 0 0.8em;
     _display: inline;
+    _width: 98%;
 }
 
 #account_information_content {
