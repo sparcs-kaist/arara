@@ -201,6 +201,9 @@ def read(request, board_name, article_id):
             article_list[i].depth = 12
         article_list[i].depth_list = [x+1 for x in range(article_list[i].depth-2)]
 
+        # Finally, render the content using content renderer
+        article_list[i].content = render_content(article_list[i].content)
+
     r['board_name'] = board_name
     username = request.session['arara_username']
     r['article_id'] = article_id
@@ -305,3 +308,20 @@ def file_download(request, board_name, article_root_id, article_id, file_id):
     response = HttpResponse(file_ob, mimetype="application/x-forcedownload")
     response['Content-Disposition'] = "attachment; filename=" + unicode(file.real_filename).encode('euc-kr')
     return response
+
+import re
+url_regex = re.compile(r"(?#Protocol)(?:(?:ht|f)tp(?:s?)\:\/\/|~/|/)?(?#Username:Password)(?:\w+:\w+@)?(?#Subdomains)(?:(?:[-\w]+\.)+(?#TopLevel Domains)(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum|travel|[a-z]{2}))(?#Port)(?::[\d]{1,5})?(?#Directories)(?:(?:(?:/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|/)+|\?|#)?(?#Query)(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)*)*(?#Anchor)(?:#(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)?[ ]*")
+
+def render_content(content):
+    # Escaping all Tag-like characters
+    content = content.replace(u"<", u"&lt;").replace(u">", u"&gt;")
+
+    # Detecting urls and decorate it using <a href= ...> </a> tag
+    urls_set = set(url_regex.findall(content))
+    for url in urls_set:
+        tagged_url = u'<a href="' + url + '">' + url + u'</a>'
+        content = content.replace(url, tagged_url)
+
+    print content
+
+    return content

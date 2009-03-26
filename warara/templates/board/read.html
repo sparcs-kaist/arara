@@ -48,7 +48,7 @@
             {% for image in article.image %}
             {{image|safe}}
             {% endfor %}
-            {{article.content|striptags|linebreaks}}
+            {{article.content|safe|linebreaksbr}}
             {% else %}
             {% trans "BLACKLISTED" %}
             {% endif %}
