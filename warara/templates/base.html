@@ -56,12 +56,13 @@
 		    {% load arara_tags %}
 		    <h1><a href="/main/"><img class="iepngfix" src="/media/image/base/header/raw_ara_w_main_header_webara_title.png" alt="아라" /></a></h1>
 		    <img src="/media/image/beta.png" id="beta_png" alt="beta" class="iepngfix" /> 
-		    <form id="ksearch" action="http://ksearch.sparcs.org" method="get">
+		    <form id="ksearch" action="http://ksearch.sparcs.org/search" method="get">
 			<div id="ksearch_bg_bottom">
 			    <div id="ksearch_logo" class="iepngfix"></div>
 			    <div class="ksearch">
-				<input type="text" class="q" id="q" name="ksearch" />
-				<input type="image" class="ksearch_submit" name="ksearch_submit" src="/media/image/base/ksearch/ksearch_btn.png" />
+				<input type="text" class="q" id="q" name="q" />
+				<input type="hidden" class="realm" id="realm" name="realm" value="arara" />
+				<input type="image" class="ksearch_submit" src="/media/image/base/ksearch/ksearch_btn.png" />
 			    </div>
 			</div>
 		    </form>

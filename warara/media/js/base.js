@@ -208,12 +208,6 @@ $(document).ready(function(){
     //png fix
     //$(".iepngfix").pngfix();
 
-	//ksearch
-	$("input[name='ksearch_submit']").click(function(event){
-			window.open("http://ksearch.sparcs.org/search?q=" + $("input[name='ksearch']").val());
-			event.preventDefault();
-			});
-	
 	//로그인 안되있을때
 	$logged_in = 0
 	if($("a[name='top_menu_message']").hasClass("hidden")){
