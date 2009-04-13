@@ -309,19 +309,7 @@ def file_download(request, board_name, article_root_id, article_id, file_id):
     response['Content-Disposition'] = "attachment; filename=" + unicode(file.real_filename).encode('euc-kr')
     return response
 
-import re
-url_regex = re.compile(r"(?#Protocol)(?:(?:ht|f)tp(?:s?)\:\/\/|~/|/)?(?#Username:Password)(?:\w+:\w+@)?(?#Subdomains)(?:(?:[-\w]+\.)+(?#TopLevel Domains)(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum|travel|[a-z]{2}))(?#Port)(?::[\d]{1,5})?(?#Directories)(?:(?:(?:/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|/)+|\?|#)?(?#Query)(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)*)*(?#Anchor)(?:#(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)?[ ]*")
-
+# Using Django's default HTML handling util, escape all tags and urlize
+from django.utils import html
 def render_content(content):
-    # Escaping all Tag-like characters
-    content = content.replace(u"<", u"&lt;").replace(u">", u"&gt;")
-
-    # Detecting urls and decorate it using <a href= ...> </a> tag
-    urls_set = set(url_regex.findall(content))
-    for url in urls_set:
-        tagged_url = u'<a href="' + url + '">' + url + u'</a>'
-        content = content.replace(url, tagged_url)
-
-    print content
-
-    return content
+    return html.urlize(html.escape(content))
