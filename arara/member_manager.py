@@ -21,6 +21,9 @@ from arara.settings import *
 log_method_call = log_method_call_with_source('member_manager')
 log_method_call_important = log_method_call_with_source_important('member_manager')
 
+import re
+PROPER_USERNAME_REGEX = re.compile(r'^[a-zA-Z0-9_\-\.]+$')
+
 class NoPermission(Exception):
     pass
 
@@ -142,8 +145,11 @@ class MemberManager(object):
         @return: 사용자 인증코드
         '''
 
+        # Check if username is proper
         if user_reg_info.username.lower() == SYSOP_REG_DIC['username'].lower():
             raise InvalidOperation('permission denied')
+        if not PROPER_USERNAME_REGEX.match(user_reg_info.username):
+            raise InvalidOperation('username not permitted')
 
         key = (user_reg_info.username +
             user_reg_info.password + user_reg_info.nickname)
