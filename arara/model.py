@@ -41,7 +41,14 @@ class User(object):
         pw = crypt.crypt(raw_password, salt)
         asc1 = pw[1:2]
         asc2 = pw[3:4]
-        i = ord(asc1) + ord(asc2)
+
+        # XXX (combacsa): Temporary fix for strange pw values.
+        #                 Don't know why "TypeError" occurs.
+        i = ord('0') + ord('0')
+        try:
+            i = ord(asc1) + ord(asc2)
+        except TypeError:
+            pass
         while True:
            pw = crypt.crypt(pw, pw)
            i += 1
