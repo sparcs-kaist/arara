@@ -41,7 +41,7 @@
 # Read the article
 
 >>> server.article_manager.read(session_key, u'garbages', 1)
-[Article(board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'polarbear', vote=0, depth=1, reply_count=None, last_modified_date=1.1000000000000001, date=1.1000000000000001, type=None, id=1)]
+[Article(attach=None, board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'polarbear', vote=0, depth=1, reply_count=None, last_modified_date=1.1000000000000001, date=1.1000000000000001, type=None, id=1)]
 
 >>> article_id = 1
 >>> server.file_manager.save_file(session_key, article_id , u'hahahah.jpg')

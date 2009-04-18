@@ -55,21 +55,21 @@ MessageList(last_page=1, hit=[], results=0, new_message_count=0)
 MessageList(last_page=1, hit=[], results=0, new_message_count=0)
 
 >>> server.messaging_manager.receive_list(mikkang_session_key)
-MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=1, new_message_count=1)
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=1, new_message_count=1)
 
 >>> server.messaging_manager.sent_list(mikkang_session_key)
 MessageList(last_page=1, hit=[], results=0, new_message_count=0)
 
 >>> server.messaging_manager.send_message(serialx_session_key, u'mikkang', u'hello2')
 >>> server.messaging_manager.receive_list(mikkang_session_key)
-MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=2)
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=2)
 
 # now add serialx to blacklist to check blacklist function
 >>> server.blacklist_manager.add(mikkang_session_key, u'serialx')
 
 # check blacklist function
 >>> server.messaging_manager.receive_list(mikkang_session_key)
-MessageList(last_page=1, hit=[Message(blacklisted=True, sent_time=31536001.100000001, read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=True, sent_time=31536001.100000001, read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=2)
+MessageList(last_page=1, hit=[Message(blacklisted=True, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=True, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=2)
 
 # now change blacklist status of serialx (block article only)
 >>> req = {'blacklisted_user_username': u'serialx', 'block_article': True, 'block_message': False}
@@ -77,7 +77,7 @@ MessageList(last_page=1, hit=[Message(blacklisted=True, sent_time=31536001.10000
 
 # check whether message is blocked or not. at this time, nothing should be blocked.
 >>> server.messaging_manager.receive_list(mikkang_session_key)
-MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=2)
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=2)
 
 # now change blacklist status of serialx again (block message only)
 >>> req = {'blacklisted_user_username': u'serialx', 'block_article': False, 'block_message': True}
@@ -85,26 +85,26 @@ MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.1000
 
 # check whether message is blocked or not. now, it should be blocked.
 >>> server.messaging_manager.receive_list(mikkang_session_key)
-MessageList(last_page=1, hit=[Message(blacklisted=True, sent_time=31536001.100000001, read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=True, sent_time=31536001.100000001, read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=2)
+MessageList(last_page=1, hit=[Message(blacklisted=True, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=True, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=2)
 
 # because it's too poor to keep serialx rot in blacklist, delete serialx from_ blacklist
 >>> server.blacklist_manager.delete_(mikkang_session_key, u'serialx')
 
 # re-receive list to check blacklist function
 >>> server.messaging_manager.receive_list(mikkang_session_key)
-MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=2)
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=2)
 
 >>> server.messaging_manager.sent_list(serialx_session_key)
-MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=0)
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=0)
 
 >>> server.messaging_manager.sent_list(mikkang_session_key)
 MessageList(last_page=1, hit=[], results=0, new_message_count=0)
 
 >>> server.messaging_manager.read_received_message(mikkang_session_key, 1)
-Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')
+Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'N', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')
 
 >>> server.messaging_manager.read_received_message(mikkang_session_key, 2)
-Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2')
+Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'N', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2')
 
 Test Delete Function
 
@@ -116,29 +116,29 @@ Traceback (most recent call last):
 InvalidOperation
 
 >>> server.messaging_manager.receive_list(mikkang_session_key)
-MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'R', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=1, new_message_count=0)
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'R', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=1, new_message_count=0)
 
 >>> server.messaging_manager.sent_list(serialx_session_key)
-MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'R', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'R', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=0)
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'R', id=2, to=u'mikkang', from_=u'serialx', message=u'hello2'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'R', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=0)
 
 >>> server.messaging_manager.delete_sent_message(serialx_session_key, 2)
 >>> server.messaging_manager.sent_list(serialx_session_key)
-MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'R', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=1, new_message_count=0)
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'R', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=1, new_message_count=0)
 
 >>> server.messaging_manager.receive_list(mikkang_session_key)
-MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'R', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=1, new_message_count=0)
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'R', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=1, new_message_count=0)
 
 # Test for a lot of message
 >>> for i in range(100):
 ...	server.messaging_manager.send_message(mikkang_session_key, u'serialx', unicode(i))
 
 >>> server.messaging_manager.read_received_message(serialx_session_key, 92)
-Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=92, to=u'serialx', from_=u'mikkang', message=u'90')
+Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=92, to=u'serialx', from_=u'mikkang', message=u'90')
 
 >>> server.messaging_manager.receive_list(serialx_session_key, 1, 10)
-MessageList(last_page=10, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=101, to=u'serialx', from_=u'mikkang', message=u'99'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=100, to=u'serialx', from_=u'mikkang', message=u'98'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=99, to=u'serialx', from_=u'mikkang', message=u'97'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=98, to=u'serialx', from_=u'mikkang', message=u'96'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=97, to=u'serialx', from_=u'mikkang', message=u'95'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=96, to=u'serialx', from_=u'mikkang', message=u'94'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=95, to=u'serialx', from_=u'mikkang', message=u'93'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=94, to=u'serialx', from_=u'mikkang', message=u'92'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=93, to=u'serialx', from_=u'mikkang', message=u'91'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'R', id=92, to=u'serialx', from_=u'mikkang', message=u'90')], results=100, new_message_count=99)
+MessageList(last_page=10, hit=[Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=101, to=u'serialx', from_=u'mikkang', message=u'99'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=100, to=u'serialx', from_=u'mikkang', message=u'98'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=99, to=u'serialx', from_=u'mikkang', message=u'97'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=98, to=u'serialx', from_=u'mikkang', message=u'96'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=97, to=u'serialx', from_=u'mikkang', message=u'95'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=96, to=u'serialx', from_=u'mikkang', message=u'94'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=95, to=u'serialx', from_=u'mikkang', message=u'93'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=94, to=u'serialx', from_=u'mikkang', message=u'92'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=93, to=u'serialx', from_=u'mikkang', message=u'91'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'R', id=92, to=u'serialx', from_=u'mikkang', message=u'90')], results=100, new_message_count=99)
 >>> server.messaging_manager.receive_list(serialx_session_key, 10, 10)
-MessageList(last_page=10, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=11, to=u'serialx', from_=u'mikkang', message=u'9'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=10, to=u'serialx', from_=u'mikkang', message=u'8'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=9, to=u'serialx', from_=u'mikkang', message=u'7'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=8, to=u'serialx', from_=u'mikkang', message=u'6'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=7, to=u'serialx', from_=u'mikkang', message=u'5'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=6, to=u'serialx', from_=u'mikkang', message=u'4'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=5, to=u'serialx', from_=u'mikkang', message=u'3'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=4, to=u'serialx', from_=u'mikkang', message=u'2'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=3, to=u'serialx', from_=u'mikkang', message=u'1'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=2, to=u'serialx', from_=u'mikkang', message=u'0')], results=100, new_message_count=99)
+MessageList(last_page=10, hit=[Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=11, to=u'serialx', from_=u'mikkang', message=u'9'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=10, to=u'serialx', from_=u'mikkang', message=u'8'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=9, to=u'serialx', from_=u'mikkang', message=u'7'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=8, to=u'serialx', from_=u'mikkang', message=u'6'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=7, to=u'serialx', from_=u'mikkang', message=u'5'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=6, to=u'serialx', from_=u'mikkang', message=u'4'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=5, to=u'serialx', from_=u'mikkang', message=u'3'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=4, to=u'serialx', from_=u'mikkang', message=u'2'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=3, to=u'serialx', from_=u'mikkang', message=u'1'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'mikkang', read_status=u'N', id=2, to=u'serialx', from_=u'mikkang', message=u'0')], results=100, new_message_count=99)
 >>> server.messaging_manager.receive_list(serialx_session_key, 12, 10)
 Traceback (most recent call last):
     ...
@@ -147,10 +147,10 @@ InvalidOperation
 # Now Send message to myself and test delete
 >>> server.messaging_manager.send_message(serialx_session_key, u'serialx', u'send this to me')
 >>> server.messaging_manager.read_received_message(serialx_session_key, 102)
-Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=102, to=u'serialx', from_=u'serialx', message=u'send this to me')
+Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'serialx', read_status=u'N', id=102, to=u'serialx', from_=u'serialx', message=u'send this to me')
 
 >>> server.messaging_manager.sent_list(serialx_session_key)
-MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'R', id=102, to=u'serialx', from_=u'serialx', message=u'send this to me'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'R', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=0)
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'serialx', from_nickname=u'serialx', read_status=u'R', id=102, to=u'serialx', from_=u'serialx', message=u'send this to me'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'R', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=2, new_message_count=0)
 >>> server.messaging_manager.delete_received_message(serialx_session_key, 102)
 >>> server.messaging_manager.read_received_message(serialx_session_key, 102)
 Traceback (most recent call last):
@@ -159,7 +159,7 @@ InvalidOperation
 
 >>> server.messaging_manager.delete_sent_message(serialx_session_key, 102)
 >>> server.messaging_manager.sent_list(serialx_session_key)
-MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'R', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=1, new_message_count=0)
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'mikkang', from_nickname=u'serialx', read_status=u'R', id=1, to=u'mikkang', from_=u'serialx', message=u'hello')], results=1, new_message_count=0)
 >>> server.messaging_manager.delete_received_message(serialx_session_key, 102)
 Traceback (most recent call last):
     ...
@@ -183,7 +183,7 @@ Register one user, dodo
 >>> server.messaging_manager.send_message_by_nickname(mikkang_session_key, u'dodo', u'hi dodo nickname test')
 
 >>> server.messaging_manager.receive_list(zzongaly_session_key)
-MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=103, to=u'zzongaly', from_=u'mikkang', message=u'hi dodo nickname test'), Message(blacklisted=False, sent_time=31536001.100000001, read_status=u'N', id=102, to=u'zzongaly', from_=u'mikkang', message=u'hi dodo username test')], results=2, new_message_count=2)
+MessageList(last_page=1, hit=[Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'dodo', from_nickname=u'mikkang', read_status=u'N', id=103, to=u'zzongaly', from_=u'mikkang', message=u'hi dodo nickname test'), Message(blacklisted=False, sent_time=31536001.100000001, to_nickname=u'dodo', from_nickname=u'mikkang', read_status=u'N', id=102, to=u'zzongaly', from_=u'mikkang', message=u'hi dodo username test')], results=2, new_message_count=2)
 
 # Test Errors
 

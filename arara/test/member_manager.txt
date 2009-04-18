@@ -89,7 +89,12 @@ Traceback (most recent call last):
   ...
 InvalidOperation
 
+# XXX(serialx): User remove temp. removed.
 >>> server.member_manager.remove_user(session_key)
+Traceback (most recent call last):
+  ...
+InvalidOperation
+
 
 >>> server.member_manager.is_sysop(session_key)
 False

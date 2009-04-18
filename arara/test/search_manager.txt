@@ -59,7 +59,7 @@
 # Read the article
 
 >>> server.article_manager.read(session_key, u'garbages', 1)
-[Article(board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'polarbear', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=1)]
+[Article(attach=None, board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'polarbear', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=1)]
 
 # Reply to the article
 
@@ -74,12 +74,12 @@ InvalidOperation
 # Read the article again
 
 >>> server.article_manager.read(session_key, u'garbages', 1)
-[Article(board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'polarbear', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=1), Article(board_name=None, author_username=u'mikkang', hit=0, blacklisted=False, title=u'dummy', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'asdf', vote=0, depth=2, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=2)]
+[Article(attach=None, board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'polarbear', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=1), Article(attach=None, board_name=None, author_username=u'mikkang', hit=0, blacklisted=False, title=u'dummy', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'asdf', vote=0, depth=2, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=2)]
 
 # List the article (should only be one article in the list
 
 >>> server.article_manager.article_list(session_key, u'garbages')
-ArticleList(last_page=1, hit=[Article(board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status='R', root_id=None, is_searchable=True, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=1, last_modified_date=31536001.100000001, date=31536001.100000001, type='normal', id=1)], results=1, current_page=None)
+ArticleList(last_page=1, hit=[Article(attach=None, board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'serialx is...', deleted=False, read_status='R', root_id=None, is_searchable=True, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=1, last_modified_date=31536001.100000001, date=31536001.100000001, type='normal', id=1)], results=1, current_page=None)
 
 # Test for pagination with mikkang session_key
 
