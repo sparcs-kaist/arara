@@ -20,8 +20,8 @@ def index(request):
     rendered = render_to_string('index.html', r.__dict__)
     return HttpResponse(rendered)
 
-@warara.cache_page(60)
 @warara.wrap_error
+@warara.cache_page(60)
 def main(request):
     server = arara.get_server() 
     sess, r = warara.check_logged_in(request)
