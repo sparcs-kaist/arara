@@ -17,6 +17,11 @@ nickname = set()
 
 LOGGING_FILENAME = 'conflicts.log'
 
+OLDARA_DBHOST = 'mir.sparcs.org'
+OLDARA_DBNAME = 'webara2g'
+OLDARA_USER   = 'pipoket'
+OLDARA_PASSWD = 'tnfqkrtm'
+
 engine = create_engine(settings.DB_CONNECTION_STRING, encoding='utf-8',
                     convert_unicode=True, assert_unicode=None,
                     pool_size=50, max_overflow=100, echo=False)
@@ -24,8 +29,8 @@ Session = sessionmaker(bind=engine, autoflush=True, transactional=True)
 # Check mysql first!
 try:
     file = open(LOGGING_FILENAME, 'w')
-    db = MySQLdb.connect(db='webara2g', user='pipoket', passwd='tnfqkrtm',
-           host='mir.sparcs.org', use_unicode=True, charset='utf8')
+    db = MySQLdb.connect(db=OLDARA_DBHOST, user=OLDARA_USER, passwd=OLDARA_PASSWD,
+           host=OLDARA_DBHOST, use_unicode=True, charset='utf8')
     cursor = db.cursor()
     cursor.execute("select * from users")
     count = cursor.rowcount
