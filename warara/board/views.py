@@ -306,7 +306,7 @@ def file_download(request, board_name, article_root_id, article_id, file_id):
     file_ob = open("%s/%s/%s" % (FILE_DIR, file.file_path, file.saved_filename))
 
     response = HttpResponse(file_ob, mimetype="application/x-forcedownload")
-    response['Content-Disposition'] = "attachment; filename=" + unicode(file.real_filename).encode('cp949')
+    response['Content-Disposition'] = "attachment; filename=" + unicode(file.real_filename).encode('cp949', 'replace')
     return response
 
 # Using Django's default HTML handling util, escape all tags and urlize
