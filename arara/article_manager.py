@@ -414,6 +414,37 @@ class ArticleManager(object):
             raise InternalError('DATABASE_ERROR')
 
 
+    def _get_blacklist_users(self, session_key):
+        try:
+            blacklist_dict_list = get_server().blacklist_manager.list_(session_key)
+        except NotLoggedIn:
+            blacklist_dict_list = []
+            pass
+        blacklist_users = set()
+        for blacklist_item in blacklist_dict_list:
+            if blacklist_item.block_article:
+                blacklist_users.add(blacklist_item.blacklisted_user_username)
+        return blacklist_users
+
+    def _get_article_list(self, session_key, board_name, page, page_length):
+        session = model.Session()
+        board = session.query(model.Board).filter_by(board_name=board_name).one()
+        article_count = session.query(model.Article).filter_by(board_id=board.id, root_id=None).count()
+        last_page = int(article_count / page_length)
+        if article_count % page_length != 0:
+            last_page += 1
+        elif article_count == 0:
+            last_page += 1
+        if page > last_page:
+            session.close()
+            raise InvalidOperation('WRONG_PAGENUM')
+        offset = page_length * (page - 1)
+        last = offset + page_length
+        article_list = session.query(model.Article).filter_by(board_id=board.id, root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
+        article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
+        session.close()
+        return article_dict_list, last_page, article_count
+
     @log_method_call
     def article_list(self, session_key, board_name, page=1, page_length=20):
         '''
@@ -437,32 +468,13 @@ class ArticleManager(object):
         '''
 
         try:
-            session = model.Session()
             self._is_board_exist(board_name)
-            try:
-                blacklist_dict_list = get_server().blacklist_manager.list_(session_key)
-            except NotLoggedIn:
-                blacklist_dict_list = []
-                pass
-            blacklist_users = set()
-            for blacklist_item in blacklist_dict_list:
-                if blacklist_item.block_article:
-                    blacklist_users.add(blacklist_item.blacklisted_user_username)
-            board = session.query(model.Board).filter_by(board_name=board_name).one()
-            article_count = session.query(model.Article).filter_by(board_id=board.id, root_id=None).count()
-            last_page = int(article_count / page_length)
-            if article_count % page_length != 0:
-                last_page += 1
-            elif article_count == 0:
-                last_page += 1
-            if page > last_page:
-                session.close()
-                raise InvalidOperation('WRONG_PAGENUM')
-            offset = page_length * (page - 1)
-            last = offset + page_length
-            article_list = session.query(model.Article).filter_by(board_id=board.id, root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
-            article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
+
+            blacklist_users = self._get_blacklist_users(session_key)
+
             article_id_list = []
+            article_dict_list, last_page, article_count = self._get_article_list(session_key, board_name, page, page_length)
+
             for article in article_dict_list:
                 if article['author_username'] in blacklist_users:
                     article['blacklisted'] = True
@@ -489,15 +501,12 @@ class ArticleManager(object):
             ret_dict = {}
             ret_dict['hit'] = [Article(**d) for d in article_dict_list]
             ret_dict['last_page'] = last_page
-            ret_dict['results'] = article_count 
+            ret_dict['results'] = article_count
             article_list = ArticleList(**ret_dict)
-            session.close()
             return article_list
         except InvalidRequestError:
-            session.close()
             raise InternalError('DATABASE_ERROR')
         except Exception:
-            session.close()
             raise
              
     @require_login
