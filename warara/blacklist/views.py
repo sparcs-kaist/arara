@@ -36,7 +36,7 @@ def delete(request):
         username = request.POST['username']
         server = arara.get_server()
         sess, r = warara.check_logged_in(request)
-        server.blacklist_manager.delete(sess, username)
+        server.blacklist_manager.delete_(sess, username)
         return HttpResponseRedirect("/blacklist/")
     # Why not return HttpResponse('Must use POST') ? XXX combacsa
 
