@@ -4,8 +4,8 @@ import sys
 import md5
 import time
 
-sys.path.append('../../')
-sys.path.append('../../gen-py/')
+sys.path.append('../')
+sys.path.append('../gen-py/')
 
 from arara import model
 from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
