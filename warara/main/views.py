@@ -51,6 +51,7 @@ def main(request):
         else:
             r['new_message'] = False
 
+    r['banner_tag'] = '<img src="/media/image/banner_1.png" alt="banner">'
     rendered = render_to_string('main.html', r)
     return HttpResponse(rendered)
 
