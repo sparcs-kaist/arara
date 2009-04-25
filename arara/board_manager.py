@@ -60,15 +60,18 @@ class BoardManager(object):
 
     @log_method_call
     def get_board(self, board_name):
+        return Board(**self._get_dict(self.get_board_raw(board_name), BOARD_MANAGER_WHITELIST))
+
+    @log_method_call
+    def get_board_raw(self, board_name):
         session = model.Session()
         try:
             board_to_get = session.query(model.Board).filter_by(board_name=board_name, deleted=False).one()
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('board does not exist')
-        board_dict = self._get_dict(board_to_get, BOARD_MANAGER_WHITELIST)
         session.close()
-        return Board(**board_dict)
+        return board_to_get
 
     @log_method_call
     def get_board_list(self):
