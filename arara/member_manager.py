@@ -90,30 +90,38 @@ class MemberManager(object):
             session.close()
             raise InvalidOperation('DATABASE_ERROR')
 
-    def authenticate(self, username, password, user_ip):
+    def get_session_and_user_raw(self, username):
         session = model.Session()
         try:
             user = session.query(model.User).filter_by(username=username).one()
-
-            if user.compare_password(password):
-                if user.activated:
-                    user.last_login_time = datetime.datetime.fromtimestamp(time.time())
-                    user.last_login_ip = unicode(user_ip)
-                    ret = {'last_login_time': datetime2timestamp(
-                        user.last_login_time),
-                           'nickname': user.nickname}
-                    session.commit()
-                    session.close()
-                    return AuthenticationInfo(**ret)
-                else:
-                    session.close()
-                    raise InvalidOperation(u'not activated\n%s\n%s' % (user.username, user.nickname))
-            else:
-                session.close()
-                raise InvalidOperation('wrong password')
         except InvalidRequestError:
             session.close()
-            raise InvalidOperation('wrong username')
+            raise InvalidOperation('username %s does not exist' % username)
+        return session, user
+
+    def get_user_raw(self, username):
+        session, user = self.get_session_and_user_raw(username)
+        session.close()
+        return user
+
+    def authenticate(self, username, password, user_ip):
+        session, user = self.get_session_and_user_raw(username)
+        if user.compare_password(password):
+            if user.activated:
+                user.last_login_time = datetime.datetime.fromtimestamp(time.time())
+                user.last_login_ip = unicode(user_ip)
+                ret = {'last_login_time': datetime2timestamp(
+                    user.last_login_time),
+                       'nickname': user.nickname}
+                session.commit()
+                session.close()
+                return AuthenticationInfo(**ret)
+            else:
+                session.close()
+                raise InvalidOperation(u'not activated\n%s\n%s' % (user.username, user.nickname))
+        else:
+            session.close()
+            raise InvalidOperation('wrong password')
    
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
@@ -237,17 +245,12 @@ class MemberManager(object):
         @type  username: string
         @param username: User ID
         '''
-        username = smart_unicode(username)
-        
         if not self.is_sysop(session_key):
             raise InvalidOperation('not sysop')
 
-        session = model.Session()
-        try:
-            user = session.query(model.User).filter(model.User.username == username).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('user does not exist')
+        username = smart_unicode(username)
+        session, user = self.get_session_and_user_raw(username)
+
         try:
             user_activation = session.query(model.UserActivation).filter_by(user_id=user.id).one()
         except InvalidRequestError:
@@ -276,13 +279,8 @@ class MemberManager(object):
         @param activation_code: Confirm Key
         '''
         username_to_confirm = smart_unicode(username_to_confirm)
-        
-        session = model.Session()
-        try:
-            user = session.query(model.User).filter(model.User.username == username_to_confirm).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('user does not exist')
+        session, user = self.get_session_and_user_raw(username_to_confirm)
+
         try:
             user_activation = session.query(model.UserActivation).filter_by(user_id=user.id).one()
         except InvalidRequestError:
@@ -399,21 +397,15 @@ class MemberManager(object):
                 2. 존재하지 않는 회원: InvalidOperation('MEMBER_NOT_EXIST'
                 3. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
         '''
-        try:
-            session = model.Session()
-            username = get_server().login_manager.get_session(session_key).username
-            user = session.query(model.User).filter_by(username=username).one()
-            user_dict = filter_dict(user.__dict__, USER_PUBLIC_WHITELIST)
-            if user_dict['last_logout_time']:
-                user_dict['last_logout_time'] = datetime2timestamp(
-                        user_dict['last_logout_time'])
-            else:
-                user_dict['last_logout_time'] = 0
-            session.close()
-            return UserInformation(**user_dict)
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('member does not exist')
+        username = get_server().login_manager.get_session(session_key).username
+        user = self.get_user_raw(username)
+        user_dict = filter_dict(user.__dict__, USER_PUBLIC_WHITELIST)
+        if user_dict['last_logout_time']:
+            user_dict['last_logout_time'] = datetime2timestamp(
+                    user_dict['last_logout_time'])
+        else:
+            user_dict['last_logout_time'] = 0
+        return UserInformation(**user_dict)
 
     @require_login    
     def modify_password(self, session_key, user_password_info):
@@ -436,11 +428,10 @@ class MemberManager(object):
                 4. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
         '''
         session_info = get_server().login_manager.get_session(session_key)
-        username = session_info.username
-        session = model.Session()
-        user = session.query(model.User).filter_by(username=username).one()
+        session, user = self.get_session_and_user_raw(session_info.username)
+
         try:
-            if not username == user_password_info.username:
+            if not session_info.username == user_password_info.username:
                 raise NoPermission()
             if not user.compare_password(user_password_info.current_password):
                 raise WrongPassword()
@@ -448,7 +439,7 @@ class MemberManager(object):
             session.commit()
             # pipoket: SECURITY ISSUE! PASSWORD SHOULD NOT BE LOGGED!
             #           This logging function will log necessary information but NOT PASSWORD.
-            self.logger.info(u"PASSWORD CHANGE:(username=%s)" % username)
+            self.logger.info(u"PASSWORD CHANGE:(username=%s)" % session_info.username)
             session.close()
             return
             
@@ -483,14 +474,13 @@ class MemberManager(object):
                 2. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
                 3. 양식이 맞지 않음(부적절한 NULL값 등): 'WRONG_DICTIONARY'
         '''
-        session_info = get_server().login_manager.get_session(session_key)
-        username = session_info.username
-
         if not is_keys_in_dict(user_modification.__dict__,
                                USER_PUBLIC_MODIFIABLE_WHITELIST):
             raise InvalidOperation('wrong input')
-        session = model.Session()
-        user = session.query(model.User).filter_by(username=username).one()
+
+        session_info = get_server().login_manager.get_session(session_key)
+        session, user = self.get_session_and_user_raw(session_info.username)
+
         for key, value in user_modification.__dict__.items():
             setattr(user, key, value)
         session.commit()
@@ -516,30 +506,29 @@ class MemberManager(object):
                 3. 올바르지 않은 이메일 주소: InvalidOperation('wrong email address')
                 3. 데이터베이스 오류: InternalError('database error')
         '''
-        session = model.Session()
-        if new_email:
-            user_with_email = session.query(model.User).filter_by(email=new_email).all()
-            if user_with_email:
-                user_with_email = user_with_email[0]
-                if user_with_email.username != username: # To allow send email to him/her again
-                    raise InvalidOperation(u'Other user(username:%s) already uses %s!' % (user_with_email.username, new_email))
-            try:
-                user = session.query(model.User).filter_by(username=username).one()
-                user_activation = session.query(model.UserActivation).filter_by(user=user).one()
-                activation_code = user_activation.activation_code
-                if user.email != new_email:
-                    user.email = new_email
-                    session.commit()
-                self._send_mail(user.email, user.username, activation_code)
-                session.close()
-            except Exception:
-                import traceback
-                logging.warn(traceback.format_exc())
-                session.close()
-                raise InternalError('database error')
-        else:
+        if not new_email:
             raise InvalidOperation('wrong email address')
 
+        session, user = self.get_session_and_user_raw(username)
+        user_with_email = session.query(model.User).filter_by(email=new_email).all()
+        if user_with_email:
+            user_with_email = user_with_email[0]
+            if user_with_email.username != username: # To allow send email to him/her again
+                session.close()
+                raise InvalidOperation(u'Other user(username:%s) already uses %s!' % (user_with_email.username, new_email))
+        try:
+            user_activation = session.query(model.UserActivation).filter_by(user=user).one()
+            activation_code = user_activation.activation_code
+            if user.email != new_email:
+                user.email = new_email
+                session.commit()
+            self._send_mail(user.email, user.username, activation_code)
+            session.close()
+        except Exception:
+            import traceback
+            logging.warn(traceback.format_exc())
+            session.close()
+            raise InternalError('database error')
 
     @require_login
     @log_method_call
@@ -562,20 +551,16 @@ class MemberManager(object):
                 3. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
         '''
         username = smart_unicode(username)
-        session = model.Session()
-        try:
-            query_user = session.query(model.User).filter_by(username=username).one()
-            query_user_dict = filter_dict(query_user.__dict__, USER_QUERY_WHITELIST)
-            if query_user_dict['last_logout_time']:
-                query_user_dict['last_logout_time'] = datetime2timestamp(
-                        query_user_dict['last_logout_time'])
-            else:
-                query_user_dict['last_logout_time'] = 0
-            session.close()
-            return PublicUserInformation(**query_user_dict)
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('Query username does not exist')
+        query_user = self.get_user_raw(username)
+        query_user_dict = filter_dict(query_user.__dict__, USER_QUERY_WHITELIST)
+
+        if query_user_dict['last_logout_time']:
+            query_user_dict['last_logout_time'] = datetime2timestamp(
+                    query_user_dict['last_logout_time'])
+        else:
+            query_user_dict['last_logout_time'] = 0
+
+        return PublicUserInformation(**query_user_dict)
 
     @require_login
     @log_method_call
@@ -630,14 +615,12 @@ class MemberManager(object):
             2. 실패시: InvalidOperation('NOT_LOGGEDIN'
         '''
         raise InvalidOperation('Not Allowed Right Now')
-        session = model.Session()
         username = get_server().login_manager.get_session(session_key).username
+        session, user = self.get_session_and_user_raw(username)
         try:
-            user = session.query(model.User).filter_by(username=username).one()
-	    session.delete(user)
+            session.delete(user)
             session.commit()
             session.close()
-            return
         except KeyError:
             session.close()
             raise NotLoggedIn()
