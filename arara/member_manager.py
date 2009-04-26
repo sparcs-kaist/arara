@@ -703,10 +703,14 @@ class MemberManager(object):
             1. SYSOP일시: True
             2. SYSOP이 아닐시: False
         '''
-
-        if get_server().login_manager.get_session(session_key).username == SYSOP_REG_DIC['username']:
-            return True
-        else:
-            return False
+        session = model.Session()
+        user_info = get_server().login_manager.get_session(session_key)
+        try:
+            user = session.query(model.User).filter_by(username=user_info.username).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('user does not exist')
+        session.close()
+        return user.is_sysop
 
 # vim: set et ts=8 sw=4 sts=4
