@@ -15,6 +15,9 @@ from arara.server import get_server
 log_method_call = log_method_call_with_source('file_manager')
 log_method_call_important = log_method_call_with_source_important('file_manager')
 
+DANGER_FILE = ('php', 'asp', 'php3', 'php4', 'htaccess', 'js',
+               'html', 'htm', '.htaccess', 'jsp')
+
 class FileManager(object):
     '''
     파일 처리 관련 클래스
@@ -32,6 +35,13 @@ class FileManager(object):
 
     def _set_login_manager(self, login_manager):
         self.login_manager = login_manager
+
+    def _get_article(self, session, article_id):
+        try:
+            return session.query(model.Article).filter_by(id=article_id).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation("article does not exist")
 
     @require_login
     @log_method_call_important
@@ -55,14 +65,12 @@ class FileManager(object):
         '''
         #그 경로의 파일이 있다고 가정하고 저장
 
-        DANGER_FILE = ('php', 'asp', 'php3', 'php4', 'htaccess', 'js',
-                'html', 'htm', '.htaccess', 'jsp')
         file_ext = filename.split('.')[-1]
         if file_ext in DANGER_FILE:
             return InvalidOperation('danger file detected')
         
         session = model.Session()
-        article = session.query(model.Article).filter_by(id=article_id).one()
+        article = self._get_article(session, article_id)
         filepath_to_save = u''+str(article.board.board_name) + '/' +str(article.date.year) + '/' + str(article.date.month) + '/' + str(article.date.day)
         try:
             # Generate unique filename by putting timestamp at the end of the hasing string
@@ -75,6 +83,19 @@ class FileManager(object):
         except Exception: 
             session.close()
             raise InternalError('database error')
+
+    def _get_file(self, session, file_id, article):
+        try:
+            return session.query(model.File).filter(
+                    and_(model.file_table.c.id == file_id,
+                    model.file_table.c.user_id == article.author.id,
+                    model.file_table.c.board_id == article.board.id,
+                    model.file_table.c.article_id == article.id, 
+                    model.file_table.c.deleted == False
+                    )).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('file not found')
 
     @log_method_call
     def download_file(self, article_id, file_id):
@@ -93,22 +114,9 @@ class FileManager(object):
                 2. 데이터베이스 오류: InternalError Exception
         '''
         session = model.Session()
-        try:
-            article = session.query(model.Article).filter_by(id = article_id).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('article not exist')
-        try:
-            file = session.query(model.File).filter(
-                    and_(model.file_table.c.id == file_id,
-                    model.file_table.c.user_id == article.author.id,
-                    model.file_table.c.board_id == article.board.id,
-                    model.file_table.c.article_id == article.id, 
-                    model.file_table.c.deleted == False
-                    )).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('file not found')
+        article = self._get_article(session, article_id)
+        file = self._get_file(session, file_id, article)
+
         download_path = file.filepath
         ghost_filename = file.saved_filename
         real_filename = file.filename
@@ -138,22 +146,9 @@ class FileManager(object):
         #ret, filepath_to_delete= self.download_file(session_key, article_id, filename)
         #download_file함수와 유사하다.. 똑같은 코드가 많다.. 먼가 비효율적이다.. 나중에 하나로 좀 해보자.. 일단 지금은 급하니까.. 복사해놓고...
         session = model.Session()
-        try:
-            article = session.query(model.Article).filter_by(id = article_id).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('article not exist')
-        try:
-            file = session.query(model.File).filter(
-                    and_(model.file_table.c.id == file_id,
-                    model.file_table.c.user_id == article.author.id,
-                    model.file_table.c.board_id == article.board.id,
-                    model.file_table.c.article_id == article.id,
-                    model.file_table.c.deleted == False,
-                    )).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('file not found')
+        article = self._get_article(session, article_id)
+        file = self._get_file(session, file_id, article)
+
         file.deleted = True
         download_path = file.filepath
         ghost_filename = file.saved_filename
