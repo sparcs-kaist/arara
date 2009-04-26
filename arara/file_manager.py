@@ -33,6 +33,15 @@ class FileManager(object):
     def _set_login_manager(self, login_manager):
         self.login_manager = login_manager
 
+    def _get_session_and_article(self, article_id):
+        session = model.Session()
+        try:
+            article = session.query(model.Article).filter_by(id = article_id).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('article not exist')
+        return session, article
+
     @require_login
     @log_method_call_important
     def save_file(self, session_key, article_id, filename):
@@ -61,8 +70,7 @@ class FileManager(object):
         if file_ext in DANGER_FILE:
             return InvalidOperation('danger file detected')
         
-        session = model.Session()
-        article = session.query(model.Article).filter_by(id=article_id).one()
+        session, article = self._get_session_and_article(article_id)
         filepath_to_save = u''+str(article.board.board_name) + '/' +str(article.date.year) + '/' + str(article.date.month) + '/' + str(article.date.day)
         try:
             # Generate unique filename by putting timestamp at the end of the hasing string
@@ -92,12 +100,7 @@ class FileManager(object):
                 1. 로그인되지 않은 유저: NotLoggedIn Exception
                 2. 데이터베이스 오류: InternalError Exception
         '''
-        session = model.Session()
-        try:
-            article = session.query(model.Article).filter_by(id = article_id).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('article not exist')
+        session, article = self._get_session_and_article(article_id)
         try:
             file = session.query(model.File).filter(
                     and_(model.file_table.c.id == file_id,
@@ -137,12 +140,7 @@ class FileManager(object):
         '''
         #ret, filepath_to_delete= self.download_file(session_key, article_id, filename)
         #download_file함수와 유사하다.. 똑같은 코드가 많다.. 먼가 비효율적이다.. 나중에 하나로 좀 해보자.. 일단 지금은 급하니까.. 복사해놓고...
-        session = model.Session()
-        try:
-            article = session.query(model.Article).filter_by(id = article_id).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('article not exist')
+        session, article = self._get_session_and_article(article_id)
         try:
             file = session.query(model.File).filter(
                     and_(model.file_table.c.id == file_id,
