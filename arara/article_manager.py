@@ -84,61 +84,32 @@ class ArticleManager(object):
                 stack.append(child)
         return ret
 
-    def _get_today_best_article(self, session_key, board=None, count=5):
+    def _get_best_article(self, session_key, board, count, time_to_filter, best_type):
         session = model.Session()
-        # 1 day is 86400 sec
-        time_to_filter = datetime.datetime.fromtimestamp(time.time()-86400)
+        time_to_filter = datetime.datetime.fromtimestamp(time.time()-time_to_filter)
         if board:
-            today_best_article = session.query(model.Article).filter(and_(
+            query = session.query(model.Article).filter(and_(
                     model.articles_table.c.board_id==board.id,
                     model.articles_table.c.root_id==None,
                     model.articles_table.c.last_modified_date > time_to_filter,
-                    not_(model.articles_table.c.deleted==True))
-                    )[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc()).all()
-            today_best_article_dict_list = self._get_dict_list(today_best_article, BEST_ARTICLE_WHITELIST)
-            for article in today_best_article_dict_list:
-                article['type'] = 'today'
-            session.close()
-            return True, today_best_article_dict_list
+                    not_(model.articles_table.c.deleted==True)))
         else:
-            today_best_article = session.query(model.Article).filter(and_(
+            query = session.query(model.Article).filter(and_(
                     model.articles_table.c.root_id==None,
                     model.articles_table.c.last_modified_date > time_to_filter,
-                    not_(model.articles_table.c.deleted==True))
-                    )[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc()).all()
-            today_best_article_dict_list = self._get_dict_list(today_best_article, BEST_ARTICLE_WHITELIST)
-            for article in today_best_article_dict_list:
-                article['type'] = 'today'
-            session.close()
-            return True, today_best_article_dict_list
+                    not_(model.articles_table.c.deleted==True)))
+        best_article = query[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc()).all()
+        best_article_dict_list = self._get_dict_list(best_article, BEST_ARTICLE_WHITELIST)
+        for article in best_article_dict_list:
+            article['type'] = best_type
+        session.close()
+        return best_article_dict_list
+
+    def _get_today_best_article(self, session_key, board=None, count=5):
+        return self._get_best_article(session_key, board, count, 86400, 'today')
 
     def _get_weekly_best_article(self, session_key, board=None, count=5):
-        session = model.Session()
-        # 1 week is 604800 sec
-        time_to_filter = datetime.datetime.fromtimestamp(time.time()-604800)
-        if board:
-            weekly_best_article = session.query(model.Article).filter(and_(
-                    model.articles_table.c.board_id==board.id,
-                    model.articles_table.c.root_id==None,
-                    model.articles_table.c.last_modified_date > time_to_filter,
-                    not_(model.articles_table.c.deleted==True))
-                    )[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc()).all()
-            weekly_best_article_dict_list = self._get_dict_list(weekly_best_article, BEST_ARTICLE_WHITELIST)
-            for article in weekly_best_article_dict_list:
-                article['type'] = 'weekly'
-            session.close()
-            return True, weekly_best_article_dict_list
-        else:
-            weekly_best_article = session.query(model.Article).filter(and_(
-                    model.articles_table.c.root_id==None,
-                    model.articles_table.c.last_modified_date > time_to_filter,
-                    not_(model.articles_table.c.deleted==True))
-                    )[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc()).all()
-            weekly_best_article_dict_list = self._get_dict_list(weekly_best_article, BEST_ARTICLE_WHITELIST)
-            for article in weekly_best_article_dict_list:
-                article['type'] = 'weekly'
-            session.close()
-            return True, weekly_best_article_dict_list
+        return self._get_best_article(session_key, board, count, 604800, 'weekly')
 
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
@@ -195,15 +166,11 @@ class ArticleManager(object):
             2. 투베를 가져오는데 실패:
                 1. 데이터베이스 오류: InternalError Exception 
         '''
-        ret, today_best_list = self._get_today_best_article(None, None, count)
-
-        if ret:
-            for article in today_best_list:
-                article['date'] = datetime2timestamp(article['date'])
-                article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
-            return [Article(**d) for d in today_best_list]
-        else:
-            raise InternalError("DATABASE ERROR")
+        today_best_list = self._get_today_best_article(None, None, count)
+        for article in today_best_list:
+            article['date'] = datetime2timestamp(article['date'])
+            article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
+        return [Article(**d) for d in today_best_list]
 
     @log_method_call
     def get_today_best_list_specific(self, board_name, count=5):
@@ -228,15 +195,12 @@ class ArticleManager(object):
             session.close()
             raise InvalidOperaion("BOARD_NOT_EXIST")
         session.close()
-        ret, today_best_list = self._get_today_best_article(None, board, count)
 
-        if ret:
-            for article in today_best_list:
-                article['date'] = datetime2timestamp(article['date'])
-                article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
-            return [Article(**d) for d in today_best_list]
-        else:
-            raise InternalError('DATABASE_ERROR')
+        today_best_list = self._get_today_best_article(None, board, count)
+        for article in today_best_list:
+            article['date'] = datetime2timestamp(article['date'])
+            article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
+        return [Article(**d) for d in today_best_list]
 
     @log_method_call
     def get_weekly_best_list(self, count=5):
@@ -254,15 +218,11 @@ class ArticleManager(object):
                 1. Not Existing Board: InvalidOperation Exception
                 2. 데이터베이스 오류: InternalError Exception
         '''
-        ret, weekly_best_list = self._get_weekly_best_article(None, None, count)
-
-        if ret:
-            for article in weekly_best_list:
-                article['date'] = datetime2timestamp(article['date'])
-                article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
-            return [Article(**d) for d in weekly_best_list]
-        else:
-            raise InternalError('DATABASE_ERROR')
+        weekly_best_list = self._get_weekly_best_article(None, None, count)
+        for article in weekly_best_list:
+            article['date'] = datetime2timestamp(article['date'])
+            article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
+        return [Article(**d) for d in weekly_best_list]
 
     @log_method_call
     def get_weekly_best_list_specific(self, board_name, count=5):
@@ -287,16 +247,12 @@ class ArticleManager(object):
             session.close()
             raise InvalidOperation('BOARD_NOT_EXIST')
         session.close()
-        ret, weekly_best_list = self._get_weekly_best_article(None, board, count)
 
-        if ret:
-            for article in weekly_best_list:
-                article['date'] = datetime2timestamp(article['date'])
-                article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
-            return [Article(**d) for d in weekly_best_list]
-        else:
-            raise InternalError('DATABASE_ERROR')
-        
+        weekly_best_list = self._get_weekly_best_article(None, board, count)
+        for article in weekly_best_list:
+            article['date'] = datetime2timestamp(article['date'])
+            article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
+        return [Article(**d) for d in weekly_best_list]
 
     @log_method_call
     @require_login
