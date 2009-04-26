@@ -155,6 +155,17 @@ class ArticleManager(object):
             return_list.append(filtered_dict)
         return return_list
 
+    def _get_best_list(self, board_name, count, best_article_method):
+        ret, best_list = best_article_method(None, board_name, count)
+
+        if ret:
+            for article in best_list:
+                article['date'] = datetime2timestamp(article['date'])
+                article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
+            return [Article(**d) for d in best_list]
+        else:
+            raise InternalError("DATABASE ERROR")
+
     @log_method_call
     def get_today_best_list(self, count=5):
         '''
@@ -168,15 +179,7 @@ class ArticleManager(object):
             2. 투베를 가져오는데 실패:
                 1. 데이터베이스 오류: InternalError Exception 
         '''
-        ret, today_best_list = self._get_today_best_article(None, None, count)
-
-        if ret:
-            for article in today_best_list:
-                article['date'] = datetime2timestamp(article['date'])
-                article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
-            return [Article(**d) for d in today_best_list]
-        else:
-            raise InternalError("DATABASE ERROR")
+        return self._get_best_list(None, count, self._get_today_best_article)
 
     @log_method_call
     def get_today_best_list_specific(self, board_name, count=5):
@@ -195,15 +198,7 @@ class ArticleManager(object):
                 2. 데이터베이스 오류: InternalError Exception
         '''
         board = self._get_board(board_name)
-        ret, today_best_list = self._get_today_best_article(None, board, count)
-
-        if ret:
-            for article in today_best_list:
-                article['date'] = datetime2timestamp(article['date'])
-                article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
-            return [Article(**d) for d in today_best_list]
-        else:
-            raise InternalError('DATABASE_ERROR')
+        return self._get_best_list(board, count, self._get_today_best_article)
 
     @log_method_call
     def get_weekly_best_list(self, count=5):
@@ -221,15 +216,7 @@ class ArticleManager(object):
                 1. Not Existing Board: InvalidOperation Exception
                 2. 데이터베이스 오류: InternalError Exception
         '''
-        ret, weekly_best_list = self._get_weekly_best_article(None, None, count)
-
-        if ret:
-            for article in weekly_best_list:
-                article['date'] = datetime2timestamp(article['date'])
-                article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
-            return [Article(**d) for d in weekly_best_list]
-        else:
-            raise InternalError('DATABASE_ERROR')
+        return self._get_best_list(None, count, self._get_weekly_best_article)
 
     @log_method_call
     def get_weekly_best_list_specific(self, board_name, count=5):
@@ -248,16 +235,7 @@ class ArticleManager(object):
                 2. 데이터베이스 오류: InternalError Exception
         '''
         board = self._get_board(board_name)
-        ret, weekly_best_list = self._get_weekly_best_article(None, board, count)
-
-        if ret:
-            for article in weekly_best_list:
-                article['date'] = datetime2timestamp(article['date'])
-                article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
-            return [Article(**d) for d in weekly_best_list]
-        else:
-            raise InternalError('DATABASE_ERROR')
-        
+        return self._get_best_list(board, count, self._get_weekly_best_article)
 
     @log_method_call
     @require_login
