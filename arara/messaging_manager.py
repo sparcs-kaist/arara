@@ -65,21 +65,6 @@ class MessagingManager(object):
             return_list.append(Message(**filtered_dict))
         return return_list
 
-    def _get_user_using_session(self, session, username):
-        try:
-            user = session.query(model.User).filter_by(username=username).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('user not exist')
-        return user
-
-    def _get_user_by_nickname_using_session(self, session, nickname):
-        try:
-            user = session.query(model.User).filter_by(nickname=nickname).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('user not exist')
-        return user
 
     @require_login
     @log_method_call
@@ -104,7 +89,7 @@ class MessagingManager(object):
         ret_dict = {}
         user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
-        sent_user = self._get_user_using_session(session, user_info.username)
+        sent_user = session.query(model.User).filter_by(username=user_info.username).one()
         sent_messages_count = session.query(model.Message).filter(
                 and_(model.message_table.c.from_id==sent_user.id,
                     not_(model.message_table.c.sent_deleted==True)
@@ -155,7 +140,7 @@ class MessagingManager(object):
         ret_dict = {}
         user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
-        to_user = self._get_user_using_session(session, user_info.username)
+        to_user = session.query(model.User).filter_by(username=user_info.username).one()
         blacklist_dict_list = get_server().blacklist_manager.list_(session_key)
         blacklist_users = set()
         for blacklist_item in blacklist_dict_list:
@@ -215,11 +200,12 @@ class MessagingManager(object):
         '''
 
         user_info = get_server().login_manager.get_session(session_key)
+        if not get_server().member_manager.is_registered(to_username):
+            raise InvalidOperation('user not exist')
         session = model.Session()
-        to_user = self._get_user_using_session(session, to_username)
-        from_user = self._get_user_using_session(session, user_info.username)
+        from_user = session.query(model.User).filter_by(username=user_info.username).one()
         from_user_ip = user_info.ip
-
+        to_user = session.query(model.User).filter_by(username=to_username).one()
         message = model.Message(from_user, from_user_ip, to_user, msg)
         try:
             session.save(message)
@@ -251,11 +237,12 @@ class MessagingManager(object):
         '''
 
         user_info = get_server().login_manager.get_session(session_key)
+        if not get_server().member_manager.is_registered_nickname(to_nickname):
+            raise InvalidOperation('user not exist')
         session = model.Session()
-        to_user = self._get_user_by_nickname_using_session(session, to_nickname)
-        from_user = self._get_user_using_session(session, user_info.username)
+        from_user = session.query(model.User).filter_by(nickname=user_info.nickname).one()
         from_user_ip = user_info.ip
-
+        to_user = session.query(model.User).filter_by(nickname=to_nickname).one()
         message = model.Message(from_user, from_user_ip, to_user, msg)
         try:
             session.save(message)
@@ -310,11 +297,12 @@ class MessagingManager(object):
             #        ret.append('USER_NOT_EXIST')
             #return True, ret
         else:
+            if not get_server().member_manager.is_registered(to_data):
+                raise InvalidOperation('user not exist')
             session = model.Session()
-            to_user = self._get_user_using_session(session, to_data)
-            from_user = self._get_user_using_session(session, user_info.username)
+            from_user = session.query(model.User).filter_by(username=user_info.username).one()
             from_user_ip = user_info.ip
-
+            to_user = session.query(model.User).filter_by(username=to_data).one()
             message = model.Message(from_user, from_user_ip, to_user, msg)
             try:
                 session.save(message)
@@ -345,7 +333,7 @@ class MessagingManager(object):
         
         user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
-        to_user = self._get_user_using_session(session, user_info.username)
+        to_user = session.query(model.User).filter_by(username=user_info.username).one()
         try:
             message = session.query(model.Message).filter(and_(model.message_table.c.to_id==to_user.id, model.message_table.c.id==msg_no, not_(model.message_table.c.received_deleted==True))).one()
         except InvalidRequestError:
@@ -378,7 +366,7 @@ class MessagingManager(object):
         
         user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
-        from_user = self._get_user_using_session(session, user_info.username)
+        from_user = session.query(model.User).filter_by(username=user_info.username).one()
         try:
             message = session.query(model.Message).filter(and_(model.message_table.c.from_id==from_user.id, model.message_table.c.id==msg_no, not_(model.message_table.c.sent_deleted==True))).one()
         except InvalidRequestError:
@@ -411,7 +399,7 @@ class MessagingManager(object):
 
         user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
-        user = self._get_user_using_session(session, user_info.username)
+        user = session.query(model.User).filter_by(username=user_info.username).one()
         try:
             message_to_delete = session.query(model.Message).filter_by(id=msg_no).one()
         except InvalidRequestError:
@@ -452,7 +440,7 @@ class MessagingManager(object):
 
         user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
-        user = self._get_user_using_session(session, user_info.username)
+        user = session.query(model.User).filter_by(username=user_info.username).one()
         try:
             message_to_delete = session.query(model.Message).filter_by(id=msg_no).one()
         except InvalidRequestError:

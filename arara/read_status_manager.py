@@ -178,21 +178,6 @@ class ReadStatusManager(object):
         else:
             return False, 'ALREADY_ADDED'
 
-    def _get_user(self, username):
-        session = model.Session()
-        try:
-            user = session.query(model.User).filter_by(username=username).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation("user does not exist")
-        session.close()
-        return user
-
-
-    def _get_user_by_session_key(self, session_key):
-        user_info = get_server().login_manager.get_session(session_key)
-        return self._get_user(user_info.username)
-
     @require_login
     @log_method_call
     def check_stat(self, session_key, no):
@@ -216,7 +201,11 @@ class ReadStatusManager(object):
                 1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        user = self._get_user_by_session_key(session_key)
+
+        user_info = get_server().login_manager.get_session(session_key)
+        session = model.Session()
+        user = session.query(model.User).filter_by(username=user_info.username).one()
+        session.close()
         ret, _ = self._initialize_data(user)
         self._check_article_exist(no)
         status = self.read_status[user.id].get(no)
@@ -242,7 +231,10 @@ class ReadStatusManager(object):
                 1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        user = self._get_user_by_session_key(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
+        session = model.Session()
+        user = session.query(model.User).filter_by(username=user_info.username).one()
+        session.close()
         ret, _ = self._initialize_data(user)
         self._check_article_exist(no_list)
         status = self.read_status[user.id].get_range(no_list)
@@ -269,7 +261,10 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        user = self._get_user_by_session_key(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
+        session = model.Session()
+        user = session.query(model.User).filter_by(username=user_info.username).one()
+        session.close()
         ret, _ = self._initialize_data(user)
         self._check_article_exist(no_list)
         status = self.read_status[user.id].set_range(no_list, 'R')
@@ -295,7 +290,10 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        user = self._get_user_by_session_key(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
+        session = model.Session()
+        user = session.query(model.User).filter_by(username=user_info.username).one()
+        session.close()
         ret, _ = self._initialize_data(user)
         self._check_article_exist(no)
         status = self.read_status[user.id].set(no, 'R')
@@ -318,7 +316,10 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        user = self._get_user_by_session_key(session_key)
+        user_info = get_server().login_manager.get_session(session_key)
+        session = model.Session()
+        user = session.query(model.User).filter_by(username=user_info.username).one()
+        session.close()
         ret, _ = self._initialize_data(user)
         self._check_article_exist(no)
         status = self.read_status[user.id].set(no, 'V')
@@ -326,9 +327,12 @@ class ReadStatusManager(object):
     @log_method_call
     def save_to_database(self, username):
         import traceback
-        user = self._get_user(username)
-
-        session = model.Session()
+        try:
+            session = model.Session()
+            user = session.query(model.User).filter_by(username=username).one()
+        except InvalidRequestError:
+            session.close()
+            logging.error(traceback.format_exc())
         try:
             read_stat = session.query(model.ReadStatus).filter_by(user_id=user.id).one()
             read_stat.read_status_data = self.read_status[user.id]
