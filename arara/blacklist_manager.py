@@ -69,6 +69,14 @@ class BlacklistManager(object):
             return_list.append(filtered_dict)
         return return_list
 
+    def _get_user(self, session, username):
+        try:
+            user = session.query(model.User).filter_by(username=username).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('username not exist')
+        return user
+
     @require_login
     @log_method_call_important
     def add(self, session_key, username, block_article=True, block_message=True):
@@ -93,19 +101,14 @@ class BlacklistManager(object):
                 6. 데이터베이스 오류: InternalError Exception 
         '''
         user_info = get_server().login_manager.get_session(session_key)
-
         username = smart_unicode(username)
-
         if username == user_info.username:
             raise InvalidOperation('cannot add yourself')
 
         session = model.Session()
-        user = session.query(model.User).filter_by(username=user_info.username).one()
-        try:
-            target_user = session.query(model.User).filter_by(username=username).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('username not exist')
+        user = self._get_user(session, user_info.username)
+        target_user = self._get_user(session, username)
+
         integrity_chk = session.query(model.Blacklist).filter_by(user_id=user.id, 
                         blacklisted_user_id=target_user.id).all()
         if integrity_chk:
@@ -140,16 +143,12 @@ class BlacklistManager(object):
         '''
         
         user_info =  get_server().login_manager.get_session(session_key)
-
         username = smart_unicode(username)
 
         session = model.Session()
-        user = session.query(model.User).filter_by(username=user_info.username).one()
-        try:
-            blacklisted_user = session.query(model.User).filter_by(username=username).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('username not exist')
+        user = self._get_user(session, user_info.username)
+        blacklisted_user = self._get_user(session, username)
+
         try:
             blacklist_to_del = session.query(model.Blacklist).filter_by(user_id=user.id,
                                 blacklisted_user_id=blacklisted_user.id).one()
@@ -189,12 +188,8 @@ class BlacklistManager(object):
         user_info = get_server().login_manager.get_session(session_key)
 
         session = model.Session()
-        user = session.query(model.User).filter_by(username=user_info.username).one()
-        try:
-            target_user = session.query(model.User).filter_by(username=blacklist_info.blacklisted_user_username).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('username not exist')
+        user = self._get_user(session, user_info.username)
+        target_user = self._get_user(session, blacklist_info.blacklisted_user_username)
         try:
             blacklist_to_modify = session.query(model.Blacklist).filter_by(user_id=user.id,
                                     blacklisted_user_id=target_user.id).one()
@@ -233,7 +228,7 @@ class BlacklistManager(object):
 
         try:
             session = model.Session()
-            user = session.query(model.User).filter_by(username=user_info.username).one()
+            user = self._get_user(session, user_info.username)
             blacklist_list = session.query(model.Blacklist).filter_by(user_id=user.id).all()
             blacklist_dict_list = self._get_dict_list(blacklist_list, BLACKLIST_LIST_DICT)
             session.close()
