@@ -38,15 +38,20 @@ class BoardManager(object):
             return_list.append(filtered_dict)
         return return_list
 
-    @require_login
-    @log_method_call_important
-    def add_board(self, session_key, board_name, board_description):
+    def _is_sysop(self, session_key):
         user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
         user = session.query(model.User).filter_by(username=user_info.username).one()
+        session.close()
         if not user.is_sysop:
-            session.close()
             raise InvalidOperation('no permission')
+
+    @require_login
+    @log_method_call_important
+    def add_board(self, session_key, board_name, board_description):
+        self._is_sysop(session_key)
+
+        session = model.Session()
         board_to_add = model.Board(board_name, board_description)
         try:
             session.save(board_to_add)
@@ -102,12 +107,9 @@ class BoardManager(object):
                 5. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
 
-        user_info = get_server().login_manager.get_session(session_key)
+        self._is_sysop(session_key)
+
         session = model.Session()
-        user = session.query(model.User).filter_by(username=user_info.username).one()
-        if not user.is_sysop:
-            session.close()
-            raise InvalidOperation('no permission')
         try:
             board = session.query(model.Board).filter_by(board_name=board_name).one()
             if board.read_only:
@@ -143,12 +145,8 @@ class BoardManager(object):
                 5. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
 
-        user_info = get_server().login_manager.get_session(session_key)
+        self._is_sysop(session_key)
         session = model.Session()
-        user = session.query(model.User).filter_by(username=user_info.username).one()
-        if not user.is_sysop:
-            session.close()
-            raise InvalidOperation('no permission')
         try:
             board = session.query(model.Board).filter_by(board_name=board_name).one()
             if not board.read_only:
@@ -166,17 +164,13 @@ class BoardManager(object):
     @require_login
     @log_method_call_important
     def delete_board(self, session_key, board_name):
-        user_info = get_server().login_manager.get_session(session_key)
+        self._is_sysop(session_key)
         session = model.Session()
-        user = session.query(model.User).filter_by(username=user_info.username).one()
         try:
             board = session.query(model.Board).filter_by(board_name=board_name).one()
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('board does not exist')
-        if not user.is_sysop:
-            session.close()
-            raise InvalidOperation('no permission')
         board.deleted = True
         session.commit()
         session.close()
