@@ -158,6 +158,15 @@ class ArticleManager(object):
             return_list.append(filtered_dict)
         return return_list
 
+    def _get_user(self, session, session_key):
+        user_info = get_server().login_manager.get_session(session_key)
+        try:
+            user = session.query(model.User).filter_by(username=user_info.username).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('user does not exist')
+        return user
+
     @log_method_call
     def get_today_best_list(self, count=5):
         '''
@@ -328,11 +337,10 @@ class ArticleManager(object):
                 2. 데이터베이스 오류: InternalError Exception
         '''
         ret_dict = {}
-        user_info = get_server().login_manager.get_session(session_key)
 
         try:
             session = model.Session()
-            user = session.query(model.User).filter_by(username=user_info.username).one()
+            user = self._get_user(session, session_key)
             article_count = article_list = session.query(model.Article).filter(and_(
                                 model.articles_table.c.root_id==None,
                                 model.articles_table.c.last_modified_date > user.last_logout_time)).count()
@@ -479,8 +487,6 @@ class ArticleManager(object):
                 4. 데이터베이스 오류: InternalError Exception 
         '''
 
-        user_info = get_server().login_manager.get_session(session_key)
-        
         session = model.Session()
         self._get_board(session, board_name)
         blacklist_dict_list = get_server().blacklist_manager.list_(session_key)
@@ -536,8 +542,6 @@ class ArticleManager(object):
 
         '''
         ret_dict = {}
-        user_info = get_server().login_manager.get_session(session_key)
-
         session = model.Session()
         board = self._get_board(session, board_name)
         total_article_count = session.query(model.Article).filter_by(board_id=board.id, root_id=None).count()
@@ -585,8 +589,6 @@ class ArticleManager(object):
                 3. 데이터베이스 오류: InrernalError Exception
         '''
 
-        user_info = get_server().login_manager.get_session(session_key)
-
         session = model.Session()
         board = self._get_board(session, board_name)
         try:
@@ -594,7 +596,7 @@ class ArticleManager(object):
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('ARTICLE_NOT_EXIST')
-        user = session.query(model.User).filter_by(username=user_info.username).one()
+        user = self._get_user(session, session_key)
         vote_unique_check = session.query(model.ArticleVoteStatus).filter_by(user_id=user.id, board_id=board.id, article_id = article.id).all()
         if vote_unique_check:
             session.close()
@@ -634,7 +636,7 @@ class ArticleManager(object):
         user_info = get_server().login_manager.get_session(session_key)
 
         session = model.Session()
-        author = session.query(model.User).filter_by(username=user_info.username).one()
+        author = self._get_user(session, session_key)
         board = self._get_board(session, board_name)
         if not board.read_only:
             new_article = model.Article(board,
@@ -684,7 +686,7 @@ class ArticleManager(object):
         user_info = get_server().login_manager.get_session(session_key)
 
         session = model.Session()
-        author = session.query(model.User).filter_by(username=user_info.username).one()
+        author = self._get_user(session, session_key)
         board = self._get_board(session, board_name)
         try:
             article = session.query(model.Article).filter_by(board_id=board.id, id=article_no).one()
@@ -733,10 +735,8 @@ class ArticleManager(object):
                 5. 데이터베이스 오류: InternalError Exception 
         '''
 
-        user_info = get_server().login_manager.get_session(session_key)
-
         session = model.Session()
-        author = session.query(model.User).filter_by(username=user_info.username).one()
+        author = self._get_user(session, session_key)
         board = self._get_board(session, board_name)
         try:
             article = session.query(model.Article).filter_by(board_id=board.id, id=no).one()
@@ -780,10 +780,8 @@ class ArticleManager(object):
                 5. 데이터베이스 오류: InternalError Exception
         '''
 
-        user_info = get_server().login_manager.get_session(session_key)
-
         session = model.Session()
-        author = session.query(model.User).filter_by(username=user_info.username).one()
+        author = self._get_user(session, session_key)
         board = self._get_board(session, board_name)
         try:
             article = session.query(model.Article).filter_by(board_id=board.id, id=no).one()
