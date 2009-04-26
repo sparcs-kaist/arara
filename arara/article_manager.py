@@ -84,10 +84,10 @@ class ArticleManager(object):
                 stack.append(child)
         return ret
 
-    def _get_best_article(self, session_key, best_type, filter_time, board=None, count=5):
+    def _get_today_best_article(self, session_key, board=None, count=5):
         session = model.Session()
-        time_to_filter = datetime.datetime.fromtimestamp(time.time()-filter_time)
-        today_best_article = None
+        # 1 day is 86400 sec
+        time_to_filter = datetime.datetime.fromtimestamp(time.time()-86400)
         if board:
             today_best_article = session.query(model.Article).filter(and_(
                     model.articles_table.c.board_id==board.id,
@@ -95,23 +95,50 @@ class ArticleManager(object):
                     model.articles_table.c.last_modified_date > time_to_filter,
                     not_(model.articles_table.c.deleted==True))
                     )[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc()).all()
+            today_best_article_dict_list = self._get_dict_list(today_best_article, BEST_ARTICLE_WHITELIST)
+            for article in today_best_article_dict_list:
+                article['type'] = 'today'
+            session.close()
+            return True, today_best_article_dict_list
         else:
             today_best_article = session.query(model.Article).filter(and_(
                     model.articles_table.c.root_id==None,
                     model.articles_table.c.last_modified_date > time_to_filter,
                     not_(model.articles_table.c.deleted==True))
                     )[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc()).all()
-        today_best_article_dict_list = self._get_dict_list(today_best_article, BEST_ARTICLE_WHITELIST)
-        for article in today_best_article_dict_list:
-            article['type'] = best_type
-        session.close()
-        return True, today_best_article_dict_list
-
-    def _get_today_best_article(self, session_key, board=None, count=5):
-        return self._get_best_article(session_key, 'today', 86400, board, count)
+            today_best_article_dict_list = self._get_dict_list(today_best_article, BEST_ARTICLE_WHITELIST)
+            for article in today_best_article_dict_list:
+                article['type'] = 'today'
+            session.close()
+            return True, today_best_article_dict_list
 
     def _get_weekly_best_article(self, session_key, board=None, count=5):
-        return self._get_best_article(session_key, 'weekly', 604800, board, count)
+        session = model.Session()
+        # 1 week is 604800 sec
+        time_to_filter = datetime.datetime.fromtimestamp(time.time()-604800)
+        if board:
+            weekly_best_article = session.query(model.Article).filter(and_(
+                    model.articles_table.c.board_id==board.id,
+                    model.articles_table.c.root_id==None,
+                    model.articles_table.c.last_modified_date > time_to_filter,
+                    not_(model.articles_table.c.deleted==True))
+                    )[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc()).all()
+            weekly_best_article_dict_list = self._get_dict_list(weekly_best_article, BEST_ARTICLE_WHITELIST)
+            for article in weekly_best_article_dict_list:
+                article['type'] = 'weekly'
+            session.close()
+            return True, weekly_best_article_dict_list
+        else:
+            weekly_best_article = session.query(model.Article).filter(and_(
+                    model.articles_table.c.root_id==None,
+                    model.articles_table.c.last_modified_date > time_to_filter,
+                    not_(model.articles_table.c.deleted==True))
+                    )[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc()).all()
+            weekly_best_article_dict_list = self._get_dict_list(weekly_best_article, BEST_ARTICLE_WHITELIST)
+            for article in weekly_best_article_dict_list:
+                article['type'] = 'weekly'
+            session.close()
+            return True, weekly_best_article_dict_list
 
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
