@@ -166,6 +166,14 @@ class ArticleManager(object):
         else:
             raise InternalError("DATABASE ERROR")
 
+    def _get_user_using_session(self, session, username):
+        try:
+            user = session.query(model.User).filter_by(username=username).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('user does not exist')
+        return user
+
     @log_method_call
     def get_today_best_list(self, count=5):
         '''
@@ -318,7 +326,7 @@ class ArticleManager(object):
 
         try:
             session = model.Session()
-            user = session.query(model.User).filter_by(username=user_info.username).one()
+            user = self._get_user_using_session(session, user_info.username)
             article_count = article_list = session.query(model.Article).filter(and_(
                                 model.articles_table.c.root_id==None,
                                 model.articles_table.c.last_modified_date > user.last_logout_time)).count()
@@ -584,7 +592,7 @@ class ArticleManager(object):
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('ARTICLE_NOT_EXIST')
-        user = session.query(model.User).filter_by(username=user_info.username).one()
+        user = self._get_user_using_session(session, user_info.username)
         vote_unique_check = session.query(model.ArticleVoteStatus).filter_by(user_id=user.id, board_id=board.id, article_id = article.id).all()
         if vote_unique_check:
             session.close()
@@ -624,7 +632,7 @@ class ArticleManager(object):
         user_info = get_server().login_manager.get_session(session_key)
         board = self._get_board(board_name)
         session = model.Session()
-        author = session.query(model.User).filter_by(username=user_info.username).one()
+        author = self._get_user_using_session(session, user_info.username)
         if not board.read_only:
             new_article = model.Article(board,
                                         article_dic.title,
@@ -673,7 +681,7 @@ class ArticleManager(object):
         user_info = get_server().login_manager.get_session(session_key)
         board = self._get_board(board_name)
         session = model.Session()
-        author = session.query(model.User).filter_by(username=user_info.username).one()
+        author = self._get_user_using_session(session, user_info.username)
         try:
             article = session.query(model.Article).filter_by(board_id=board.id, id=article_no).one()
             new_reply = model.Article(board,
@@ -724,7 +732,7 @@ class ArticleManager(object):
         user_info = get_server().login_manager.get_session(session_key)
         board = self._get_board(board_name)
         session = model.Session()
-        author = session.query(model.User).filter_by(username=user_info.username).one()
+        author = self._get_user_using_session(session, user_info.username)
         try:
             article = session.query(model.Article).filter_by(board_id=board.id, id=no).one()
             if article.deleted == True:
@@ -770,7 +778,7 @@ class ArticleManager(object):
         user_info = get_server().login_manager.get_session(session_key)
         board = self._get_board(board_name)
         session = model.Session()
-        author = session.query(model.User).filter_by(username=user_info.username).one()
+        author = self._get_user_using_session(session, user_info.username)
         try:
             article = session.query(model.Article).filter_by(board_id=board.id, id=no).one()
             if article.author_id == author.id or author.is_sysop:
