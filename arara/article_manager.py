@@ -167,6 +167,14 @@ class ArticleManager(object):
             raise InvalidOperation('user does not exist')
         return user
 
+    def _get_article(self, session, board_id, article_id):
+        try:
+            article = session.query(model.Article).filter_by(board_id=board_id, id=article_id).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation("article does not exist")
+        return article
+
     @log_method_call
     def get_today_best_list(self, count=5):
         '''
@@ -591,11 +599,7 @@ class ArticleManager(object):
 
         session = model.Session()
         board = self._get_board(session, board_name)
-        try:
-            article = session.query(model.Article).filter_by(id=article_no).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('ARTICLE_NOT_EXIST')
+        article = self._get_article(session, board.id, article_no)
         user = self._get_user(session, session_key)
         vote_unique_check = session.query(model.ArticleVoteStatus).filter_by(user_id=user.id, board_id=board.id, article_id = article.id).all()
         if vote_unique_check:
@@ -688,23 +692,19 @@ class ArticleManager(object):
         session = model.Session()
         author = self._get_user(session, session_key)
         board = self._get_board(session, board_name)
-        try:
-            article = session.query(model.Article).filter_by(board_id=board.id, id=article_no).one()
-            new_reply = model.Article(board,
-                                    reply_dic.title,
-                                    reply_dic.content,
-                                    author,
-                                    user_info.ip,
-                                    article)
-            article.reply_count += 1
-            if article.root:
-                article.root.reply_count += 1
-            session.save(new_reply)
-            session.commit()
-            session.close()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('ARTICLE_NOT_EXIST')
+        article = self._get_article(session, board.id, article_no)
+        new_reply = model.Article(board,
+                                reply_dic.title,
+                                reply_dic.content,
+                                author,
+                                user_info.ip,
+                                article)
+        article.reply_count += 1
+        if article.root:
+            article.root.reply_count += 1
+        session.save(new_reply)
+        session.commit()
+        session.close()
         return new_reply.id
 
     @require_login
@@ -738,23 +738,19 @@ class ArticleManager(object):
         session = model.Session()
         author = self._get_user(session, session_key)
         board = self._get_board(session, board_name)
-        try:
-            article = session.query(model.Article).filter_by(board_id=board.id, id=no).one()
-            if article.deleted == True:
-                session.close()
-                raise InvalidOperation("NO_PERMISSION")
-            if article.author_id == author.id:
-                article.title = article_dic.title
-                article.content = article_dic.content
-                article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
-                session.commit()
-                session.close()
-            else:
-                session.close()
-                raise InvalidOperation("NO_PERMISSION")
-        except InvalidRequestError:
+        article = self._get_article(session, board.id, no)
+        if article.deleted == True:
             session.close()
-            raise InvalidOperation("ARTICLE_NOT_EXIST")
+            raise InvalidOperation("NO_PERMISSION")
+        if article.author_id == author.id:
+            article.title = article_dic.title
+            article.content = article_dic.content
+            article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
+            session.commit()
+            session.close()
+        else:
+            session.close()
+            raise InvalidOperation("NO_PERMISSION")
         return article.id
 
     @require_login
@@ -783,21 +779,17 @@ class ArticleManager(object):
         session = model.Session()
         author = self._get_user(session, session_key)
         board = self._get_board(session, board_name)
-        try:
-            article = session.query(model.Article).filter_by(board_id=board.id, id=no).one()
-            if article.author_id == author.id or author.is_sysop:
-                article.deleted = True
-                article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
-                if article.root:
-                    article.root.reply_count -= 1
-                session.commit()
-                session.close()
-            else:
-                session.close()
-                raise InvalidOperation("NO_PERMISSION")
-        except InvalidRequestError:
+        article = self._get_article(session, board.id, no)
+        if article.author_id == author.id or author.is_sysop:
+            article.deleted = True
+            article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
+            if article.root:
+                article.root.reply_count -= 1
+            session.commit()
             session.close()
-            raise InvalidOperation("ARTICLE_NOT_EXIST")
+        else:
+            session.close()
+            raise InvalidOperation("NO_PERMISSION")
         return True
 
 # vim: set et ts=8 sw=4 sts=4
