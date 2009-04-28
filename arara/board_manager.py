@@ -58,14 +58,26 @@ class BoardManager(object):
             session.close()
             raise InvalidOperation('already added')
 
-    @log_method_call
-    def get_board(self, board_name):
-        session = model.Session()
+    def _get_board(self, session, board_name):
         try:
-            board_to_get = session.query(model.Board).filter_by(board_name=board_name, deleted=False).one()
+            board = session.query(model.Board).filter_by(board_name=board_name, deleted=False).one()
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('board does not exist')
+        return board
+
+    def _get_board_including_deleted(self, session, board_name):
+        try:
+            board = session.query(model.Board).filter_by(board_name=board_name).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('board does not exist')
+        return board
+
+    @log_method_call
+    def get_board(self, board_name):
+        session = model.Session()
+        board_to_get = self._get_board(session, board_name)
         board_dict = self._get_dict(board_to_get, BOARD_MANAGER_WHITELIST)
         session.close()
         return Board(**board_dict)
@@ -101,19 +113,13 @@ class BoardManager(object):
 
         self._is_sysop(session_key)
         session = model.Session()
-        try:
-            board = session.query(model.Board).filter_by(board_name=board_name).one()
-            if board.read_only:
-                session.close()
-                raise InvalidOperation('aleardy read only board')
-            board.read_only = True
-            session.commit()
+        board = self._get_board_including_deleted(session, board_name)
+        if board.read_only:
             session.close()
-            return
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('board does not exist')
-
+            raise InvalidOperation('aleardy read only board')
+        board.read_only = True
+        session.commit()
+        session.close()
 
     @require_login
     @log_method_call_important
@@ -138,31 +144,20 @@ class BoardManager(object):
 
         self._is_sysop(session_key)
         session = model.Session()
-        try:
-            board = session.query(model.Board).filter_by(board_name=board_name).one()
-            if not board.read_only:
-                session.close()
-                raise InvalidOperation('not read only board')
-            board.read_only = False
-            session.commit()
+        board = self._get_board_including_deleted(session, board_name)
+        if not board.read_only:
             session.close()
-            return
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('board does not exist')
-        
+            raise InvalidOperation('not read only board')
+        board.read_only = False
+        session.commit()
+        session.close()
 
     @require_login
     @log_method_call_important
     def delete_board(self, session_key, board_name):
         self._is_sysop(session_key)
         session = model.Session()
-        try:
-            board = session.query(model.Board).filter_by(board_name=board_name).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('board does not exist')
+        board = self._get_board_including_deleted(session, board_name)
         board.deleted = True
         session.commit()
         session.close()
-        return
