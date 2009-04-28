@@ -65,6 +65,14 @@ class SearchManager(object):
     def _set_login_manager(self, login_manager):
         self.login_manager = login_manager
 
+    def _get_board(self, session, board_name):
+        try:
+            board = session.query(model.Board).filter_by(board_name=board_name).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation("board does not exist")
+        return board
+
     def register_article(self):
         sess = get_server().login_manager.login('SYSOP', 'SYSOP', '234.234.234.234')
         #XXX SYSOP LOGIN MUST BE IMPLEMENTED HERE 
@@ -76,7 +84,7 @@ class SearchManager(object):
             try:
                 session = model.Session()
                 board_name = board_info['board_name']
-                board = session.query(model.Board).filter_by(board_name=board_name).one()
+                board = self._get_board(session, board_name)
                 article_count = session.query(model.Article).filter_by(board_id=board.id).count()
                 for article_no in range(1, article_count):
                     article = session.query(model.Article).filter_by(id=article_no).one()
@@ -216,11 +224,7 @@ class SearchManager(object):
         if board_name.upper() == 'NO_BOARD':
             board = None
         else:
-            try:
-                board = session.query(model.Board).filter_by(board_name=board_name).one()
-            except InvalidRequestError:
-                session.close()
-                raise InvalidOperation('board not exist')
+            board = self._get_board(session, board_name)
                 
         query = session.query(model.Article).filter_by(is_searchable=True)
 
