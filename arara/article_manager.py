@@ -89,12 +89,12 @@ class ArticleManager(object):
                 stack.append(child)
         return ret
 
-    def _get_best_article(self, session_key, board, count, time_to_filter, best_type):
+    def _get_best_article(self, session_key, board_id, count, time_to_filter, best_type):
         session = model.Session()
         time_to_filter = datetime.datetime.fromtimestamp(time.time()-time_to_filter)
-        if board:
+        if board_id:
             query = session.query(model.Article).filter(and_(
-                    model.articles_table.c.board_id==board.id,
+                    model.articles_table.c.board_id==board_id,
                     model.articles_table.c.root_id==None,
                     model.articles_table.c.last_modified_date > time_to_filter,
                     not_(model.articles_table.c.deleted==True)))
@@ -209,7 +209,7 @@ class ArticleManager(object):
         board = self._get_board(session, board_name)
         session.close()
 
-        today_best_list = self._get_best_article(None, board, count, 86400, 'today')
+        today_best_list = self._get_best_article(None, board.id, count, 86400, 'today')
         for article in today_best_list:
             article['date'] = datetime2timestamp(article['date'])
             article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
@@ -257,7 +257,7 @@ class ArticleManager(object):
         board = self._get_board(session, board_name)
         session.close()
 
-        weekly_best_list = self._get_best_article(None, board, count, 604800, 'weekly')
+        weekly_best_list = self._get_best_article(None, board.id, count, 604800, 'weekly')
         for article in weekly_best_list:
             article['date'] = datetime2timestamp(article['date'])
             article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
