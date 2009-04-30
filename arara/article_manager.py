@@ -63,6 +63,9 @@ class ArticleManager(object):
             raise InvalidOperaion("BOARD_NOT_EXIST")
         return board
 
+    def _get_board_id(self, session, board_name):
+        return self._get_board(session, board_name).id
+
     def _article_thread_to_list(self, article_thread):
         queue = []
         depth_ret = {}
@@ -206,10 +209,10 @@ class ArticleManager(object):
                 2. 데이터베이스 오류: InternalError Exception
         '''
         session = model.Session()
-        board = self._get_board(session, board_name)
+        board_id = self._get_board_id(session, board_name)
         session.close()
 
-        today_best_list = self._get_best_article(None, board.id, count, 86400, 'today')
+        today_best_list = self._get_best_article(None, board_id, count, 86400, 'today')
         for article in today_best_list:
             article['date'] = datetime2timestamp(article['date'])
             article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
@@ -254,10 +257,10 @@ class ArticleManager(object):
                 2. 데이터베이스 오류: InternalError Exception
         '''
         session = model.Session()
-        board = self._get_board(session, board_name)
+        board_id = self._get_board_id(session, board_name)
         session.close()
 
-        weekly_best_list = self._get_best_article(None, board.id, count, 604800, 'weekly')
+        weekly_best_list = self._get_best_article(None, board_id, count, 604800, 'weekly')
         for article in weekly_best_list:
             article['date'] = datetime2timestamp(article['date'])
             article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
@@ -392,8 +395,8 @@ class ArticleManager(object):
 
     def _get_article_list(self, session_key, board_name, page, page_length):
         session = model.Session()
-        board = self._get_board(session, board_name)
-        article_count = session.query(model.Article).filter_by(board_id=board.id, root_id=None).count()
+        board_id = self._get_board_id(session, board_name)
+        article_count = session.query(model.Article).filter_by(board_id=board_id, root_id=None).count()
         last_page = int(article_count / page_length)
         if article_count % page_length != 0:
             last_page += 1
@@ -404,7 +407,7 @@ class ArticleManager(object):
             raise InvalidOperation('WRONG_PAGENUM')
         offset = page_length * (page - 1)
         last = offset + page_length
-        article_list = session.query(model.Article).filter_by(board_id=board.id, root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
+        article_list = session.query(model.Article).filter_by(board_id=board_id, root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
         article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
         session.close()
         return article_dict_list, last_page, article_count
@@ -546,10 +549,10 @@ class ArticleManager(object):
         '''
         ret_dict = {}
         session = model.Session()
-        board = self._get_board(session, board_name)
-        total_article_count = session.query(model.Article).filter_by(board_id=board.id, root_id=None).count()
+        board_id = self._get_board_id(session, board_name)
+        total_article_count = session.query(model.Article).filter_by(board_id=board_id, root_id=None).count()
         remaining_article_count = session.query(model.Article).filter(and_(
-                model.articles_table.c.board_id==board.id,
+                model.articles_table.c.board_id==board_id,
                 model.articles_table.c.root_id==None,
                 model.articles_table.c.id < no)).count()
         position_no = total_article_count - remaining_article_count
@@ -732,8 +735,8 @@ class ArticleManager(object):
 
         session = model.Session()
         author = self._get_user(session, session_key)
-        board = self._get_board(session, board_name)
-        article = self._get_article(session, board.id, no)
+        board_id = self._get_board_id(session, board_name)
+        article = self._get_article(session, board_id, no)
         if article.deleted == True:
             session.close()
             raise InvalidOperation("NO_PERMISSION")
@@ -773,8 +776,8 @@ class ArticleManager(object):
 
         session = model.Session()
         author = self._get_user(session, session_key)
-        board = self._get_board(session, board_name)
-        article = self._get_article(session, board.id, no)
+        board_id = self._get_board_id(session, board_name)
+        article = self._get_article(session, board_id, no)
         if article.author_id == author.id or author.is_sysop:
             article.deleted = True
             article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
