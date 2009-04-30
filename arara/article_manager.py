@@ -110,12 +110,6 @@ class ArticleManager(object):
         session.close()
         return best_article_dict_list
 
-    def _get_today_best_article(self, session_key, board=None, count=5):
-        return self._get_best_article(session_key, board, count, 86400, 'today')
-
-    def _get_weekly_best_article(self, session_key, board=None, count=5):
-        return self._get_best_article(session_key, board, count, 604800, 'weekly')
-
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
         session = model.Session()
@@ -188,7 +182,8 @@ class ArticleManager(object):
             2. 투베를 가져오는데 실패:
                 1. 데이터베이스 오류: InternalError Exception 
         '''
-        today_best_list = self._get_today_best_article(None, None, count)
+        today_best_list = self._get_best_article(None, None, count, 86400, 'today')
+
         for article in today_best_list:
             article['date'] = datetime2timestamp(article['date'])
             article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
@@ -214,7 +209,7 @@ class ArticleManager(object):
         board = self._get_board(session, board_name)
         session.close()
 
-        today_best_list = self._get_today_best_article(None, board, count)
+        today_best_list = self._get_best_article(None, board, count, 86400, 'today')
         for article in today_best_list:
             article['date'] = datetime2timestamp(article['date'])
             article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
@@ -236,7 +231,7 @@ class ArticleManager(object):
                 1. Not Existing Board: InvalidOperation Exception
                 2. 데이터베이스 오류: InternalError Exception
         '''
-        weekly_best_list = self._get_weekly_best_article(None, None, count)
+        weekly_best_list = self._get_best_article(None, None, count, 604800, 'weekly')
         for article in weekly_best_list:
             article['date'] = datetime2timestamp(article['date'])
             article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
@@ -262,7 +257,7 @@ class ArticleManager(object):
         board = self._get_board(session, board_name)
         session.close()
 
-        weekly_best_list = self._get_weekly_best_article(None, board, count)
+        weekly_best_list = self._get_best_article(None, board, count, 604800, 'weekly')
         for article in weekly_best_list:
             article['date'] = datetime2timestamp(article['date'])
             article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
