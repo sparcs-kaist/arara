@@ -3,14 +3,17 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 # Django settings for warara project.
 
-#DEBUG = True
-DEBUG = False
+# To disable DEBUG feature, uncomment below:
+# DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
+    #  When you disabled DEBUG feature, you must specify your information below
+    # to keep track on DEBUG information.
     # ('Your Name', 'your_email@domain.com'),
-    ('Kyuhong Byun', 'combacsa@gmail.com'),
-    ('Sung-jin Hong', 'serialx@serialx.net'),
+    # ('Kyuhong Byun', 'combacsa@gmail.com'),
+    # ('Sung-jin Hong', 'serialx@serialx.net'),
 )
 
 MANAGERS = ADMINS
