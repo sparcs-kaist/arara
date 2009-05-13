@@ -8,7 +8,6 @@ import random
 
 from sqlalchemy import *
 from sqlalchemy.orm import *
-from sqlalchemy.databases.mysql import MSLongBlob
 
 def smart_unicode(string):
     if type(string) == str:
@@ -268,13 +267,10 @@ article_vote_table = Table('article_vote_status', metadata,
     mysql_engine='InnoDB'
 )
 
-class MyPickleType(PickleType):
-    impl = MSLongBlob
-
 read_status_table = Table('read_status', metadata,
     Column('id', Integer, primary_key=True),
     Column('user_id', Integer, ForeignKey('users.id')),
-    Column('read_status_data', MyPickleType),
+    Column('read_status_data', PickleType),
     mysql_engine='InnoDB'
 )
 
