@@ -292,6 +292,7 @@ class ArticleManager(object):
             session = model.Session()
             offset = page_length * (page - 1)
             last = offset + page_length
+            # XXX: 갖고 와서 빼는군여. 가져올 때 빼세요.
             article_list = session.query(model.Article).filter_by(root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
             article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
             article_number = []

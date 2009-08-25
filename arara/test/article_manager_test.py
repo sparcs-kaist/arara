@@ -241,69 +241,30 @@ class ArticleManagerTest(unittest.TestCase):
         article_id = self._dummy_article_write(self.session_key_mikkang)
         self.assertEqual("[Article(attach=None, board_name=None, author_username=u'mikkang', hit=1, blacklisted=True, title=u'TITLE', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'CONTENT', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, type=None, id=1)]", repr(server.article_manager.read(self.session_key_serialx, u'board', 1)))
 
-    def test_need_to_implement(self):
-        """
-# XXX : Where is "Also check the functionality of next and prev article
+    def test_article_list_below(self):
+        for i in range(100):
+            self._dummy_article_write(self.session_key_mikkang)
 
-# Test article listed below
+        l = server.article_manager.article_list_below(self.session_key_mikkang, u'board', 75, 10)
+        self.assertEqual(l.hit[0].id, 80)
+        self.assertEqual(l.last_page, 10)
+        l = server.article_manager.article_list_below(self.session_key_mikkang, u'board', 84, 10)
+        self.assertEqual(l.hit[0].id, 90)
+        l = server.article_manager.article_list_below(self.session_key_mikkang, u'board', 95, 10)
+        self.assertEqual(l.hit[0].id, 100)
 
->>> l = server.article_manager.article_list_below(session_key, u'garbages', 90, 10)
->>> l.hit[0].id
-94
+    def test_not_read_article_list(self):
+        for i in range(110):
+            self._dummy_article_write(self.session_key_mikkang)
 
->>> l.last_page
-11
+        l = server.article_manager.not_read_article_list(self.session_key_mikkang)
+        self.assertEqual(l.hit, [110, 109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91])
 
->>> l = server.article_manager.article_list_below(session_key, u'garbages', 84, 10)
->>> l.hit[0].id
-84
+        _ = server.article_manager.read(self.session_key_mikkang, u'board', 110)
+        l = server.article_manager.not_read_article_list(self.session_key_mikkang)
+        # XXX: 잘못 구현되어 있습니당. article_manager.py의 주석 참조
+        self.assertEqual(l.hit, [109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91])
 
->>> l = server.article_manager.article_list_below(session_key, u'garbages', 95, 10)
->>> l.hit[0].id
-108
-
->>> l = server.article_manager.article_list_below(session_key, u'garbages', 104, 10)
->>> l.hit[0].id
-108
-
-# Logout the user
-
->>> server.login_manager.logout(session_key)
-
-# New Aritlcle List Test
-
-# Restore time to NOW.
->>> time.time = org_time
-
->>> session_key_mikkang = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.140')
->>> session_key_combacsa = server.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.140')
-
->>> article_dic = {'title': u'serialx is...1', 'content': u'polarbear'}
->>> _ = server.article_manager.write_article(session_key_mikkang, u'garbages', Article(**article_dic))
-
->>> server.login_manager.logout(session_key_combacsa)
-
->>> article_dic = {'title': u'serialx is...2', 'content': u'polarbear'}
->>> _ = server.article_manager.write_article(session_key_mikkang, u'garbages', Article(**article_dic))
-
->>> session_key_combacsa = server.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.140')
->>> l = server.article_manager.new_article_list(session_key_combacsa)
->>> l.hit[0].title
-u'serialx is...2'
->>> l.hit[0].author_username
-u'mikkang'
-
-# Not Read Article List Test!
-
->>> l = server.article_manager.not_read_article_list(session_key_combacsa)
->>> l.hit
-[110, 109, 108, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87]
-
->>> _ = server.article_manager.read(session_key_combacsa, u'garbages', 110)
->>> l = server.article_manager.not_read_article_list(session_key_combacsa)
->>> l.hit
-[109, 108, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87]
-        """
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(ArticleManagerTest)
