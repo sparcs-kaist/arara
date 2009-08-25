@@ -3,10 +3,10 @@ import unittest
 import os
 import sys
 
-THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'gen-py'))
-sys.path.append(THRIFT_PATH)
-ARARA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-sys.path.append(ARARA_PATH)
+thrift_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'gen-py'))
+sys.path.append(thrift_path)
+arara_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.append(arara_path)
 
 from arara_thrift.ttypes import *
 import arara.model
