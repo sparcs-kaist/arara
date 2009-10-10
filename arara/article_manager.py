@@ -75,8 +75,7 @@ class ArticleManager(object):
                 depth = item.values()[0]
                 depth_ret[item.keys()[0]] = depth
             depth += 1
-            length = len(queue)
-            for i in range(length):
+            for i in xrange(len(queue)):
                 parent_article = queue.pop(0).keys()[0]
                 for child in parent_article.children:
                     queue.append({child: depth})
@@ -87,7 +86,7 @@ class ArticleManager(object):
             a = stack.pop()
             d = self._get_dict(a, READ_ARTICLE_WHITELIST)
             d['depth'] = depth_ret[a]
-            ret.append(filter_dict(d, READ_ARTICLE_WHITELIST))
+            ret.append(d)
             for child in a.children[::-1]:
                 stack.append(child)
         return ret
@@ -106,19 +105,19 @@ class ArticleManager(object):
                     model.articles_table.c.root_id==None,
                     model.articles_table.c.last_modified_date > time_to_filter,
                     not_(model.articles_table.c.deleted==True)))
-        best_article = query[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc()).all()
+        best_article = query[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc())
         best_article_dict_list = self._get_dict_list(best_article, BEST_ARTICLE_WHITELIST)
+        session.close()
         for article in best_article_dict_list:
             article['type'] = best_type
-        session.close()
-        return best_article_dict_list
+            article['date'] = datetime2timestamp(article['date'])
+            article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
+            yield article
 
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
-        session = model.Session()
-        if item_dict.has_key('title'):
-            if not item_dict['title']:
-                item_dict['title'] = u'Untitled'
+        if not item_dict.get('title'):
+            item_dict['title'] = u'Untitled'
         if item_dict.has_key('author_id'):
             item_dict['author_username'] = item.author.username
             item_dict['author_nickname'] = item.author.nickname
@@ -126,34 +125,27 @@ class ArticleManager(object):
         if item_dict.has_key('board_id'):
             item_dict['board_name'] = item.board.board_name
             del item_dict['board_id']
-        if item_dict.has_key('root_id'):
-            if not item_dict['root_id']:
-                item_dict['root_id'] = item_dict['id']
+        if not item_dict.get('root_id'):
+            item_dict['root_id'] = item_dict['id']
         if item_dict.has_key('content'):
             if whitelist == SEARCH_ARTICLE_WHITELIST:
                 item_dict['content'] = item_dict['content'][:40]
             if whitelist == READ_ARTICLE_WHITELIST:
+                session = model.Session()
                 attach_files = session.query(model.File).filter_by(
-                        article_id=item.id).filter_by(deleted=False).all()
-                if len(attach_files) > 0:
-                    item_dict['attach'] = []
-                    for one_file in attach_files:
-                        one_file_dict = one_file.__dict__
-                        item_dict['attach'].append(AttachDict(**{'filename': one_file_dict['filename'],
-                                                    'file_id': one_file_dict['id']}))
+                        article_id=item.id).filter_by(deleted=False)
+                if attach_files.count() > 0:
+                    item_dict['attach'] = [AttachDict(filename=x.filename, file_id=x.id) for x in attach_files]
+                session.close()
+
         if whitelist:
-            filtered_dict = filter_dict(item_dict, whitelist)
+            return filter_dict(item_dict, whitelist)
         else:
-            filtered_dict = item_dict
-        session.close()
-        return filtered_dict
+            return item_dict
 
     def _get_dict_list(self, raw_list, whitelist=None):
-        return_list = []
         for item in raw_list:
-            filtered_dict = self._get_dict(item, whitelist)
-            return_list.append(filtered_dict)
-        return return_list
+            yield self._get_dict(item, whitelist)
 
     def _get_user(self, session, session_key):
         user_info = get_server().login_manager.get_session(session_key)
@@ -186,10 +178,6 @@ class ArticleManager(object):
                 1. 데이터베이스 오류: InternalError Exception 
         '''
         today_best_list = self._get_best_article(None, None, count, 86400, 'today')
-
-        for article in today_best_list:
-            article['date'] = datetime2timestamp(article['date'])
-            article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
         return [Article(**d) for d in today_best_list]
 
     @log_method_call
@@ -213,9 +201,6 @@ class ArticleManager(object):
         session.close()
 
         today_best_list = self._get_best_article(None, board_id, count, 86400, 'today')
-        for article in today_best_list:
-            article['date'] = datetime2timestamp(article['date'])
-            article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
         return [Article(**d) for d in today_best_list]
 
     @log_method_call
@@ -235,9 +220,6 @@ class ArticleManager(object):
                 2. 데이터베이스 오류: InternalError Exception
         '''
         weekly_best_list = self._get_best_article(None, None, count, 604800, 'weekly')
-        for article in weekly_best_list:
-            article['date'] = datetime2timestamp(article['date'])
-            article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
         return [Article(**d) for d in weekly_best_list]
 
     @log_method_call
@@ -261,9 +243,6 @@ class ArticleManager(object):
         session.close()
 
         weekly_best_list = self._get_best_article(None, board_id, count, 604800, 'weekly')
-        for article in weekly_best_list:
-            article['date'] = datetime2timestamp(article['date'])
-            article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
         return [Article(**d) for d in weekly_best_list]
 
     @log_method_call
@@ -293,7 +272,7 @@ class ArticleManager(object):
             offset = page_length * (page - 1)
             last = offset + page_length
             # XXX: 갖고 와서 빼는군여. 가져올 때 빼세요.
-            article_list = session.query(model.Article).filter_by(root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
+            article_list = session.query(model.Article).filter_by(root_id=None)[offset:last].order_by(model.Article.id.desc())
             article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
             article_number = []
             for article in article_dict_list:
@@ -364,15 +343,15 @@ class ArticleManager(object):
 
             article_list = session.query(model.Article).filter(and_(
                     model.articles_table.c.root_id==None,
-                    model.articles_table.c.last_modified_date > user.last_logout_time))[offset:last].order_by(model.Article.id.desc()).all()
+                    model.articles_table.c.last_modified_date > user.last_logout_time))[offset:last].order_by(model.Article.id.desc())
             article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
+
+            ret_dict['hit'] = list()
             for article in article_dict_list:
                 article['read_status'] = 'N'
-
                 article['date'] = datetime2timestamp(article['date'])
                 article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
-
-            ret_dict['hit'] = [Article(**d) for d in article_dict_list]
+                ret_dict['hit'] = Article(**d)
             ret_dict['last_page'] = last_page
             ret_dict['results'] = article_count
             session.close()
@@ -408,7 +387,7 @@ class ArticleManager(object):
             raise InvalidOperation('WRONG_PAGENUM')
         offset = page_length * (page - 1)
         last = offset + page_length
-        article_list = session.query(model.Article).filter_by(board_id=board_id, root_id=None)[offset:last].order_by(model.Article.id.desc()).all()
+        article_list = session.query(model.Article).filter_by(board_id=board_id, root_id=None)[offset:last].order_by(model.Article.id.desc())
         article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
         session.close()
         return article_dict_list, last_page, article_count
@@ -436,10 +415,11 @@ class ArticleManager(object):
         '''
         blacklist_users = self._get_blacklist_users(session_key)
 
-        article_id_list = []
         article_dict_list, last_page, article_count = self._get_article_list(session_key, board_name, page, page_length)
         # InvalidOperation(board not exist) 는 여기서 알아서 불릴 것이므로 제거.
 
+        ret_dict = {}
+        ret_dict['hit'] = list()
         for article in article_dict_list:
             if article['author_username'] in blacklist_users:
                 article['blacklisted'] = True
@@ -448,23 +428,15 @@ class ArticleManager(object):
             if article.has_key('id'):
                 if not article.has_key('type'):
                     article['type'] = 'normal'
-                article_id_list.append(article['id']) 
-
+                try:
+                    msg = get_server().read_status_manager.check_stat(session_key, article['id'])
+                    article['read_status'] = msg
+                except NotLoggedIn, InvalidOperation:
+                    article['read_status'] = 'N'
             article['date'] = datetime2timestamp(article['date'])
             article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
-        try:
-            msg = get_server().read_status_manager.check_stats(session_key, article_id_list)
-            for index, article in enumerate(article_dict_list):
-                article['read_status'] = msg[index]
-        except NotLoggedIn:
-            for index, article in enumerate(article_dict_list):
-                article['read_status'] = 'N'
-        except InvalidOperation:
-            for index, article in enumerate(article_dict_list):
-                article['read_status'] = 'N'
-            
-        ret_dict = {}
-        ret_dict['hit'] = [Article(**d) for d in article_dict_list]
+            ret_dict['hit'].append(Article(**article))
+
         ret_dict['last_page'] = last_page
         ret_dict['results'] = article_count
         article_list = ArticleList(**ret_dict)
@@ -600,7 +572,7 @@ class ArticleManager(object):
         board = self._get_board(session, board_name)
         article = self._get_article(session, board.id, article_no)
         user = self._get_user(session, session_key)
-        vote_unique_check = session.query(model.ArticleVoteStatus).filter_by(user_id=user.id, board_id=board.id, article_id = article.id).all()
+        vote_unique_check = session.query(model.ArticleVoteStatus).filter_by(user_id=user.id, board_id=board.id, article_id = article.id).count()
         if vote_unique_check:
             session.close()
             raise InvalidOperation('ALREADY_VOTED')

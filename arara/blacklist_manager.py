@@ -63,11 +63,8 @@ class BlacklistManager(object):
         return filtered_dict
 
     def _get_dict_list(self, raw_list, whitelist):
-        return_list = []
         for item in raw_list:
-            filtered_dict = self._get_dict(item, whitelist)
-            return_list.append(filtered_dict)
-        return return_list
+            yield self._get_dict(item, whitelist)
 
     def _get_user(self, session, username):
         try:
@@ -229,7 +226,7 @@ class BlacklistManager(object):
         try:
             session = model.Session()
             user = self._get_user(session, user_info.username)
-            blacklist_list = session.query(model.Blacklist).filter_by(user_id=user.id).all()
+            blacklist_list = session.query(model.Blacklist).filter_by(user_id=user.id)
             blacklist_dict_list = self._get_dict_list(blacklist_list, BLACKLIST_LIST_DICT)
             session.close()
         except:

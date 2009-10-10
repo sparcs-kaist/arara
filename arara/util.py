@@ -117,12 +117,7 @@ def require_login(function):
 
 def filter_dict(dictionary, keys):
     """Dictionary is filtered by the given keys."""
-    new_dict = {}
-    for key in dictionary:
-        if key in keys:
-            new_dict[key] = dictionary[key]
-    return new_dict
-
+    return dict((x, y) for (x, y) in dictionary.iteritems() if x in keys)
 
 def is_keys_in_dict(dictionary, keys):
     for key in keys:
