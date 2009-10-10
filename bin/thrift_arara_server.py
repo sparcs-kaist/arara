@@ -56,6 +56,7 @@ def open_thrift_server(processor, handler, port):
     #else:
     #    server = TServer.TThreadedServer(processor_, transport, tfactory, pfactory)
     server = TServer.TThreadPoolServer(processor_, transport, tfactory, pfactory)
+    server.setNumThreads(200)
     return server, handler_instance
 
 def setter_name(class_):
