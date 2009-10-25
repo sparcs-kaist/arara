@@ -1,4 +1,6 @@
 #-*- coding: utf:-8 -*-
+# Test template for ARARA Engine.
+# 클래스 이름을 적당히 고치고, suite() 함수에 반영하고 사용한다.
 import unittest
 import os
 import sys
@@ -16,10 +18,9 @@ import arara.server
 import arara.model
 server = None
 
-# Time is needed for testing file_manager
 import time
 
-class NoticeManagerTest(unittest.TestCase):
+class Test(unittest.TestCase):
     def setUp(self):
         global server
         # Common preparation for all tests
@@ -34,19 +35,13 @@ class NoticeManagerTest(unittest.TestCase):
         self.org_time = time.time
         time.time = stub_time
 
-        # Login as SYSOP and create 'garbage'
-        session_key_sysop = server.login_manager.login(
-                u'SYSOP', u'SYSOP', u'123.123.123.123')
-        server.board_manager.add_board(
-                unicode(session_key_sysop), u'garbages', u'Garbage Board')
-
     def tearDown(self):
         arara.model.clear_test_database()
         # Restore the time
         time.time = self.org_time
 
 def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(NoticeManagerTest)
+    return unittest.TestLoader().loadTestsFromTestCase(Test)
 
 if __name__ == "__main__":
     unittest.TextTestRunner(verbosity=2).run(suite())
