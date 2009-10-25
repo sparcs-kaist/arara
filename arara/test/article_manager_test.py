@@ -151,7 +151,12 @@ class ArticleManagerTest(unittest.TestCase):
             self.fail()
         except InvalidOperation:
             pass
-        # XXX: What about 이미 지운 글?
+        # Can't delete which I already deleted
+        try:
+            server.article_manager.delete_(self.session_key_mikkang, u"board", article1_id)
+            self.fail()
+        except InvalidOperation:
+            pass
 
     def test_modification(self):
         # XXX combacsa 20090805 1905

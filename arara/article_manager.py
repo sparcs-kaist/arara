@@ -755,6 +755,9 @@ class ArticleManager(object):
         board_id = self._get_board_id(session, board_name)
         article = self._get_article(session, board_id, no)
         if article.author_id == author.id or author.is_sysop:
+            if article.deleted:
+                session.close()
+                raise InvalidOperation("ALREADY_DELETED")
             article.deleted = True
             article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
             if article.root:
