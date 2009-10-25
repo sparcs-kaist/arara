@@ -49,7 +49,7 @@ class BoardManager(object):
         session = model.Session()
         board_to_add = model.Board(board_name, board_description)
         try:
-            session.save(board_to_add)
+            session.add(board_to_add)
             session.commit()
             session.close()
             return

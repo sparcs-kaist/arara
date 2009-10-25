@@ -149,7 +149,7 @@ class ReadStatusManager(object):
                     select(
                         [model.articles_table],
                         select([func.max(model.articles_table.c.id)]).label('top_article_id')==model.articles_table.c.id)
-                    )[0]
+                    ).first()
         except IndexError:
             session.close()
             raise InvalidOperation('ARTICLE_NOT_EXIST')
@@ -337,24 +337,27 @@ class ReadStatusManager(object):
             read_stat = session.query(model.ReadStatus).filter_by(user_id=user.id).one()
             read_stat.read_status_data = self.read_status[user.id]
             session.commit()
+            id = user.id
             session.close()
-            del self.read_status[user.id]
+            del self.read_status[id]
         except KeyError:
             session.close()
         except InvalidRequestError:
             try:
                 new_read_stat = model.ReadStatus(user, self.read_status[user.id])
-                session.save(new_read_stat)
+                session.add(new_read_stat)
                 session.commit()
+                id = user.id
                 session.close()
-                del self.read_status[user.id]
+                del self.read_status[id]
             except KeyError:
                 self.read_status[user.id] = ReadStatus()
                 new_read_stat = model.ReadStatus(user, self.read_status[user.id])
-                session.save(new_read_stat)
+                session.add(new_read_stat)
                 session.commit()
+                id = user.id
                 session.close()
-                del self.read_status[user.id]
+                del self.read_status[id]
         except InvalidOperation:
             session.close()
         except Exception:

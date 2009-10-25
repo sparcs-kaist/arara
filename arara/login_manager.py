@@ -38,7 +38,7 @@ class LoginManager(object):
             session.close()
         except InvalidRequestError:
             visitor = model.Visitor()
-            session.save(visitor)
+            session.add(visitor)
             session.commit()
             session.close()
 
@@ -84,8 +84,10 @@ class LoginManager(object):
         visitor.today = visitor.today + 1
         visitor.date = datetime.datetime.fromtimestamp(time.time())
         session.commit()
+        total = visitor.total
+        today = visitor.today
         session.close()
-        visitor_count= {'total_visitor_count':visitor.total, 'today_visitor_count':visitor.today}
+        visitor_count= {'total_visitor_count':total, 'today_visitor_count':today}
         return VisitorCount(**visitor_count)
 
     def login(self, username, password, user_ip):

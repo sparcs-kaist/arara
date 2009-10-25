@@ -76,7 +76,7 @@ class FileManager(object):
             # Generate unique filename by putting timestamp at the end of the hasing string
             ghost_filename = u''+hashlib.md5(filename.encode('utf-8') + str(article.author.id) + str(article.board.id) + str(article.id) + str(time.time())).hexdigest()
             file = model.File(filename, ghost_filename, filepath_to_save, article.author, article.board, article)
-            session.save(file)
+            session.add(file)
             session.commit()
             session.close()
             return FileInfo(filepath_to_save, ghost_filename)

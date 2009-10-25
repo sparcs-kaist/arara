@@ -62,7 +62,7 @@ class MemberManager(object):
         try:
             user = model.User(**sysop_reg_dic)
             session = model.Session()
-            session.save(user)
+            session.add(user)
             user.activated = True
             user.is_sysop = True
             session.commit()
@@ -159,10 +159,10 @@ class MemberManager(object):
         try:
             # Register user to db
             user = model.User(**user_reg_info.__dict__)
-            session.save(user)
+            session.add(user)
             # Register activate code to db
             user_activation = model.UserActivation(user, activation_code)
-            session.save(user_activation)
+            session.add(user_activation)
             session.commit()
         except IntegrityError:
             session.rollback()

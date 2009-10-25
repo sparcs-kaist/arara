@@ -105,7 +105,7 @@ class ArticleManager(object):
                     model.articles_table.c.root_id==None,
                     model.articles_table.c.last_modified_date > time_to_filter,
                     not_(model.articles_table.c.deleted==True)))
-        best_article = query[:count].order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc())
+        best_article = query.order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc())[:count]
         best_article_dict_list = self._get_dict_list(best_article, BEST_ARTICLE_WHITELIST)
         session.close()
         for article in best_article_dict_list:
@@ -115,6 +115,7 @@ class ArticleManager(object):
             yield article
 
     def _get_dict(self, item, whitelist=None):
+        session = model.Session()
         item_dict = item.__dict__
         if not item_dict.get('title'):
             item_dict['title'] = u'Untitled'
@@ -131,12 +132,11 @@ class ArticleManager(object):
             if whitelist == SEARCH_ARTICLE_WHITELIST:
                 item_dict['content'] = item_dict['content'][:40]
             if whitelist == READ_ARTICLE_WHITELIST:
-                session = model.Session()
                 attach_files = session.query(model.File).filter_by(
                         article_id=item.id).filter_by(deleted=False)
                 if attach_files.count() > 0:
                     item_dict['attach'] = [AttachDict(filename=x.filename, file_id=x.id) for x in attach_files]
-                session.close()
+        session.close()
 
         if whitelist:
             return filter_dict(item_dict, whitelist)
@@ -272,7 +272,7 @@ class ArticleManager(object):
             offset = page_length * (page - 1)
             last = offset + page_length
             # XXX: 갖고 와서 빼는군여. 가져올 때 빼세요.
-            article_list = session.query(model.Article).filter_by(root_id=None)[offset:last].order_by(model.Article.id.desc())
+            article_list = session.query(model.Article).filter_by(root_id=None).order_by(model.Article.id.desc())[offset:last]
             article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
             article_number = []
             for article in article_dict_list:
@@ -343,7 +343,7 @@ class ArticleManager(object):
 
             article_list = session.query(model.Article).filter(and_(
                     model.articles_table.c.root_id==None,
-                    model.articles_table.c.last_modified_date > user.last_logout_time))[offset:last].order_by(model.Article.id.desc())
+                    model.articles_table.c.last_modified_date > user.last_logout_time)).order_by(model.Article.id.desc())[offset:last]
             article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
 
             ret_dict['hit'] = list()
@@ -387,7 +387,7 @@ class ArticleManager(object):
             raise InvalidOperation('WRONG_PAGENUM')
         offset = page_length * (page - 1)
         last = offset + page_length
-        article_list = session.query(model.Article).filter_by(board_id=board_id, root_id=None)[offset:last].order_by(model.Article.id.desc())
+        article_list = session.query(model.Article).filter_by(board_id=board_id, root_id=None).order_by(model.Article.id.desc())[offset:last]
         article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
         session.close()
         return article_dict_list, last_page, article_count
@@ -579,7 +579,7 @@ class ArticleManager(object):
         else:
             article.vote += 1
             vote = model.ArticleVoteStatus(user, board, article)
-            session.save(vote)
+            session.add(vote)
             session.commit()
             session.close()
             return
@@ -620,16 +620,17 @@ class ArticleManager(object):
                                         author,
                                         user_info.ip,
                                         None)
-            session.save(new_article)
+            session.add(new_article)
             if article_dic.__dict__.has_key('is_searchable'):
                 if not article_dic.is_searchable:
                     new_article.is_searchable = False
             session.commit()
+            id = new_article.id
             session.close()
         else:
             session.close()
             raise InvalidOperation('READ_ONLY_BOARD')
-        return new_article.id
+        return id
 
     @require_login
     @log_method_call_important
@@ -673,10 +674,11 @@ class ArticleManager(object):
         article.reply_count += 1
         if article.root:
             article.root.reply_count += 1
-        session.save(new_reply)
+        session.add(new_reply)
         session.commit()
+        id = new_reply.id
         session.close()
-        return new_reply.id
+        return id
 
     @require_login
     @log_method_call_important
@@ -718,11 +720,12 @@ class ArticleManager(object):
             article.content = article_dic.content
             article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
             session.commit()
+            id = article.id
             session.close()
         else:
             session.close()
             raise InvalidOperation("NO_PERMISSION")
-        return article.id
+        return id
 
     @require_login
     @log_method_call_important

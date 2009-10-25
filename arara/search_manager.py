@@ -306,7 +306,7 @@ class SearchManager(object):
             raise InvalidOperation('wrong pagenum')
         offset = page_length * (page - 1)
         last = offset + page_length
-        result = query[offset:last].order_by(model.Article.id.desc()).all()
+        result = query.order_by(model.Article.id.desc())[offset:last]
 
         end_time = time.time()
 

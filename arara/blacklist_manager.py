@@ -112,7 +112,7 @@ class BlacklistManager(object):
             session.close()
             raise InvalidOperation('already added')
         new_blacklist = model.Blacklist(user, target_user, block_article, block_message)
-        session.save(new_blacklist)
+        session.add(new_blacklist)
         session.commit()
         session.close()
         return

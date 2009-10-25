@@ -123,7 +123,7 @@ class MessagingManager(object):
         sent_messages = session.query(model.Message).filter(
                 and_(model.message_table.c.from_id==sent_user.id,
                     not_(model.message_table.c.sent_deleted==True)
-                    ))[offset:last].order_by(model.Message.id.desc()).all()
+                    )).order_by(model.Message.id.desc())[offset:last]
         sent_messages_dict_list = self._get_dict_list(sent_messages, MESSAGE_WHITELIST)
         ret_dict['hit'] = sent_messages_dict_list
         ret_dict['last_page'] = last_page
@@ -184,7 +184,7 @@ class MessagingManager(object):
         received_messages = session.query(model.Message).filter(
                 and_(model.message_table.c.to_id==to_user.id, 
                     not_(model.message_table.c.received_deleted==True)
-                    )).order_by(model.Message.id.desc())[offset:last].all()
+                    )).order_by(model.Message.id.desc())[offset:last]
         received_messages_dict_list = self._get_dict_list(received_messages, MESSAGE_WHITELIST, blacklist_users)
         ret_dict['hit'] = received_messages_dict_list
         ret_dict['last_page'] = last_page
@@ -221,7 +221,7 @@ class MessagingManager(object):
         from_user_ip = user_info.ip
         message = model.Message(from_user, from_user_ip, to_user, msg)
         try:
-            session.save(message)
+            session.add(message)
             session.commit()
         except InvalidRequestError:
             session.close()
@@ -256,7 +256,7 @@ class MessagingManager(object):
         from_user_ip = user_info.ip
         message = model.Message(from_user, from_user_ip, to_user, msg)
         try:
-            session.save(message)
+            session.add(message)
             session.commit()
         except InvalidRequestError:
             session.close()
@@ -314,7 +314,7 @@ class MessagingManager(object):
             from_user_ip = user_info.ip
             message = model.Message(from_user, from_user_ip, to_user, msg)
             try:
-                session.save(message)
+                session.add(message)
                 session.commit()
             except InvalidRequestError:
                 session.close()
