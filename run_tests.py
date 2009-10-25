@@ -9,11 +9,7 @@ THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), './gen-py/
 sys.path.append(PROJECT_PATH)
 sys.path.append(THRIFT_PATH)
 
-import arara.tests
+import arara.test_set
 
 if __name__ == '__main__':
-    try: 
-        import testoob 
-        testoob.main(defaultTest="arara.tests.suite") 
-    except ImportError: 
-        unittest.TextTestRunner().run(arara.tests.suite()) 
+    unittest.TextTestRunner(verbosity=2).run(arara.test_set.suite()) 
