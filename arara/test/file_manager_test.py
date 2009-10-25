@@ -2,6 +2,7 @@
 import unittest
 import os
 import sys
+import logging
 
 thrift_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'gen-py'))
 sys.path.append(thrift_path)
@@ -22,6 +23,7 @@ class FileManagerTest(unittest.TestCase):
     def setUp(self):
         global server
         # Common preparation for all tests
+        logging.basicConfig(level=logging.ERROR)
         arara.model.init_test_database()
         arara.server.server = arara.get_namespace()
         server = arara.get_namespace()

@@ -3,6 +3,7 @@
 import unittest
 import os
 import sys
+import logging
 
 
 THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../gen-py/'))
@@ -26,6 +27,7 @@ class ModelTest(unittest.TestCase):
     def setUp(self):
         global server
         # Common preparation for all tests
+        logging.basicConfig(leve=logging.ERROR)
         arara.model.init_test_database()
         arara.server.server = arara.get_namespace()
         server = arara.get_namespace()
