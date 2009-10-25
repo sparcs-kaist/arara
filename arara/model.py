@@ -444,7 +444,9 @@ def init_database():
     global Session
     get_engine()
     metadata.create_all(engine)
-    Session = sessionmaker(bind=engine, autoflush=True, autocommit=False)
+    # TODO: 나중에 SQLAlchemy 0.5 로 갈 때는
+    # transactional=True 대신 autocommit=False 로 한다.
+    Session = sessionmaker(bind=engine, autoflush=True, transactional=True)
 
 def init_test_database():
     """Test database must reset the database."""
@@ -452,7 +454,9 @@ def init_test_database():
     # 데이터베이스를 억지로 새로 만든다.
     from sqlalchemy import create_engine
     engine = create_engine('sqlite://', convert_unicode=True, encoding='utf-8', echo=False)
-    Session = sessionmaker(bind=engine, autoflush=True, autocommit=False)
+    # TODO: 나중에 SQLAlchemy 0.5 로 갈 때는
+    # transactional=True 대신 autocommit=False 로 한다.
+    Session = sessionmaker(bind=engine, autoflush=True, transactional=True)
     metadata.create_all(engine)
 
     # 네임스페이스 객체를 새로 만든다. (억지로)
