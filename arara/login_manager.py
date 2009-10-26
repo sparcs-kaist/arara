@@ -117,7 +117,7 @@ class LoginManager(object):
         self.session_dic[hash] = {'username': username, 'ip': user_ip,
                 'nickname': msg.nickname, 'logintime': msg.last_login_time,
                 'current_action': 'login_manager.login()',
-                'last_action_time': datetime.datetime.fromtimestamp(time.time())}
+                'last_action_time': time.time()}
         self.logger.info("User '%s' has LOGGED IN from '%s' as '%s'", username, user_ip, hash)
         return hash
 
@@ -148,21 +148,24 @@ class LoginManager(object):
 
     def _check_session_status(self):
         while True:
-            logger = logging.getLogger('SESSION CLEANER')
-            logger.info("=================== SESSION CLEANING STARTED") 
-            current_time = datetime.datetime.fromtimestamp(time.time())
-            for session_key in self.session_dic.keys():
-                session_time = self.session_dic[session_key]['last_action_time']
-                username = self.session_dic[session_key]['username']
-                diff_time = current_time - session_time
-                if diff_time.seconds > SESSION_EXPIRE_TIME:
-                    logger.info("==SESSION CLEANER== TARGET DETECTED: USERNAME<%s>" % username)
-                    logger.info("==SESSION CLEANER==: SAVING READSTATUS OF %s FROM DATABASE" % username)
-                    get_server().read_status_manager.save_to_database(username)
-                    del self.session_dic[session_key]
-                    logger.warn("==SESSION CLEANER==: USERNAME<%s> SUCCESFULLY DELETED!" % username)
-            logger.info("=================== SESSION CLEANING FINISHED") 
-            time.sleep(SESSION_EXPIRE_TIME)
+            try:
+                logger = logging.getLogger('SESSION CLEANER')
+                logger.info("=================== SESSION CLEANING STARTED") 
+                current_time = time.time()
+                for session_key in self.session_dic.keys():
+                    session_time = self.session_dic[session_key]['last_action_time']
+                    username = self.session_dic[session_key]['username']
+                    diff_time = current_time - session_time
+                    if diff_time > SESSION_EXPIRE_TIME:
+                        logger.info("==SESSION CLEANER== TARGET DETECTED: USERNAME<%s> (Last: %s, No action for %s)",
+                                username, session_time, diff_time)
+                        logger.debug("==SESSION CLEANER==: LOGGING OUT %s ", username)
+                        self.logout(session_key)
+                        logger.info("==SESSION CLEANER==: USERNAME<%s> SUCCESFULLY DELETED!", username)
+                logger.info("=================== SESSION CLEANING FINISHED") 
+                time.sleep(SESSION_EXPIRE_TIME)
+            except Exception:
+                logger.exception("EXCEPTION at SESSION CLEANER")
 
     def update_session(self, session_key):
         '''
@@ -172,10 +175,11 @@ class LoginManager(object):
         @param session_key: User Key
         '''
         if self.session_dic.has_key(session_key):
-            self.session_dic[session_key]['last_action_time'] = datetime.datetime.fromtimestamp(time.time())
+            self.session_dic[session_key]['last_action_time'] = time.time()
             return True
         else:
             return False
+
     @log_method_call
     def get_session(self, session_key):
         '''
