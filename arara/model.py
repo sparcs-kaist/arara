@@ -423,19 +423,24 @@ CONNECTION_STRING = settings.DB_CONNECTION_STRING
 #CONNECTION_STRING = 'sqlite:///%s' % TEST_DATABASE_FILENAME
 
 engine = None
+pool = None
 
 def get_engine():
     '''Factory method to create database connection.'''
     global engine
+    global pool
     if not engine:
         from sqlalchemy import create_engine
         if CONNECTION_STRING.startswith('mysql'):
             engine = create_engine(CONNECTION_STRING, encoding='utf-8',
-                                convert_unicode=True, assert_unicode=None,
-                                pool_size=10, max_overflow=20, pool_recycle=5, echo=False)
+                                convert_unicode=True, assert_unicode=False,
+                                pool_size=30, max_overflow=10, pool_recycle=5, 
+                                echo=False, echo_pool=False)  
+            # (pipoket) Note: To see what`s happing to the pool, turn on echo_pool above.
         else:
             engine = create_engine(CONNECTION_STRING, encoding='utf-8',
                                 convert_unicode=True, assert_unicode=None)
+    pool = engine.pool
     return engine
 
 Session = None
