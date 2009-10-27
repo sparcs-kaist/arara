@@ -46,7 +46,8 @@ def log_method_call_with_source_important(source):
             logger.info("CALL(by %s) %s.%s%s", username, source,
                     function.func_name, repr(args))
             # XXX: (pipoket) This line shows the status of the pool, remove this later
-            logger.info(model.pool.status())
+            if model.pool:
+                logger.info(model.pool.status())
             #logger.debug("CURRENT USER STATUS UPDATED: User '%s' calls '%s' function",
             #        username, user_info.current_action)
             try:
@@ -78,7 +79,8 @@ def log_method_call_with_source(source):
             logger = logging.getLogger(source)
             logger.debug("CALL %s.%s%s", source, function.func_name, repr(args))
             # XXX: (pipoket) This line shows the status of the pool, remove this later
-            logger.info(model.pool.status())
+            if model.pool:
+                logger.info(model.pool.status())
             try:
                 ret = function(self, *args, **kwargs)
             except InvalidOperation:
