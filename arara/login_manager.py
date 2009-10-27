@@ -73,7 +73,7 @@ class LoginManager(object):
         '''
         session = model.Session()
         try:
-            visitor = session.query(model.Visitor).one()
+            visitor = session.query(model.Visitor).first()
         except Exception, e: 
             session.close()
             raise InternalError(repr(e))
@@ -83,9 +83,9 @@ class LoginManager(object):
             visitor.today = 0
         visitor.today = visitor.today + 1
         visitor.date = datetime.datetime.fromtimestamp(time.time())
-        session.commit()
         total = visitor.total
         today = visitor.today
+        session.commit()
         session.close()
         visitor_count= {'total_visitor_count':total, 'today_visitor_count':today}
         return VisitorCount(**visitor_count)
