@@ -33,16 +33,17 @@ from thirdparty import wsgiserver
 from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
 
 handler_for_info = logging.handlers.RotatingFileHandler('arara_server.log', 'a', 2**20*50, 10)
-#handler_for_debug = logging.handlers.RotatingFileHandler('arara_server_debug.log', 'a', 2**20*50, 10)
 formatter = logging.Formatter('%(asctime)s [%(process)d:%(thread)X] <%(name)s> ** %(levelname)s ** %(message)s')
-#handler_for_debug.setFormatter(formatter)
 handler_for_info.setFormatter(formatter)
-#handler_for_debug.setLevel(logging.DEBUG)
 handler_for_info.setLevel(logging.INFO)
 
+#handler_for_debug = logging.handlers.RotatingFileHandler('arara_server_debug.log', 'a', 2**20*50, 10)
+#handler_for_debug.setFormatter(formatter)
+#handler_for_debug.setLevel(logging.DEBUG)
+
 logging.getLogger('').setLevel(logging.NOTSET)
-#logging.getLogger('').addHandler(handler_for_debug)
 logging.getLogger('').addHandler(handler_for_info)
+#logging.getLogger('').addHandler(handler_for_debug)
 
     
 def open_thrift_server(processor, handler, port):
