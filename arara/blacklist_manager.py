@@ -58,13 +58,16 @@ class BlacklistManager(object):
             item_dict['blacklisted_user_username'] = item.target_user.username
             item_dict['blacklisted_user_nickname'] = item.target_user.nickname
             del item_dict['blacklisted_user_id']
+        item_dict['last_modified_date'] = \
+                datetime2timestamp(item_dict['last_modified_date'])
+        item_dict['blacklisted_date'] = \
+                datetime2timestamp(item_dict['blacklisted_date'])
         filtered_dict = filter_dict(item_dict, whitelist)
 
-        return filtered_dict
+        return BlacklistInformation(**filtered_dict)
 
     def _get_dict_list(self, raw_list, whitelist):
-        for item in raw_list:
-            yield self._get_dict(item, whitelist)
+        return [self._get_dict(item, whitelist) for item in raw_list]
 
     def _get_user(self, session, username):
         try:
@@ -226,19 +229,12 @@ class BlacklistManager(object):
         try:
             session = model.Session()
             user = self._get_user(session, user_info.username)
-            blacklist_list = session.query(model.Blacklist).filter_by(user_id=user.id)
-            blacklist_dict_list = self._get_dict_list(blacklist_list, BLACKLIST_LIST_DICT)
+            blacklist_list = list(session.query(model.Blacklist).filter_by(user_id=user.id))
             session.close()
+            blacklist_list = self._get_dict_list(blacklist_list, BLACKLIST_LIST_DICT)
         except:
             session.close()
             raise InternalError('database error')
-        blacklist_list = []
-        for d in blacklist_dict_list:
-            d['last_modified_date'] = \
-                    datetime2timestamp(d['last_modified_date'])
-            d['blacklisted_date'] = \
-                    datetime2timestamp(d['blacklisted_date'])
-            blacklist_list.append(BlacklistInformation(**d))
         return blacklist_list
 
 

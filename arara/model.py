@@ -406,11 +406,11 @@ mapper(Message, message_table, properties={
 })
 
 mapper(Blacklist, blacklist_table, properties={
-    'user':relation(User, primaryjoin=blacklist_table.c.user_id==users_table.c.id,
+    'user':relation(User, lazy=False, primaryjoin=blacklist_table.c.user_id==users_table.c.id,
                     backref=backref('blacklist', lazy=True, join_depth=1,
                                     primaryjoin=blacklist_table.c.user_id==users_table.c.id,
                                     viewonly=True)),
-    'target_user':relation(User, primaryjoin=blacklist_table.c.blacklisted_user_id==users_table.c.id,
+    'target_user':relation(User, lazy=False, primaryjoin=blacklist_table.c.blacklisted_user_id==users_table.c.id,
                     backref=backref('blacklisted', lazy=True, join_depth=1,
                                     primaryjoin=blacklist_table.c.blacklisted_user_id==users_table.c.id,
                                     viewonly=True)),
