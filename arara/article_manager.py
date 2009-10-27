@@ -367,10 +367,7 @@ class ArticleManager(object):
         except NotLoggedIn:
             blacklist_dict_list = []
             pass
-        blacklist_users = set()
-        for blacklist_item in blacklist_dict_list:
-            if blacklist_item.block_article:
-                blacklist_users.add(blacklist_item.blacklisted_user_username)
+        blacklist_users = set([x.blacklisted_user_username for x in blacklist_dict_list if x.block_article])
         return blacklist_users
 
     def _get_article_list(self, session_key, board_name, page, page_length):
@@ -387,9 +384,9 @@ class ArticleManager(object):
             raise InvalidOperation('WRONG_PAGENUM')
         offset = page_length * (page - 1)
         last = offset + page_length
-        article_list = session.query(model.Article).filter_by(board_id=board_id, root_id=None).order_by(model.Article.id.desc())[offset:last]
-        article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
+        article_list = list(session.query(model.Article).filter_by(board_id=board_id, root_id=None).order_by(model.Article.id.desc())[offset:last])
         session.close()
+        article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
         return article_dict_list, last_page, article_count
 
     @log_method_call
