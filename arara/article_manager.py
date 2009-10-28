@@ -66,7 +66,7 @@ class ArticleManager(object):
     def _get_board_id(self, session, board_name):
         return self._get_board(session, board_name).id
 
-    def _article_thread_to_list(self, article_thread):
+    def _article_thread_to_list(self, article_thread, session_key, blacklist_users):
         queue = []
         depth_ret = {}
         queue.append({article_thread: 1})
@@ -86,7 +86,15 @@ class ArticleManager(object):
             a = stack.pop()
             d = self._get_dict(a, READ_ARTICLE_WHITELIST)
             d['depth'] = depth_ret[a]
-            ret.append(d)
+
+            if d['author_username'] in blacklist_users:
+                d['blacklisted'] = True
+            else:
+                d['blacklisted'] = False
+            get_server().read_status_manager.mark_as_read(session_key, d['id'])
+            d['date'] = datetime2timestamp(d['date'])
+            d['last_modified_date'] = datetime2timestamp(d['last_modified_date'])
+            ret.append(Article(**d))
             for child in a.children[::-1]:
                 stack.append(child)
         return ret
@@ -108,11 +116,14 @@ class ArticleManager(object):
         best_article = query.order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc())[:count]
         best_article_dict_list = self._get_dict_list(best_article, BEST_ARTICLE_WHITELIST)
         session.close()
+
+        best_article_list = list()
         for article in best_article_dict_list:
             article['type'] = best_type
             article['date'] = datetime2timestamp(article['date'])
             article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
-            yield article
+            best_article_list.append(Article(**article))
+        return best_article_list
 
     def _get_dict(self, item, whitelist=None):
         session = model.Session()
@@ -177,8 +188,7 @@ class ArticleManager(object):
             2. 투베를 가져오는데 실패:
                 1. 데이터베이스 오류: InternalError Exception 
         '''
-        today_best_list = self._get_best_article(None, None, count, 86400, 'today')
-        return [Article(**d) for d in today_best_list]
+        return self._get_best_article(None, None, count, 86400, 'today')
 
     @log_method_call
     def get_today_best_list_specific(self, board_name, count=5):
@@ -200,8 +210,7 @@ class ArticleManager(object):
         board_id = self._get_board_id(session, board_name)
         session.close()
 
-        today_best_list = self._get_best_article(None, board_id, count, 86400, 'today')
-        return [Article(**d) for d in today_best_list]
+        return self._get_best_article(None, board_id, count, 86400, 'today')
 
     @log_method_call
     def get_weekly_best_list(self, count=5):
@@ -219,8 +228,7 @@ class ArticleManager(object):
                 1. Not Existing Board: InvalidOperation Exception
                 2. 데이터베이스 오류: InternalError Exception
         '''
-        weekly_best_list = self._get_best_article(None, None, count, 604800, 'weekly')
-        return [Article(**d) for d in weekly_best_list]
+        return self._get_best_article(None, None, count, 604800, 'weekly')
 
     @log_method_call
     def get_weekly_best_list_specific(self, board_name, count=5):
@@ -242,8 +250,7 @@ class ArticleManager(object):
         board_id = self._get_board_id(session, board_name)
         session.close()
 
-        weekly_best_list = self._get_best_article(None, board_id, count, 604800, 'weekly')
-        return [Article(**d) for d in weekly_best_list]
+        return self._get_best_article(None, board_id, count, 604800, 'weekly')
 
     @log_method_call
     @require_login
@@ -266,7 +273,6 @@ class ArticleManager(object):
                 2. 데이터베이스 오류: InternalError Exception
         '''
 
-        ret_dict = {}
         try:
             session = model.Session()
             offset = page_length * (page - 1)
@@ -292,11 +298,13 @@ class ArticleManager(object):
             if page > last_page:
                 session.close()
                 raise InvalidOperaion('WRONG_PAGENUM')
-            ret_dict['hit'] = not_read_article_number
-            ret_dict['last_page'] = last_page
-            ret_dict['results'] = article_count 
+
             session.close()
-            return ArticleNumberList(**ret_dict)
+            ret = ArticleNumberList()
+            ret.hit = not_read_article_number
+            ret.last_page = last_page
+            ret.results = article_count
+            return ret
         except InvalidRequestError:
             session.close()
             raise InternalError('DATABASE_ERROR')
@@ -322,7 +330,6 @@ class ArticleManager(object):
                 1. 페이지 번호 오류: InvalidOperation Exception 
                 2. 데이터베이스 오류: InternalError Exception
         '''
-        ret_dict = {}
 
         try:
             session = model.Session()
@@ -345,17 +352,18 @@ class ArticleManager(object):
                     model.articles_table.c.root_id==None,
                     model.articles_table.c.last_modified_date > user.last_logout_time)).order_by(model.Article.id.desc())[offset:last]
             article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
+            session.close()
 
-            ret_dict['hit'] = list()
+            ret = ArticleList()
+            ret.hit = list()
             for article in article_dict_list:
                 article['read_status'] = 'N'
                 article['date'] = datetime2timestamp(article['date'])
                 article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
-                ret_dict['hit'] = Article(**d)
-            ret_dict['last_page'] = last_page
-            ret_dict['results'] = article_count
-            session.close()
-            return ArticleList(**ret_dict)
+                ret.hit.append(Article(**d))
+            ret.last_page = last_page
+            ret.results = article_count
+            return ret
         except InvalidRequestError:
             session.close()
             raise InternalError('DATABASE_ERROR')
@@ -367,8 +375,7 @@ class ArticleManager(object):
         except NotLoggedIn:
             blacklist_dict_list = []
             pass
-        blacklist_users = set([x.blacklisted_user_username for x in blacklist_dict_list if x.block_article])
-        return blacklist_users
+        return set([x.blacklisted_user_username for x in blacklist_dict_list if x.block_article])
 
     def _get_article_list(self, session_key, board_name, page, page_length):
         session = model.Session()
@@ -415,8 +422,8 @@ class ArticleManager(object):
         article_dict_list, last_page, article_count = self._get_article_list(session_key, board_name, page, page_length)
         # InvalidOperation(board not exist) 는 여기서 알아서 불릴 것이므로 제거.
 
-        ret_dict = {}
-        ret_dict['hit'] = list()
+        article_list = ArticleList()
+        article_list.hit = list()
         for article in article_dict_list:
             if article['author_username'] in blacklist_users:
                 article['blacklisted'] = True
@@ -432,11 +439,10 @@ class ArticleManager(object):
                     article['read_status'] = 'N'
             article['date'] = datetime2timestamp(article['date'])
             article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
-            ret_dict['hit'].append(Article(**article))
+            article_list.hit.append(Article(**article))
 
-        ret_dict['last_page'] = last_page
-        ret_dict['results'] = article_count
-        article_list = ArticleList(**ret_dict)
+        article_list.last_page = last_page
+        article_list.results = article_count
         return article_list
          
     @require_login
@@ -466,10 +472,8 @@ class ArticleManager(object):
         session = model.Session()
         self._get_board(session, board_name)
         blacklist_dict_list = get_server().blacklist_manager.list_(session_key)
-        blacklist_users = set()
-        for blacklist_item in blacklist_dict_list:
-            if blacklist_item.block_article:
-                blacklist_users.add(blacklist_item.blacklisted_user_username)
+        blacklist_users = set([x.blacklisted_user_username for x in blacklist_dict_list if x.block_article])
+
         try:
             article = session.query(model.Article).options(eagerload('children')).filter_by(id=no).one()
             msg = get_server().read_status_manager.check_stat(session_key, no)
@@ -480,20 +484,9 @@ class ArticleManager(object):
             session.rollback()
             session.close()
             raise InvalidOperation('ARTICLE_NOT_EXIST')
-        article_dict_list = self._article_thread_to_list(article)
-        article_id_list = []
-        for item in article_dict_list:
-            if item['author_username'] in blacklist_users:
-                item['blacklisted'] = True
-            else:
-                item['blacklisted'] = False
-            article_id_list.append(item['id'])
-            item['date'] = datetime2timestamp(item['date'])
-            item['last_modified_date'] = datetime2timestamp(item['last_modified_date'])
-
-        get_server().read_status_manager.mark_as_read_list(session_key, article_id_list)
+        article_dict_list = self._article_thread_to_list(article, session_key, blacklist_users)
         session.close()
-        return [Article(**d) for d in article_dict_list]
+        return article_dict_list
 
     @require_login
     @log_method_call
@@ -517,7 +510,6 @@ class ArticleManager(object):
                 2. 데이터베이스 오류: InternalError Exception
 
         '''
-        ret_dict = {}
         session = model.Session()
         board_id = self._get_board_id(session, board_name)
         total_article_count = session.query(model.Article).filter_by(board_id=board_id, root_id=None).count()
@@ -526,6 +518,8 @@ class ArticleManager(object):
                 model.articles_table.c.root_id==None,
                 model.articles_table.c.id < no)).count()
         position_no = total_article_count - remaining_article_count
+        session.close()
+
         page_position = 0
         while True:
             page_position += 1
@@ -534,14 +528,14 @@ class ArticleManager(object):
         try:
             below_article_dict_list = self.article_list(session_key, board_name, page_position, page_length)
         except Exception:
-            session.close()
             raise
-        ret_dict['hit'] = below_article_dict_list.hit
-        ret_dict['current_page'] = page_position
-        ret_dict['last_page'] = below_article_dict_list.last_page
-        ret_dict['results'] = below_article_dict_list.results
-        session.close()
-        return ArticleList(**ret_dict)
+
+        ret = ArticleList()
+        ret.hit = below_article_dict_list.hit
+        ret.current_page = page_position
+        ret.last_page = below_article_dict_list.last_page
+        ret.results = below_article_dict_list.results
+        return ret
         
 
     @require_login
