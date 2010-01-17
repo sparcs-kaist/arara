@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
 
@@ -59,50 +60,63 @@ def agreement(request):
 
     return HttpResponse(rendered)
 
+def login_precheck(request):
+    # 로그인했다가 그냥 바로 로그아웃하는 함수.
+    # username / passwd 점검용으로 사용된다.
+    username = request.POST['username']
+    password = request.POST['password']
+    client_ip = request.META['REMOTE_ADDR']
+    server = arara.get_server()
+
+    try:
+        session_key = server.login_manager.login(username, password, client_ip)
+        server.login_manager.logout(session_key)
+    except InvalidOperation, e:
+        return HttpResponse(e.why)
+
+    return HttpResponse("OK")
+
 @warara.wrap_error
 def login(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        current_page = request.POST.get('current_page_url', 0)
-        client_ip = request.META['REMOTE_ADDR']
-        server = arara.get_server()
+    if request.method != 'POST':
+        return HttpResponseRedirect('/')
 
-        try:
-            session_key = server.login_manager.login(username, password, client_ip)
-        except InvalidOperation, e:
-            if request.POST.get('precheck', 0):
-                return HttpResponse(e.why)
-            else:
-                #XXX: (pipoket) Ugly hack for showing nickname while not logged in.
-                # print e.why
-                splited = e.why.splitlines()
-                if splited[0] == 'not activated':
-                    username = splited[1]
-                    nickname = splited[2]
-                    rendered = render_to_string('account/mail_confirm.html', {
-                        'username': username, 'nickname': nickname})
-                    return HttpResponse(rendered)
-                else:
-                    return HttpResponse('<script>alert("Login failed!"); history.back()</script>');
+    if request.POST.get('precheck', 0):
+        return login_precheck(request)
 
-        if request.POST.get('precheck', 0):
-            return HttpResponse("OK")
+    username = request.POST['username']
+    password = request.POST['password']
+    current_page = request.POST.get('current_page_url', 0)
+    client_ip = request.META['REMOTE_ADDR']
+    server = arara.get_server()
 
-        User_Info = server.member_manager.get_info(session_key)
-        if User_Info.default_language == "kor":
-            request.session["django_language"] = "ko"
-        elif User_Info.default_language == "eng":
-            request.session["django_language"] = "en"
-        request.session["arara_session_key"] = session_key
-        request.session["arara_username"] = username
+    try:
+        session_key = server.login_manager.login(username, password, client_ip)
+    except InvalidOperation, e:
+        #XXX: (pipoket) Ugly hack for showing nickname while not logged in.
+        # print e.why
+        splited = e.why.splitlines()
+        if splited[0] == 'not activated':
+            username = splited[1]
+            nickname = splited[2]
+            rendered = render_to_string('account/mail_confirm.html', {
+                'username': username, 'nickname': nickname})
+            return HttpResponse(rendered)
+        else:
+            return HttpResponse('<script>alert("Login failed!"); history.back()</script>');
 
-        request.session.set_expiry(3600)
-        if current_page.find('register')+1:
-            return HttpResponseRedirect('/main')
-        return HttpResponseRedirect(current_page)
+    User_Info = server.member_manager.get_info(session_key)
+    if User_Info.default_language == "kor":
+        request.session["django_language"] = "ko"
+    elif User_Info.default_language == "eng":
+        request.session["django_language"] = "en"
+    request.session["arara_session_key"] = session_key
+    request.session["arara_username"] = username
 
-    return HttpResponseRedirect('/')
+    request.session.set_expiry(3600)
+    if current_page.find('register')+1:
+        return HttpResponseRedirect('/main')
+    return HttpResponseRedirect(current_page)
 
 @warara.wrap_error
 def logout(request):
