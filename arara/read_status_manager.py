@@ -164,16 +164,16 @@ class ReadStatusManager(object):
             if no_data > top_article.id:
                 raise InvalidOperation('ARTICLE_NOT_EXIST')
 
-    def _initialize_data(self, user):
-        if not self.read_status.has_key(user.id):
+    def _initialize_data(self, user_id):
+        if not self.read_status.has_key(user_id):
             try:
                 session = model.Session()
-                read_status = session.query(model.ReadStatus).filter_by(user_id=user.id).one()
-                self.read_status[user.id] = read_status.read_status_data
+                read_status = session.query(model.ReadStatus).filter_by(user_id=user_id).one()
+                self.read_status[user_id] = read_status.read_status_data
                 session.close()
                 return True, 'OK'
             except InvalidRequestError:
-                self.read_status[user.id] = ReadStatus()
+                self.read_status[user_id] = ReadStatus()
                 session.close()
                 return True, 'OK'
         else:
@@ -217,11 +217,10 @@ class ReadStatusManager(object):
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
 
-        user_info = get_server().login_manager.get_session(session_key)
-        user = self._get_user_using_session(user_info.username)
-        ret, _ = self._initialize_data(user)
+        user_id = get_server().login_manager.get_user_id(session_key)
+        ret, _ = self._initialize_data(user_id)
         self._check_article_exist(no)
-        status = self.read_status[user.id].get(no)
+        status = self.read_status[user_id].get(no)
         return status
 
     @require_login
@@ -244,11 +243,10 @@ class ReadStatusManager(object):
                 1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        user_info = get_server().login_manager.get_session(session_key)
-        user = self._get_user_using_session(user_info.username)
-        ret, _ = self._initialize_data(user)
+        user_id = get_server().login_manager.get_user_id(session_key)
+        ret, _ = self._initialize_data(user_id)
         self._check_article_exist(no_list)
-        status = self.read_status[user.id].get_range(no_list)
+        status = self.read_status[user_id].get_range(no_list)
         return status
 
     @require_login
@@ -272,11 +270,10 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        user_info = get_server().login_manager.get_session(session_key)
-        user = self._get_user_using_session(user_info.username)
-        ret, _ = self._initialize_data(user)
+        user_id = get_server().login_manager.get_user_id(session_key)
+        ret, _ = self._initialize_data(user_id)
         self._check_article_exist(no_list)
-        status = self.read_status[user.id].set_range(no_list, 'R')
+        status = self.read_status[user_id].set_range(no_list, 'R')
 
     @require_login
     @log_method_call
@@ -299,11 +296,10 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        user_info = get_server().login_manager.get_session(session_key)
-        user = self._get_user_using_session(user_info.username)
-        ret, _ = self._initialize_data(user)
+        user_id = get_server().login_manager.get_user_id(session_key)
+        ret, _ = self._initialize_data(user_id)
         self._check_article_exist(no)
-        status = self.read_status[user.id].set(no, 'R')
+        status = self.read_status[user_id].set(no, 'R')
 
     @require_login
     @log_method_call
@@ -323,11 +319,10 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        user_info = get_server().login_manager.get_session(session_key)
-        user = self._get_user_using_session(user_info.username)
-        ret, _ = self._initialize_data(user)
+        user_id = get_server().login_manager.get_user_id(session_key)
+        ret, _ = self._initialize_data(user_id)
         self._check_article_exist(no)
-        status = self.read_status[user.id].set(no, 'V')
+        status = self.read_status[user_id].set(no, 'V')
 
     @log_method_call
     def save_to_database(self, username):
