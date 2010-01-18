@@ -168,6 +168,9 @@ class ArticleManager(object):
             raise InvalidOperation('user does not exist')
         return user
 
+    def _get_user_id(self, session_key):
+        return get_server().login_manager.get_user_id(session_key)
+
     def _get_article(self, session, board_id, article_id):
         try:
             article = session.query(model.Article).filter_by(board_id=board_id, id=article_id).one()

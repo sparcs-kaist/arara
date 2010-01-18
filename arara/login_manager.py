@@ -204,6 +204,21 @@ class LoginManager(object):
             raise NotLoggedIn()
 
     @log_method_call
+    def get_user_id(self, session_key):
+        '''
+        세션의 사용자 id 만을 반환하는 함수
+
+        @type  session_key: string
+        @param session_key: User Key
+        @rtype: i32
+        @return: 세션의 사용자 id
+        '''
+        try:
+            return self.session_dic[session_key]['id']
+        except KeyError:
+            raise NotLoggedIn()
+
+    @log_method_call
     def get_current_online(self, session_key):
         '''
         현재 온라인 상태인 사용자를 반환하는 함수
