@@ -142,15 +142,14 @@ class BlacklistManager(object):
                 3. 데이터베이스 오류: InternalError Exception
         '''
         
-        user_info =  get_server().login_manager.get_session(session_key)
+        user_id = get_server().login_manager.get_user_id(session_key)
         username = smart_unicode(username)
 
         session = model.Session()
-        user = self._get_user(session, user_info.username)
         blacklisted_user = self._get_user(session, username)
 
         try:
-            blacklist_to_del = session.query(model.Blacklist).filter_by(user_id=user.id,
+            blacklist_to_del = session.query(model.Blacklist).filter_by(user_id=user_id,
                                 blacklisted_user_id=blacklisted_user.id).one()
         except InvalidRequestError:
             session.close()
@@ -185,13 +184,12 @@ class BlacklistManager(object):
         #if not is_keys_in_dict(blacklist_dict, BLACKLIST_DICT):
         #    return False, 'WRONG_DICTIONARY'
 
-        user_info = get_server().login_manager.get_session(session_key)
+        user_id = get_server().login_manager.get_user_id(session_key)
 
         session = model.Session()
-        user = self._get_user(session, user_info.username)
         target_user = self._get_user(session, blacklist_info.blacklisted_user_username)
         try:
-            blacklist_to_modify = session.query(model.Blacklist).filter_by(user_id=user.id,
+            blacklist_to_modify = session.query(model.Blacklist).filter_by(user_id=user_id,
                                     blacklisted_user_id=target_user.id).one()
         except InvalidRequestError:
             session.close()
@@ -224,12 +222,10 @@ class BlacklistManager(object):
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
 
-        user_info = get_server().login_manager.get_session(session_key)
-
+        user_id = get_server().login_manager.get_user_id(session_key)
         try:
             session = model.Session()
-            user = self._get_user(session, user_info.username)
-            blacklist_list = list(session.query(model.Blacklist).filter_by(user_id=user.id))
+            blacklist_list = list(session.query(model.Blacklist).filter_by(user_id=user_id))
             session.close()
             blacklist_list = self._get_dict_list(blacklist_list, BLACKLIST_LIST_DICT)
         except:
