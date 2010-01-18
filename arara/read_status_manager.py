@@ -7,6 +7,7 @@ from arara.util import require_login
 from arara import model
 from arara.util import require_login
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
+from arara.util import smart_unicode
 from arara.server import get_server
 
 from arara_thrift.ttypes import *
@@ -180,7 +181,7 @@ class ReadStatusManager(object):
 
     def _get_user(self, session, username):
         try:
-            user = session.query(model.User).filter_by(username=username).one()
+            user = session.query(model.User).filter_by(username=smart_unicode(username)).one()
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('user does not exist')

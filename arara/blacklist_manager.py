@@ -71,7 +71,7 @@ class BlacklistManager(object):
 
     def _get_user(self, session, username):
         try:
-            user = session.query(model.User).filter_by(username=username).one()
+            user = session.query(model.User).filter_by(username=smart_unicode(username)).one()
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('username not exist')

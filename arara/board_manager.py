@@ -3,6 +3,7 @@ from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
 from arara import model
 from arara.util import filter_dict, require_login
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
+from arara.util import smart_unicode
 
 from arara_thrift.ttypes import *
 from arara.server import get_server
@@ -47,7 +48,7 @@ class BoardManager(object):
     def add_board(self, session_key, board_name, board_description):
         self._is_sysop(session_key)
         session = model.Session()
-        board_to_add = model.Board(board_name, board_description)
+        board_to_add = model.Board(smart_unicode(board_name), board_description)
         try:
             session.add(board_to_add)
             session.commit()
@@ -60,7 +61,7 @@ class BoardManager(object):
 
     def _get_board(self, session, board_name):
         try:
-            board = session.query(model.Board).filter_by(board_name=board_name, deleted=False).one()
+            board = session.query(model.Board).filter_by(board_name=smart_unicode(board_name), deleted=False).one()
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('board does not exist')
@@ -68,7 +69,7 @@ class BoardManager(object):
 
     def _get_board_including_deleted(self, session, board_name):
         try:
-            board = session.query(model.Board).filter_by(board_name=board_name).one()
+            board = session.query(model.Board).filter_by(board_name=smart_unicode(board_name)).one()
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('board does not exist')

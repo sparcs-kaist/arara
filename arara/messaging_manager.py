@@ -9,6 +9,7 @@ from arara_thrift.ttypes import *
 from arara.util import require_login, filter_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 from arara.util import datetime2timestamp
+from arara.util import smart_unicode
 from arara.server import get_server
 
 log_method_call = log_method_call_with_source('messaging_manager')
@@ -67,7 +68,7 @@ class MessagingManager(object):
 
     def _get_user(self, session, username):
         try:
-            user = session.query(model.User).filter_by(username=username).one()
+            user = session.query(model.User).filter_by(username=smart_unicode(username)).one()
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('username not found')
@@ -75,10 +76,10 @@ class MessagingManager(object):
 
     def _get_user_by_nickname(self, session, nickname):
         try:
-            user = session.query(model.User).filter_by(nickname=nickname).one()
+            user = session.query(model.User).filter_by(nickname=smart_unicode(nickname)).one()
         except InvalidRequestError:
             session.close()
-            raise InvalidOperation('username not found')
+            raise InvalidOperation('nickname not found')
         return user
 
     @require_login

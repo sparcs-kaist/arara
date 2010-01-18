@@ -9,6 +9,7 @@ from sqlalchemy import and_, or_, not_
 from arara.util import require_login, filter_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 from arara.util import datetime2timestamp
+from arara.util import smart_unicode
 from arara_thrift.ttypes import *
 from arara import model
 from arara.settings import *
@@ -67,7 +68,7 @@ class SearchManager(object):
 
     def _get_board(self, session, board_name):
         try:
-            board = session.query(model.Board).filter_by(board_name=board_name).one()
+            board = session.query(model.Board).filter_by(board_name=smart_unicode(board_name)).one()
         except InvalidRequestError:
             session.close()
             raise InvalidOperation("board does not exist")

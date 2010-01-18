@@ -80,7 +80,7 @@ class MemberManager(object):
         try:
             self.logger.info("=== LOGOUT PROCESS INITIATED")
             session = model.Session()
-            user = session.query(model.User).filter_by(username=username).one()
+            user = session.query(model.User).filter_by(username=smart_unicode(username)).one()
             user.last_logout_time = datetime.datetime.fromtimestamp(time.time())
             get_server().read_status_manager.save_to_database(username)
             session.commit()
@@ -91,6 +91,7 @@ class MemberManager(object):
             raise InvalidOperation('DATABASE_ERROR')
 
     def authenticate(self, username, password, user_ip):
+        username = smart_unicode(username) # XXX(combacsa): Why is this not unicode by default???
         session = model.Session()
         try:
             user = session.query(model.User).filter_by(username=username).one()
@@ -402,6 +403,7 @@ class MemberManager(object):
         try:
             session = model.Session()
             username = get_server().login_manager.get_session(session_key).username
+            username = smart_unicode(username)
             user = session.query(model.User).filter_by(username=username).one()
             user_dict = filter_dict(user.__dict__, USER_PUBLIC_WHITELIST)
             if user_dict['last_logout_time']:
@@ -436,7 +438,7 @@ class MemberManager(object):
                 4. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
         '''
         session_info = get_server().login_manager.get_session(session_key)
-        username = session_info.username
+        username = smart_unicode(session_info.username)
         session = model.Session()
         user = session.query(model.User).filter_by(username=username).one()
         try:
@@ -484,7 +486,7 @@ class MemberManager(object):
                 3. 양식이 맞지 않음(부적절한 NULL값 등): 'WRONG_DICTIONARY'
         '''
         session_info = get_server().login_manager.get_session(session_key)
-        username = session_info.username
+        username = smart_unicode(session_info.username)
 
         if not is_keys_in_dict(user_modification.__dict__,
                                USER_PUBLIC_MODIFIABLE_WHITELIST):
@@ -517,6 +519,7 @@ class MemberManager(object):
                 3. 데이터베이스 오류: InternalError('database error')
         '''
         session = model.Session()
+        username = smart_unicode(username)
         if new_email:
             user_with_email = session.query(model.User).filter_by(email=new_email).all()
             if user_with_email:
@@ -631,7 +634,7 @@ class MemberManager(object):
         '''
         raise InvalidOperation('Not Allowed Right Now')
         session = model.Session()
-        username = get_server().login_manager.get_session(session_key).username
+        username = smart_unicode(get_server().login_manager.get_session(session_key).username)
         try:
             user = session.query(model.User).filter_by(username=username).one()
 	    session.delete(user)
@@ -706,7 +709,7 @@ class MemberManager(object):
         session = model.Session()
         user_info = get_server().login_manager.get_session(session_key)
         try:
-            user = session.query(model.User).filter_by(username=user_info.username).one()
+            user = session.query(model.User).filter_by(username=smart_unicode(user_info.username)).one()
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('user does not exist')

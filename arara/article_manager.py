@@ -11,6 +11,7 @@ from arara import model
 from arara.util import require_login, filter_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 from arara.util import datetime2timestamp
+from arara.util import smart_unicode
 from arara.server import get_server
 
 from arara_thrift.ttypes import *
@@ -57,7 +58,7 @@ class ArticleManager(object):
 
     def _get_board(self, session, board_name):
         try:
-            board = session.query(model.Board).filter_by(board_name=board_name).one()
+            board = session.query(model.Board).filter_by(board_name=smart_unicode(board_name)).one()
         except InvalidRequestError:
             session.close()
             raise InvalidOperaion("BOARD_NOT_EXIST")
@@ -161,7 +162,7 @@ class ArticleManager(object):
     def _get_user(self, session, session_key):
         user_info = get_server().login_manager.get_session(session_key)
         try:
-            user = session.query(model.User).filter_by(username=user_info.username).one()
+            user = session.query(model.User).filter_by(username=smart_unicode(user_info.username)).one()
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('user does not exist')
