@@ -425,19 +425,19 @@ class ArticleManager(object):
 
         article_list = ArticleList()
         article_list.hit = list()
+
         for article in article_dict_list:
             if article['author_username'] in blacklist_users:
                 article['blacklisted'] = True
             else:
                 article['blacklisted'] = False
-            if article.has_key('id'):
-                if not article.has_key('type'):
-                    article['type'] = 'normal'
-                try:
-                    msg = get_server().read_status_manager.check_stat(session_key, article['id'])
-                    article['read_status'] = msg
-                except NotLoggedIn, InvalidOperation:
-                    article['read_status'] = 'N'
+            if not article.has_key('type'):
+                article['type'] = 'normal'
+            try:
+                msg = get_server().read_status_manager.check_stat(session_key, article['id'])
+                article['read_status'] = msg
+            except NotLoggedIn, InvalidOperation:
+                article['read_status'] = 'N'
             article['date'] = datetime2timestamp(article['date'])
             article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
             article_list.hit.append(Article(**article))
