@@ -16,6 +16,8 @@ import warara
 
 from arara.settings import FILE_DIR, FILE_MAXIMUM_SIZE
 
+IMAGE_FILETYPE = ['jpg', 'jpeg', 'gif', 'png']
+
 @warara.wrap_error
 def index(request):
     rendered = render_to_string('board/index.html', {})
@@ -176,45 +178,46 @@ def read(request, board_name, article_id):
     server = arara.get_server()
     sess, r = warara.check_logged_in(request)
     article_list = server.article_manager.read(sess, board_name, int(article_id))
-    image_filetype = ['jpg', 'jpeg', 'gif', 'png']
+    username = request.session['arara_username']
+
     for article in article_list:
         article.date = datetime.datetime.fromtimestamp(article.date)
 
-    for i in range(len(article_list)):
-        if 'attach' in article_list[i].__dict__ and article_list[i].attach: #image view
-            article_list[i].__dict__['image'] = []
-            insert_image_tag_list = article_list[i].__dict__['image']
-            for file in article_list[i].attach:
-                if file.filename.split('.')[-1].lower() in image_filetype:
-                    insert_image_tag = "<p><img src=\"/board/%s/%d/%d/file/%d/\"></img></p>" % (board_name, article_list[i].root_id, article_list[i].id, file.file_id)
-                    insert_image_tag_list.append(insert_image_tag)
+        if article.deleted: #deleted article access
+            article.author_nickname = ''
+            article.author_username = ''
+            article.content = '-- deleted --'
+            article.title  = '-- deleted --'
+            article.attach = None
+            article.image = None
+            continue
 
-        #article_list[i]['content'] = render_bbcode(article_list[i]['content'], 'UTF-8')
-        if article_list[i].deleted: #deleted article access
-            article_list[i].author_nickname = ''
-            article_list[i].author_username = ''
-            article_list[i].content = 'deleted'
-            article_list[i].title = 'deleted'
-            article_list[i].attach = None
-            article_list[i].image = None
-        if article_list[i].depth > 12: #set depth 12 which has bigger depth than 12
-            article_list[i].depth = 12
-        article_list[i].depth_list = [x+1 for x in range(article_list[i].depth-2)]
+        if article.__dict__.has_key('attach') and article.attach: #image view
+            insert_image_tag_list = []
+            for file in article.attach:
+                if file.filename.split('.')[-1].lower() in IMAGE_FILETYPE:
+                    insert_image_tag = "<p><img src=\"/board/%s/%d/%d/file/%d/\"></img></p>" % (board_name, article.root_id, article.id, file.file_id)
+                    insert_image_tag_list.append(insert_image_tag)
+            article.__dict__['image'] = insert_image_tag_list
+
+        #article['content'] = render_bbcode(article_list[i]['content'], 'UTF-8')
+
+        if article.depth > 12: #set depth 12 which has bigger depth than 12
+            article.depth = 12
+        article.depth_list = [x + 1 for x in range(article.depth - 2)]
 
         # Finally, render the content using content renderer
-        article_list[i].content = render_content(article_list[i].content)
+        article.content = render_content(article.content)
 
-    r['board_name'] = board_name
-    username = request.session['arara_username']
-    r['article_id'] = article_id
-    r['default_text'] = server.member_manager.get_info(sess)
-    r['default_text'] = r['default_text'].signature
-
-    for article in article_list:
         if article.author_username == username:
             article.flag_modify = 1
         else:
             article.flag_modify = 0
+
+    r['board_name'] = board_name
+    r['article_id'] = article_id
+    r['default_text'] = server.member_manager.get_info(sess)
+    r['default_text'] = r['default_text'].signature
     r['article_read_list'] = article_list
 
     #article_below_list
