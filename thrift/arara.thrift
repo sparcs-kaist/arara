@@ -25,6 +25,7 @@ struct Session {
     3: string current_action,
     4: string nickname,
     5: double logintime,
+    6: i32    id,
 }
 
 service LoginManager {
@@ -59,6 +60,7 @@ service LoginManager {
 struct AuthenticationInfo {
     1: double last_login_time,
     2: string nickname,
+    3: i32 id,
 }
 
 struct UserRegistration {

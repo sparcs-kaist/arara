@@ -114,7 +114,7 @@ class LoginManager(object):
         #        return False, 'ALREADY_LOGIN'
         hash = hashlib.md5(username+password+datetime.datetime.today().__str__()).hexdigest()
         timestamp = datetime.datetime.fromtimestamp(time.time())
-        self.session_dic[hash] = {'username': username, 'ip': user_ip,
+        self.session_dic[hash] = {'id': msg.id, 'username': username, 'ip': user_ip,
                 'nickname': msg.nickname, 'logintime': msg.last_login_time,
                 'current_action': 'login_manager.login()',
                 'last_action_time': time.time()}

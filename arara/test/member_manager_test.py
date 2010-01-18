@@ -35,6 +35,10 @@ class MemberManagerTest(unittest.TestCase):
         register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
         server.member_manager.confirm(u'serialx', unicode(register_key))
 
+        # Register one user, pipoket, but not confirm.
+        user_reg_dic = {'username':u'pipoket', 'password':u'pipoket', 'nickname':u'pipoket', 'email':u'pipoket@example.com', 'signature':u'pipoket', 'self_introduction':u'pipoket', 'default_language':u'english' }
+        self.register_key_pipoket = server.member_manager.register(UserRegistration(**user_reg_dic))
+
     def testAddMikkang(self):
         user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang@example.com', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
         # Check this user is not yet registered
@@ -172,6 +176,28 @@ class MemberManagerTest(unittest.TestCase):
         session_key = server.login_manager.login(u'mikkang20', u'mikkang', u'143.248.234.140')
         server.login_manager.logout(session_key)
         # XXX 시삽이 아닌 사람이 백도어 컨펌을 못 하는 것을 테스트.
+
+    def testAuthenticate(self):
+        # 인증 성공
+        msg1 = server.member_manager.authenticate(u'combacsa', u'combacsa', u'143.248.234.140')
+        msg2 = server.member_manager.authenticate(u'serialx',  u'serialx', u'143.248.234.140')
+        # 인증 실패 - wrong passwd
+        try:
+            msg3 = server.member_manager.authenticate(u'combacsa', u'mikkang', u'143.248.234.140')
+        except InvalidOperation:
+            pass
+        # 인증 실패 - wrong username
+        try:
+            msg4 = server.member_manager.authenticate(u'elaborate', u'elaborate', u'143.248.234.140')
+        except InvalidOperation:
+            pass
+        # 인증 실패 - not activated
+        try:
+            msg5 = server.member_manager.authenticate(u'pipoket', u'pipoket', u'143.248.234.140')
+        except InvalidOperation:
+            # XXX 실패 사유가 무엇인지 확인할 수 있어야 한다 ...
+            pass
+
 
     def tearDown(self):
         arara.model.clear_test_database()

@@ -102,7 +102,8 @@ class MemberManager(object):
                     user.last_login_ip = unicode(user_ip)
                     ret = {'last_login_time': datetime2timestamp(
                         user.last_login_time),
-                           'nickname': user.nickname}
+                           'nickname': user.nickname,
+                           'id': user.id}
                     session.commit()
                     session.close()
                     return AuthenticationInfo(**ret)

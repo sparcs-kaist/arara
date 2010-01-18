@@ -85,10 +85,10 @@ class LoginManagerTest(unittest.TestCase):
         session_key_serialx = server.login_manager.login(u'serialx', u'serialx', '143.248.234.140')
         session = server.login_manager.get_current_online(session_key_pipoket)
         pipoket_dict = session[0].__dict__
-        pipoket_dict_must_be = {'username': u'pipoket', 'ip': u'143.248.234.145', 'current_action': 'login_manager.login()', 'nickname': u'pipoket', 'logintime': 1.1000000000000001}
+        pipoket_dict_must_be = {'username': u'pipoket', 'ip': u'143.248.234.145', 'current_action': 'login_manager.login()', 'nickname': u'pipoket', 'logintime': 1.1000000000000001, 'id': 2}
 
         serialx_dict = session[1].__dict__
-        serialx_dict_must_be = {'username': u'serialx', 'ip': u'143.248.234.140', 'current_action': 'login_manager.login()', 'nickname': u'serialx', 'logintime': 1.1000000000000001}
+        serialx_dict_must_be = {'username': u'serialx', 'ip': u'143.248.234.140', 'current_action': 'login_manager.login()', 'nickname': u'serialx', 'logintime': 1.1000000000000001, 'id': 3}
         self.assertEqual(len(pipoket_dict.keys()), len(pipoket_dict_must_be.keys()))
         for keys in pipoket_dict.keys():
             self.assertEqual(pipoket_dict[keys], pipoket_dict_must_be[keys])
