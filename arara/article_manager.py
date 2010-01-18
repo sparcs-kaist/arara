@@ -426,18 +426,27 @@ class ArticleManager(object):
         article_list = ArticleList()
         article_list.hit = list()
 
-        for article in article_dict_list:
+        # article_dict_list 를 generator 에서 list화.
+        # 어차피 이 함수가 끝날때까지 append 되는 새 list 를 return 하므로 상관없다.
+        article_dict_list = [x for x in article_dict_list]
+        article_id_list = [article['id'] for article in article_dict_list]
+        read_stats_list = None # Namespace 에 등록. Assign 은 요 바로 다음에서.
+
+        try:
+            read_stats_list = get_server().read_status_manager.check_stats(session_key, article_id_list)
+        except NotLoggedIn, InvalidOperation:
+            read_stats_list = ['N'] * len(article_id_list)
+
+        for idx, article in enumerate(article_dict_list):
             if article['author_username'] in blacklist_users:
                 article['blacklisted'] = True
             else:
                 article['blacklisted'] = False
             if not article.has_key('type'):
                 article['type'] = 'normal'
-            try:
-                msg = get_server().read_status_manager.check_stat(session_key, article['id'])
-                article['read_status'] = msg
-            except NotLoggedIn, InvalidOperation:
-                article['read_status'] = 'N'
+
+            article['read_status'] = read_stats_list[idx]
+
             article['date'] = datetime2timestamp(article['date'])
             article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
             article_list.hit.append(Article(**article))
@@ -522,6 +531,7 @@ class ArticleManager(object):
         session.close()
 
         page_position = 0
+        # XXX (combacsa): WTF below? ;;;
         while True:
             page_position += 1
             if position_no <= (page_length * page_position):
