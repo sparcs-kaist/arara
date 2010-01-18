@@ -47,7 +47,7 @@ service LoginManager {
     Session get_session(1:string session_key)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    Session get_user_id(1:string session_key)
+    i32 get_user_id(1:string session_key)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     list<Session> get_current_online(1:string session_key)
