@@ -83,6 +83,7 @@ class ArticleManager(object):
         stack = []
         ret = []
         stack.append(article_thread)
+        article_id_list = []
         while stack:
             a = stack.pop()
             d = self._get_dict(a, READ_ARTICLE_WHITELIST)
@@ -92,12 +93,13 @@ class ArticleManager(object):
                 d['blacklisted'] = True
             else:
                 d['blacklisted'] = False
-            get_server().read_status_manager.mark_as_read(session_key, d['id'])
+            article_id_list.append(d['id'])
             d['date'] = datetime2timestamp(d['date'])
             d['last_modified_date'] = datetime2timestamp(d['last_modified_date'])
             ret.append(Article(**d))
             for child in a.children[::-1]:
                 stack.append(child)
+        get_server().read_status_manager.mark_as_read_list(session_key, article_id_list)
         return ret
 
     def _get_best_article(self, session_key, board_id, count, time_to_filter, best_type):
