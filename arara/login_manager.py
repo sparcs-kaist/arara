@@ -163,9 +163,9 @@ class LoginManager(object):
                         self.logout(session_key)
                         logger.info("==SESSION CLEANER==: USERNAME<%s> SUCCESFULLY DELETED!", username)
                 logger.info("=================== SESSION CLEANING FINISHED") 
-                time.sleep(SESSION_EXPIRE_TIME)
             except Exception:
                 logger.exception("EXCEPTION at SESSION CLEANER")
+            time.sleep(SESSION_EXPIRE_TIME)
 
     def update_session(self, session_key):
         '''
