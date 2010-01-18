@@ -26,6 +26,7 @@ from thrift.server import TServer
 
 import arara
 import arara.model
+import arara.settings
 
 from arara import MAPPING, DEPENDENCY, PORT, CLASSES, connect_thrift_server
 from thirdparty import wsgiserver
@@ -37,13 +38,15 @@ formatter = logging.Formatter('%(asctime)s [%(process)d:%(thread)X] <%(name)s> *
 handler_for_info.setFormatter(formatter)
 handler_for_info.setLevel(logging.INFO)
 
-#handler_for_debug = logging.handlers.RotatingFileHandler('arara_server_debug.log', 'a', 2**20*50, 10)
-#handler_for_debug.setFormatter(formatter)
-#handler_for_debug.setLevel(logging.DEBUG)
-
 logging.getLogger('').setLevel(logging.NOTSET)
 logging.getLogger('').addHandler(handler_for_info)
-#logging.getLogger('').addHandler(handler_for_debug)
+
+if arara.settings.ARARA_DEBUG_HANDLER_ON:
+    handler_for_debug = logging.handlers.RotatingFileHandler('arara_server_debug.log', 'a', 2**20*50, 10)
+    handler_for_debug.setFormatter(formatter)
+    handler_for_debug.setLevel(logging.DEBUG)
+
+    logging.getLogger('').addHandler(handler_for_debug)
 
     
 def open_thrift_server(processor, handler, port):

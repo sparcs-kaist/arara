@@ -13,6 +13,8 @@ ARARA_SERVER_BASE_PORT = 8000
 SESSION_EXPIRE_TIME = 3610 # seconds
 ARARA_POOL_DEBUG_MODE = False
 #To use POOL DEBUG MODE, turn on the flag above. (see changeset 1247)
+ARARA_DEBUG_HANDLER_ON = False
+#To use DEBUG Handler on, turn on the flag above.
 
 # Mail Server Setting
 WARARA_SERVER_ADDRESS = 'swingfixer.kaist.ac.kr'
