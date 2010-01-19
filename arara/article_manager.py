@@ -622,8 +622,8 @@ class ArticleManager(object):
         board = self._get_board(session, board_name)
         if not board.read_only:
             new_article = model.Article(board,
-                                        article_dic.title,
-                                        article_dic.content,
+                                        smart_unicode(article_dic.title),
+                                        smart_unicode(article_dic.content),
                                         author,
                                         user_info.ip,
                                         None)
@@ -673,8 +673,8 @@ class ArticleManager(object):
         board = self._get_board(session, board_name)
         article = self._get_article(session, board.id, article_no)
         new_reply = model.Article(board,
-                                reply_dic.title,
-                                reply_dic.content,
+                                smart_unicode(reply_dic.title),
+                                smart_unicode(reply_dic.content),
                                 author,
                                 user_info.ip,
                                 article)
@@ -723,8 +723,8 @@ class ArticleManager(object):
             session.close()
             raise InvalidOperation("NO_PERMISSION")
         if article.author_id == author.id:
-            article.title = article_dic.title
-            article.content = article_dic.content
+            article.title = smart_unicode(article_dic.title)
+            article.content = smart_unicode(article_dic.content)
             article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
             session.commit()
             id = article.id
