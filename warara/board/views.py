@@ -204,7 +204,7 @@ def read(request, board_name, article_id):
 
         if article.depth > 12: #set depth 12 which has bigger depth than 12
             article.depth = 12
-        article.depth_list = [x + 1 for x in range(article.depth - 2)]
+        article.depth_list = range(1, article.depth - 1)
 
         # Finally, render the content using content renderer
         article.content = render_content(article.content)
