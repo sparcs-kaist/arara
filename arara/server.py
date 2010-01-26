@@ -54,7 +54,7 @@ def connect(name):
     #protocol = TBinaryProtocol.TBinaryProtocol(transport)
     client = dict(HANDLER_MAPPING)[name].Client(protocol)
     transport.open()
-    logging.getLogger('get_server').info("Got server %s", name)
+    #logging.getLogger('get_server').info("Got server %s", name)
     return client
 
 
