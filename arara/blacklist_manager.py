@@ -225,7 +225,7 @@ class BlacklistManager(object):
         user_id = get_server().login_manager.get_user_id(session_key)
         try:
             session = model.Session()
-            blacklist_list = list(session.query(model.Blacklist).filter_by(user_id=user_id))
+            blacklist_list = session.query(model.Blacklist).filter_by(user_id=user_id).all()
             session.close()
             blacklist_list = self._get_dict_list(blacklist_list, BLACKLIST_LIST_DICT)
         except:
