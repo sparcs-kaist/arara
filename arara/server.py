@@ -1,3 +1,5 @@
+import logging
+
 from thrift.protocol import TBinaryProtocol
 from thrift.transport.TTransport import TTransportException
 from thrift.transport import TTransport
@@ -49,8 +51,10 @@ def connect(name):
     transport = TTransport.TBufferedTransport(socket)
     #transport = TTransport.TFramedTransport(socket)
     protocol = TBinaryProtocol.TBinaryProtocolAccelerated(transport)
+    #protocol = TBinaryProtocol.TBinaryProtocol(transport)
     client = dict(HANDLER_MAPPING)[name].Client(protocol)
     transport.open()
+    logging.getLogger('get_server').info("Got server %s", name)
     return client
 
 
