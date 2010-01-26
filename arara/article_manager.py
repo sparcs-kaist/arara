@@ -61,7 +61,7 @@ class ArticleManager(object):
             board = session.query(model.Board).filter_by(board_name=smart_unicode(board_name)).one()
         except InvalidRequestError:
             session.close()
-            raise InvalidOperaion("BOARD_NOT_EXIST")
+            raise InvalidOperation("BOARD_NOT_EXIST")
         return board
 
     def _get_board_id(self, session, board_name):
@@ -275,7 +275,7 @@ class ArticleManager(object):
         @return:
             1. 리스트 읽어오기 성공: Not Read Article List
             2. 리스트 읽어오기 실패:
-                1. 페이지 번호 오류: InvalidOperaion Exception 
+                1. 페이지 번호 오류: InvalidOperation Exception 
                 2. 데이터베이스 오류: InternalError Exception
         '''
 
@@ -303,7 +303,7 @@ class ArticleManager(object):
                 last_page += 1
             if page > last_page:
                 session.close()
-                raise InvalidOperaion('WRONG_PAGENUM')
+                raise InvalidOperation('WRONG_PAGENUM')
 
             session.close()
             ret = ArticleNumberList()
