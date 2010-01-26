@@ -49,18 +49,22 @@ if arara.settings.ARARA_DEBUG_HANDLER_ON:
     logging.getLogger('').addHandler(handler_for_debug)
 
     
-def open_thrift_server(processor, handler, port):
+def open_thrift_server(server_name, processor, handler, port):
     handler_instance = handler()
     processor_ = processor.Processor(handler_instance)
     transport = TSocket.TServerSocket(port)
     tfactory = TTransport.TBufferedTransportFactory()
+    #tfactory = TTransport.TFramedTransportFactory()
     pfactory = TBinaryProtocol.TBinaryProtocolAcceleratedFactory()
-    #if handler.__class__.__name__ in ['ArticleManager']:
-    #    server = TServer.TForkingServer(processor_, transport, tfactory, pfactory)
-    #else:
-    #    server = TServer.TThreadedServer(processor_, transport, tfactory, pfactory)
-    server = TServer.TThreadPoolServer(processor_, transport, tfactory, pfactory)
-    server.setNumThreads(200)
+    #server = TServer.TThreadedServer(processor_, transport, tfactory, pfactory)
+    if server_name in ['LoginManager']:
+        logging.getLogger('open_server').info("%s running in TThreadedServer", server_name)
+        server = TServer.TThreadedServer(processor_, transport, tfactory, pfactory)
+    else:
+        logging.getLogger('open_server').info("%s running in TForkingServer", server_name)
+        server = TServer.TForkingServer(processor_, transport, tfactory, pfactory)
+    #server = TServer.TThreadPoolServer(processor_, transport, tfactory, pfactory)
+    #server.setNumThreads(15)
     return server, handler_instance
 
 def setter_name(class_):
@@ -81,8 +85,9 @@ def open_server(server_name, base_port):
     base_class = CLASSES[server_name]
     thrift_class = dict(MAPPING)[base_class]
     port = base_port + PORT[base_class]
+    logger.info("Opening ARAra Thrift middleware on port starting from %s...", port)
     import thread
-    server, instance = open_thrift_server(thrift_class, base_class, port)
+    server, instance = open_thrift_server(server_name, thrift_class, base_class, port)
     thread.start_new_thread(resolve_dependencies, (base_class, instance, base_port))
     return server
 
@@ -108,11 +113,11 @@ def resolve_dependencies(base_class, instance, base_port):
     
 
 if __name__ == '__main__':
+    logger = logging.getLogger('main')
     parser = optparse.OptionParser()
-    parser.add_option("-p", "--port=", dest="port", default=8000, type="int",
+    parser.add_option("-p", "--port=", dest="port", default=10000, type="int",
                       help="The port to bind")
     options, args = parser.parse_args()
-    print "Opening ARAra Thrift middleware on port starting from", options.port, "..."
     
     arara.model.init_database()
 
@@ -127,7 +132,7 @@ if __name__ == '__main__':
     print args[0]
     server = open_server(args[0], options.port)
 
-    print 'Starting the server...'
+    logger.info('Starting the server...')
     server.serve()
     print 'done.'
     
