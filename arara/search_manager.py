@@ -31,6 +31,12 @@ class SearchManager(object):
     def __init__(self):
         pass
 
+    def _set_board_manager(self, board_manager):
+        self.board_manager = board_manager
+
+    def _set_login_manager(self, login_manager):
+        self.login_manager = login_manager
+
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
         if item_dict.has_key('author_id'):
@@ -59,12 +65,6 @@ class SearchManager(object):
             filtered_dict = self._get_dict(item, whitelist)
             return_list.append(Article(**filtered_dict))
         return return_list
-
-    def _set_board_manager(self, board_manager):
-        self.board_manager = board_manager
-
-    def _set_login_manager(self, login_manager):
-        self.login_manager = login_manager
 
     def _get_board(self, session, board_name):
         try:
@@ -277,7 +277,18 @@ class SearchManager(object):
                 if not set([one_article.id]).issubset(root_num):
                     root_num.add(one_article.id)
 
+        # (pipoket): Solution for maximum recursion depth exceeded exception
+        # Filter out the unnecessary article numbers from the root_num set
+        offset = page_length * (page - 1)
+        last = offset + page_length
+        article_count = len(root_num)
+        root_num = list(root_num)
+        root_num.sort()
+        root_num.reverse()
+        root_num = root_num[offset:last]
+
         # Now we have all the root id we need. Query them!
+        query = session.query(model.Article)
         condition = None
         if root_num: # If there is any element in the root_num set make condition
             for one_id in root_num:
@@ -295,8 +306,8 @@ class SearchManager(object):
         query = None
 
         # Okay, I think everthing is prepared. Let's query the final result!
+        # article_count, offset, last are moved up to the root_num set filtering part above
         query = session.query(model.Article).filter(condition)
-        article_count = query.count()
         last_page = int(article_count / page_length)
         if article_count % page_length != 0:
             last_page += 1
@@ -305,9 +316,7 @@ class SearchManager(object):
         if page > last_page:
             session.close()
             raise InvalidOperation('wrong pagenum')
-        offset = page_length * (page - 1)
-        last = offset + page_length
-        result = query.order_by(model.Article.id.desc())[offset:last]
+        result = query.order_by(model.Article.id.desc()).all()
 
         end_time = time.time()
 
