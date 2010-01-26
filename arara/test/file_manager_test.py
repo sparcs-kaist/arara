@@ -45,7 +45,7 @@ class FileManagerTest(unittest.TestCase):
                         'nickname':u'mikkang', 'email':u'mikkang@example.com',
                         'signature':u'mikkang', 'self_introduction':u'mikkang',
                         'default_language':u'english' }
-        register_key = server.member_manager.register(
+        register_key = server.member_manager.register_(
                 UserRegistration(**user_reg_dict))
         server.member_manager.confirm(u'mikkang', unicode(register_key))
         self.mikkang_session_key = server.login_manager.login(

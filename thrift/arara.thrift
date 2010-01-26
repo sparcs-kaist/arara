@@ -125,7 +125,7 @@ service MemberManager {
                                     3:string user_ip)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void register(1:UserRegistration user_reg)
+    void register_(1:UserRegistration user_reg)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void backdoor_confirm(1:string session_key, 2:string username)

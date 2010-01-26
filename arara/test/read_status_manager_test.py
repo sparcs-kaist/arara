@@ -28,7 +28,7 @@ class ReadStatusManagerTest(unittest.TestCase):
     def _register_user(self, id):
         # Register a user, log-in, and then return its session_key
         user_reg_dic = self._get_user_reg_dic(id)
-        register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
+        register_key = server.member_manager.register_(UserRegistration(**user_reg_dic))
         server.member_manager.confirm(id, unicode(register_key))
         return server.login_manager.login(id, id, u'143.248.234.140')
 

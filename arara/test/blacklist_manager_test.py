@@ -39,7 +39,7 @@ class BlacklistManagerTest(unittest.TestCase):
                         'nickname':u'mikkang', 'email':u'mikkang@example.com',
                         'signature':u'mikkang', 'self_introduction':u'mikkang',
                         'default_language':u'english' }
-        register_key = server.member_manager.register(
+        register_key = server.member_manager.register_(
                 UserRegistration(**user_reg_dict))
         server.member_manager.confirm(u'mikkang', unicode(register_key))
         self.mikkang_session_key = server.login_manager.login(
@@ -50,7 +50,7 @@ class BlacklistManagerTest(unittest.TestCase):
                         'nickname':u'combacsa', 'email':u'combacsa@example.com', 
                         'signature':u'combacsa', 'self_introduction':u'combacsa', 
                         'default_language':u'english' }
-        register_key = server.member_manager.register(
+        register_key = server.member_manager.register_(
                 UserRegistration(**user_reg_dic))
         server.member_manager.confirm(u'combacsa', register_key)
         self.combacsa_session_key = server.login_manager.login(
@@ -61,7 +61,7 @@ class BlacklistManagerTest(unittest.TestCase):
                         'nickname':u'serialx', 'email':u'serialx@example.com', 
                         'signature':u'serialx', 'self_introduction':u'serialx',
                         'default_language':u'english' }
-        register_key = server.member_manager.register(
+        register_key = server.member_manager.register_(
                 UserRegistration(**user_reg_dic))
         server.member_manager.confirm(u'serialx', register_key)
         self.serialx_session_key = server.login_manager.login(

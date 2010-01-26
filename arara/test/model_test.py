@@ -39,7 +39,7 @@ class ModelTest(unittest.TestCase):
         server.board_manager.add_board(session_key_sysop, u'garbages', u'Garbage Board')
         # Register one user, serialx
         user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx@example.com', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'english' }
-        register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
+        register_key = server.member_manager.register_(UserRegistration(**user_reg_dic))
         server.member_manager.confirm(u'serialx', register_key)
         # Up to here.
         server.login_manager.logout(session_key_sysop)

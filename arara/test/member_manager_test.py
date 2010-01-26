@@ -27,17 +27,17 @@ class MemberManagerTest(unittest.TestCase):
 
         # Regiister one user, combacsa
         user_reg_dic = {'username':u'combacsa', 'password':u'combacsa', 'nickname':u'combacsa', 'email':u'combacsa@example.com', 'signature':u'combacsa', 'self_introduction':u'combacsa', 'default_language':u'english' }
-        register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
+        register_key = server.member_manager.register_(UserRegistration(**user_reg_dic))
         server.member_manager.confirm(u'combacsa', unicode(register_key))
 
         # Register one user, serialx
         user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx@example.com', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'english' }
-        register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
+        register_key = server.member_manager.register_(UserRegistration(**user_reg_dic))
         server.member_manager.confirm(u'serialx', unicode(register_key))
 
         # Register one user, pipoket, but not confirm.
         user_reg_dic = {'username':u'pipoket', 'password':u'pipoket', 'nickname':u'pipoket', 'email':u'pipoket@example.com', 'signature':u'pipoket', 'self_introduction':u'pipoket', 'default_language':u'english' }
-        self.register_key_pipoket = server.member_manager.register(UserRegistration(**user_reg_dic))
+        self.register_key_pipoket = server.member_manager.register_(UserRegistration(**user_reg_dic))
 
     def testAddMikkang(self):
         user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang@example.com', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
@@ -47,7 +47,7 @@ class MemberManagerTest(unittest.TestCase):
         self.assertEqual(False, server.member_manager.is_registered_email(user_reg_dic['email']))
 
         # Register the user, login, and check if any problem occurs
-        register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
+        register_key = server.member_manager.register_(UserRegistration(**user_reg_dic))
         server.member_manager.confirm(u'mikkang', register_key)
         session_key = server.login_manager.login(u'mikkang', u'mikkang', u'143.248.234.140')
         server.login_manager.logout(session_key)
@@ -108,7 +108,7 @@ class MemberManagerTest(unittest.TestCase):
         self.assertEqual(u"serialx", users[0].nickname)
         # Multi User Result (Add new user with duplicated nickname)
         user_reg_dic = {'username':u'ggingkkang', 'password':u'xx', 'nickname':u'serialx', 'email':u'ggingkkang@example.com', 'signature':u'', 'self_introduction':u'', 'default_language':u'english' }
-        register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
+        register_key = server.member_manager.register_(UserRegistration(**user_reg_dic))
         server.member_manager.confirm(u'ggingkkang', unicode(register_key))
 
         users = server.member_manager.search_user(session_key, u'serialx')
@@ -162,14 +162,14 @@ class MemberManagerTest(unittest.TestCase):
         # Prevent adding SYSOP
         user_reg_dic = { 'username':u'SYSOP', 'password':u'SYSOP', 'nickname':u'SYSOP', 'email':u'SYSOP@sparcs.org', 'signature':u'', 'self_introduction':u'i am mikkang', 'default_language':u'english' }
         try:
-            sysop_register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
+            sysop_register_key = server.member_manager.register_(UserRegistration(**user_reg_dic))
             fail()
         except InvalidOperation:
             pass
 
     def testBackdoorConfirm(self):
         user_reg_dic = {'username':u'mikkang20', 'password':u'mikkang', 'nickname':u'mikkang20', 'email':u'mikkang20@example.com', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
-        registration_key = server.member_manager.register(UserRegistration(**user_reg_dic))
+        registration_key = server.member_manager.register_(UserRegistration(**user_reg_dic))
         session_key = server.login_manager.login(u'SYSOP', u'SYSOP', u'143.248.234.145')
         server.member_manager.backdoor_confirm(session_key, u'mikkang20')
         server.login_manager.logout(session_key)

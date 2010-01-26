@@ -133,7 +133,7 @@ class MemberManager(object):
         return return_list
 
     @log_method_call
-    def register(self, user_reg_info):
+    def register_(self, user_reg_info):
         '''
         DB에 회원 정보 추가. activation code를 발급한다.
         예외상황:

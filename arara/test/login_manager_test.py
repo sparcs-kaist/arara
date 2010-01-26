@@ -35,12 +35,12 @@ class LoginManagerTest(unittest.TestCase):
 
         # Register pipoket
         user_reg_dic = {'username':u'pipoket', 'password':u'pipoket', 'nickname':u'pipoket', 'email':u'pipoket@example.com', 'signature':u'pipoket', 'self_introduction':u'pipoket', 'default_language':u'english' }
-        register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
+        register_key = server.member_manager.register_(UserRegistration(**user_reg_dic))
         server.member_manager.confirm(u'pipoket', unicode(register_key))
 
         # Register serialx
         user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx@example.com', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'serialx' }
-        register_key = server.member_manager.register(UserRegistration(**user_reg_dic))
+        register_key = server.member_manager.register_(UserRegistration(**user_reg_dic))
         server.member_manager.confirm(u'serialx', unicode(register_key))
 
     def testNormalLoginLogout(self):
