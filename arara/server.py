@@ -44,9 +44,10 @@ HANDLER_PORT = {'login_manager': 1,
         }
 
 def connect(name):
-    transport = TSocket.TSocket(settings.ARARA_SERVER_HOST,
-                                settings.ARARA_SERVER_BASE_PORT + HANDLER_PORT[name])
-    transport = TTransport.TBufferedTransport(transport)
+    socket = TSocket.TSocket(settings.ARARA_SERVER_HOST,
+                             settings.ARARA_SERVER_BASE_PORT + HANDLER_PORT[name])
+    transport = TTransport.TBufferedTransport(socket)
+    #transport = TTransport.TFramedTransport(socket)
     protocol = TBinaryProtocol.TBinaryProtocolAccelerated(transport)
     client = dict(HANDLER_MAPPING)[name].Client(protocol)
     transport.open()
