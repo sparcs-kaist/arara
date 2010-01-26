@@ -116,6 +116,8 @@ class MemberManager(object):
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('wrong username')
+        except InvalidOperation:
+            raise
         except Exception, e:
             self.logger.warning("Exception occur on member_manager.authenticate. username <%s> and Error <%s>" % (username, repr(e)))
             raise InvalidOperation("unexpected error on authentication, contact SYSOP")
