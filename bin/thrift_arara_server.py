@@ -56,13 +56,13 @@ def open_thrift_server(server_name, processor, handler, port):
     tfactory = TTransport.TBufferedTransportFactory()
     #tfactory = TTransport.TFramedTransportFactory()
     pfactory = TBinaryProtocol.TBinaryProtocolAcceleratedFactory()
-    #server = TServer.TThreadedServer(processor_, transport, tfactory, pfactory)
-    if server_name in ['LoginManager']:
-        logging.getLogger('open_server').info("%s running in TThreadedServer", server_name)
-        server = TServer.TThreadedServer(processor_, transport, tfactory, pfactory)
-    else:
-        logging.getLogger('open_server').info("%s running in TForkingServer", server_name)
-        server = TServer.TForkingServer(processor_, transport, tfactory, pfactory)
+    server = TServer.TThreadedServer(processor_, transport, tfactory, pfactory)
+    #if server_name in ['BlacklistManager']:
+    #    logging.getLogger('open_server').info("%s running in TForkingServer", server_name)
+    #    server = TServer.TForkingServer(processor_, transport, tfactory, pfactory)
+    #else:
+    #    logging.getLogger('open_server').info("%s running in TThreadedServer", server_name)
+    #    server = TServer.TThreadedServer(processor_, transport, tfactory, pfactory)
     #server = TServer.TThreadPoolServer(processor_, transport, tfactory, pfactory)
     #server.setNumThreads(15)
     return server, handler_instance
