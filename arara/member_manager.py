@@ -116,6 +116,9 @@ class MemberManager(object):
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('wrong username')
+        except Exception, e:
+            self.logger.warning("Exception occur on member_manager.authenticate. username <%s> and Error <%s>" % (username, repr(e)))
+            raise InvalidOperation("unexpected error on authentication, contact SYSOP")
    
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
