@@ -69,11 +69,13 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.cache.UpdateCacheMiddleware',  # (pipoket): Django provided automatic caching middleware
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',  # (pipoket): Django provided automatic caching middleware
 )
 
 ROOT_URLCONF = 'warara.urls'
@@ -109,5 +111,6 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 #SESSION_FILE_PATH = session_dir
 
 #CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
+#CACHE_MIDDLEWARE_SECONDS = 30  # (pipoket): Minimum caching time
 
 # vim: set et ts=8 sw=4 sts=4
