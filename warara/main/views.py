@@ -34,7 +34,9 @@ def main(request):
         for item in ret:
             item.date = datetime.datetime.fromtimestamp(item.date)
         cache.set('today_best_list', ret, 60)
-    ctx['today_best_list'] = enumerate(ret)
+    # TODO: Change the key 'todays_best_list' to 'today_best_list' 
+    #       in both here and Template file.
+    ctx['todays_best_list'] = enumerate(ret)
 
     # Get the weekly-best list
     ret = cache.get('weekly_best_list')
