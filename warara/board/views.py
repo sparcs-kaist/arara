@@ -310,6 +310,10 @@ def file_download(request, board_name, article_root_id, article_id, file_id):
 
     response = HttpResponse(file_ob, mimetype="application/x-forcedownload")
     response['Content-Disposition'] = "attachment; filename=" + unicode(file.real_filename).encode('cp949', 'replace')
+    # Django's never_cache decorator causes empty file, so we do it manually.
+    # NOTE: Django's cache middleware uses cache backends with timeout value from http headers
+    #       with simultaneously setting appropriate http headers to control web browsers.
+    response['Cache-Control'] = 'max-age=0, no-cache=True'
     return response
 
 # Using Django's default HTML handling util, escape all tags and urlize
