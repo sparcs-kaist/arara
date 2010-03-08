@@ -85,7 +85,11 @@ class LoginManager(object):
         visitor.date = datetime.datetime.fromtimestamp(time.time())
         total = visitor.total
         today = visitor.today
-        session.commit()
+        try:
+            session.commit()
+        except Exception, e:
+            session.close()
+            self.logger.warning("Internal Error occur on LoginManager.total_visitor(): %s" % repr(e))
         session.close()
         visitor_count= {'total_visitor_count':total, 'today_visitor_count':today}
         return VisitorCount(**visitor_count)
