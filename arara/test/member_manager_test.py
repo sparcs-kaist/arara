@@ -197,6 +197,11 @@ class MemberManagerTest(unittest.TestCase):
         except InvalidOperation:
             # XXX 실패 사유가 무엇인지 확인할 수 있어야 한다 ...
             pass
+        try:
+            msg6 = server.member_manager.authenticate(u" ", u" ", u"143.248.234.140")
+            self.fail()
+        except InvalidOperation:
+            pass
 
 
     def tearDown(self):
