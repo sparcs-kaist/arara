@@ -92,6 +92,8 @@ class MemberManager(object):
 
     def authenticate(self, username, password, user_ip):
         username = smart_unicode(username) # XXX(combacsa): Why is this not unicode by default???
+        if username.strip() == u"" or username == u" ":
+            raise InvalidOperation('wrong username')
         session = model.Session()
         try:
             user = session.query(model.User).filter_by(username=username).one()
