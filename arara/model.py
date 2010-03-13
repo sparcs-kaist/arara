@@ -434,7 +434,7 @@ def get_engine():
         if CONNECTION_STRING.startswith('mysql'):
             engine = create_engine(CONNECTION_STRING, encoding='utf-8',
                                 convert_unicode=True, assert_unicode=False,
-                                pool_size=50, max_overflow=10, pool_recycle=5, 
+                                pool_size=300, max_overflow=10, pool_recycle=5, 
                                 echo=False, echo_pool=False)  
             # (pipoket) Note: To see what`s happing to the pool, turn on echo_pool above.
         else:
