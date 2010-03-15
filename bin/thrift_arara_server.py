@@ -1,4 +1,5 @@
 #!/usr/bin/python
+#-*- coding: utf-8 -*-
 import os
 import sys
 # XXX(serialx): ugly hack for the unicode
@@ -7,7 +8,6 @@ sys.setdefaultencoding('utf-8')
 
 import optparse
 import traceback
-import xmlrpclib
 import time
 import logging
 import logging.handlers
@@ -29,9 +29,6 @@ import arara.model
 import arara.settings
 
 from arara import MAPPING, DEPENDENCY, PORT, CLASSES, connect_thrift_server
-from thirdparty import wsgiserver
-
-from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
 
 handler_for_info = logging.handlers.RotatingFileHandler('arara_server.log', 'a', 2**20*50, 10)
 formatter = logging.Formatter('%(asctime)s [%(process)d:%(thread)X] <%(name)s> ** %(levelname)s ** %(message)s')
@@ -56,7 +53,18 @@ def open_thrift_server(server_name, processor, handler, port):
     tfactory = TTransport.TBufferedTransportFactory()
     #tfactory = TTransport.TFramedTransportFactory()
     pfactory = TBinaryProtocol.TBinaryProtocolAcceleratedFactory()
-    server = TServer.TThreadedServer(processor_, transport, tfactory, pfactory)
+
+    # 서버를 어떻게 띄울 것인가?
+    # 1. TThreadedServer   : Thread per Connection
+    # 2. TForkingServer    : Process per Connection
+    # 3. TThreadPoolServer : Preloaded Thread with Pool
+
+    if server_name in ['LoginManager', 'MemberManager']:
+        server = TServer.TThreadPoolServer(processor_, transport, tfactory, pfactory)
+        server.setNumThreads(10)
+    else:
+        server = TServer.TThreadedServer(processor_, transport, tfactory, pfactory)
+
     #if server_name in ['BlacklistManager']:
     #    logging.getLogger('open_server').info("%s running in TForkingServer", server_name)
     #    server = TServer.TForkingServer(processor_, transport, tfactory, pfactory)
@@ -122,7 +130,6 @@ if __name__ == '__main__':
     arara.model.init_database()
 
     def exception_handler(type_, value, traceback_):
-        import traceback
         error_msg = ''.join(traceback.format_exception(type_, value, traceback_))
         print >> sys.stderr, error_msg
         print >> sys.stdout, error_msg
