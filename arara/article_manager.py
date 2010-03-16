@@ -162,9 +162,9 @@ class ArticleManager(object):
             yield self._get_dict(item, whitelist)
 
     def _get_user(self, session, session_key):
-        user_info = get_server().login_manager.get_session(session_key)
+        user_id = get_server().login_manager.get_user_id(session_key)
         try:
-            user = session.query(model.User).filter_by(username=smart_unicode(user_info.username)).one()
+            user = session.query(model.User).filter_by(id=user_id).one()
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('user does not exist')
