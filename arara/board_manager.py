@@ -21,9 +21,6 @@ class BoardManager(object):
     def __init__(self):
         pass
 
-    def _set_login_manager(self, login_manager):
-        self.login_manager = login_manager
-
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
         if whitelist:

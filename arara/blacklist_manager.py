@@ -43,12 +43,6 @@ class BlacklistManager(object):
     #        return function(self, session_key, *args)
     #    return wrapper
 
-    def _set_login_manager(self, login_manager):
-        self.login_manager = login_manager
-
-    def _set_member_manager(self, member_manager):
-        self.member_manager = member_manager
-    
     def _get_dict(self, item, whitelist):
         item_dict = item.__dict__
         if item_dict['user_id']:

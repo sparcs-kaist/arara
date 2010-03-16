@@ -41,21 +41,6 @@ class ArticleManager(object):
         #self.articles = {'garbages': {} }
         #self.article_no = 0
 
-    def _set_login_manager(self, login_manager):
-        self.login_manager = login_manager
-
-    def _set_blacklist_manager(self, blacklist_manager):
-        self.blacklist_manager = blacklist_manager 
-
-    def _set_read_status_manager(self, read_status_manager):
-        self.read_status_manager = read_status_manager
-    
-    def _set_board_manager(self, board_manager):
-        self.board_manager = board_manager
-
-    def _set_file_manager(self, file_manager):
-        self.file_manager = file_manager
-
     def _get_board(self, session, board_name):
         try:
             board = session.query(model.Board).filter_by(board_name=smart_unicode(board_name)).one()

@@ -33,9 +33,6 @@ class FileManager(object):
         else:
             return False, 'BOARD_NOT_EXIST'
 
-    def _set_login_manager(self, login_manager):
-        self.login_manager = login_manager
-
     def _get_article(self, session, article_id):
         try:
             return session.query(model.Article).filter_by(id=article_id).one()

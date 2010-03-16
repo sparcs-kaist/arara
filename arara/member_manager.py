@@ -72,9 +72,6 @@ class MemberManager(object):
             session.close()
             pass
 
-    def _set_login_manager(self, login_manager):
-        self.login_manager = login_manager
-
     @log_method_call
     def _logout_process(self, username):
         try:

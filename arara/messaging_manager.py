@@ -25,15 +25,6 @@ class MessagingManager(object):
     def __init__(self):
         self.message_list = []
 
-    def _set_login_manager(self, login_manager):
-        self.login_manager = login_manager
-
-    def _set_member_manager(self, member_manager):
-        self.member_manager = member_manager
-
-    def _set_blacklist_manager(self, blacklist_manager):
-        self.blacklist_manager = blacklist_manager
-
     def _get_dict(self, item, whitelist=None, blacklist_users=None):
         item_dict = item.__dict__
         if item_dict.has_key('from_id'):

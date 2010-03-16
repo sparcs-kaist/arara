@@ -122,12 +122,6 @@ class ReadStatusManager(object):
         self.read_status = {}
         self.logger = logging.getLogger('read_status_manager')
 
-    def _set_login_manager(self, login_manager):
-        self.login_manager = login_manager
-
-    def _set_member_manager(self, member_manager):
-        self.member_manager = member_manager
-
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
         if whitelist:

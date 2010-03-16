@@ -42,9 +42,6 @@ class LoginManager(object):
             session.commit()
             session.close()
 
-    def _set_member_manager(self, member_manager):
-        get_server().member_manager = member_manager
-
     def guest_login(self, guest_ip):
         '''
         guest 로그인 처리를 담당하는 함수

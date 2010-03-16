@@ -31,12 +31,6 @@ class SearchManager(object):
     def __init__(self):
         pass
 
-    def _set_board_manager(self, board_manager):
-        self.board_manager = board_manager
-
-    def _set_login_manager(self, login_manager):
-        self.login_manager = login_manager
-
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
         if item_dict.has_key('author_id'):
