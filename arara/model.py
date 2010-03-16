@@ -116,6 +116,7 @@ class Article(object):
             self.root = None
         self.parent = parent
         self.last_modified_date = self.date
+        self.destroyed = False
 
     def __repr__(self):
         return "<Article('%s', '%s', %s)>" % (self.title, self.author.username, str(self.date))
@@ -257,6 +258,7 @@ articles_table = Table('articles', metadata,
     Column('reply_count', Integer, nullable=False),
     Column('is_searchable', Boolean, nullable=False),
     Column('last_modified_date', DateTime),
+    Column('destroyed', Boolean),
     mysql_engine='InnoDB'
 )
 
