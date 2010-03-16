@@ -111,10 +111,18 @@ class LoginManager(object):
         username = smart_unicode(username)
         password = smart_unicode(password)
         user_ip = smart_unicode(user_ip)
-        msg = get_server().member_manager.authenticate(username, password, user_ip)
-        #for user_info in self.session_dic.values():
-        #    if user_info['username'] == username:
-        #        return False, 'ALREADY_LOGIN'
+        # 가끔 Thrift 가 맛이 가서 LoginManager -> MemberManager 통신이 끊어질 때가 있다.
+        # 이런 경우 Thrift 자체 Timeout 이 지난 뒤에 Error 가 돌아가므로, InternalError 로 에쁘게 Wrapping 한다.
+        try:
+            msg = get_server().member_manager.authenticate(username, password, user_ip)
+        except InvalidOperation:
+            raise
+        except InternalError:
+            raise
+        except Exception, e:
+            self.logger.warning("Internal Error occur on MemberManager.authenticate(): %s" % repr(e))
+            raise InternalError("Ask SYSOP")
+
         hash = hashlib.md5(username+password+datetime.datetime.today().__str__()).hexdigest()
         self.session_dic[hash] = {'id': msg.id, 'username': username, 'ip': user_ip,
                 'nickname': msg.nickname, 'logintime': msg.last_login_time,
