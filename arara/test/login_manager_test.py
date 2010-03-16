@@ -15,12 +15,16 @@ import arara.model
 import arara
 import arara.server
 import arara.model
+from arara.settings import SESSION_EXPIRE_TIME
 server = None
 
 # Faking time.time (to check time field)
 import time
 def stub_time():
     return 1.1
+
+def stub_time_2():
+    return 1.1 + (SESSION_EXPIRE_TIME / 2)
 
 class LoginManagerTest(unittest.TestCase):
     def setUp(self):
@@ -123,6 +127,19 @@ class LoginManagerTest(unittest.TestCase):
             fail()
         except NotLoggedIn:
             pass
+
+    def testUpdateMonitorStatus(self):
+        # 본 테스트의 목적은 로그인 이후 활동을 하는 사용자가 로그아웃되는것을 막기 위함이다.
+        session_key_pipoket = server.login_manager.login(u'pipoket', u'pipoket', u'143.248.234.145')
+        time.time = stub_time_2
+
+        server.login_manager._update_monitor_status(session_key_pipoket, "read")
+        # XXX 지금은 dictionary 에 직접 접근하는데 ...
+        #     last_action_time 을 보는 함수가 없는 탓이다.
+        #     어떻게 해야 좋을까? 아흥.
+        result = server.login_manager.session_dic[session_key_pipoket]['last_action_time']
+
+        self.assertEqual(result, stub_time_2())
 
     def tearDown(self):
         time.time = self.org_time

@@ -149,6 +149,7 @@ class LoginManager(object):
         action = smart_unicode(action)
         if self.session_dic.has_key(session_key):
             self.session_dic[session_key]['current_action'] = action
+            self.update_session(session_key)
             return True
         else:
             return False
