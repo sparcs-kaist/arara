@@ -88,6 +88,7 @@ struct UserInformation {
     9 : bool activated,
     10: i32 widget,
     11: i32 layout,
+    12: i32 id,
 }
 
 struct UserPasswordInfo {
