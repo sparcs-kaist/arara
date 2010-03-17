@@ -11,7 +11,7 @@ from arara.server import get_server
 log_method_call = log_method_call_with_source('board_manager')
 log_method_call_important = log_method_call_with_source_important('board_manager')
 
-BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only')
+BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only', 'id')
 
 class BoardManager(object):
     '''

@@ -40,18 +40,18 @@ class BoardManagerTest(unittest.TestCase):
         server.board_manager.add_board(self.session_key_sysop, u'garbages', u'Garbages Board')
         board_list = server.board_manager.get_board_list()
         self.assertEqual(1, len(board_list))
-        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board')", repr(board_list[0]))
+        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board', id=1)", repr(board_list[0]))
         # Add another board 'ToSysop'
         server.board_manager.add_board(self.session_key_sysop, u'ToSysop', u'The comments to SYSOP')
         board_list = server.board_manager.get_board_list()
         self.assertEqual(2, len(board_list))
-        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board')", repr(board_list[0]))
-        self.assertEqual("Board(read_only=False, board_name=u'ToSysop', board_description=u'The comments to SYSOP')", repr(board_list[1]))
+        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board', id=1)", repr(board_list[0]))
+        self.assertEqual("Board(read_only=False, board_name=u'ToSysop', board_description=u'The comments to SYSOP', id=2)", repr(board_list[1]))
         # Check if you can get each board
         garbages = server.board_manager.get_board(u'garbages')
-        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board')", repr(garbages))
+        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board', id=1)", repr(garbages))
         tosysop = server.board_manager.get_board(u'ToSysop')
-        self.assertEqual("Board(read_only=False, board_name=u'ToSysop', board_description=u'The comments to SYSOP')", repr(tosysop))
+        self.assertEqual("Board(read_only=False, board_name=u'ToSysop', board_description=u'The comments to SYSOP', id=2)", repr(tosysop))
         # Try to delete the board
         server.board_manager.delete_board(self.session_key_sysop, u'ToSysop')
         server.board_manager.delete_board(self.session_key_sysop, u'garbages')
