@@ -318,6 +318,11 @@ def file_download(request, board_name, article_root_id, article_id, file_id):
     return response
 
 # Using Django's default HTML handling util, escape all tags and urlize
+# 동시에 <a> tag 를 target="_blank" 로 설정되도록 regex 를 써서 바꿔버린다.
+# TODO: 더 나은 방법이 있다면 (CSS 에 a tag 에 속성 먹이기가 더 예쁘지 않을까...전체를 div class 로 감싸서)
+#       그거로 바꾸기!
 from django.utils import html
+import re
+a_tag = re.compile(r'<a href="(.+?)">')
 def render_content(content):
-    return html.urlize(html.escape(content))
+    return a_tag.sub(r'<a href="\1" target="_blank">', html.urlize(html.escape(content)))
