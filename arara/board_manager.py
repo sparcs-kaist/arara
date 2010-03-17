@@ -19,7 +19,8 @@ class BoardManager(object):
     '''
 
     def __init__(self):
-        pass
+        # Internal Cache!
+        self.all_board_list = None
 
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
@@ -50,6 +51,8 @@ class BoardManager(object):
             session.add(board_to_add)
             session.commit()
             session.close()
+            # 보드에 변경이 발생하므로 캐시 초기화
+            self.all_board_list = None
             return
         except IntegrityError:
             session.rollback()
@@ -82,11 +85,13 @@ class BoardManager(object):
 
     @log_method_call
     def get_board_list(self):
-        session = model.Session()
-        board_to_get = session.query(model.Board).filter_by(deleted=False).all()
-        board_dict_list = self._get_dict_list(board_to_get, BOARD_MANAGER_WHITELIST)
-        session.close()
-        return [Board(**d) for d in board_dict_list]
+        if self.all_board_list == None:
+            session = model.Session()
+            board_to_get = session.query(model.Board).filter_by(deleted=False).all()
+            board_dict_list = self._get_dict_list(board_to_get, BOARD_MANAGER_WHITELIST)
+            session.close()
+            self.all_board_list = [Board(**d) for d in board_dict_list]
+        return self.all_board_list
 
     @require_login
     @log_method_call_important
@@ -118,6 +123,8 @@ class BoardManager(object):
         board.read_only = True
         session.commit()
         session.close()
+        # 보드에 변경이 발생하므로 캐시 초기화
+        self.all_board_list = None
 
     @require_login
     @log_method_call_important
@@ -149,6 +156,8 @@ class BoardManager(object):
         board.read_only = False
         session.commit()
         session.close()
+        # 보드에 변경이 발생하므로 캐시 초기화
+        self.all_board_list = None
 
     @require_login
     @log_method_call_important
@@ -159,3 +168,5 @@ class BoardManager(object):
         board.deleted = True
         session.commit()
         session.close()
+        # 보드에 변경이 발생하므로 캐시 초기화
+        self.all_board_list = None
