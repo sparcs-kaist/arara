@@ -20,7 +20,7 @@ log_method_call = log_method_call_with_source('article_manager')
 log_method_call_important = log_method_call_with_source_important('article_manager')
 
 WRITE_ARTICLE_DICT = ('title', 'content')
-READ_ARTICLE_WHITELIST = ('id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'author_nickname', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable', 'attach')
+READ_ARTICLE_WHITELIST = ('id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'author_nickname', 'author_id', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable', 'attach')
 LIST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'author_nickname', 'vote', 'hit')
 SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
@@ -121,7 +121,6 @@ class ArticleManager(object):
         if item_dict.has_key('author_id'):
             item_dict['author_username'] = item.author.username
             item_dict['author_nickname'] = item.author.nickname
-            del item_dict['author_id']
         if item_dict.has_key('board_id'):
             item_dict['board_name'] = item.board.board_name
             del item_dict['board_id']

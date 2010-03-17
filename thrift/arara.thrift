@@ -285,15 +285,16 @@ struct Article {
     8:  i32 root_id,
     9:  string author_username,
     10: string author_nickname,
-    11: bool blacklisted = 0,
-    12: bool is_searchable = 1,
-    13: double last_modified_date,
-    14: optional i32 depth,  // Only used in the 'read' function
-    15: optional string read_status,
-    16: optional i32 reply_count,
-    17: optional string type
-    18: optional string board_name,
-    19: optional list<AttachDict> attach,
+    11: i32 author_id,
+    12: bool blacklisted = 0,
+    13: bool is_searchable = 1,
+    14: double last_modified_date,
+    15: optional i32 depth,  // Only used in the 'read' function
+    16: optional string read_status,
+    17: optional i32 reply_count,
+    18: optional string type
+    19: optional string board_name,
+    20: optional list<AttachDict> attach,
     #19: optional i32 next,
     #20: optional i32 prev,
 }
