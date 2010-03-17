@@ -112,6 +112,7 @@ def login(request):
         request.session["django_language"] = "en"
     request.session["arara_session_key"] = session_key
     request.session["arara_username"] = username
+    request.session["arara_userid"] = User_Info.id
 
     request.session.set_expiry(3600)
     if current_page.find('register')+1:
@@ -125,6 +126,7 @@ def logout(request):
     account = server.login_manager.logout(session_key)
     del request.session['arara_session_key']
     del request.session['arara_username']
+    del request.session['arara_userid']
     request.session.clear()
     return HttpResponseRedirect('/')
 

@@ -179,6 +179,7 @@ def read(request, board_name, article_id):
     sess, r = warara.check_logged_in(request)
     article_list = server.article_manager.read(sess, board_name, int(article_id))
     username = request.session['arara_username']
+    userid = request.session['arara_userid']
 
     for article in article_list:
         article.date = datetime.datetime.fromtimestamp(article.date)
@@ -209,7 +210,7 @@ def read(request, board_name, article_id):
         # Finally, render the content using content renderer
         article.content = render_content(article.content)
 
-        if article.author_username == username:
+        if article.author_id == userid:
             article.flag_modify = 1
         else:
             article.flag_modify = 0
