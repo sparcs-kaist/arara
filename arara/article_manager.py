@@ -22,11 +22,11 @@ log_method_call_important = log_method_call_with_source_important('article_manag
 WRITE_ARTICLE_DICT = ('title', 'content')
 READ_ARTICLE_WHITELIST = ('id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'author_nickname', 'author_id', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable', 'attach')
 LIST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
-                    'deleted', 'author_username', 'author_nickname', 'vote', 'hit')
+                    'deleted', 'author_username', 'author_nickname', 'author_id', 'vote', 'hit')
 SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
-                    'deleted', 'author_username', 'author_nickname', 'vote', 'hit', 'content')
+                    'deleted', 'author_username', 'author_nickname', 'author_id', 'vote', 'hit', 'content')
 BEST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
-                    'deleted', 'author_username', 'author_nickname', 'vote', 'hit', 'last_page', 'board_name')
+                    'deleted', 'author_username', 'author_nickname', 'author_id', 'vote', 'hit', 'last_page', 'board_name')
 
 class ArticleManager(object):
     '''
