@@ -53,6 +53,7 @@ class ArticleManager(object):
         return self._get_board(session, board_name).id
 
     def _article_thread_to_list(self, article_thread, session_key, blacklist_users):
+        # article_thread 의 모든 자식들을 찾고 그들의 depth 를 구해 depth_ret 에 저장한다.
         queue = []
         depth_ret = {}
         depth = 1
@@ -65,6 +66,7 @@ class ArticleManager(object):
                 parent_article = queue.pop(0)
                 for child in parent_article.children:
                     queue.append(child)
+        # 저장한 결과를 바탕으로 List of Article 을 만든다.
         stack = []
         ret = []
         stack.append(article_thread)
