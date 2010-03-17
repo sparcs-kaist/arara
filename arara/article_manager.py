@@ -53,39 +53,28 @@ class ArticleManager(object):
         return self._get_board(session, board_name).id
 
     def _article_thread_to_list(self, article_thread, session_key, blacklist_users):
-        # article_thread 의 모든 자식들을 찾고 그들의 depth 를 구해 depth_ret 에 저장한다.
-        queue = []
-        depth_ret = {}
-        depth = 1
-        queue.append(article_thread)
-        while queue:
-            for item in queue:
-                depth_ret[item] = depth
-            depth += 1
-            for i in xrange(len(queue)):
-                parent_article = queue.pop(0)
-                for child in parent_article.children:
-                    queue.append(child)
-        # 저장한 결과를 바탕으로 List of Article 을 만든다.
+        # 기존에 반복문 2개로 하던 걸 1개로 줄여봄.
         stack = []
         ret = []
-        stack.append(article_thread)
         article_id_list = []
+        stack.append((article_thread, 1))
         while stack:
-            a = stack.pop()
-            d = self._get_dict(a, READ_ARTICLE_WHITELIST)
-            d['depth'] = depth_ret[a]
+            art, dep = stack.pop()
+            for child in art.children[::-1]:
+                stack.append((child, dep + 1))
+            dic = self._get_dict(art, READ_ARTICLE_WHITELIST)
+            dic['depth'] = dep
 
-            if d['author_username'] in blacklist_users:
-                d['blacklisted'] = True
+            if dic['author_username'] in blacklist_users:
+                dic['blacklisted'] = True
             else:
-                d['blacklisted'] = False
-            article_id_list.append(d['id'])
-            d['date'] = datetime2timestamp(d['date'])
-            d['last_modified_date'] = datetime2timestamp(d['last_modified_date'])
-            ret.append(Article(**d))
-            for child in a.children[::-1]:
-                stack.append(child)
+                dic['blacklisted'] = False
+
+            article_id_list.append(dic['id'])
+            dic['date'] = datetime2timestamp(dic['date'])
+            dic['last_modified_date'] = datetime2timestamp(dic['last_modified_date'])
+            ret.append(Article(**dic))
+
         get_server().read_status_manager.mark_as_read_list(session_key, article_id_list)
         return ret
 
