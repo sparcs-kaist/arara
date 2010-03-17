@@ -55,16 +55,16 @@ class ArticleManager(object):
     def _article_thread_to_list(self, article_thread, session_key, blacklist_users):
         queue = []
         depth_ret = {}
-        queue.append({article_thread: 1})
+        depth = 1
+        queue.append(article_thread)
         while queue:
             for item in queue:
-                depth = item.values()[0]
-                depth_ret[item.keys()[0]] = depth
+                depth_ret[item] = depth
             depth += 1
             for i in xrange(len(queue)):
-                parent_article = queue.pop(0).keys()[0]
+                parent_article = queue.pop(0)
                 for child in parent_article.children:
-                    queue.append({child: depth})
+                    queue.append(child)
         stack = []
         ret = []
         stack.append(article_thread)
