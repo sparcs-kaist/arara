@@ -52,7 +52,7 @@ class ArticleManager(object):
     def _get_board_id(self, session, board_name):
         return self._get_board(session, board_name).id
 
-    def _article_thread_to_list(self, article_thread, session_key, blacklist_users):
+    def _article_thread_to_list(self, article_thread, session_key, blacklisted_userid):
         # 기존에 반복문 2개로 하던 걸 1개로 줄여봄.
         stack = []
         ret = []
@@ -65,7 +65,7 @@ class ArticleManager(object):
             dic = self._get_dict(art, READ_ARTICLE_WHITELIST)
             dic['depth'] = dep
 
-            if dic['author_username'] in blacklist_users:
+            if dic['author_id'] in blacklisted_userid:
                 dic['blacklisted'] = True
             else:
                 dic['blacklisted'] = False
@@ -350,13 +350,13 @@ class ArticleManager(object):
             raise InternalError('DATABASE_ERROR')
 
 
-    def _get_blacklist_users(self, session_key):
+    def _get_blacklist_userid(self, session_key):
         try:
-            blacklist_dict_list = get_server().blacklist_manager.list_(session_key)
+            blacklist_list = get_server().blacklist_manager.get_article_blacklisted_userid_list(session_key)
         except NotLoggedIn:
-            blacklist_dict_list = []
+            blacklist_list = []
             pass
-        return set([x.blacklisted_user_username for x in blacklist_dict_list if x.block_article])
+        return set(blacklist_list)
 
     def _get_article_list(self, session_key, board_name, page, page_length):
         session = model.Session()
@@ -398,7 +398,7 @@ class ArticleManager(object):
                 2. 페이지 번호 오류: InvalidOperation Exception
                 3. 데이터베이스 오류: InternalError Exception 
         '''
-        blacklist_users = self._get_blacklist_users(session_key)
+        blacklisted_users = self._get_blacklist_userid(session_key)
 
         article_dict_list, last_page, article_count = self._get_article_list(session_key, board_name, page, page_length)
         # InvalidOperation(board not exist) 는 여기서 알아서 불릴 것이므로 제거.
@@ -418,7 +418,7 @@ class ArticleManager(object):
             read_stats_list = ['N'] * len(article_id_list)
 
         for idx, article in enumerate(article_dict_list):
-            if article['author_username'] in blacklist_users:
+            if article['author_id'] in blacklisted_users:
                 article['blacklisted'] = True
             else:
                 article['blacklisted'] = False
@@ -461,8 +461,7 @@ class ArticleManager(object):
 
         session = model.Session()
         self._get_board(session, board_name)
-        blacklist_dict_list = get_server().blacklist_manager.list_(session_key)
-        blacklist_users = set([x.blacklisted_user_username for x in blacklist_dict_list if x.block_article])
+        blacklisted_userid = self._get_blacklist_userid(session_key)
 
         try:
             article = session.query(model.Article).options(eagerload('children')).filter_by(id=no).one()
@@ -474,7 +473,7 @@ class ArticleManager(object):
             session.rollback()
             session.close()
             raise InvalidOperation('ARTICLE_NOT_EXIST')
-        article_dict_list = self._article_thread_to_list(article, session_key, blacklist_users)
+        article_dict_list = self._article_thread_to_list(article, session_key, blacklisted_userid)
         session.close()
         return article_dict_list
 
