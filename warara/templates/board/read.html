@@ -23,7 +23,7 @@
     {% ifequal article.id article.root_id %}
     <h1 class="root_article_title"><a href="#">{{article.title}}</a></h1>
     <div id="root_article_info" rel="{{article.id}}">
-        <span class="nickname user_nickname">{{article.author_nickname}}</span>
+        <span class="nickname user_nickname">{{article.author_nickname}}<span class="hidden username">{{article.author_username}}</span></span>
         <span class="user_name">{{article.author_username}}</span>
         <span class="article_date">{{article.date|date:"Y/m/d H:i:s"}}</span>
         <span class="vote">{% trans "vote: " %}<span class="vote_num_{{article.id}}">{{article.vote}}</span> |</span>
