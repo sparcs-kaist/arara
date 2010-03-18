@@ -67,24 +67,9 @@ class BlacklistManagerTest(unittest.TestCase):
         self.serialx_session_key = server.login_manager.login(
                 u'serialx', u'serialx', u'143.248.234.140')
 
-    def add(self):
+    def test_add(self):
         server.blacklist_manager.add(self.mikkang_session_key, u'combacsa')
-        try:
-            server.blacklist_manager.add(self.mikkang_session_key, u'pv457')
-            fail()
-        except InvalidOperation:
-            pass
-        try:
-            server.blacklist_manager.add(self.mikkang_session_key, u'combacsa')
-            fail()
-        except InvalidOperation:  
-            pass
-        try:
-            server.blacklist_manager.add(self.mikkang_session_key, u'mikkang')
-            fail()
-        except InvalidOperation:
-            pass
-
+        # Case 0. 정상 작동
         ret = server.blacklist_manager.list_(self.mikkang_session_key)[0]
         self.assertEqual(ret.blacklisted_user_nickname, u'combacsa')
         self.assertEqual(ret.last_modified_date, 1.1000000000000001)
@@ -94,7 +79,29 @@ class BlacklistManagerTest(unittest.TestCase):
         self.assertEqual(ret.blacklisted_date, 1.1000000000000001)
         self.assertEqual(ret.id, 1)
 
-    def modify(self):
+        # Case 1. 존재하지 않는 유저
+        try:
+            server.blacklist_manager.add(self.mikkang_session_key, u'pv457')
+            self.fail()
+        except InvalidOperation:
+            pass
+        # Case 2. 이미 등록한 유저
+        try:
+            server.blacklist_manager.add(self.mikkang_session_key, u'combacsa')
+            self.fail()
+        except InvalidOperation:  
+            pass
+        # Case 3. 자기 자신
+        try:
+            server.blacklist_manager.add(self.mikkang_session_key, u'mikkang')
+            self.fail()
+        except InvalidOperation:
+            pass
+
+    def test_modify(self):
+        # Setting.
+        server.blacklist_manager.add(self.mikkang_session_key, u'combacsa')
+        # Case 1. 수정 잘 되는지 확인
         blacklist_dict = {'blacklisted_user_username': u'combacsa', 
                           'block_article': False, 'block_message': True}
         server.blacklist_manager.modify(self.mikkang_session_key, 
@@ -108,47 +115,42 @@ class BlacklistManagerTest(unittest.TestCase):
         self.assertEqual(ret.block_message, True)
         self.assertEqual(ret.blacklisted_date, 1.1000000000000001)
         self.assertEqual(ret.id, 1)
-        
+        # Case 2. Blacklist 에 없는 사용자 추가 실패
         try:
             blacklist_dict = {'blacklisted_user_username': u'pv457',
                               'block_article': False, 'block_message': True}
             server.blacklist_manager.modify(self.mikkang_session_key,
                     BlacklistRequest(**blacklist_dict))
-            fail()
+            self.fail()
         except InvalidOperation:
             pass
 
-    def delete(self):
+    def test_delete(self):
+        # Setting.
+        server.blacklist_manager.add(self.mikkang_session_key, u'combacsa')
+        # Case 1. 정상 삭제
         server.blacklist_manager.delete_(self.mikkang_session_key, u'combacsa')
+        # Case 2. 정상 삭제 후 수정 실패
         blacklist_dict = {'blacklisted_user_username': u'combacsa',
                           'block_article': False, 'block_message': True}
         try:
             server.blacklist_manager.modify(self.mikkang_session_key, 
                     BlacklistRequest(**blacklist_dict))
-            fail()
+            self.fail()
         except InvalidOperation:
             pass
+        # Case 3. 정상 삭제 후 다시 삭제 실패
         try:
             server.blacklist_manager.delete_(self.mikkang_session_key, u'combacsa')
-            fail()
+            self.fail()
         except InvalidOperation:
             pass
+        # Case 4. 존재하지 않는 유저 삭제 실패
         try:
             server.blacklist_manager.delete_(self.mikkang_session_key, u'pv457')
-            fail()
+            self.fail()
         except InvalidOperation:
             pass
-
-    def test_add(self):
-        self.add()
-
-    def test_modify(self):
-        self.add()
-        self.modify()
-
-    def test_delete(self):
-        self.add()
-        self.delete()
 
     def tearDown(self):
         arara.model.clear_test_database()
