@@ -110,9 +110,14 @@ def resolve_dependencies(base_class, instance, base_port):
             try:
                 client = connect_thrift_server('localhost',
                         base_port, dependency_class)
-                setter = setter_name(dependency_class)
-                setter_method = getattr(instance, setter)
-                setter_method(client)
+                # XXX
+                # Dependency Resolve 할 때 Getter, Setter 를 쓸 이유가 없다.
+                # Race Condition 을 제거하기 위해 무조건 get_server() 를 쓰도록 했기 때문.
+                # 따라서 아래를 주석처리한다.
+                # 나중에 상황 봐서 필요없다 싶으면 setter_name 같은것도 죄다 지운다.
+                #setter = setter_name(dependency_class)
+                #setter_method = getattr(instance, setter)
+                #setter_method(client)
                 break
             except TTransportException:
                 print '%s cannot be connected. Retrying...' % dependency_class.__name__
