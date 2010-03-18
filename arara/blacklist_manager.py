@@ -227,5 +227,33 @@ class BlacklistManager(object):
             raise InternalError('database error')
         return blacklist_list
 
+    @require_login
+    @log_method_call
+    def get_article_blacklisted_userid_list(self,session_key):
+        '''
+        Article 에 대해 블랙리스트로 설정한 사람의 목록을 돌려줌.
+
+        >>> 사용법 추가해 넣을 것.
+
+        @type  session_key: string
+        @param session_key: User Key
+        @rtype: list
+        @return:
+            1. 성공: True, Blacklist Dictionary List
+            2. 실패:
+                1. 로그인되지 않은 사용자: False, 'NOT_LOGGEDIN'
+                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        '''
+
+        user_id = get_server().login_manager.get_user_id(session_key)
+        try:
+            session = model.Session()
+            raw_blacklist = session.query(model.Blacklist).filter_by(user_id=user_id, block_article=True).all()
+            session.close()
+            userid_blacklist = [x.blacklisted_user_id for x in raw_blacklist]
+        except:
+            session.close()
+            raise InternalError('database error')
+        return userid_blacklist
 
 # vim: set et ts=8 sw=4 sts=4

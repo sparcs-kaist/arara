@@ -213,6 +213,9 @@ service BlacklistManager {
     list<BlacklistInformation> list_(1:string session_key) 
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<i32> get_article_blacklisted_userid_list(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 }
 
 struct Board {

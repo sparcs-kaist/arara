@@ -152,6 +152,19 @@ class BlacklistManagerTest(unittest.TestCase):
         except InvalidOperation:
             pass
 
+    def test_get_article_blacklisted_userid_list(self):
+        # Setting.
+        server.blacklist_manager.add(self.mikkang_session_key, u'combacsa')
+        server.blacklist_manager.add(self.mikkang_session_key, u'serialx')
+        # Case 1. 정상 작동
+        result = server.blacklist_manager.get_article_blacklisted_userid_list(self.mikkang_session_key)
+        self.assertEqual([3, 4], result)
+        # Case 1-1. serialx 를 지우고 get 할 때 combacsa 만 돌아오는가
+        server.blacklist_manager.delete_(self.mikkang_session_key, u'serialx')
+        result = server.blacklist_manager.get_article_blacklisted_userid_list(self.mikkang_session_key)
+        self.assertEqual([3], result)
+        # TODO : 없는 유저에 대해 작동 안하는 거 확인.
+
     def tearDown(self):
         arara.model.clear_test_database()
         time.time = self.org_time
