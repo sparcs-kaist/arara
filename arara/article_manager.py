@@ -362,7 +362,9 @@ class ArticleManager(object):
         # 해당 board 에 있는 글의 갯수를 센다.
         session = model.Session()
         board_id = self._get_board_id(session, board_name)
-        article_count = session.query(model.Article).filter_by(board_id=board_id, root_id=None).count()
+        desired_query = session.query(model.Article).filter_by(board_id=board_id, root_id=None)
+
+        article_count = desired_query.count()
         last_page = self._get_last_page(article_count, page_length)
         # 페이지가 넘치면? InvalidOperation.
         if page > last_page:
@@ -371,7 +373,7 @@ class ArticleManager(object):
         # Page 의 시작 글과 끝 글의 번째수를 구하고 Query 를 날린다.
         offset = page_length * (page - 1)
         last = offset + page_length
-        article_list = list(session.query(model.Article).filter_by(board_id=board_id, root_id=None).order_by(model.Article.id.desc())[offset:last])
+        article_list = list(desired_query.order_by(model.Article.id.desc())[offset:last])
         session.close()
         # 적당히 리턴한다.
         article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
