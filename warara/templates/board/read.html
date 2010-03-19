@@ -34,7 +34,7 @@
     <div class="article_reply_title">
         <h1><a href="#">{{article.title}}</a></h1>
         <span class="article_info">
-            <span class="nickname user_nickname">{{article.author_nickname}}</span>
+            <span class="nickname user_nickname">{{article.author_nickname}}<span class="hidden username">{{article.author_username}}</span></span>
             <span class="user_name">{{article.author_username}}</span> |
             <span class="vote">{% trans "vote: " %}<span class="vote_num_{{article.id}}">{{article.vote}}</span> </span> |
             <span class="article_date">{{article.date|date:"Y/m/d H:i:s"}}</span>
