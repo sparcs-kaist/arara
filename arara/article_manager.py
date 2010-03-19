@@ -511,12 +511,10 @@ class ArticleManager(object):
         position_no = total_article_count - remaining_article_count
         session.close()
 
-        page_position = 0
-        # XXX (combacsa): WTF below? ;;;
-        while True:
+        page_position = position_no / page_length
+        if position_no % page_length != 0:
             page_position += 1
-            if position_no <= (page_length * page_position):
-                break
+
         try:
             below_article_dict_list = self.article_list(session_key, board_name, page_position, page_length)
         except Exception:
