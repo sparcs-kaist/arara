@@ -156,6 +156,14 @@ class ArticleManager(object):
             raise InvalidOperation("article does not exist")
         return article
 
+    def _get_last_page(self, article_count, page_length):
+        last_page = int(article_count / page_length)
+        if article_count % page_length != 0:
+            last_page += 1
+        elif article_count == 0:
+            last_page += 1
+        return last_page
+
     @log_method_call
     def get_today_best_list(self, count=5):
         '''
@@ -271,11 +279,7 @@ class ArticleManager(object):
                 if read_stats_list[i] == 'N':
                     not_read_article_number.append(article_number[i])
             article_count = len(not_read_article_number) 
-            last_page = int(article_count / page_length)
-            if article_count % page_length != 0:
-                last_page += 1
-            elif article_count == 0:
-                last_page += 1
+            last_page = self._get_last_page(article_count, page_length)
             if page > last_page:
                 session.close()
                 raise InvalidOperation('WRONG_PAGENUM')
@@ -318,11 +322,7 @@ class ArticleManager(object):
             article_count = article_list = session.query(model.Article).filter(and_(
                                 model.articles_table.c.root_id==None,
                                 model.articles_table.c.last_modified_date > user.last_logout_time)).count()
-            last_page = int(article_count / page_length)
-            if article_count % page_length != 0:
-                last_page += 1
-            elif article_count == 0:
-                last_page += 1
+            last_page = self._get_last_page(article_count, page_length)
             if page > last_page:
                 session.close()
                 raise InvalidOperation('WRONG_PAGENUM')
@@ -359,21 +359,21 @@ class ArticleManager(object):
         return set(blacklist_list)
 
     def _get_article_list(self, session_key, board_name, page, page_length):
+        # 해당 board 에 있는 글의 갯수를 센다.
         session = model.Session()
         board_id = self._get_board_id(session, board_name)
         article_count = session.query(model.Article).filter_by(board_id=board_id, root_id=None).count()
-        last_page = int(article_count / page_length)
-        if article_count % page_length != 0:
-            last_page += 1
-        elif article_count == 0:
-            last_page += 1
+        last_page = self._get_last_page(article_count, page_length)
+        # 페이지가 넘치면? InvalidOperation.
         if page > last_page:
             session.close()
             raise InvalidOperation('WRONG_PAGENUM')
+        # Page 의 시작 글과 끝 글의 번째수를 구하고 Query 를 날린다.
         offset = page_length * (page - 1)
         last = offset + page_length
         article_list = list(session.query(model.Article).filter_by(board_id=board_id, root_id=None).order_by(model.Article.id.desc())[offset:last])
         session.close()
+        # 적당히 리턴한다.
         article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
         return article_dict_list, last_page, article_count
 
