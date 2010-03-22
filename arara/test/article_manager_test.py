@@ -162,6 +162,35 @@ class ArticleManagerTest(unittest.TestCase):
         except InvalidOperation:
             pass
 
+    def test_destroy(self):
+        # Write some articles
+        article1_id = self._dummy_article_write(self.session_key_mikkang)
+        article2_id = self._dummy_article_write(self.session_key_mikkang)
+        article3_id = self._dummy_article_write(self.session_key_mikkang)
+        # Delete one.
+        server.article_manager.delete_(self.session_key_mikkang, u'board', article1_id)
+        # Destroy one.
+        self.assertEqual(True, server.article_manager.destroy_article(self.session_key_sysop, u'board', article1_id))
+        # Can't destroy which do not exist.
+        try:
+            server.article_manager.destroy_article(self.session_key_sysop, u'board', 1241252)
+            self.fail()
+        except InvalidOperation:
+            pass
+        # Can't destroy someone other than sysop
+        try:
+            server.article_manager.destroy_article(self.session_key_mikkang, u'board', article2_id)
+            self.fail()
+        except InvalidOperation:
+            pass
+        # Can't destroy which already destroyed.
+        try:
+            server.article_manager.destroy_article(self.session_key_sysop, u"board", article1_id)
+            self.fail()
+        except InvalidOperation:
+            pass
+        # TODO : Check whether it is marked as destroyed
+
     def test_modification(self):
         # XXX combacsa 20090805 1905
         # Write an articles

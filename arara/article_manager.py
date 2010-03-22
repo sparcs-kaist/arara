@@ -749,4 +749,59 @@ class ArticleManager(object):
             raise InvalidOperation("NO_PERMISSION")
         return True
 
+    @require_login
+    @log_method_call_important
+    def destroy_article(self, session_key, board_name, no):
+        '''
+        주어진 글이 Destroy 할만한 글인지 판단하여, 만일 그렇다면 Destroy 함.
+        
+        @type  session_key: string
+        @param session_key: User Key
+        @type board_name: string
+        @param board_name : BBS Name
+        @type  no: number
+        @param no: Article Number
+        @rtype: boolean 
+        @return:
+            1. Delete 성공: True
+            2. Delete 실패:
+                1. 존재하지 않는 게시물번호: InvalidOperation Exception
+                2. 존재하지 않는 게시판: InvalidOperation Exception
+                3. 로그인되지 않은 유저: InvalidOperation Exception
+                4. 수정 권한이 없음: InvalidOperation Exception
+                5. 데이터베이스 오류: InternalError Exception
+                6. 기타 : 이 주석은 전부 뜯어고쳐야 함.
+        '''
+
+        session = model.Session()
+        user = self._get_user(session, session_key)
+        board_id = self._get_board_id(session, board_name)
+        article = self._get_article(session, board_id, no)
+        # 시삽만 이 작업을 할 수 있다.
+        if user.is_sysop:
+            # 이미 destroyed 인 것은 고려할 필요가 없다.
+            if article.destroyed:
+                session.close()
+                raise InvalidOperation("ALREADY_DESTROYED")
+            # 현재의 DB 구조상의 한계로 인해, root가 아닌 글은 체크할 수 없다.
+            if article.root == None:
+                if article.deleted:
+                    # 이런 경우에만 일단 destroyed 를 set 해준다.
+                    article.destroyed = True
+                    session.commit()
+                else:
+                    # 아니라면 False 를 return 하여 알려준다.
+                    session.close()
+                    return False
+            else:
+                session.close()
+                raise InvalidOperation("NOT_IMPLEMENTED")
+            session.close()
+        else:
+            session.close()
+            raise InvalidOperation("NO_PERMISSION")
+        return True
+
+
+
 # vim: set et ts=8 sw=4 sts=4
