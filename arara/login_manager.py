@@ -161,6 +161,9 @@ class LoginManager(object):
                 logger.info("=================== SESSION CLEANING STARTED") 
                 current_time = time.time()
                 for session_key in self.session_dic.keys():
+                    if not self.session_dic.has_key(session_key):
+                        # XXX Session Clearner 가 도는 중에 Logout 해버리면 이게 문제가 될 수 있다.
+                        continue
                     session_time = self.session_dic[session_key]['last_action_time']
                     username = self.session_dic[session_key]['username']
                     diff_time = current_time - session_time
