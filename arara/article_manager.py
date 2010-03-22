@@ -589,7 +589,7 @@ class ArticleManager(object):
                 4. 데이터베이스 오류: InternalError Exception
         '''
 
-        user_info = get_server().login_manager.get_session(session_key)
+        user_ip = get_server().login_manager.get_user_ip(session_key)
 
         session = model.Session()
         author = self._get_user(session, session_key)
@@ -599,7 +599,7 @@ class ArticleManager(object):
                                         smart_unicode(article_dic.title),
                                         smart_unicode(article_dic.content),
                                         author,
-                                        user_info.ip,
+                                        user_ip,
                                         None)
             session.add(new_article)
             if article_dic.__dict__.has_key('is_searchable'):
@@ -638,9 +638,7 @@ class ArticleManager(object):
                 3. 로그인되지 않은 유저: InvalidOperation Exception
                 4. 데이터베이스 오류: InternalError Exception
         '''
-
-
-        user_info = get_server().login_manager.get_session(session_key)
+        user_ip = get_server().login_manager.get_user_ip(session_key)
 
         session = model.Session()
         author = self._get_user(session, session_key)
@@ -650,7 +648,7 @@ class ArticleManager(object):
                                 smart_unicode(reply_dic.title),
                                 smart_unicode(reply_dic.content),
                                 author,
-                                user_info.ip,
+                                user_ip,
                                 article)
         article.reply_count += 1
         if article.root:
