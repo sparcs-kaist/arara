@@ -405,9 +405,6 @@ class ArticleManager(object):
         article_dict_list, last_page, article_count = self._get_article_list(session_key, board_name, page, page_length)
         # InvalidOperation(board not exist) 는 여기서 알아서 불릴 것이므로 제거.
 
-        article_list = ArticleList()
-        article_list.hit = list()
-
         # article_dict_list 를 generator 에서 list화.
         # 어차피 이 함수가 끝날때까지 append 되는 새 list 를 return 하므로 상관없다.
         article_dict_list = [x for x in article_dict_list]
@@ -417,7 +414,11 @@ class ArticleManager(object):
         try:
             read_stats_list = get_server().read_status_manager.check_stats(session_key, article_id_list)
         except NotLoggedIn, InvalidOperation:
-            read_stats_list = ['N'] * len(article_id_list)
+            read_stats_list = ['N'] * article_count
+
+        # 이상의 내용을 바탕으로 article_list 를 채운다.
+        article_list = ArticleList()
+        article_list.hit = [None] * article_count
 
         for idx, article in enumerate(article_dict_list):
             if article['author_id'] in blacklisted_users:
@@ -431,7 +432,7 @@ class ArticleManager(object):
 
             article['date'] = datetime2timestamp(article['date'])
             article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
-            article_list.hit.append(Article(**article))
+            article_list.hit[idx] = Article(**article)
 
         article_list.last_page = last_page
         article_list.results = article_count
