@@ -690,13 +690,13 @@ class ArticleManager(object):
         '''
 
         session = model.Session()
-        author = self._get_user(session, session_key)
+        author_id = self._get_user_id(session_key)
         board_id = self._get_board_id(session, board_name)
         article = self._get_article(session, board_id, no)
         if article.deleted == True:
             session.close()
             raise InvalidOperation("NO_PERMISSION")
-        if article.author_id == author.id:
+        if article.author_id == author_id:
             article.title = smart_unicode(article_dic.title)
             article.content = smart_unicode(article_dic.content)
             article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
