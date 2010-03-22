@@ -95,6 +95,16 @@ class LoginManagerTest(unittest.TestCase):
         self.assertEqual(1, result)
         server.login_manager.logout(session_key)
 
+    def testGetUserIp(self):
+        session_key1 = server.login_manager.login(u'pipoket', u'pipoket', '143.248.234.145')
+        session_key2 = server.login_manager.login(u'SYSOP', u'SYSOP', '143.248.234.146')
+        result1 = server.login_manager.get_user_ip(unicode(session_key1))
+        result2 = server.login_manager.get_user_ip(unicode(session_key2))
+        self.assertEqual("143.248.234.145", result1)
+        self.assertEqual("143.248.234.146", result2)
+        server.login_manager.logout(session_key1)
+        server.login_manager.logout(session_key2)
+
     def testGetCurrentOnline(self):
         session_key_pipoket = server.login_manager.login(u'pipoket', u'pipoket', '143.248.234.145')
         session_key_serialx = server.login_manager.login(u'serialx', u'serialx', '143.248.234.140')

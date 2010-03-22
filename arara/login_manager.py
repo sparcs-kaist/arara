@@ -227,6 +227,21 @@ class LoginManager(object):
             raise NotLoggedIn()
 
     @log_method_call
+    def get_user_ip(self, session_key):
+        '''
+        세션의 사용자 ip 만을 반환하는 함수
+
+        @type  session_key: string
+        @param session_key: User Key
+        @rtype: string
+        @return: 세션의 사용자 ip
+        '''
+        try:
+            return self.session_dic[session_key]['ip']
+        except KeyError:
+            raise NotLoggedIn()
+
+    @log_method_call
     def get_current_online(self, session_key):
         '''
         현재 온라인 상태인 사용자를 반환하는 함수
