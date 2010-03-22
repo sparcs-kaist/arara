@@ -366,6 +366,10 @@ class ArticleManager(object):
 
         article_count = desired_query.count()
         last_page = self._get_last_page(article_count, page_length)
+        # Page 에 0 이 들어오면 계속 잘못 작동하고 있다. 이를 막기 위해 page 의 시작점을 0 으로 설정한다.
+        # XXX 가능하면 TEST CODE 도 만들자.
+        if page == 0:
+            page = 1
         # 페이지가 넘치면? InvalidOperation.
         if page > last_page:
             session.close()
