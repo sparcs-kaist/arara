@@ -35,6 +35,7 @@ class NotLoggedIn(Exception):
 
 USER_PUBLIC_KEYS = ['username', 'password', 'nickname', 'email',
         'signature', 'self_introduction', 'default_language']
+
 USER_QUERY_WHITELIST = ('username', 'nickname', 'email',
         'signature', 'self_introduction', 'last_login_ip', 'last_logout_time')
 USER_PUBLIC_WHITELIST= ('username', 'nickname', 'email', 'last_login_ip',
@@ -150,6 +151,9 @@ class MemberManager(object):
         @rtype: string
         @return: 사용자 인증코드
         '''
+        # XXX Smart Unicode 적용
+        for keys in USER_PUBLIC_KEYS:
+            user_reg_info.__dict__[keys] = smart_unicode(user_reg_info.__dict__[keys])
 
         # Check if username is proper
         if user_reg_info.username.lower() == SYSOP_REG_DIC['username'].lower():
