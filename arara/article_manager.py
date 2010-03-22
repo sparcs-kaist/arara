@@ -418,11 +418,11 @@ class ArticleManager(object):
         try:
             read_stats_list = get_server().read_status_manager.check_stats(session_key, article_id_list)
         except NotLoggedIn, InvalidOperation:
-            read_stats_list = ['N'] * article_count
+            read_stats_list = ['N'] * len(article_id_list)
 
         # 이상의 내용을 바탕으로 article_list 를 채운다.
         article_list = ArticleList()
-        article_list.hit = [None] * article_count
+        article_list.hit = [None] * len(article_id_list)
 
         for idx, article in enumerate(article_dict_list):
             if article['author_id'] in blacklisted_users:
