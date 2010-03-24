@@ -12,6 +12,7 @@ import test.model_test
 import test.read_status_internal_test
 import test.read_status_manager_test
 import test.search_manager_test
+import test.util_test
 
 def suite():
     return unittest.TestSuite([
@@ -25,7 +26,8 @@ def suite():
         test.model_test.suite(),
         test.read_status_internal_test.suite(),
         test.read_status_manager_test.suite(),
-        test.search_manager_test.suite()
+        test.search_manager_test.suite(),
+        test.util_test.suite(),
         ])
 
 if __name__ == "__main__":

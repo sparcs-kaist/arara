@@ -4,11 +4,13 @@ import traceback
 import logging
 import datetime
 import time
+import struct
 
 from arara import model
 from arara import settings
 from arara.server import get_server
 from arara_thrift.ttypes import *
+
 
 def smart_unicode(string):
     if isinstance(string, unicode): return string
@@ -134,3 +136,11 @@ def is_keys_in_dict(dictionary, keys):
         if not key in dictionary:
             return False
     return True
+
+def intlist_to_string(int_list):
+    length = len(int_list)
+    return "".join((struct.pack("i", length), struct.pack("i" * length, *int_list)))
+
+def string_to_intlist(string_):
+    length = struct.unpack("i", string_[:4])[0]
+    return list(struct.unpack("i" * length, string_[4:]))
