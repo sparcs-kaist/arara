@@ -279,6 +279,17 @@ def delete(request, board_name, root_id, article_no):
 
     return HttpResponseRedirect('/board/%s/%s' % (board_name, root_id))
 
+def destroy(request, board_name, root_id, article_no):
+    server = arara.get_server()
+    sess, r = warara.check_logged_in(request)
+    server.article_manager.destroy_article(sess, board_name, int(article_no))
+    # XXX 2010.05.14.
+    # 글을 destroy하였으므로 해당 보드로 돌아간다.
+    # 추후에는 pageno 정보를 이용하도록 수정하는 게 좋겠다.
+    # 어차피 지금은 SYSOP 이 아니면 이 작업을 할 수 없지만.
+    return HttpResponseRedirect('/board/%s' % board_name)
+    # XXX 여기까지.
+
 @warara.wrap_error
 def search(request, board_name):
     server = arara.get_server()
