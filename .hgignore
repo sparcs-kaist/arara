@@ -4,6 +4,8 @@ gen-rb/*
 gen-cpp/*
 gen-java/*
 gen-py/*
+log/*
+run/*
 *.pyc
 *.swp
 arara/settings.py
