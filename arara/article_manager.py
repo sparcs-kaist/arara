@@ -362,7 +362,7 @@ class ArticleManager(object):
         # 해당 board 에 있는 글의 갯수를 센다.
         session = model.Session()
         board_id = self._get_board_id(session, board_name)
-        desired_query = session.query(model.Article).filter_by(board_id=board_id, root_id=None)
+        desired_query = session.query(model.Article).filter_by(board_id=board_id, root_id=None, destroyed=False)
 
         article_count = desired_query.count()
         last_page = self._get_last_page(article_count, page_length)
@@ -508,10 +508,11 @@ class ArticleManager(object):
         '''
         session = model.Session()
         board_id = self._get_board_id(session, board_name)
-        total_article_count = session.query(model.Article).filter_by(board_id=board_id, root_id=None).count()
+        total_article_count = session.query(model.Article).filter_by(board_id=board_id, root_id=None, destroyed=False).count()
         remaining_article_count = session.query(model.Article).filter(and_(
                 model.articles_table.c.board_id==board_id,
                 model.articles_table.c.root_id==None,
+                model.articles_table.c.destroyed==False,
                 model.articles_table.c.id < no)).count()
         position_no = total_article_count - remaining_article_count
         session.close()

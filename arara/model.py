@@ -258,7 +258,7 @@ articles_table = Table('articles', metadata,
     Column('reply_count', Integer, nullable=False),
     Column('is_searchable', Boolean, nullable=False),
     Column('last_modified_date', DateTime),
-    Column('destroyed', Boolean),
+    Column('destroyed', Boolean, nullable=False),
     mysql_engine='InnoDB'
 )
 
