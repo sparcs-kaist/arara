@@ -1,8 +1,10 @@
 $(document).ready(function(){
     var cursor_pos = 1;
+    var original_cursor_pos = -2; // -1 은 커서 없을 때, 이므로.
     if($("#root_article_info").length){ //if it is a read page
     $root_article_id = parseInt($("#root_article_info").attr("rel"));
     cursor_pos = parseInt($("td.id_col[rel='" + $root_article_id + "']").parent().attr("rel"));
+    original_cursor_pos = cursor_pos; // XXX root_article_pos 를 쓸 필요가 있는가?
     $root_article_pos = cursor_pos; //naming
     }
     var row_count = $("#article_table tr").length;
@@ -101,8 +103,13 @@ $(document).ready(function(){
         }
 		if($("#article_table tr.row_highlight").length){
             switch (event.which) {
-                case 13:  // enter
                 case 32:  // space
+                    if (cursor_pos != original_cursor_pos){
+                        event.preventDefault();
+                        read_article();
+                    }
+                    break;
+                case 13:  // enter
                 case 39:
                 case 105:
                     event.preventDefault();
