@@ -56,6 +56,16 @@ def get_article_list(request, r, mode):
     page_range_length = 10
     page_range_no = math.ceil(float(page_no) / page_range_length)
 
+    # XXX (combacsa) 2010.05.14.
+    # 위 코드와 같이 해 두면, "검색 결과" 로 나온 글을 읽은 뒤 호출되는 get_article_list 에서는
+    # page_range_no 가 0 이 된다.
+    # 일단 문제가 있으므로  아래와 같이 땜빵한다.
+
+    if page_range_no == 0:
+        page_range_no = 1
+
+    # XXX 여기까지.
+
     article_list = article_result.hit
     for i in range(len(article_list)):
         if article_list[i].deleted:
