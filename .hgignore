@@ -1,0 +1,10 @@
+syntax: glob
+
+gen-rb/*
+gen-cpp/*
+gen-java/*
+gen-py/*
+*.pyc
+*.swp
+arara/settings.py
+warara/settings.py
