@@ -86,7 +86,14 @@ def login(request):
 
     username = request.POST['username']
     password = request.POST['password']
-    current_page = request.POST.get('current_page_url', 0)
+    # XXX 2010.05.15.
+    # 경위는 알 수 없지만 current_page_url 이 넘어오지 않아서
+    # current_page 값이 진짜로 0 이 되어버리는 사례가 있었다.
+    # 따라서 저~~ 아래에서 current_page.find 를 호출하면
+    # int 에 대해서 호출하므로 맛이 가버리는 일이 발생한다.
+    # 임시방편으로, current_page 를 /main 으로 설정해 본다.
+    current_page = request.POST.get('current_page_url', '/main')
+    # XXX 여기까지.
     client_ip = request.META['REMOTE_ADDR']
     server = arara.get_server()
 
