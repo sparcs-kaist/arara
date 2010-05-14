@@ -107,6 +107,7 @@ def outbox(request):
         page = 1
     r['logged_in'] = True
     r['page_no'] = int(page)
+    page = int(page) # XXX 2010.05.15. 땜빵
     page_length = request.GET.get('page_length', 10)
     page_length = int(page_length)
     try:
