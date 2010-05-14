@@ -118,7 +118,7 @@ def outbox(request):
         while page>0:
             page -= 1
             try:
-                r['message_result'] = server.messaging_sent.receive_list(sess, page, page_length)
+                r['message_result'] = server.messaging_manager.sent_list(sess, page, page_length)
             except Exception:
                 break;
     for message in r['message_result'].hit:
