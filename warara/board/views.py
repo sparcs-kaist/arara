@@ -230,6 +230,7 @@ def read(request, board_name, article_id):
     r['default_text'] = server.member_manager.get_info(sess)
     r['default_text'] = r['default_text'].signature
     r['article_read_list'] = article_list
+    r['root_article'] = article_list[0]
 
     #article_below_list
     get_article_list(request, r, 'read')

@@ -106,6 +106,65 @@
 </div>
 {% endfor %}
 
+
+<!-- 2010.05.15. "Reply to main article" 기능을 추가.  -->
+<!-- letyoursoulbefree 권하기를, reply to main 앞에 달리는 사각형을 좀 더 진하게 하는게 어떨까 하더라. -->
+<!-- combacsa 고민하기를, root_article 만 있는 경우에는 굳이 이하의 내용이 나올 필요가 있나 싶다. if 써서 이하의 div 는 아예 빼버리는 건 어떨지. -->
+<div class="article article_depth_{{root_article.depth}}">
+<div class="article_content">
+
+<div class="clear_float"></div>
+<div class="clear_float"></div>
+<div class="article_read_buttons">
+    <a class="article_reply_show_strong">
+    {% if not root_article.deleted %}
+    <a class="article_reply_show" href="#">{% trans "Reply to main" %}</a>
+    {% else %}
+    <a>{% trans "main article was deleted, can't reply" %}</a>
+    {% endif %}
+    </a>
+</div>
+
+<div class="article_reply">
+<form class="article_reply_form" action="/board/{{board_name}}/{{root_article.id}}/reply/" method="POST" enctype="multipart/form-data">
+<input type="hidden" name="root_id" value="{{root_article.root_id}}" />
+<ul>
+    <li><input type="text" name="title" class="write_reply_title" value="{{root_article.title}}" /></li>
+    <li><textarea name="content">{{default_text}}</textarea></li>
+</ul>
+<input type="hidden" value="{{article_no}}" name="article_no"></input>
+<div class="article_write_file">
+    <div class="file_line">
+	<span class="article_write_file_caption">{% trans "file 1" %}</span>
+	<div class="file_upload_p">
+	    <div class="file_upload_t">
+		<input type="file" name="file1" class="file_upload" size=5></input>
+	    </div>
+	    <div class="file_upload_f">
+		<input name="file1_fi" class="file_input_f"></input> <!-- file1 fake input -->
+		<div class="file_search_button">
+		    {% trans "search" %}
+		</div>
+	    </div>
+	    <input type="button" name="file_input_add" class="small_btn" value="+"></input>
+	</div>
+    </div>
+</div>
+<input type="submit" class="write_reply small_btn" name="reply_submit" value="{% trans "write" %}" />
+<input type="button" class="cancel_reply small_btn" value="{% trans "cancel" %}"></input>
+<div class="clear_float"></div>
+</form>
+</div>
+
+<div class="clear_float"></div>
+</div>
+<div class="clear_float"></div>
+</div>
+
+
+<!-- 2010.05.15.     -->
+<!-- 그게 여기까지.  -->
+
 <div id="file_line_model">
     <div class="file_line">
         <span class="article_write_file_caption">{% trans "file 1" %}</span>
