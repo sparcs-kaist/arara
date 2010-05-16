@@ -21,12 +21,15 @@ DANGER_FILE = ('php', 'asp', 'php3', 'php4', 'htaccess', 'js',
 class FileManager(object):
     '''
     파일 처리 관련 클래스
+
+    TThreadPoolServer, TThreadedServer, TForkingServer 모두 사용가능.
     '''
     
     def __init__(self):
         pass
 
     def _is_board_exist(self, board_name):
+        # XXX 2010.05.15 : Deprecated Check 하고 없애자.
         ret, _ = get_server().board_manager.get_board(board_name)
         if ret:
             return True, 'OK'

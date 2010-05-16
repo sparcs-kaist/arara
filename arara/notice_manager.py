@@ -21,11 +21,14 @@ NOTICE_ADD_WHITELIST = ('content','due_date','weight')
 class NoticeManager(object):
     '''
     배너 및 환영 페이지 처리 관련 클래스
+
+    TForkingServer    : OK
+    TThreadedServer   : OK
+    TThreadPoolServer : OK
     '''
 
     def __init__(self):
-        self.banner_list = []
-        self.welcome_list = []
+        pass
 
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__

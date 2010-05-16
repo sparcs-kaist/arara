@@ -33,13 +33,10 @@ class ArticleManager(object):
     게시글 및 검색 처리 클래스
     현재 게시글 표시방식이 절묘하기 때문에 read 메소드에 관한 논의가 필요.
 
-    용법 : arara/test/article_manager.txt
+    TThreadPoolSerer, TForkingServer, TThreadedServer 모두 가능.
     '''
     def __init__(self):
         pass
-        #monk data
-        #self.articles = {'garbages': {} }
-        #self.article_no = 0
 
     def _get_board(self, session, board_name):
         try:

@@ -26,6 +26,10 @@ SEARCH_DICT = ('title', 'content', 'author_nickname', 'author_username', 'date',
 class SearchManager(object):
     '''
     게시물 검색 기능을 담당하는 클래스
+
+    (O) TForkingServer
+    (O) TThreadedServer
+    (O) TThreadPoolServer
     '''
 
     def __init__(self):

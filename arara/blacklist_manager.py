@@ -30,18 +30,11 @@ BLACKLIST_LIST_DICT = ['id', 'blacklisted_user_nickname', 'blacklisted_user_user
 class BlacklistManager(object):
     '''
     블랙리스트 처리 관련 클래스
+
+    TThreadedServer, TThreadPoolServer, TForkingServer 가 가능하다.
     '''
     def __init__(self):
-        # will make list for blacklist member in member_dic, key value is blacklist ex)59
-        self.member_dic = {}
-        
-    #def _prepare_session_username(function):
-    #     # Internal member_dic에 사용자 username를 강제 등록한다.
-    #    def wrapper(self, session_key, *args):
-    #        if not self.member_dic.has_key(get_server().login_manager.get_session(session_key)[1]['username']):
-    #            self.member_dic[get_server().login_manager.get_session(session_key)[1]['username']] = {}
-    #        return function(self, session_key, *args)
-    #    return wrapper
+        pass
 
     def _get_dict(self, item, whitelist):
         item_dict = item.__dict__

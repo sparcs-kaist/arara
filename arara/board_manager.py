@@ -16,6 +16,9 @@ BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only', 'id')
 class BoardManager(object):
     '''
     보드 추가 삭제 및 관리 관련 클래스
+
+    구조상 TForkingServer 를 쓸 수 없다.
+    TThreadedServer, TThreadPoolServer 만 가능하다.
     '''
 
     def __init__(self):
@@ -77,6 +80,9 @@ class BoardManager(object):
 
     @log_method_call
     def get_board(self, board_name):
+        # XXX 2010.05.15. Comment.
+        # 여기서도 보드 캐시를 이용하게 하는게 낫지 않나?
+        # XXX 여기까지.
         session = model.Session()
         board_to_get = self._get_board(session, board_name)
         board_dict = self._get_dict(board_to_get, BOARD_MANAGER_WHITELIST)

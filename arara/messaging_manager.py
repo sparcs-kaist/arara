@@ -20,10 +20,12 @@ MESSAGE_WHITELIST = ['id', 'from_', 'to', 'from_nickname', 'to_nickname', 'messa
 class MessagingManager(object):
     '''
     회원간 쪽지기능등을 담당하는 클래스
+
+    TForkingServer, TThreadedServer, TThreadPoolServer 모두 가능.
     '''
 
     def __init__(self):
-        self.message_list = []
+        pass
 
     def _get_dict(self, item, whitelist=None, blacklist_users=None):
         item_dict = item.__dict__

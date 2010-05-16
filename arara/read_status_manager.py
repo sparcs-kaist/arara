@@ -116,6 +116,10 @@ class ReadStatus(object):
 class ReadStatusManager(object):
     '''
     읽은 글, 통과한글 처리관련 클래스
+
+    (X) TForkingServer
+    (O) TThreadedServer
+    (O) TThreadPoolServer
     '''
 
     def __init__(self):

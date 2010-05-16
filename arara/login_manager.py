@@ -23,6 +23,9 @@ log_method_call = log_method_call_with_source('login_manager')
 class LoginManager(object):
     '''
     로그인 처리 관련 클래스
+
+    TThreadedServer, TThreadPoolServer 만 사용 가능.
+    TForkingServer 는 사용할 수 없다.
     '''
     
     def __init__(self):

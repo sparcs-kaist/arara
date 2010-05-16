@@ -48,12 +48,17 @@ USER_SEARCH_WHITELIST = ('username', 'nickname')
 class MemberManager(object):
     '''
     회원 가입, 회원정보 수정, 회원정보 조회, 이메일 인증등을 담당하는 클래스
+
+    TThreadedServer, TThreadPoolServer 는 확실히 가능하다.
+    TForkingServer 는 안 될 가능성이 크다.
     '''
 
     def __init__(self):
         # mock data
         self.logger = logging.getLogger('member_manager')
+        # XXX 2010.05.15. 이거 필요한가 ??
         self.member_dic = {}  # DB에서 member table를 read해오는 부분
+        # XXX 여기까지
         # 초기 시샵 생성
         #if not self.is_registered('SYSOP'):
         self._register_sysop()
