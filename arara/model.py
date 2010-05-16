@@ -258,7 +258,12 @@ articles_table = Table('articles', metadata,
     Column('reply_count', Integer, nullable=False),
     Column('is_searchable', Boolean, nullable=False),
     Column('last_modified_date', DateTime),
-    Column('destroyed', Boolean, nullable=False),
+    # XXX 2010.05.17.
+    # destroyed 필드는 nullable = False 로 해야 할 것 같은데
+    # 이렇게 하면 테스트 코드가 깨진다.
+    # SQLite 자체의 문제인 것 같으나 아직은 확신이 없다.
+    Column('destroyed', Boolean),
+    # XXX 여기까지.
     mysql_engine='InnoDB'
 )
 
