@@ -82,6 +82,7 @@ class BoardManager(object):
     def get_board(self, board_name):
         return self._get_board(board_name)
 
+    @log_method_call
     def get_board_id(self, board_name):
         return self._get_board(board_name).id
 
