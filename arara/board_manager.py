@@ -24,6 +24,8 @@ class BoardManager(object):
     def __init__(self):
         # Internal Cache!
         self.all_board_list = None
+        self.all_board_dict = None
+        self.cache_board_list()
 
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
@@ -55,22 +57,20 @@ class BoardManager(object):
             session.commit()
             session.close()
             # 보드에 변경이 발생하므로 캐시 초기화
-            self.all_board_list = None
-            return
+            self.cache_board_list()
         except IntegrityError:
             session.rollback()
             session.close()
             raise InvalidOperation('already added')
 
-    def _get_board(self, session, board_name):
+    def _get_board(self, board_name):
         try:
-            board = session.query(model.Board).filter_by(board_name=smart_unicode(board_name), deleted=False).one()
-        except InvalidRequestError:
-            session.close()
+            return self.all_board_dict[board_name]
+        except KeyError:
             raise InvalidOperation('board does not exist')
         return board
 
-    def _get_board_including_deleted(self, session, board_name):
+    def _get_board_from_session(self, session, board_name):
         try:
             board = session.query(model.Board).filter_by(board_name=smart_unicode(board_name)).one()
         except InvalidRequestError:
@@ -80,23 +80,27 @@ class BoardManager(object):
 
     @log_method_call
     def get_board(self, board_name):
-        # XXX 2010.05.15. Comment.
-        # 여기서도 보드 캐시를 이용하게 하는게 낫지 않나?
-        # XXX 여기까지.
+        return self._get_board(board_name)
+
+    def get_board_id(self, board_name):
+        return self._get_board(board_name).id
+
+    def cache_board_list(self):
+        # Board 의 목록을 DB 로부터 memory 로 옮겨 둔다.
         session = model.Session()
-        board_to_get = self._get_board(session, board_name)
-        board_dict = self._get_dict(board_to_get, BOARD_MANAGER_WHITELIST)
+        boards = session.query(model.Board).filter_by(deleted=False).all()
+        board_dict_list = self._get_dict_list(boards, BOARD_MANAGER_WHITELIST)
         session.close()
-        return Board(**board_dict)
+        # all_board_list 와 all_board_dict 로 만든다. 
+        self.all_board_list = [Board(**d) for d in board_dict_list]
+        self.all_board_dict = {}
+        for board in self.all_board_list:
+            self.all_board_dict[board.board_name] = board
 
     @log_method_call
     def get_board_list(self):
         if self.all_board_list == None:
-            session = model.Session()
-            board_to_get = session.query(model.Board).filter_by(deleted=False).all()
-            board_dict_list = self._get_dict_list(board_to_get, BOARD_MANAGER_WHITELIST)
-            session.close()
-            self.all_board_list = [Board(**d) for d in board_dict_list]
+            self.cache_board_list()
         return self.all_board_list
 
     @require_login
@@ -122,7 +126,7 @@ class BoardManager(object):
 
         self._is_sysop(session_key)
         session = model.Session()
-        board = self._get_board_including_deleted(session, board_name)
+        board = self._get_board_from_session(session, board_name)
         if board.read_only:
             session.close()
             raise InvalidOperation('aleardy read only board')
@@ -130,7 +134,7 @@ class BoardManager(object):
         session.commit()
         session.close()
         # 보드에 변경이 발생하므로 캐시 초기화
-        self.all_board_list = None
+        self.cache_board_list()
 
     @require_login
     @log_method_call_important
@@ -155,7 +159,7 @@ class BoardManager(object):
 
         self._is_sysop(session_key)
         session = model.Session()
-        board = self._get_board_including_deleted(session, board_name)
+        board = self._get_board_from_session(session, board_name)
         if not board.read_only:
             session.close()
             raise InvalidOperation('not read only board')
@@ -163,16 +167,16 @@ class BoardManager(object):
         session.commit()
         session.close()
         # 보드에 변경이 발생하므로 캐시 초기화
-        self.all_board_list = None
+        self.cache_board_list()
 
     @require_login
     @log_method_call_important
     def delete_board(self, session_key, board_name):
         self._is_sysop(session_key)
         session = model.Session()
-        board = self._get_board_including_deleted(session, board_name)
+        board = self._get_board_from_session(session, board_name)
         board.deleted = True
         session.commit()
         session.close()
         # 보드에 변경이 발생하므로 캐시 초기화
-        self.all_board_list = None
+        self.cache_board_list()

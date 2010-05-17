@@ -46,8 +46,8 @@ class ArticleManager(object):
             raise InvalidOperation("BOARD_NOT_EXIST")
         return board
 
-    def _get_board_id(self, session, board_name):
-        return self._get_board(session, board_name).id
+    def _get_board_id(self, board_name):
+        return get_server().board_manager.get_board_id(board_name)
 
     def _article_thread_to_list(self, article_thread, session_key, blacklisted_userid):
         # 기존에 반복문 2개로 하던 걸 1개로 줄여봄.
@@ -192,9 +192,7 @@ class ArticleManager(object):
                 1. Not Existing Board: InvalidOperation Exception
                 2. 데이터베이스 오류: InternalError Exception
         '''
-        session = model.Session()
-        board_id = self._get_board_id(session, board_name)
-        session.close()
+        board_id = self._get_board_id(board_name)
 
         return self._get_best_article(None, board_id, count, 86400, 'today')
 
@@ -232,9 +230,7 @@ class ArticleManager(object):
                 1. Not Existing Board: InvalidOperation Exception 
                 2. 데이터베이스 오류: InternalError Exception
         '''
-        session = model.Session()
-        board_id = self._get_board_id(session, board_name)
-        session.close()
+        board_id = self._get_board_id(board_name)
 
         return self._get_best_article(None, board_id, count, 604800, 'weekly')
 
@@ -357,8 +353,8 @@ class ArticleManager(object):
 
     def _get_article_list(self, session_key, board_name, page, page_length):
         # 해당 board 에 있는 글의 갯수를 센다.
+        board_id = self._get_board_id(board_name)
         session = model.Session()
-        board_id = self._get_board_id(session, board_name)
         desired_query = session.query(model.Article).filter_by(board_id=board_id, root_id=None, destroyed=False)
 
         article_count = desired_query.count()
@@ -464,7 +460,7 @@ class ArticleManager(object):
         '''
 
         session = model.Session()
-        self._get_board(session, board_name)
+        # XXX 주어진 boar_name 에 맞는지 check
         blacklisted_userid = self._get_blacklist_userid(session_key)
 
         try:
@@ -503,8 +499,8 @@ class ArticleManager(object):
                 2. 데이터베이스 오류: InternalError Exception
 
         '''
+        board_id = self._get_board_id(board_name)
         session = model.Session()
-        board_id = self._get_board_id(session, board_name)
         total_article_count = session.query(model.Article).filter_by(board_id=board_id, root_id=None, destroyed=False).count()
         remaining_article_count = session.query(model.Article).filter(and_(
                 model.articles_table.c.board_id==board_id,
@@ -690,9 +686,9 @@ class ArticleManager(object):
                 5. 데이터베이스 오류: InternalError Exception 
         '''
 
+        board_id = self._get_board_id(board_name)
         session = model.Session()
         author_id = self._get_user_id(session_key)
-        board_id = self._get_board_id(session, board_name)
         article = self._get_article(session, board_id, no)
         if article.deleted == True:
             session.close()
@@ -732,9 +728,9 @@ class ArticleManager(object):
                 5. 데이터베이스 오류: InternalError Exception
         '''
 
+        board_id = self._get_board_id(board_name)
         session = model.Session()
         author = self._get_user(session, session_key)
-        board_id = self._get_board_id(session, board_name)
         article = self._get_article(session, board_id, no)
         if article.author_id == author.id or author.is_sysop:
             if article.deleted:
@@ -775,9 +771,9 @@ class ArticleManager(object):
                 6. 기타 : 이 주석은 전부 뜯어고쳐야 함.
         '''
 
+        board_id = self._get_board_id(board_name)
         session = model.Session()
         user = self._get_user(session, session_key)
-        board_id = self._get_board_id(session, board_name)
         article = self._get_article(session, board_id, no)
         # 시삽만 이 작업을 할 수 있다.
         if user.is_sysop:
