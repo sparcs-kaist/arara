@@ -738,14 +738,41 @@ class ArticleManager(object):
                 raise InvalidOperation("ALREADY_DELETED")
             article.deleted = True
             article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
+            # root 가 있으면 root 의 댓글 수를 1 줄이면서 동시에 destroy 해버린다.
             if article.root:
                 article.root.reply_count -= 1
+                if article.root.reply_count == 0 and article.root.deleted:
+                    article.root.destroyed = True
+            # 스스로가 root 이고 reply 달렸던 것이 없으면 destroy 해버린다.
+            elif article.reply_count == 0:
+                article.destroyed = True
             session.commit()
             session.close()
         else:
             session.close()
             raise InvalidOperation("NO_PERMISSION")
         return True
+
+    def _destroy_article(self, board_id, no):
+        # XXX Internal use only
+        session = model.Session()
+        article = self._get_article(session, board_id, no)
+        # 이미 destroyed 인 것은 고려할 필요가 없다.
+        if article.destroyed:
+            session.close()
+            raise InvalidOperation("ALREADY_DESTROYED")
+        # 현재의 DB 구조상의 한계로 인해, root가 아닌 글은 체크할 수 없다.
+        if article.root == None and article.reply_count == 0:
+            if article.deleted:
+                # 이런 경우에만 일단 destroyed 를 set 해준다.
+                article.destroyed = True
+                session.commit()
+            else:
+                raise InvalidOperation("NOT_DELETED")
+        else:
+            session.close()
+            raise InvalidOperation("NOT_IMPLEMENTED")
+        session.close()
 
     @require_login
     @log_method_call_important
@@ -771,35 +798,16 @@ class ArticleManager(object):
                 6. 기타 : 이 주석은 전부 뜯어고쳐야 함.
         '''
 
-        board_id = self._get_board_id(board_name)
         session = model.Session()
         user = self._get_user(session, session_key)
-        article = self._get_article(session, board_id, no)
+        session.close()
         # 시삽만 이 작업을 할 수 있다.
         if user.is_sysop:
-            # 이미 destroyed 인 것은 고려할 필요가 없다.
-            if article.destroyed:
-                session.close()
-                raise InvalidOperation("ALREADY_DESTROYED")
-            # 현재의 DB 구조상의 한계로 인해, root가 아닌 글은 체크할 수 없다.
-            if article.root == None:
-                if article.deleted:
-                    # 이런 경우에만 일단 destroyed 를 set 해준다.
-                    article.destroyed = True
-                    session.commit()
-                else:
-                    # 아니라면 False 를 return 하여 알려준다.
-                    session.close()
-                    return False
-            else:
-                session.close()
-                raise InvalidOperation("NOT_IMPLEMENTED")
-            session.close()
+            board_id = self._get_board_id(board_name)
+            self._destroy_article(board_id, no)
         else:
             session.close()
             raise InvalidOperation("NO_PERMISSION")
         return True
-
-
 
 # vim: set et ts=8 sw=4 sts=4
