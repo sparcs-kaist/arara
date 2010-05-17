@@ -10,7 +10,6 @@ from arara_thrift.ttypes import *
 
 import os
 import arara
-import math
 import datetime
 import warara
 
@@ -27,44 +26,51 @@ def get_article_list(request, r, mode):
     server = arara.get_server()
     sess, _ = warara.check_logged_in(request)
     
+    # 현재 읽고자 하는 page 의 번호를 알아낸다.
     page_no = request.GET.get('page_no', 1)
+    # 가끔 일부 crawlbot 이 "/?page_no=" 라는 주소로 접근. page number 가 "" 가 된다.
+    # 이런 경우들에 대한 일반적인 예외 처리를 한다.
+    # XXX 2010.05.18: InvalidOperation 을 내뱉는 것이 능사인지 생각해보자.
     try:
-        # Some crawlbot access to /?page_no= (missing page number)
-        # So we have to handle such case ...
-        r['page_no'] = int(page_no)
+        page_no = int(page_no)
+        r['page_no'] = page_no
     except Exception:
         raise InvalidOperation("Wrong Pagenumber")
+    # XXX 2010.05.18: page_no 가 가끔 0 으로 들어오는 때가 있다.
+    #                 Warara 코드의 문제인 경우조차 있어서, 일단 그럴땐 1 로 설정해주자.
+    if page_no < 0:
+        raise InvalidOperation("Wrong Pagenumber")
+    elif page_no == 0:
+        page_no = 1
+
     if not r.get('selected_method_list', 0):
         r['selected_method_list'] = ['title', 'content', 'author_nickname', 'author_username']
         r['search_method_list'] = [{'val':'title', 'text':'title'}, {'val':'content', 'text':'content'},
                 {'val':'author_nickname', 'text':'nickname'}, {'val':'author_username', 'text':'id'}]
         
+    # XXX 2010.05.18. page_length 변수를 사용하지 않던 걸 사용하도록 고치다.
+    #                 이 값은 Backend 에서 가져오는 페이지당 글의 갯수이다.
+    #                 article_per_page 정도가 적당하다. 나중에 이름을 바꾸자.
     page_length = 20
     if mode == 'list':
-        article_result = server.article_manager.article_list(sess, r['board_name'], r['page_no'], 20)
+        article_result = server.article_manager.article_list(sess, r['board_name'], page_no, page_length)
     elif mode == 'read':
-        article_result = server.article_manager.article_list_below(sess, r['board_name'], int(r['article_id']), 20)
+        article_result = server.article_manager.article_list_below(sess, r['board_name'], int(r['article_id']), page_length)
         r['page_no'] = article_result.current_page
     elif mode == 'search':
-        page_no = int(page_no)
         for k, v in r['search_method'].items():
             del r['search_method'][k]
             r['search_method'][str(k)] = v
         search_method = SearchQuery(**r['search_method'])
         article_result = server.search_manager.search(sess, False, r['board_name'], search_method, page_no, page_length)
 
+    # XXX 2010.05.18. page_range_length 는 글 목록 하단에 표시하는 page 들의 갯수이다.
     page_range_length = 10
-    page_range_no = math.ceil(float(page_no) / page_range_length)
 
-    # XXX (combacsa) 2010.05.14.
-    # 위 코드와 같이 해 두면, "검색 결과" 로 나온 글을 읽은 뒤 호출되는 get_article_list 에서는
-    # page_range_no 가 0 이 된다.
-    # 일단 문제가 있으므로  아래와 같이 땜빵한다.
-
-    if page_range_no == 0:
-        page_range_no = 1
-
-    # XXX 여기까지.
+    # XXX 2010.05.18. page_range_no 는 현 page 가 글 목록 하단의 page 들 중 몇 째인가이다.
+    page_range_no = page_no / page_range_length
+    if page_no % page_range_length > 0:
+        page_range_no += 1
 
     article_list = article_result.hit
     for i in range(len(article_list)):
