@@ -20,7 +20,7 @@
         {% trans "write an article" %}
     </span>
 </div>
-<form name="article_write" action="/board/{{board_name}}/write/" method="POST" enctype="multipart/form-data">
+<form name="article_write" action="/board/{{board_name}}/write/" method="post" enctype="multipart/form-data">
     <div id="article_write_title">
         <caption>{% trans "title : " %}</caption>
         <input type="text" value="{{default_title}}" name="title"></input>

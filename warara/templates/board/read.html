@@ -73,7 +73,7 @@
         </div>
         <div class="clear_float"></div>
         <div class="article_reply">
-            <form class="article_reply_form" action="/board/{{board_name}}/{{article.id}}/reply/" method="POST" enctype="multipart/form-data">
+            <form class="article_reply_form" action="/board/{{board_name}}/{{article.id}}/reply/" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="root_id" value="{{article.root_id}}" />
                 <ul>
                     <li><input type="text" name="title" class="write_reply_title" value="{{article.title}}" /></li>
@@ -126,7 +126,7 @@
 </div>
 
 <div class="article_reply">
-<form class="article_reply_form" action="/board/{{board_name}}/{{root_article.id}}/reply/" method="POST" enctype="multipart/form-data">
+<form class="article_reply_form" action="/board/{{board_name}}/{{root_article.id}}/reply/" method="post" enctype="multipart/form-data">
 <input type="hidden" name="root_id" value="{{root_article.root_id}}" />
 <ul>
     <li><input type="text" name="title" class="write_reply_title" value="{{root_article.title}}" /></li>
