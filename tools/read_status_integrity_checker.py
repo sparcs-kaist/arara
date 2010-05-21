@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-# Goal: 비밀번호 설정이 날아간 사용자들을 모조리 제거한다.
+# Goal: ReadStatus 설정이 맛이 간 사용자들의 목록을 뽑아낸다.
+# user_integrity_checker 를 카피한 소스여서 정리가 필요.
 import MySQLdb
 import sys
 import time

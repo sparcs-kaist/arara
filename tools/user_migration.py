@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# NeoARA & Webara to ARAra User migrator
+# Author: Woo-suk Suh (pipoket@sparcs.kaist.ac.kr)
 import MySQLdb
 import sys
 import md5

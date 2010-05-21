@@ -1,3 +1,7 @@
+#-*- coding: utf-8 -*-
+# NeoARA -> ARAra Migrator
+# Author : Sung Mo Koo (breadfish@sparcs.kaist.ac.kr)
+# 네오아라 / 웹아라에서 아라라 엔진으로 사용자 정보를 이전하는 툴.
 import os
 import MySQLdb
 import arara
