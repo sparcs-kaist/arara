@@ -28,7 +28,8 @@ import arara
 import arara.model
 import arara.settings
 
-from arara import MAPPING, DEPENDENCY, PORT, CLASSES, connect_thrift_server
+from arara import DEPENDENCY, PORT, CLASSES
+from middleware.thrift_middleware import MAPPING, connect_thrift_server
 
 handler_for_info = logging.handlers.RotatingFileHandler('arara_server.log', 'a', 2**20*50, 10)
 formatter = logging.Formatter('%(asctime)s [%(process)d:%(thread)X] <%(name)s> ** %(levelname)s ** %(message)s')
