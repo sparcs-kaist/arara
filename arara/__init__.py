@@ -12,46 +12,17 @@ from arara.file_manager import FileManager
 from arara import settings
 from arara.server import get_server
 
-DEPENDENCY = {LoginManager: [MemberManager],
-              MemberManager: [LoginManager],
-              BlacklistManager: [MemberManager, LoginManager],
-              BoardManager: [LoginManager],
-              ReadStatusManager: [LoginManager, MemberManager],
-              ArticleManager: [LoginManager, BlacklistManager,
-                               ReadStatusManager, BoardManager,
-                               FileManager],
-              MessagingManager: [LoginManager, MemberManager,
-                                 BlacklistManager],
-              NoticeManager: [LoginManager, MemberManager],
-              ReadStatusManager: [LoginManager, MemberManager],
-              SearchManager: [BoardManager, LoginManager],
-              FileManager: [LoginManager]
-              }
-
-PORT = {LoginManager: 1,
-        MemberManager: 2,
-        BlacklistManager: 3,
-        BoardManager: 4,
-        ReadStatusManager: 5,
-        ArticleManager: 6,
-        MessagingManager: 7,
-        NoticeManager: 8,
-        ReadStatusManager: 9,
-        SearchManager: 10,
-        FileManager: 11,
-        }
-
-CLASSES = {'LoginManager': LoginManager,
-           'MemberManager': MemberManager,
-           'BlacklistManager': BlacklistManager,
-           'BoardManager': BoardManager,
-           'ReadStatusManager': ReadStatusManager,
-           'ArticleManager': ArticleManager,
-           'MessagingManager': MessagingManager,
-           'NoticeManager': NoticeManager,
-           'ReadStatusManager': ReadStatusManager,
-           'SearchManager': SearchManager,
-           'FileManager': FileManager,
+CLASSES = {'login_manager': LoginManager,
+           'member_manager': MemberManager,
+           'blacklist_manager': BlacklistManager,
+           'board_manager': BoardManager,
+           'readStatus_manager': ReadStatusManager,
+           'article_manager': ArticleManager,
+           'messaging_manager': MessagingManager,
+           'notice_manager': NoticeManager,
+           'read_status_manager': ReadStatusManager,
+           'search_manager': SearchManager,
+           'file_manager': FileManager,
         }
 
 class Namespace(object):

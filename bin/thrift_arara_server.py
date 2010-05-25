@@ -28,7 +28,8 @@ from thrift.server import TServer
 import arara.model
 import arara.settings
 
-from arara import DEPENDENCY, PORT, CLASSES
+from arara import CLASSES
+from middleware import MANAGER_LIST, DEPENDENCY, HANDLER_PORT
 from middleware.thrift_middleware import MAPPING, connect_thrift_server
 
 handler_for_info = logging.handlers.RotatingFileHandler('arara_server.log', 'a', 2**20*50, 10)
@@ -90,27 +91,26 @@ def setter_name(class_):
     return '_set_' + concat
 
 def open_server(server_name, base_port):
-    assert server_name in CLASSES
+    assert server_name in MANAGER_LIST
     base_class = CLASSES[server_name]
-    thrift_class = dict(MAPPING)[base_class]
-    port = base_port + PORT[base_class]
+    thrift_class = dict(MAPPING)[server_name]
+    port = base_port + HANDLER_PORT[server_name]
     logger.info("Opening ARAra Thrift middleware on port starting from %s...", port)
     import thread
     server, instance = open_thrift_server(server_name, thrift_class, base_class, port)
-    thread.start_new_thread(resolve_dependencies, (base_class, instance, base_port))
+    thread.start_new_thread(resolve_dependencies, (server_name, instance, base_port))
     return server
 
-def resolve_dependencies(base_class, instance, base_port):
-    dependencies = DEPENDENCY[base_class]
-    for dependency_class in dependencies:
-        dependency_port = base_port + PORT[dependency_class]
-        dependency_thrift_class = dict(MAPPING)[dependency_class]
+def resolve_dependencies(base_server, instance, base_port):
+    dependencies = DEPENDENCY[base_server]
+    for dependency_server in dependencies:
+        dependency_port = base_port + HANDLER_PORT[dependency_server]
         print 'Connecting to %s in localhost:%d' % (
-                dependency_class.__name__, dependency_port)
+                dependency_server, dependency_port)
         while True:
             try:
                 client = connect_thrift_server('localhost',
-                        base_port, dependency_class)
+                        base_port, dependency_server)
                 # XXX
                 # Dependency Resolve 할 때 Getter, Setter 를 쓸 이유가 없다.
                 # Race Condition 을 제거하기 위해 무조건 get_server() 를 쓰도록 했기 때문.
@@ -121,7 +121,7 @@ def resolve_dependencies(base_class, instance, base_port):
                 #setter_method(client)
                 break
             except TTransportException:
-                print '%s cannot be connected. Retrying...' % dependency_class.__name__
+                print '%s cannot be connected. Retrying...' % dependency_server
                 time.sleep(1)
                 continue
     
