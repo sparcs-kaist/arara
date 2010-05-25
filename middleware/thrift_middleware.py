@@ -48,3 +48,49 @@ def connect_thrift_server(host, base_port, class_):
     client = dict(MAPPING)[class_].Client(protocol)
     transport.open()
     return client
+
+from arara import settings
+
+HANDLER_PORT = {'login_manager': 1,
+        'member_manager': 2,
+        'blacklist_manager': 3,
+        'board_manager': 4,
+        'read_status_manager': 5,
+        'article_manager': 6,
+        'messaging_manager': 7,
+        'notice_manager': 8,
+        'read_status_manager': 9,
+        'search_manager': 10,
+        'file_manager': 11,
+        }
+
+HANDLER_MAPPING = [('login_manager', arara_thrift.LoginManager),
+           ('member_manager', arara_thrift.MemberManager),
+           ('blacklist_manager', arara_thrift.BlacklistManager),
+           ('board_manager', arara_thrift.BoardManager),
+           ('read_status_manager', arara_thrift.ReadStatusManager),
+           ('article_manager', arara_thrift.ArticleManager),
+           ('messaging_manager', arara_thrift.MessagingManager),
+           ('notice_manager', arara_thrift.NoticeManager),
+           ('search_manager', arara_thrift.SearchManager),
+           ('file_manager', arara_thrift.FileManager)
+           ]
+
+def connect(name):
+    socket = TSocket.TSocket(settings.ARARA_SERVER_HOST,
+                             settings.ARARA_SERVER_BASE_PORT + HANDLER_PORT[name])
+    transport = TTransport.TBufferedTransport(socket)
+    #transport = TTransport.TFramedTransport(socket)
+    protocol = TBinaryProtocol.TBinaryProtocolAccelerated(transport)
+    #protocol = TBinaryProtocol.TBinaryProtocol(transport)
+    client = dict(HANDLER_MAPPING)[name].Client(protocol)
+    transport.open()
+    #logging.getLogger('get_server').info("Got server %s", name)
+    return client
+
+
+class Server(object):
+    def __getattr__(self, name):
+        if name in dict(HANDLER_MAPPING):
+            return connect(name)
+        raise AttributeError()

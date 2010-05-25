@@ -24,7 +24,7 @@ from thrift.transport import TTransport
 from thrift.transport import TSocket
 from thrift.server import TServer
 
-import arara
+# import arara
 import arara.model
 import arara.settings
 
