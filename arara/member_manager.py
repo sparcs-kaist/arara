@@ -16,7 +16,7 @@ from arara.util import require_login, filter_dict, is_keys_in_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 from arara.util import smart_unicode, datetime2timestamp
 from arara.server import get_server
-from arara.settings import *
+from etc.arara_settings import *
 
 log_method_call = log_method_call_with_source('member_manager')
 log_method_call_important = log_method_call_with_source_important('member_manager')
@@ -213,7 +213,7 @@ class MemberManager(object):
         @rtype: string
         @return: None
         '''
-        from arara.settings import WARARA_SERVER_ADDRESS, MAIL_HOST, MAIL_SENDER
+        from etc.arara_settings import WARARA_SERVER_ADDRESS, MAIL_HOST, MAIL_SENDER
 
         SERVER_ADDRESS = WARARA_SERVER_ADDRESS
 

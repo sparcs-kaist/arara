@@ -423,9 +423,8 @@ mapper(Blacklist, blacklist_table, properties={
                                     viewonly=True)),
 })
 
-
-import settings
-CONNECTION_STRING = settings.DB_CONNECTION_STRING
+from etc.arara_settings import DB_CONNECTION_STRING
+CONNECTION_STRING = DB_CONNECTION_STRING
 #TEST_DATABASE_FILENAME = 'test.db'
 #CONNECTION_STRING = 'sqlite:///%s' % TEST_DATABASE_FILENAME
 

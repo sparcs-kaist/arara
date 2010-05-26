@@ -15,7 +15,7 @@ import arara.model
 import arara
 import arara.server
 import arara.model
-from arara.settings import SESSION_EXPIRE_TIME
+from etc.arara_settings import SESSION_EXPIRE_TIME
 server = None
 
 # Faking time.time (to check time field)

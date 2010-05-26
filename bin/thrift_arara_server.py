@@ -26,7 +26,7 @@ from thrift.server import TServer
 
 # import arara
 import arara.model
-import arara.settings
+from etc import arara_settings
 
 from arara import CLASSES
 from middleware import MANAGER_LIST, DEPENDENCY, HANDLER_PORT
@@ -40,7 +40,7 @@ handler_for_info.setLevel(logging.INFO)
 logging.getLogger('').setLevel(logging.NOTSET)
 logging.getLogger('').addHandler(handler_for_info)
 
-if arara.settings.ARARA_DEBUG_HANDLER_ON:
+if arara_settings.ARARA_DEBUG_HANDLER_ON:
     handler_for_debug = logging.handlers.RotatingFileHandler('arara_server_debug.log', 'a', 2**20*50, 10)
     handler_for_debug.setFormatter(formatter)
     handler_for_debug.setLevel(logging.DEBUG)

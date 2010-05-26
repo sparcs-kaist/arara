@@ -15,7 +15,7 @@ from arara import model
 from util import is_keys_in_dict
 from util import log_method_call_with_source
 from util import smart_unicode
-from arara.settings import SESSION_EXPIRE_TIME
+from etc.arara_settings import SESSION_EXPIRE_TIME
 from arara.server import get_server
 
 log_method_call = log_method_call_with_source('login_manager')

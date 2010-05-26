@@ -12,7 +12,7 @@ from arara.util import datetime2timestamp
 from arara.util import smart_unicode
 from arara_thrift.ttypes import *
 from arara import model
-from arara.settings import *
+from etc.arara_settings import *
 from arara.server import get_server
 
 log_method_call = log_method_call_with_source('search_manager')

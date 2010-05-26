@@ -9,8 +9,6 @@ from arara.read_status_manager import ReadStatusManager
 from arara.search_manager import SearchManager
 from arara.file_manager import FileManager
 
-from arara import settings
-
 CLASSES = {'login_manager': LoginManager,
            'member_manager': MemberManager,
            'blacklist_manager': BlacklistManager,

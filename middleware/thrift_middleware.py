@@ -28,7 +28,7 @@ from thrift.transport import TTransport
 from thrift.transport import TSocket
 from thrift.server import TServer
 
-from arara import settings
+from etc import arara_settings
 
 from middleware import HANDLER_PORT
 
@@ -41,8 +41,8 @@ def connect_thrift_server(host, base_port, class_):
     return client
 
 def connect(name):
-    socket = TSocket.TSocket(settings.ARARA_SERVER_HOST,
-                             settings.ARARA_SERVER_BASE_PORT + HANDLER_PORT[name])
+    socket = TSocket.TSocket(arara_settings.ARARA_SERVER_HOST,
+                             arara_settings.ARARA_SERVER_BASE_PORT + HANDLER_PORT[name])
     transport = TTransport.TBufferedTransport(socket)
     #transport = TTransport.TFramedTransport(socket)
     protocol = TBinaryProtocol.TBinaryProtocolAccelerated(transport)

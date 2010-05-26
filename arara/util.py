@@ -7,7 +7,7 @@ import time
 import struct
 
 from arara import model
-from arara import settings
+from etc import arara_settings
 from arara.server import get_server
 from arara_thrift.ttypes import *
 
@@ -50,7 +50,7 @@ def log_method_call_with_source_important(source):
                     function.func_name, repr(args))
             # XXX: (pipoket) This line shows the status of the pool, remove this later
             if model.pool:
-                if settings.ARARA_POOL_DEBUG_MODE:
+                if arara_settings.ARARA_POOL_DEBUG_MODE:
                     logger.info(model.pool.status())
             #logger.debug("CURRENT USER STATUS UPDATED: User '%s' calls '%s' function",
             #        username, user_info.current_action)
@@ -84,7 +84,7 @@ def log_method_call_with_source(source):
             logger.debug("CALL %s.%s%s", source, function.func_name, repr(args))
             # XXX: (pipoket) This line shows the status of the pool, remove this later
             if model.pool:
-                if settings.ARARA_POOL_DEBUG_MODE:
+                if arara_settings.ARARA_POOL_DEBUG_MODE:
                     logger.info(model.pool.status())
             try:
                 ret = function(self, *args, **kwargs)
