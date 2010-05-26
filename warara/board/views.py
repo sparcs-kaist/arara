@@ -9,11 +9,11 @@ from thirdparty.postmarkup import render_bbcode
 from arara_thrift.ttypes import *
 
 import os
-import arara
 import datetime
 import warara
+from warara import warara_middleware
 
-from arara.settings import FILE_DIR, FILE_MAXIMUM_SIZE
+from etc.warara_settings import FILE_DIR, FILE_MAXIMUM_SIZE
 
 IMAGE_FILETYPE = ['jpg', 'jpeg', 'gif', 'png']
 
@@ -23,7 +23,7 @@ def index(request):
     return HttpResponse(rendered)
 
 def get_article_list(request, r, mode):
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     sess, _ = warara.check_logged_in(request)
     
     # 현재 읽고자 하는 page 의 번호를 알아낸다.
@@ -109,7 +109,7 @@ def get_article_list(request, r, mode):
 
 @warara.wrap_error
 def list(request, board_name):
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
     r['board_name'] = board_name
     get_article_list(request, r, 'list')
@@ -119,7 +119,7 @@ def list(request, board_name):
 
 @warara.wrap_error
 def write(request, board_name):
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     if request.method == 'POST':
         return write_(request, board_name)
 
@@ -153,7 +153,7 @@ def write(request, board_name):
 
 @warara.wrap_error
 def write_(request, board_name):
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
     article_dic = {}
     r['url'] = ''.join(['/board/', board_name, '/'])
@@ -191,7 +191,7 @@ def write_(request, board_name):
 
 @warara.wrap_error
 def read(request, board_name, article_id):
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
     article_list = server.article_manager.read(sess, board_name, int(article_id))
     username = request.session['arara_username']
@@ -246,7 +246,7 @@ def read(request, board_name, article_id):
 
 @warara.wrap_error
 def reply(request, board_name, article_id):
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
     reply_dic = {}
     reply_dic['content'] = request.POST.get('content', '')
@@ -269,7 +269,7 @@ def reply(request, board_name, article_id):
 
 @warara.wrap_error
 def vote(request, board_name, root_id, article_no):
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
     try:
         server.article_manager.vote_article(sess, board_name, int(article_no))
@@ -280,14 +280,14 @@ def vote(request, board_name, root_id, article_no):
 
 @warara.wrap_error
 def delete(request, board_name, root_id, article_no):
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
     server.article_manager.delete_(sess, board_name, int(article_no))
 
     return HttpResponseRedirect('/board/%s/%s' % (board_name, root_id))
 
 def destroy(request, board_name, root_id, article_no):
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
     server.article_manager.destroy_article(sess, board_name, int(article_no))
     # XXX 2010.05.14.
@@ -299,7 +299,7 @@ def destroy(request, board_name, root_id, article_no):
 
 @warara.wrap_error
 def search(request, board_name):
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request);
     r['board_name'] = board_name
 
@@ -335,7 +335,7 @@ def search(request, board_name):
 
 @warara.wrap_error
 def file_download(request, board_name, article_root_id, article_id, file_id):
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     file = {}
     file= server.file_manager.download_file(int(article_id), int(file_id))
     file_ob = open("%s/%s/%s" % (FILE_DIR, file.file_path, file.saved_filename))
@@ -343,7 +343,7 @@ def file_download(request, board_name, article_root_id, article_id, file_id):
     response = HttpResponse(file_ob, mimetype="application/x-forcedownload")
     response['Content-Disposition'] = "attachment; filename=" + unicode(file.real_filename).encode('cp949', 'replace')
     # Django's never_cache decorator causes empty file, so we do it manually.
-    # NOTE: Django's cache middleware uses cache backends with timeout value from http headers
+    # NOTE: Django's cache warara_middleware uses cache backends with timeout value from http headers
     #       with simultaneously setting appropriate http headers to control web browsers.
     response['Cache-Control'] = 'max-age=0, no-cache=True'
     return response

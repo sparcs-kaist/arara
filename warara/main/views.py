@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 import sys
 import datetime
-import arara
 import warara
 
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 from django.core.cache import cache
 
-import arara
 from arara.util import timestamp2datetime
+from warara import warara_middleware
 
 @warara.wrap_error
 def index(request):
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     if request.session.get('django_language', 0):
         request.session["django_language"] = "en"
     r = server.login_manager.total_visitor()
@@ -23,7 +22,7 @@ def index(request):
 @warara.wrap_error
 @warara.cache_page(60)
 def main(request):
-    server = arara.get_server() 
+    server = warara_middleware.get_server() 
     sess, ctx = warara.check_logged_in(request)
     # TODO: rename all 'r' variables to 'ctx' that means 'context'.
 
@@ -60,7 +59,7 @@ def main(request):
 
 @warara.wrap_error
 def help(request):
-    server = arara.get_server() 
+    server = warara_middleware.get_server() 
     sess, ctx = warara.check_logged_in(request)
     
     rendered = render_to_string('help.html', ctx)
@@ -70,7 +69,7 @@ def help(request):
 def get_user_info(request):
     if request.method == 'POST':
         session_key, ctx = warara.check_logged_in(request)
-        server = arara.get_server()
+        server = warara_middleware.get_server()
         query_user_name = request.POST['query_user_name']
         information = server.member_manager.query_by_username(session_key, query_user_name)
         information.last_logout_time = timestamp2datetime(information.last_logout_time)

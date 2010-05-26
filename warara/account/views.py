@@ -5,13 +5,13 @@ from django.http import HttpResponse, HttpResponseRedirect
 from arara_thrift.ttypes import *
 from arara.util import timestamp2datetime
 
-import arara
 import warara
+from warara import warara_middleware
 
 @warara.wrap_error
 def register(request):
     sess, r = warara.check_logged_in(request)
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     if r['logged_in'] == True:
         raise InvalidOperation("Already logged in!")
 
@@ -34,7 +34,7 @@ def register(request):
 
 @warara.wrap_error
 def confirm_user(request, username, confirm_key):
-    server = arara.get_server()
+    server = warara_middleware.get_server()
 
     try:
         server.member_manager.confirm(username, confirm_key)
@@ -66,7 +66,7 @@ def login_precheck(request):
     username = request.POST['username']
     password = request.POST['password']
     client_ip = request.META['REMOTE_ADDR']
-    server = arara.get_server()
+    server = warara_middleware.get_server()
 
     try:
         session_key = server.login_manager.login(username, password, client_ip)
@@ -95,7 +95,7 @@ def login(request):
     current_page = request.POST.get('current_page_url', '/main')
     # XXX 여기까지.
     client_ip = request.META['REMOTE_ADDR']
-    server = arara.get_server()
+    server = warara_middleware.get_server()
 
     try:
         session_key = server.login_manager.login(username, password, client_ip)
@@ -129,7 +129,7 @@ def login(request):
 @warara.wrap_error
 def logout(request):
     session_key, r = warara.check_logged_in(request)
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     account = server.login_manager.logout(session_key)
     del request.session['arara_session_key']
     del request.session['arara_username']
@@ -140,7 +140,7 @@ def logout(request):
 @warara.wrap_error
 def account(request):
     session_key, r = warara.check_logged_in(request)
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     account = server.member_manager.get_info(session_key)
 
     account.last_logout_time = timestamp2datetime(account.last_logout_time)
@@ -151,7 +151,7 @@ def account(request):
 @warara.wrap_error
 def account_modify(request):
     session_key, r = warara.check_logged_in(request)
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     account = server.member_manager.get_info(session_key)
     if request.method == 'POST':
         nickname = request.POST['mynickname']
@@ -173,7 +173,7 @@ def account_modify(request):
 @warara.wrap_error
 def password_modify(request):
     session_key, r = warara.check_logged_in(request)
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     if request.method == 'POST':
         username = request.session['arara_username']
         last_password = request.POST['last_password']
@@ -190,7 +190,7 @@ def password_modify(request):
 @warara.wrap_error
 def account_remove(request):
     session_key, r = warara.check_logged_in(request)
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     if request.method == 'POST':
         server.member_manager.remove_user(session_key)
         return HttpResponseRedirect("/")
@@ -202,7 +202,7 @@ def account_remove(request):
 
 def id_check(request):
     if request.method == 'POST':
-        server = arara.get_server()
+        server = warara_middleware.get_server()
         r = {}
         check_id_field = request.POST['check_field']
         ret = server.member_manager.is_registered(check_id_field)
@@ -221,7 +221,7 @@ def id_check(request):
 
 def nickname_check(request):
     if request.method == 'POST':
-        server = arara.get_server()
+        server = warara_middleware.get_server()
         r = {}
         check_nickname_field = request.POST['check_field']
         ret = server.member_manager.is_registered_nickname(check_nickname_field)
@@ -242,7 +242,7 @@ def nickname_check(request):
 
 def email_check(request):
     if request.method == 'POST':
-        server = arara.get_server()
+        server = warara_middleware.get_server()
         r = {}
         check_email_field = request.POST['check_email_field']
         ret = server.member_manager.is_registered_email(check_email_field)
@@ -259,7 +259,7 @@ def mail_resend(request):
     # XXX : Combacsa modified this code... might not work well...
     # XXX : pipoket also modified this code :)
     sess, r = warara.check_logged_in(request)
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     if r['logged_in'] == True:
         raise InvalidOperation("Already logged in!")
 

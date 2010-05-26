@@ -3,15 +3,15 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.paginator import Paginator
 
-import arara
 import math
 import warara
 import datetime
 
 from arara_thrift.ttypes import *
+from warara import warara_middleware
 
 def get_various_info(request, r):
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     sess, _ = warara.check_logged_in(request)
     page_no = r['page_no']
     page_no = int(page_no)
@@ -59,7 +59,7 @@ def index(request):
 
 @warara.wrap_error
 def inbox(request):
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     r = {}
     sess, _ = warara.check_logged_in(request)
     page = request.GET.get('page_no', 1);
@@ -98,7 +98,7 @@ def inbox(request):
 @warara.wrap_error
 def outbox(request):
     # XXX Combacsa: What about merging inbox & outbox alltogether?
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     r = {}
     sess, _ = warara.check_logged_in(request)
     if request.GET.has_key('page_no'):
@@ -143,7 +143,7 @@ def send(request, msg_no=0):
     r['default_receiver'] = ''
     r['default_text'] = ''
 
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     sess, _ = warara.check_logged_in(request)
     msg_no = int(msg_no)
 
@@ -165,7 +165,7 @@ def send(request, msg_no=0):
 
 @warara.wrap_error
 def send_(request):
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     sess, _ = warara.check_logged_in(request)
     r = {}
     
@@ -184,7 +184,7 @@ def send_(request):
 
 @warara.wrap_error
 def read(request, message_list_type, message_id):
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     sess, _ = warara.check_logged_in(request)
 
     r = {}
@@ -213,7 +213,7 @@ def read(request, message_list_type, message_id):
 
 @warara.wrap_error
 def delete(request):
-    server = arara.get_server()
+    server = warara_middleware.get_server()
     sess, _ = warara.check_logged_in(request)
     ret, msg = 1, 1
     del_msg_no = int(request.GET.get('del_msg_no', 0))
