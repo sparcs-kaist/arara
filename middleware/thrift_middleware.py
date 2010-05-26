@@ -28,33 +28,25 @@ from thrift.transport import TTransport
 from thrift.transport import TSocket
 from thrift.server import TServer
 
-from etc import arara_settings
-
 from middleware import HANDLER_PORT
 
-def connect_thrift_server(host, base_port, class_):
-    transport = TSocket.TSocket(host, base_port + HANDLER_PORT[class_])
-    transport = TTransport.TBufferedTransport(transport)
-    protocol = TBinaryProtocol.TBinaryProtocolAccelerated(transport)
-    client = dict(MAPPING)[class_].Client(protocol)
-    transport.open()
-    return client
-
-def connect(name):
-    socket = TSocket.TSocket(arara_settings.ARARA_SERVER_HOST,
-                             arara_settings.ARARA_SERVER_BASE_PORT + HANDLER_PORT[name])
+def connect_thrift_server(host, base_port, name):
+    socket = TSocket.TSocket(host, base_port + HANDLER_PORT[name])
     transport = TTransport.TBufferedTransport(socket)
     #transport = TTransport.TFramedTransport(socket)
+
     protocol = TBinaryProtocol.TBinaryProtocolAccelerated(transport)
     #protocol = TBinaryProtocol.TBinaryProtocol(transport)
     client = dict(MAPPING)[name].Client(protocol)
     transport.open()
-    #logging.getLogger('get_server').info("Got server %s", name)
     return client
 
-
 class Server(object):
+    def __init__(self, host, base_port):
+        self.host = host
+        self.base_port = base_port
+
     def __getattr__(self, name):
         if name in dict(MAPPING):
-            return connect(name)
+            return connect_thrift_server(self.host, self.base_port, name)
         raise AttributeError()
