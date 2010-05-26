@@ -10,7 +10,6 @@ from arara.search_manager import SearchManager
 from arara.file_manager import FileManager
 
 from arara import settings
-from arara.server import get_server
 
 CLASSES = {'login_manager': LoginManager,
            'member_manager': MemberManager,
