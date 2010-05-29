@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# ARAra Test data adder
+# 2010년 5월 30일 현재의 API 와는 호환되지 않는 코드.
 
 import xmlrpclib
 server = xmlrpclib.Server('http://localhost:8000')

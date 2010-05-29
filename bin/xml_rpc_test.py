@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# XML-RPC 서버 개발중에 잠깐 쓰였던 파일.
 import xmlrpclib
 
 s = xmlrpclib.Server('http://localhost:4949')

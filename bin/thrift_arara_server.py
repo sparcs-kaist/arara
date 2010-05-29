@@ -77,19 +77,6 @@ def open_thrift_server(server_name, processor, handler, port):
     #server.setNumThreads(15)
     return server, handler_instance
 
-def setter_name(class_):
-    """AbcdEfg -> _set_abcd_efg"""
-    class_name = class_.__name__
-    char_list = list(class_name)
-    if char_list[0].isupper():
-        char_list[0] = char_list[0].lower()
-    for i, char in enumerate(char_list):
-        if char.isupper():
-            char_list[i] = char.lower()
-            char_list.insert(i, '_')
-    concat = ''.join(char_list)
-    return '_set_' + concat
-
 def open_server(server_name, base_port):
     assert server_name in MANAGER_LIST
     base_class = CLASSES[server_name]
@@ -111,20 +98,11 @@ def resolve_dependencies(base_server, instance, base_port):
             try:
                 client = connect_thrift_server('localhost',
                         base_port, dependency_server)
-                # XXX
-                # Dependency Resolve 할 때 Getter, Setter 를 쓸 이유가 없다.
-                # Race Condition 을 제거하기 위해 무조건 get_server() 를 쓰도록 했기 때문.
-                # 따라서 아래를 주석처리한다.
-                # 나중에 상황 봐서 필요없다 싶으면 setter_name 같은것도 죄다 지운다.
-                #setter = setter_name(dependency_class)
-                #setter_method = getattr(instance, setter)
-                #setter_method(client)
                 break
             except TTransportException:
                 print '%s cannot be connected. Retrying...' % dependency_server
                 time.sleep(1)
                 continue
-    
 
 if __name__ == '__main__':
     logger = logging.getLogger('main')

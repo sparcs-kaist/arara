@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# XML-RPC 버전의 Middleware 를 띄우던 코드.
+# 2010년 5월 30일 현재는 작동하지 않는다.
 import os
 import sys
 import optparse
