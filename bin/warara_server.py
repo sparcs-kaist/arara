@@ -1,4 +1,5 @@
 #!/usr/bin/python
+#-*- encoding: utf-8 -*-
 # CherryPy 를 사용하여 Warara 서버를 실행한다.
 import os
 import sys
