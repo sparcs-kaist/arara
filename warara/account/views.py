@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
 
 from arara_thrift.ttypes import *
-from arara.util import timestamp2datetime
+from libs import timestamp2datetime
 
 import warara
 from warara import warara_middleware

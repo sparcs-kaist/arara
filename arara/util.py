@@ -20,8 +20,7 @@ def datetime2timestamp(datetime_):
     return (time.mktime(datetime_.timetuple())
             + datetime_.microsecond / 1e6)
 
-def timestamp2datetime(timestamp):
-    return datetime.datetime.fromtimestamp(timestamp)
+from libs import timestamp2datetime
 
 def update_monitor_status(function):
     def wrapper(self, session_key, *args, **kwargs):

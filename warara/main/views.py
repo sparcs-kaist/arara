@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse
 from django.core.cache import cache
 
-from arara.util import timestamp2datetime
+from libs import timestamp2datetime
 from warara import warara_middleware
 
 @warara.wrap_error
