@@ -370,7 +370,7 @@ class ArticleManager(object):
         # Page 의 시작 글과 끝 글의 번째수를 구하고 Query 를 날린다.
         offset = page_length * (page - 1)
         last = offset + page_length
-        article_list = list(desired_query.order_by(model.Article.id.desc())[offset:last])
+        article_list = list(desired_query.order_by(model.Article.last_reply_date.desc())[offset:last])
         session.close()
         # 적당히 리턴한다.
         article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
@@ -649,9 +649,16 @@ class ArticleManager(object):
                                 author,
                                 user_ip,
                                 article)
+        # XXX 2010.06.17.
+        # 현재 root 글에 대해서만 정보를 저장할 것인가
+        # 아니면 중간 중간에 걸쳐 있는 글에 대해서도 정보를 저장할 것인가
+        # 고민이 필요하다. 즉 parent 들을 추적을 할까 말까에 대해서 ...
         article.reply_count += 1
+        article.last_reply_date = new_reply.date
         if article.root:
             article.root.reply_count += 1
+            article.root.last_reply_date = new_reply.date
+
         session.add(new_reply)
         session.commit()
         id = new_reply.id
