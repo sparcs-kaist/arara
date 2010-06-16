@@ -7,7 +7,6 @@ MANAGER_LIST = (
         'article_manager',
         'messaging_manager',
         'notice_manager',
-        'read_status_manager',
         'search_manager',
         'file_manager',
                )
@@ -26,7 +25,6 @@ DEPENDENCY = {
         'messaging_manager': ['login_manager', 'member_manager',
                               'blacklist_manager'],
         'notice_manager': ['login_manager', 'member_manager'],
-        'read_status_manager': ['login_manager', 'member_manager'],
         'search_manager': ['board_manager', 'login_manager'],
         'file_manager': ['login_manager']
               }
