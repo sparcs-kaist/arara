@@ -117,6 +117,7 @@ class Article(object):
         self.parent = parent
         self.last_modified_date = self.date
         self.destroyed = False
+        self.last_reply_date = self.date
 
     def __repr__(self):
         return "<Article('%s', '%s', %s)>" % (self.title, self.author.username, str(self.date))
@@ -264,6 +265,9 @@ articles_table = Table('articles', metadata,
     # SQLite 자체의 문제인 것 같으나 아직은 확신이 없다.
     Column('destroyed', Boolean),
     # XXX 여기까지.
+    # XXX 2010.06.17.
+    # 새로운 Field 를 추가한다. last_reply_date 마지막으로 reply 가 달린 / 수정된 시각.
+    Column('last_reply_date', DateTime),
     mysql_engine='InnoDB'
 )
 
