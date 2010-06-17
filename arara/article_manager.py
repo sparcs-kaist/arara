@@ -28,6 +28,9 @@ SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_
 BEST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'author_nickname', 'author_id', 'vote', 'hit', 'last_page', 'board_name')
 
+LIST_ORDER_ROOT_ID         = 0
+LIST_ORDER_LAST_REPLY_DATE = 1
+
 class ArticleManager(object):
     '''
     게시글 및 검색 처리 클래스
@@ -193,7 +196,6 @@ class ArticleManager(object):
                 2. 데이터베이스 오류: InternalError Exception
         '''
         board_id = self._get_board_id(board_name)
-
         return self._get_best_article(None, board_id, count, 86400, 'today')
 
     @log_method_call
@@ -231,7 +233,6 @@ class ArticleManager(object):
                 2. 데이터베이스 오류: InternalError Exception
         '''
         board_id = self._get_board_id(board_name)
-
         return self._get_best_article(None, board_id, count, 604800, 'weekly')
 
     @log_method_call
@@ -292,6 +293,7 @@ class ArticleManager(object):
     @require_login
     def new_article_list(self, session_key, page=1, page_length=20):
         '''
+        제대로 작동하지 않는 함수. 다시 코딩하여야 함.
         사용자가 로그아웃한 이후 게시판에 새로 올라온 글 또는 수정된 글들을 불러오는 함수
 
         @type  session_key: string
@@ -351,7 +353,7 @@ class ArticleManager(object):
             pass
         return set(blacklist_list)
 
-    def _get_article_list(self, session_key, board_name, page, page_length):
+    def _get_article_list(self, session_key, board_name, page, page_length, order_by = LIST_ORDER_ROOT_ID):
         # 해당 board 에 있는 글의 갯수를 센다.
         board_id = self._get_board_id(board_name)
         session = model.Session()
@@ -370,7 +372,16 @@ class ArticleManager(object):
         # Page 의 시작 글과 끝 글의 번째수를 구하고 Query 를 날린다.
         offset = page_length * (page - 1)
         last = offset + page_length
-        article_list = list(desired_query.order_by(model.Article.last_reply_date.desc())[offset:last])
+
+        # 목록의 정렬. 근데 조금 비효율적인 것 같기도 하고 ...
+        article_list = None
+        if order_by == LIST_ORDER_ROOT_ID:
+            article_list = list(desired_query.order_by(model.Article.id.desc())[offset:last])
+        elif order_by == LIST_ORDER_LAST_REPLY_DATE:
+            article_list = list(desired_query.order_by(model.Article.last_reply_date.desc())[offset:last])
+        else:
+            article_list = list(desired_query.order_by(model.Article.id.desc())[offset:last])
+
         session.close()
         # 적당히 리턴한다.
         article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
@@ -399,7 +410,7 @@ class ArticleManager(object):
         '''
         blacklisted_users = self._get_blacklist_userid(session_key)
 
-        article_dict_list, last_page, article_count = self._get_article_list(session_key, board_name, page, page_length)
+        article_dict_list, last_page, article_count = self._get_article_list(session_key, board_name, page, page_length, LIST_ORDER_LAST_REPLY_DATE)
         # InvalidOperation(board not exist) 는 여기서 알아서 불릴 것이므로 제거.
 
         # article_dict_list 를 generator 에서 list화.
