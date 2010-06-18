@@ -37,7 +37,7 @@
         <tbody>
             {% for article in article_list %}
             <tr rel="{{forloop.counter}}">
-                <td class="column cursor_col">{% ifequal article.read_status 'N' %}{{article.read_status}}{%endifequal%}</td>
+                <td class="column cursor_col">{% ifnotequal article.read_status 'R' %}{{article.read_status}}{%endifnotequal%}</td>
                 <td class="column id_col" rel="{{article.id}}">{{article.id}}</td>
 		<td class="column title_col{%if article.deleted%} deleted{%endif%}">{% if logged_in %}<a href="/board/{{board_name}}/{{article.id}}/?page_no={{page_no}}">{{article.title|truncatechars:"60"}}</a> {%if article.reply_count%}[{{article.reply_count}}]{%endif%}{% else %}{{article.title|truncatechars:"60"}}{% if article.reply_count%} [{{article.reply_count}}]{% endif %}{% endif %}</td>
 		<td class="column author_col">
