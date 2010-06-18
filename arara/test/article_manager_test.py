@@ -126,8 +126,15 @@ class ArticleManagerTest(unittest.TestCase):
         reply_id     = server.article_manager.write_reply(self.session_key_mikkang, u'board', 1, reply_dic)
         # Without reply, listing order must be [article 2, article 1].
         # But since new reply was found on article 1, listing order must be [article 1, article 2].
-        expected_result = "ArticleList(last_page=1, hit=[Article(attach=None, board_name=None, author_username=u'mikkang', hit=0, blacklisted=False, title=u'TITLE', deleted=False, read_status='N', root_id=None, is_searchable=True, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=1, last_modified_date=31536001.100000001, date=31536001.100000001, author_id=2, type='normal', id=1), Article(attach=None, board_name=None, author_username=u'serialx', hit=0, blacklisted=False, title=u'TITLE', deleted=False, read_status='N', root_id=None, is_searchable=True, author_nickname=u'serialx', content=None, vote=0, depth=None, reply_count=0, last_modified_date=31536002.100000001, date=31536002.100000001, author_id=3, type='normal', id=2)], results=2, current_page=None)"
-        self.assertEqual(expected_result, repr(server.article_manager.article_list(self.session_key_mikkang, u'board')))
+        result = server.article_manager.article_list(self.session_key_mikkang, u'board')
+        self.assertEqual(1, result.last_page)
+        self.assertEqual(2, result.results)
+        self.assertEqual(None, result.current_page)
+
+        expected_result1 = "Article(attach=None, board_name=None, author_username=u'mikkang', hit=0, blacklisted=False, title=u'TITLE', deleted=False, read_status='N', root_id=None, is_searchable=True, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=1, last_modified_date=31536001.100000001, date=31536001.100000001, author_id=2, type='normal', id=1)"
+        expected_result2 = "Article(attach=None, board_name=None, author_username=u'serialx', hit=0, blacklisted=False, title=u'TITLE', deleted=False, read_status='N', root_id=None, is_searchable=True, author_nickname=u'serialx', content=None, vote=0, depth=None, reply_count=0, last_modified_date=31536002.100000001, date=31536002.100000001, author_id=3, type='normal', id=2)"
+        self.assertEqual(expected_result1, repr(result.hit[0]))
+        self.assertEqual(expected_result2, repr(result.hit[1]))
 
     def test_pagination(self):
         # Write some articles
