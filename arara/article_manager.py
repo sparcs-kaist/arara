@@ -387,27 +387,8 @@ class ArticleManager(object):
         article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
         return article_dict_list, last_page, article_count
 
-    @log_method_call
-    def article_list(self, session_key, board_name, page=1, page_length=20):
-        '''
-        게시판의 게시글 목록 읽어오기
-
-        @type  session_key: string
-        @param session_key: User Key
-        @type board_name: string
-        @param board_name : BBS Name
-        @type  page: integer
-        @param page: Page Number to Request
-        @type  page_length: integer
-        @param page_length: Count of Article on a Page
-        @rtype: list
-        @return:
-            1. 리스트 읽어오기 성공: Article List
-            2. 리스트 읽어오기 실패:
-                1. 존재하지 않는 게시판: InvalidOperation Exception
-                2. 페이지 번호 오류: InvalidOperation Exception
-                3. 데이터베이스 오류: InternalError Exception 
-        '''
+    def _article_list(self, session_key, board_name, page, page_length, order_by):
+        '''Internal use only.'''
         blacklisted_users = self._get_blacklist_userid(session_key)
 
         article_dict_list, last_page, article_count = self._get_article_list(session_key, board_name, page, page_length, LIST_ORDER_LAST_REPLY_DATE)
@@ -446,6 +427,29 @@ class ArticleManager(object):
         article_list.results = article_count
         return article_list
          
+    @log_method_call
+    def article_list(self, session_key, board_name, page=1, page_length=20):
+        '''
+        게시판의 게시글 목록 읽어오기
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type board_name: string
+        @param board_name : BBS Name
+        @type  page: integer
+        @param page: Page Number to Request
+        @type  page_length: integer
+        @param page_length: Count of Article on a Page
+        @rtype: list
+        @return:
+            1. 리스트 읽어오기 성공: Article List
+            2. 리스트 읽어오기 실패:
+                1. 존재하지 않는 게시판: InvalidOperation Exception
+                2. 페이지 번호 오류: InvalidOperation Exception
+                3. 데이터베이스 오류: InternalError Exception 
+        '''
+        return self._article_list(session_key, board_name, page, page_length, LIST_ORDER_LAST_REPLY_DATE)
+
     @require_login
     @log_method_call_important
     def read(self, session_key, board_name, no):
@@ -488,6 +492,36 @@ class ArticleManager(object):
         session.close()
         return article_dict_list
 
+    def _article_list_below(self, session_key, board_name, no, page_length):
+        '''Internal Use Only.'''
+        board_id = self._get_board_id(board_name)
+        session = model.Session()
+        total_article_count = session.query(model.Article).filter_by(board_id=board_id, root_id=None, destroyed=False).count()
+        remaining_article_count = session.query(model.Article).filter(and_(
+                model.articles_table.c.board_id==board_id,
+                model.articles_table.c.root_id==None,
+                model.articles_table.c.destroyed==False,
+                model.articles_table.c.id < no)).count()
+        position_no = total_article_count - remaining_article_count
+        session.close()
+
+        page_position = position_no / page_length
+        if position_no % page_length != 0:
+            page_position += 1
+
+        try:
+            below_article_dict_list = self._article_list(session_key, board_name, page_position, page_length, LIST_ORDER_LAST_REPLY_DATE)
+        except Exception:
+            raise
+
+        ret = ArticleList()
+        ret.hit = below_article_dict_list.hit
+        ret.current_page = page_position
+        ret.last_page = below_article_dict_list.last_page
+        ret.results = below_article_dict_list.results
+        return ret
+ 
+
     @require_login
     @log_method_call
     def article_list_below(self, session_key, board_name, no, page_length=20):
@@ -508,35 +542,8 @@ class ArticleManager(object):
             2. 목록 가져오기 실패:
                 1. 존재하지 않는 게시판: InvalidOperation Exception
                 2. 데이터베이스 오류: InternalError Exception
-
         '''
-        board_id = self._get_board_id(board_name)
-        session = model.Session()
-        total_article_count = session.query(model.Article).filter_by(board_id=board_id, root_id=None, destroyed=False).count()
-        remaining_article_count = session.query(model.Article).filter(and_(
-                model.articles_table.c.board_id==board_id,
-                model.articles_table.c.root_id==None,
-                model.articles_table.c.destroyed==False,
-                model.articles_table.c.id < no)).count()
-        position_no = total_article_count - remaining_article_count
-        session.close()
-
-        page_position = position_no / page_length
-        if position_no % page_length != 0:
-            page_position += 1
-
-        try:
-            below_article_dict_list = self.article_list(session_key, board_name, page_position, page_length)
-        except Exception:
-            raise
-
-        ret = ArticleList()
-        ret.hit = below_article_dict_list.hit
-        ret.current_page = page_position
-        ret.last_page = below_article_dict_list.last_page
-        ret.results = below_article_dict_list.results
-        return ret
-        
+        return self._article_list_below(session_key, board_name, no, page_length)
 
     @require_login
     @log_method_call_important
