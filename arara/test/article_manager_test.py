@@ -133,8 +133,8 @@ class ArticleManagerTest(unittest.TestCase):
 
         expected_result1 = "Article(attach=None, board_name=None, author_username=u'mikkang', hit=0, blacklisted=False, title=u'TITLE', deleted=False, read_status='N', root_id=None, is_searchable=True, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=1, last_modified_date=31536001.100000001, date=31536001.100000001, author_id=2, type='normal', id=1)"
         expected_result2 = "Article(attach=None, board_name=None, author_username=u'serialx', hit=0, blacklisted=False, title=u'TITLE', deleted=False, read_status='N', root_id=None, is_searchable=True, author_nickname=u'serialx', content=None, vote=0, depth=None, reply_count=0, last_modified_date=31536002.100000001, date=31536002.100000001, author_id=3, type='normal', id=2)"
-        self.assertEqual(expected_result1, repr(result.hit[0]))
-        self.assertEqual(expected_result2, repr(result.hit[1]))
+        self.assertEqual(expected_result2, repr(result.hit[0]))
+        self.assertEqual(expected_result1, repr(result.hit[1]))
 
     def test_pagination(self):
         # Write some articles

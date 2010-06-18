@@ -391,7 +391,7 @@ class ArticleManager(object):
         '''Internal use only.'''
         blacklisted_users = self._get_blacklist_userid(session_key)
 
-        article_dict_list, last_page, article_count = self._get_article_list(session_key, board_name, page, page_length, LIST_ORDER_LAST_REPLY_DATE)
+        article_dict_list, last_page, article_count = self._get_article_list(session_key, board_name, page, page_length, order_by)
         # InvalidOperation(board not exist) 는 여기서 알아서 불릴 것이므로 제거.
 
         # article_dict_list 를 generator 에서 list화.
@@ -448,7 +448,7 @@ class ArticleManager(object):
                 2. 페이지 번호 오류: InvalidOperation Exception
                 3. 데이터베이스 오류: InternalError Exception 
         '''
-        return self._article_list(session_key, board_name, page, page_length, LIST_ORDER_LAST_REPLY_DATE)
+        return self._article_list(session_key, board_name, page, page_length, LIST_ORDER_ROOT_ID)
 
     @require_login
     @log_method_call_important
@@ -492,7 +492,7 @@ class ArticleManager(object):
         session.close()
         return article_dict_list
 
-    def _article_list_below(self, session_key, board_name, no, page_length):
+    def _article_list_below(self, session_key, board_name, no, page_length, order_by):
         '''Internal Use Only.'''
         board_id = self._get_board_id(board_name)
         session = model.Session()
@@ -510,7 +510,7 @@ class ArticleManager(object):
             page_position += 1
 
         try:
-            below_article_dict_list = self._article_list(session_key, board_name, page_position, page_length, LIST_ORDER_LAST_REPLY_DATE)
+            below_article_dict_list = self._article_list(session_key, board_name, page_position, page_length, order_by)
         except Exception:
             raise
 
@@ -543,7 +543,7 @@ class ArticleManager(object):
                 1. 존재하지 않는 게시판: InvalidOperation Exception
                 2. 데이터베이스 오류: InternalError Exception
         '''
-        return self._article_list_below(session_key, board_name, no, page_length)
+        return self._article_list_below(session_key, board_name, no, page_length, LIST_ORDER_ROOT_ID)
 
     @require_login
     @log_method_call_important
