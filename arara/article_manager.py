@@ -402,8 +402,13 @@ class ArticleManager(object):
         read_stats_list = None # Namespace 에 등록. Assign 은 요 바로 다음에서.
 
         try:
-            # read_stats_list = get_server().read_status_manager.check_stats(session_key, article_id_list)
-            read_stats_list = get_server().read_status_manager.check_stats(session_key, article_last_reply_id_list)
+            read_stats_list = get_server().read_status_manager.check_stats(session_key, article_id_list)
+            read_stats_list_sub = get_server().read_status_manager.check_stats(session_key, article_last_reply_id_list)
+            for idx, item in enumerate(read_stats_list_sub):
+                if read_stats_list[idx] == 'R':
+                    if item == 'N':
+                        read_stats_list[idx] = 'U'
+
         except NotLoggedIn, InvalidOperation:
             read_stats_list = ['N'] * len(article_id_list)
 

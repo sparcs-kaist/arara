@@ -171,29 +171,41 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual('R', l.hit[0].read_status)
 
     def test_update_read_status(self):
+        # Case 1. 루트 글은 읽었으나 답글은 읽지 않았다
+        # Case 2. 루트 글도 안 읽었고 답글도 안 읽었다
+        # Case 3. 루트 글도 답글도 읽었다.
+
         # Preparation
-        article_1_id = self._dummy_article_write(self.session_key_mikkang)
-        article_2_id = self._dummy_article_write(self.session_key_serialx)
-        # 글 읽기
+        article_1_id = self._dummy_article_write(self.session_key_mikkang) # 루트글만 읽음
+        article_2_id = self._dummy_article_write(self.session_key_mikkang) # 루트글도 안읽음
+        article_3_id = self._dummy_article_write(self.session_key_mikkang) # 루트글도 답글도 읽음
         server.article_manager.read(self.session_key_serialx, u'board', article_1_id)
-        server.article_manager.read(self.session_key_serialx, u'board', article_2_id)
+        server.article_manager.read(self.session_key_serialx, u'board', article_3_id)
         global STUB_TIME_CURRENT
         STUB_TIME_CURRENT += 1.0
         reply_dic    = WrittenArticle(**{'title':u'dummy', 'content': u'asdf'})
-        reply_id     = server.article_manager.write_reply(self.session_key_mikkang, u'board', 1, reply_dic)
+        reply_1_id   = server.article_manager.write_reply(self.session_key_mikkang, u'board', 1, reply_dic)
+        STUB_TIME_CURRENT += 1.0
+        reply_dic    = WrittenArticle(**{'title':u'dummy', 'content': u'asdf'})
+        reply_2_id   = server.article_manager.write_reply(self.session_key_mikkang, u'board', 2, reply_dic)
+        STUB_TIME_CURRENT += 1.0
+        reply_dic    = WrittenArticle(**{'title':u'dummy', 'content': u'asdf'})
+        reply_3_id   = server.article_manager.write_reply(self.session_key_mikkang, u'board', 3, reply_dic)
+        server.article_manager.read(self.session_key_serialx, u'board', reply_3_id)
 
-        # Test Begin.
-        # 1. article_1_id 에 해당하는 글은 [아직 읽지 않은] 것으로 뜨고
-        # 2. article_2_id 에 해당하는 글은 [이미 읽은]      것으로 떠야 한다.
-        # 왜냐. article_1_id 글에는 댓글이 달렸으니까.
+        # Article_3 번에게는 R
+        # Article_2 번에게는 N
+        # Article_1 번에게는 U <새로 도입하는 기호, 루트글은 읽고 답글은 안읽었을 때>
+
         result = server.article_manager.article_list(self.session_key_serialx, u'board')
         self.assertEqual('R', result.hit[0].read_status)
         self.assertEqual('N', result.hit[1].read_status)
+        self.assertEqual('U', result.hit[2].read_status)
 
-        # 이제 다시 한번 위의 글을 읽어주면 N->R 으로.
+        # 이제 다시 한번 위의 글을 읽어주면 U->R 으로.
         server.article_manager.read(self.session_key_serialx, u'board', article_1_id)
         result = server.article_manager.article_list(self.session_key_serialx, u'board')
-        self.assertEqual('R', result.hit[1].read_status)
+        self.assertEqual('R', result.hit[2].read_status)
 
     def test_deletion(self):
         # Write some articles
