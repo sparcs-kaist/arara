@@ -268,6 +268,9 @@ articles_table = Table('articles', metadata,
     # XXX 2010.06.17.
     # 새로운 Field 를 추가한다. last_reply_date 마지막으로 reply 가 달린 / 수정된 시각.
     Column('last_reply_date', DateTime),
+    # XXX 2010.06.18.
+    # 새로운 Field 를 추가한다. last_reply_id 마지막으로 달린 reply 의 글 번호.
+    Column('last_reply_id', Integer),
     mysql_engine='InnoDB'
 )
 

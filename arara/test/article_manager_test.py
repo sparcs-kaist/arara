@@ -170,6 +170,31 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual('R', l.hit[1].read_status)
         self.assertEqual('R', l.hit[0].read_status)
 
+    def test_update_read_status(self):
+        # Preparation
+        article_1_id = self._dummy_article_write(self.session_key_mikkang)
+        article_2_id = self._dummy_article_write(self.session_key_serialx)
+        # 글 읽기
+        server.article_manager.read(self.session_key_serialx, u'board', article_1_id)
+        server.article_manager.read(self.session_key_serialx, u'board', article_2_id)
+        global STUB_TIME_CURRENT
+        STUB_TIME_CURRENT += 1.0
+        reply_dic    = WrittenArticle(**{'title':u'dummy', 'content': u'asdf'})
+        reply_id     = server.article_manager.write_reply(self.session_key_mikkang, u'board', 1, reply_dic)
+
+        # Test Begin.
+        # 1. article_1_id 에 해당하는 글은 [아직 읽지 않은] 것으로 뜨고
+        # 2. article_2_id 에 해당하는 글은 [이미 읽은]      것으로 떠야 한다.
+        # 왜냐. article_1_id 글에는 댓글이 달렸으니까.
+        result = server.article_manager.article_list(self.session_key_serialx, u'board')
+        self.assertEqual('R', result.hit[0].read_status)
+        self.assertEqual('N', result.hit[1].read_status)
+
+        # 이제 다시 한번 위의 글을 읽어주면 N->R 으로.
+        server.article_manager.read(self.session_key_serialx, u'board', article_1_id)
+        result = server.article_manager.article_list(self.session_key_serialx, u'board')
+        self.assertEqual('R', result.hit[1].read_status)
+
     def test_deletion(self):
         # Write some articles
         article1_id = self._dummy_article_write(self.session_key_mikkang)

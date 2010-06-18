@@ -385,13 +385,14 @@ class ArticleManager(object):
         session.close()
         # 적당히 리턴한다.
         article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
-        return article_dict_list, last_page, article_count
+        article_last_reply_id_list = [article.last_reply_id for article in article_list]
+        return article_dict_list, last_page, article_count, article_last_reply_id_list
 
     def _article_list(self, session_key, board_name, page, page_length, order_by):
         '''Internal use only.'''
         blacklisted_users = self._get_blacklist_userid(session_key)
 
-        article_dict_list, last_page, article_count = self._get_article_list(session_key, board_name, page, page_length, order_by)
+        article_dict_list, last_page, article_count, article_last_reply_id_list = self._get_article_list(session_key, board_name, page, page_length, order_by)
         # InvalidOperation(board not exist) 는 여기서 알아서 불릴 것이므로 제거.
 
         # article_dict_list 를 generator 에서 list화.
@@ -401,7 +402,8 @@ class ArticleManager(object):
         read_stats_list = None # Namespace 에 등록. Assign 은 요 바로 다음에서.
 
         try:
-            read_stats_list = get_server().read_status_manager.check_stats(session_key, article_id_list)
+            # read_stats_list = get_server().read_status_manager.check_stats(session_key, article_id_list)
+            read_stats_list = get_server().read_status_manager.check_stats(session_key, article_last_reply_id_list)
         except NotLoggedIn, InvalidOperation:
             read_stats_list = ['N'] * len(article_id_list)
 
@@ -624,6 +626,8 @@ class ArticleManager(object):
                     new_article.is_searchable = False
             session.commit()
             id = new_article.id
+            new_article.last_reply_id  = id
+            session.commit()
             session.close()
         else:
             session.close()
@@ -680,6 +684,11 @@ class ArticleManager(object):
         session.add(new_reply)
         session.commit()
         id = new_reply.id
+        new_reply.last_reply_id = id
+        article.last_reply_id = id
+        if article.root:
+            article.root.last_reply_id = new_reply.id
+        session.commit()
         session.close()
         return id
 
