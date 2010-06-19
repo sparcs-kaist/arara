@@ -6,7 +6,7 @@ import datetime
 import thread
 import time
 
-from sqlalchemy.exceptions import InvalidRequestError
+from sqlalchemy.exceptions import InvalidRequestError, ConcurrentModificationError
 
 from arara_thrift.ttypes import *
 from arara.model import ReadStatus
@@ -71,25 +71,34 @@ class LoginManager(object):
         @rtype: arara_thrift.VisitorCount
         @return: 방문자수와 하루 방문자수를 포함한 객체
         '''
+        RETRY_COUNT = 10
+
         session = model.Session()
-        try:
-            visitor = session.query(model.Visitor).first()
-        except Exception, e: 
-            session.close()
-            raise InternalError(repr(e))
-        visitor.total = visitor.total + 1
+        total = None
+        today = None
         now = datetime.datetime.fromtimestamp(time.time())
-        if not now.day == visitor.date.day:
-            visitor.today = 0
-        visitor.today = visitor.today + 1
-        visitor.date = datetime.datetime.fromtimestamp(time.time())
-        total = visitor.total
-        today = visitor.today
-        try:
-            session.commit()
-        except Exception, e:
-            session.close()
-            self.logger.warning("Internal Error occur on LoginManager.total_visitor(): %s" % repr(e))
+        # ConcurrentModificationError 가 나면 RETRY_COUNT 회 재시도하도록 해 보자.
+        for i in xrange(RETRY_COUNT):
+            try:
+                visitor = session.query(model.Visitor).first()
+                visitor.total = visitor.total + 1
+                if not now.day == visitor.date.day:
+                    visitor.today = 0
+                visitor.today = visitor.today + 1
+                total = visitor.total
+                today = visitor.today
+                session.commit()
+                break
+            except ConcurrentModificationError:
+                # 끝까지 실패하면 로깅메시지 하나 띄워주자.
+                session.rollback()
+                if i == RETRY_COUNT - 1:
+                    visitor = session.query(model.Visitor).first()
+                    total = visitor.total
+                    today = visitor.today
+                    self.logger.warning("Internal Error occur on LoginManager.total_visitor(): Due t the repeated ConcurrentModificationError, can't update Counter information.")
+                continue
+
         session.close()
         visitor_count= {'total_visitor_count':total, 'today_visitor_count':today}
         return VisitorCount(**visitor_count)
