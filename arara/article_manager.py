@@ -856,10 +856,16 @@ class ArticleManager(object):
             article = session.query(model.Article).options(eagerload('children')).filter_by(id=no).one()
             # TODO _article_thread_to_list 가 왜 blacklisted 여부를 필요로 하는가. 이건 별도로 빼야 할 듯.
             article_dict_list = self._article_thread_to_list(article, session_key, [])
-            self.logger.warning("article no %d is ... reply_count is %d while real reply count is %d." % (no, article.reply_count, len(article_dict_list)))
             if article.reply_count != len(article_dict_list) - 1:
                 # 이런 글은 수정이 필요하다.
-                session.close()
+                article.reply_count = len(article_dict_list) - 1
+                try:
+                    session.commit()
+                    session.close()
+                except InvalidRequestError:
+                    session.close()
+                    # 이 부분 어떻게 처리할 지 고민좀 ...
+                    raise InvalidOperation("Internal Error")
                 return True
             else:
                 session.close()
