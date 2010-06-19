@@ -9,14 +9,13 @@ import time
 from sqlalchemy.exceptions import InvalidRequestError, ConcurrentModificationError
 
 from arara_thrift.ttypes import *
-from arara.model import ReadStatus
 
 from arara import model
-from util import is_keys_in_dict
 from util import log_method_call_with_source
 from util import smart_unicode
-from etc.arara_settings import SESSION_EXPIRE_TIME
 from arara.server import get_server
+
+from etc.arara_settings import SESSION_EXPIRE_TIME
 
 log_method_call = log_method_call_with_source('login_manager')
 

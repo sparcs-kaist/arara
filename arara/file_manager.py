@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+#TODO: md5 library 는 Python 2.4 까지만 쓰였다. Python 2.5 부터는 hashlib.
+#      아라라 엔진의 Requirement 를 Python 2.5 로 선언해야 한다.
 import md5 as hashlib
 import time
 
@@ -27,14 +29,6 @@ class FileManager(object):
     
     def __init__(self):
         pass
-
-    def _is_board_exist(self, board_name):
-        # XXX 2010.05.15 : Deprecated Check 하고 없애자.
-        ret, _ = get_server().board_manager.get_board(board_name)
-        if ret:
-            return True, 'OK'
-        else:
-            return False, 'BOARD_NOT_EXIST'
 
     def _get_article(self, session, article_id):
         try:

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+# TODO: md5 대신 hashlib 을 쓰도록 한다.
 import md5
 import datetime
 import time
