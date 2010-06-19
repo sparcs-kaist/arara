@@ -156,12 +156,19 @@ class LoginManagerTest(unittest.TestCase):
         arara.model.clear_test_database()
 
     def testCount(self):
-        server.login_manager.total_visitor() 
-        server.login_manager.total_visitor() 
-        server.login_manager.total_visitor() 
+        visitors = server.login_manager.total_visitor() 
+        self.assertEqual(1, visitors.total_visitor_count)
+        self.assertEqual(1, visitors.today_visitor_count)
+        visitors = server.login_manager.total_visitor() 
+        self.assertEqual(2, visitors.total_visitor_count)
+        self.assertEqual(2, visitors.today_visitor_count)
+        visitors = server.login_manager.total_visitor() 
+        self.assertEqual(3, visitors.total_visitor_count)
+        self.assertEqual(3, visitors.today_visitor_count)
         visitors = server.login_manager.total_visitor() 
         self.assertEqual(4, visitors.total_visitor_count)
         self.assertEqual(4, visitors.today_visitor_count)
+        # TODO: 하루가 지난 뒤에는 totday_visitor_count 가 0 이 되는 것
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(LoginManagerTest)

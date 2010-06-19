@@ -70,7 +70,10 @@ class LoginManager(object):
         @rtype: arara_thrift.VisitorCount
         @return: 방문자수와 하루 방문자수를 포함한 객체
         '''
-        RETRY_COUNT = 10
+        # TODO: 사실 가장 예쁘게 하는 방법은 visitor 숫자를 늘리는 메소드를
+        #       별도의 thread 로 빼 버리고 이 함수 자신은 순수하게 DB를
+        #       읽어오기만 하는 것이 아닐지 ...
+        RETRY_COUNT = 20
 
         session = model.Session()
         total = None
@@ -84,6 +87,7 @@ class LoginManager(object):
                 if not now.day == visitor.date.day:
                     visitor.today = 0
                 visitor.today = visitor.today + 1
+                visitor.date = now
                 total = visitor.total
                 today = visitor.today
                 session.commit()
