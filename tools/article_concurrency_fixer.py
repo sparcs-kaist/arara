@@ -12,7 +12,7 @@ def board_handle(session_key, board_name):
     print "There are", len(root_article_list_hit), "articles."
     for i in xrange(len(root_article_list_hit)):
         get_server().article_manager.fix_reply_count(session_key, board_name, root_article_list_hit[i].id)
-        if i % 100 == 0:
+        if i % 10 == 0:
             print i, "/", len(root_article_list_hit)
     print "Done for board name [", board_name, "]"
 
@@ -24,7 +24,7 @@ def logout(session_key):
 
 def main():
     session_key = login()
-    board_handle(session_key, 'test')
+    board_handle(session_key, 'garbages')
     logout(session_key)
 
 if __name__ == "__main__":

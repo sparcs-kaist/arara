@@ -77,6 +77,21 @@ class ArticleManager(object):
         get_server().read_status_manager.mark_as_read_list(session_key, article_id_list)
         return ret
 
+    def _get_real_reply_count(self, article_thread):
+        # 주어진 글을 순회하며, 실제 reply count 가 되어야 하는 수를 구한다.
+        # article_thread 의 타입이 model.Article 이라는 점을 이용한다.
+        stack = []
+        stack.append(article_thread)
+        reply_count = 0
+        while stack:
+            art = stack.pop()
+            for child in art.children[::-1]:
+                if not child.deleted:
+                    reply_count += 1
+                stack.append(child)
+
+        return reply_count
+
     def _get_best_article(self, session_key, board_id, count, time_to_filter, best_type):
         session = model.Session()
         time_to_filter = datetime.datetime.fromtimestamp(time.time()-time_to_filter)
@@ -854,11 +869,11 @@ class ArticleManager(object):
         article = self._get_article(session, board_id, no)
         if article.root == None:
             article = session.query(model.Article).options(eagerload('children')).filter_by(id=no).one()
-            # TODO _article_thread_to_list 가 왜 blacklisted 여부를 필요로 하는가. 이건 별도로 빼야 할 듯.
-            article_dict_list = self._article_thread_to_list(article, session_key, [])
-            if article.reply_count != len(article_dict_list) - 1:
+            real_reply_count = self._get_real_reply_count(article)
+
+            if article.reply_count != real_reply_count:
                 # 이런 글은 수정이 필요하다.
-                article.reply_count = len(article_dict_list) - 1
+                article.reply_count = real_reply_count
                 try:
                     session.commit()
                     session.close()
