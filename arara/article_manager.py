@@ -38,7 +38,7 @@ class ArticleManager(object):
     TThreadPoolSerer, TForkingServer, TThreadedServer 모두 가능.
     '''
     def __init__(self):
-        pass
+        self.logger = logging.getLogger('article_manager')
 
     def _get_board(self, session, board_name):
         try:
@@ -843,6 +843,63 @@ class ArticleManager(object):
         if user.is_sysop:
             board_id = self._get_board_id(board_name)
             self._destroy_article(board_id, no)
+        else:
+            session.close()
+            raise InvalidOperation("NO_PERMISSION")
+        return True
+
+    def _reply_count_fix(self, session_key, board_id, no):
+        '''Internal use only.'''
+        session = model.Session()
+        article = self._get_article(session, board_id, no)
+        if article.root == None:
+            article = session.query(model.Article).options(eagerload('children')).filter_by(id=no).one()
+            # TODO _article_thread_to_list 가 왜 blacklisted 여부를 필요로 하는가. 이건 별도로 빼야 할 듯.
+            article_dict_list = self._article_thread_to_list(article, session_key, [])
+            self.logger.warning("article no %d is ... reply_count is %d while real reply count is %d." % (no, article.reply_count, len(article_dict_list)))
+            if article.reply_count != len(article_dict_list) - 1:
+                # 이런 글은 수정이 필요하다.
+                session.close()
+                return True
+            else:
+                session.close()
+                return False
+        else:
+            session.close()
+            raise InvalidOperation("NOT_IMPLEMENTED")
+
+    @require_login
+    @log_method_call_important
+    def fix_reply_count(self, session_key, board_name, no):
+        '''
+        주어진 글의 reply_count 가 올바른지 확인.
+        올바르지 않다면 이를 고침.
+        
+        @type  session_key: string
+        @param session_key: User Key
+        @type board_name: string
+        @param board_name : BBS Name
+        @type  no: number
+        @param no: Article Number
+        @rtype: boolean 
+        @return:
+            1. Fix 성공: True
+            2. Fix 실패:
+                1. 존재하지 않는 게시물번호: InvalidOperation Exception
+                2. 존재하지 않는 게시판: InvalidOperation Exception
+                3. 로그인되지 않은 유저: InvalidOperation Exception
+                4. 수정 권한이 없음: InvalidOperation Exception
+                5. 데이터베이스 오류: InternalError Exception
+                6. 기타 : 이 주석은 전부 뜯어고쳐야 함.
+        '''
+
+        session = model.Session()
+        user = self._get_user(session, session_key)
+        session.close()
+        # 시삽만 이 작업을 할 수 있다.
+        if user.is_sysop:
+            board_id = self._get_board_id(board_name)
+            return self._reply_count_fix(session_key, board_id, no)
         else:
             session.close()
             raise InvalidOperation("NO_PERMISSION")
