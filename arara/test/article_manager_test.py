@@ -243,27 +243,26 @@ class ArticleManagerTest(unittest.TestCase):
         # Delete one.
         server.article_manager.delete_(self.session_key_mikkang, u'board', article1_id)
         try:
-            # Destroy one. Must fail, because delete automatically destroy article.
             self.assertEqual(True, server.article_manager.destroy_article(self.session_key_sysop, u'board', article1_id))
-            self.fail()
+            self.fail('Destroy one. Must fail, because delete automatically destroy article...')
         except InvalidOperation:
             pass
-        # Can't destroy which do not exist.
+
         try:
             server.article_manager.destroy_article(self.session_key_sysop, u'board', 1241252)
-            self.fail()
+            self.fail("Can't destroy which do not exist.")
         except InvalidOperation:
             pass
-        # Can't destroy someone other than sysop
+        
         try:
             server.article_manager.destroy_article(self.session_key_mikkang, u'board', article2_id)
-            self.fail()
+            self.fail("Anyone other tha SYSOP can't do destroy article")
         except InvalidOperation:
             pass
-        # Can't destroy which already destroyed.
+
         try:
             server.article_manager.destroy_article(self.session_key_sysop, u"board", article1_id)
-            self.fail()
+            self.fail("Can't destroy which already destroyed.")
         except InvalidOperation:
             pass
         # TODO : Check whether it is marked as destroyed
