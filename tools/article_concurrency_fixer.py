@@ -21,14 +21,18 @@ MAXIMUM_LENGTH = 10
 
 def board_handle(session_key, board_name):
     print "Handling for board name [", board_name, "]"
+
     root_article_list = get_server().article_manager.article_list(session_key, board_name, 1, MAXIMUM_LENGTH)
     root_article_list_hit = root_article_list.hit
-    print "There are", len(root_article_list_hit), "articles."
-    for i in xrange(len(root_article_list_hit)):
-        get_server().article_manager.fix_reply_count(session_key, board_name, root_article_list_hit[i].id)
-        get_server().article_manager.destroy_article(session_key, board_name, root_article_list_hit[i].id)
-        if i % 10 == 0:
-            print i, "/", len(root_article_list_hit)
+    length = len(root_article_list_hit)
+
+    print "There are", length, "articles."
+
+    for idx, article in enumerate(root_article_list_hit):
+        get_server().article_manager.fix_article_concurrency(session_key, board_name, article.id)
+        if idx % 10 == 0:
+            print idx, "/", length
+
     print "Done for board name [", board_name, "]"
 
 def login():

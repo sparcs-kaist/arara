@@ -77,21 +77,6 @@ class ArticleManager(object):
         get_server().read_status_manager.mark_as_read_list(session_key, article_id_list)
         return ret
 
-    def _get_real_reply_count(self, article_thread):
-        # 주어진 글을 순회하며, 실제 reply count 가 되어야 하는 수를 구한다.
-        # article_thread 의 타입이 model.Article 이라는 점을 이용한다.
-        stack = []
-        stack.append(article_thread)
-        reply_count = 0
-        while stack:
-            art = stack.pop()
-            for child in art.children[::-1]:
-                if not child.deleted:
-                    reply_count += 1
-                stack.append(child)
-
-        return reply_count
-
     def _get_best_article(self, session_key, board_id, count, time_to_filter, best_type):
         session = model.Session()
         time_to_filter = datetime.datetime.fromtimestamp(time.time()-time_to_filter)
@@ -857,46 +842,60 @@ class ArticleManager(object):
         # 시삽만 이 작업을 할 수 있다.
         if user.is_sysop:
             board_id = self._get_board_id(board_name)
-            try:
-                self._destroy_article(board_id, no)
-            except InvalidOperation:
-                pass
+            self._destroy_article(board_id, no)
         else:
-            session.close()
             raise InvalidOperation("NO_PERMISSION")
         return True
 
-    def _reply_count_fix(self, session_key, board_id, no):
+    def _fix_article_concurrency(self, board_id, no):
         '''Internal use only.'''
         session = model.Session()
-        article = self._get_article(session, board_id, no)
-        if article.root == None:
-            article = session.query(model.Article).options(eagerload('children')).filter_by(id=no).one()
-            real_reply_count = self._get_real_reply_count(article)
+        article = session.query(model.Article).options(eagerload('children')).filter_by(id=no).one()
 
-            if article.reply_count != real_reply_count:
-                # 이런 글은 수정이 필요하다.
-                article.reply_count = real_reply_count
-                try:
-                    session.commit()
-                    session.close()
-                except InvalidRequestError:
-                    session.close()
-                    # 이 부분 어떻게 처리할 지 고민좀 ...
-                    raise InvalidOperation("Internal Error")
-                return True
-            else:
-                session.close()
-                return False
-        else:
+        if article.root != None:
             session.close()
             raise InvalidOperation("NOT_IMPLEMENTED")
 
+        last_reply_id   = article.id
+        last_reply_date = article.last_modified_date
+        reply_count     = 0
+        # 주어진 글을 순회하며, 실제 reply count, last_reply_id, last_reply_date 구한다.
+        stack = []
+        stack.append(article)
+        while stack:
+            art = stack.pop()
+            for child in art.children[::-1]:
+                if not child.deleted:
+                    reply_count += 1
+                    if last_reply_id < child.id:
+                        last_reply_id = child.id
+                    if last_reply_date < child.last_reply_date:
+                        last_reply_date = child.last_reply_date
+                stack.append(child)
+
+        try:
+            if article.reply_count != real_reply_count:
+                article.reply_count = real_reply_count
+            if (not article.destroyed) and article.deleted and (article.reply_count == 0):
+                article.destroyed = True
+            if article.last_reply_id != last_reply_id:
+                article.last_reply_id = last_reply_id
+            if article.last_reply_date != last_reply_date:
+                article.last_reply_date = last_reply_date
+
+            session.commit()
+            session.close()
+
+        except InvalidRequestError:
+            session.rollback()
+            session.close()
+            raise InvalidOperation("Internal Error")
+
     @require_login
     @log_method_call_important
-    def fix_reply_count(self, session_key, board_name, no):
+    def fix_article_concurrency(self, session_key, board_name, no):
         '''
-        주어진 글의 reply_count 가 올바른지 확인.
+        주어진 글의 concurrency 가 올바른지 확인.
         올바르지 않다면 이를 고침.
         
         @type  session_key: string
@@ -923,7 +922,7 @@ class ArticleManager(object):
         # 시삽만 이 작업을 할 수 있다.
         if user.is_sysop:
             board_id = self._get_board_id(board_name)
-            return self._reply_count_fix(session_key, board_id, no)
+            return self._fix_article_concurrency(board_id, no)
         else:
             session.close()
             raise InvalidOperation("NO_PERMISSION")

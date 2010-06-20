@@ -391,9 +391,9 @@ service ArticleManager {
                          3:id_t no)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    bool fix_reply_count(1:string session_key,
-                         2:string board_name,
-                         3:id_t no)
+    bool fix_article_concurrency(1:string session_key,
+                                 2:string board_name,
+                                 3:id_t no)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 }
