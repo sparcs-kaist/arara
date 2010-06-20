@@ -17,7 +17,7 @@ from arara_engine_connector import *
 LOGIN_ID = 'SYSOP'
 LOGIN_PW = 'SYSOP'
 
-MAXIMUM_LENGTH = 10
+MAXIMUM_LENGTH = 1048576
 
 def board_handle(session_key, board_name):
     print "Handling for board name [", board_name, "]"

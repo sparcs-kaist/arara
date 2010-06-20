@@ -874,8 +874,8 @@ class ArticleManager(object):
                 stack.append(child)
 
         try:
-            if article.reply_count != real_reply_count:
-                article.reply_count = real_reply_count
+            if article.reply_count != reply_count:
+                article.reply_count = reply_count
             if (not article.destroyed) and article.deleted and (article.reply_count == 0):
                 article.destroyed = True
             if article.last_reply_id != last_reply_id:
