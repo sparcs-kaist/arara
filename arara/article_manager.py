@@ -857,7 +857,10 @@ class ArticleManager(object):
         # 시삽만 이 작업을 할 수 있다.
         if user.is_sysop:
             board_id = self._get_board_id(board_name)
-            self._destroy_article(board_id, no)
+            try:
+                self._destroy_article(board_id, no)
+            except InvalidOperation:
+                pass
         else:
             session.close()
             raise InvalidOperation("NO_PERMISSION")
