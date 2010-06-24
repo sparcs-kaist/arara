@@ -1,9 +1,6 @@
 syntax: glob
 
-gen-rb/*
-gen-cpp/*
-gen-java/*
-gen-py/*
+gen-*/*
 log/*
 run/*
 *.pyc
