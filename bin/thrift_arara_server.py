@@ -107,7 +107,7 @@ def resolve_dependencies(base_server, instance, base_port):
 if __name__ == '__main__':
     logger = logging.getLogger('main')
     parser = optparse.OptionParser()
-    parser.add_option("-p", "--port=", dest="port", default=10000, type="int",
+    parser.add_option("-p", "--port=", dest="port", default=arara_settings.ARARA_SERVER_BASE_PORT, type="int",
                       help="The port to bind")
     options, args = parser.parse_args()
     
