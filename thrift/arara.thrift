@@ -366,6 +366,9 @@ service ArticleManager {
     list<Article> read(1:string session_key, 2:string board_name, 3:id_t no)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<Article> read_recent_article(1:string session_key, 2:string board_name)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     ArticleList article_list_below(1:string session_key,
                                    2:string board_name,
                                    3:id_t no,

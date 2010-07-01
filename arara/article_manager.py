@@ -498,6 +498,47 @@ class ArticleManager(object):
         session.close()
         return article_dict_list
 
+    def read_recent_article(self, session_key, board_name):
+        '''
+        DB로부터 가장 최근의 게시글 하나만을 읽어옴
+
+        Article Dictionary { no, read_status, title, content, author, date, hit, vote }
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type board_name: string
+        @param board_name : BBS Name
+        @rtype: dictionary
+        @return:
+            1. Read 성공: Article Dictionary
+            2. Read 실패:
+                1. 최근 게시물이 존재하지 않음: InvalidOperation Exception
+                2. 존재하지 않는 게시판: InvalidOperation Exception
+                3. 로그인되지 않은 유저: InvalidOperation Exception
+                4. 데이터베이스 오류: InternalError Exception 
+        '''
+        
+        board_id = self._get_board_id(board_name)
+        session = model.Session()
+        blacklisted_userid = self._get_blacklist_userid(session_key)
+
+        try:
+            article = session.query(model.Article).options(eagerload('children')).filter_by(board_id=board_id).order_by(model.Article.id.desc()).first()
+            if article == None:
+                raise InvalidOperation('ARTICLE_NOT_EXIST')
+            msg = get_server().read_status_manager.check_stat(session_key, article.id)
+            if msg == 'N':
+                article.hit += 1
+                session.commit()
+        except InvalidRequestError:
+            session.rollback()
+            session.close()
+            raise InvalidOperation('ARTICLE_NOT_EXIST')
+
+        article_dict_list = self._article_thread_to_list(article, session_key, blacklisted_userid)
+        session.close()
+        return article_dict_list
+
     def _article_list_below(self, session_key, board_name, no, page_length, order_by):
         '''Internal Use Only.'''
         board_id = self._get_board_id(board_name)
