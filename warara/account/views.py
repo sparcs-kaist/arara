@@ -84,8 +84,13 @@ def login(request):
     if request.POST.get('precheck', 0):
         return login_precheck(request)
 
-    username = request.POST['username']
-    password = request.POST['password']
+    # 가끔 username / password 를 아예 안 넣는 경우가 있다.
+    username = request.POST.get('username', None)
+    password = request.POST.get('password', None)
+    if username == None or password == None:
+        # XXX 2010.07.02. 사실 합당한 에러를 만들어야 하는데 ...
+        raise NotLoggedIn()
+
     # XXX 2010.05.15.
     # 경위는 알 수 없지만 current_page_url 이 넘어오지 않아서
     # current_page 값이 진짜로 0 이 되어버리는 사례가 있었다.
