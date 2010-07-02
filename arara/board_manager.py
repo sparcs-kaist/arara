@@ -11,7 +11,7 @@ from arara.server import get_server
 log_method_call = log_method_call_with_source('board_manager')
 log_method_call_important = log_method_call_with_source_important('board_manager')
 
-BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only', 'id')
+BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only', 'hide', 'id')
 
 class BoardManager(object):
     '''
@@ -165,6 +165,70 @@ class BoardManager(object):
             session.close()
             raise InvalidOperation('not read only board')
         board.read_only = False
+        session.commit()
+        session.close()
+        # 보드에 변경이 발생하므로 캐시 초기화
+        self.cache_board_list()
+
+    @require_login
+    @log_method_call_important
+    def hide_board(self, session_key, board_name):
+        '''
+        보드를 숨겨주는 함수
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type  board_name: string
+        @param board_name: Board Name
+        @rtype: boolean, string
+        @return:
+            1. 성공: True, 'OK'
+            2. 실패:
+                1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
+                2. 시샵이 아닌 경우: False, 'no permission'
+                3. 존재하지 않는 게시판: False, 'board does not exist'
+                4. 이미 숨겨져 있는 보드의 경우: False, 'already hidden'
+                5. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        '''
+        self._is_sysop(session_key)
+        session = model.Session()
+        board = self._get_board_from_session(session, board_name)
+        if board.hide:
+            session.close()
+            raise InvalidOperation('already hidden')
+        board.hide = True
+        session.commit()
+        session.close()
+        # 보드에 변경이 발생하므로 캐시 초기화
+        self.cache_board_list()
+
+    @require_login
+    @log_method_call_important
+    def return_hide_board(self, session_key, board_name):
+        '''
+        숨겨진 보드를 다시 보여주는 함수
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type  board_name: string
+        @param board_name: Board Name
+        @rtype: boolean, string
+        @return:
+            1. 성공: True, 'OK'
+            2. 실패:
+                1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
+                2. 시샵이 아닌 경우: False, 'no permission'
+                3. 존재하지 않는 게시판: False, 'board does not exist'
+                4. 숨겨져 있는 보드가 아닌 경우: False, 'not hidden board'
+                5. 데이터베이스 오류: False, 'DATABASE_ERROR'
+        '''
+        self._is_sysop(session_key)
+        session = model.Session()
+        board = self._get_board_from_session(session, board_name)
+        if not board.hide:
+            session.close()
+            raise InvalidOperation('not hidden board')
+        board.hide = False
         session.commit()
         session.close()
         # 보드에 변경이 발생하므로 캐시 초기화

@@ -90,6 +90,7 @@ class Board(object):
         self.board_description = smart_unicode(board_description)
         self.deleted = False
         self.read_only = False
+        self.hide = False
 
     def __repr__(self):
         return "<Board('%s', '%s')>" % (self.board_name, self.board_description)
@@ -240,6 +241,7 @@ board_table = Table('boards', metadata,
     Column('board_description', Unicode(300)),
     Column('deleted', Boolean),
     Column('read_only', Boolean),
+    Column('hide', Boolean),
     mysql_engine='InnoDB'
 )
 

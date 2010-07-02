@@ -226,6 +226,7 @@ struct Board {
     2: string board_name,
     3: string board_description,
     4: i32 id,
+    5: bool hide,
 }
 
 service BoardManager {
@@ -246,6 +247,12 @@ service BoardManager {
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void return_read_only_board(1:string session_key, 2:string board_name)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void hide_board(1:string session_key, 2:string board_name)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void return_hide_board(1:string session_key, 2:string board_name)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void delete_board(1:string session_key, 2:string board_name)

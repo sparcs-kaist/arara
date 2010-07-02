@@ -40,22 +40,21 @@ class BoardManagerTest(unittest.TestCase):
         server.board_manager.add_board(self.session_key_sysop, u'garbages', u'Garbages Board')
         board_list = server.board_manager.get_board_list()
         self.assertEqual(1, len(board_list))
-        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board', id=1)", repr(board_list[0]))
+        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board', hide=False, id=1)", repr(board_list[0]))
         # Add another board 'ToSysop'
         server.board_manager.add_board(self.session_key_sysop, u'ToSysop', u'The comments to SYSOP')
         board_list = server.board_manager.get_board_list()
         self.assertEqual(2, len(board_list))
-        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board', id=1)", repr(board_list[0]))
-        self.assertEqual("Board(read_only=False, board_name=u'ToSysop', board_description=u'The comments to SYSOP', id=2)", repr(board_list[1]))
+        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board', hide=False, id=1)", repr(board_list[0]))
+        self.assertEqual("Board(read_only=False, board_name=u'ToSysop', board_description=u'The comments to SYSOP', hide=False, id=2)", repr(board_list[1]))
         # Check if you can get each board
         garbages = server.board_manager.get_board(u'garbages')
-        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board', id=1)", repr(garbages))
+        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board', hide=False, id=1)", repr(garbages))
         tosysop = server.board_manager.get_board(u'ToSysop')
-        self.assertEqual("Board(read_only=False, board_name=u'ToSysop', board_description=u'The comments to SYSOP', id=2)", repr(tosysop))
+        self.assertEqual("Board(read_only=False, board_name=u'ToSysop', board_description=u'The comments to SYSOP', hide=False, id=2)", repr(tosysop))
         # Try to delete the board
         server.board_manager.delete_board(self.session_key_sysop, u'ToSysop')
         server.board_manager.delete_board(self.session_key_sysop, u'garbages')
-
 
     def testAbNormalAddAndRemoveOneBoard(self):
         # Add Existing Board
@@ -123,6 +122,49 @@ class BoardManagerTest(unittest.TestCase):
         except InvalidOperation:
             pass
         server.board_manager.return_read_only_board(self.session_key_sysop, u'garbages')
+
+    def testHideAndReturnHideBoard(self):
+        # Adding new board
+        server.board_manager.add_board(self.session_key_sysop, u'garbages', u'Garbages Board')
+        # Test 1. hide_board success?
+        server.board_manager.hide_board(self.session_key_sysop, u'garbages')
+        board_list = server.board_manager.get_board_list()
+        self.assertEqual(1, len(board_list))
+        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board', hide=True, id=1)", repr(board_list[0]))
+        # Test 2. can hide already hidden board?
+        try:
+            server.board_manager.hide_board(self.session_key_sysop, u'garbages')
+            self.fail("Must not hide already hidden board!")
+        except InvalidOperation:
+            pass
+
+        # Test 3. return_hide_board success?
+        server.board_manager.return_hide_board(self.session_key_sysop, u'garbages')
+        board_list = server.board_manager.get_board_list()
+        self.assertEqual(1, len(board_list))
+        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board', hide=False, id=1)", repr(board_list[0]))
+
+        # Test 4. can return_hide not hidden board?
+        try:
+            server.board_manager.return_hide_board(self.session_key_sysop, u'garbages')
+            self.fail("Must not return_hide not yet hidden board!")
+        except InvalidOperation:
+            pass
+
+        # Test 5. Anyone except sysop can do operate?
+        # 5-1. hide_board
+        try:
+            server.board_manager.hide_board(self.session_key, u'garbages')
+            self.fail("Someone who is not sysop was able to hide board.")
+        except InvalidOperation:
+            pass
+        # 5-2. return_hide_board
+        server.board_manager.hide_board(self.session_key_sysop, 'garbages')
+        try:
+            server.board_manager.return_hide_board(self.session_key, 'garbages')
+            self.fail("Someone who is not sysop was able to show board.")
+        except InvalidOperation:
+            pass
 
     def tearDown(self):
         arara.model.clear_test_database()
