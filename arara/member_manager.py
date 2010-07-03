@@ -35,15 +35,15 @@ class NotLoggedIn(Exception):
     pass
 
 USER_PUBLIC_KEYS = ['username', 'password', 'nickname', 'email',
-        'signature', 'self_introduction', 'default_language']
+        'signature', 'self_introduction', 'default_language', 'campus']
 
 USER_QUERY_WHITELIST = ('username', 'nickname', 'email',
-        'signature', 'self_introduction', 'last_login_ip', 'last_logout_time')
+        'signature', 'self_introduction', 'campus', 'last_login_ip', 'last_logout_time')
 USER_PUBLIC_WHITELIST= ('username', 'nickname', 'email', 'last_login_ip',
         'last_logout_time', 'signature', 'self_introduction',
-        'default_language', 'activated', 'widget', 'layout', 'id')
+        'default_language', 'campus', 'activated', 'widget', 'layout', 'id')
 USER_PUBLIC_MODIFIABLE_WHITELIST= ('nickname', 'signature',
-        'self_introduction', 'default_language', 'widget', 'layout')
+        'self_introduction', 'default_language', 'campus', 'widget', 'layout')
 USER_SEARCH_WHITELIST = ('username', 'nickname')
 
 class MemberManager(object):

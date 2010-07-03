@@ -20,7 +20,7 @@ SALT_SET = string.lowercase + string.uppercase + string.digits + './'
 
 class User(object):
     def __init__(self, username, password, nickname, email, signature,
-                 self_introduction, default_language):
+                 self_introduction, default_language, campus):
         self.username = smart_unicode(username)
         self.set_password(password)
         self.nickname = smart_unicode(nickname)
@@ -28,6 +28,7 @@ class User(object):
         self.signature = smart_unicode(signature)
         self.self_introduction = smart_unicode(self_introduction)
         self.default_language = smart_unicode(default_language)
+        self.campus = smart_unicode(campus)
         self.activated = False
         self.widget = 0
         self.layout = 0
@@ -217,6 +218,7 @@ users_table = Table('users', metadata,
     Column('signature', Unicode(1024)),
     Column('self_introduction', Unicode(1024)),
     Column('default_language', Unicode(5)),  # ko_KR, en_US
+    Column('campus', Unicode(15)),  # Null, Seoul, Daejeon
     Column('activated', Boolean),
     Column('widget', Integer),
     Column('layout', Integer),

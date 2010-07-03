@@ -76,7 +76,8 @@ struct UserRegistration {
     4: string email,
     5: string signature,
     6: string self_introduction,
-    7: string default_language
+    7: string default_language,
+    8: string campus,
 }
 
 struct UserInformation {
@@ -87,11 +88,12 @@ struct UserInformation {
     5 : double last_logout_time,
     6 : string signature,
     7 : string self_introduction,
-    8 : string default_language
-    9 : bool activated,
-    10: i32 widget,
-    11: i32 layout,
-    12: i32 id,
+    8 : string default_language,
+    9 : string campus,
+    10: bool activated,
+    11: i32 widget,
+    12: i32 layout,
+    13: i32 id,
 }
 
 struct UserPasswordInfo {
@@ -105,8 +107,9 @@ struct UserModification {
     2: string signature,
     3: string self_introduction,
     4: string default_language,
-    5: i32 widget,
-    6: i32 layout,
+    5: string campus,
+    6: i32 widget,
+    7: i32 layout,
 }
 
 struct PublicUserInformation {
@@ -117,6 +120,7 @@ struct PublicUserInformation {
     5: string last_login_ip,
     6: double last_logout_time,
     7: string email,
+	8: string campus,
 }
 
 struct SearchUserResult {
