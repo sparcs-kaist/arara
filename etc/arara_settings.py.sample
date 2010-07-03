@@ -31,7 +31,8 @@ SYSOP_REG_DIC = {'username' :u'SYSOP',
                  'signature':u'--\n아라 BBS 시삽 (SYStem OPerator',
 
                  'self_introduction':u'--\n아라 BBS 시삽 (SYStem OPerator',
-                 'default_language':u'ko_KR'}
+                 'default_language':u'ko_KR',
+                 'campus': u''}
 
 # K-Search Server Setting
 KSEARCH_API_SERVER_ADDRESS = 'http://nan.sparcs.org:9000/api'
