@@ -94,26 +94,26 @@ class ArticleManagerTest(unittest.TestCase):
         # Test 1. Board에 게시물이 하나도 없을 때 에러를 발생시키는가?
         try:
             server.article_manager.read_recent_article(self.session_key_mikkang, u'board')
-            self.fail()
+            self.fail("Get article from empty board!")
         except InvalidOperation:
             pass
 
         # Test 2. Board에 게시물이 여러 개 있을 때 과연 최근 게시물을 읽어 오는가?
         article_id1 = self._dummy_article_write(self.session_key_mikkang)
         article_id2 = self._dummy_article_write(self.session_key_mikkang)
+        recent_article = server.article_manager.read_recent_article(self.session_key_mikkang, u'board')
+        if recent_article[0].id != article_id2:
+            self.fail("Not recent article!")
+
         article_id3 = self._dummy_article_write(self.session_key_mikkang)
-
-        result = server.article_manager.read_recent_article(self.session_key_mikkang, u'board')
-
-        if result[0].id == article_id3:
-            pass
-        else:
-            self.fail()
+        more_recent_article = server.article_manager.read_recent_article(self.session_key_mikkang, u'board')
+        if more_recent_article[0].id != article_id3:
+            self.fail("Not recent article!")
 
         # Test 3. 존재하지 않는 보드에 접근할 때 에러를 발생시키는가?
         try:
             server.article_manager.read_recent_article(self.session_key_mikkang, u'ghost_board')
-            self.fail()
+            self.fail("Get article from non-exist board")
         except InvalidOperation:
             pass
             
