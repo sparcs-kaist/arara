@@ -38,7 +38,7 @@ class MessagingManagerTest(unittest.TestCase):
         user_reg_dict = {'username':u'mikkang', 'password':u'mikkang', 
                         'nickname':u'mikkang', 'email':u'mikkang@example.com',
                         'signature':u'mikkang', 'self_introduction':u'mikkang',
-                        'default_language':u'english' }
+                        'default_language':u'english', 'campus':u'Daejeon' }
         register_key = server.member_manager.register_(
                 UserRegistration(**user_reg_dict))
         server.member_manager.confirm(u'mikkang', unicode(register_key))
@@ -49,7 +49,7 @@ class MessagingManagerTest(unittest.TestCase):
         user_reg_dic = {'username':u'combacsa', 'password':u'combacsa',
                         'nickname':u'combacsa', 'email':u'combacsa@example.com',
                         'signature':u'combacsa', 'self_introduction':u'combacsa', 
-                        'default_language':u'english' }
+                        'default_language':u'english', 'campus':u'Seoul' }
         register_key = server.member_manager.register_(
                 UserRegistration(**user_reg_dic))
         server.member_manager.confirm(u'combacsa', unicode(register_key))
@@ -60,7 +60,7 @@ class MessagingManagerTest(unittest.TestCase):
         user_reg_dic = {'username':u'serialx', 'password':u'serialx',
                 'nickname':u'serialx', 'email':u'serialx@example.com', 
                 'signature':u'serialx', 'self_introduction':u'serialx', 
-                'default_language':u'english' }
+                'default_language':u'english', 'campus':u'' }
         register_key = server.member_manager.register_(
                 UserRegistration(**user_reg_dic))
         server.member_manager.confirm(u'serialx', unicode(register_key))
@@ -71,7 +71,7 @@ class MessagingManagerTest(unittest.TestCase):
         user_reg_dic = {'username':u'zzongaly', 'password':u'zzongaly', 
                 'nickname':u'dodo', 'email':u'zzongaly@example.com', 
                 'signature':u'mikkang friend', 'self_introduction':u'i am dodo', 
-                'default_language':u'english' }
+                'default_language':u'english', 'campus':u'' }
         register_key = server.member_manager.register_(
                 UserRegistration(**user_reg_dic))
         server.member_manager.confirm(u'zzongaly', unicode(register_key))

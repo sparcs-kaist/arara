@@ -44,7 +44,7 @@ class FileManagerTest(unittest.TestCase):
         user_reg_dict = {'username':u'mikkang', 'password':u'mikkang', 
                         'nickname':u'mikkang', 'email':u'mikkang@example.com',
                         'signature':u'mikkang', 'self_introduction':u'mikkang',
-                        'default_language':u'english' }
+                        'default_language':u'english', 'campus':u'Seoul' }
         register_key = server.member_manager.register_(
                 UserRegistration(**user_reg_dict))
         server.member_manager.confirm(u'mikkang', unicode(register_key))

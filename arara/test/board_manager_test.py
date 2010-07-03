@@ -26,7 +26,7 @@ class BoardManagerTest(unittest.TestCase):
         arara.server.server = arara.get_namespace()
         server = arara.get_namespace()
         # Register one user, mikkang
-        user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang@example.com', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english' }
+        user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang@example.com', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english', 'campus':u'seoul' }
         register_key = server.member_manager.register_(UserRegistration(**user_reg_dic))
         server.member_manager.confirm(u'mikkang', register_key)
         # Then let it logged on.
