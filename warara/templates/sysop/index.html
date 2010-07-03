@@ -21,7 +21,7 @@
         <input type="checkbox" name="{{board.board_name}}" value="{{board.board_name}}">
         <span>{{board.board_name}}</span>
         <span>{{board.board_description}}</span>
-	<span>{% if board.hide %}숨김{% endif %}</span><br />
+        <span>{% if board.hide %}숨김{% endif %}</span><br />
         {% endfor %}
         <input type="submit" name="remove"      value="삭제">
         <input type="submit" name="hide"        value="숨기기">
@@ -34,6 +34,13 @@
     <form method="post" action="/sysop/confirm_user/">
         <span>사용자 아이디</span><input type="text" name="confirm_username" id="confirm_username">
         <input type="submit" value="인증">
+    </form>
+</div>
+
+<div id="refresh_weather">
+    <h3>날씨 정보 갱신</h3>
+    <form method="post" action="/sysop/refresh_weather/">
+        <input type="submit" value="갱신" />
     </form>
 </div>
 {% endblock content %}

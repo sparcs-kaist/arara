@@ -5,4 +5,5 @@ urlpatterns = patterns('',
     (r'^add_board/$', 'warara.sysop.views.add_board'),
     (r'^modify_board/$', 'warara.sysop.views.modify_board'),
     (r'^confirm_user/$', 'warara.sysop.views.confirm_user'),
+    (r'^refresh_weather/$', 'warara.sysop.views.refresh_weather'),
 )
