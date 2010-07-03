@@ -34,16 +34,20 @@ class WrongPassword(Exception):
 class NotLoggedIn(Exception):
     pass
 
+# User Public Keys : 사용자 등록시 필요한 Parameter들이 들어있는 Dict의 형식을 결정. (arara.thrift에서는 UserRegistration)
 USER_PUBLIC_KEYS = ['username', 'password', 'nickname', 'email',
         'signature', 'self_introduction', 'default_language', 'campus']
-
+# User Query Whitelist : 사용자의 이름, 닉네임 등으로 사용자를 검색할 후 정보를 받을 Dict의 형식을 결정. (arara.thrift에서는 PublicUserInformation)
 USER_QUERY_WHITELIST = ('username', 'nickname', 'email',
         'signature', 'self_introduction', 'campus', 'last_login_ip', 'last_logout_time')
+# User Public Whitelist : 사용자에 대한 정보를 받을 Dict의 형식을 결정. USER_QUERY_WHITELIST와 달리 현재 로그인 된 회원의 정보를 반환하는 용도로 사용함. (arara.thrift에서는 UserInformation)
 USER_PUBLIC_WHITELIST= ('username', 'nickname', 'email', 'last_login_ip',
         'last_logout_time', 'signature', 'self_introduction',
         'default_language', 'campus', 'activated', 'widget', 'layout', 'id')
+# User Public Modifiable Whitelist : 사용자에 대한 정보 중 수정 가능한 것들의 Dict의 형식을 결정. (arara.thrift에서는 UserModification)
 USER_PUBLIC_MODIFIABLE_WHITELIST= ('nickname', 'signature',
         'self_introduction', 'default_language', 'campus', 'widget', 'layout')
+# User Search Whitelist : 사용자에 대한 검색 결과를 받을 Dict의 형식을 결정. (arara.thrift에서는 SearchUserResult)
 USER_SEARCH_WHITELIST = ('username', 'nickname')
 
 class MemberManager(object):
