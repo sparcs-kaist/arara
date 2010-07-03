@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
 
@@ -22,13 +23,33 @@ def add_board(request):
     return HttpResponseRedirect('/sysop/')
 
 @warara.wrap_error
-def remove_board(request):
+def modify_board(request):
+    '''
+    선택된 보드들을 삭제 / 숨김 / 숨김 해제한다.
+    '''
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
     board_list = server.board_manager.get_board_list()
+    # 어떤 명령을 주었는지 확인한다.
+    action = None
+    if request.POST.get('remove', None) != None:
+        action = 'remove'
+    elif request.POST.get('hide', None) != None:
+        action = 'hide'
+    elif request.POST.get('return_hide', None) != None:
+        action = 'return_hide'
+    else:
+        raise InvalidOperation("unknown_sysop_board_modification_command")
+    # 주어진 명령을 선택된 모든 보드에 대하여 시행한다.
     for board in board_list:
         if request.POST.get(board.board_name, None):
-            msg = server.board_manager.delete_board(sess, board.board_name)
+            if action == 'remove':
+                msg = server.board_manager.delete_board(sess, board.board_name)
+            elif action == 'hide':
+                msg = server.board_manager.hide_board(sess, board.board_name)
+            elif action == 'return_hide':
+                msg = server.board_manager.return_hide_board(sess, board.board_name)
+            # 그 밖의 경우는 위에서 필터링되므로 신경쓰지 않는다.
     return HttpResponseRedirect('/sysop/')
 
 @warara.wrap_error
@@ -36,4 +57,31 @@ def confirm_user(request):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
     msg = server.member_manager.backdoor_confirm(sess, request.POST['confirm_username'])
+    return HttpResponseRedirect('/sysop/')
+
+@warara.wrap_error
+def hide_board(request):
+    """
+    request 에 주어진 hide_board_name 의 보드를 숨긴다.
+    """
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+    board_list = server.board_manager.get_board_list()
+    for board in board_list:
+        if request.POST.get(board.board_name, None):
+            msg = server.board_manager.hide_board(sess, board.board_name)
+    return HttpResponseRedirect('/sysop/')
+
+@warara.wrap_error
+def return_hide_board(request):
+    """
+    request 에 주어진 hide_board_name 의 보드의 숨김을 해제한다.
+    """
+    # TODO: 나중에 관련 함수 이름 전체를 unhide 같은 것으로 바꾸자.
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+    board_list = server.board_manager.get_board_list()
+    for board in board_list:
+        if request.POST.get(board.board_name, None):
+            msg = server.board_manager.hide_board(sess, board.board_name)
     return HttpResponseRedirect('/sysop/')
