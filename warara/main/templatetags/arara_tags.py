@@ -4,6 +4,9 @@ from django import template
 from django.core.cache import cache
 register = template.Library()
 
+#CACHETIME_BOARD_LIST = 600
+CACHETIME_BOARD_LIST = 6
+
 @register.tag(name="get_board_list")
 def do_get_board_list(parser, token):
     return BoardListUpdateNode()
@@ -14,8 +17,10 @@ class BoardListUpdateNode(template.Node):
 
         board_list = cache.get('board_list')
         if not board_list:
-            board_list = server.board_manager.get_board_list()
-            cache.set('board_list', board_list, 600)
+            # hide 속성이 걸려 있지 않은 게시판만 표시한다.
+            # TODO: hide 된 보드도 모두 Web 상으로 보고 싶은 유저가 있을 수 있다!
+            board_list = filter(lambda x: not x.hide, server.board_manager.get_board_list())
+            cache.set('board_list', board_list, CACHETIME_BOARD_LIST)
         context["board_list"] = board_list
         return ""
 
