@@ -29,7 +29,7 @@
         {% ifequal message_list_type 'inbox'%}{{num_new_message}}{% trans " new message(s) /" %}{% endifequal %} {{num_message}}{% trans " message(s)" %}
     </span>
     <span class="selector">
-	    {% trans "한번에" %}
+        {% trans "한번에" %}
         <select name="page_length">
             {% for pli in page_length_list %}
             <option value="{{pli}}"{% ifequal pli page_length %} selected="selected"{%endifequal%}>{{pli}}</option>
@@ -90,7 +90,7 @@
 </div>
 
 <div id="message_page_move">
-	<span class="prev">
+    <span class="prev">
         {% if prev_page_group.mark %}
         <a href="/message/{{message_list_type}}?page_no={{first_page.no}}&page_length={{page_length}}">《 </a>
         <a name="prev_page_group" href="/message/{{message_list_type}}?page_no={{prev_page_group.no}}&page_length={{page_length}}">〈 </a>
@@ -123,7 +123,7 @@
     <input type="hidden" value="{{message_no_strlist}}" name="message_no_strlist">
     <input type="hidden" value=1 name="flag_del_enm" id="flag_del_enm">
     <input type="submit" class="small_btn" value="{% trans "delete" %}">
-	<a class="big_btn" href="/message/send/">{% trans "send" %}</a>
+    <a class="big_btn" href="/message/send/">{% trans "send" %}</a>
 </div>
 </form>
 {% endblock message_content %}

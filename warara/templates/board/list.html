@@ -39,13 +39,13 @@
             <tr rel="{{forloop.counter}}">
                 <td class="column cursor_col">{% ifnotequal article.read_status 'R' %}{{article.read_status}}{%endifnotequal%}</td>
                 <td class="column id_col" rel="{{article.id}}">{{article.id}}</td>
-		<td class="column title_col{%if article.deleted%} deleted{%endif%}">{% if logged_in %}<a href="/board/{{board_name}}/{{article.id}}/?page_no={{page_no}}">{{article.title|truncatechars:"60"}}</a> {%if article.reply_count%}[{{article.reply_count}}]{%endif%}{% else %}{{article.title|truncatechars:"60"}}{% if article.reply_count%} [{{article.reply_count}}]{% endif %}{% endif %}</td>
-		<td class="column author_col">
-			<span class="nickname">{{article.author_nickname|truncatechars:"8"}}<span class="hidden username">{{article.author_username}}</span></span>
-		</td>
+                <td class="column title_col{%if article.deleted%} deleted{%endif%}">{% if logged_in %}<a href="/board/{{board_name}}/{{article.id}}/?page_no={{page_no}}">{{article.title|truncatechars:"60"}}</a> {%if article.reply_count%}[{{article.reply_count}}]{%endif%}{% else %}{{article.title|truncatechars:"60"}}{% if article.reply_count%} [{{article.reply_count}}]{% endif %}{% endif %}</td>
+                <td class="column author_col">
+                        <span class="nickname">{{article.author_nickname|truncatechars:"8"}}<span class="hidden username">{{article.author_username}}</span></span>
+                </td>
                 <td class="column date_col">{{article.date|date:"Y/m/d"}}</td>
                 <td class="column vote_col">{{article.vote}}</td>
-		<td class="column hit_col">{{article.hit}}</td>
+                <td class="column hit_col">{{article.hit}}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -73,19 +73,19 @@
 {% if logged_in %}
 <div id="board_buttons" class="width_full">
     <div id="board_search">
-	<form name="board_search" method="GET" action="/board/{{board_name}}/search">
-	    {% for smi in search_method_list %}
-	        <span class="search_method">
-		    <a href="#" rel="{{smi.val}}" name="search_method_select"{%if smi.selected%} class="selected"{%endif%}>{{smi.text}}</a>
-		    <input type="hidden" value="{{smi.val}}"{%if smi.selected%} name="{{smi.val}}"{%endif%}></input>
-		</span>
-	    {% endfor %}
-	    <input type="text" name="search_word" class="small_form" id="board_search_content"></input>
-	    <input class="" type="submit" value="{% trans "search" %}" id="board_search_submit"></input>
-	</form>
+        <form name="board_search" method="GET" action="/board/{{board_name}}/search">
+            {% for smi in search_method_list %}
+                <span class="search_method">
+                    <a href="#" rel="{{smi.val}}" name="search_method_select"{%if smi.selected%} class="selected"{%endif%}>{{smi.text}}</a>
+                    <input type="hidden" value="{{smi.val}}"{%if smi.selected%} name="{{smi.val}}"{%endif%}></input>
+                </span>
+            {% endfor %}
+            <input type="text" name="search_word" class="small_form" id="board_search_content"></input>
+            <input class="" type="submit" value="{% trans "search" %}" id="board_search_submit"></input>
+        </form>
     </div>
     <div id="board_write" class="{% if board_dict.read_only %} hidden{% endif %}">
-	    <a href="/board/{{board_name}}/write/">{% trans "write" %}</a>
+        <a href="/board/{{board_name}}/write/">{% trans "write" %}</a>
     </div>
 </div>
 {%endif%}

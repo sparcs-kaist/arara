@@ -3,188 +3,188 @@
 {% load i18n %}
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
-	<script type="text/javascript" src="/media/thirdparty/jquery-latest.min.js"></script>
-	<script type="text/javascript" src="/media/thirdparty/jquery.history.js"></script>
-	<script type="text/javascript" src="/media/js/base.js"></script>
-	<script type="text/javascript" src="/media/thirdparty/thickbox/thickbox.js"></script>
-	{% block script %}{% endblock %}
-	<link rel="stylesheet" href="/media/style/reset-min.css"></link>
-	<link rel="stylesheet" href="/media/style/reset_base-min.css"></link>
-	<link rel="stylesheet" href="/media/style/base.css" />
-	<link rel="stylesheet" href="/media/thirdparty/thickbox/thickbox.css"></link>
-	{% block style %}{% endblock %}
-	<title>{% block title %}아라{% endblock %}</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
+        <script type="text/javascript" src="/media/thirdparty/jquery-latest.min.js"></script>
+        <script type="text/javascript" src="/media/thirdparty/jquery.history.js"></script>
+        <script type="text/javascript" src="/media/js/base.js"></script>
+        <script type="text/javascript" src="/media/thirdparty/thickbox/thickbox.js"></script>
+        {% block script %}{% endblock %}
+        <link rel="stylesheet" href="/media/style/reset-min.css"></link>
+        <link rel="stylesheet" href="/media/style/reset_base-min.css"></link>
+        <link rel="stylesheet" href="/media/style/base.css" />
+        <link rel="stylesheet" href="/media/thirdparty/thickbox/thickbox.css"></link>
+        {% block style %}{% endblock %}
+        <title>{% block title %}아라{% endblock %}</title>
     </head>
 
     <body>
-	<div id="wrapper">
-	    <div id="header_wrapper">
-		<div id="top_header_bg">
-			<div id="top_header">
-			    <ul id="link">
-				<li><a href="http://ara.kaist.ac.kr" title="웹아라">{% trans "웹아라" %}</a></li>
-				<li><a href="http://lkin.kaist.ac.kr" title="수강지식인">LKIN</a></li>
-					<!--<a href="http://events.kaist.ac.kr" title="">Events</a>-->
-				<li><a href="http://ftp.kaist.ac.kr" title="오픈소스 미러링 서비스 FTPKAIST 입니다.">FTPKAIST</a></li>
-				<li id="more_link_over">more&gt;</li>
-			    </ul>
-			    <ul id="more_link" style="display:none">
-				<li>Bar(<a href="telnet://bar.kaist.ac.kr" title="Bar Telnet BBS served by KaLi">T</a>/<a href="http://bar.kaist.ac.kr" title="Bar Web BBS served by KaLi">W</a>)</li>
-				<li><a href="http://kftp.kaist.ac.kr" title="한국과학기술원 FTP SITE: 한컴오피스, MS등의 필수 유틸리티가 공식적으로 배포되는곳.">KFtp</a></li>
-				<li><a href="http://voki.kaist.ac.kr" title="한국과학기술원 교육방속국 V.O.K.(Voice Of KAIST)">VOK</a></li>
-				<li><a href="https://portal.kaist.ac.kr" title="포탈시스템">포탈</a></li>
-				<li><a href="http://webmail.kaist.ac.kr" title="KAIST Webmail System">웹메일</a></li>
-				<li><a href="http://kaipa.kaist.ac.kr" title="수강신청시스템">Kaipa</a></li>
-				<li><a href="http://ict.kaist.ac.kr" title="정보통신팀">ICT</a></li>
-				<li><a href="http://kds.kaist.ac.kr" title="KAIST Dormitory System">KDS</a></li>
-				<li><a href="http://student.kaist.ac.kr" title="학부총학생회">총학</a></li>
-				<li><a href="http://welfare.kaist.ac.kr" title="학생복지위원회">학복위</a></li>
-				<li><a href="http://club.cyworld.com/2008KAISTJY" title="동아리연합회">동연</a></li>
-				<li><a href="http://dormi.kaist.ac.kr" title="생활관자치회">생활관자치회</a></li>
-				<li><a href="http://gsa.kaist.ac.kr" title="대학원총학생회">원총학</a></li>
-				<li><a href="http://elka.kaist.ac.kr" title="KAIST 공식 응원단 E.L.K.A.">ELKA</a></li>
-				<li><a href="http://kisa.kaist.ac.kr" title="KAIST International Student Association, KISA">KISA</a></li>
-				<li><a href="http://kaistwhatson.blogspot.com" title="KAIST Whats' on!">What's on</a></li>
-				<li><a href="http://www.ilovekaist.net" title="KAIST 동창회">동창회</a></li>
-				<li><a href="http://club.cyworld.com/rmskaist" title="식당모니터링위원회">식당모니터링위원회</a></li>
-				<li><a href="http://www.kaist.ac.kr" title="한국과학기술원 공식 홈페이지">KAIST</a></li>
-				<li id="less_link_over">&lt;less</li>
-			    </ul>
-			</div>
-		</div>
-		<div id="header">
-		    {% load arara_tags %}
-		    <h1><a href="/main/"><img class="iepngfix" src="/media/image/base/header/raw_ara_w_main_header_webara_title.png" alt="아라" /></a></h1>
-		    <img src="/media/image/beta.png" id="beta_png" alt="beta" class="iepngfix" /> 
-		    <form id="ksearch" action="http://ksearch.sparcs.org/search" method="get">
-			<div id="ksearch_bg_bottom">
-			    <div id="ksearch_logo" class="iepngfix"></div>
-			    <div class="ksearch">
-				<input type="text" class="q" id="q" name="q" />
-				<input type="hidden" class="realm" id="realm" name="realm" value="arara" />
-				<input type="image" class="ksearch_submit" src="/media/image/base/ksearch/ksearch_btn.png" />
-			    </div>
-			</div>
-		    </form>
-		</div>
-		<div id="bottom_header_bg"><div id="bottom_header_border">
-		    <div id="bottom_header">
-			<div id="subtitle_wrapper">
-			    <div id="subtitle_logo" class="iepngfix"></div>
-			</div>
-			<div id="top_menu_wrapper">
-			    <div id="subtitle_folding"></div>
-			    <div id="subtitle_round"></div>
-			    <div id="bbstitle_wrapper">
-			        <div id="bbstitle_dingbet"></div>
-				<div id="bbstitle"><span id="bbsname">{% block board_name %}main{% endblock board_name %}</span>
-				    <span class="board_description">{% block board_description %}환영합니다.{% endblock board_description %}</span>
-				</div>
-			    </div>
-			    <div id="top_menu">
-			        <div id="login_box"{%if logged_in%} class="hidden"{%endif%}>
-				    <form action="/account/login/" method="post" name="login">
-					<label for="login_username_field">{% trans "Username:" %}</label>
-				        <input type="text" id="login_username_field" name="username" />
-				        <label for="login_password_field">{% trans "Password:" %}</label>
-				        <input type="password" id="login_password_field" name="password" />
-				        <input type="hidden" name="current_page_url" value="/main/"></input>
-				        <input type="submit" class="small_btn" value="{% trans "Login" %}" />
-				    </form>
-				</div>
-				<a name="login" href="#" class="{% if logged_in %}hidden{% endif %}" id="login_toggle">{% trans "Login" %}</a>
-				<a name="register" href="/account/register/agreement" class="{% if logged_in %}hidden{% endif %}">{% trans "Register" %}</a>
-				<a name="logout" href="/account/logout/" class="{% if not logged_in %}hidden{% endif %}">{% trans "Logout" %}</a>
-				<a href="/message/inbox/" name="top_menu_message" class="{% if not logged_in %}hidden{%else%}{%if new_message%}new_message{%endif%}{% endif %}">{% trans "Message" %}</a>
-				<a name="blacklist" href="/blacklist/" class="{% if not logged_in %}hidden{% endif %}">{% trans "Blacklist" %}</a>
-				<a name="account" href="/account/" class="{% if not logged_in %}hidden{% endif %}">{% trans "Account" %}</a>
-				<a href="/main/help">{% trans "Help" %}</a>
-			    </div>
-			</div>
-		    </div>
-    		</div></div>
-	    </div>
-	    <div id="body_wrapper">
-		<div id="menu_wrapper">
-		    <div id="menu">
-			{% block menu %}
-			{% get_board_list %}
-			<ul>
-			    {% for board_info in board_list %}
+        <div id="wrapper">
+            <div id="header_wrapper">
+                <div id="top_header_bg">
+                    <div id="top_header">
+                        <ul id="link">
+                            <li><a href="http://ara.kaist.ac.kr" title="웹아라">{% trans "웹아라" %}</a></li>
+                            <li><a href="http://lkin.kaist.ac.kr" title="수강지식인">LKIN</a></li>
+                                    <!--<a href="http://events.kaist.ac.kr" title="">Events</a>-->
+                            <li><a href="http://ftp.kaist.ac.kr" title="오픈소스 미러링 서비스 FTPKAIST 입니다.">FTPKAIST</a></li>
+                            <li id="more_link_over">more&gt;</li>
+                        </ul>
+                        <ul id="more_link" style="display:none">
+                            <li>Bar(<a href="telnet://bar.kaist.ac.kr" title="Bar Telnet BBS served by KaLi">T</a>/<a href="http://bar.kaist.ac.kr" title="Bar Web BBS served by KaLi">W</a>)</li>
+                            <li><a href="http://kftp.kaist.ac.kr" title="한국과학기술원 FTP SITE: 한컴오피스, MS등의 필수 유틸리티가 공식적으로 배포되는곳.">KFtp</a></li>
+                            <li><a href="http://voki.kaist.ac.kr" title="한국과학기술원 교육방속국 V.O.K.(Voice Of KAIST)">VOK</a></li>
+                            <li><a href="https://portal.kaist.ac.kr" title="포탈시스템">포탈</a></li>
+                            <li><a href="http://webmail.kaist.ac.kr" title="KAIST Webmail System">웹메일</a></li>
+                            <li><a href="http://kaipa.kaist.ac.kr" title="수강신청시스템">Kaipa</a></li>
+                            <li><a href="http://ict.kaist.ac.kr" title="정보통신팀">ICT</a></li>
+                            <li><a href="http://kds.kaist.ac.kr" title="KAIST Dormitory System">KDS</a></li>
+                            <li><a href="http://student.kaist.ac.kr" title="학부총학생회">총학</a></li>
+                            <li><a href="http://welfare.kaist.ac.kr" title="학생복지위원회">학복위</a></li>
+                            <li><a href="http://club.cyworld.com/2008KAISTJY" title="동아리연합회">동연</a></li>
+                            <li><a href="http://dormi.kaist.ac.kr" title="생활관자치회">생활관자치회</a></li>
+                            <li><a href="http://gsa.kaist.ac.kr" title="대학원총학생회">원총학</a></li>
+                            <li><a href="http://elka.kaist.ac.kr" title="KAIST 공식 응원단 E.L.K.A.">ELKA</a></li>
+                            <li><a href="http://kisa.kaist.ac.kr" title="KAIST International Student Association, KISA">KISA</a></li>
+                            <li><a href="http://kaistwhatson.blogspot.com" title="KAIST Whats' on!">What's on</a></li>
+                            <li><a href="http://www.ilovekaist.net" title="KAIST 동창회">동창회</a></li>
+                            <li><a href="http://club.cyworld.com/rmskaist" title="식당모니터링위원회">식당모니터링위원회</a></li>
+                            <li><a href="http://www.kaist.ac.kr" title="한국과학기술원 공식 홈페이지">KAIST</a></li>
+                            <li id="less_link_over">&lt;less</li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="header">
+                    {% load arara_tags %}
+                    <h1><a href="/main/"><img class="iepngfix" src="/media/image/base/header/raw_ara_w_main_header_webara_title.png" alt="아라" /></a></h1>
+                    <img src="/media/image/beta.png" id="beta_png" alt="beta" class="iepngfix" /> 
+                    <form id="ksearch" action="http://ksearch.sparcs.org/search" method="get">
+                        <div id="ksearch_bg_bottom">
+                            <div id="ksearch_logo" class="iepngfix"></div>
+                            <div class="ksearch">
+                                <input type="text" class="q" id="q" name="q" />
+                                <input type="hidden" class="realm" id="realm" name="realm" value="arara" />
+                                <input type="image" class="ksearch_submit" src="/media/image/base/ksearch/ksearch_btn.png" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div id="bottom_header_bg"><div id="bottom_header_border">
+                    <div id="bottom_header">
+                        <div id="subtitle_wrapper">
+                            <div id="subtitle_logo" class="iepngfix"></div>
+                        </div>
+                        <div id="top_menu_wrapper">
+                            <div id="subtitle_folding"></div>
+                            <div id="subtitle_round"></div>
+                            <div id="bbstitle_wrapper">
+                                <div id="bbstitle_dingbet"></div>
+                                <div id="bbstitle"><span id="bbsname">{% block board_name %}main{% endblock board_name %}</span>
+                                    <span class="board_description">{% block board_description %}환영합니다.{% endblock board_description %}</span>
+                                </div>
+                            </div>
+                            <div id="top_menu">
+                                <div id="login_box"{%if logged_in%} class="hidden"{%endif%}>
+                                    <form action="/account/login/" method="post" name="login">
+                                        <label for="login_username_field">{% trans "Username:" %}</label>
+                                        <input type="text" id="login_username_field" name="username" />
+                                        <label for="login_password_field">{% trans "Password:" %}</label>
+                                        <input type="password" id="login_password_field" name="password" />
+                                        <input type="hidden" name="current_page_url" value="/main/"></input>
+                                        <input type="submit" class="small_btn" value="{% trans "Login" %}" />
+                                    </form>
+                                </div>
+                                <a name="login" href="#" class="{% if logged_in %}hidden{% endif %}" id="login_toggle">{% trans "Login" %}</a>
+                                <a name="register" href="/account/register/agreement" class="{% if logged_in %}hidden{% endif %}">{% trans "Register" %}</a>
+                                <a name="logout" href="/account/logout/" class="{% if not logged_in %}hidden{% endif %}">{% trans "Logout" %}</a>
+                                <a href="/message/inbox/" name="top_menu_message" class="{% if not logged_in %}hidden{%else%}{%if new_message%}new_message{%endif%}{% endif %}">{% trans "Message" %}</a>
+                                <a name="blacklist" href="/blacklist/" class="{% if not logged_in %}hidden{% endif %}">{% trans "Blacklist" %}</a>
+                                <a name="account" href="/account/" class="{% if not logged_in %}hidden{% endif %}">{% trans "Account" %}</a>
+                                <a href="/main/help">{% trans "Help" %}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div></div>
+            </div>
+            <div id="body_wrapper">
+                <div id="menu_wrapper">
+                    <div id="menu">
+                        {% block menu %}
+                        {% get_board_list %}
+                        <ul>
+                            {% for board_info in board_list %}
                             <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_name}}</a></li>
-			    {% endfor %}
-			</ul>
-			{% endblock %}
-		    </div>
-		</div>
+                            {% endfor %}
+                        </ul>
+                        {% endblock %}
+                    </div>
+                </div>
 
-		<div id="content_wrapper">
-		    <div id="content">
-			{% block content %}{% endblock %}
-		    </div>
-		</div>
+                <div id="content_wrapper">
+                    <div id="content">
+                        {% block content %}{% endblock %}
+                    </div>
+                </div>
 
-		<div id="widget">
-		</div>
-	    </div>
+                <div id="widget">
+                </div>
+            </div>
 
-	    <div id="footer_wrapper">
-		<div id="footer">
-			<span id="copyright_text">{% trans "All copyrights reserved by " %}</span>
-			<a href="http://sparcs.kaist.ac.kr"><img width="136" height="36" src="/media/image/sparcs.png" alt="SPARCS" /></a>
-		</div>
-	    </div>
+            <div id="footer_wrapper">
+                <div id="footer">
+                    <span id="copyright_text">{% trans "All copyrights reserved by " %}</span>
+                    <a href="http://sparcs.kaist.ac.kr"><img width="136" height="36" src="/media/image/sparcs.png" alt="SPARCS" /></a>
+                </div>
+            </div>
 
-	    <div id="user_popup">
-		<ul>
-		    <li id="user_popup_username"></li>
-			<li class="user_popup_function{% if not logged_in %} hidden{% endif %}"><a id="user_popup_send_message" class="thickbox" href="#TB_inline?&amp;width=490&amp;height=565&amp;inlineId=message_popup&amp;modal=true">{% trans "Send Message" %}</a></li>
-			<li class="user_popup_function"><a id="user_popup_user_information" class="thickbox" href="#TB_inline?height=size&amp;width=size&amp;inlineId=user_information_popup&amp;modal=true">{% trans "User Information" %}</a></li>
-		    <li class="user_popup_function{% if not logged_in %} hidden{% endif %}"><a id="user_popup_add_blacklist" href="#">{% trans "Add Blacklist" %}</a></li>
-		</ul>
-	    </div>
-	    
-	    <div id="user_information_popup">
-		    <div id="u_info_pop_head">{% trans "Member Information" %}</div>
-		    <div id="user_information_popup_content"></div>
-		    <input type="button" id="u_info_send_message" value="{% trans "send message" %}" />
-		    <input type="button" id="u_info_add_blacklist" value="{% trans "add blacklist" %}" />
-		    <input type="button" id="user_information_close" value="{% trans "close" %}" />
-	    </div>
-	    
-	    <div id="message_popup">
-			<div id="message_popup_head">
-				<span class="main_head">
-					{% trans "send a message" %}
-				</span>
-				<span class="sub_head">
-					{% trans "send a message" %}
-				</span>
-			</div>
-			<div id="message_popup_content" class="message_content">
-				<form action="/message/send/" method="post">
-					<div id="message_send_receiver">
-						<div class="sendto">{% trans "send to : " %}</div>
-						<div class="doublemarginshet">
-						<input type="text" id="message_receiver_field" name="receiver" value="{{default_receiver}}"></input>
-						</div>
-					</div>
-					<div id="message_send_text">
-						<textarea id="message_text_field" name="text">{{default_text}}</textarea>
-					</div>
-					<div id="message_send_buttons">
-						<span class="message_send_submit">
-							<input type="submit" name="submit" class="message_send_submit big_btn" value="{% trans "send" %}" ></input>
-						</span>
-						<span class="message_send_cancel">
-							<input type="button" name="cancel" value="{% trans "cancel" %}" class="small_btn"></input>
-						</span>
-					</div>
-				</form>
-			</div>
-	    </div>
-	</div>
+            <div id="user_popup">
+                <ul>
+                    <li id="user_popup_username"></li>
+                        <li class="user_popup_function{% if not logged_in %} hidden{% endif %}"><a id="user_popup_send_message" class="thickbox" href="#TB_inline?&amp;width=490&amp;height=565&amp;inlineId=message_popup&amp;modal=true">{% trans "Send Message" %}</a></li>
+                        <li class="user_popup_function"><a id="user_popup_user_information" class="thickbox" href="#TB_inline?height=size&amp;width=size&amp;inlineId=user_information_popup&amp;modal=true">{% trans "User Information" %}</a></li>
+                    <li class="user_popup_function{% if not logged_in %} hidden{% endif %}"><a id="user_popup_add_blacklist" href="#">{% trans "Add Blacklist" %}</a></li>
+                </ul>
+            </div>
+            
+            <div id="user_information_popup">
+                <div id="u_info_pop_head">{% trans "Member Information" %}</div>
+                <div id="user_information_popup_content"></div>
+                <input type="button" id="u_info_send_message" value="{% trans "send message" %}" />
+                <input type="button" id="u_info_add_blacklist" value="{% trans "add blacklist" %}" />
+                <input type="button" id="user_information_close" value="{% trans "close" %}" />
+            </div>
+            
+            <div id="message_popup">
+                <div id="message_popup_head">
+                    <span class="main_head">
+                        {% trans "send a message" %}
+                    </span>
+                    <span class="sub_head">
+                        {% trans "send a message" %}
+                    </span>
+                </div>
+                <div id="message_popup_content" class="message_content">
+                    <form action="/message/send/" method="post">
+                        <div id="message_send_receiver">
+                            <div class="sendto">{% trans "send to : " %}</div>
+                            <div class="doublemarginshet">
+                                <input type="text" id="message_receiver_field" name="receiver" value="{{default_receiver}}"></input>
+                            </div>
+                        </div>
+                        <div id="message_send_text">
+                            <textarea id="message_text_field" name="text">{{default_text}}</textarea>
+                        </div>
+                        <div id="message_send_buttons">
+                            <span class="message_send_submit">
+                                <input type="submit" name="submit" class="message_send_submit big_btn" value="{% trans "send" %}" ></input>
+                            </span>
+                            <span class="message_send_cancel">
+                                <input type="button" name="cancel" value="{% trans "cancel" %}" class="small_btn"></input>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         <script type="text/javascript">
         var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
         document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));

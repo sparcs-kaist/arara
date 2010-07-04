@@ -13,53 +13,53 @@
 {% block myaccount_content %}
 {% load i18n %}
     <div id="myaccount_head_content" class="account_content">
-	<div class="account_head_block">
-		<div class="account_head">{% trans "MY ACCOUNT" %}</div>
-	    <div class="account_administer">
-		<span id="contempo_acc_admin"><a href="/account/">{% trans "My Account" %}</a></span><span>|</span>
-		<span><a href="/account/account_modify/">{% trans "Account Modify" %}</a></span><span>|</span>
+        <div class="account_head_block">
+            <div class="account_head">{% trans "MY ACCOUNT" %}</div>
+            <div class="account_administer">
+            <span id="contempo_acc_admin"><a href="/account/">{% trans "My Account" %}</a></span><span>|</span>
+            <span><a href="/account/account_modify/">{% trans "Account Modify" %}</a></span><span>|</span>
 
-		<span><a href="/account/password_modify/">{% trans "Password Modify" %}</a></span><span>|</span>
+            <span><a href="/account/password_modify/">{% trans "Password Modify" %}</a></span><span>|</span>
 
-		<span><a href="/account/account_remove/">{% trans "Account Remove" %}</a></span>
-	    </div>
-	</div>
-	<div id="account_information_content">
-	    <div id="myaccount">
-		<div class="acc_subtitle"><div class="acc_subtitle_name">{% trans "My information" %}</div></div>
-		<div>
-		    <span class="my_acc_info_name">{% trans "ID" %}</span>
-		    <span class="my_acc_info_content">{{username}}</span>
-		</div>
-		<div>
-		    <span class="my_acc_info_name">{% trans "Nickname" %}</span>
-		    <span class="my_acc_info_content">{{nickname}}</span>
-		</div>
-	    </div>
-	    <div id="mysetting">
-	        <div class="acc_subtitle"><div class="acc_subtitle_name">{% trans "My ARA setting" %}</div></div>
-	        <div>
-	    	    <span class="my_acc_info_name">{% trans "Signature" %}</span>
-		    <span class="my_acc_info_content">{{signature|linebreaksbr}}</span>
-		</div>
-		<div>
-		    <span class="my_acc_info_name">{% trans "Introduction" %}</span>
-		    <span class="my_acc_info_content">{{self_introduction|linebreaksbr}}</span>
-		</div>
-		<div>
-		    <span class="my_acc_info_name">{% trans "Language" %}</span>
-		    <span class="my_acc_info_content">{{default_language}}</span>
-		</div>
-	        <div>
-		    <span class="my_acc_info_name">{% trans "Last login IP" %}</span>
-		    <span class="my_acc_info_content">{{last_login_ip}}</span>
-		</div>
-		<div>
-		    <span class="my_acc_info_name">{% trans "Last logout time" %}</span>
-		    <span class="my_acc_info_content">{{last_logout_time}}</span>
-		</div>
-	    </div>
-	</div>
+            <span><a href="/account/account_remove/">{% trans "Account Remove" %}</a></span>
+            </div>
+        </div>
+        <div id="account_information_content">
+            <div id="myaccount">
+                <div class="acc_subtitle"><div class="acc_subtitle_name">{% trans "My information" %}</div></div>
+                <div>
+                    <span class="my_acc_info_name">{% trans "ID" %}</span>
+                    <span class="my_acc_info_content">{{username}}</span>
+                </div>
+                <div>
+                    <span class="my_acc_info_name">{% trans "Nickname" %}</span>
+                    <span class="my_acc_info_content">{{nickname}}</span>
+                </div>
+            </div>
+            <div id="mysetting">
+                <div class="acc_subtitle"><div class="acc_subtitle_name">{% trans "My ARA setting" %}</div></div>
+                <div>
+                    <span class="my_acc_info_name">{% trans "Signature" %}</span>
+                    <span class="my_acc_info_content">{{signature|linebreaksbr}}</span>
+                </div>
+                <div>
+                    <span class="my_acc_info_name">{% trans "Introduction" %}</span>
+                    <span class="my_acc_info_content">{{self_introduction|linebreaksbr}}</span>
+                </div>
+                <div>
+                    <span class="my_acc_info_name">{% trans "Language" %}</span>
+                    <span class="my_acc_info_content">{{default_language}}</span>
+                </div>
+                    <div>
+                    <span class="my_acc_info_name">{% trans "Last login IP" %}</span>
+                    <span class="my_acc_info_content">{{last_login_ip}}</span>
+                </div>
+                <div>
+                    <span class="my_acc_info_name">{% trans "Last logout time" %}</span>
+                    <span class="my_acc_info_content">{{last_logout_time}}</span>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 </div>

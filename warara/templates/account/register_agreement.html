@@ -8,12 +8,12 @@
 {% load i18n %}
 <div id="account_content">
     <div class="account_head_block">
-	<div class="account_head">{% trans "REGISTRATION AGREEMENT" %}</div>
-	<div class="register_process">
-	    <span id="contempo_process">{% trans "Step 1 : Regisgtration agreement" %}</span>
-	    <span>|</span>
-	    <span>{% trans "Step 2 : Account register" %}</span>
-	</div>
+        <div class="account_head">{% trans "REGISTRATION AGREEMENT" %}</div>
+        <div class="register_process">
+            <span id="contempo_process">{% trans "Step 1 : Regisgtration agreement" %}</span>
+            <span>|</span>
+            <span>{% trans "Step 2 : Account register" %}</span>
+        </div>
     </div>
     <div id="agreement_subtitle_bottom"><div id="agreement_sub_title">{% trans "User Agreement" %}</div></div>
     <div id="agreement_content">
@@ -31,12 +31,12 @@
 5. 아라 사용중 발생하는 문의는 아라 시삽(변규홍, combacsa@sparcs.kaist.ac.kr / 010-5231-7494)에게 하시면 됩니다. ToSysop 보드에 글을 올리시면 더 좋습니다.
 
 6. 본 약관은 향후 변경될 수 있습니다.
-	</textarea>
-	<div>{% trans "Want you create an account, you should check Agree." %}</div>
+        </textarea>
+        <div>{% trans "Want you create an account, you should check Agree." %}</div>
     </div>
     <div id="register_agree_buttons">
-	    <span id="register_agree"><input type="button" value="{% trans "agree" %}" onClick="location.href='/account/register/'" /></span>
-	    <span id="register_disagree"><input type="button" value="{% trans "disagree" %}" onClick="location.href='/main/'" /></span>
+        <span id="register_agree"><input type="button" value="{% trans "agree" %}" onClick="location.href='/account/register/'" /></span>
+        <span id="register_disagree"><input type="button" value="{% trans "disagree" %}" onClick="location.href='/main/'" /></span>
     </div>
 </div>
 {% endblock %}

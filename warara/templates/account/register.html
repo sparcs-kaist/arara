@@ -10,68 +10,68 @@
 {% load i18n %}
 <div id="account_content" class="account_content">
     <div class="account_head_block">
-	<div class="account_head">{% trans "USER REGISTRATION" %}</div>
-	<div class="register_process">
-	    <span>{% trans "Step 1 : Regisgtration agreement" %}</span>
-	    <span>|</span>
-	    <span id="contempo_process">{% trans "Step 2 : Account register" %}</span>
-	</div>
+        <div class="account_head">{% trans "USER REGISTRATION" %}</div>
+        <div class="register_process">
+            <span>{% trans "Step 1 : Regisgtration agreement" %}</span>
+            <span>|</span>
+            <span id="contempo_process">{% trans "Step 2 : Account register" %}</span>
+        </div>
     </div>
     <form action="/account/register/" method="post" name="form" id="account_information_content">
-	<span id="account_user_content">
-	    <span id="information">
-		<div class="acc_subtitle"><div class="acc_subtitle_name">{% trans "User information" %}</div></div>
-	    	<div>
-	            <label for="id">{% trans "ID" %}<span class="feedback"></span></label>
-	            <input name="id" id="id" type="text" class="required_field" />
-	    	</div>
-	    	<div>
-	            <label for="nickname">{% trans "Nickname" %}<span class="feedback"></span></label>
-	            <input name="nickname" id="nickname" type="text" class="required_field" />
-	    	</div>
-	    	<div>
-	            <label for="email">{% trans "E-mail address" %}<span class="feedback"></span></label>
-	            <input name="email" id="email" type="text" class="required_field" />
-	            <br />
-	            <em class="required">{% trans "(We will send you user registration confirmation to here)" %}</em>
-	    	</div>
-	    </span>
-	    <span id="password_fieldset">
-	    	<div class="acc_subtitle" id="password_field_input"><div class="acc_subtitle_name">{% trans "Password" %}</div></div>
-	        <div>
-		    <label for="password_field">{% trans "Password" %}<span class="feedback"></span></label>
-		    <input name="password" id="password_field" type="password" class="required_field" />
-	        </div>
-	        <div>
-		    <label for="re_password_field">{% trans "Re-enter password" %}<span class="feedback"></span></label>
-		    <input name="re_password" id="re_password_field" type="password" class="required_field" />
-	            <em class="required"></em>
-	        </div>
-	    </span>
-	    <span id="setting">
-	    	<div class="acc_subtitle"><div class="acc_subtitle_name">{% trans "ARA Setting" %}</div></div>
-	    	<div>
-	            <label for="sig">{% trans "Signature" %}</label>
-	            <textarea name="sig" id="sig" cols="50" rows="10"></textarea>
-	    	</div>
-	    	<div>
-	            <label for="introduce">{% trans "Introduction" %}</label>
-	            <textarea name="introduce" id="introduce" cols="50" rows="10"></textarea>
-	    	</div>
-	    	<div>
-	            <label for="language">{% trans "Language" %}</label>
-	            <select name="language" id="laguage" />
-		    <option value="eng">English</option>
-		    <option value="kor">한국어</option>
-	            </select>
-	    	</div>
-	    </span>
+        <span id="account_user_content">
+            <span id="information">
+                <div class="acc_subtitle"><div class="acc_subtitle_name">{% trans "User information" %}</div></div>
+                <div>
+                    <label for="id">{% trans "ID" %}<span class="feedback"></span></label>
+                    <input name="id" id="id" type="text" class="required_field" />
+                </div>
+                <div>
+                    <label for="nickname">{% trans "Nickname" %}<span class="feedback"></span></label>
+                    <input name="nickname" id="nickname" type="text" class="required_field" />
+                </div>
+                <div>
+                    <label for="email">{% trans "E-mail address" %}<span class="feedback"></span></label>
+                    <input name="email" id="email" type="text" class="required_field" />
+                    <br />
+                    <em class="required">{% trans "(We will send you user registration confirmation to here)" %}</em>
+                </div>
+            </span>
+            <span id="password_fieldset">
+                <div class="acc_subtitle" id="password_field_input"><div class="acc_subtitle_name">{% trans "Password" %}</div></div>
+                <div>
+                    <label for="password_field">{% trans "Password" %}<span class="feedback"></span></label>
+                    <input name="password" id="password_field" type="password" class="required_field" />
+                </div>
+                <div>
+                    <label for="re_password_field">{% trans "Re-enter password" %}<span class="feedback"></span></label>
+                    <input name="re_password" id="re_password_field" type="password" class="required_field" />
+                    <em class="required"></em>
+                </div>
+            </span>
+            <span id="setting">
+                <div class="acc_subtitle"><div class="acc_subtitle_name">{% trans "ARA Setting" %}</div></div>
+                <div>
+                    <label for="sig">{% trans "Signature" %}</label>
+                    <textarea name="sig" id="sig" cols="50" rows="10"></textarea>
+                </div>
+                <div>
+                    <label for="introduce">{% trans "Introduction" %}</label>
+                    <textarea name="introduce" id="introduce" cols="50" rows="10"></textarea>
+                </div>
+                <div>
+                    <label for="language">{% trans "Language" %}</label>
+                    <select name="language" id="laguage" />
+                        <option value="eng">English</option>
+                        <option value="kor">한국어</option>
+                    </select>
+                </div>
+            </span>
         </span>
-	<div id="register_buttons">
-	<label for="register_submit"><span class="feedback" id="regist_btn_feedback"></span></label>
-	<span id="register_submit"><input value="{% trans "Done" %}" name="done" class="submit" type="submit" /></span>
-	<span id="register_cancel"><input value="{% trans "Cancel" %}" name="cancel" type="button" onClick="location.href='/main/'" /></span>
-	</div>
+        <div id="register_buttons">
+            <label for="register_submit"><span class="feedback" id="regist_btn_feedback"></span></label>
+            <span id="register_submit"><input value="{% trans "Done" %}" name="done" class="submit" type="submit" /></span>
+            <span id="register_cancel"><input value="{% trans "Cancel" %}" name="cancel" type="button" onClick="location.href='/main/'" /></span>
+        </div>
     </form>
 </div>
 {% endblock %}

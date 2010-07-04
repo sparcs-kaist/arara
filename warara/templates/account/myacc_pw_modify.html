@@ -12,38 +12,38 @@
 {% load i18n %}
 <div id="myacc_pw_modify_content" class="account_content">
     <div class="account_head_block">
-	<div class="account_head">{% trans "MY PASSWORD MODIFY" %}</div>
-	<div class="account_administer">
-	    <span><a href="/account/">{% trans "My Account" %}</a></span><span>|</span>
-	    <span><a href="/account/account_modify/">{% trans "Account Modify" %}</a></span><span>|</span>
+        <div class="account_head">{% trans "MY PASSWORD MODIFY" %}</div>
+        <div class="account_administer">
+            <span><a href="/account/">{% trans "My Account" %}</a></span><span>|</span>
+            <span><a href="/account/account_modify/">{% trans "Account Modify" %}</a></span><span>|</span>
 
-	    <span id="contempo_acc_admin"><a rel="password_modify" href="/account/password_modify/">{% trans "Password Modify" %}</a></span><span>|</span>
-	    <span><a href="/account/account_remove/">{% trans "Account Remove" %}</a></span>
-	</div>
+            <span id="contempo_acc_admin"><a rel="password_modify" href="/account/password_modify/">{% trans "Password Modify" %}</a></span><span>|</span>
+            <span><a href="/account/account_remove/">{% trans "Account Remove" %}</a></span>
+        </div>
     </div>
     <form action="/account/password_modify/" method="post" id="account_information_content">
-	<span id="account_user_content">
-	    <div id="mypassword_fieldset">
-	    	<div class="acc_subtitle"><div class="acc_subtitle_name">{% trans "Password" %}</div></div>
-		    <div>
-			<label for="last_password_field">{% trans "Current password" %}<span class="feedback"></span></label>
-			<input name="last_password" id="last_password_field" type="password" class="required_field" />
-		    </div>
-		    <div>
-			<label for="password_field">{% trans "New password" %}<span class="feedback"></span></label>
-			<input name="password" id="password_field" type="password" class="required_field" />
-		    </div>
-		    <div>
-			<label for="re_password_field">{% trans "Re-enter new password" %}<span class="feedback"></span></label>
-			<input name="re_password" id="re_password_field" type="password" class="required_field" />
-		    </div>
-	    	</div>
-	</span>
-	<div id="register_buttons">
-	<label for="register_submit"><span class="feedback" id="regist_btn_feedback"></span></label>
-	<span id="register_submit"><input value="{% trans "Done" %}" name="done" class="submit" type="submit" /></span>
-	<span id="register_cancel"><input value="{% trans "Cancel" %}" name="cancel" type="button" onClick="location.href='/account/'" /></span>
-	</div>
+        <span id="account_user_content">
+            <div id="mypassword_fieldset">
+                <div class="acc_subtitle"><div class="acc_subtitle_name">{% trans "Password" %}</div></div>
+                <div>
+                    <label for="last_password_field">{% trans "Current password" %}<span class="feedback"></span></label>
+                    <input name="last_password" id="last_password_field" type="password" class="required_field" />
+                </div>
+                <div>
+                    <label for="password_field">{% trans "New password" %}<span class="feedback"></span></label>
+                    <input name="password" id="password_field" type="password" class="required_field" />
+                </div>
+                <div>
+                    <label for="re_password_field">{% trans "Re-enter new password" %}<span class="feedback"></span></label>
+                    <input name="re_password" id="re_password_field" type="password" class="required_field" />
+                </div>
+            </div>
+        </span>
+        <div id="register_buttons">
+            <label for="register_submit"><span class="feedback" id="regist_btn_feedback"></span></label>
+            <span id="register_submit"><input value="{% trans "Done" %}" name="done" class="submit" type="submit" /></span>
+            <span id="register_cancel"><input value="{% trans "Cancel" %}" name="cancel" type="button" onClick="location.href='/account/'" /></span>
+        </div>
     </form>
 </div>
 {% endblock %}
