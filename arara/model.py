@@ -434,11 +434,6 @@ mapper(Blacklist, blacklist_table, properties={
                                     viewonly=True)),
 })
 
-from etc.arara_settings import DB_CONNECTION_STRING
-CONNECTION_STRING = DB_CONNECTION_STRING
-#TEST_DATABASE_FILENAME = 'test.db'
-#CONNECTION_STRING = 'sqlite:///%s' % TEST_DATABASE_FILENAME
-
 engine = None
 pool = None
 
@@ -446,17 +441,43 @@ def get_engine():
     '''Factory method to create database connection.'''
     global engine
     global pool
-    if not engine:
-        from sqlalchemy import create_engine
-        if CONNECTION_STRING.startswith('mysql'):
-            engine = create_engine(CONNECTION_STRING, encoding='utf-8',
-                                convert_unicode=True, assert_unicode=False,
-                                pool_size=300, max_overflow=10, pool_recycle=5, 
-                                echo=False, echo_pool=False)  
-            # (pipoket) Note: To see what`s happing to the pool, turn on echo_pool above.
-        else:
-            engine = create_engine(CONNECTION_STRING, encoding='utf-8',
-                                convert_unicode=True, assert_unicode=None)
+    if engine:
+        return engine
+
+    from etc import arara_settings
+    CONNECTION_STRING = None
+    SQLALCHEMY_KWARGS = None
+    # creating DB Connection String
+    if arara_settings.ARARA_DBTYPE == 'mysql':
+        CONNECTION_STRING = 'mysql://%s:%s@%s/%s?charset=utf8&use_unicode=1' % \
+            (arara_settings.MYSQL_ID,
+             arara_settings.MYSQL_PASSWD,
+             arara_settings.MYSQL_DBHOST,
+             arara_setttings.MYSQL_DBNAME)
+        SQLALCHEMY_KWARGS = {'encoding': 'utf-8',
+                             'convert_unicode': True,
+                             'assert_unicode': False,
+                             'pool_size': 300,
+                             'max_overflow': 10,
+                             'pool_recycle': 5,
+                             'echo': False,
+                             'echo_pool': False}
+        # (pipoket) Note: To see what`s happing to the pool, turn on echo_pool above.
+    elif arara_settings.ARARA_DBTYPE == 'sqlite':
+        CONNECTION_STRING = 'sqlite:///%s' % arara_settings.SQLITE_PATH
+        SQLALCHEMY_KWARGS = {'encoding': 'utf-8',
+                             'convert_unicode': True,
+                             'assert_unicode': None}
+    elif arara_settings.ARARA_DBTYPE == 'other':
+        CONNECTION_STRING = arara_settings.DB_CONNECTION_STRING
+        SQLALCHEMY_KWARGS = {'encoding': 'utf-8',
+                             'convert_unicode': True,
+                             'assert_unicode': None}
+    else:
+        # No other DB support.
+        assert False, "DB Type must be either one of mysql, sqlite, or other."
+
+    engine = create_engine(CONNECTION_STRING, **SQLALCHEMY_KWARGS)
     pool = engine.pool
     return engine
 
@@ -466,18 +487,13 @@ def init_database():
     global Session
     get_engine()
     metadata.create_all(engine)
-    # XXX SQLAlchemy 0.4 에서는 아래 설정을 사용한다.
-    #Session = sessionmaker(bind=engine, autoflush=True, transactional=True)
     Session = sessionmaker(bind=engine, autoflush=True, autocommit=False)
 
 def init_test_database():
     """Test database must reset the database."""
     global engine, Session, namespace
     # 데이터베이스를 억지로 새로 만든다.
-    from sqlalchemy import create_engine
     engine = create_engine('sqlite://', convert_unicode=True, encoding='utf-8', echo=False)
-    # XXX SQLAlchemy 0.4 에서는 아래 설정을 사용한다.
-    #Session = sessionmaker(bind=engine, autoflush=True, transactional=True)
     Session = sessionmaker(bind=engine, autoflush=True, autocommit=False)
     metadata.create_all(engine)
 

@@ -1,28 +1,38 @@
 #-*- coding: utf8 -*-
-# MySQL Server Setting
-MYSQL_ID = "ara"
-MYSQL_PASSWD = "together"
-MYSQL_DBHOST = "swingfixer.kaist.ac.kr"
-MYSQL_DBNAME = "arara"
 
-DB_CONNECTION_STRING = 'mysql://%s:%s@%s/%s?charset=utf8&use_unicode=1' % (MYSQL_ID, MYSQL_PASSWD, MYSQL_DBHOST, MYSQL_DBNAME)
+# Part 1. DB Setting
+# ARAra Engine supports MySQL & SQLite.
+# To use MySQL, ID / PASSWD / DB HOST / DB NAME is required.
+MYSQL_ID     = "combacsa"
+MYSQL_PASSWD = "combacsa"
+MYSQL_DBHOST = "127.0.0.1"
+MYSQL_DBNAME = "combacsa"
+# To use SQLite, Path to the db is required.
+SQLITE_PATH  = "arara_sqlite.db"
+# Or, if you are using a DB which is supported by SQLAlchemy,
+# you could use your own DB_CONNECTION_STRING.
+DB_CONNECTION_STRING = ""
+# Specify your choice between "mysql" / "sqlite" / "other".
+ARARA_DBTYPE = "sqlite"
 
-# ARARA Server Setting
-ARARA_SERVER_HOST = 'swingfixer.kaist.ac.kr'
-ARARA_SERVER_BASE_PORT = 10000
+# Part 2. Backend Server Setting
+ARARA_SERVER_HOST = '127.0.0.1'
+ARARA_SERVER_BASE_PORT = 20000
 SESSION_EXPIRE_TIME = 3610 # seconds
 ARARA_POOL_DEBUG_MODE = False
 #To use POOL DEBUG MODE, turn on the flag above. (see changeset 1247)
 ARARA_DEBUG_HANDLER_ON = False
 #To use DEBUG Handler on, turn on the flag above.
 
-# Mail Server Setting
-WARARA_SERVER_ADDRESS = 'swingfixer.kaist.ac.kr'
+# Part 3. Mail Server & Mail Contents Setting
+# Specify Web Frontend address below.
+WARARA_SERVER_ADDRESS = '143.248.234.153:20012'
 MAIL_HOST = 'localhost'
 MAIL_SENDER = 'ara@ara.kaist.ac.kr'
 MAIL_CONTENT = 'You have been successfully registered as the ARA member.<br />To use your account, you have to activate it.<br />Please click the link below on any web browser to activate your account.<br /><br />'
 MAIL_TITLE = "[ARA] Please activate your account 아라 계정 활성화"
 
+# XXX Move most of the information here to other place ...
 # SYSOP Initialization Setting
 SYSOP_REG_DIC = {'username' :u'SYSOP',
                  'password' :u'SYSOP',
