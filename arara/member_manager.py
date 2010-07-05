@@ -59,19 +59,29 @@ class MemberManager(object):
     '''
 
     def __init__(self):
-        # mock data
         self.logger = logging.getLogger('member_manager')
-        # XXX 2010.05.15. 이거 필요한가 ??
-        self.member_dic = {}  # DB에서 member table를 read해오는 부분
-        # XXX 여기까지
-        # 초기 시샵 생성
-        #if not self.is_registered('SYSOP'):
         self._register_sysop()
 
     def _register_sysop(self):
-        sysop_reg_dic = SYSOP_REG_DIC
+        """
+        시삽을 등록시킨다.
+        """
+        from etc.arara_settings import SYSOP_INITIAL_USERNAME, SYSOP_INITIAL_PASSWORD
+        # 이미 시삽이 등록되어 있을 땐 굳이 할 필요가 없다.
+        if self.is_registered(SYSOP_INITIAL_USERNAME):
+            return
+
+        SYSOP_REG_DIC = {'username' :SYSOP_INITIAL_USERNAME,
+                         'password' :SYSOP_INITIAL_PASSWORD,
+                         'nickname' :u'SYSOP',
+                         'email'    :u'sysop@ara.kaist.ac.kr',
+                         'signature':u'--\n아라 BBS 시삽 (SYStem OPerator)',
+                         'self_introduction':u'--\n아라 BBS 시삽 (SYStem OPerator)',
+                         'default_language':u'ko_KR',
+                         'campus': u''}
+
         try:
-            user = model.User(**sysop_reg_dic)
+            user = model.User(**SYSOP_REG_DIC)
             session = model.Session()
             session.add(user)
             user.activated = True
@@ -81,7 +91,7 @@ class MemberManager(object):
         except IntegrityError:
             session.rollback()
             session.close()
-            pass
+            raise InvalidOperation("cannot add sysop ... ?!")
 
     @log_method_call
     def _logout_process(self, username):
@@ -166,7 +176,7 @@ class MemberManager(object):
             user_reg_info.__dict__[keys] = smart_unicode(user_reg_info.__dict__[keys])
 
         # Check if username is proper
-        if user_reg_info.username.lower() == SYSOP_REG_DIC['username'].lower():
+        if user_reg_info.username.lower() == SYSOP_INITIAL_USERNAME.lower():
             raise InvalidOperation('permission denied')
         if not PROPER_USERNAME_REGEX.match(user_reg_info.username):
             raise InvalidOperation('username not permitted')

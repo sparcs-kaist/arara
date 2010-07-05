@@ -32,17 +32,9 @@ MAIL_SENDER = 'ara@ara.kaist.ac.kr'
 MAIL_CONTENT = 'You have been successfully registered as the ARA member.<br />To use your account, you have to activate it.<br />Please click the link below on any web browser to activate your account.<br /><br />'
 MAIL_TITLE = "[ARA] Please activate your account 아라 계정 활성화"
 
-# XXX Move most of the information here to other place ...
 # SYSOP Initialization Setting
-SYSOP_REG_DIC = {'username' :u'SYSOP',
-                 'password' :u'SYSOP',
-                 'nickname' :u'SYSOP',
-                 'email'    :u'sysop@ara.kaist.ac.kr',
-                 'signature':u'--\n아라 BBS 시삽 (SYStem OPerator',
-
-                 'self_introduction':u'--\n아라 BBS 시삽 (SYStem OPerator',
-                 'default_language':u'ko_KR',
-                 'campus': u''}
+SYSOP_INITIAL_USERNAME = 'SYSOP'
+SYSOP_INITIAL_PASSWORD = 'SYSOP'
 
 # K-Search Server Setting
 KSEARCH_API_SERVER_ADDRESS = 'http://nan.sparcs.org:9000/api'
