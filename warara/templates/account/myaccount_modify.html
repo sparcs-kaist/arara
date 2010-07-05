@@ -30,6 +30,14 @@
                     <label for="mynickname">{% trans "Nickname" %}<span class="feedback"></span></label>
                     <input name="mynickname" id="nickname" type="text" class="required_field" value={{nickname}} rel="{{nickname}}" />
                 </div>
+                <div>
+                    <label for="mycampus">{% trans "Campus Location" %}</label>
+                    <select name="mycampus" id="mycampus" />
+                        <option value="" {% ifequal campus "" %}selected{% endifequal %}>  </option>
+                        <option value="Daejeon" {% ifequal campus "Daejeon" %}selected{% endifequal %}>Daejeon</option>
+                        <option value="Seoul" {% ifequal campus "Seoul" %}selected{% endifequal %}>Seoul</option>
+                    </select>
+                </div>
             </div>
             <div id="mysetting_modify">
                 <div class="acc_subtitle"><div class="acc_subtitle_name">{% trans "My ARA setting" %}</div></div>

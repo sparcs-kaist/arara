@@ -35,6 +35,14 @@
                     <br />
                     <em class="required">{% trans "(We will send you user registration confirmation to here)" %}</em>
                 </div>
+                <div>
+                    <label for="campus">{% trans "Campus Location" %}<span class="feedback"></span></label>
+                    <select name="campus" id="campus">
+                        <option value=""> </option>
+                        <option value="Daejeon">Daejeon</option>
+                        <option value="Seoul">Seoul</option>
+                    </select>
+                </div>  
             </span>
             <span id="password_fieldset">
                 <div class="acc_subtitle" id="password_field_input"><div class="acc_subtitle_name">{% trans "Password" %}</div></div>

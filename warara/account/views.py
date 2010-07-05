@@ -23,7 +23,8 @@ def register(request):
         signature = request.POST['sig']
         introduction = request.POST['introduce']
         language = request.POST['language']
-        user_information_dict = {'username':username, 'password':password, 'nickname':nickname, 'email':email, 'signature':signature, 'self_introduction':introduction, 'default_language':language}
+        campus = request.POST['campus']
+        user_information_dict = {'username':username, 'password':password, 'nickname':nickname, 'email':email, 'signature':signature, 'self_introduction':introduction, 'default_language':language, 'campus':campus}
         message = server.member_manager.register_(UserRegistration(**user_information_dict))
         return HttpResponseRedirect("/main/")
     
@@ -163,7 +164,9 @@ def account_modify(request):
         signature = request.POST['mysig']
         introduction = request.POST['myintroduce']
         language = request.POST['mylanguage']
-        modified_information_dic = {'nickname': nickname, 'signature': signature, 'self_introduction': introduction, 'default_language': language, 'widget': 0, 'layout': 0}
+        campus = request.POST['mycampus']
+        print campus, 
+        modified_information_dic = {'nickname': nickname, 'signature': signature, 'self_introduction': introduction, 'default_language': language, 'widget': 0, 'layout': 0, 'campus': campus}
         server.member_manager.modify(session_key, UserModification(**modified_information_dic))
         if language == "kor":
             request.session["django_language"] = "ko"
