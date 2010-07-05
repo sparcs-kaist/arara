@@ -84,6 +84,29 @@ class MemberManagerTest(unittest.TestCase):
         server.member_manager.modify_password(session_key, UserPasswordInfo(**user_password_dic))
         server.login_manager.logout(session_key)
 
+    def testPasswdChangeSysop(self):
+        # Preparation
+        session_key_sysop = server.login_manager.login(u'SYSOP', u'SYSOP', u'127.0.0.1')
+        # Test 1. SYSOP change pasword for user 'combacsa' successfully.
+        user_password_dic = {'username':u'combacsa', 'current_password':u'', 'new_password':u'computer'}
+        server.member_manager.modify_password_sysop(session_key_sysop, UserPasswordInfo(**user_password_dic))
+        # Test 1-1. combacsa can't login with old password
+        session_key = None
+        try:
+            session_key = server.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.145')
+            self.fail('Though sysop changed password, user was able to login with old password.')
+        except InvalidOperation:
+            pass
+        # Test 1-2. combacsa can login with new password
+        session_key = server.login_manager.login(u'combacsa', u'computer', u'143.248.234.145')
+        # Test 2. Anyone except SYSOP can't call modify_password_sysop even if it is user oneself.
+        user_password_dic = {'username':u'combacsa', 'current_password':u'', 'new_password':u'combacsa'}
+        try:
+            server.member_manager.modify_password_sysop(session_key, UserPasswordInfo(**user_password_dic))
+            self.fail("Someone who was not a sysop successfully changed one's password.")
+        except InvalidOperation:
+            pass
+
     def testModifyInfo(self):
         session_key = server.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.145')
         modify_user_reg_dic = { 'nickname':u'combacsa is sysop', 'signature':u'KAIST07 && HSHS07 && SPARCS07', 'self_introduction':u'i am Kyuhong', 'default_language':u'korean', 'campus':u'Seoul', 'widget':1, 'layout':u'aaa' }

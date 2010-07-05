@@ -495,6 +495,40 @@ class MemberManager(object):
             session.close()
             raise NotLoggedIn()
 
+    @require_login    
+    def modify_password_sysop(self, session_key, user_password_info):
+        '''
+        회원의 password를 시삽이 강제로 수정.
+
+        ---user_password_info {username, current_password, new_password}
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type  user_password_info: Dictionary
+        @param user_password_info: User Dictionary
+        @rtype: void
+        @return:
+            1. modify 성공: void
+            2. modify 실패:
+                1. 수정 권한 없음: 'NO_PERMISSION'
+                2. 잘못된 현재 패스워드: 'WRONG_PASSWORD'
+                3. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN'
+                4. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
+        '''
+        if not self.is_sysop(session_key):
+            raise InvalidOperation('no permission')
+
+        username = smart_unicode(user_password_info.username)
+        session = model.Session()
+        try:
+            user = session.query(model.User).filter_by(username=username).one()
+            user.set_password(user_password_info.new_password)
+            session.commit()
+            self.logger.info(u"PASSWORD CHANGE:(username=%s)" % username)
+            session.close()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('user does not exist')
 
     @require_login
     @log_method_call_important

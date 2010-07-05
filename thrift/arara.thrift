@@ -158,6 +158,10 @@ service MemberManager {
                            2:UserPasswordInfo user_password_info)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void modify_password_sysop(1:string session_key,
+                               2:UserPasswordInfo user_password_info)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void modify(1:string session_key,
                   2:UserModification user_modification_info)
         throws (1:InvalidOperation invalid,
