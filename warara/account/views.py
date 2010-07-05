@@ -165,7 +165,6 @@ def account_modify(request):
         introduction = request.POST['myintroduce']
         language = request.POST['mylanguage']
         campus = request.POST['mycampus']
-        print campus, 
         modified_information_dic = {'nickname': nickname, 'signature': signature, 'self_introduction': introduction, 'default_language': language, 'widget': 0, 'layout': 0, 'campus': campus}
         server.member_manager.modify(session_key, UserModification(**modified_information_dic))
         if language == "kor":
