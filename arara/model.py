@@ -453,7 +453,7 @@ def get_engine():
             (arara_settings.MYSQL_ID,
              arara_settings.MYSQL_PASSWD,
              arara_settings.MYSQL_DBHOST,
-             arara_setttings.MYSQL_DBNAME)
+             arara_settings.MYSQL_DBNAME)
         SQLALCHEMY_KWARGS = {'encoding': 'utf-8',
                              'convert_unicode': True,
                              'assert_unicode': False,
