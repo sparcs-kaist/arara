@@ -822,6 +822,7 @@ class ArticleManager(object):
                     heading = None
                     heading_str = smart_unicode(article_dic.heading)
                     if heading_str != u"":
+                        board = self._get_board(session, board_name)
                         heading = self._get_heading(session, board, heading_str)
                     article.heading = heading
             article.last_modified_time = datetime.datetime.fromtimestamp(time.time())

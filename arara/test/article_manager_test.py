@@ -107,6 +107,20 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(1, len(result))
         self.assertEqual(expected_result, self._to_dict(result[0]))
 
+    def test_write_and_read_with_heading(self):
+        # Write an article
+        article_id = self._dummy_article_write(self.session_key_mikkang, u"", u"board_h", u"head1")
+        result = server.article_manager.read(self.session_key_mikkang, u'board_h', 1)
+        expected_result = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'CONTENT', 'vote': 0, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1, 'heading': u'head1'}
+        self.assertEqual(1, len(result))
+        self.assertEqual(expected_result, self._to_dict(result[0]))
+        # Can't write an article with nonexist heading
+        try:
+            self._dummy_article_write(self.session_key_mikkang, u"", u"board_h", u"head3")
+            self.fail("must not be able to write an article with nonexisting heading")
+        except InvalidOperation:
+            pass
+
     def test_read_recent_article(self):
         # Test 1. Board에 게시물이 하나도 없을 때 에러를 발생시키는가?
         try:
@@ -173,6 +187,34 @@ class ArticleManagerTest(unittest.TestCase):
         expected_result['root_id'] = None
         expected_result['heading'] = None
         self.assertEqual(expected_result, self._to_dict(result.hit[0]))
+
+    def test_reply_with_heading(self):
+        # Write an article
+        article_id = self._dummy_article_write(self.session_key_mikkang, u'', u'board_h')
+        global STUB_TIME_CURRENT
+        STUB_TIME_CURRENT += 1.0
+        reply_dic = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u'head1'})
+        reply_id1 = server.article_manager.write_reply(self.session_key_serialx, u'board_h', article_id, reply_dic)
+        STUB_TIME_CURRENT += 1.0
+        reply_dic = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u'head2'})
+        reply_id2 = server.article_manager.write_reply(self.session_key_mikkang, u'board_h', article_id, reply_dic)
+
+        result = server.article_manager.read(self.session_key_mikkang, u'board_h', 1)
+        expected_result2 = {'attach': None, 'board_name': None, 'author_username': u'serialx', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'serialx', 'content': u'asdf', 'vote': 0, 'depth': 2, 'reply_count': None, 'last_modified_date': 31536002.100000001, 'date': 31536002.100000001, 'author_id': 3, 'type': None, 'id': 2, 'heading': u'head1'}
+        expected_result3 = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'asdf', 'vote': 0, 'depth': 2, 'reply_count': None, 'last_modified_date': 31536003.100000001, 'date': 31536003.100000001, 'author_id': 2, 'type': None, 'id': 3, 'heading': u'head2'}
+
+        self.assertEqual(3, len(result))
+        self.assertEqual(expected_result2, self._to_dict(result[1]))
+        self.assertEqual(expected_result3, self._to_dict(result[2]))
+
+        # Can't write an article with nonexist heading
+        try:
+            self._dummy_article_write(self.session_key_mikkang, u"", u"board_h", u"head3")
+            self.fail("must not be able to write an article with nonexisting heading")
+        except InvalidOperation:
+            pass
+
+
 
     def test_reply_changes_list(self):
         # Preparation
@@ -342,6 +384,20 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(expected_result, self._to_dict(result[0]))
         # XXX : 수정된 글의 경우 ... 
         #       이미 읽은 유저가 읽을 때 조회수가 올라가야 할까?
+
+    def test_modification_with_heading(self):
+        # 위의 것과 똑같은데 heading 의 변화만 관찰한다
+        # Write an articles
+        article_no = self._dummy_article_write(self.session_key_mikkang, u"", u"board_h", u"head1")
+        # Modify its contents
+        article_dic = {'title': u'MODIFIED TITLE', 'content': u'MODIFIED CONTENT', 'heading': u'head2'}
+        result = server.article_manager.modify(self.session_key_mikkang, u'board_h', article_no, WrittenArticle(**article_dic))
+        self.assertEqual(article_no, result)
+        # Now check it is modified or not
+        result = server.article_manager.read(self.session_key_mikkang, u'board_h', 1)
+        expected_result = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'MODIFIED TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'MODIFIED CONTENT', 'vote': 0, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1, 'heading': u'head2'}
+        self.assertEqual(1, len(result))
+        self.assertEqual(expected_result, self._to_dict(result[0]))
 
     def test_read_and_hit_goes_up(self):
         # Write an article
