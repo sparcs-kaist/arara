@@ -64,11 +64,13 @@ class ArticleManager(object):
         @param heading: 선택한 말머리
         @rtype : BoardHeading object
         @return:
-            1. 선택된 BoardHeading 객체
+            1. 선택된 BoardHeading 객체 (단, heading == u"" 일 때는 None)
             2. 실패:
                 TODO 구현할 것
         '''
         try:
+            if heading == u"":
+                return None
             return session.query(model.BoardHeading).filter_by(board=board, heading=heading).one()
         except InvalidRequestError:
             session.close()
@@ -86,11 +88,13 @@ class ArticleManager(object):
         @param heading: 선택한 말머리
         @rtype : BoardHeading object
         @return:
-            1. 선택된 BoardHeading 객체
+            1. 선택된 BoardHeading 객체 (단, heading == u"" 일 때는 None)
             2. 실패:
                 TODO 구현할 것
         '''
         try:
+            if heading == u"":
+                return None
             return session.query(model.BoardHeading).filter_by(board_id=board_id, heading=heading).one()
         except InvalidRequestError:
             session.close()
@@ -402,17 +406,21 @@ class ArticleManager(object):
             pass
         return set(blacklist_list)
 
-    def _get_article_list(self, board_name, page, page_length, order_by = LIST_ORDER_ROOT_ID):
+    def _get_article_list(self, board_name, heading_name, page, page_length, include_all_headings = True, order_by = LIST_ORDER_ROOT_ID):
         '''
         Internal.
         주어진 게시판의 주어진 페이지에 있는 글의 목록을 가져온다.
 
         @type  board_name: string
         @param board_name: 글을 가져올 게시판의 이름
+        @type  heading_name: string
+        @param heading_name: 가져올 글의 글머리 이름
         @type  page: int
         @param page: 글을 가져올 페이지의 번호
         @type  page_length: int
         @param page_length: 페이지당 글 갯수
+        @type  include_all_headings: boolean
+        @param include_all_headings: 모든 글머리의 글을 가져올지에 대한 여부
         @type  order_by: int - LIST_ORDER
         @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
         @rtype: (list<article_dict>, int, int, list<int>)
@@ -426,6 +434,10 @@ class ArticleManager(object):
         board_id = self._get_board_id(board_name)
         session = model.Session()
         desired_query = session.query(model.Article).filter_by(board_id=board_id, root_id=None, destroyed=False)
+        if not include_all_headings:
+            # 특정 말머리만 선택한다
+            heading = self._get_heading_by_boardid(session, board_id, heading_name)
+            desired_query = desired_query.filter_by(heading=heading)
 
         article_count = desired_query.count()
         last_page = self._get_last_page(article_count, page_length)
@@ -460,7 +472,7 @@ class ArticleManager(object):
         '''Internal use only.'''
         blacklisted_users = self._get_blacklist_userid(session_key)
 
-        article_dict_list, last_page, article_count, article_last_reply_id_list = self._get_article_list(board_name, page, page_length, order_by)
+        article_dict_list, last_page, article_count, article_last_reply_id_list = self._get_article_list(board_name, u"", page, page_length, True, order_by)
         # InvalidOperation(board not exist) 는 여기서 알아서 불릴 것이므로 제거.
 
         # article_dict_list 를 generator 에서 list화.
