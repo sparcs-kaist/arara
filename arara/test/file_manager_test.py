@@ -52,7 +52,7 @@ class FileManagerTest(unittest.TestCase):
                 u'mikkang', u'mikkang', u'143.248.234.140')
 
         # Write an article for filemanager test
-        article_dict = {'title': u'serialx is...', 'content': u'polarbear'}
+        article_dict = {'title': u'serialx is...', 'content': u'polarbear', 'heading': u''}
         server.article_manager.write_article(self.mikkang_session_key, 
                 u'garbages', WrittenArticle(**article_dict))
         # Article to test filemanager has no 1

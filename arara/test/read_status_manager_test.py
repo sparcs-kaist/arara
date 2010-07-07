@@ -56,11 +56,11 @@ class ReadStatusManagerTest(unittest.TestCase):
         self.session_key_mikkang = self._register_user(u'mikkang')
 
     def _write_articles(self):
-        article = Article(**{'title': u'serialx is...', 'content': u'polarbear'})
+        article = Article(**{'title': u'serialx is...', 'content': u'polarbear', 'heading': u''})
         server.article_manager.write_article(
                 self.session_key_mikkang, u'garbages', article)
 
-        article = Article(**{'title': u'serialx is...', 'content': u'polarbear'})
+        article = Article(**{'title': u'serialx is...', 'content': u'polarbear', 'heading': u''})
         server.article_manager.write_article(
                 self.session_key_mikkang, u'garbages', article)
 

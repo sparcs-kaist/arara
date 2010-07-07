@@ -294,7 +294,8 @@ service ReadStatusManager {
 
 struct WrittenArticle {
     1: string title,
-    2: string content
+    2: string heading,
+    3: string content
 }
 
 struct AttachDict {
@@ -305,24 +306,25 @@ struct AttachDict {
 struct Article {
     1:  id_t id,
     2:  string title,
-    3:  string content,
-    4:  double date,
-    5:  i32 hit = 0,
-    6:  i32 vote,
-    7:  bool deleted = 0,
-    8:  i32 root_id,
-    9:  string author_username,
-    10: string author_nickname,
-    11: i32 author_id,
-    12: bool blacklisted = 0,
-    13: bool is_searchable = 1,
-    14: double last_modified_date,
-    15: optional i32 depth,  // Only used in the 'read' function
-    16: optional string read_status,
-    17: optional i32 reply_count,
-    18: optional string type
-    19: optional string board_name,
-    20: optional list<AttachDict> attach,
+    3:  string heading,
+    4:  string content,
+    5:  double date,
+    6:  i32 hit = 0,
+    7:  i32 vote,
+    8:  bool deleted = 0,
+    9:  i32 root_id,
+    10:  string author_username,
+    11: string author_nickname,
+    12: i32 author_id,
+    13: bool blacklisted = 0,
+    14: bool is_searchable = 1,
+    15: double last_modified_date,
+    16: optional i32 depth,  // Only used in the 'read' function
+    17: optional string read_status,
+    18: optional i32 reply_count,
+    19: optional string type
+    20: optional string board_name,
+    21: optional list<AttachDict> attach,
     #19: optional i32 next,
     #20: optional i32 prev,
 }

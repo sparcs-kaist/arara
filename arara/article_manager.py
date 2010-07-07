@@ -18,7 +18,8 @@ from arara_thrift.ttypes import *
 log_method_call = log_method_call_with_source('article_manager')
 log_method_call_important = log_method_call_with_source_important('article_manager')
 
-WRITE_ARTICLE_DICT = ('title', 'content')
+# TODO: WRITE_ARTICLE_DICT 는 사실 쓰이지 않는다... SPEC 표시 용도일까?
+WRITE_ARTICLE_DICT = ('title', 'heading', 'content')
 READ_ARTICLE_WHITELIST = ('id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'author_nickname', 'author_id', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable', 'attach')
 LIST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'author_nickname', 'author_id', 'vote', 'hit')
@@ -629,6 +630,28 @@ class ArticleManager(object):
             session.close()
             return
 
+    def _get_heading(self, session, board, heading):
+        '''
+        Internal Function - 주어진 heading 객체를 찾아낸다.
+
+        @type  session: SQLAlchemy Session object
+        @param session: 현재 사용중인 session
+        @type  board: Board object
+        @param board: 선택된 게시판 object
+        @type  heading: unicode string
+        @param heading: 선택한 말머리
+        @rtype : BoardHeading object
+        @return:
+            1. 선택된 BoardHeading 객체
+            2. 실패:
+                TODO 구현할 것
+        '''
+        try:
+            return session.query(model.BoardHeading).filter_by(board=board, heading=heading).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('heading not exist')
+
     @require_login
     @log_method_call_important
     def write_article(self, session_key, board_name, article_dic):
@@ -659,8 +682,13 @@ class ArticleManager(object):
         author = self._get_user(session, session_key)
         board = self._get_board(session, board_name)
         if not board.read_only:
+            # 글에 적합한 heading 객체를 찾는다
+            heading = None
+            heading_str = smart_unicode(article_dic.heading)
+            if heading_str != u"":
+                heading = self._get_heading(session, board, heading_str)
             new_article = model.Article(board,
-                                        None, # TODO: Board Heading 객체로 대체
+                                        heading,
                                         smart_unicode(article_dic.title),
                                         smart_unicode(article_dic.content),
                                         author,
@@ -711,8 +739,14 @@ class ArticleManager(object):
         author = self._get_user(session, session_key)
         board = self._get_board(session, board_name)
         article = self._get_article(session, board.id, article_no)
+
+        heading = None
+        heading_str = smart_unicode(reply_dic.heading)
+        if heading_str != u"":
+            heading = self._get_heading(session, board, heading_str)
+
         new_reply = model.Article(board,
-                                None, # TODO: Board Heading 객체로 대체한다
+                                heading,
                                 smart_unicode(reply_dic.title),
                                 smart_unicode(reply_dic.content),
                                 author,
@@ -777,6 +811,14 @@ class ArticleManager(object):
         if article.author_id == author_id:
             article.title = smart_unicode(article_dic.title)
             article.content = smart_unicode(article_dic.content)
+            # 필요한 경우에만 heading 수정
+            if not (article.heading == None and smart_unicode(article_dic.heading) == u''):
+                if not (article.heading.heading == smart_unicode(article_dic.heading)):
+                    heading = None
+                    heading_str = smart_unicode(article_dic.heading)
+                    if heading_str != u"":
+                        heading = self._get_heading(session, board, heading_str)
+                    article.heading = heading
             article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
             session.commit()
             id = article.id

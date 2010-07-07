@@ -126,7 +126,7 @@ def write(request, board_name):
     if request.GET.get('multi', 0):
         sess, r = warara.check_logged_in(request)
         rec_num = request.GET['multi']
-        article_dic={'title':'test title', 'content':'test content'}
+        article_dic={'title':'test title', 'content':'test content', 'heading': u''}
         for i in range(int(rec_num)):
             article_id = server.article_manager.write_article(sess, board_name, WrittenArticle(**article_dic))
 
@@ -159,6 +159,7 @@ def write_(request, board_name):
     r['url'] = ''.join(['/board/', board_name, '/'])
     article_dic['content'] = request.POST.get('text', '')
     article_dic['title'] = request.POST.get('title', '')
+    article_dic['heading'] = request.POST.get('heading', '') # Heading !!!
     if request.POST.get('write_type', 0) == 'modify':
         article_no = request.POST.get('article_no', 0)
         article_id = server.article_manager.modify(sess, board_name, int(article_no), WrittenArticle(**article_dic))
@@ -251,6 +252,7 @@ def reply(request, board_name, article_id):
     reply_dic = {}
     reply_dic['content'] = request.POST.get('content', '')
     reply_dic['title'] = request.POST.get('title', '')
+    reply_dic['heading'] = request.POST.get('heading', '') # TODO: HEADING !!
     root_id = request.POST.get('root_id', '')
 
     article_id = server.article_manager.write_reply(sess, board_name, int(article_id), WrittenArticle(**reply_dic))

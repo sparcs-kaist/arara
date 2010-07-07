@@ -64,7 +64,7 @@ class Test(unittest.TestCase):
         time.time = self.org_time
 
     def _dummy_article_write(self, session_key, board, title_append = u""):
-        article_dic = {'title': u'TITLE' + title_append, 'content': u'CONTENT'}
+        article_dic = {'title': u'TITLE' + title_append, 'content': u'CONTENT', 'heading': u''}
         return server.article_manager.write_article(session_key, board, Article(**article_dic))
 
     def test_search(self):

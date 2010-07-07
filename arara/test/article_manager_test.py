@@ -57,6 +57,7 @@ class ArticleManagerTest(unittest.TestCase):
         self.session_key_serialx = self._register_user(u'serialx')
         # Create default board
         server.board_manager.add_board(self.session_key_sysop, u'board', u'Test Board', [])
+        server.board_manager.add_board(self.session_key_sysop, u'board_h', u'Test Board with heading', [u'head1', u'head2'])
 
     def tearDown(self):
         arara.model.clear_test_database()
@@ -73,11 +74,11 @@ class ArticleManagerTest(unittest.TestCase):
         except InvalidOperation:
             pass
 
-    def _dummy_article_write(self, session_key, title_append = u""):
+    def _dummy_article_write(self, session_key, title_append = u"", board_name=u'board', heading=u''):
         global STUB_TIME_CURRENT
         STUB_TIME_CURRENT += 1.0
-        article_dic = {'title': u'TITLE' + title_append, 'content': u'CONTENT'}
-        return server.article_manager.write_article(session_key, u'board', Article(**article_dic))
+        article_dic = {'title': u'TITLE' + title_append, 'content': u'CONTENT', 'heading': heading}
+        return server.article_manager.write_article(session_key, board_name, Article(**article_dic))
 
     def _to_dict(self, article_object):
         '''
@@ -135,7 +136,7 @@ class ArticleManagerTest(unittest.TestCase):
             
     def test_reply(self):
         # Test fail to reply on a nonexisting article
-        reply_dic = WrittenArticle(**{'title':u'dummy', 'content': u'asdf'})
+        reply_dic = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
         try:
             server.article_manager.write_reply(self.session_key_mikkang, u'board', 24, reply_dic)
             self.fail()
@@ -178,7 +179,7 @@ class ArticleManagerTest(unittest.TestCase):
         article_2_id = self._dummy_article_write(self.session_key_serialx)
         global STUB_TIME_CURRENT
         STUB_TIME_CURRENT += 1.0
-        reply_dic    = WrittenArticle(**{'title':u'dummy', 'content': u'asdf'})
+        reply_dic    = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
         reply_id     = server.article_manager.write_reply(self.session_key_mikkang, u'board', 1, reply_dic)
         # Without reply, listing order must be [article 2, article 1].
         # But since new reply was found on article 1, listing order must be [article 1, article 2].
@@ -241,13 +242,13 @@ class ArticleManagerTest(unittest.TestCase):
         server.article_manager.read(self.session_key_serialx, u'board', article_3_id)
         global STUB_TIME_CURRENT
         STUB_TIME_CURRENT += 1.0
-        reply_dic    = WrittenArticle(**{'title':u'dummy', 'content': u'asdf'})
+        reply_dic    = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
         reply_1_id   = server.article_manager.write_reply(self.session_key_mikkang, u'board', 1, reply_dic)
         STUB_TIME_CURRENT += 1.0
-        reply_dic    = WrittenArticle(**{'title':u'dummy', 'content': u'asdf'})
+        reply_dic    = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
         reply_2_id   = server.article_manager.write_reply(self.session_key_mikkang, u'board', 2, reply_dic)
         STUB_TIME_CURRENT += 1.0
-        reply_dic    = WrittenArticle(**{'title':u'dummy', 'content': u'asdf'})
+        reply_dic    = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
         reply_3_id   = server.article_manager.write_reply(self.session_key_mikkang, u'board', 3, reply_dic)
         server.article_manager.read(self.session_key_serialx, u'board', reply_3_id)
 
@@ -330,7 +331,7 @@ class ArticleManagerTest(unittest.TestCase):
         # Write an articles
         article_no = self._dummy_article_write(self.session_key_mikkang)
         # Modify its contents
-        article_dic = {'title': u'MODIFIED TITLE', 'content': u'MODIFIED CONTENT'}
+        article_dic = {'title': u'MODIFIED TITLE', 'content': u'MODIFIED CONTENT', 'heading': u''}
         result = server.article_manager.modify(self.session_key_mikkang, u'board', article_no, WrittenArticle(**article_dic))
         self.assertEqual(article_no, result)
         # Now check it is modified or not
@@ -414,7 +415,7 @@ class ArticleManagerTest(unittest.TestCase):
 
     def test_many_replies(self):
         article_id = self._dummy_article_write(self.session_key_mikkang)
-        reply_dic = WrittenArticle(**{'title':u'dummy', 'content': u'asdf'})
+        reply_dic = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
         article_reply_id_1 = server.article_manager.write_reply(self.session_key_mikkang, u'board', article_id, reply_dic)
         article_reply_id_2 = server.article_manager.write_reply(self.session_key_mikkang, u'board', article_reply_id_1, reply_dic)
         article_reply_id_3 = server.article_manager.write_reply(self.session_key_mikkang, u'board', article_reply_id_2, reply_dic)
