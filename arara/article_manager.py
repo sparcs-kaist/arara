@@ -468,7 +468,7 @@ class ArticleManager(object):
         article_last_reply_id_list = [article.last_reply_id for article in article_list]
         return article_dict_list, last_page, article_count, article_last_reply_id_list
 
-    def _article_list(self, session_key, board_name, page, page_length, order_by = LIST_ORDER_ROOT_ID):
+    def _article_list(self, session_key, board_name, heading_name, page, page_length, include_all_headings = True, order_by = LIST_ORDER_ROOT_ID):
         '''
         Internal.
         주어진 게시판의 주어진 페이지에 있는 글의 목록을 가져와 Thrift 형식의 Article 객체의 list 로 돌려준다.
@@ -477,10 +477,14 @@ class ArticleManager(object):
         @param session_key: 사용자의 session_key
         @type  board_name: string
         @param board_name: 글을 가져올 게시판의 이름
+        @type  heading_name: string
+        @param heading_name: 가져올 글의 글머리 이름
         @type  page: int
         @param page: 글을 가져올 페이지의 번호
         @type  page_length: int
         @param page_length: 페이지당 글 갯수
+        @type  include_all_headings: boolean
+        @param include_all_headings: 모든 글머리의 글을 가져올지에 대한 여부
         @type  order_by: int - LIST_ORDER
         @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
         @rtype: list<Article>
@@ -489,7 +493,7 @@ class ArticleManager(object):
         '''
         blacklisted_users = self._get_blacklist_userid(session_key)
 
-        article_dict_list, last_page, article_count, article_last_reply_id_list = self._get_article_list(board_name, u"", page, page_length, True, order_by)
+        article_dict_list, last_page, article_count, article_last_reply_id_list = self._get_article_list(board_name, heading_name, page, page_length, include_all_headings, order_by)
         # InvalidOperation(board not exist) 는 여기서 알아서 불릴 것이므로 제거.
 
         # article_dict_list 를 generator 에서 list화.
@@ -552,7 +556,7 @@ class ArticleManager(object):
                 2. 페이지 번호 오류: InvalidOperation Exception
                 3. 데이터베이스 오류: InternalError Exception 
         '''
-        return self._article_list(session_key, board_name, page, page_length, LIST_ORDER_ROOT_ID)
+        return self._article_list(session_key, board_name, u"", page, page_length, True, LIST_ORDER_ROOT_ID)
 
     @require_login
     @log_method_call_important
@@ -672,7 +676,7 @@ class ArticleManager(object):
             page_position += 1
 
         try:
-            below_article_dict_list = self._article_list(session_key, board_name, page_position, page_length, order_by)
+            below_article_dict_list = self._article_list(session_key, board_name, u"", page_position, page_length, True, order_by)
         except Exception:
             raise
 
