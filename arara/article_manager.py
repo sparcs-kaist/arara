@@ -402,7 +402,26 @@ class ArticleManager(object):
             pass
         return set(blacklist_list)
 
-    def _get_article_list(self, session_key, board_name, page, page_length, order_by = LIST_ORDER_ROOT_ID):
+    def _get_article_list(self, board_name, page, page_length, order_by = LIST_ORDER_ROOT_ID):
+        '''
+        Internal.
+        주어진 게시판의 주어진 페이지에 있는 글의 목록을 가져온다.
+
+        @type  board_name: string
+        @param board_name: 글을 가져올 게시판의 이름
+        @type  page: int
+        @param page: 글을 가져올 페이지의 번호
+        @type  page_length: int
+        @param page_length: 페이지당 글 갯수
+        @type  order_by: int - LIST_ORDER
+        @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
+        @rtype: (list<article_dict>, int, int, list<int>)
+        @return:
+            1. article_dict_list : article_dict 의 list
+            2. last page         : 글 목록의 마지막 페이지의 번호
+            3. article_count     : 글의 전체 갯수
+            4. article_last_reply_id_list : 글 목록의 각 글에 달린 마지막 reply 의 번호목록
+        '''
         # 해당 board 에 있는 글의 갯수를 센다.
         board_id = self._get_board_id(board_name)
         session = model.Session()
@@ -441,7 +460,7 @@ class ArticleManager(object):
         '''Internal use only.'''
         blacklisted_users = self._get_blacklist_userid(session_key)
 
-        article_dict_list, last_page, article_count, article_last_reply_id_list = self._get_article_list(session_key, board_name, page, page_length, order_by)
+        article_dict_list, last_page, article_count, article_last_reply_id_list = self._get_article_list(board_name, page, page_length, order_by)
         # InvalidOperation(board not exist) 는 여기서 알아서 불릴 것이므로 제거.
 
         # article_dict_list 를 generator 에서 list화.

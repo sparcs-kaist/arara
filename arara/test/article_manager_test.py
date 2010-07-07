@@ -506,6 +506,26 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(1, len(result))
         self.assertEqual(expected_result, self._to_dict(result[0]))
 
+    def test__get_article_list(self):
+        # ArticleManager._get_article_list 의 테스트가 목적이다.
+        # 게시판에 적당한 갯수의 글을 쓰고 적당한 page 의 상황을 확인한다
+        for i in range(55):
+            self._dummy_article_write(self.session_key_mikkang)
+
+        # Thrift 를 거치지 않으므로 이렇게 테스트 가능.
+        result = server.article_manager._get_article_list(u'board', 1, 5)
+        article_dict_list = list(result[0]) # 이건 generator 이다
+        last_page         = result[1]
+        article_count     = result[2]
+        last_reply_id_list= result[3]
+
+        article_dict_list_id_only = [x['id'] for x in article_dict_list]
+
+        self.assertEqual([55, 54, 53, 52, 51], article_dict_list_id_only)
+        self.assertEqual(11, last_page)
+        self.assertEqual(55, article_count)
+        self.assertEqual([55, 54, 53, 52, 51], last_reply_id_list)
+
     def test_article_list_below(self):
         for i in range(100):
             self._dummy_article_write(self.session_key_mikkang)
