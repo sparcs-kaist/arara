@@ -52,6 +52,50 @@ class ArticleManager(object):
     def _get_board_id(self, board_name):
         return get_server().board_manager.get_board_id(board_name)
 
+    def _get_heading(self, session, board, heading):
+        '''
+        Internal Function - 주어진 heading 객체를 찾아낸다.
+
+        @type  session: SQLAlchemy Session object
+        @param session: 현재 사용중인 session
+        @type  board: Board object
+        @param board: 선택된 게시판 object
+        @type  heading: unicode string
+        @param heading: 선택한 말머리
+        @rtype : BoardHeading object
+        @return:
+            1. 선택된 BoardHeading 객체
+            2. 실패:
+                TODO 구현할 것
+        '''
+        try:
+            return session.query(model.BoardHeading).filter_by(board=board, heading=heading).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('heading not exist')
+
+    def _get_heading_by_boardid(self, session, board_id, heading):
+        '''
+        Internal Function - 주어진 heading 객체를 찾아낸다. 단 board_id 를 이용한다.
+
+        @type  session: SQLAlchemy Session object
+        @param session: 현재 사용중인 session
+        @type  board_id: Board id
+        @param board_id: 선택된 게시판의 id
+        @type  heading: unicode string
+        @param heading: 선택한 말머리
+        @rtype : BoardHeading object
+        @return:
+            1. 선택된 BoardHeading 객체
+            2. 실패:
+                TODO 구현할 것
+        '''
+        try:
+            return session.query(model.BoardHeading).filter_by(board_id=board_id, heading=heading).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('heading not exist')
+
     def _article_thread_to_list(self, article_thread, session_key, blacklisted_userid):
         # 기존에 반복문 2개로 하던 걸 1개로 줄여봄.
         stack = []
@@ -635,28 +679,6 @@ class ArticleManager(object):
             session.close()
             return
 
-    def _get_heading(self, session, board, heading):
-        '''
-        Internal Function - 주어진 heading 객체를 찾아낸다.
-
-        @type  session: SQLAlchemy Session object
-        @param session: 현재 사용중인 session
-        @type  board: Board object
-        @param board: 선택된 게시판 object
-        @type  heading: unicode string
-        @param heading: 선택한 말머리
-        @rtype : BoardHeading object
-        @return:
-            1. 선택된 BoardHeading 객체
-            2. 실패:
-                TODO 구현할 것
-        '''
-        try:
-            return session.query(model.BoardHeading).filter_by(board=board, heading=heading).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('heading not exist')
-
     @require_login
     @log_method_call_important
     def write_article(self, session_key, board_name, article_dic):
@@ -817,14 +839,17 @@ class ArticleManager(object):
             article.title = smart_unicode(article_dic.title)
             article.content = smart_unicode(article_dic.content)
             # 필요한 경우에만 heading 수정
-            if not (article.heading == None and smart_unicode(article_dic.heading) == u''):
-                if not (article.heading.heading == smart_unicode(article_dic.heading)):
-                    heading = None
-                    heading_str = smart_unicode(article_dic.heading)
-                    if heading_str != u"":
-                        board = self._get_board(session, board_name)
-                        heading = self._get_heading(session, board, heading_str)
-                    article.heading = heading
+            new_heading = smart_unicode(article_dic.heading)
+            cond1 = article.heading == None
+            cond2 = new_heading == u''
+            cond = not (cond1 and cond2)
+            if not cond1:
+                cond = (article.heading.heading != new_heading)
+            if cond:
+                heading = None
+                if not cond2:
+                    heading = self._get_heading_by_boardid(session, board_id, new_heading)
+                article.heading = heading
             article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
             session.commit()
             id = article.id
