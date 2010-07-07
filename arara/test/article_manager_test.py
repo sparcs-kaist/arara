@@ -534,7 +534,7 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(11, result.last_page)
         self.assertEqual([55, 54, 53, 52, 51], [x.id for x in result.hit])
 
-        result = server.article_manager._article_list_below(self.session_key_serialx, u"board_h", 55, 5)
+        result = server.article_manager._article_list_below(self.session_key_serialx, u"board_h", u"", 55, 5)
         self.assertEqual(55, result.results)
         self.assertEqual(11, result.last_page)
         self.assertEqual([55, 54, 53, 52, 51], [x.id for x in result.hit])
@@ -557,6 +557,11 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(6, result.last_page)
         self.assertEqual([54, 52, 50, 48, 46], [x.id for x in result.hit])
 
+        result = server.article_manager._article_list_below(self.session_key_serialx, u"board_h", u"", 54, 5, False)
+        self.assertEqual(27, result.results)
+        self.assertEqual(6, result.last_page)
+        self.assertEqual([54, 52, 50, 48, 46], [x.id for x in result.hit])
+
         # TEST 3 : heading == head1
         result = server.article_manager._get_article_list(u'board_h', u"head1", 1, 5, False)
         article_dict_list = list(result[0])
@@ -571,6 +576,11 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual([55, 53, 51, 49, 47], last_reply_id_list)
 
         result = server.article_manager._article_list(self.session_key_serialx, u"board_h", u"head1", 1, 5, False)
+        self.assertEqual(28, result.results)
+        self.assertEqual(6, result.last_page)
+        self.assertEqual([55, 53, 51, 49, 47], [x.id for x in result.hit])
+
+        result = server.article_manager._article_list_below(self.session_key_serialx, u"board_h", u"head1", 55, 5, False)
         self.assertEqual(28, result.results)
         self.assertEqual(6, result.last_page)
         self.assertEqual([55, 53, 51, 49, 47], [x.id for x in result.hit])

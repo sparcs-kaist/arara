@@ -641,7 +641,7 @@ class ArticleManager(object):
         session.close()
         return article_dict_list
 
-    def _article_list_below(self, session_key, board_name, no, page_length, order_by = LIST_ORDER_ROOT_ID):
+    def _article_list_below(self, session_key, board_name, heading_name, no, page_length, include_all_headings = True, order_by = LIST_ORDER_ROOT_ID):
         '''
         Internal.
         주어진 게시판의 주어진 게시물의 하단에 표시될 글의 목록을 가져와 Thrift 형식의 Article 객체의 list 로 돌려준다.
@@ -650,10 +650,14 @@ class ArticleManager(object):
         @param session_key: 사용자의 session_key
         @type  board_name: string
         @param board_name: 글을 가져올 게시판의 이름
+        @type  heading_name: string
+        @param heading_name: 목록에서 보여줄 선택된 말머리
         @type  no: int
         @param no: 글번호
         @type  page_length: int
         @param page_length: 페이지당 글 갯수
+        @type  include_all_headings: boolean
+        @param include_all_headings: 모든 말머리를 보여줄 것인지의 여부
         @type  order_by: int - LIST_ORDER
         @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
         @rtype: list<Article>
@@ -662,21 +666,37 @@ class ArticleManager(object):
         '''
         board_id = self._get_board_id(board_name)
         session = model.Session()
-        total_article_count = session.query(model.Article).filter_by(board_id=board_id, root_id=None, destroyed=False).count()
-        remaining_article_count = session.query(model.Article).filter(and_(
+
+        # 전체 글 갯수를 센다
+        total_article_query = session.query(model.Article).filter_by(board_id=board_id, root_id=None, destroyed=False)
+        heading = None # 뒤에서 heading 재활용을 위해 그냥 scope 에 선언
+        if not include_all_headings:
+            heading = self._get_heading_by_boardid(session, board_id, heading_name)
+            total_article_query = total_article_query.filter_by(heading=heading)
+
+        total_article_count = total_article_query.count()
+
+        # 선택된 글 이후로 남은 글 갯수를 센다
+        remaining_article_query = session.query(model.Article).filter(and_(
                 model.articles_table.c.board_id==board_id,
                 model.articles_table.c.root_id==None,
                 model.articles_table.c.destroyed==False,
-                model.articles_table.c.id < no)).count()
-        position_no = total_article_count - remaining_article_count
-        session.close()
+                model.articles_table.c.id < no))
+        if not include_all_headings:
+            remaining_article_query = remaining_article_query.filter_by(heading=heading)
 
+        remaining_article_count = remaining_article_query.count()
+
+        session.close()
+        # 이로부터 합당한 쪽번호를 계산한다
+        position_no = total_article_count - remaining_article_count
         page_position = position_no / page_length
         if position_no % page_length != 0:
             page_position += 1
 
+        # 이상을 바탕으로 _article_list 함수를 호출한다
         try:
-            below_article_dict_list = self._article_list(session_key, board_name, u"", page_position, page_length, True, order_by)
+            below_article_dict_list = self._article_list(session_key, board_name, heading_name, page_position, page_length, include_all_headings, order_by)
         except Exception:
             raise
 
@@ -709,7 +729,7 @@ class ArticleManager(object):
                 1. 존재하지 않는 게시판: InvalidOperation Exception
                 2. 데이터베이스 오류: InternalError Exception
         '''
-        return self._article_list_below(session_key, board_name, no, page_length, LIST_ORDER_ROOT_ID)
+        return self._article_list_below(session_key, board_name, u"", no, page_length, True, LIST_ORDER_ROOT_ID)
 
     @require_login
     @log_method_call_important
