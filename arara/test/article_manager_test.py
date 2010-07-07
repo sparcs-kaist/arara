@@ -79,6 +79,22 @@ class ArticleManagerTest(unittest.TestCase):
         article_dic = {'title': u'TITLE' + title_append, 'content': u'CONTENT'}
         return server.article_manager.write_article(session_key, u'board', Article(**article_dic))
 
+    def _to_dict(self, article_object):
+        '''
+        이런 식으로 온 객체를 
+
+        Article(attach=None, board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'TITLE', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'CONTENT', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, author_id=2, type=None, id=1)
+
+        이런 식으로 고친다
+
+        {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': ...}
+        '''
+        FIELD_LIST = ['attach', 'board_name', 'author_username', 'hit', 'blacklisted', 'title', 'deleted', 'read_status', 'root_id', 'is_searchable', 'author_nickname', 'content', 'vote', 'depth', 'reply_count', 'last_modified_date', 'date', 'author_id', 'type', 'id']
+        result_dict = {}
+        for field in FIELD_LIST:
+            result_dict[field] = article_object.__dict__[field]
+        return result_dict
+
     def test_write_and_read_basic(self):
         # Write an article.
         article_id = self._dummy_article_write(self.session_key_mikkang)
@@ -86,9 +102,9 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(1, article_id)
         # Now read, and check the contents.
         result = server.article_manager.read(self.session_key_mikkang, u'board', 1)
-        expected_result = "Article(attach=None, board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'TITLE', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'CONTENT', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, author_id=2, type=None, id=1)"
+        expected_result = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'CONTENT', 'vote': 0, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1}
         self.assertEqual(1, len(result))
-        self.assertEqual(expected_result, repr(result[0]))
+        self.assertEqual(expected_result, self._to_dict(result[0]))
 
     def test_read_recent_article(self):
         # Test 1. Board에 게시물이 하나도 없을 때 에러를 발생시키는가?
@@ -133,15 +149,28 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(2, reply_id)
         # Test read original article again.
         result = server.article_manager.read(self.session_key_mikkang, u'board', 1)
-        expected_result1 = "Article(attach=None, board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'TITLE', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'CONTENT', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, author_id=2, type=None, id=1)"
-        expected_result2 = "Article(attach=None, board_name=None, author_username=u'mikkang', hit=0, blacklisted=False, title=u'dummy', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'asdf', vote=0, depth=2, reply_count=None, last_modified_date=31536002.100000001, date=31536002.100000001, author_id=2, type=None, id=2)"
+        expected_result1 = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'CONTENT', 'vote': 0, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1}
+        
+        expected_result2 = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'asdf', 'vote': 0, 'depth': 2, 'reply_count': None, 'last_modified_date': 31536002.100000001, 'date': 31536002.100000001, 'author_id': 2, 'type': None, 'id': 2}
         self.assertEqual(2, len(result))
-        self.assertEqual(expected_result1, repr(result[0]))
-        self.assertEqual(expected_result2, repr(result[1]))
+        self.assertEqual(expected_result1, self._to_dict(result[0]))
+        self.assertEqual(expected_result2, self._to_dict(result[1]))
         # List the article (should only be one article in the list
         # XXX It shouldn't be a repr!!! Please replace it.
-        expected_result = "ArticleList(last_page=1, hit=[Article(attach=None, board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'TITLE', deleted=False, read_status='R', root_id=None, is_searchable=True, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=1, last_modified_date=31536001.100000001, date=31536001.100000001, author_id=2, type='normal', id=1)], results=1, current_page=None)"
-        self.assertEqual(expected_result, repr(server.article_manager.article_list(self.session_key_mikkang, u'board')))
+        result = server.article_manager.article_list(self.session_key_mikkang, u'board')
+        self.assertEqual(1, result.last_page)
+        self.assertEqual(1, result.results)
+        self.assertEqual(None, result.current_page)
+        self.assertEqual(1, len(result.hit))
+
+        expected_result = expected_result1
+        expected_result['reply_count'] = 1
+        expected_result['content'] = None
+        expected_result['read_status'] = 'R'
+        expected_result['type'] = 'normal'
+        expected_result['depth'] = None
+        expected_result['root_id'] = None
+        self.assertEqual(expected_result, self._to_dict(result.hit[0]))
 
     def test_reply_changes_list(self):
         # Preparation
@@ -158,10 +187,12 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(2, result.results)
         self.assertEqual(None, result.current_page)
 
-        expected_result1 = "Article(attach=None, board_name=None, author_username=u'mikkang', hit=0, blacklisted=False, title=u'TITLE', deleted=False, read_status='N', root_id=None, is_searchable=True, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=1, last_modified_date=31536001.100000001, date=31536001.100000001, author_id=2, type='normal', id=1)"
-        expected_result2 = "Article(attach=None, board_name=None, author_username=u'serialx', hit=0, blacklisted=False, title=u'TITLE', deleted=False, read_status='N', root_id=None, is_searchable=True, author_nickname=u'serialx', content=None, vote=0, depth=None, reply_count=0, last_modified_date=31536002.100000001, date=31536002.100000001, author_id=3, type='normal', id=2)"
-        self.assertEqual(expected_result2, repr(result.hit[0]))
-        self.assertEqual(expected_result1, repr(result.hit[1]))
+        expected_result1 = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE', 'deleted': False, 'read_status': 'N', 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 1, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': 'normal', 'id': 1}
+
+        expected_result2 = {'attach': None, 'board_name': None, 'author_username': u'serialx', 'hit': 0, 'blacklisted': False, 'title': u'TITLE', 'deleted': False, 'read_status': 'N', 'root_id': None, 'is_searchable': True, 'author_nickname': u'serialx', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536002.100000001, 'date': 31536002.100000001, 'author_id': 3, 'type': 'normal', 'id': 2}
+
+        self.assertEqual(expected_result2, self._to_dict(result.hit[0]))
+        self.assertEqual(expected_result1, self._to_dict(result.hit[1]))
 
     def test_pagination(self):
         # Write some articles
@@ -304,9 +335,9 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(article_no, result)
         # Now check it is modified or not
         result = server.article_manager.read(self.session_key_mikkang, u'board', 1)
-        expected_result = "Article(attach=None, board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'MODIFIED TITLE', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'MODIFIED CONTENT', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, author_id=2, type=None, id=1)"
+        expected_result = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'MODIFIED TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'MODIFIED CONTENT', 'vote': 0, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1}
         self.assertEqual(1, len(result))
-        self.assertEqual(expected_result, repr(result[0]))
+        self.assertEqual(expected_result, self._to_dict(result[0]))
         # XXX : 수정된 글의 경우 ... 
         #       이미 읽은 유저가 읽을 때 조회수가 올라가야 할까?
 
@@ -317,12 +348,12 @@ class ArticleManagerTest(unittest.TestCase):
         server.article_manager.read(self.session_key_mikkang, u'board', 1)
         # Another person read the article, and check hit goes up.
         result = server.article_manager.read(self.session_key_serialx, u'board', 1)
-        expected_result = "Article(attach=None, board_name=None, author_username=u'mikkang', hit=2, blacklisted=False, title=u'TITLE', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'CONTENT', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, author_id=2, type=None, id=1)"
+        expected_result = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 2, 'blacklisted': False, 'title': u'TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'CONTENT', 'vote': 0, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1}
         self.assertEqual(1, len(result))
-        self.assertEqual(expected_result, repr(result[0]))
+        self.assertEqual(expected_result, self._to_dict(result[0]))
         # If author read the article again, it should not goes up.
         result = server.article_manager.read(self.session_key_mikkang, u'board', 1)
-        self.assertEqual(expected_result, repr(result[0]))
+        self.assertEqual(expected_result, self._to_dict(result[0]))
         # XXX : 제 3의 인물이 또 읽으면 hit 이 올라가는 거.
 
     def test_vote(self):
@@ -332,16 +363,16 @@ class ArticleManagerTest(unittest.TestCase):
         server.article_manager.vote_article(self.session_key_mikkang, u'board', article_no)
         # So the vote status must be updated.
         result = server.article_manager.read(self.session_key_mikkang, u'board', 1)
-        expected_result = "Article(attach=None, board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'TITLE', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'CONTENT', vote=1, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, author_id=2, type=None, id=1)"
+        expected_result = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'CONTENT', 'vote': 1, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1}
         self.assertEqual(1, len(result))
-        self.assertEqual(expected_result, repr(result[0]))
+        self.assertEqual(expected_result, self._to_dict(result[0]))
         # Serialx now vote
         server.article_manager.vote_article(self.session_key_serialx, u'board', article_no)
         # So the vote status must be updated again.
         result = server.article_manager.read(self.session_key_mikkang, u'board', 1)
-        expected_result = "Article(attach=None, board_name=None, author_username=u'mikkang', hit=1, blacklisted=False, title=u'TITLE', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'CONTENT', vote=2, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, author_id=2, type=None, id=1)"
+        expected_result = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'CONTENT', 'vote': 2, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1}
         self.assertEqual(1, len(result))
-        self.assertEqual(expected_result, repr(result[0]))
+        self.assertEqual(expected_result, self._to_dict(result[0]))
         # But he can't vote again.
         try:
             server.article_manager.vote_article(self.session_key_serialx, u'board', article_no)
@@ -356,29 +387,30 @@ class ArticleManagerTest(unittest.TestCase):
         for i in range(1, 6):
             self._dummy_article_write(self.session_key_mikkang, unicode(i))
         result = server.article_manager.get_today_best_list(5)
-        repr_data1 = "Article(attach=None, board_name=u'board', author_username=u'mikkang', hit=0, blacklisted=False, title=u'TITLE5', deleted=False, read_status=None, root_id=None, is_searchable=True, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=0, last_modified_date=31536005.100000001, date=31536005.100000001, author_id=2, type='today', id=5)"
-        repr_data2 = "Article(attach=None, board_name=u'board', author_username=u'mikkang', hit=0, blacklisted=False, title=u'TITLE4', deleted=False, read_status=None, root_id=None, is_searchable=True, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=0, last_modified_date=31536004.100000001, date=31536004.100000001, author_id=2, type='today', id=4)"
-        repr_data3 = "Article(attach=None, board_name=u'board', author_username=u'mikkang', hit=0, blacklisted=False, title=u'TITLE3', deleted=False, read_status=None, root_id=None, is_searchable=True, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=0, last_modified_date=31536003.100000001, date=31536003.100000001, author_id=2, type='today', id=3)"
-        repr_data4 = "Article(attach=None, board_name=u'board', author_username=u'mikkang', hit=0, blacklisted=False, title=u'TITLE2', deleted=False, read_status=None, root_id=None, is_searchable=True, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=0, last_modified_date=31536002.100000001, date=31536002.100000001, author_id=2, type='today', id=2)"
-        repr_data5 = "Article(attach=None, board_name=u'board', author_username=u'mikkang', hit=0, blacklisted=False, title=u'TITLE1', deleted=False, read_status=None, root_id=None, is_searchable=True, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=0, last_modified_date=31536001.100000001, date=31536001.100000001, author_id=2, type='today', id=1)"
+        repr_data1 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE5', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536005.100000001, 'date': 31536005.100000001, 'author_id': 2, 'type': 'today', 'id': 5}
+        repr_data2 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE4', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536004.100000001, 'date': 31536004.100000001, 'author_id': 2, 'type': 'today', 'id': 4}
+        repr_data3 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE3', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536003.100000001, 'date': 31536003.100000001, 'author_id': 2, 'type': 'today', 'id': 3}
+        repr_data4 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE2', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536002.100000001, 'date': 31536002.100000001, 'author_id': 2, 'type': 'today', 'id': 2}
+        repr_data5 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE1', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': 'today', 'id': 1}
+
         self.assertEqual(5, len(result))
-        self.assertEqual(repr_data1, repr(result[0]))
-        self.assertEqual(repr_data2, repr(result[1]))
-        self.assertEqual(repr_data3, repr(result[2]))
-        self.assertEqual(repr_data4, repr(result[3]))
-        self.assertEqual(repr_data5, repr(result[4]))
+        self.assertEqual(repr_data1, self._to_dict(result[0]))
+        self.assertEqual(repr_data2, self._to_dict(result[1]))
+        self.assertEqual(repr_data3, self._to_dict(result[2]))
+        self.assertEqual(repr_data4, self._to_dict(result[3]))
+        self.assertEqual(repr_data5, self._to_dict(result[4]))
         result = server.article_manager.get_weekly_best_list(5)
-        repr_data1 = "Article(attach=None, board_name=u'board', author_username=u'mikkang', hit=0, blacklisted=False, title=u'TITLE5', deleted=False, read_status=None, root_id=None, is_searchable=True, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=0, last_modified_date=31536005.100000001, date=31536005.100000001, author_id=2, type='weekly', id=5)"
-        repr_data2 = "Article(attach=None, board_name=u'board', author_username=u'mikkang', hit=0, blacklisted=False, title=u'TITLE4', deleted=False, read_status=None, root_id=None, is_searchable=True, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=0, last_modified_date=31536004.100000001, date=31536004.100000001, author_id=2, type='weekly', id=4)"
-        repr_data3 = "Article(attach=None, board_name=u'board', author_username=u'mikkang', hit=0, blacklisted=False, title=u'TITLE3', deleted=False, read_status=None, root_id=None, is_searchable=True, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=0, last_modified_date=31536003.100000001, date=31536003.100000001, author_id=2, type='weekly', id=3)"
-        repr_data4 = "Article(attach=None, board_name=u'board', author_username=u'mikkang', hit=0, blacklisted=False, title=u'TITLE2', deleted=False, read_status=None, root_id=None, is_searchable=True, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=0, last_modified_date=31536002.100000001, date=31536002.100000001, author_id=2, type='weekly', id=2)"
-        repr_data5 = "Article(attach=None, board_name=u'board', author_username=u'mikkang', hit=0, blacklisted=False, title=u'TITLE1', deleted=False, read_status=None, root_id=None, is_searchable=True, author_nickname=u'mikkang', content=None, vote=0, depth=None, reply_count=0, last_modified_date=31536001.100000001, date=31536001.100000001, author_id=2, type='weekly', id=1)"
+        repr_data1 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE5', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536005.100000001, 'date': 31536005.100000001, 'author_id': 2, 'type': 'weekly', 'id': 5}
+        repr_data2 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE4', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536004.100000001, 'date': 31536004.100000001, 'author_id': 2, 'type': 'weekly', 'id': 4}
+        repr_data3 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE3', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536003.100000001, 'date': 31536003.100000001, 'author_id': 2, 'type': 'weekly', 'id': 3}
+        repr_data4 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE2', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536002.100000001, 'date': 31536002.100000001, 'author_id': 2, 'type': 'weekly', 'id': 2}
+        repr_data5 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE1', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': 'weekly', 'id': 1}
         self.assertEqual(5, len(result))
-        self.assertEqual(repr_data1, repr(result[0]))
-        self.assertEqual(repr_data2, repr(result[1]))
-        self.assertEqual(repr_data3, repr(result[2]))
-        self.assertEqual(repr_data4, repr(result[3]))
-        self.assertEqual(repr_data5, repr(result[4]))
+        self.assertEqual(repr_data1, self._to_dict(result[0]))
+        self.assertEqual(repr_data2, self._to_dict(result[1]))
+        self.assertEqual(repr_data3, self._to_dict(result[2]))
+        self.assertEqual(repr_data4, self._to_dict(result[3]))
+        self.assertEqual(repr_data5, self._to_dict(result[4]))
 
     def test_many_replies(self):
         article_id = self._dummy_article_write(self.session_key_mikkang)
@@ -411,10 +443,10 @@ class ArticleManagerTest(unittest.TestCase):
         # 어떻게 최소화할 지에 대해서도 생각해야한다 ... (combacsa)
         server.blacklist_manager.add(self.session_key_serialx, u'mikkang')
         article_id = self._dummy_article_write(self.session_key_mikkang)
-        expected_result = "Article(attach=None, board_name=None, author_username=u'mikkang', hit=1, blacklisted=True, title=u'TITLE', deleted=False, read_status=None, root_id=1, is_searchable=True, author_nickname=u'mikkang', content=u'CONTENT', vote=0, depth=1, reply_count=None, last_modified_date=31536001.100000001, date=31536001.100000001, author_id=2, type=None, id=1)"
+        expected_result = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': True, 'title': u'TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'CONTENT', 'vote': 0, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1}
         result = server.article_manager.read(self.session_key_serialx, u'board', 1)
         self.assertEqual(1, len(result))
-        self.assertEqual(expected_result, repr(result[0]))
+        self.assertEqual(expected_result, self._to_dict(result[0]))
 
     def test_article_list_below(self):
         for i in range(100):
