@@ -39,6 +39,23 @@ class MemberManagerTest(unittest.TestCase):
         user_reg_dic = {'username':u'pipoket', 'password':u'pipoket', 'nickname':u'pipoket', 'email':u'pipoket@example.com', 'signature':u'pipoket', 'self_introduction':u'pipoket', 'default_language':u'english', 'campus':u'Daejeon'}
         self.register_key_pipoket = server.member_manager.register_(UserRegistration(**user_reg_dic))
 
+    def testAddUserWithoutConfirm(self):
+        user_reg_dic = {'username':u'hodduc', 'password':u'hodduc', 'nickname':u'hodduc', 'email':u'hodduc@example.com', 'signature':u'hodduc', 'self_introduction':u'hodduc', 'default_language':u'english', 'campus':u'Daejeon' }
+        # _register_without_confirm 함수로 가입 후 로그인
+        # 만약 원래 의도대로 Self Activation되지 않았다면 login이 되지 않을 것이므로 Exception이 발생함
+        server.member_manager._register_without_confirm(user_reg_dic, False)
+        session_key = server.login_manager.login(u'hodduc', u'hodduc', u'143.248.234.140')
+
+        user_reg_dic = {'username':u'sillo', 'password':u'sillo', 'nickname':u'sillo', 'email':u'sillo@example.com', 'signature':u'sillo', 'self_introduction':u'sillo', 'default_language':u'english', 'campus':u'Daejeon'}
+        # _register_without_confirm 함수로 시삽 권한으로 가입 후 로그인
+        # 시삽 권한을 가지는지 확인
+        server.member_manager._register_without_confirm(user_reg_dic, True)
+        session_key = server.login_manager.login(u'sillo', u'sillo', u'143.248.234.140')
+        if not server.member_manager.is_sysop(session_key):
+            self.fail('_register_without_confirm() failed! :: Failed to grant SYSOP previlege')
+
+
+
     def testAddMikkang(self):
         user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang@example.com', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english', 'campus':u'Daejeon' }
         # Check this user is not yet registered

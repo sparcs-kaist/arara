@@ -62,10 +62,41 @@ class MemberManager(object):
         self.logger = logging.getLogger('member_manager')
         self._register_sysop()
 
+    def _register_without_confirm(self, user_reg_dic, is_sysop):
+        '''
+        confirm 과정 없이 사용자를 등록하는 함수
+
+        @type  user_reg_dic: dict
+        @param user_reg_dic: User Information
+        @type  is_sysop: boolean
+        @param is_sysop: 유저가 시삽권한을 가질지를 결정
+        @rtype: void
+        @return:
+            1. 사용자 등록이 성공했을 경우 : void
+            2. 사용자 등록이 실패했을 경우 : Invalid Operation
+        '''
+        try:
+            user = model.User(**user_reg_dic)
+            session = model.Session()
+            session.add(user)
+            user.activated = True
+            user.is_sysop = is_sysop
+            session.commit()
+            session.close()
+        except:
+            session.rollback()
+            session.close()
+            raise InvalidOperation('Cannot add users without confirm')
+
     def _register_sysop(self):
-        """
-        시삽을 등록시킨다.
-        """
+        '''
+        시삽을 등록하는 함수
+
+        @rtype: void
+        @return:
+            1. 시삽 등록이 성공했을 경우 : void
+            2. 시삽 등록이 실패했을 경우 : Invalid Operation
+        '''
         from etc.arara_settings import SYSOP_INITIAL_USERNAME, SYSOP_INITIAL_PASSWORD
         # 이미 시삽이 등록되어 있을 땐 굳이 할 필요가 없다.
         if self.is_registered(SYSOP_INITIAL_USERNAME):
@@ -80,18 +111,8 @@ class MemberManager(object):
                          'default_language':u'ko_KR',
                          'campus': u''}
 
-        try:
-            user = model.User(**SYSOP_REG_DIC)
-            session = model.Session()
-            session.add(user)
-            user.activated = True
-            user.is_sysop = True
-            session.commit()
-            session.close()
-        except IntegrityError:
-            session.rollback()
-            session.close()
-            raise InvalidOperation("cannot add sysop ... ?!")
+        self._register_without_confirm(SYSOP_REG_DIC, True)
+
 
     @log_method_call
     def _logout_process(self, username):
