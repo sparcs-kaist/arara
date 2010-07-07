@@ -19,7 +19,7 @@ def index(request):
 def add_board(request):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
-    server.board_manager.add_board(sess, request.POST['add_board_name'], request.POST['add_board_description'])
+    server.board_manager.add_board(sess, request.POST['add_board_name'], request.POST['add_board_description'], []) # TODO: 말머리 정보
     return HttpResponseRedirect('/sysop/')
 
 @warara.wrap_error
@@ -95,7 +95,7 @@ def refresh_weather(request):
     # 제안하는 convention : 보드 이름이 _ 로 시작하면 무조건 hide 속성을 부여하는 건 어떨까.
     board_list = server.board_manager.get_board_list()
     if not filter(lambda x:x.board_name == '_weather', board_list):
-        server.board_manager.add_board(sess, '_weather', u'Board for weather (should be hidden)')
+        server.board_manager.add_board(sess, '_weather', u'Board for weather (should be hidden)', []) # 말머리는 없다
         server.board_manager.hide_board(sess, '_weather')
 
     # 날씨 정보를 받아온다.

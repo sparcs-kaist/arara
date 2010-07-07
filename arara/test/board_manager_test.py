@@ -166,6 +166,23 @@ class BoardManagerTest(unittest.TestCase):
         except InvalidOperation:
             pass
 
+    def test_get_board_heading_list(self):
+        # 말머리가 없는 board 에서 아무 말머리도 안 등록되어있는지 확인한다.
+        server.board_manager.add_board(self.session_key_sysop, u'garbages', u'Garbages Board')
+        self.assertEqual([], server.board_manager.get_board_heading_list(u'garbages'))
+
+        # 말머리를 가진 board 를 추가한다
+        server.board_manager.add_board(self.session_key_sysop, u'BuySell', u'market', [u'buy', u'sell'])
+        # 추가된 말머리들이 잘 읽히는지 확인한다
+        self.assertEqual([u'buy', u'sell'], server.board_manager.get_board_heading_list(u'BuySell'))
+
+        # 존재하지 않는 게시판의 말머리는 읽어올 수 없어야 한다.
+        try:
+            server.board_manager.get_board_heading_list(u'noboard')
+            self.fail('Must not be able to get board heading list from nonexist board')
+        except InvalidOperation:
+            pass
+
     def tearDown(self):
         arara.model.clear_test_database()
 

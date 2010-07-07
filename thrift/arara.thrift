@@ -239,7 +239,7 @@ struct Board {
 
 service BoardManager {
     void add_board(1:string session_key, 2:string board_name,
-                   3:string board_description)
+                   3:string board_description, 4:list<string> heading_list)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     Board get_board(1: string board_name)
@@ -248,6 +248,9 @@ service BoardManager {
     i32 get_board_id(1: string board_name)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<string> get_board_heading_list(1: string board_name)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch),
     list<Board> get_board_list()
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),

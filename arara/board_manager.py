@@ -48,12 +48,39 @@ class BoardManager(object):
 
     @require_login
     @log_method_call_important
-    def add_board(self, session_key, board_name, board_description):
+    def add_board(self, session_key, board_name, board_description, heading_list = []):
+        '''
+        보드를 신설한다.
+
+        @type  session_key: string
+        @param session_key: User Key (must be SYSOP)
+        @type  board_name: string
+        @param board_name: 개설할 Board Name
+        @type  board_description: string
+        @param board_description: 보드에 대한 한줄 설명
+        @type  heading_list: list of string
+        @param heading_list: 보드에 존재할 말머리 목록 (초기값 : [] 아무 말머리 없음)
+        @rtype: boolean, string 
+        @return:
+            1. 성공: None
+            2. 실패:
+                1. 로그인되지 않은 유저: 'NOT_LOGGEDIN'
+                2. 시샵이 아닌 경우: 'no permission'
+                3. 존재하는 게시판: 'board already exist'
+                4. 데이터베이스 오류: 'DATABASE_ERROR'
+
+        '''
         self._is_sysop(session_key)
         session = model.Session()
         board_to_add = model.Board(smart_unicode(board_name), board_description)
         try:
             session.add(board_to_add)
+            # Board Heading 들도 추가한다.
+            # TODO: heading 에 대한 중복 검사가 필요하다. (지금은 따로 없다)
+            for heading in heading_list:
+                board_heading = model.BoardHeading(board_to_add, smart_unicode(heading))
+                session.add(board_heading)
+
             session.commit()
             session.close()
             # 보드에 변경이 발생하므로 캐시 초기화
@@ -85,6 +112,27 @@ class BoardManager(object):
     @log_method_call
     def get_board_id(self, board_name):
         return self._get_board(board_name).id
+
+    @log_method_call
+    def get_board_heading_list(self, board_name):
+        '''
+        주어진 board의 heading 의 목록을 가져온다.
+
+        @type  board_name: string
+        @param board_name: heading 을 가져올 보드의 이름
+        @rtype : list of string
+        @return: heading 의 목록
+        '''
+        session = model.Session()
+        board_heading_list = []
+        board_id = self.get_board_id(board_name)
+        heading_query = session.query(model.BoardHeading).filter_by(board_id=board_id)
+        heading_result = heading_query.all()
+
+        for board_heading in heading_result:
+            board_heading_list.append(board_heading.heading)
+
+        return board_heading_list
 
     def cache_board_list(self):
         # Board 의 목록을 DB 로부터 memory 로 옮겨 둔다.

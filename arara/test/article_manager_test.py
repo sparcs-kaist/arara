@@ -56,7 +56,7 @@ class ArticleManagerTest(unittest.TestCase):
         self.session_key_mikkang = self._register_user(u'mikkang')
         self.session_key_serialx = self._register_user(u'serialx')
         # Create default board
-        server.board_manager.add_board(self.session_key_sysop, u'board', u'Test Board')
+        server.board_manager.add_board(self.session_key_sysop, u'board', u'Test Board', [])
 
     def tearDown(self):
         arara.model.clear_test_database()
