@@ -318,7 +318,26 @@ class SearchManager(object):
 
         end_time = time.time()
 
-        search_dict_list = self._get_dict_list(result, SEARCH_ARTICLE_WHITELIST)
+        search_list = list(result)
+        search_dict_list = self._get_dict_list(search_list, SEARCH_ARTICLE_WHITELIST)
+
+        # 검색된 글도 읽음 여부를 기억하게 해야 한다!
+        article_last_reply_id_list = [article.last_reply_id for article in search_list]
+        article_id_list = [article.id for article in search_dict_list]
+        try:
+            read_stats_list = get_server().read_status_manager.check_stats(session_key, article_id_list)
+            read_stats_list_sub = get_server().read_status_manager.check_stats(session_key, article_last_reply_id_list)
+            for idx, item in enumerate(read_stats_list_sub):
+                if read_stats_list[idx] == 'R':
+                    if item == 'N':
+                        read_stats_list[idx] = 'U'
+
+        except NotLoggedIn, InvalidOperation:
+            read_stats_list = ['N'] * len(article_id_list)
+
+        for index, article in enumerate(search_dict_list):
+            article.read_status = read_stats_list[index]
+
         ret_dict['hit'] = search_dict_list
         ret_dict['results'] = article_count
         ret_dict['search_time'] = end_time-start_time

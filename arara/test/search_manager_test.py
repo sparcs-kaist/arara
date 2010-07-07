@@ -89,6 +89,24 @@ class Test(unittest.TestCase):
         c = [x.id for x in server.search_manager.search(self.session_key_mikkang, True, u'search2', SearchQuery(**{'query': u'pipoket'}), 1, 20).hit]
         self.assertEqual([], c)
 
+    def test_search_with_read_status(self):
+        # TEST 1. Nothing changed
+        article_1_id = self._dummy_article_write(self.session_key_mikkang, u'search1')
+        article_2_id = self._dummy_article_write(self.session_key_mikkang, u'search1')
+        result = [x.read_status for x in server.search_manager.search(self.session_key_pipoket, True, u'search1', SearchQuery(**{'query': u'mikkang'}), 1, 20).hit]
+        self.assertEqual(['N', 'N'], result)
+
+        # TEST 2. article_2 was read.
+        server.article_manager.read(self.session_key_pipoket, u'search1', article_2_id)
+        result = [x.read_status for x in server.search_manager.search(self.session_key_pipoket, True, u'search1', SearchQuery(**{'query': u'mikkang'}), 1, 20).hit]
+        self.assertEqual(['R', 'N'], result)
+
+        # TEST 3. article_2 got reply.
+        reply_dic = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
+        reply_id  = server.article_manager.write_reply(self.session_key_mikkang, u'search1', article_2_id, reply_dic)
+        result = [x.read_status for x in server.search_manager.search(self.session_key_pipoket, True, u'search1', SearchQuery(**{'query': u'mikkang'}), 1, 20).hit]
+        self.assertEqual(['U', 'N'], result)
+
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(Test)
 
