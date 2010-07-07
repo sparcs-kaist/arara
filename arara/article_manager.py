@@ -20,7 +20,7 @@ log_method_call_important = log_method_call_with_source_important('article_manag
 
 # TODO: WRITE_ARTICLE_DICT 는 사실 쓰이지 않는다... SPEC 표시 용도일까?
 WRITE_ARTICLE_DICT = ('title', 'heading', 'content')
-READ_ARTICLE_WHITELIST = ('id', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'author_nickname', 'author_id', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable', 'attach')
+READ_ARTICLE_WHITELIST = ('id', 'heading', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'author_nickname', 'author_id', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable', 'attach')
 LIST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'author_nickname', 'author_id', 'vote', 'hit')
 SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
@@ -115,6 +115,11 @@ class ArticleManager(object):
         if item_dict.has_key('board_id'):
             item_dict['board_name'] = item.board.board_name
             del item_dict['board_id']
+        if item_dict.has_key('heading_id'):
+            if item.heading == None:
+                item_dict['heading'] = u''
+            else:
+                item_dict['heading'] = item.heading.heading
         if not item_dict.get('root_id'):
             item_dict['root_id'] = item_dict['id']
         if item_dict.has_key('content'):
