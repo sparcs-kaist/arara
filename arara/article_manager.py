@@ -660,6 +660,7 @@ class ArticleManager(object):
         board = self._get_board(session, board_name)
         if not board.read_only:
             new_article = model.Article(board,
+                                        None, # TODO: Board Heading 객체로 대체
                                         smart_unicode(article_dic.title),
                                         smart_unicode(article_dic.content),
                                         author,
@@ -711,6 +712,7 @@ class ArticleManager(object):
         board = self._get_board(session, board_name)
         article = self._get_article(session, board.id, article_no)
         new_reply = model.Article(board,
+                                None, # TODO: Board Heading 객체로 대체한다
                                 smart_unicode(reply_dic.title),
                                 smart_unicode(reply_dic.content),
                                 author,

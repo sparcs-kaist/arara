@@ -45,13 +45,16 @@ class ModelTest(unittest.TestCase):
         server.login_manager.logout(session_key_sysop)
 
     def testArticleWriteAndRead(self):
+        """
+        Heading 없이 글을 쓰고 읽는 것을 테스트한다.
+        """
         session = arara.model.Session()
         board = session.query(arara.model.Board).filter_by(board_name=u'garbages').one()
         serialx = session.query(arara.model.User).filter_by(username=u'serialx').one()
-        a = arara.model.Article(board, u'title1', u'content', serialx, u'0.0.0.0', None)
-        b = arara.model.Article(board, u'title2', u'content', serialx, u'0.0.0.0', a)
-        c = arara.model.Article(board, u'title3', u'content', serialx, u'0.0.0.0', b)
-        d = arara.model.Article(board, u'title4', u'content', serialx, u'0.0.0.0', c)
+        a = arara.model.Article(board, None, u'title1', u'content', serialx, u'0.0.0.0', None)
+        b = arara.model.Article(board, None, u'title2', u'content', serialx, u'0.0.0.0', a)
+        c = arara.model.Article(board, None, u'title3', u'content', serialx, u'0.0.0.0', b)
+        d = arara.model.Article(board, None, u'title4', u'content', serialx, u'0.0.0.0', c)
         session.add(a)
         session.add(b)
         session.add(c)

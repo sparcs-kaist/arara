@@ -96,9 +96,18 @@ class Board(object):
     def __repr__(self):
         return "<Board('%s', '%s')>" % (self.board_name, self.board_description)
 
-class Article(object):
-    def __init__(self, board, title, content, author, author_ip, parent):
+class BoardHeading(object):
+    def __init__(self, board, heading):
         self.board = board
+        self.heading = smart_unicode(heading)
+
+    def __repr__(self):
+        return "<BoardHeading('%s', '%s')>" % (self.board, self.heading)
+
+class Article(object):
+    def __init__(self, board, heading, title, content, author, author_ip, parent):
+        self.board = board
+        self.heading = heading
         self.title = smart_unicode(title)
         self.content = smart_unicode(content)
         self.author = author
@@ -247,10 +256,18 @@ board_table = Table('boards', metadata,
     mysql_engine='InnoDB'
 )
 
+board_heading_table = Table('board_headings', metadata,
+    Column('id', Integer, primary_key=True),
+    Column('board_id', Integer, ForeignKey('boards.id')),
+    Column('heading', Unicode(10)),
+    mysql_engine='InnoDB'
+)
+
 articles_table = Table('articles', metadata,
     Column('id', Integer, primary_key=True),
     Column('title', Unicode(200)),
     Column('board_id', Integer, ForeignKey('boards.id')),
+    Column('heading_id', Integer, ForeignKey('board_headings.id'), nullable=True), # TODO: nullable=True 는 어디까지나 임시방편이므로 어서 지운다.
     Column('content', UnicodeText),
     Column('author_id', Integer, ForeignKey('users.id')),
     Column('author_ip', Unicode(15)),
@@ -381,6 +398,7 @@ mapper(UserActivation, user_activation_table, properties={
 mapper(Article, articles_table, properties={
     'author':relation(User, backref='articles', lazy=False),
     'board':relation(Board, backref='articles', lazy=False),
+    'heading':relation(BoardHeading, backref='articles', lazy=False),
     'children':relation(Article,
         join_depth=3,
         primaryjoin=articles_table.c.parent_id==articles_table.c.id,
@@ -409,6 +427,10 @@ mapper(ReadStatus, read_status_table, properties={
 })
 
 mapper(Board, board_table)
+
+mapper(BoardHeading, board_heading_table, properties={
+    'board': relation(Board, backref='headings', lazy=False),
+})
 
 mapper(Message, message_table, properties={
     'from_user': relation(User, primaryjoin=message_table.c.from_id==users_table.c.id,
