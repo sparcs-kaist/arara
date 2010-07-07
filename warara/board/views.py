@@ -23,6 +23,16 @@ def index(request):
     return HttpResponse(rendered)
 
 def get_article_list(request, r, mode):
+    """
+    글 목록을 Backend 로부터 받아온다.
+
+    @type  request: Django request
+    @param request: Django 로 넘어온 Request
+    @type  r: dict
+    @param r: 차후 render_to_string 에 넘겨질 dictionary
+    @type  mode: string
+    @param mode: 작동방식 - 크게 list, read, search 가 있음
+    """
     server = warara_middleware.get_server()
     sess, _ = warara.check_logged_in(request)
     
@@ -53,9 +63,11 @@ def get_article_list(request, r, mode):
     #                 article_per_page 정도가 적당하다. 나중에 이름을 바꾸자.
     page_length = 20
     if mode == 'list':
-        article_result = server.article_manager.article_list(sess, r['board_name'], page_no, page_length)
+        #TODO: heading 과 include_all_headings
+        article_result = server.article_manager.article_list(sess, r['board_name'], u"", page_no, page_length, True)
     elif mode == 'read':
-        article_result = server.article_manager.article_list_below(sess, r['board_name'], int(r['article_id']), page_length)
+        #TODO: heading 과 include_all_headings
+        article_result = server.article_manager.article_list_below(sess, r['board_name'], u"", int(r['article_id']), page_length, True)
         r['page_no'] = article_result.current_page
     elif mode == 'search':
         for k, v in r['search_method'].items():

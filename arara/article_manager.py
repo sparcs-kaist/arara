@@ -536,18 +536,22 @@ class ArticleManager(object):
         return article_list
          
     @log_method_call
-    def article_list(self, session_key, board_name, page=1, page_length=20):
+    def article_list(self, session_key, board_name, heading_name, page=1, page_length=20, include_all_headings=True):
         '''
         게시판의 게시글 목록 읽어오기
 
         @type  session_key: string
         @param session_key: User Key
-        @type board_name: string
+        @type  board_name: string
         @param board_name : BBS Name
+        @type  heading_name: string
+        @param heading_name: 가져올 글의 글머리 이름
         @type  page: integer
         @param page: Page Number to Request
         @type  page_length: integer
         @param page_length: Count of Article on a Page
+        @type  include_all_headings: boolean
+        @param include_all_headings: 모든 글머리의 글을 가져올지에 대한 여부
         @rtype: list
         @return:
             1. 리스트 읽어오기 성공: Article List
@@ -556,7 +560,7 @@ class ArticleManager(object):
                 2. 페이지 번호 오류: InvalidOperation Exception
                 3. 데이터베이스 오류: InternalError Exception 
         '''
-        return self._article_list(session_key, board_name, u"", page, page_length, True, LIST_ORDER_ROOT_ID)
+        return self._article_list(session_key, board_name, heading_name, page, page_length, include_all_headings, LIST_ORDER_ROOT_ID)
 
     @require_login
     @log_method_call_important
@@ -710,7 +714,7 @@ class ArticleManager(object):
 
     @require_login
     @log_method_call
-    def article_list_below(self, session_key, board_name, no, page_length=20):
+    def article_list_below(self, session_key, board_name, heading_name, no, page_length=20, include_all_headings=True):
         '''
         게시물을 읽을 때 밑에 표시될 게시글 목록을 가져오는 함수
 
@@ -718,10 +722,14 @@ class ArticleManager(object):
         @param session_key: User Key
         @type  board_name: string
         @param board_name: Board Name
+        @type  heading_name: string
+        @param heading_name: 가져올 글의 글머리 이름
         @type  no: integer
         @param no: Article No
         @type  page_length: integer
         @param page_length: Number of articles to be displayed on a page
+        @type  include_all_headings: boolean
+        @param include_all_headings: 모든 글머리의 글을 가져올지에 대한 여부
         @rtype: Article List
         @return:
             1. 목록 가져오기 성공: Article List
@@ -729,7 +737,7 @@ class ArticleManager(object):
                 1. 존재하지 않는 게시판: InvalidOperation Exception
                 2. 데이터베이스 오류: InternalError Exception
         '''
-        return self._article_list_below(session_key, board_name, u"", no, page_length, True, LIST_ORDER_ROOT_ID)
+        return self._article_list_below(session_key, board_name, heading_name, no, page_length, include_all_headings, LIST_ORDER_ROOT_ID)
 
     @require_login
     @log_method_call_important

@@ -172,7 +172,7 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(expected_result2, self._to_dict(result[1]))
         # List the article (should only be one article in the list
         # XXX It shouldn't be a repr!!! Please replace it.
-        result = server.article_manager.article_list(self.session_key_mikkang, u'board')
+        result = server.article_manager.article_list(self.session_key_mikkang, u'board', u'')
         self.assertEqual(1, result.last_page)
         self.assertEqual(1, result.results)
         self.assertEqual(None, result.current_page)
@@ -226,7 +226,7 @@ class ArticleManagerTest(unittest.TestCase):
         reply_id     = server.article_manager.write_reply(self.session_key_mikkang, u'board', 1, reply_dic)
         # Without reply, listing order must be [article 2, article 1].
         # But since new reply was found on article 1, listing order must be [article 1, article 2].
-        result = server.article_manager.article_list(self.session_key_mikkang, u'board')
+        result = server.article_manager.article_list(self.session_key_mikkang, u'board', u'')
         self.assertEqual(1, result.last_page)
         self.assertEqual(2, result.results)
         self.assertEqual(None, result.current_page)
@@ -243,11 +243,11 @@ class ArticleManagerTest(unittest.TestCase):
         for i in range(1, 105):
             self._dummy_article_write(self.session_key_mikkang, unicode(i))
         # Check some articles
-        l = server.article_manager.article_list(self.session_key_mikkang, u'board')
+        l = server.article_manager.article_list(self.session_key_mikkang, u'board', u'')
         self.assertEqual(u'TITLE104', l.hit[0].title)
         self.assertEqual(u'TITLE103', l.hit[1].title)
         self.assertEqual(u'TITLE85', l.hit[19].title)
-        l = server.article_manager.article_list(self.session_key_mikkang, u'board', page=2)
+        l = server.article_manager.article_list(self.session_key_mikkang, u'board', u'', page=2)
         self.assertEqual(u'TITLE84', l.hit[0].title)
         self.assertEqual(6, l.last_page)
 
@@ -260,14 +260,14 @@ class ArticleManagerTest(unittest.TestCase):
         article_id2 = self._dummy_article_write(self.session_key_mikkang)
         article_id3 = self._dummy_article_write(self.session_key_mikkang)
         # Test that everything is New
-        l = server.article_manager.article_list(self.session_key_serialx, u'board')
+        l = server.article_manager.article_list(self.session_key_serialx, u'board', u'')
         self.assertEqual('N', l.hit[2].read_status)
         self.assertEqual('N', l.hit[1].read_status)
         self.assertEqual('N', l.hit[0].read_status)
         # Now Read some article and test if it is changed as read
         article_1 = server.article_manager.read(self.session_key_serialx, u'board', article_id3)
         article_2 = server.article_manager.read(self.session_key_serialx, u'board', article_id2)
-        l = server.article_manager.article_list(self.session_key_serialx, u'board')
+        l = server.article_manager.article_list(self.session_key_serialx, u'board', u'')
         self.assertEqual('N', l.hit[2].read_status)
         self.assertEqual('R', l.hit[1].read_status)
         self.assertEqual('R', l.hit[0].read_status)
@@ -299,14 +299,14 @@ class ArticleManagerTest(unittest.TestCase):
         # Article_2 번에게는 N
         # Article_1 번에게는 U <새로 도입하는 기호, 루트글은 읽고 답글은 안읽었을 때>
 
-        result = server.article_manager.article_list(self.session_key_serialx, u'board')
+        result = server.article_manager.article_list(self.session_key_serialx, u'board', u'')
         self.assertEqual('R', result.hit[0].read_status)
         self.assertEqual('N', result.hit[1].read_status)
         self.assertEqual('U', result.hit[2].read_status)
 
         # 이제 다시 한번 위의 글을 읽어주면 U->R 으로.
         server.article_manager.read(self.session_key_serialx, u'board', article_1_id)
-        result = server.article_manager.article_list(self.session_key_serialx, u'board')
+        result = server.article_manager.article_list(self.session_key_serialx, u'board', u'')
         self.assertEqual('R', result.hit[2].read_status)
 
     def test_deletion(self):
@@ -490,7 +490,7 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(4, article[3].depth)
         self.assertEqual(2, article[4].depth)
         # And check reply_count
-        list = server.article_manager.article_list(self.session_key_mikkang, u'board', 1, 5)
+        list = server.article_manager.article_list(self.session_key_mikkang, u'board', u'', 1, 5)
         self.assertEqual(4, list.hit[0].reply_count)
 
     def test_blacklist(self):
@@ -589,12 +589,12 @@ class ArticleManagerTest(unittest.TestCase):
         for i in range(100):
             self._dummy_article_write(self.session_key_mikkang)
 
-        l = server.article_manager.article_list_below(self.session_key_mikkang, u'board', 75, 10)
+        l = server.article_manager.article_list_below(self.session_key_mikkang, u'board', u'', 75, 10)
         self.assertEqual(l.hit[0].id, 80)
         self.assertEqual(l.last_page, 10)
-        l = server.article_manager.article_list_below(self.session_key_mikkang, u'board', 84, 10)
+        l = server.article_manager.article_list_below(self.session_key_mikkang, u'board', u'', 84, 10)
         self.assertEqual(l.hit[0].id, 90)
-        l = server.article_manager.article_list_below(self.session_key_mikkang, u'board', 95, 10)
+        l = server.article_manager.article_list_below(self.session_key_mikkang, u'board', u'', 95, 10)
         self.assertEqual(l.hit[0].id, 100)
 
     def test_not_read_article_list(self):

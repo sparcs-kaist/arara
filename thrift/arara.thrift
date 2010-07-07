@@ -372,8 +372,10 @@ service ArticleManager {
 	        2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     ArticleList article_list(1:string session_key,
                              2:string board_name,
-                             3:i32 page=1,
-                             4:i32 page_length=20)
+                             3:string heading_name,
+                             4:i32 page=1,
+                             5:i32 page_length=20,
+                             6:bool include_all_headings=1)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     list<Article> read(1:string session_key, 2:string board_name, 3:id_t no)
@@ -384,8 +386,10 @@ service ArticleManager {
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     ArticleList article_list_below(1:string session_key,
                                    2:string board_name,
-                                   3:id_t no,
-                                   4:i32 page_length=20)
+                                   3:string heading_name,
+                                   4:id_t no,
+                                   5:i32 page_length=20,
+                                   6:bool include_all_headins=1)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void vote_article(1:string session_key, 2:string board_name,
