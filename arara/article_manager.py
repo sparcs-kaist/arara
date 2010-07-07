@@ -468,8 +468,25 @@ class ArticleManager(object):
         article_last_reply_id_list = [article.last_reply_id for article in article_list]
         return article_dict_list, last_page, article_count, article_last_reply_id_list
 
-    def _article_list(self, session_key, board_name, page, page_length, order_by):
-        '''Internal use only.'''
+    def _article_list(self, session_key, board_name, page, page_length, order_by = LIST_ORDER_ROOT_ID):
+        '''
+        Internal.
+        주어진 게시판의 주어진 페이지에 있는 글의 목록을 가져와 Thrift 형식의 Article 객체의 list 로 돌려준다.
+
+        @type  session_key: string
+        @param session_key: 사용자의 session_key
+        @type  board_name: string
+        @param board_name: 글을 가져올 게시판의 이름
+        @type  page: int
+        @param page: 글을 가져올 페이지의 번호
+        @type  page_length: int
+        @param page_length: 페이지당 글 갯수
+        @type  order_by: int - LIST_ORDER
+        @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
+        @rtype: list<Article>
+        @return:
+            선택한 게시판의 선택한 page 에 있는 글 (Article 객체) 의 list
+        '''
         blacklisted_users = self._get_blacklist_userid(session_key)
 
         article_dict_list, last_page, article_count, article_last_reply_id_list = self._get_article_list(board_name, u"", page, page_length, True, order_by)
@@ -620,8 +637,25 @@ class ArticleManager(object):
         session.close()
         return article_dict_list
 
-    def _article_list_below(self, session_key, board_name, no, page_length, order_by):
-        '''Internal Use Only.'''
+    def _article_list_below(self, session_key, board_name, no, page_length, order_by = LIST_ORDER_ROOT_ID):
+        '''
+        Internal.
+        주어진 게시판의 주어진 게시물의 하단에 표시될 글의 목록을 가져와 Thrift 형식의 Article 객체의 list 로 돌려준다.
+
+        @type  session_key: string
+        @param session_key: 사용자의 session_key
+        @type  board_name: string
+        @param board_name: 글을 가져올 게시판의 이름
+        @type  no: int
+        @param no: 글번호
+        @type  page_length: int
+        @param page_length: 페이지당 글 갯수
+        @type  order_by: int - LIST_ORDER
+        @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
+        @rtype: list<Article>
+        @return:
+            선택한 게시판의 선택한 page 에 있는 글 (Article 객체) 의 list
+        '''
         board_id = self._get_board_id(board_name)
         session = model.Session()
         total_article_count = session.query(model.Article).filter_by(board_id=board_id, root_id=None, destroyed=False).count()
