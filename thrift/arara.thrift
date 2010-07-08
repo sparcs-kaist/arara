@@ -235,6 +235,7 @@ struct Board {
     3: string board_description,
     4: i32 id,
     5: bool hide,
+    6: list<string> headings,
 }
 
 service BoardManager {

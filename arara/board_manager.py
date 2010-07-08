@@ -11,7 +11,7 @@ from arara.server import get_server
 log_method_call = log_method_call_with_source('board_manager')
 log_method_call_important = log_method_call_with_source_important('board_manager')
 
-BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only', 'hide', 'id')
+BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only', 'hide', 'id', 'headings')
 
 class BoardManager(object):
     '''
@@ -25,6 +25,8 @@ class BoardManager(object):
         # Internal Cache!
         self.all_board_list = None
         self.all_board_dict = None
+        self.all_board_and_heading_list = None
+        self.all_board_and_heading_dict = None
         self.cache_board_list()
 
     def _get_dict(self, item, whitelist=None):
@@ -114,25 +116,39 @@ class BoardManager(object):
         return self._get_board(board_name).id
 
     @log_method_call
+    def get_board_heading_list_fromid(self, board_id):
+        '''
+        주어진 board의 heading 의 목록을 가져온다. 단 board_id 를 이용한다.
+
+        @type  board_id: int
+        @param board_id: heading 을 가져올 보드의 id
+        @rtype : list of string
+        @return: heading 의 목록
+        '''
+        session = model.Session()
+        board_heading_list = []
+        heading_query = session.query(model.BoardHeading).filter_by(board_id=board_id)
+        heading_result = heading_query.all()
+
+        for board_heading in heading_result:
+            board_heading_list.append(board_heading.heading)
+        session.close()
+
+        return board_heading_list
+
+    @log_method_call
     def get_board_heading_list(self, board_name):
         '''
         주어진 board의 heading 의 목록을 가져온다.
+        주의 : internal cache 에 영향을 받으므로 internal cache 를 생성하는 중에는 사용하면 안 된다.
 
         @type  board_name: string
         @param board_name: heading 을 가져올 보드의 이름
         @rtype : list of string
         @return: heading 의 목록
         '''
-        session = model.Session()
-        board_heading_list = []
         board_id = self.get_board_id(board_name)
-        heading_query = session.query(model.BoardHeading).filter_by(board_id=board_id)
-        heading_result = heading_query.all()
-
-        for board_heading in heading_result:
-            board_heading_list.append(board_heading.heading)
-
-        return board_heading_list
+        return self.get_board_heading_list_fromid(board_id)
 
     def cache_board_list(self):
         # Board 의 목록을 DB 로부터 memory 로 옮겨 둔다.
@@ -140,6 +156,9 @@ class BoardManager(object):
         boards = session.query(model.Board).filter_by(deleted=False).all()
         board_dict_list = self._get_dict_list(boards, BOARD_MANAGER_WHITELIST)
         session.close()
+        # Board Heading 도 전부 가져온다.
+        for each_board in board_dict_list:
+            each_board['headings'] = self.get_board_heading_list_fromid(each_board['id'])
         # all_board_list 와 all_board_dict 로 만든다. 
         self.all_board_list = [Board(**d) for d in board_dict_list]
         self.all_board_dict = {}
