@@ -19,7 +19,16 @@ def index(request):
 def add_board(request):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
-    server.board_manager.add_board(sess, request.POST['add_board_name'], request.POST['add_board_description'], []) # TODO: 말머리 정보
+
+    # 말머리도 적어넣었구나
+    board_headings = []
+    headings_string = request.POST.get('add_board_headings', None)
+    if headings_string:
+        #TODO: 중복 검사 등
+        #TODO: 공백 말머리는 허용하지 말 것
+        board_headings = [x.strip() for x in headings_string.split(",")]
+
+    server.board_manager.add_board(sess, request.POST['add_board_name'], request.POST['add_board_description'], board_headings)
     return HttpResponseRedirect('/sysop/')
 
 @warara.wrap_error
