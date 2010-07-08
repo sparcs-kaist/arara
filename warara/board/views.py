@@ -74,7 +74,8 @@ def get_article_list(request, r, mode):
             del r['search_method'][k]
             r['search_method'][str(k)] = v
         search_method = SearchQuery(**r['search_method'])
-        article_result = server.search_manager.search(sess, False, r['board_name'], search_method, page_no, page_length)
+        #TODO: heading 과 include_all_headings
+        article_result = server.search_manager.search(sess, False, r['board_name'], u"", search_method, page_no, page_length, True)
 
     # XXX 2010.05.18. page_range_length 는 글 목록 하단에 표시하는 page 들의 갯수이다.
     page_range_length = 10

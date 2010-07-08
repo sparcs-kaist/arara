@@ -137,9 +137,33 @@ class SearchManager(object):
         #    return False, 'KSEARCH_DEAD'
         #return ret, result
 
+    def _get_heading_id(self, session, board, heading):
+        '''
+        Internal Function - 주어진 heading 객체를 찾아낸다. (ArticleManager._get_heading 을 그대로 참고하여 만들어짐)
+
+        @type  session: SQLAlchemy Session object
+        @param session: 현재 사용중인 session
+        @type  board: Board object
+        @param board: 선택된 게시판 object
+        @type  heading: unicode string
+        @param heading: 선택한 말머리
+        @rtype : BoardHeading object
+        @return:
+            1. 선택된 BoardHeading 객체 (단, heading == u"" 일 때는 None)
+            2. 실패:
+                TODO 구현할 것
+        '''
+        try:
+            if heading == u"":
+                return None
+            return session.query(model.BoardHeading).filter_by(board=board, heading=heading).one().id
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('heading not exist')
+
     @require_login
     @log_method_call_important
-    def search(self, session_key, all_flag, board_name, query_dict, page=1, page_length=20):
+    def search(self, session_key, all_flag, board_name, heading_name, query_dict, page=1, page_length=20, include_all_headings = True):
         '''
         게시물 검색
 
@@ -180,12 +204,16 @@ class SearchManager(object):
         @param all_flag: Search all or not
         @type  board_name: string
         @param board_name: BBS Name
+        @type  heading_name: string
+        @param heading_name: 검색하고자 하는 말머리 한정 (board_name 주어졌을 때)
         @type  query_dict: dictionary
         @param query_dict: Search Dictionary
         @type  page: integer
         @param page: Page Number to Request
         @type  page_length: integer
         @param page_length: Count of Article on a page
+        @type  include_all_headings: boolean
+        @param include_all_headings: 모든 말머리를 대상으로 하는 검색인지 여부 (board_name 주어졌을 때)
         @rtype: dictionary
         @return:
             1. 검색성공: Search Result Dictionary ('hit': '검색결과', 'results': '결과 수', 'search_time': '검색 소요 시간', 'last_page': '마지막 페이지 번호')
@@ -229,6 +257,11 @@ class SearchManager(object):
 
         if board:
             query = query.filter_by(board_id=board.id)
+
+            # 말머리 한정은 board 가 정해져 있어야만 가능하다
+            if not include_all_headings:
+                heading_id = self._get_heading_id(session, board, heading_name)
+                query = query.filter_by(heading_id= heading_id)
 
         if all_flag:
             query_text = query_dict['query']

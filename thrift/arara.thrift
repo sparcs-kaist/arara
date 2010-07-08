@@ -544,9 +544,11 @@ service SearchManager {
     ArticleSearchResult search(1:string session_key,
                 2:bool all_flag,
                 3:string board_name,
-                4:SearchQuery query_dict,
-                5:i32 page = 1,
-                6:i32 page_length = 20)
+                4:string heading_name,
+                5:SearchQuery query_dict,
+                6:i32 page = 1,
+                7:i32 page_length = 20,
+                8:bool include_all_headings = 1)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 }
