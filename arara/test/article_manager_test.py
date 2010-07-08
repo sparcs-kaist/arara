@@ -185,7 +185,6 @@ class ArticleManagerTest(unittest.TestCase):
         expected_result['type'] = 'normal'
         expected_result['depth'] = None
         expected_result['root_id'] = None
-        expected_result['heading'] = None
         self.assertEqual(expected_result, self._to_dict(result.hit[0]))
 
     def test_reply_with_heading(self):
@@ -231,9 +230,9 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(2, result.results)
         self.assertEqual(None, result.current_page)
 
-        expected_result1 = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE', 'deleted': False, 'read_status': 'N', 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 1, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': 'normal', 'id': 1, 'heading': None}
+        expected_result1 = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE', 'deleted': False, 'read_status': 'N', 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 1, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': 'normal', 'id': 1, 'heading': u''}
 
-        expected_result2 = {'attach': None, 'board_name': None, 'author_username': u'serialx', 'hit': 0, 'blacklisted': False, 'title': u'TITLE', 'deleted': False, 'read_status': 'N', 'root_id': None, 'is_searchable': True, 'author_nickname': u'serialx', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536002.100000001, 'date': 31536002.100000001, 'author_id': 3, 'type': 'normal', 'id': 2, 'heading': None}
+        expected_result2 = {'attach': None, 'board_name': None, 'author_username': u'serialx', 'hit': 0, 'blacklisted': False, 'title': u'TITLE', 'deleted': False, 'read_status': 'N', 'root_id': None, 'is_searchable': True, 'author_nickname': u'serialx', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536002.100000001, 'date': 31536002.100000001, 'author_id': 3, 'type': 'normal', 'id': 2, 'heading': u''}
 
         self.assertEqual(expected_result2, self._to_dict(result.hit[0]))
         self.assertEqual(expected_result1, self._to_dict(result.hit[1]))
@@ -533,11 +532,13 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(55, result.results)
         self.assertEqual(11, result.last_page)
         self.assertEqual([55, 54, 53, 52, 51], [x.id for x in result.hit])
+        self.assertEqual([u'head1', u'', u'head1', u'', u'head1'], [x.heading for x in result.hit])
 
         result = server.article_manager._article_list_below(self.session_key_serialx, u"board_h", u"", 55, 5)
         self.assertEqual(55, result.results)
         self.assertEqual(11, result.last_page)
         self.assertEqual([55, 54, 53, 52, 51], [x.id for x in result.hit])
+        self.assertEqual([u'head1', u'', u'head1', u'', u'head1'], [x.heading for x in result.hit])
 
         # TEST 2 : heading 이 없는 것만
         result = server.article_manager._get_article_list(u'board_h', u"", 1, 5, False)
@@ -556,11 +557,13 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(27, result.results)
         self.assertEqual(6, result.last_page)
         self.assertEqual([54, 52, 50, 48, 46], [x.id for x in result.hit])
+        self.assertEqual([u'', u'', u'', u'', u''], [x.heading for x in result.hit])
 
         result = server.article_manager._article_list_below(self.session_key_serialx, u"board_h", u"", 54, 5, False)
         self.assertEqual(27, result.results)
         self.assertEqual(6, result.last_page)
         self.assertEqual([54, 52, 50, 48, 46], [x.id for x in result.hit])
+        self.assertEqual([u'', u'', u'', u'', u''], [x.heading for x in result.hit])
 
         # TEST 3 : heading == head1
         result = server.article_manager._get_article_list(u'board_h', u"head1", 1, 5, False)
@@ -579,11 +582,13 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(28, result.results)
         self.assertEqual(6, result.last_page)
         self.assertEqual([55, 53, 51, 49, 47], [x.id for x in result.hit])
+        self.assertEqual([u'head1', u'head1', u'head1', u'head1', u'head1'], [x.heading for x in result.hit])
 
         result = server.article_manager._article_list_below(self.session_key_serialx, u"board_h", u"head1", 55, 5, False)
         self.assertEqual(28, result.results)
         self.assertEqual(6, result.last_page)
         self.assertEqual([55, 53, 51, 49, 47], [x.id for x in result.hit])
+        self.assertEqual([u'head1', u'head1', u'head1', u'head1', u'head1'], [x.heading for x in result.hit])
 
     def test_article_list_below(self):
         for i in range(100):

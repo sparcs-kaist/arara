@@ -19,7 +19,7 @@ log_method_call = log_method_call_with_source('search_manager')
 log_method_call_important = log_method_call_with_source_important('search_manager')
 
 READ_ARTICLE_WHITELIST = ('id', 'title', 'contsent', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable')
-SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
+SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'heading', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'author_nickname', 'vote', 'hit', 'content')
 SEARCH_DICT = ('title', 'content', 'author_nickname', 'author_username', 'date', 'query')
 
@@ -44,6 +44,11 @@ class SearchManager(object):
         if item_dict.has_key('board_id'):
             item_dict['board_name'] = item.board.board_name
             del item_dict['board_id']
+        if item_dict.has_key('heading_id'):
+            if item.heading == None:
+                item_dict['heading'] = u''
+            else:
+                item_dict['heading'] = item.heading.heading
         if item_dict.has_key('root_id'):
             if not item_dict['root_id']:
                 item_dict['root_id'] = item_dict['id']

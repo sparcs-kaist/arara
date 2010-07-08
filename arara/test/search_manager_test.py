@@ -117,16 +117,25 @@ class Test(unittest.TestCase):
         self._dummy_article_write(self.session_key_mikkang, u"search2", u"", u"")
 
         # TEST 1. All headings
-        a = [x.id for x in server.search_manager.search(self.session_key_mikkang, True, u'search2', u'', SearchQuery(**{'query': u'pipoket'}), 1, 20, True).hit]
-        self.assertEqual([6, 4, 3, 1], a)
+        result = server.search_manager.search(self.session_key_mikkang, True, u'search2', u'', SearchQuery(**{'query': u'pipoket'}), 1, 20, True).hit
+        id_list = [x.id for x in result]
+        heading_list = [x.heading for x in result]
+        self.assertEqual([6, 4, 3, 1], id_list)
+        self.assertEqual([u"head1", u"", u"head1", u""], heading_list)
 
         # TEST 2. only ""
-        b = [x.id for x in server.search_manager.search(self.session_key_pipoket, True, u'search2', u'', SearchQuery(**{'query': u'mikkang'}), 1, 20, False).hit]
-        self.assertEqual([8, 7], b)
+        result = server.search_manager.search(self.session_key_pipoket, True, u'search2', u'', SearchQuery(**{'query': u'mikkang'}), 1, 20, False).hit
+        id_list = [x.id for x in result]
+        heading_list = [x.heading for x in result]
+        self.assertEqual([8, 7], id_list)
+        self.assertEqual([u'', u''], heading_list)
 
         # TEST 3. only "head1"
-        c = [x.id for x in server.search_manager.search(self.session_key_mikkang, True, u'search2', u'head1', SearchQuery(**{'query': u'pipoket'}), 1, 20, False).hit]
-        self.assertEqual([6, 3], c)
+        result = server.search_manager.search(self.session_key_mikkang, True, u'search2', u'head1', SearchQuery(**{'query': u'pipoket'}), 1, 20, False).hit
+        id_list = [x.id for x in result]
+        heading_list = [x.heading for x in result]
+        self.assertEqual([6, 3], id_list)
+        self.assertEqual([u'head1', u'head1'], heading_list)
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(Test)
