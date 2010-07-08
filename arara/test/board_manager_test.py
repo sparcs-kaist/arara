@@ -35,23 +35,32 @@ class BoardManagerTest(unittest.TestCase):
         self.session_key_sysop = server.login_manager.login(u'SYSOP', u'SYSOP', '143.234.234.234')
         self.assertEqual(0, len(server.board_manager.get_board_list())) # XXX combacsa: is it allowed?
 
+    def _to_dict(self, board_object):
+        # ArticleManagerTest._to_dict 를 참고하여 구현하였다.
+
+        FIELD_LIST = ['read_only', 'board_name', 'board_description', 'hide', 'id']
+        result_dict = {}
+        for field in FIELD_LIST:
+            result_dict[field] = board_object.__dict__[field]
+        return result_dict
+
     def testNormalAddAndRemoveOneBoard(self):
         # Add one board 'garbages'
         server.board_manager.add_board(self.session_key_sysop, u'garbages', u'Garbages Board')
         board_list = server.board_manager.get_board_list()
         self.assertEqual(1, len(board_list))
-        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board', hide=False, id=1)", repr(board_list[0]))
+        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': False, 'id':1}, self._to_dict(board_list[0]))
         # Add another board 'ToSysop'
         server.board_manager.add_board(self.session_key_sysop, u'ToSysop', u'The comments to SYSOP')
         board_list = server.board_manager.get_board_list()
         self.assertEqual(2, len(board_list))
-        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board', hide=False, id=1)", repr(board_list[0]))
-        self.assertEqual("Board(read_only=False, board_name=u'ToSysop', board_description=u'The comments to SYSOP', hide=False, id=2)", repr(board_list[1]))
+        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': False, 'id': 1}, self._to_dict(board_list[0]))
+        self.assertEqual({'read_only': False, 'board_name': u'ToSysop', 'board_description': u'The comments to SYSOP', 'hide': False, 'id': 2}, self._to_dict(board_list[1]))
         # Check if you can get each board
         garbages = server.board_manager.get_board(u'garbages')
-        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board', hide=False, id=1)", repr(garbages))
+        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': False, 'id': 1}, self._to_dict(garbages))
         tosysop = server.board_manager.get_board(u'ToSysop')
-        self.assertEqual("Board(read_only=False, board_name=u'ToSysop', board_description=u'The comments to SYSOP', hide=False, id=2)", repr(tosysop))
+        self.assertEqual({'read_only': False, 'board_name': u'ToSysop', 'board_description': u'The comments to SYSOP', 'hide': False, 'id': 2}, self._to_dict(tosysop))
         # Try to delete the board
         server.board_manager.delete_board(self.session_key_sysop, u'ToSysop')
         server.board_manager.delete_board(self.session_key_sysop, u'garbages')
@@ -130,7 +139,7 @@ class BoardManagerTest(unittest.TestCase):
         server.board_manager.hide_board(self.session_key_sysop, u'garbages')
         board_list = server.board_manager.get_board_list()
         self.assertEqual(1, len(board_list))
-        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board', hide=True, id=1)", repr(board_list[0]))
+        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': True, 'id': 1}, self._to_dict(board_list[0]))
         # Test 2. can hide already hidden board?
         try:
             server.board_manager.hide_board(self.session_key_sysop, u'garbages')
@@ -142,7 +151,7 @@ class BoardManagerTest(unittest.TestCase):
         server.board_manager.return_hide_board(self.session_key_sysop, u'garbages')
         board_list = server.board_manager.get_board_list()
         self.assertEqual(1, len(board_list))
-        self.assertEqual("Board(read_only=False, board_name=u'garbages', board_description=u'Garbages Board', hide=False, id=1)", repr(board_list[0]))
+        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': False, 'id': 1}, self._to_dict(board_list[0]))
 
         # Test 4. can return_hide not hidden board?
         try:
