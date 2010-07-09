@@ -6,6 +6,8 @@ register = template.Library()
 
 #CACHETIME_BOARD_LIST = 600
 CACHETIME_BOARD_LIST = 6
+#CACHETIME_BOARD_DESCRIPTION = 600
+CACHETIME_BOARD_DESCRIPTION = 6
 
 @register.tag(name="get_board_list")
 def do_get_board_list(parser, token):
@@ -31,7 +33,7 @@ def do_get_board_description(value, arg):
     board_description = cache.get('board_description.' + value)
     if not board_description:
         board_description = server.board_manager.get_board(value).board_description
-        cache.set('board_description.' + value, board_description, 600)
+        cache.set('board_description.' + value, board_description, CACHETIME_BOARD_DESCRIPTION)
     return board_description
 
 @register.filter(name='truncatechars')
