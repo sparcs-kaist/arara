@@ -239,6 +239,53 @@ class BoardManager(object):
 
     @require_login
     @log_method_call_important
+    def edit_board(self, session_key, board_name, new_name, new_description):
+        '''
+        보드의 이름과 설명을 변경한다. 이름이나 설명을 바꾸고 싶지 않으면 파라메터로 길이가 0 인 문자열을 주면 된다.
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type  board_name: string
+        @param board_name: 설명을 수정하고자 하는 Board Name
+        @type  new_name: string
+        @param new_name: 보드에게 할당할 새 이름 (미변경시 '')
+        @type  new_description: string
+        @param new_description: 보드에게 할당할 새 설명 (미변경시 '')
+        @rtype: void
+        @return:
+            1. 성공: 아무것도 리턴하지 않음
+            2. 실패:
+                1. 로그인되지 않은 유저: 'NOT_LOGGEDIN'
+                2. 시샵이 아닌 경우: 'no permission'
+                3. 존재하지 않는 게시판: 'board does not exist'
+                4. 기타 오류 : 주석 추가해 주세요
+        '''
+        self._is_sysop(session_key)
+
+        board_name = smart_unicode(board_name)
+        new_name = smart_unicode(new_name)
+        new_description = smart_unicode(new_description)
+
+        # 변경이 필요한 항목에 대해서만 변경을 진행한다.
+        session = model.Session()
+        board = self._get_board_from_session(session, board_name)
+        if new_name != u'':
+            board.board_name = new_name
+        if new_description != u'':
+            board.board_description = new_description
+        try:
+            session.commit()
+            session.close()
+        except IntegrityError:
+            raise InvalidOperation("board already exist")
+        # TODO :전체적인 Error 들 정리 ...
+        except InvalidRequestError:
+            raise InternalError()
+        # 보드에 변경이 생겼으므로 캐시 초기화
+        self.cache_board_list()
+
+    @require_login
+    @log_method_call_important
     def hide_board(self, session_key, board_name):
         '''
         보드를 숨겨주는 함수

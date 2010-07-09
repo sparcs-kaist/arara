@@ -197,7 +197,52 @@ class BoardManagerTest(unittest.TestCase):
         server.board_manager.add_board(self.session_key_sysop, u'garbages', u'Garbages Board', [u'gar', u'bage'])
 
         self.assertEqual([u'gar', u'bage'], server.board_manager.get_board_heading_list_fromid(1))
-        
+
+    def test_edit_board(self):
+        # 테스트에 사용할 보드 추가.
+        server.board_manager.add_board(self.session_key_sysop, u'garbages', u'Garbage Board')
+        # TEST 1. 보드의 이름, 설명 동시에 바꾸기
+        server.board_manager.edit_board(self.session_key_sysop, u'garbages', u'recycle', u'Recycle Board')
+        board_list = server.board_manager.get_board_list()
+        self.assertEqual(1, len(board_list))
+        expected_board = {'read_only': False, 'board_name': u'recycle', 'board_description': u'Recycle Board', 'hide': False, 'id': 1, 'headings': []}
+        self.assertEqual(expected_board, self._to_dict(board_list[0]))
+        # TEST 1-1. 바뀐 이름의 보드는 존재하지 않아야 한다
+        try:
+            server.board_manager.get_board(u'garbages')
+            self.fail("Board 'garbages' must not exist since it is renamed.")
+        except InvalidOperation:
+            pass
+        # TEST 2. 보드의 이름만 바꾸기
+        server.board_manager.edit_board(self.session_key_sysop, u'recycle', u'garbages', u'')
+        board_list = server.board_manager.get_board_list()
+        self.assertEqual(1, len(board_list))
+        expected_board['board_name'] = u'garbages'
+        self.assertEqual(expected_board, self._to_dict(board_list[0]))
+        # TEST 2-1. 바뀐 이름의 보드는 존재하지 않아야 한다
+        try:
+            server.board_manager.get_board(u'recycle')
+            self.fail("Board 'recycle' must not exist since it is renamed.")
+        except InvalidOperation:
+            pass
+        # TEST 3. 보드의 설명만 바꾸기
+        server.board_manager.edit_board(self.session_key_sysop, u'garbages', u'', u'Garbage Board')
+        board_list = server.board_manager.get_board_list()
+        self.assertEqual(1, len(board_list))
+        expected_board['board_description'] = u'Garbage Board'
+        self.assertEqual(expected_board, self._to_dict(board_list[0]))
+        # TEST 4. 예외적인 상황에 대하여
+        try:
+            server.board_manager.edit_board(self.session_key_sysop, u'test', u'test2', u'haha')
+            self.fail("Since board 'test' not exist, it must fail to rename that board.")
+        except InvalidOperation:
+            pass
+        server.board_manager.add_board(self.session_key_sysop, u'recycle', u'Recycle Board')
+        try:
+            server.board_manager.edit_board(self.session_key_sysop, u'garbages', u'recycle', u'Recycle Board')
+            self.fail("Since board 'recycle'exist, it must fail to rename board 'garbages to 'recycle'.")
+        except InvalidOperation:
+            pass
 
     def tearDown(self):
         arara.model.clear_test_database()

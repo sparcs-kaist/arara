@@ -270,6 +270,10 @@ service BoardManager {
     void delete_board(1:string session_key, 2:string board_name)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void edit_board(1:string session_key, 2:string board_name,
+                    3:string new_name, 4:string new_description)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 }
 
 service ReadStatusManager {
