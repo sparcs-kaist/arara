@@ -1,5 +1,9 @@
 namespace py arara_thrift
 
+////////////////////////////////////////
+// Section 1 : Exception Definition
+////////////////////////////////////////
+
 exception InternalError {
     1: optional string why
 }
@@ -11,6 +15,10 @@ exception InvalidOperation {
 exception NotLoggedIn {
 
 }
+
+////////////////////////////////////////
+// Section 2 : Data Type Definition
+////////////////////////////////////////
 
 typedef i32 id_t
 
@@ -26,41 +34,6 @@ struct Session {
     4: string nickname,
     5: double logintime,
     6: i32    id,
-}
-
-service LoginManager {
-    string guest_login(1:string guest_ip)
-        throws (1:InvalidOperation invalid,
-                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    VisitorCount total_visitor()
-        throws (1:InvalidOperation invalid,
-                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    string login(1:string username, 2:string password, 3:string user_ip)
-        throws (1:InvalidOperation invalid,
-                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void logout(1:string session_key)
-        throws (1:InvalidOperation invalid,
-                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    bool update_session(1:string session_key)
-        throws (1:InvalidOperation invalid,
-                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    Session get_session(1:string session_key)
-        throws (1:InvalidOperation invalid,
-                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    i32 get_user_id(1:string session_key)
-        throws (1:InvalidOperation invalid,
-                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    string get_user_ip(1:string session_key)
-        throws (1:InvalidOperation invalid,
-                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    list<Session> get_current_online(1:string session_key)
-        throws (1:InvalidOperation invalid,
-                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    bool is_logged_in(1:string session_key)
-        throws (1:InvalidOperation invalid,
-                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    bool _update_monitor_status(1:string session_key,
-		2:string action),
 }
 
 struct AuthenticationInfo {
@@ -120,12 +93,187 @@ struct PublicUserInformation {
     5: string last_login_ip,
     6: double last_logout_time,
     7: string email,
-	8: string campus,
+    8: string campus,
 }
 
 struct SearchUserResult {
     1: string username,
     2: string nickname,
+}
+
+struct BlacklistRequest {
+    1: string blacklisted_user_username,
+    2: bool block_article,
+    3: bool block_message,
+}
+
+struct BlacklistInformation {
+    1: string blacklisted_user_username,
+    2: string blacklisted_user_nickname,
+    3: double last_modified_date,
+    4: double blacklisted_date,
+    5: bool block_article,
+    6: bool block_message,
+    7: i32 id
+}
+
+struct Board {
+    1: bool read_only,
+    2: string board_name,
+    3: string board_description,
+    4: i32 id,
+    5: bool hide,
+    6: list<string> headings,
+}
+
+struct WrittenArticle {
+    1: string title,
+    2: string heading,
+    3: string content
+}
+
+struct AttachDict {
+    1: string filename,
+    2: i32 file_id,
+}
+
+struct Article {
+    1:  id_t id,
+    2:  string title,
+    3:  string heading,
+    4:  string content,
+    5:  double date,
+    6:  i32 hit = 0,
+    7:  i32 vote,
+    8:  bool deleted = 0,
+    9:  i32 root_id,
+    10:  string author_username,
+    11: string author_nickname,
+    12: i32 author_id,
+    13: bool blacklisted = 0,
+    14: bool is_searchable = 1,
+    15: double last_modified_date,
+    16: optional i32 depth,  // Only used in the 'read' function
+    17: optional string read_status,
+    18: optional i32 reply_count,
+    19: optional string type
+    20: optional string board_name,
+    21: optional list<AttachDict> attach,
+    #19: optional i32 next,
+    #20: optional i32 prev,
+}
+
+struct ArticleList {
+    1: i32 last_page,
+    2: i32 results,
+    3: list<Article> hit,
+    4: optional i32 current_page,
+}
+
+struct ArticleNumberList {
+    1: i32 last_page,
+    2: i32 results,
+    3: list<i32> hit,
+}
+
+struct FileInfo {
+    1:string file_path,
+    2:string saved_filename,
+}
+
+struct DownloadFileInfo {
+    1:string file_path,
+    2:string saved_filename,
+    3:string real_filename,
+}
+
+struct Message {
+    1:i32 id,
+    2:string from_,
+    3:string from_nickname,
+    4:string to,
+    5:string to_nickname,
+    6:string message,
+    7:double sent_time,
+    8:string read_status,
+    9:optional bool blacklisted = 0,
+}
+
+struct MessageList {
+    1:list<Message> hit,
+    2:i32 last_page,
+    3:i32 results,
+    4:optional i32 new_message_count = 0,
+}
+
+struct ArticleSearchResult {
+    1:list<Article> hit,
+    2:i32 results,
+    3:double search_time,
+    4:i32 last_page,
+}
+
+struct SearchQuery {
+    1:string query = '',
+    2:string title = '',
+    3:string content = '',
+    4:string author_nickname = '',
+    5:string author_username = '',
+    6:string date = '',
+}
+
+struct Notice {
+    1:i32 id,
+    2:string content,
+    3:double issued_date,
+    4:double due_date,
+    5:bool valid,
+    6:i32 weight,
+}
+
+struct WrittenNotice {
+    1:string content,
+    2:double due_date,
+    3:i32 weight,
+}
+
+////////////////////////////////////////
+// Section 3 : Service Definition
+////////////////////////////////////////
+
+service LoginManager {
+    string guest_login(1:string guest_ip)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    VisitorCount total_visitor()
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    string login(1:string username, 2:string password, 3:string user_ip)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void logout(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    bool update_session(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    Session get_session(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    i32 get_user_id(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    string get_user_ip(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<Session> get_current_online(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    bool is_logged_in(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    bool _update_monitor_status(1:string session_key,
+		2:string action),
 }
 
 service MemberManager {
@@ -194,22 +342,6 @@ service MemberManager {
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 }
 
-struct BlacklistRequest {
-    1: string blacklisted_user_username,
-    2: bool block_article,
-    3: bool block_message,
-}
-
-struct BlacklistInformation {
-    1: string blacklisted_user_username,
-    2: string blacklisted_user_nickname,
-    3: double last_modified_date,
-    4: double blacklisted_date,
-    5: bool block_article,
-    6: bool block_message,
-    7: i32 id
-}
-
 service BlacklistManager {
     void add(1:string session_key, 2:string username,
              3:bool block_article=1, 4:bool block_message=1)
@@ -227,15 +359,6 @@ service BlacklistManager {
     list<i32> get_article_blacklisted_userid_list(1:string session_key)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-}
-
-struct Board {
-    1: bool read_only,
-    2: string board_name,
-    3: string board_description,
-    4: i32 id,
-    5: bool hide,
-    6: list<string> headings,
 }
 
 service BoardManager {
@@ -295,56 +418,6 @@ service ReadStatusManager {
     void save_to_database(1:string username="")
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-}
-
-struct WrittenArticle {
-    1: string title,
-    2: string heading,
-    3: string content
-}
-
-struct AttachDict {
-    1: string filename,
-    2: i32 file_id,
-}
-
-struct Article {
-    1:  id_t id,
-    2:  string title,
-    3:  string heading,
-    4:  string content,
-    5:  double date,
-    6:  i32 hit = 0,
-    7:  i32 vote,
-    8:  bool deleted = 0,
-    9:  i32 root_id,
-    10:  string author_username,
-    11: string author_nickname,
-    12: i32 author_id,
-    13: bool blacklisted = 0,
-    14: bool is_searchable = 1,
-    15: double last_modified_date,
-    16: optional i32 depth,  // Only used in the 'read' function
-    17: optional string read_status,
-    18: optional i32 reply_count,
-    19: optional string type
-    20: optional string board_name,
-    21: optional list<AttachDict> attach,
-    #19: optional i32 next,
-    #20: optional i32 prev,
-}
-
-struct ArticleList {
-    1: i32 last_page,
-    2: i32 results,
-    3: list<Article> hit,
-    4: optional i32 current_page,
-}
-
-struct ArticleNumberList {
-    1: i32 last_page,
-    2: i32 results,
-    3: list<i32> hit,
 }
 
 service ArticleManager {
@@ -430,17 +503,6 @@ service ArticleManager {
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 }
 
-struct FileInfo {
-    1:string file_path,
-    2:string saved_filename,
-}
-
-struct DownloadFileInfo {
-    1:string file_path,
-    2:string saved_filename,
-    3:string real_filename,
-}
-
 service FileManager {
     FileInfo save_file(1:string session_key,
                 2:i32 article_id,
@@ -456,25 +518,6 @@ service FileManager {
                 3:i32 file_id)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-}
-
-struct Message {
-    1:i32 id,
-    2:string from_,
-    3:string from_nickname,
-    4:string to,
-    5:string to_nickname,
-    6:string message,
-    7:double sent_time,
-    8:string read_status,
-    9:optional bool blacklisted = 0,
-}
-
-struct MessageList {
-    1:list<Message> hit,
-    2:i32 last_page,
-    3:i32 results,
-    4:optional i32 new_message_count = 0,
 }
 
 service MessagingManager {
@@ -521,22 +564,6 @@ service MessagingManager {
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 }
 
-struct ArticleSearchResult {
-    1:list<Article> hit,
-    2:i32 results,
-    3:double search_time,
-    4:i32 last_page,
-}
-
-struct SearchQuery {
-    1:string query = '',
-    2:string title = '',
-    3:string content = '',
-    4:string author_nickname = '',
-    5:string author_username = '',
-    6:string date = '',
-}
-
 service SearchManager {
     void register_article()
         throws (1:InvalidOperation invalid,
@@ -556,21 +583,6 @@ service SearchManager {
                 8:bool include_all_headings = 1)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-}
-
-struct Notice {
-    1:i32 id,
-    2:string content,
-    3:double issued_date,
-    4:double due_date,
-    5:bool valid,
-    6:i32 weight,
-}
-
-struct WrittenNotice {
-    1:string content,
-    2:double due_date,
-    3:i32 weight,
 }
 
 service NoticeManager {
