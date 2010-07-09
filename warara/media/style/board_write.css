@@ -35,6 +35,19 @@
     width: 91%;
 }
 
+#article_write_heading {
+    width: 97.6%;
+    margin: 1em 0em;
+    margin-left: 2%;
+}
+
+#article_write_heading input{
+    position: relative;
+    left: 4%;
+    border: 1px solid #ddd;
+    width: 91%;
+}
+
 #article_write_text {
     width: 98%;
     padding-left: 2%;

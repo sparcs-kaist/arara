@@ -63,8 +63,10 @@ def get_article_list(request, r, mode):
     #                 article_per_page 정도가 적당하다. 나중에 이름을 바꾸자.
     page_length = 20
     if mode == 'list':
-        #TODO: heading 과 include_all_headings
-        article_result = server.article_manager.article_list(sess, r['board_name'], u"", page_no, page_length, True)
+        # GET 으로 넘어온 말머리가 있는지 본다.
+        heading = request.GET.get('heading', None)
+        include_all_headings = (heading == None)
+        article_result = server.article_manager.article_list(sess, r['board_name'], heading, page_no, page_length, include_all_headings)
     elif mode == 'read':
         #TODO: heading 과 include_all_headings
         article_result = server.article_manager.article_list_below(sess, r['board_name'], u"", int(r['article_id']), page_length, True)
@@ -120,6 +122,12 @@ def get_article_list(request, r, mode):
     board_dict = server.board_manager.get_board(r['board_name'])
     r['board_dict'] = board_dict
 
+    # heading control
+    if len(board_dict.headings) == 0:
+        r['have_heading'] = False
+    else:
+        r['have_heading'] = True
+
 @warara.wrap_error
 def list(request, board_name):
     server = warara_middleware.get_server()
@@ -160,6 +168,15 @@ def write(request, board_name):
         r['t_write'] = 'modify'
         r['article'] = article_list[0]
     r['board_name'] = board_name
+
+    # heading control
+    board_dict = server.board_manager.get_board(board_name)
+    if len(board_dict.headings) == 0:
+        r['have_heading'] = False
+        r['board_heading_list'] = []
+    else:
+        r['have_heading'] = True
+        r['board_heading_list'] = board_dict.headings
 
     rendered = render_to_string('board/write.html', r)
     return HttpResponse(rendered)
