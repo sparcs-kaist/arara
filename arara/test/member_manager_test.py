@@ -127,7 +127,7 @@ class MemberManagerTest(unittest.TestCase):
     def testModifyInfo(self):
         session_key = server.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.145')
         modify_user_reg_dic = { 'nickname':u'combacsa is sysop', 'signature':u'KAIST07 && HSHS07 && SPARCS07', 'self_introduction':u'i am Kyuhong', 'default_language':u'korean', 'campus':u'Seoul', 'widget':1, 'layout':u'aaa' }
-        server.member_manager.modify(session_key, UserModification(**modify_user_reg_dic))
+        server.member_manager.modify_user(session_key, UserModification(**modify_user_reg_dic))
         member = server.member_manager.get_info(unicode(session_key))
         self.assertEqual(1, member.widget)
         self.assertEqual(u"aaa", member.layout)
@@ -139,7 +139,7 @@ class MemberManagerTest(unittest.TestCase):
 
         # Restore change (at least nickname)
         modify_user_reg_dic = { 'nickname':u'combacsa', 'signature':u'KAIST07 && HSHS07 && SPARCS07', 'self_introduction':u'i am Kyuhong', 'default_language':u'korean', 'campus':u'Seoul', 'widget':1, 'layout':u'aaa' }
-        server.member_manager.modify(session_key, UserModification(**modify_user_reg_dic))
+        server.member_manager.modify_user(session_key, UserModification(**modify_user_reg_dic))
         server.login_manager.logout(session_key)
 
     def testSearch(self):

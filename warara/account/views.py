@@ -166,7 +166,7 @@ def account_modify(request):
         language = request.POST['mylanguage']
         campus = request.POST['mycampus']
         modified_information_dic = {'nickname': nickname, 'signature': signature, 'self_introduction': introduction, 'default_language': language, 'widget': 0, 'layout': 0, 'campus': campus}
-        server.member_manager.modify(session_key, UserModification(**modified_information_dic))
+        server.member_manager.modify_user(session_key, UserModification(**modified_information_dic))
         if language == "kor":
             request.session["django_language"] = "ko"
         elif language == "eng":

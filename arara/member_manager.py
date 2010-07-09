@@ -553,7 +553,7 @@ class MemberManager(object):
 
     @require_login
     @log_method_call_important
-    def modify(self, session_key, user_modification):
+    def modify_user(self, session_key, user_modification):
         '''
         password를 제외한 회원 정보 수정
 
