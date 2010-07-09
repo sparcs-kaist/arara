@@ -565,7 +565,7 @@ class ArticleManager(object):
 
     @require_login
     @log_method_call_important
-    def read(self, session_key, board_name, no):
+    def read_article(self, session_key, board_name, no):
         '''
         DB로부터 게시글 하나를 읽어옴
 
@@ -900,7 +900,7 @@ class ArticleManager(object):
 
     @require_login
     @log_method_call_important
-    def modify(self, session_key, board_name, no, article_dic):
+    def modify_article(self, session_key, board_name, no, article_dic):
         '''
         DB의 해당하는 게시글 수정
 
@@ -959,7 +959,7 @@ class ArticleManager(object):
 
     @require_login
     @log_method_call_important
-    def delete_(self, session_key, board_name, no):
+    def delete_article(self, session_key, board_name, no):
         '''
         DB에 해당하는 글 삭제
         

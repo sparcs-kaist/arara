@@ -456,7 +456,7 @@ service ArticleManager {
                              6:bool include_all_headings=1)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    list<Article> read(1:string session_key, 2:string board_name, 3:id_t no)
+    list<Article> read_article(1:string session_key, 2:string board_name, 3:id_t no)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     list<Article> read_recent_article(1:string session_key, 2:string board_name)
@@ -482,13 +482,13 @@ service ArticleManager {
                       3:id_t article_no, 4:WrittenArticle article)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    i32 modify(1:string session_key, 2:string board_name,
+    i32 modify_article(1:string session_key, 2:string board_name,
                3:id_t no, 4:WrittenArticle article)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void delete_(1:string session_key,
-                2:string board_name,
-                3:id_t no)
+    void delete_article(1:string session_key,
+                        2:string board_name,
+                        3:id_t no)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void destroy_article(1:string session_key,

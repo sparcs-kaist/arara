@@ -102,7 +102,7 @@ class ArticleManagerTest(unittest.TestCase):
         # Checking the article id
         self.assertEqual(1, article_id)
         # Now read, and check the contents.
-        result = server.article_manager.read(self.session_key_mikkang, u'board', 1)
+        result = server.article_manager.read_article(self.session_key_mikkang, u'board', 1)
         expected_result = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'CONTENT', 'vote': 0, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1, 'heading': u''}
         self.assertEqual(1, len(result))
         self.assertEqual(expected_result, self._to_dict(result[0]))
@@ -110,7 +110,7 @@ class ArticleManagerTest(unittest.TestCase):
     def test_write_and_read_with_heading(self):
         # Write an article
         article_id = self._dummy_article_write(self.session_key_mikkang, u"", u"board_h", u"head1")
-        result = server.article_manager.read(self.session_key_mikkang, u'board_h', 1)
+        result = server.article_manager.read_article(self.session_key_mikkang, u'board_h', 1)
         expected_result = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'CONTENT', 'vote': 0, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1, 'heading': u'head1'}
         self.assertEqual(1, len(result))
         self.assertEqual(expected_result, self._to_dict(result[0]))
@@ -163,7 +163,7 @@ class ArticleManagerTest(unittest.TestCase):
         reply_id   = server.article_manager.write_reply(self.session_key_mikkang, u'board', 1, reply_dic)
         self.assertEqual(2, reply_id)
         # Test read original article again.
-        result = server.article_manager.read(self.session_key_mikkang, u'board', 1)
+        result = server.article_manager.read_article(self.session_key_mikkang, u'board', 1)
         expected_result1 = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'CONTENT', 'vote': 0, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1, 'heading': u''}
         
         expected_result2 = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'asdf', 'vote': 0, 'depth': 2, 'reply_count': None, 'last_modified_date': 31536002.100000001, 'date': 31536002.100000001, 'author_id': 2, 'type': None, 'id': 2, 'heading': u''}
@@ -198,7 +198,7 @@ class ArticleManagerTest(unittest.TestCase):
         reply_dic = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u'head2'})
         reply_id2 = server.article_manager.write_reply(self.session_key_mikkang, u'board_h', article_id, reply_dic)
 
-        result = server.article_manager.read(self.session_key_mikkang, u'board_h', 1)
+        result = server.article_manager.read_article(self.session_key_mikkang, u'board_h', 1)
         expected_result2 = {'attach': None, 'board_name': None, 'author_username': u'serialx', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'serialx', 'content': u'asdf', 'vote': 0, 'depth': 2, 'reply_count': None, 'last_modified_date': 31536002.100000001, 'date': 31536002.100000001, 'author_id': 3, 'type': None, 'id': 2, 'heading': u'head1'}
         expected_result3 = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'dummy', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'asdf', 'vote': 0, 'depth': 2, 'reply_count': None, 'last_modified_date': 31536003.100000001, 'date': 31536003.100000001, 'author_id': 2, 'type': None, 'id': 3, 'heading': u'head2'}
 
@@ -264,8 +264,8 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual('N', l.hit[1].read_status)
         self.assertEqual('N', l.hit[0].read_status)
         # Now Read some article and test if it is changed as read
-        article_1 = server.article_manager.read(self.session_key_serialx, u'board', article_id3)
-        article_2 = server.article_manager.read(self.session_key_serialx, u'board', article_id2)
+        article_1 = server.article_manager.read_article(self.session_key_serialx, u'board', article_id3)
+        article_2 = server.article_manager.read_article(self.session_key_serialx, u'board', article_id2)
         l = server.article_manager.article_list(self.session_key_serialx, u'board', u'')
         self.assertEqual('N', l.hit[2].read_status)
         self.assertEqual('R', l.hit[1].read_status)
@@ -280,8 +280,8 @@ class ArticleManagerTest(unittest.TestCase):
         article_1_id = self._dummy_article_write(self.session_key_mikkang) # 루트글만 읽음
         article_2_id = self._dummy_article_write(self.session_key_mikkang) # 루트글도 안읽음
         article_3_id = self._dummy_article_write(self.session_key_mikkang) # 루트글도 답글도 읽음
-        server.article_manager.read(self.session_key_serialx, u'board', article_1_id)
-        server.article_manager.read(self.session_key_serialx, u'board', article_3_id)
+        server.article_manager.read_article(self.session_key_serialx, u'board', article_1_id)
+        server.article_manager.read_article(self.session_key_serialx, u'board', article_3_id)
         global STUB_TIME_CURRENT
         STUB_TIME_CURRENT += 1.0
         reply_dic    = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
@@ -292,7 +292,7 @@ class ArticleManagerTest(unittest.TestCase):
         STUB_TIME_CURRENT += 1.0
         reply_dic    = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
         reply_3_id   = server.article_manager.write_reply(self.session_key_mikkang, u'board', 3, reply_dic)
-        server.article_manager.read(self.session_key_serialx, u'board', reply_3_id)
+        server.article_manager.read_article(self.session_key_serialx, u'board', reply_3_id)
 
         # Article_3 번에게는 R
         # Article_2 번에게는 N
@@ -304,7 +304,7 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual('U', result.hit[2].read_status)
 
         # 이제 다시 한번 위의 글을 읽어주면 U->R 으로.
-        server.article_manager.read(self.session_key_serialx, u'board', article_1_id)
+        server.article_manager.read_article(self.session_key_serialx, u'board', article_1_id)
         result = server.article_manager.article_list(self.session_key_serialx, u'board', u'')
         self.assertEqual('R', result.hit[2].read_status)
 
@@ -314,24 +314,24 @@ class ArticleManagerTest(unittest.TestCase):
         article2_id = self._dummy_article_write(self.session_key_mikkang)
         article3_id = self._dummy_article_write(self.session_key_mikkang)
         # Delete these!
-        self.assertEqual(True, server.article_manager.delete_(self.session_key_mikkang, u'board', article1_id))
-        self.assertEqual(True, server.article_manager.read(self.session_key_mikkang, u'board', article1_id)[0].deleted)
+        self.assertEqual(True, server.article_manager.delete_article(self.session_key_mikkang, u'board', article1_id))
+        self.assertEqual(True, server.article_manager.read_article(self.session_key_mikkang, u'board', article1_id)[0].deleted)
         # XXX: Well.. It will be safe to check all the other information remain
         # Can't delete which not exist
         try:
-            server.article_manager.delete_(self.session_key_mikkang, u'board', 1241252)
+            server.article_manager.delete_article(self.session_key_mikkang, u'board', 1241252)
             self.fail()
         except InvalidOperation:
             pass
         # Can't delete which I didn't write
         try:
-            server.article_manager.delete_(self.session_key_serialx, u'board', article2_id)
+            server.article_manager.delete_article(self.session_key_serialx, u'board', article2_id)
             self.fail()
         except InvalidOperation:
             pass
         # Can't delete which I already deleted
         try:
-            server.article_manager.delete_(self.session_key_mikkang, u"board", article1_id)
+            server.article_manager.delete_article(self.session_key_mikkang, u"board", article1_id)
             self.fail()
         except InvalidOperation:
             pass
@@ -342,7 +342,7 @@ class ArticleManagerTest(unittest.TestCase):
         article2_id = self._dummy_article_write(self.session_key_mikkang)
         article3_id = self._dummy_article_write(self.session_key_mikkang)
         # Delete one.
-        server.article_manager.delete_(self.session_key_mikkang, u'board', article1_id)
+        server.article_manager.delete_article(self.session_key_mikkang, u'board', article1_id)
         try:
             self.assertEqual(True, server.article_manager.destroy_article(self.session_key_sysop, u'board', article1_id))
             self.fail('Destroy one. Must fail, because delete automatically destroy article...')
@@ -374,10 +374,10 @@ class ArticleManagerTest(unittest.TestCase):
         article_no = self._dummy_article_write(self.session_key_mikkang)
         # Modify its contents
         article_dic = {'title': u'MODIFIED TITLE', 'content': u'MODIFIED CONTENT', 'heading': u''}
-        result = server.article_manager.modify(self.session_key_mikkang, u'board', article_no, WrittenArticle(**article_dic))
+        result = server.article_manager.modify_article(self.session_key_mikkang, u'board', article_no, WrittenArticle(**article_dic))
         self.assertEqual(article_no, result)
         # Now check it is modified or not
-        result = server.article_manager.read(self.session_key_mikkang, u'board', 1)
+        result = server.article_manager.read_article(self.session_key_mikkang, u'board', 1)
         expected_result = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'MODIFIED TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'MODIFIED CONTENT', 'vote': 0, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1, 'heading': u''}
         self.assertEqual(1, len(result))
         self.assertEqual(expected_result, self._to_dict(result[0]))
@@ -390,10 +390,10 @@ class ArticleManagerTest(unittest.TestCase):
         article_no = self._dummy_article_write(self.session_key_mikkang, u"", u"board_h", u"head1")
         # Modify its contents
         article_dic = {'title': u'MODIFIED TITLE', 'content': u'MODIFIED CONTENT', 'heading': u'head2'}
-        result = server.article_manager.modify(self.session_key_mikkang, u'board_h', article_no, WrittenArticle(**article_dic))
+        result = server.article_manager.modify_article(self.session_key_mikkang, u'board_h', article_no, WrittenArticle(**article_dic))
         self.assertEqual(article_no, result)
         # Now check it is modified or not
-        result = server.article_manager.read(self.session_key_mikkang, u'board_h', 1)
+        result = server.article_manager.read_article(self.session_key_mikkang, u'board_h', 1)
         expected_result = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'MODIFIED TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'MODIFIED CONTENT', 'vote': 0, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1, 'heading': u'head2'}
         self.assertEqual(1, len(result))
         self.assertEqual(expected_result, self._to_dict(result[0]))
@@ -402,14 +402,14 @@ class ArticleManagerTest(unittest.TestCase):
         # Write an article
         article_no = self._dummy_article_write(self.session_key_mikkang)
         # Author read the article
-        server.article_manager.read(self.session_key_mikkang, u'board', 1)
+        server.article_manager.read_article(self.session_key_mikkang, u'board', 1)
         # Another person read the article, and check hit goes up.
-        result = server.article_manager.read(self.session_key_serialx, u'board', 1)
+        result = server.article_manager.read_article(self.session_key_serialx, u'board', 1)
         expected_result = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 2, 'blacklisted': False, 'title': u'TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'CONTENT', 'vote': 0, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1, 'heading': u''}
         self.assertEqual(1, len(result))
         self.assertEqual(expected_result, self._to_dict(result[0]))
         # If author read the article again, it should not goes up.
-        result = server.article_manager.read(self.session_key_mikkang, u'board', 1)
+        result = server.article_manager.read_article(self.session_key_mikkang, u'board', 1)
         self.assertEqual(expected_result, self._to_dict(result[0]))
         # XXX : 제 3의 인물이 또 읽으면 hit 이 올라가는 거.
 
@@ -419,14 +419,14 @@ class ArticleManagerTest(unittest.TestCase):
         # Mikkang now vote
         server.article_manager.vote_article(self.session_key_mikkang, u'board', article_no)
         # So the vote status must be updated.
-        result = server.article_manager.read(self.session_key_mikkang, u'board', 1)
+        result = server.article_manager.read_article(self.session_key_mikkang, u'board', 1)
         expected_result = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'CONTENT', 'vote': 1, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1, 'heading': u''}
         self.assertEqual(1, len(result))
         self.assertEqual(expected_result, self._to_dict(result[0]))
         # Serialx now vote
         server.article_manager.vote_article(self.session_key_serialx, u'board', article_no)
         # So the vote status must be updated again.
-        result = server.article_manager.read(self.session_key_mikkang, u'board', 1)
+        result = server.article_manager.read_article(self.session_key_mikkang, u'board', 1)
         expected_result = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': False, 'title': u'TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'CONTENT', 'vote': 2, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1, 'heading': u''}
         self.assertEqual(1, len(result))
         self.assertEqual(expected_result, self._to_dict(result[0]))
@@ -477,7 +477,7 @@ class ArticleManagerTest(unittest.TestCase):
         article_reply_id_3 = server.article_manager.write_reply(self.session_key_mikkang, u'board', article_reply_id_2, reply_dic)
         article_reply_id_4 = server.article_manager.write_reply(self.session_key_mikkang, u'board', article_id, reply_dic)
         # Now check some
-        article = server.article_manager.read(self.session_key_mikkang, u'board', article_id)
+        article = server.article_manager.read_article(self.session_key_mikkang, u'board', article_id)
         self.assertEqual(article_id, article[0].root_id)
         self.assertEqual(article_id, article[1].root_id)
         self.assertEqual(article_id, article[2].root_id)
@@ -501,7 +501,7 @@ class ArticleManagerTest(unittest.TestCase):
         server.blacklist_manager.add_blacklist(self.session_key_serialx, u'mikkang')
         article_id = self._dummy_article_write(self.session_key_mikkang)
         expected_result = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': True, 'title': u'TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'CONTENT', 'vote': 0, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1, 'heading': u''}
-        result = server.article_manager.read(self.session_key_serialx, u'board', 1)
+        result = server.article_manager.read_article(self.session_key_serialx, u'board', 1)
         self.assertEqual(1, len(result))
         self.assertEqual(expected_result, self._to_dict(result[0]))
 
@@ -609,7 +609,7 @@ class ArticleManagerTest(unittest.TestCase):
         l = server.article_manager.not_read_article_list(self.session_key_mikkang)
         self.assertEqual(l.hit, [110, 109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91])
 
-        _ = server.article_manager.read(self.session_key_mikkang, u'board', 110)
+        _ = server.article_manager.read_article(self.session_key_mikkang, u'board', 110)
         l = server.article_manager.not_read_article_list(self.session_key_mikkang)
         # XXX: 잘못 구현되어 있습니당. article_manager.py의 주석 참조
         self.assertEqual(l.hit, [109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91])

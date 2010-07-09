@@ -96,7 +96,7 @@ class Test(unittest.TestCase):
         self.assertEqual(['N', 'N'], result)
 
         # TEST 2. article_2 was read.
-        server.article_manager.read(self.session_key_pipoket, u'search1', article_2_id)
+        server.article_manager.read_article(self.session_key_pipoket, u'search1', article_2_id)
         result = [x.read_status for x in server.search_manager.search(self.session_key_pipoket, True, u'search1', u'', SearchQuery(**{'query': u'mikkang'}), 1, 20, True).hit]
         self.assertEqual(['R', 'N'], result)
 

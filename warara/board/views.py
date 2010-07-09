@@ -161,7 +161,7 @@ def write(request, board_name):
 
     if article_id:
         sess = request.session["arara_session_key"]
-        article_list = server.article_manager.read(sess, board_name, int(article_id))
+        article_list = server.article_manager.read_article(sess, board_name, int(article_id))
         r['default_title'] = article_list[0].title
         r['default_text'] = article_list[0].content
         r['article_no'] = article_list[0].id
@@ -192,7 +192,7 @@ def write_(request, board_name):
     article_dic['heading'] = request.POST.get('heading', '') # Heading !!!
     if request.POST.get('write_type', 0) == 'modify':
         article_no = request.POST.get('article_no', 0)
-        article_id = server.article_manager.modify(sess, board_name, int(article_no), WrittenArticle(**article_dic))
+        article_id = server.article_manager.modify_article(sess, board_name, int(article_no), WrittenArticle(**article_dic))
 
         delete_file = request.POST.get('delete_file', 0) #delete_file
         if delete_file:
@@ -224,7 +224,7 @@ def write_(request, board_name):
 def read(request, board_name, article_id):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
-    article_list = server.article_manager.read(sess, board_name, int(article_id))
+    article_list = server.article_manager.read_article(sess, board_name, int(article_id))
     username = request.session['arara_username']
     userid = request.session['arara_userid']
 
@@ -314,7 +314,7 @@ def vote(request, board_name, root_id, article_no):
 def delete(request, board_name, root_id, article_no):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
-    server.article_manager.delete_(sess, board_name, int(article_no))
+    server.article_manager.delete_article(sess, board_name, int(article_no))
 
     return HttpResponseRedirect('/board/%s/%s' % (board_name, root_id))
 
