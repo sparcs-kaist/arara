@@ -150,7 +150,7 @@ class MessagingManager(object):
         user_info = get_server().login_manager.get_session(session_key)
         session = model.Session()
         to_user = self._get_user(session, user_info.username)
-        blacklist_dict_list = get_server().blacklist_manager.list_(session_key)
+        blacklist_dict_list = get_server().blacklist_manager.get_blacklist(session_key)
         blacklist_users = set()
         for blacklist_item in blacklist_dict_list:
             if blacklist_item.block_message:

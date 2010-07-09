@@ -66,7 +66,7 @@ class BlacklistManager(object):
 
     @require_login
     @log_method_call_important
-    def add(self, session_key, username, block_article=True, block_message=True):
+    def add_blacklist(self, session_key, username, block_article=True, block_message=True):
         '''
         블랙리스트 username 추가
 
@@ -109,7 +109,7 @@ class BlacklistManager(object):
        
     @require_login
     @log_method_call_important
-    def delete_(self, session_key, username):
+    def delete_blacklist(self, session_key, username):
         '''
         블랙리스트 username 삭제 
 
@@ -148,7 +148,7 @@ class BlacklistManager(object):
 
     @require_login
     @log_method_call_important
-    def modify(self, session_key, blacklist_info):
+    def modify_blacklist(self, session_key, blacklist_info):
         '''
         블랙리스트 id 수정 
 
@@ -190,7 +190,7 @@ class BlacklistManager(object):
 
     @require_login
     @log_method_call
-    def list_(self,session_key):
+    def get_blacklist(self,session_key):
         '''
         블랙리스트로 설정한 사람의 목록을 보여줌
 

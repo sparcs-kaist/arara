@@ -343,17 +343,17 @@ service MemberManager {
 }
 
 service BlacklistManager {
-    void add(1:string session_key, 2:string username,
-             3:bool block_article=1, 4:bool block_message=1)
+    void add_blacklist(1:string session_key, 2:string username,
+                       3:bool block_article=1, 4:bool block_message=1)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void delete_(1:string session_key, 2:string username)
+    void delete_blacklist(1:string session_key, 2:string username)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void modify(1:string session_key, 2:BlacklistRequest blacklist_info)
+    void modify_blacklist(1:string session_key, 2:BlacklistRequest blacklist_info)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    list<BlacklistInformation> list_(1:string session_key) 
+    list<BlacklistInformation> get_blacklist(1:string session_key) 
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     list<i32> get_article_blacklisted_userid_list(1:string session_key)

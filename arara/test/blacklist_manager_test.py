@@ -68,9 +68,9 @@ class BlacklistManagerTest(unittest.TestCase):
                 u'serialx', u'serialx', u'143.248.234.140')
 
     def test_add(self):
-        server.blacklist_manager.add(self.mikkang_session_key, u'combacsa')
+        server.blacklist_manager.add_blacklist(self.mikkang_session_key, u'combacsa')
         # Case 0. 정상 작동
-        ret = server.blacklist_manager.list_(self.mikkang_session_key)[0]
+        ret = server.blacklist_manager.get_blacklist(self.mikkang_session_key)[0]
         self.assertEqual(ret.blacklisted_user_nickname, u'combacsa')
         self.assertEqual(ret.last_modified_date, 1.1000000000000001)
         self.assertEqual(ret.block_article, True)
@@ -81,33 +81,33 @@ class BlacklistManagerTest(unittest.TestCase):
 
         # Case 1. 존재하지 않는 유저
         try:
-            server.blacklist_manager.add(self.mikkang_session_key, u'pv457')
+            server.blacklist_manager.add_blacklist(self.mikkang_session_key, u'pv457')
             self.fail()
         except InvalidOperation:
             pass
         # Case 2. 이미 등록한 유저
         try:
-            server.blacklist_manager.add(self.mikkang_session_key, u'combacsa')
+            server.blacklist_manager.add_blacklist(self.mikkang_session_key, u'combacsa')
             self.fail()
         except InvalidOperation:  
             pass
         # Case 3. 자기 자신
         try:
-            server.blacklist_manager.add(self.mikkang_session_key, u'mikkang')
+            server.blacklist_manager.add_blacklist(self.mikkang_session_key, u'mikkang')
             self.fail()
         except InvalidOperation:
             pass
 
     def test_modify(self):
         # Setting.
-        server.blacklist_manager.add(self.mikkang_session_key, u'combacsa')
+        server.blacklist_manager.add_blacklist(self.mikkang_session_key, u'combacsa')
         # Case 1. 수정 잘 되는지 확인
         blacklist_dict = {'blacklisted_user_username': u'combacsa', 
                           'block_article': False, 'block_message': True}
-        server.blacklist_manager.modify(self.mikkang_session_key, 
+        server.blacklist_manager.modify_blacklist(self.mikkang_session_key, 
                 BlacklistRequest(**blacklist_dict))
 
-        ret = server.blacklist_manager.list_(self.mikkang_session_key)[0]
+        ret = server.blacklist_manager.get_blacklist(self.mikkang_session_key)[0]
         self.assertEqual(ret.blacklisted_user_nickname, u'combacsa')
         self.assertEqual(ret.last_modified_date, 1.1000000000000001)
         self.assertEqual(ret.block_article, False)
@@ -119,7 +119,7 @@ class BlacklistManagerTest(unittest.TestCase):
         try:
             blacklist_dict = {'blacklisted_user_username': u'pv457',
                               'block_article': False, 'block_message': True}
-            server.blacklist_manager.modify(self.mikkang_session_key,
+            server.blacklist_manager.modify_blacklist(self.mikkang_session_key,
                     BlacklistRequest(**blacklist_dict))
             self.fail()
         except InvalidOperation:
@@ -127,40 +127,40 @@ class BlacklistManagerTest(unittest.TestCase):
 
     def test_delete(self):
         # Setting.
-        server.blacklist_manager.add(self.mikkang_session_key, u'combacsa')
+        server.blacklist_manager.add_blacklist(self.mikkang_session_key, u'combacsa')
         # Case 1. 정상 삭제
-        server.blacklist_manager.delete_(self.mikkang_session_key, u'combacsa')
+        server.blacklist_manager.delete_blacklist(self.mikkang_session_key, u'combacsa')
         # Case 2. 정상 삭제 후 수정 실패
         blacklist_dict = {'blacklisted_user_username': u'combacsa',
                           'block_article': False, 'block_message': True}
         try:
-            server.blacklist_manager.modify(self.mikkang_session_key, 
+            server.blacklist_manager.modify_blacklist(self.mikkang_session_key, 
                     BlacklistRequest(**blacklist_dict))
             self.fail()
         except InvalidOperation:
             pass
         # Case 3. 정상 삭제 후 다시 삭제 실패
         try:
-            server.blacklist_manager.delete_(self.mikkang_session_key, u'combacsa')
+            server.blacklist_manager.delete_blacklist(self.mikkang_session_key, u'combacsa')
             self.fail()
         except InvalidOperation:
             pass
         # Case 4. 존재하지 않는 유저 삭제 실패
         try:
-            server.blacklist_manager.delete_(self.mikkang_session_key, u'pv457')
+            server.blacklist_manager.delete_blacklist(self.mikkang_session_key, u'pv457')
             self.fail()
         except InvalidOperation:
             pass
 
     def test_get_article_blacklisted_userid_list(self):
         # Setting.
-        server.blacklist_manager.add(self.mikkang_session_key, u'combacsa')
-        server.blacklist_manager.add(self.mikkang_session_key, u'serialx')
+        server.blacklist_manager.add_blacklist(self.mikkang_session_key, u'combacsa')
+        server.blacklist_manager.add_blacklist(self.mikkang_session_key, u'serialx')
         # Case 1. 정상 작동
         result = server.blacklist_manager.get_article_blacklisted_userid_list(self.mikkang_session_key)
         self.assertEqual([3, 4], result)
         # Case 1-1. serialx 를 지우고 get 할 때 combacsa 만 돌아오는가
-        server.blacklist_manager.delete_(self.mikkang_session_key, u'serialx')
+        server.blacklist_manager.delete_blacklist(self.mikkang_session_key, u'serialx')
         result = server.blacklist_manager.get_article_blacklisted_userid_list(self.mikkang_session_key)
         self.assertEqual([3], result)
         # TODO : 없는 유저에 대해 작동 안하는 거 확인.

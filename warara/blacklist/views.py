@@ -23,7 +23,7 @@ def add(request):
             # XXX combacsa's DdamBbang.
             raise InvalidOperation("ID not exist!")
         converted_id =  id_converting[0].username
-        server.blacklist_manager.add(sess, converted_id, True, True) 
+        server.blacklist_manager.add_blacklist(sess, converted_id, True, True) 
         if request.POST.get('ajax', 0):
             return HttpResponse(1)
         return HttpResponseRedirect("/blacklist/")
@@ -36,7 +36,7 @@ def delete(request):
         username = request.POST['username']
         server = warara_middleware.get_server()
         sess, r = warara.check_logged_in(request)
-        server.blacklist_manager.delete_(sess, username)
+        server.blacklist_manager.delete_blacklist(sess, username)
         return HttpResponseRedirect("/blacklist/")
     # Why not return HttpResponse('Must use POST') ? XXX combacsa
 
@@ -44,7 +44,7 @@ def delete(request):
 def update(request):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
-    blacklist = server.blacklist_manager.list_(sess)
+    blacklist = server.blacklist_manager.get_blacklist(sess)
     bl_submit_chooser = request.POST['bl_submit_chooser']
     if bl_submit_chooser == "update":
         for b in blacklist:
@@ -59,7 +59,7 @@ def update(request):
             else:
                 b.block_message = False
 
-            server.blacklist_manager.modify(sess, BlacklistRequest(
+            server.blacklist_manager.modify_blacklist(sess, BlacklistRequest(
                 blacklisted_user_username = b.blacklisted_user_username,
                 block_article = b.block_article,
                 block_message = b.block_message))
@@ -67,7 +67,7 @@ def update(request):
         for b in blacklist:
             delete_user = request.POST.get('bl_%s_delete' % b.blacklisted_user_username, "")
             if delete_user != "":
-                server.blacklist_manager.delete_(sess, delete_user)
+                server.blacklist_manager.delete_blacklist(sess, delete_user)
 
     return HttpResponseRedirect("/blacklist/")
 
@@ -77,7 +77,7 @@ def index(request):
     sess, _ = warara.check_logged_in(request)
     r = {}
     r['logged_in'] = True
-    blacklist = server.blacklist_manager.list_(sess)
+    blacklist = server.blacklist_manager.get_blacklist(sess)
     r['blacklist'] = blacklist
 
     if 'search' in request.GET:

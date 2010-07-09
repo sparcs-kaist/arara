@@ -498,7 +498,7 @@ class ArticleManagerTest(unittest.TestCase):
         # XXX 아라라 프로젝트 생각 :
         # 장기적으로는 Middleware 가 Frontend 에게 보내는 정보량을
         # 어떻게 최소화할 지에 대해서도 생각해야한다 ... (combacsa)
-        server.blacklist_manager.add(self.session_key_serialx, u'mikkang')
+        server.blacklist_manager.add_blacklist(self.session_key_serialx, u'mikkang')
         article_id = self._dummy_article_write(self.session_key_mikkang)
         expected_result = {'attach': None, 'board_name': None, 'author_username': u'mikkang', 'hit': 1, 'blacklisted': True, 'title': u'TITLE', 'deleted': False, 'read_status': None, 'root_id': 1, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': u'CONTENT', 'vote': 0, 'depth': 1, 'reply_count': None, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': None, 'id': 1, 'heading': u''}
         result = server.article_manager.read(self.session_key_serialx, u'board', 1)
