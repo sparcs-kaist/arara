@@ -16,9 +16,10 @@
         <input type="submit" value="추가">
     </form>
 </div>
+<!-- TODO: division 이름을 remove_board 에서 modify_boards 로 바꾸자. 관련 CSS 수정 일체 필요할 듯. -->
 <div id="remove_board">
     <h3>보드 삭제 / 숨기기 / 숨김 해제하기</h3>
-    <form method="post" action="/sysop/modify_board/">
+    <form method="post" action="/sysop/modify_boards/">
         {% for board in board_list %}
         <input type="checkbox" name="{{board.board_name}}" value="{{board.board_name}}">
         <span>{{board.board_name}}</span>

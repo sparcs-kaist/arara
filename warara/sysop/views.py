@@ -32,7 +32,7 @@ def add_board(request):
     return HttpResponseRedirect('/sysop/')
 
 @warara.wrap_error
-def modify_board(request):
+def modify_boards(request):
     '''
     선택된 보드들을 삭제 / 숨김 / 숨김 해제한다.
     '''
