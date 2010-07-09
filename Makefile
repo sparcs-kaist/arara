@@ -2,4 +2,9 @@
 all:
 	thrift -v -gen py thrift/arara.thrift
 clean:
-	rm -r gen-*/
+	rm -f -r gen-*/
+	rm -f *.pyc
+	rm -f */*.pyc
+	rm -f */*/*.pyc
+	rm -f */*/*/*.pyc
+	rm -f */*/*/*/*.pyc
