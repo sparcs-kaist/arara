@@ -32,6 +32,18 @@
     </form>
 </div>
 
+<!-- TODO: edit_board 를 위한 css 설정 -->
+<div id="edit_board">
+    <h3> 보드 이름 / 설명 변경 </h3>
+
+    <form method="post" action="/sysop/edit_board/">
+        <input type="text" name="orig_board_name" id="orig_board_name">
+        <input type="text" name="new_board_name" id="new_board_name">
+        <input type="text" name="new_board_description" id="new_board_description">
+        <input type="submit" value="수정">
+    </form>
+</div>
+
 <div id="confirm_user">
     <h3>사용자 인증</h3>
     <form method="post" action="/sysop/confirm_user/">

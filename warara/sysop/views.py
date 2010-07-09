@@ -62,6 +62,20 @@ def modify_boards(request):
     return HttpResponseRedirect('/sysop/')
 
 @warara.wrap_error
+def edit_board(request):
+    '''
+    지정한 이름의 게시판의 이름 자체나 설명을 바꾼다.
+    '''
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+
+    original_board_name = request.POST['orig_board_name']
+    new_board_name = request.POST['new_board_name']
+    new_board_description = request.POST['new_board_description']
+    server.board_manager.edit_board(sess, original_board_name, new_board_name, new_board_description)
+    return HttpResponseRedirect('/sysop/')
+
+@warara.wrap_error
 def confirm_user(request):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
