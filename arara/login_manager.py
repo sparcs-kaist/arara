@@ -13,7 +13,6 @@ from arara_thrift.ttypes import *
 from arara import model
 from util import log_method_call_with_source
 from util import smart_unicode
-from arara.server import get_server
 
 from etc.arara_settings import SESSION_EXPIRE_TIME
 
@@ -22,12 +21,10 @@ log_method_call = log_method_call_with_source('login_manager')
 class LoginManager(object):
     '''
     로그인 처리 관련 클래스
-
-    TThreadedServer, TThreadPoolServer 만 사용 가능.
-    TForkingServer 는 사용할 수 없다.
     '''
     
-    def __init__(self):
+    def __init__(self, engine):
+        self.engine = engine
         self.session_dic = {}
         self.session_checker = thread.start_new_thread(self._check_session_status, tuple())
         self.logger = logging.getLogger('login_manager')
@@ -126,7 +123,7 @@ class LoginManager(object):
         # 가끔 Thrift 가 맛이 가서 LoginManager -> MemberManager 통신이 끊어질 때가 있다.
         # 이런 경우 Thrift 자체 Timeout 이 지난 뒤에 Error 가 돌아가므로, InternalError 로 에쁘게 Wrapping 한다.
         try:
-            msg = get_server().member_manager.authenticate(username, password, user_ip)
+            msg = self.engine.member_manager.authenticate(username, password, user_ip)
         except InvalidOperation:
             raise
         except InternalError:
@@ -153,7 +150,7 @@ class LoginManager(object):
 
         try:
             username = self.session_dic[session_key]['username']
-            get_server().member_manager._logout_process(username)
+            self.engine.member_manager._logout_process(username)
             self.logger.info("User '%s' has LOGGED OUT" % username)
             del self.session_dic[session_key]
         except KeyError:

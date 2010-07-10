@@ -10,7 +10,6 @@ from arara.util import log_method_call_with_source, log_method_call_with_source_
 from arara.util import smart_unicode, datetime2timestamp
 
 from arara_thrift.ttypes import *
-from arara.server import get_server
 
 log_method_call = log_method_call_with_source('blacklist_manager')
 log_method_call_important = log_method_call_with_source_important('blacklist_manager')
@@ -30,11 +29,9 @@ BLACKLIST_LIST_DICT = ['id', 'blacklisted_user_nickname', 'blacklisted_user_user
 class BlacklistManager(object):
     '''
     블랙리스트 처리 관련 클래스
-
-    TThreadedServer, TThreadPoolServer, TForkingServer 가 가능하다.
     '''
-    def __init__(self):
-        pass
+    def __init__(self, engine):
+        self.engine = engine
 
     def _get_dict(self, item, whitelist):
         item_dict = item.__dict__
@@ -87,7 +84,7 @@ class BlacklistManager(object):
                 5. 로그인되지 않은 사용자: NotLoggedIn Exception
                 6. 데이터베이스 오류: InternalError Exception 
         '''
-        user_info = get_server().login_manager.get_session(session_key)
+        user_info = self.engine.login_manager.get_session(session_key)
         username = smart_unicode(username)
         if username == user_info.username:
             raise InvalidOperation('cannot add yourself')
@@ -129,7 +126,7 @@ class BlacklistManager(object):
                 3. 데이터베이스 오류: InternalError Exception
         '''
         
-        user_id = get_server().login_manager.get_user_id(session_key)
+        user_id = self.engine.login_manager.get_user_id(session_key)
         username = smart_unicode(username)
 
         session = model.Session()
@@ -171,7 +168,7 @@ class BlacklistManager(object):
         #if not is_keys_in_dict(blacklist_dict, BLACKLIST_DICT):
         #    return False, 'WRONG_DICTIONARY'
 
-        user_id = get_server().login_manager.get_user_id(session_key)
+        user_id = self.engine.login_manager.get_user_id(session_key)
 
         session = model.Session()
         target_user = self._get_user(session, blacklist_info.blacklisted_user_username)
@@ -209,7 +206,7 @@ class BlacklistManager(object):
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
 
-        user_id = get_server().login_manager.get_user_id(session_key)
+        user_id = self.engine.login_manager.get_user_id(session_key)
         try:
             session = model.Session()
             blacklist_list = session.query(model.Blacklist).filter_by(user_id=user_id).all()
@@ -238,7 +235,7 @@ class BlacklistManager(object):
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
 
-        user_id = get_server().login_manager.get_user_id(session_key)
+        user_id = self.engine.login_manager.get_user_id(session_key)
         try:
             session = model.Session()
             raw_blacklist = session.query(model.Blacklist).filter_by(user_id=user_id, block_article=True).all()

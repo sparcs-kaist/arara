@@ -16,7 +16,6 @@ from arara import model
 from arara.util import require_login, filter_dict, is_keys_in_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 from arara.util import smart_unicode, datetime2timestamp
-from arara.server import get_server
 from etc.arara_settings import *
 
 log_method_call = log_method_call_with_source('member_manager')
@@ -53,12 +52,10 @@ USER_SEARCH_WHITELIST = ('username', 'nickname')
 class MemberManager(object):
     '''
     회원 가입, 회원정보 수정, 회원정보 조회, 이메일 인증등을 담당하는 클래스
-
-    TThreadedServer, TThreadPoolServer 는 확실히 가능하다.
-    TForkingServer 는 안 될 가능성이 크다.
     '''
 
-    def __init__(self):
+    def __init__(self, engine):
+        self.engine = engine
         self.logger = logging.getLogger('member_manager')
         self._register_sysop()
 
@@ -121,7 +118,7 @@ class MemberManager(object):
             session = model.Session()
             user = session.query(model.User).filter_by(username=smart_unicode(username)).one()
             user.last_logout_time = datetime.datetime.fromtimestamp(time.time())
-            get_server().read_status_manager.save_to_database(username)
+            self.engine.read_status_manager.save_to_database(username)
             session.commit()
             session.close()
             return
@@ -452,7 +449,7 @@ class MemberManager(object):
         '''
         try:
             session = model.Session()
-            username = get_server().login_manager.get_session(session_key).username
+            username = self.engine.login_manager.get_session(session_key).username
             username = smart_unicode(username)
             user = session.query(model.User).filter_by(username=username).one()
             user_dict = filter_dict(user.__dict__, USER_PUBLIC_WHITELIST)
@@ -487,7 +484,7 @@ class MemberManager(object):
                 3. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN'
                 4. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
         '''
-        session_info = get_server().login_manager.get_session(session_key)
+        session_info = self.engine.login_manager.get_session(session_key)
         username = smart_unicode(session_info.username)
         session = model.Session()
         user = session.query(model.User).filter_by(username=username).one()
@@ -569,7 +566,7 @@ class MemberManager(object):
                 2. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
                 3. 양식이 맞지 않음(부적절한 NULL값 등): 'WRONG_DICTIONARY'
         '''
-        session_info = get_server().login_manager.get_session(session_key)
+        session_info = self.engine.login_manager.get_session(session_key)
         username = smart_unicode(session_info.username)
 
         if not is_keys_in_dict(user_modification.__dict__,
@@ -718,7 +715,7 @@ class MemberManager(object):
         '''
         raise InvalidOperation('Not Allowed Right Now')
         session = model.Session()
-        username = smart_unicode(get_server().login_manager.get_session(session_key).username)
+        username = smart_unicode(self.engine.login_manager.get_session(session_key).username)
         try:
             user = session.query(model.User).filter_by(username=username).one()
 	    session.delete(user)
@@ -791,7 +788,7 @@ class MemberManager(object):
             2. SYSOP이 아닐시: False
         '''
         session = model.Session()
-        user_info = get_server().login_manager.get_session(session_key)
+        user_info = self.engine.login_manager.get_session(session_key)
         try:
             user = session.query(model.User).filter_by(username=smart_unicode(user_info.username)).one()
         except InvalidRequestError:

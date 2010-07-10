@@ -28,9 +28,8 @@ from thrift.server import TServer
 import arara.model
 from etc import arara_settings
 
-from arara import CLASSES
-from middleware import MANAGER_LIST, DEPENDENCY, HANDLER_PORT
-from middleware.thrift_middleware import MAPPING, connect_thrift_server
+from arara.arara_engine import ARAraEngine
+from middleware.thrift_middleware import ARAraThriftInterface, connect_thrift_server
 
 handler_for_info = logging.handlers.RotatingFileHandler('arara_server.log', 'a', 2**20*50, 10)
 formatter = logging.Formatter('%(asctime)s [%(process)d:%(thread)X] <%(name)s> ** %(levelname)s ** %(message)s')
@@ -48,7 +47,7 @@ if arara_settings.ARARA_DEBUG_HANDLER_ON:
     logging.getLogger('').addHandler(handler_for_debug)
 
     
-def open_thrift_server(server_name, processor, handler, port):
+def open_thrift_server(processor, handler, port):
     handler_instance = handler()
     processor_ = processor.Processor(handler_instance)
     transport = TSocket.TServerSocket(port)
@@ -61,48 +60,18 @@ def open_thrift_server(server_name, processor, handler, port):
     # 2. TForkingServer    : Process per Connection
     # 3. TThreadPoolServer : Preloaded Thread with Pool
 
-    if server_name in ['LoginManager', 'MemberManager']:
-        server = TServer.TThreadPoolServer(processor_, transport, tfactory, pfactory)
-        server.setNumThreads(10)
-    else:
-        server = TServer.TThreadedServer(processor_, transport, tfactory, pfactory)
-
-    #if server_name in ['BlacklistManager']:
-    #    logging.getLogger('open_server').info("%s running in TForkingServer", server_name)
-    #    server = TServer.TForkingServer(processor_, transport, tfactory, pfactory)
-    #else:
-    #    logging.getLogger('open_server').info("%s running in TThreadedServer", server_name)
-    #    server = TServer.TThreadedServer(processor_, transport, tfactory, pfactory)
-    #server = TServer.TThreadPoolServer(processor_, transport, tfactory, pfactory)
-    #server.setNumThreads(15)
+    server = TServer.TThreadPoolServer(processor_, transport, tfactory, pfactory)
+    server.setNumThreads(30)
     return server, handler_instance
 
-def open_server(server_name, base_port):
-    assert server_name in MANAGER_LIST
-    base_class = CLASSES[server_name]
-    thrift_class = dict(MAPPING)[server_name]
-    port = base_port + HANDLER_PORT[server_name]
+def open_server(base_port):
+    base_class = ARAraEngine
+    thrift_class = ARAraThriftInterface
+    port = base_port
     logger.info("Opening ARAra Thrift middleware on port starting from %s...", port)
     import thread
-    server, instance = open_thrift_server(server_name, thrift_class, base_class, port)
-    thread.start_new_thread(resolve_dependencies, (server_name, instance, base_port))
+    server, instance = open_thrift_server(thrift_class, base_class, port)
     return server
-
-def resolve_dependencies(base_server, instance, base_port):
-    dependencies = DEPENDENCY[base_server]
-    for dependency_server in dependencies:
-        dependency_port = base_port + HANDLER_PORT[dependency_server]
-        print 'Connecting to %s in localhost:%d' % (
-                dependency_server, dependency_port)
-        while True:
-            try:
-                client = connect_thrift_server('localhost',
-                        base_port, dependency_server)
-                break
-            except TTransportException:
-                print '%s cannot be connected. Retrying...' % dependency_server
-                time.sleep(1)
-                continue
 
 if __name__ == '__main__':
     logger = logging.getLogger('main')
@@ -120,8 +89,7 @@ if __name__ == '__main__':
 
     sys.excepthook = exception_handler
 
-    print args[0]
-    server = open_server(args[0], options.port)
+    server = open_server(options.port)
 
     logger.info('Starting the server...')
     server.serve()

@@ -241,7 +241,8 @@ struct WrittenNotice {
 // Section 3 : Service Definition
 ////////////////////////////////////////
 
-service LoginManager {
+service ARAraThriftInterface {
+/// LoginManager Part Begin
     string guest_login(1:string guest_ip)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
@@ -274,9 +275,8 @@ service LoginManager {
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     bool _update_monitor_status(1:string session_key,
 		2:string action),
-}
-
-service MemberManager {
+/// Login Manager Part end
+/// MemberManager Part Begin
     AuthenticationInfo authenticate(1:string username, 2:string password,
                                     3:string user_ip)
         throws (1:InvalidOperation invalid,
@@ -340,9 +340,8 @@ service MemberManager {
     void _logout_process(1:string username)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-}
-
-service BlacklistManager {
+/// MemberManager Part End
+/// BlacklistManager Part Begin
     void add_blacklist(1:string session_key, 2:string username,
                        3:bool block_article=1, 4:bool block_message=1)
         throws (1:InvalidOperation invalid,
@@ -359,9 +358,8 @@ service BlacklistManager {
     list<i32> get_article_blacklisted_userid_list(1:string session_key)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-}
-
-service BoardManager {
+/// BlacklistManager Part End
+/// BoardManager Part Begin
     void add_board(1:string session_key, 2:string board_name,
                    3:string board_description, 4:list<string> heading_list)
         throws (1:InvalidOperation invalid,
@@ -397,9 +395,8 @@ service BoardManager {
                     3:string new_name, 4:string new_description)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-}
-
-service ReadStatusManager {
+/// BoardManager Part End
+/// ReadStatusManager Part Begin
     string check_stat(1:string session_key, 2:i32 no)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
@@ -418,9 +415,8 @@ service ReadStatusManager {
     void save_to_database(1:string username="")
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-}
-
-service ArticleManager {
+/// ReadStatusManager Part End
+/// ArticleManager Part Begin
     list<Article> get_today_best_list(1:i32 count=5)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
@@ -501,9 +497,8 @@ service ArticleManager {
                                  3:id_t no)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-}
-
-service FileManager {
+/// ArticleManager Part End
+/// FileManager Part Begin
     FileInfo save_file(1:string session_key,
                 2:i32 article_id,
                 3:string filename)
@@ -518,9 +513,8 @@ service FileManager {
                 3:i32 file_id)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-}
-
-service MessagingManager {
+/// FileManager Part End
+/// MessagingManager Part Begin
     MessageList sent_list(1:string session_key,
                 2:i32 page=1,
                 3:i32 page_length=20)
@@ -562,9 +556,9 @@ service MessagingManager {
                 2:i32 msg_no)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-}
 
-service SearchManager {
+/// MessagingManager Part End
+/// SearchManager Part Begin
     void register_article()
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
@@ -583,9 +577,8 @@ service SearchManager {
                 8:bool include_all_headings = 1)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-}
-
-service NoticeManager {
+/// SearchManager Part End
+/// NoticeManager Part Begin
     string get_banner()
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
@@ -614,4 +607,5 @@ service NoticeManager {
                     2:i32 id)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+/// NoticeManager Part End
 }

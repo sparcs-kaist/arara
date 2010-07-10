@@ -11,8 +11,6 @@ MANAGER_LIST = (
         'file_manager',
                )
 
-HANDLER_PORT = dict(zip(MANAGER_LIST, range(1, len(MANAGER_LIST) + 1)))
-
 DEPENDENCY = {
         'login_manager': ['member_manager'],
         'member_manager': ['login_manager'],

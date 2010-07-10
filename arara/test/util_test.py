@@ -12,21 +12,18 @@ sys.path.append(arara_path)
 from arara_thrift.ttypes import *
 import arara.model
 import arara
-import arara.server
+from arara import arara_engine
 import arara.model
 import arara.util
-server = None
 
 import time
 
 class Test(unittest.TestCase):
     def setUp(self):
-        global server
         # Common preparation for all tests
         logging.basicConfig(level=logging.ERROR)
         arara.model.init_test_database()
-        arara.server.server = arara.get_namespace()
-        server = arara.get_namespace()
+        self.engine = arara_engine.ARAraEngine()
 
         # Fake time for further test
         def stub_time():

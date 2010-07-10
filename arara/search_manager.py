@@ -13,7 +13,6 @@ from arara.util import smart_unicode
 from arara_thrift.ttypes import *
 from arara import model
 from etc.arara_settings import *
-from arara.server import get_server
 
 log_method_call = log_method_call_with_source('search_manager')
 log_method_call_important = log_method_call_with_source_important('search_manager')
@@ -26,14 +25,10 @@ SEARCH_DICT = ('title', 'content', 'author_nickname', 'author_username', 'date',
 class SearchManager(object):
     '''
     게시물 검색 기능을 담당하는 클래스
-
-    (O) TForkingServer
-    (O) TThreadedServer
-    (O) TThreadPoolServer
     '''
 
-    def __init__(self):
-        pass
+    def __init__(self, engine):
+        self.engine = engine
 
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
@@ -78,9 +73,9 @@ class SearchManager(object):
         return board
 
     def register_article(self):
-        sess = get_server().login_manager.login('SYSOP', 'SYSOP', '234.234.234.234')
+        sess = self.engine.login_manager.login('SYSOP', 'SYSOP', '234.234.234.234')
         #XXX SYSOP LOGIN MUST BE IMPLEMENTED HERE 
-        board_list = get_server().board_manager.get_board_list()
+        board_list = self.engine.board_manager.get_board_list()
         if not ret:
             raise InternalError('database error')
 
@@ -363,8 +358,8 @@ class SearchManager(object):
         article_last_reply_id_list = [article.last_reply_id for article in search_list]
         article_id_list = [article.id for article in search_dict_list]
         try:
-            read_stats_list = get_server().read_status_manager.check_stats(session_key, article_id_list)
-            read_stats_list_sub = get_server().read_status_manager.check_stats(session_key, article_last_reply_id_list)
+            read_stats_list = self.engine.read_status_manager.check_stats(session_key, article_id_list)
+            read_stats_list_sub = self.engine.read_status_manager.check_stats(session_key, article_last_reply_id_list)
             for idx, item in enumerate(read_stats_list_sub):
                 if read_stats_list[idx] == 'R':
                     if item == 'N':

@@ -17,7 +17,6 @@ from arara import read_status_manager
 
 class ReadStatusInternalTest(unittest.TestCase):
     def setUp(self):
-        global server
         # Common preparation for all tests
         logging.basicConfig(level=logging.ERROR)
 

@@ -8,8 +8,6 @@ from arara_thrift.ttypes import *
 from arara.util import require_login, filter_dict, is_keys_in_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 from arara.util import timestamp2datetime
-from arara.server import get_server
-
 
 log_method_call = log_method_call_with_source('notice_manager')
 log_method_call_important = log_method_call_with_source_important('notice_manager')
@@ -21,14 +19,10 @@ NOTICE_ADD_WHITELIST = ('content','due_date','weight')
 class NoticeManager(object):
     '''
     배너 및 환영 페이지 처리 관련 클래스
-
-    TForkingServer    : OK
-    TThreadedServer   : OK
-    TThreadPoolServer : OK
     '''
 
-    def __init__(self):
-        pass
+    def __init__(self, engine):
+        self.engine = engine
 
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
@@ -118,7 +112,7 @@ class NoticeManager(object):
                 2. 데이터베이스 오류: InternalError Exception
             3. 시삽이 아닐 때: InvalidOperation Exception
         '''
-        if not get_server().member_manager.is_sysop(session_key):
+        if not self.engine.member_manager.is_sysop(session_key):
             raise InvalidOperation('not sysop')
 
         session = model.Session()
@@ -150,7 +144,7 @@ class NoticeManager(object):
             3. 시삽이 아닐 때: False, 'NOT_SYSOP'
         '''
         
-        if not get_server().member_manager.is_sysop(session_key):
+        if not self.engine.member_manager.is_sysop(session_key):
             raise InvalidOperation('not sysop')
         session = model.Session()
         welcome= session.query(model.Welcome).all()
@@ -195,7 +189,7 @@ class NoticeManager(object):
         if not is_keys_in_dict(notice_reg_dic, NOTICE_ADD_WHITELIST):
             raise InvalidOperation('wrong dictionary')
 
-        if not get_server().member_manager.is_sysop(session_key):
+        if not self.engine.member_manager.is_sysop(session_key):
             raise InvalidOperation('not sysop')
 
         session = model.Session()
@@ -244,7 +238,7 @@ class NoticeManager(object):
         if not is_keys_in_dict(notice_reg_dic, NOTICE_ADD_WHITELIST):
             raise InvalidOperation('wrong dictionary')
 
-        if not get_server().member_manager.is_sysop(session_key):
+        if not self.engine.member_manager.is_sysop(session_key):
             raise InvalidOperation('not sysop')
 
         session = model.Session()
@@ -285,7 +279,7 @@ class NoticeManager(object):
                 3. 데이터베이스 오류: InternalError Exception
         '''
         
-        if not get_server().member_manager.is_sysop(session_key):
+        if not self.engine.member_manager.is_sysop(session_key):
             raise InvalidOperation('not sysop')
         try:
             session = model.Session()
@@ -326,7 +320,7 @@ class NoticeManager(object):
                 3. 데이터베이스 오류: InternalError Exception
         '''
         
-        if not get_server().member_manager.is_sysop(session_key):
+        if not self.engine.member_manager.is_sysop(session_key):
             raise InvalidOperation('not sysop')
         try:
             session = model.Session()

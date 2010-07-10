@@ -8,7 +8,6 @@ import struct
 
 from arara import model
 from etc import arara_settings
-from arara.server import get_server
 from arara_thrift.ttypes import *
 
 
@@ -111,12 +110,12 @@ def require_login(function):
     로그인이 되어 있을 때에만 작동하는 메소드로 만들어주는 데코레이터.
     """
     def wrapper(self, session_key, *args):
-        if not get_server().login_manager.is_logged_in(session_key):
+        if not self.engine.login_manager.is_logged_in(session_key):
             raise NotLoggedIn()
         else:
             try:
-                assert get_server().login_manager._update_monitor_status(session_key, str(function.func_name))
-                assert get_server().login_manager.update_session(session_key)
+                assert self.engine.login_manager._update_monitor_status(session_key, str(function.func_name))
+                assert self.engine.login_manager.update_session(session_key)
                 return function(self, session_key, *args)
             except AssertionError:
                 session_logger = logging.getLogger('SESSION UPDATER')

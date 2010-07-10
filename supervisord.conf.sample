@@ -76,36 +76,8 @@ serverurl=unix://run/supervisor.sock ; use a unix:// URL  for a unix socket
 ;serverurl=AUTO                ; override serverurl computation (childutils)
 
 
-[program:login_manager]
-command=./bin/thrift_arara_server.py login_manager
-
-[program:member_manager]
-command=./bin/thrift_arara_server.py member_manager
-
-[program:blacklist_manager]
-command=./bin/thrift_arara_server.py blacklist_manager
-
-[program:board_manager]
-command=./bin/thrift_arara_server.py board_manager
-
-[program:read_status_manager]
-command=./bin/thrift_arara_server.py read_status_manager
-
-[program:article_manager]
-command=./bin/thrift_arara_server.py article_manager
-
-[program:messaging_manager]
-command=./bin/thrift_arara_server.py messaging_manager
-
-[program:notice_manager]
-command=./bin/thrift_arara_server.py notice_manager
-
-[program:search_manager]
-command=./bin/thrift_arara_server.py search_manager
-
-[program:file_manager]
-command=./bin/thrift_arara_server.py file_manager
-
+[program:arara_engine]
+command=./bin/thrift_arara_server.py
 
 ; The below sample eventlistener section shows all possible
 ; eventlistener subsection values, create one or more 'real'

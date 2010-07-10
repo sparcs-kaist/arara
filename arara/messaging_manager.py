@@ -10,7 +10,6 @@ from arara.util import require_login, filter_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 from arara.util import datetime2timestamp
 from arara.util import smart_unicode
-from arara.server import get_server
 
 log_method_call = log_method_call_with_source('messaging_manager')
 log_method_call_important = log_method_call_with_source_important('messaging_manager')
@@ -20,12 +19,10 @@ MESSAGE_WHITELIST = ['id', 'from_', 'to', 'from_nickname', 'to_nickname', 'messa
 class MessagingManager(object):
     '''
     회원간 쪽지기능등을 담당하는 클래스
-
-    TForkingServer, TThreadedServer, TThreadPoolServer 모두 가능.
     '''
 
-    def __init__(self):
-        pass
+    def __init__(self, engine):
+        self.engine = engine
 
     def _get_dict(self, item, whitelist=None, blacklist_users=None):
         item_dict = item.__dict__
@@ -96,7 +93,7 @@ class MessagingManager(object):
         '''
 
         ret_dict = {}
-        user_info = get_server().login_manager.get_session(session_key)
+        user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
         sent_user = self._get_user(session, user_info.username)
         sent_messages_count = session.query(model.Message).filter(
@@ -147,10 +144,10 @@ class MessagingManager(object):
         '''
 
         ret_dict = {}
-        user_info = get_server().login_manager.get_session(session_key)
+        user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
         to_user = self._get_user(session, user_info.username)
-        blacklist_dict_list = get_server().blacklist_manager.get_blacklist(session_key)
+        blacklist_dict_list = self.engine.blacklist_manager.get_blacklist(session_key)
         blacklist_users = set()
         for blacklist_item in blacklist_dict_list:
             if blacklist_item.block_message:
@@ -208,7 +205,7 @@ class MessagingManager(object):
                 3. 데이터베이스 오류: InternalError Exception
         '''
 
-        user_info = get_server().login_manager.get_session(session_key)
+        user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
         to_user = self._get_user(session, to_username)
         from_user = self._get_user(session, user_info.username)
@@ -243,7 +240,7 @@ class MessagingManager(object):
                 3. 데이터베이스 오류: InternalError Exception
         '''
 
-        user_info = get_server().login_manager.get_session(session_key)
+        user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
         to_user = self._get_user_by_nickname(session, to_nickname)
         from_user = self._get_user(session, user_info.username)
@@ -281,12 +278,12 @@ class MessagingManager(object):
                 3. 데이터베이스 오류: InternalError Exception 
         '''
 
-        user_info = get_server().login_manager.get_session(session_key)
+        user_info = self.engine.login_manager.get_session(session_key)
         if type(to_data) == list:
             raise InvalidOperation('temporarily disabled')
             #ret = []
             #for to in to_data: 
-            #    if get_server().member_manager.is_registered(to):
+            #    if self.engine.member_manager.is_registered(to):
             #        session = model.Session()
             #        from_user = session.query(model.User).filter_by(username=user_info.username).one()
             #        from_user_ip = user_info.ip
@@ -334,7 +331,7 @@ class MessagingManager(object):
                 3. 데이터베이스 오류: InternalError Exception
         '''
         
-        user_info = get_server().login_manager.get_session(session_key)
+        user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
         to_user = self._get_user(session, user_info.username)
         try:
@@ -367,7 +364,7 @@ class MessagingManager(object):
                 3. 데이터베이스 오류: InternalError Exception
         '''
         
-        user_info = get_server().login_manager.get_session(session_key)
+        user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
         from_user = self._get_user(session, user_info.username)
         try:
@@ -400,7 +397,7 @@ class MessagingManager(object):
                 3. 데이터베이스 오류: InternalError Exception
         '''
 
-        user_info = get_server().login_manager.get_session(session_key)
+        user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
         user = self._get_user(session, user_info.username)
         try:
@@ -441,7 +438,7 @@ class MessagingManager(object):
                 3. 데이터베이스 오류: InternalError Exception
         '''
 
-        user_info = get_server().login_manager.get_session(session_key)
+        user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
         user = self._get_user(session, user_info.username)
         try:

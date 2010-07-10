@@ -6,7 +6,6 @@ from arara.util import log_method_call_with_source, log_method_call_with_source_
 from arara.util import smart_unicode
 
 from arara_thrift.ttypes import *
-from arara.server import get_server
 
 log_method_call = log_method_call_with_source('board_manager')
 log_method_call_important = log_method_call_with_source_important('board_manager')
@@ -16,12 +15,10 @@ BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only', 'hide
 class BoardManager(object):
     '''
     보드 추가 삭제 및 관리 관련 클래스
-
-    구조상 TForkingServer 를 쓸 수 없다.
-    TThreadedServer, TThreadPoolServer 만 가능하다.
     '''
 
-    def __init__(self):
+    def __init__(self, engine):
+        self.engine = engine
         # Internal Cache!
         self.all_board_list = None
         self.all_board_dict = None
@@ -45,7 +42,7 @@ class BoardManager(object):
         return return_list
 
     def _is_sysop(self, session_key):
-        if not get_server().member_manager.is_sysop(session_key):
+        if not self.engine.member_manager.is_sysop(session_key):
             raise InvalidOperation('no permission')
 
     @require_login

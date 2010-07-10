@@ -513,16 +513,11 @@ def init_database():
 
 def init_test_database():
     """Test database must reset the database."""
-    global engine, Session, namespace
+    global engine, Session
     # 데이터베이스를 억지로 새로 만든다.
     engine = create_engine('sqlite://', convert_unicode=True, encoding='utf-8', echo=False)
     Session = sessionmaker(bind=engine, autoflush=True, autocommit=False)
     metadata.create_all(engine)
-
-    # 네임스페이스 객체를 새로 만든다. (억지로)
-    import arara
-    arara.namespace = None
-    arara.get_namespace()
 
 def clear_test_database():
     """테스트 이후의 흔적을 지운다."""

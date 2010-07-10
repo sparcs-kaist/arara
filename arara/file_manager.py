@@ -12,7 +12,6 @@ from arara import model
 from arara_thrift.ttypes import *
 from arara.util import require_login
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
-from arara.server import get_server
 
 log_method_call = log_method_call_with_source('file_manager')
 log_method_call_important = log_method_call_with_source_important('file_manager')
@@ -23,12 +22,10 @@ DANGER_FILE = ('php', 'asp', 'php3', 'php4', 'htaccess', 'js',
 class FileManager(object):
     '''
     파일 처리 관련 클래스
-
-    TThreadPoolServer, TThreadedServer, TForkingServer 모두 사용가능.
     '''
     
-    def __init__(self):
-        pass
+    def __init__(self, engine):
+        self.engine = engine
 
     def _get_article(self, session, article_id):
         try:

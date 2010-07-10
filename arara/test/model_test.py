@@ -14,9 +14,8 @@ sys.path.append(ARARA_PATH)
 from arara_thrift.ttypes import *
 import arara.model
 import arara
-import arara.server
+from arara import arara_engine
 import arara.model
-server = None
 
 import time
 def stub_time():
@@ -25,24 +24,22 @@ def stub_time():
 
 class ModelTest(unittest.TestCase):
     def setUp(self):
-        global server
         # Common preparation for all tests
         logging.basicConfig(leve=logging.ERROR)
         arara.model.init_test_database()
-        arara.server.server = arara.get_namespace()
-        server = arara.get_namespace()
+        self.engine = arara_engine.ARAraEngine()
         # Faking time
         self.org_time = time.time
         time.time = stub_time
         # Create default board (garbages)
-        session_key_sysop = server.login_manager.login(u'SYSOP', u'SYSOP', '123.123.123.123')
-        server.board_manager.add_board(session_key_sysop, u'garbages', u'Garbage Board')
+        session_key_sysop = self.engine.login_manager.login(u'SYSOP', u'SYSOP', '123.123.123.123')
+        self.engine.board_manager.add_board(session_key_sysop, u'garbages', u'Garbage Board')
         # Register one user, serialx
         user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx@example.com', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'english', 'campus':u'' }
-        register_key = server.member_manager.register_(UserRegistration(**user_reg_dic))
-        server.member_manager.confirm(u'serialx', register_key)
+        register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
+        self.engine.member_manager.confirm(u'serialx', register_key)
         # Up to here.
-        server.login_manager.logout(session_key_sysop)
+        self.engine.login_manager.logout(session_key_sysop)
 
     def testArticleWriteAndRead(self):
         """

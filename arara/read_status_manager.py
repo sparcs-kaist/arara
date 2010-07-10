@@ -8,7 +8,6 @@ from arara import model
 from arara.util import require_login
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 from arara.util import smart_unicode
-from arara.server import get_server
 
 from arara_thrift.ttypes import *
 
@@ -116,13 +115,10 @@ class ReadStatus(object):
 class ReadStatusManager(object):
     '''
     읽은 글, 통과한글 처리관련 클래스
-
-    (X) TForkingServer
-    (O) TThreadedServer
-    (O) TThreadPoolServer
     '''
 
-    def __init__(self):
+    def __init__(self, engine):
+        self.engine = engine
         self.read_status = {}
         self.logger = logging.getLogger('read_status_manager')
 
@@ -215,7 +211,7 @@ class ReadStatusManager(object):
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
 
-        user_id = get_server().login_manager.get_user_id(session_key)
+        user_id = self.engine.login_manager.get_user_id(session_key)
         ret, _ = self._initialize_data(user_id)
         self._check_article_exist(no)
         status = self.read_status[user_id].get(no)
@@ -241,7 +237,7 @@ class ReadStatusManager(object):
                 1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        user_id = get_server().login_manager.get_user_id(session_key)
+        user_id = self.engine.login_manager.get_user_id(session_key)
         ret, _ = self._initialize_data(user_id)
         self._check_article_exist(no_list)
         status = self.read_status[user_id].get_range(no_list)
@@ -268,7 +264,7 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        user_id = get_server().login_manager.get_user_id(session_key)
+        user_id = self.engine.login_manager.get_user_id(session_key)
         ret, _ = self._initialize_data(user_id)
         self._check_article_exist(no_list)
         status = self.read_status[user_id].set_range(no_list, 'R')
@@ -294,7 +290,7 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        user_id = get_server().login_manager.get_user_id(session_key)
+        user_id = self.engine.login_manager.get_user_id(session_key)
         ret, _ = self._initialize_data(user_id)
         self._check_article_exist(no)
         status = self.read_status[user_id].set(no, 'R')
@@ -317,7 +313,7 @@ class ReadStatusManager(object):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        user_id = get_server().login_manager.get_user_id(session_key)
+        user_id = self.engine.login_manager.get_user_id(session_key)
         ret, _ = self._initialize_data(user_id)
         self._check_article_exist(no)
         status = self.read_status[user_id].set(no, 'V')

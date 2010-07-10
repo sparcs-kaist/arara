@@ -11,7 +11,6 @@ from arara.util import require_login, filter_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 from arara.util import datetime2timestamp
 from arara.util import smart_unicode
-from arara.server import get_server
 
 from arara_thrift.ttypes import *
 
@@ -36,11 +35,10 @@ class ArticleManager(object):
     '''
     게시글 및 검색 처리 클래스
     현재 게시글 표시방식이 절묘하기 때문에 read 메소드에 관한 논의가 필요.
-
-    TThreadPoolSerer, TForkingServer, TThreadedServer 모두 가능.
     '''
-    def __init__(self):
+    def __init__(self, engine):
         self.logger = logging.getLogger('article_manager')
+        self.engine = engine
 
     def _get_board(self, session, board_name):
         try:
@@ -51,7 +49,7 @@ class ArticleManager(object):
         return board
 
     def _get_board_id(self, board_name):
-        return get_server().board_manager.get_board_id(board_name)
+        return self.engine.board_manager.get_board_id(board_name)
 
     def _get_heading(self, session, board, heading):
         '''
@@ -124,7 +122,7 @@ class ArticleManager(object):
             dic['last_modified_date'] = datetime2timestamp(dic['last_modified_date'])
             ret.append(Article(**dic))
 
-        get_server().read_status_manager.mark_as_read_list(session_key, article_id_list)
+        self.engine.read_status_manager.mark_as_read_list(session_key, article_id_list)
         return ret
 
     def _get_best_article(self, session_key, board_id, count, time_to_filter, best_type):
@@ -191,7 +189,7 @@ class ArticleManager(object):
             yield self._get_dict(item, whitelist)
 
     def _get_user(self, session, session_key):
-        user_id = get_server().login_manager.get_user_id(session_key)
+        user_id = self.engine.login_manager.get_user_id(session_key)
         try:
             user = session.query(model.User).filter_by(id=user_id).one()
         except InvalidRequestError:
@@ -200,7 +198,7 @@ class ArticleManager(object):
         return user
 
     def _get_user_id(self, session_key):
-        return get_server().login_manager.get_user_id(session_key)
+        return self.engine.login_manager.get_user_id(session_key)
 
     def _get_article(self, session, board_id, article_id):
         try:
@@ -320,7 +318,7 @@ class ArticleManager(object):
             article_number = []
             for article in article_dict_list:
                 article_number.append(article['id'])
-            read_stats_list = get_server().read_status_manager.check_stats(session_key, article_number)
+            read_stats_list = self.engine.read_status_manager.check_stats(session_key, article_number)
             #not_read_article = filter(lambda x : x = 'N', read_stats_list) 
             not_read_article_number = []
             for i in range(len(read_stats_list)):
@@ -401,7 +399,7 @@ class ArticleManager(object):
 
     def _get_blacklist_userid(self, session_key):
         try:
-            blacklist_list = get_server().blacklist_manager.get_article_blacklisted_userid_list(session_key)
+            blacklist_list = self.engine.blacklist_manager.get_article_blacklisted_userid_list(session_key)
         except NotLoggedIn:
             blacklist_list = []
             pass
@@ -504,8 +502,8 @@ class ArticleManager(object):
         read_stats_list = None # Namespace 에 등록. Assign 은 요 바로 다음에서.
 
         try:
-            read_stats_list = get_server().read_status_manager.check_stats(session_key, article_id_list)
-            read_stats_list_sub = get_server().read_status_manager.check_stats(session_key, article_last_reply_id_list)
+            read_stats_list = self.engine.read_status_manager.check_stats(session_key, article_id_list)
+            read_stats_list_sub = self.engine.read_status_manager.check_stats(session_key, article_last_reply_id_list)
             for idx, item in enumerate(read_stats_list_sub):
                 if read_stats_list[idx] == 'R':
                     if item == 'N':
@@ -593,7 +591,7 @@ class ArticleManager(object):
 
         try:
             article = session.query(model.Article).options(eagerload('children')).filter_by(id=no).one()
-            msg = get_server().read_status_manager.check_stat(session_key, no)
+            msg = self.engine.read_status_manager.check_stat(session_key, no)
             if msg == 'N':
                 article.hit += 1
                 session.commit()
@@ -633,7 +631,7 @@ class ArticleManager(object):
             article = session.query(model.Article).options(eagerload('children')).filter_by(board_id=board_id).order_by(model.Article.id.desc()).first()
             if article == None:
                 raise InvalidOperation('ARTICLE_NOT_EXIST')
-            msg = get_server().read_status_manager.check_stat(session_key, article.id)
+            msg = self.engine.read_status_manager.check_stat(session_key, article.id)
             if msg == 'N':
                 article.hit += 1
                 session.commit()
@@ -801,7 +799,7 @@ class ArticleManager(object):
                 4. 데이터베이스 오류: InternalError Exception
         '''
 
-        user_ip = get_server().login_manager.get_user_ip(session_key)
+        user_ip = self.engine.login_manager.get_user_ip(session_key)
 
         session = model.Session()
         author = self._get_user(session, session_key)
@@ -858,7 +856,7 @@ class ArticleManager(object):
                 3. 로그인되지 않은 유저: InvalidOperation Exception
                 4. 데이터베이스 오류: InternalError Exception
         '''
-        user_ip = get_server().login_manager.get_user_ip(session_key)
+        user_ip = self.engine.login_manager.get_user_ip(session_key)
 
         session = model.Session()
         author = self._get_user(session, session_key)
