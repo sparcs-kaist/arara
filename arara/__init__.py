@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 # TODO: 이 파일의 "목적성" 이 불분명해졌다.
 from arara.article_manager import ArticleManager
 from arara.blacklist_manager import BlacklistManager
