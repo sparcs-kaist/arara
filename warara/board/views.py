@@ -153,7 +153,7 @@ def total_list(request):
     r['board_name'] = u'All Articles'
     get_article_list(request, r, 'total_list')
 
-    rendered = render_to_string('board/list.html', r)
+    rendered = render_to_string('board/total_list.html', r)
     return HttpResponse(rendered)
 
 @warara.wrap_error
