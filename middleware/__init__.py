@@ -9,6 +9,7 @@ MANAGER_LIST = (
         'notice_manager',
         'search_manager',
         'file_manager',
+        'bot_manager',
                )
 
 DEPENDENCY = {
@@ -24,5 +25,6 @@ DEPENDENCY = {
                               'blacklist_manager'],
         'notice_manager': ['login_manager', 'member_manager'],
         'search_manager': ['board_manager', 'login_manager'],
-        'file_manager': ['login_manager']
+        'file_manager': ['login_manager'],
+        'bot_manager': ['login_manager', 'member_manager', 'article_manager'],
               }

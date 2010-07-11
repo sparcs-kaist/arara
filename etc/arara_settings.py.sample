@@ -38,6 +38,10 @@ BOT_ENABLED = True
 # Warning : Do not change BOT's password in web page.
 BOT_ACCOUNT_USERNAME = u'BOT'
 BOT_ACCOUNT_PASSWORD = u'i_am_ara_bot'
+# BOTs list to be serviced in ARAra
+BOT_SERVICE_LIST = ['weather']
+BOT_SERVICE_SETTING = {'weather_refresh_period': 60, 
+                       'weather_board_name'    : '_weather'}
 
 # SYSOP Initialization Setting
 SYSOP_INITIAL_USERNAME = u'SYSOP'

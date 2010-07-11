@@ -9,6 +9,7 @@ from arara.notice_manager import NoticeManager
 from arara.read_status_manager import ReadStatusManager
 from arara.search_manager import SearchManager
 from arara.file_manager import FileManager
+from arara.bot_manager import BotManager
 
 class ARAraEngine(object):
     '''
@@ -29,6 +30,7 @@ class ARAraEngine(object):
         self.notice_manager = NoticeManager(self)
         self.search_manager = SearchManager(self)
         self.file_manager = FileManager(self)
+        self.bot_manager = BotManager(self)
 
         # 일단 일일이 선언하기 귀찮아서 이렇게 구현했다.
         mapping = {

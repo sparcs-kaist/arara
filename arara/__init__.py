@@ -10,6 +10,7 @@ from arara.notice_manager import NoticeManager
 from arara.read_status_manager import ReadStatusManager
 from arara.search_manager import SearchManager
 from arara.file_manager import FileManager
+from arara.bot_manager import BotManager
 
 from arara.arara_engine import ARAraEngine
 
@@ -24,6 +25,7 @@ CLASSES = {'login_manager': LoginManager,
            'read_status_manager': ReadStatusManager,
            'search_manager': SearchManager,
            'file_manager': FileManager,
+           'bot_manager': BotManager,
         }
 
 # vim: set et ts=8 sw=4 sts=4

@@ -4,6 +4,7 @@ import test
 import test.article_manager_test
 import test.blacklist_manager_test
 import test.board_manager_test
+import test.bot_manager_test
 import test.file_manager_test
 import test.login_manager_test
 import test.member_manager_test
@@ -13,12 +14,12 @@ import test.read_status_internal_test
 import test.read_status_manager_test
 import test.search_manager_test
 import test.util_test
-
 def suite():
     return unittest.TestSuite([
         test.article_manager_test.suite(),
         test.blacklist_manager_test.suite(),
         test.board_manager_test.suite(),
+        test.bot_manager_test.suite(),
         test.file_manager_test.suite(),
         test.login_manager_test.suite(),
         test.member_manager_test.suite(),
