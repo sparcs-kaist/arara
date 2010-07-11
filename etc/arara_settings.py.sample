@@ -32,6 +32,13 @@ MAIL_SENDER = 'ara@ara.kaist.ac.kr'
 MAIL_CONTENT = 'You have been successfully registered as the ARA member.<br />To use your account, you have to activate it.<br />Please click the link below on any web browser to activate your account.<br /><br />'
 MAIL_TITLE = "[ARA] Please activate your account 아라 계정 활성화"
 
+# Part 4. BOT Setting
+BOT_ENABLED = True
+# BOT's account name and password setting.
+# Warning : Do not change BOT's password in web page.
+BOT_ACCOUNT_USERNAME = u'BOT'
+BOT_ACCOUNT_PASSWORD = u'i_am_ara_bot'
+
 # SYSOP Initialization Setting
 SYSOP_INITIAL_USERNAME = u'SYSOP'
 SYSOP_INITIAL_PASSWORD = u'SYSOP'

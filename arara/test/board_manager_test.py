@@ -15,10 +15,13 @@ import arara.model
 import arara
 from arara import arara_engine
 import arara.model
+import etc.arara_settings
 
 class BoardManagerTest(unittest.TestCase):
     def setUp(self):
         # Common preparation for all tests
+        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
+        etc.arara_settings.BOT_ENABLED = False
         logging.basicConfig(level=logging.ERROR)
         arara.model.init_test_database()
         self.engine = arara_engine.ARAraEngine()
@@ -243,6 +246,7 @@ class BoardManagerTest(unittest.TestCase):
 
     def tearDown(self):
         arara.model.clear_test_database()
+        etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(BoardManagerTest)

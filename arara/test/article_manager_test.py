@@ -13,12 +13,12 @@ sys.path.append(ARARA_PATH)
 from arara_thrift.ttypes import *
 import arara.model
 import arara
-import arara.model
 import time
 from arara import arara_engine
-
 STUB_TIME_INITIAL = 31536000.1
 STUB_TIME_CURRENT = STUB_TIME_INITIAL
+
+import etc.arara_settings
 
 def stub_time():
     # XXX Not Thread-safe!
@@ -40,6 +40,8 @@ class ArticleManagerTest(unittest.TestCase):
     def setUp(self):
         global STUB_TIME_CURRENT
         # Common preparation for all tests
+        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
+        etc.arara_settings.BOT_ENABLED = False
         logging.basicConfig(level=logging.ERROR)
         arara.model.init_test_database()
         self.engine = arara_engine.ARAraEngine()
@@ -58,6 +60,7 @@ class ArticleManagerTest(unittest.TestCase):
 
     def tearDown(self):
         arara.model.clear_test_database()
+        etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
         time.time = self.org_time
 
     def test_read_only_board(self):

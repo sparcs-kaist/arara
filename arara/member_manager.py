@@ -59,6 +59,11 @@ class MemberManager(object):
         self.logger = logging.getLogger('member_manager')
         self._register_sysop()
 
+        # Test Code에서의 Stub Code 작성을 위해 etc.arara_settings의 BOT_ENABLED를 Reload할 필요가 있다
+        from etc.arara_settings import BOT_ENABLED
+        if BOT_ENABLED:
+            self._register_bot()
+
     def _register_without_confirm(self, user_reg_dic, is_sysop):
         '''
         confirm 과정 없이 사용자를 등록하는 함수
@@ -110,6 +115,30 @@ class MemberManager(object):
 
         self._register_without_confirm(SYSOP_REG_DIC, True)
 
+    def _register_bot(self):
+        '''
+        BOT용 계정을 등록하는 함수.
+
+        @rtype: void
+        @return:
+            1. BOT 계정 등록이 성공했을 경우 : void
+            2. BOT 계정 등록이 실패했을 경우 : Invalid Operation
+        '''
+        from etc.arara_settings import BOT_ACCOUNT_USERNAME, BOT_ACCOUNT_PASSWORD
+        # 이미 BOT 계정이 등록되어 있을 땐 굳이 할 필요가 없다
+        if self.is_registered(BOT_ACCOUNT_USERNAME):
+            return
+
+        BOT_ACCOUNT_DIC = {'username' :BOT_ACCOUNT_USERNAME,
+                           'password' :BOT_ACCOUNT_PASSWORD,
+                           'nickname' :u'BOT',
+                           'email'    :u'bot@ara.kaist.ac.kr',
+                           'signature':u'--\n아라 봇(AraBOT)',
+                           'self_introduction':u'--\n아라의 각종 서비스를 담당하는 아라봇입니다',
+                           'default_language':u'ko_KR',
+                           'campus'   : u''}
+
+        self._register_without_confirm(BOT_ACCOUNT_DIC, False)
 
     @log_method_call
     def _logout_process(self, username):

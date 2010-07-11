@@ -16,6 +16,7 @@ import arara.model
 import arara
 from arara import arara_engine
 import arara.model
+import etc.arara_settings
 
 import time
 def stub_time():
@@ -25,6 +26,8 @@ def stub_time():
 class ModelTest(unittest.TestCase):
     def setUp(self):
         # Common preparation for all tests
+        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
+        etc.arara_settings.BOT_ENABLED = False
         logging.basicConfig(leve=logging.ERROR)
         arara.model.init_test_database()
         self.engine = arara_engine.ARAraEngine()
@@ -84,6 +87,7 @@ class ModelTest(unittest.TestCase):
     def tearDown(self):
         time.time = self.org_time
         arara.model.clear_test_database()
+        etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(ModelTest)

@@ -14,6 +14,7 @@ import arara.model
 import arara
 from arara import arara_engine
 import arara.model
+import etc.arara_settings
 
 import time
 
@@ -31,6 +32,8 @@ class Test(unittest.TestCase):
 
     def setUp(self):
         # Common preparation for all tests
+        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
+        etc.arara_settings.BOT_ENABLED = False
         logging.basicConfig(level=logging.ERROR)
         arara.model.init_test_database()
         self.engine = arara_engine.ARAraEngine()
@@ -58,6 +61,7 @@ class Test(unittest.TestCase):
         arara.model.clear_test_database()
         # Restore the time
         time.time = self.org_time
+        etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
 
     def _dummy_article_write(self, session_key, board, title_append = u"", heading = u""):
         article_dic = {'title': u'TITLE' + title_append, 'content': u'CONTENT', 'heading': heading}

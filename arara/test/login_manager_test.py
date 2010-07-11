@@ -16,6 +16,7 @@ import arara
 from arara import arara_engine
 import arara.model
 from etc.arara_settings import SESSION_EXPIRE_TIME
+import etc.arara_settings
 
 # Faking time.time (to check time field)
 import time
@@ -28,6 +29,8 @@ def stub_time_2():
 class LoginManagerTest(unittest.TestCase):
     def setUp(self):
         # Common preparation for all tests
+        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
+        etc.arara_settings.BOT_ENABLED = False
         logging.basicConfig(level=logging.ERROR)
         arara.model.init_test_database()
         self.engine = arara_engine.ARAraEngine()
@@ -151,6 +154,7 @@ class LoginManagerTest(unittest.TestCase):
     def tearDown(self):
         time.time = self.org_time
         arara.model.clear_test_database()
+        etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
 
     def testCount(self):
         visitors = self.engine.login_manager.total_visitor() 
