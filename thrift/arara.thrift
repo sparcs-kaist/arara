@@ -599,6 +599,10 @@ service ARAraThriftInterface {
                     2:WrittenNotice notice_reg_dic)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void modify_banner_validity(1:string session_key,
+                                2:i32 id, 3:bool valid)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void remove_banner(1:string session_key,
                     2:i32 id)
         throws (1:InvalidOperation invalid,

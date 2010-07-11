@@ -262,6 +262,45 @@ class NoticeManager(object):
             session.close()
             raise InternalError('database error')
 
+    @require_login    
+    @log_method_call_important
+    def modify_banner_validity(self, session_key, id, valid):
+        '''
+        배너의 valid 필드만 바꿔주는 함수
+       
+        @type  session_key: string
+        @param session_key: User Key
+        @type  id: int
+        @param id: 바꾸고자 하는 banner 의 id
+        @type  valid: boolean
+        @param valid: 설정하고자 하는 해당 banner 의 validity
+        @rtype: void
+        @return:
+            1. 배너 validity 설정 변경에 성공하였을 때 : void
+            2. 실패하면?
+                1. 시삽이 아닐 때: InvalidOperation Exception
+                2. 데이터베이스 오류: InternalError Exception
+        '''
+        if not self.engine.member_manager.is_sysop(session_key):
+            raise InvalidOperation('not sysop')
+
+        session = model.Session()
+        try:
+            # 배너를 하나 고른다.
+            chosen_banner = session.query(model.Banner).filter_by(id=id).one()
+            if chosen_banner:
+                if chosen_banner.valid != valid:
+                    chosen_banner.valid = valid
+                    session.commit()
+                session.close()
+            else:
+                session.close()
+                raise InvalidOperation('not existing banner')
+
+        except Exception, e:
+            session.close()
+            raise InternalError('database error')
+
     @require_login 
     @log_method_call_important
     def remove_banner(self, session_key, id):

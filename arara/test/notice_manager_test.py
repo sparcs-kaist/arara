@@ -63,6 +63,17 @@ class NoticeManagerTest(unittest.TestCase):
         self.assertEqual(2, len(banner_list))
         self.assertEqual(expected_result, repr(banner_list))
 
+    def testModifyBannerValidity(self):
+        # 배너 하나를 추가한다
+        notice_reg_dic = {'content' : u'/media/image/banner_1.png', 'due_date' : 31537001.100000001, 'weight' : 1}
+        banner_1 = self.engine.notice_manager.add_banner(self.session_key_sysop, WrittenNotice(**notice_reg_dic)) 
+        # 배너의 valid를 바꾼다 ( False -> True )
+        self.engine.notice_manager.modify_banner_validity(self.session_key_sysop, banner_1, True)
+        # 배너의 valid가 바뀌었는지 확인한다
+        banner_list = self.engine.notice_manager.list_banner(self.session_key_sysop)
+        expected_result = "[Notice(due_date=31537001.100000001, weight=1, issued_date=31536000.100000001, content=u'/media/image/banner_1.png', valid=True, id=1)]"
+        self.assertEqual(expected_result, repr(banner_list))
+
     def tearDown(self):
         arara.model.clear_test_database()
         time.time = self.org_time
