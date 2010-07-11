@@ -122,26 +122,7 @@ def refresh_weather(request):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
 
-    # _weather 보드가 있는지 확인하고, 없으면 새로 생성한다.
-    # 제안하는 convention : 보드 이름이 _ 로 시작하면 무조건 hide 속성을 부여하는 건 어떨까.
-    board_list = server.board_manager.get_board_list()
-    if not filter(lambda x:x.board_name == '_weather', board_list):
-        server.board_manager.add_board(sess, '_weather', u'Board for weather (should be hidden)', []) # 말머리는 없다
-        server.board_manager.hide_board(sess, '_weather')
-
-    # 날씨 정보를 받아온다.
-    # 날씨 정보 출처 : 기상청 (www.kma.go.kr)
-    import urllib
-    import time
-    today_string = time.strftime("%Y-%m-%d (%a) %H:%M:%s", time.localtime())
-    xmlsession = urllib.urlopen('http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=3020055000')
-    weather_xml = xmlsession.read()
-    xmlsession.close()
-
-    # 받아온 날씨 정보를 새로운 글로 작성한다.
-    from arara_thrift.ttypes import WrittenArticle
-    article_dic = {'title': today_string, 'content': weather_xml}
-    server.article_manager.write_article(sess, '_weather', WrittenArticle(**article_dic))
+    server.bot_manager.refresh_weather_info(sess)
 
     return HttpResponseRedirect('/sysop/')
 

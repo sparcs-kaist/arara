@@ -39,7 +39,14 @@ class BotManager(object):
             return True
         except:
             return False
-            
+
+    def refresh_weather_info(self, session_key):
+        if not self.engine.member_manager.is_sysop(session_key):
+            raise InvalidOperation('You are not SYSOP')
+        if not self.weather_bot:
+            raise InvalidOperation('Weather Bot is not enabled!')
+        self.weather_bot.write_weather_article()
+        
 class WeatherBot(object):
     def __init__(self, engine, manager):
         import thread

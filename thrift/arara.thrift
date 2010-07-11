@@ -612,4 +612,9 @@ service ARAraThriftInterface {
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// NoticeManager Part End
+/// BotManager Part Start
+	void refresh_weather_info(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+/// BotManager Part End
 }

@@ -28,6 +28,17 @@ def stub_start_new_thread(function, argument):
     pass
 
 class BotManagerTest(unittest.TestCase):
+    def _get_user_reg_dic(self, id):
+        return {'username':id, 'password':id, 'nickname':id, 'email':id + u'@example.com',
+                'signature':id, 'self_introduction':id, 'default_language':u'english', 'campus':u''}
+
+    def _register_user(self, id):
+        # Register a user, log-in, and then return its session_key
+        user_reg_dic = self._get_user_reg_dic(id)
+        register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
+        self.engine.member_manager.confirm(id, unicode(register_key))
+        return self.engine.login_manager.login(id, id, u'143.248.234.140')
+
     def setUp(self):
         # Before Initialization Engines, BOTs object should be Mock object
         ## This is for Weather Bot
@@ -47,7 +58,7 @@ class BotManagerTest(unittest.TestCase):
         self.engine = arara_engine.ARAraEngine()
 
         self.session_key_sysop = self.engine.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123.')
-
+        self.session_key_mikkang = self._register_user(u'mikkang')
     def testInit(self):
         # 각각의 Bot의 Instance들을 제대로 생성했는지 검사
         if not('weather' in BOT_SERVICE_LIST and self.engine.bot_manager.weather_bot):
@@ -61,12 +72,32 @@ class BotManagerTest(unittest.TestCase):
         self.assertEqual(u'melong. this is time', recent_article[0].title)
         self.assertEqual(u'melong. this is xml', recent_article[0].content)
 
+    def testRefrshWeatherInfo(self):
+        # refresh_weather_info가 정보를 잘 갱신하는지 검사하는 테스트이다
+        def new_stub_toprettyxml(url):
+            return u'melong. this is self-refreshed xml'
+        xml.dom.minidom.Element.toprettyxml = new_stub_toprettyxml
+
+        # 시삽이 아닌데도 refresh를 시도할 경우 에러를 내놓아야 한다
+        try:
+            self.engine.bot_manager.refresh_weather_info(self.session_key_mikkang)
+            self.fail()
+        except:
+            pass
+        self.engine.bot_manager.refresh_weather_info(self.session_key_sysop)
+
+        # Recent Article을 긁어왔을 때 새로 갱신된 글이어야 한다.
+        recent_article = self.engine.article_manager.read_recent_article(self.session_key_sysop, BOT_SERVICE_SETTING['weather_board_name'])
+        self.assertEqual(u'melong. this is time', recent_article[0].title)
+        self.assertEqual(u'melong. this is self-refreshed xml', recent_article[0].content)
+
     def tearDown(self):
         # Restore Stub Code
         xml.dom.minidom.Element.toprettyxml = self.org_toprettyxml
         time.strftime = self.org_strftime
         thread.start_new_thread = self.org_start_new_thread
         etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
+
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(BotManagerTest)
 

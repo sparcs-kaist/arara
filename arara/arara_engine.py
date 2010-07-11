@@ -126,6 +126,7 @@ class ARAraEngine(object):
             'modify_banner_validity': self.notice_manager.modify_banner_validity,
             'remove_banner': self.notice_manager.remove_banner,
             'remove_welcome': self.notice_manager.remove_welcome,
+            'refresh_weather_info': self.bot_manager.refresh_weather_info,
             }
                 
         for x in mapping:
