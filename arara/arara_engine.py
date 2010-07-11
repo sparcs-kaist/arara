@@ -123,6 +123,7 @@ class ARAraEngine(object):
             'list_welcome': self.notice_manager.list_welcome,
             'add_banner': self.notice_manager.add_banner,
             'add_welcome': self.notice_manager.add_welcome,
+            'modify_banner_validity': self.notice_manager.modify_banner_validity,
             'remove_banner': self.notice_manager.remove_banner,
             'remove_welcome': self.notice_manager.remove_welcome,
             }
