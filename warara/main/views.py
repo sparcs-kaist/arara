@@ -11,6 +11,8 @@ from libs import timestamp2datetime
 from warara import warara_middleware
 
 from arara_thrift.ttypes import InvalidOperation
+from etc.warara_settings import USE_WEATHER_FORECAST
+from arara_thrift.ttypes import *
 
 @warara.wrap_error
 def index(request):
@@ -63,6 +65,16 @@ def main(request):
     except InvalidOperation:
         ctx['has_banner'] = False
 
+    # Get Weather info
+    if USE_WEATHER_FORECAST:
+        ctx['weather_info'] = server.bot_manager.get_weather_info(sess)
+        if ctx['weather_info'].city == None:
+            ctx['has_weather'] = False
+        else:
+            ctx['has_weather'] = True
+    else:
+        ctx['has_weather'] = False
+    
     rendered = render_to_string('main.html', ctx)
     return HttpResponse(rendered)
 

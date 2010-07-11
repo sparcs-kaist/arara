@@ -9,3 +9,6 @@ WARARA_SERVER_ADDRESS = 'swingfixer.kaist.ac.kr'
 # Web Server FILEDIR Setting
 FILE_DIR = '/home/ara/arara/files'
 FILE_MAXIMUM_SIZE = 100*1024*1024
+
+# ARAra forecast Service Setting
+USE_WEATHER_FORECAST = True
