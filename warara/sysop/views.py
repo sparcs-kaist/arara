@@ -1,16 +1,24 @@
 #-*- coding: utf-8 -*-
+import datetime
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
 
 import warara
 from warara import warara_middleware
 
+from arara.util import datetime2timestamp
+
 @warara.wrap_error
 def index(request):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
+
     board_list = server.board_manager.get_board_list()
     r['board_list'] = board_list
+
+    # TODO: 배너를 단순히 나열하기보다는 배너의 날짜 등을 함께 표시하는 것이 어떨까?
+    banner_list = server.notice_manager.list_banner(sess)
+    r['banner_list'] = banner_list
 
     rendered = render_to_string('sysop/index.html', r)
     return HttpResponse(rendered)
@@ -134,5 +142,48 @@ def refresh_weather(request):
     from arara_thrift.ttypes import WrittenArticle
     article_dic = {'title': today_string, 'content': weather_xml}
     server.article_manager.write_article(sess, '_weather', WrittenArticle(**article_dic))
+
+    return HttpResponseRedirect('/sysop/')
+
+@warara.wrap_error
+def add_banner(request):
+    '''
+    새로운 배너를 등록한다.
+    '''
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+
+    notice_reg_dic = {}
+
+    # TODO: 아래 필드들 중 하나라도 None 이 들어오면 ... 등록에 들어가지 않아야 한다.
+    if request.POST.get('banner_path', None) != None:
+        notice_reg_dic['content'] = request.POST['banner_path']
+    if request.POST.get('banner_due_date', None) != None:
+        year, month, day = tuple(request.POST['banner_due_date'].split('.'))
+        notice_reg_dic['due_date'] = datetime2timestamp(datetime.datetime(int(year), int(month), int(day)))
+    if request.POST.get('banner_weight', None) != None:
+        notice_reg_dic['weight'] = int(request.POST['banner_weight'])
+
+    from arara_thrift.ttypes import WrittenNotice
+    server.notice_manager.add_banner(sess, WrittenNotice(**notice_reg_dic))
+
+    return HttpResponseRedirect('/sysop/')
+
+@warara.wrap_error
+def select_banner(request):
+    '''
+    사용자들에게 노출할 배너를 선택한다.
+    '''
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+
+    banner_list = server.notice_manager.list_banner(sess)
+    select_banner_list = request.POST.getlist('select_banner_list')
+
+    for banner in banner_list:
+        if unicode(banner.id) in select_banner_list:
+            server.notice_manager.modify_banner_validity(sess, banner.id, True)
+        else:
+            server.notice_manager.modify_banner_validity(sess, banner.id, False)
 
     return HttpResponseRedirect('/sysop/')

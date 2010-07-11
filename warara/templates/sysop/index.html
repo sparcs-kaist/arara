@@ -58,4 +58,27 @@
         <input type="submit" value="갱신" />
     </form>
 </div>
+
+<div id="select_banner">
+    <div id="add_banner">
+        <h3>배너 추가</h3>
+        <form method="post" action="/sysop/add_banner/">
+            <span>배너 파일 위치 (src 속성에 설정)</span><input type="text" name="banner_path" /><br />
+            <span>배너 게시 기한 (ex. 2010.07.12.)</span><input type="text" name="banner_due_date" /><br />
+            <span>배너 표시 빈도 (숫자 하나. ex.1)</span><input type="text" name="banner_weight" /><br />
+            <input type="submit" value="추가" />
+        </form>
+    </div>
+    <div id="banner_list">
+        <h3>배너 선택</h3>
+        <form method="post" action="/sysop/select_banner/">
+            {% for banner in banner_list %}
+            <input type="checkbox" class="banner_select" name="select_banner_list" value={{ banner.id }} {% if banner.valid %}checked="checked"{% endif %}/>{{ banner.content }}<br />
+            {% endfor %}
+            사용자들에게 노출될 배너들의 체크박스를 선택합니다.
+            <input type="submit" value="적용" />
+        </form>
+    </div>
+</div>
+
 {% endblock content %}
