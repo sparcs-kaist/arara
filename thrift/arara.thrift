@@ -273,8 +273,7 @@ service ARAraThriftInterface {
     bool is_logged_in(1:string session_key)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    bool _update_monitor_status(1:string session_key,
-		2:string action),
+    bool _update_monitor_status(1:string session_key, 2:string action),
 /// Login Manager Part end
 /// MemberManager Part Begin
     AuthenticationInfo authenticate(1:string username, 2:string password,
@@ -441,9 +440,9 @@ service ARAraThriftInterface {
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     ArticleList new_article_list(1:string session_key,
                                  2:i32 page,
-				 3:i32 page_length)
-	throws (1:InvalidOperation invalid,
-	        2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+                                 3:i32 page_length)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     ArticleList article_list(1:string session_key,
                              2:string board_name,
                              3:string heading_name,
@@ -613,7 +612,7 @@ service ARAraThriftInterface {
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// NoticeManager Part End
 /// BotManager Part Start
-	void refresh_weather_info(1:string session_key)
+    void refresh_weather_info(1:string session_key)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// BotManager Part End
