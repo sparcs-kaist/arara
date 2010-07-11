@@ -10,6 +10,8 @@ from django.core.cache import cache
 from libs import timestamp2datetime
 from warara import warara_middleware
 
+from arara_thrift.ttypes import InvalidOperation
+
 @warara.wrap_error
 def index(request):
     server = warara_middleware.get_server()
@@ -53,6 +55,13 @@ def main(request):
             ctx['new_message'] = True
         else:
             ctx['new_message'] = False
+
+    # Get banner
+    try:
+        ctx['banner'] = server.notice_manager.get_banner()
+        ctx['has_banner'] = True
+    except InvalidOperation:
+        ctx['has_banner'] = False
 
     rendered = render_to_string('main.html', ctx)
     return HttpResponse(rendered)
