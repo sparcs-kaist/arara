@@ -237,6 +237,15 @@ struct WrittenNotice {
     3:i32 weight,
 }
 
+struct WeatherInfo {
+    1:string city,
+    2:string current_temperature,
+    3:string current_condition,
+    4:string current_icon_url,
+    5:string tomorrow_icon_url,
+    6:string day_after_tomorrow_icon_url,
+}
+
 ////////////////////////////////////////
 // Section 3 : Service Definition
 ////////////////////////////////////////
@@ -613,6 +622,9 @@ service ARAraThriftInterface {
 /// NoticeManager Part End
 /// BotManager Part Start
     void refresh_weather_info(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    WeatherInfo get_weather_info(1:string session_key)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// BotManager Part End
