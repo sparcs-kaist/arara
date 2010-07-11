@@ -611,6 +611,24 @@ class ArticleManagerTest(unittest.TestCase):
         # XXX: 잘못 구현되어 있습니당. article_manager.py의 주석 참조
         self.assertEqual(l.hit, [109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91])
 
+    def test_article_list_for_all_board(self):
+        # 테스트용 게시판을 두 개 만들자.
+        self.engine.board_manager.add_board(self.session_key_sysop, u'total1', u'Test Board', [])
+        self.engine.board_manager.add_board(self.session_key_sysop, u'total2', u'Test Board', [])
+
+        # 게시판 2개에 섞어서 글을 쓰자.
+        for i in range(55):
+            if i % 2 == 1:
+                self._dummy_article_write(self.session_key_mikkang, unicode(i), u"total1")
+            else:
+                self._dummy_article_write(self.session_key_mikkang, unicode(i), u"total2")
+
+        # 검사!
+        l = self.engine.article_manager.article_list(self.session_key_mikkang, u'', u'', 1, 20, True)
+        self.assertEqual(u'TITLE54', l.hit[0].title)
+        self.assertEqual(u'TITLE53', l.hit[1].title)
+        self.assertEqual(u'TITLE35', l.hit[19].title)
+        self.assertEqual(3, l.last_page)
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(ArticleManagerTest)

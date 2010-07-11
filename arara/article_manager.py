@@ -429,14 +429,21 @@ class ArticleManager(object):
             3. article_count     : 글의 전체 갯수
             4. article_last_reply_id_list : 글 목록의 각 글에 달린 마지막 reply 의 번호목록
         '''
-        # 해당 board 에 있는 글의 갯수를 센다.
-        board_id = self._get_board_id(board_name)
         session = model.Session()
-        desired_query = session.query(model.Article).filter_by(board_id=board_id, root_id=None, destroyed=False)
-        if not include_all_headings:
-            # 특정 말머리만 선택한다
-            heading = self._get_heading_by_boardid(session, board_id, heading_name)
-            desired_query = desired_query.filter_by(heading=heading)
+        desired_query = session.query(model.Article)
+
+        if board_name != u'':
+            # 해당 board 에 있는 글만 선택한다
+            board_id = self._get_board_id(board_name)
+            desired_query = desired_query.filter_by(board_id=board_id, root_id=None, destroyed=False)
+
+            if not include_all_headings:
+                # 특정 말머리만 선택한다
+                heading = self._get_heading_by_boardid(session, board_id, heading_name)
+                desired_query = desired_query.filter_by(heading=heading)
+        else:
+            # 모든 board 에 있는 글을 선택한다.
+            desired_query = desired_query.filter_by(root_id=None, destroyed=False)
 
         article_count = desired_query.count()
         last_page = self._get_last_page(article_count, page_length)
@@ -542,7 +549,7 @@ class ArticleManager(object):
         @type  session_key: string
         @param session_key: User Key
         @type  board_name: string
-        @param board_name : BBS Name
+        @param board_name : BBS Name (0글자 문자열을 넘기면 모든 게시판에 대하여 적용)
         @type  heading_name: string
         @param heading_name: 가져올 글의 글머리 이름
         @type  page: integer
