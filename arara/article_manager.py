@@ -129,17 +129,25 @@ class ArticleManager(object):
         session = model.Session()
         time_to_filter = datetime.datetime.fromtimestamp(time.time()-time_to_filter)
         if board_id:
-            query = session.query(model.Article).filter(and_(
+            query = session.query(model.Article, model.Board).filter(and_(
                     model.articles_table.c.board_id==board_id,
+                    model.articles_table.c.board_id==model.board_table.c.id,
                     model.articles_table.c.root_id==None,
                     model.articles_table.c.last_modified_date > time_to_filter,
+                    not_(model.board_table.c.hide==True),
+                    not_(model.board_table.c.deleted==True),
                     not_(model.articles_table.c.deleted==True)))
         else:
-            query = session.query(model.Article).filter(and_(
+            query = session.query(model.Article, model.Board).filter(and_(
+                    model.articles_table.c.board_id==model.board_table.c.id,
                     model.articles_table.c.root_id==None,
                     model.articles_table.c.last_modified_date > time_to_filter,
+                    not_(model.board_table.c.hide==True),
+                    not_(model.board_table.c.deleted==True),
                     not_(model.articles_table.c.deleted==True)))
-        best_article = query.order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc())[:count]
+
+        joined_best_article = query.order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc())[:count]
+        best_article = [article for article, _ in joined_best_article]
         best_article_dict_list = self._get_dict_list(best_article, BEST_ARTICLE_WHITELIST)
         session.close()
 

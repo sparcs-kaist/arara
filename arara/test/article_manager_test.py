@@ -51,12 +51,22 @@ class ArticleManagerTest(unittest.TestCase):
         self.org_time = time.time
         time.time = stub_time
         STUB_TIME_CURRENT = STUB_TIME_INITIAL
-        # Register mikkang, serialx
+        # Register users(almost of accounts will be used in voting test)
         self.session_key_mikkang = self._register_user(u'mikkang')
         self.session_key_serialx = self._register_user(u'serialx')
+        self.session_key_hodduc = self._register_user(u'hodduc')
+        self.session_key_sillo = self._register_user(u'sillo')
+        self.session_key_orcjun = self._register_user(u'orcjun')
+        self.session_key_letyoursoulbefree = self._register_user(u'letyoursoulbefree')
+        self.session_key_koolvibes = self._register_user(u'koolvibes')
+        self.session_key_wiki = self._register_user(u'wiki')
+
         # Create default board
         self.engine.board_manager.add_board(self.session_key_sysop, u'board', u'Test Board', [])
         self.engine.board_manager.add_board(self.session_key_sysop, u'board_h', u'Test Board with heading', [u'head1', u'head2'])
+
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board_del', u'Test Board for deleting board test', [])
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board_hide', u'Test Board for hiding board test', [])
 
     def tearDown(self):
         arara.model.clear_test_database()
@@ -438,38 +448,91 @@ class ArticleManagerTest(unittest.TestCase):
         except InvalidOperation:
             pass
 
+    def _vote(self, article_num, vote_num, board_name):
+        vote_order = [self.session_key_mikkang, self.session_key_serialx, self.session_key_hodduc, self.session_key_sillo, self.session_key_orcjun, self.session_key_letyoursoulbefree, self.session_key_koolvibes, self.session_key_wiki]
+        for i in range(vote_num):
+            self.engine.article_manager.vote_article(vote_order[i], board_name, article_num)
+
     def test_todays_best_and_weekly_best(self):
         # XXX : Insufficient. To test properly, we must faking time sharply.
-        # Write 5 articles.
         # XXX : 왜 content=None 이어야 하지 ??
-        for i in range(1, 6):
-            self._dummy_article_write(self.session_key_mikkang, unicode(i))
-        result = self.engine.article_manager.get_today_best_list(5)
-        repr_data1 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE5', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536005.100000001, 'date': 31536005.100000001, 'author_id': 2, 'type': 'today', 'id': 5, 'heading': None}
-        repr_data2 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE4', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536004.100000001, 'date': 31536004.100000001, 'author_id': 2, 'type': 'today', 'id': 4, 'heading': None}
-        repr_data3 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE3', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536003.100000001, 'date': 31536003.100000001, 'author_id': 2, 'type': 'today', 'id': 3, 'heading': None}
-        repr_data4 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE2', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536002.100000001, 'date': 31536002.100000001, 'author_id': 2, 'type': 'today', 'id': 2, 'heading': None}
-        repr_data5 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE1', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': 'today', 'id': 1, 'heading': None}
 
-        self.assertEqual(5, len(result))
-        self.assertEqual(repr_data1, self._to_dict(result[0]))
-        self.assertEqual(repr_data2, self._to_dict(result[1]))
-        self.assertEqual(repr_data3, self._to_dict(result[2]))
-        self.assertEqual(repr_data4, self._to_dict(result[3]))
-        self.assertEqual(repr_data5, self._to_dict(result[4]))
+        article = [0] * 9
+
+        article[0] = self._dummy_article_write(self.session_key_mikkang)
+        self._vote(article[0], 4, u'board')
+        article[1] = self._dummy_article_write(self.session_key_mikkang)
+        self._vote(article[1], 8, u'board')
+        article[2] = self._dummy_article_write(self.session_key_mikkang)
+        self._vote(article[2], 3, u'board')
+
+        article[3] = self._dummy_article_write(self.session_key_hodduc, "", u'board_hide')          
+        self._vote(article[3], 0, u'board_hide')
+        article[4] = self._dummy_article_write(self.session_key_hodduc, "", u'board_hide')          
+        self._vote(article[4], 7, u'board_hide')
+        article[5] = self._dummy_article_write(self.session_key_hodduc, "", u'board_hide')          
+        self._vote(article[5], 6, u'board_hide')
+
+        article[6] = self._dummy_article_write(self.session_key_sillo, "", u'board_del')
+        self._vote(article[6], 2, u'board_del')
+        article[7] = self._dummy_article_write(self.session_key_sillo, "", u'board_del')
+        self._vote(article[7], 5, u'board_del')
+        article[8] = self._dummy_article_write(self.session_key_sillo, "", u'board_del')
+        self._vote(article[8], 1, u'board_del')
+
+        # 추천한 대로 잘 뽑히는가?
         result = self.engine.article_manager.get_weekly_best_list(5)
-        repr_data1 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE5', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536005.100000001, 'date': 31536005.100000001, 'author_id': 2, 'type': 'weekly', 'id': 5, 'heading': None}
-        repr_data2 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE4', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536004.100000001, 'date': 31536004.100000001, 'author_id': 2, 'type': 'weekly', 'id': 4, 'heading': None}
-        repr_data3 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE3', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536003.100000001, 'date': 31536003.100000001, 'author_id': 2, 'type': 'weekly', 'id': 3, 'heading': None}
-        repr_data4 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE2', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536002.100000001, 'date': 31536002.100000001, 'author_id': 2, 'type': 'weekly', 'id': 2, 'heading': None}
-        repr_data5 = {'attach': None, 'board_name': u'board', 'author_username': u'mikkang', 'hit': 0, 'blacklisted': False, 'title': u'TITLE1', 'deleted': False, 'read_status': None, 'root_id': None, 'is_searchable': True, 'author_nickname': u'mikkang', 'content': None, 'vote': 0, 'depth': None, 'reply_count': 0, 'last_modified_date': 31536001.100000001, 'date': 31536001.100000001, 'author_id': 2, 'type': 'weekly', 'id': 1, 'heading': None}
-        self.assertEqual(5, len(result))
-        self.assertEqual(repr_data1, self._to_dict(result[0]))
-        self.assertEqual(repr_data2, self._to_dict(result[1]))
-        self.assertEqual(repr_data3, self._to_dict(result[2]))
-        self.assertEqual(repr_data4, self._to_dict(result[3]))
-        self.assertEqual(repr_data5, self._to_dict(result[4]))
+        self.assertEqual(len(result), 5)
+        self.assertEqual(article[1], result[0].id)
+        self.assertEqual(article[4], result[1].id)
+        self.assertEqual(article[5], result[2].id)
+        self.assertEqual(article[7], result[3].id)
+        self.assertEqual(article[0], result[4].id)
 
+        # 특정 게시판만 뽑을때는 잘 뽑히는가?
+        result = self.engine.article_manager.get_weekly_best_list_specific('board_del')
+        self.assertEqual(len(result), 3)
+        self.assertEqual(article[7], result[0].id)
+        self.assertEqual(article[6], result[1].id)
+        self.assertEqual(article[8], result[2].id)
+
+
+        # 게시판을 숨기면 잘 갱신되는가?
+        self.engine.board_manager.hide_board(self.session_key_sysop, u'board_hide')
+        result = self.engine.article_manager.get_weekly_best_list(5)
+        self.assertEqual(len(result), 5)
+        self.assertEqual(article[1], result[0].id)
+        self.assertEqual(article[7], result[1].id)
+        self.assertEqual(article[0], result[2].id)
+        self.assertEqual(article[2], result[3].id)
+        self.assertEqual(article[6], result[4].id)
+
+        # 게시판을 숨김해제하면 잘 갱신되는가?
+        self.engine.board_manager.return_hide_board(self.session_key_sysop, u'board_hide')
+        result = self.engine.article_manager.get_weekly_best_list(5)
+        self.assertEqual(len(result), 5)
+        self.assertEqual(article[1], result[0].id)
+        self.assertEqual(article[4], result[1].id)
+        self.assertEqual(article[5], result[2].id)
+        self.assertEqual(article[7], result[3].id)
+        self.assertEqual(article[0], result[4].id)
+
+        # 게시물을 지우면 잘 갱신되는가?
+        self.engine.article_manager.delete_article(self.session_key_sillo, u'board_del', article[6])
+        result = self.engine.article_manager.get_weekly_best_list_specific('board_del')
+        self.assertEqual(len(result), 2)
+        self.assertEqual(article[7], result[0].id)
+        self.assertEqual(article[8], result[1].id)
+
+        # 보드를 지우면 잘 갱신되는가?
+        self.engine.board_manager.delete_board(self.session_key_sysop, u'board_del')
+        result = self.engine.article_manager.get_weekly_best_list(5)
+        self.assertEqual(len(result), 5)
+        self.assertEqual(article[1], result[0].id)
+        self.assertEqual(article[4], result[1].id)
+        self.assertEqual(article[5], result[2].id)
+        self.assertEqual(article[0], result[3].id)
+        self.assertEqual(article[2], result[4].id)
     def test_many_replies(self):
         article_id = self._dummy_article_write(self.session_key_mikkang)
         reply_dic = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
