@@ -7,7 +7,7 @@ from arara import model
 from arara_thrift.ttypes import *
 from arara.util import require_login, filter_dict, is_keys_in_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
-from arara.util import timestamp2datetime
+from arara.util import timestamp2datetime, datetime2timestamp
 
 log_method_call = log_method_call_with_source('notice_manager')
 log_method_call_important = log_method_call_with_source_important('notice_manager')
@@ -26,6 +26,12 @@ class NoticeManager(object):
 
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
+
+        if item_dict.has_key('issued_date'):
+            item_dict['issued_date'] = datetime2timestamp(item_dict['issued_date'])
+        if item_dict.has_key('due_date'):
+            item_dict['due_date'] = datetime2timestamp(item_dict['due_date'])
+
         if whitelist:
             filtered_dict = filter_dict(item_dict, whitelist)
         else:
@@ -163,7 +169,8 @@ class NoticeManager(object):
     def add_banner(self, session_key, notice_reg_dic):
         '''
         관리자용 배너 추가 함수
-
+        이 아래의 doctest 는 작동하지 않으니 무시할 것.
+       
         >>> notice_reg_dic = { 'content':'hahahah', 'due_date':'2008,7,14', 'weight':'1' }
         >>> notice.add_banner(SYSOP_session_key, WrittenNotice(**notice_reg_dic))
         >>> notice.add_banner(user_session_key, notice_reg_dic)
@@ -175,9 +182,9 @@ class NoticeManager(object):
         @param session_key: User Key
         @type  notice_reg_dic: dictionary
         @param notice_reg_dic: Notice Dictionary
-        @rtype: void
+        @rtype: int
         @return:
-            1. 배너 페이지 추가에 성공하였을 때: void
+            1. 배너 페이지 추가에 성공하였을 때: 추가된 배너의 id
             2. 배너 페이지 추가에 실패하였을 때:
                 1. 시삽이 아닐 때: InvalidOperation Exception
                 2. 데이터베이스 오류: InternalError Exception
@@ -195,11 +202,12 @@ class NoticeManager(object):
         session = model.Session()
         try:
             # Register welcome to db
-            banner= model.Banner(**notice_reg_dic)
-            session.save(banner)
+            banner = model.Banner(**notice_reg_dic)
+            session.add(banner)
             session.commit()
+            banner_id = banner.id
             session.close()
-            return
+            return banner_id
         except Exception, e:
             session.rollback()
             session.close()
