@@ -107,15 +107,13 @@ class NoticeManager(object):
         '''
         관리자용 banner 페이지 목록을 가져오는 함수
 
-        >>> notice.list_banner(SYSOP_session_key)
-        [{'no': 32, 'content': '신입회원을 모집합니다','availability': 'True'}, {'no': 33', content': '환영합니다','availability': 'False'}
-
+        @type  session_key: string
+        @param session_key: Session Key (시삽이어야 함)
         @rtype: list
         @return:
-            1. banner 페이지가 있을 때: banner 페이지들의 목록(text)
-            2. banner 페이지가 없을 때: 
-                1. banner가 없을때  : InvalidOperation Exception
-                2. 데이터베이스 오류: InternalError Exception
+            1. banner 페이지가 있을 때: banner 페이지들의 목록
+            2. banner 페이지가 없을 때: [] (빈 스트링)
+                1. 데이터베이스 오류: InternalError Exception
             3. 시삽이 아닐 때: InvalidOperation Exception
         '''
         if not self.engine.member_manager.is_sysop(session_key):
@@ -125,12 +123,7 @@ class NoticeManager(object):
         banner = session.query(model.Banner).all()
         banner_dict_list = self._get_dict_list(banner, NOTICE_PUBLIC_WHITELIST)
 
-        if banner_dict_list:
-            session.close()
-            return banner_dict_list
-        else:    
-            session.close()
-            raise InvalidOperation('no banner')
+        return banner_dict_list
 
     @require_login
     @log_method_call_important

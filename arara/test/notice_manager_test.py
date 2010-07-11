@@ -87,6 +87,11 @@ class NoticeManagerTest(unittest.TestCase):
         expected_result = {'due_date': 31537001.100000001, 'weight': 1, 'issued_date': 31536000.100000001, 'content': u'/media/image/banner_1.png', 'valid': True, 'id':1}
         self.assertEqual(expected_result, self._to_dict(banner_list[0]))
 
+    def testListBanner(self):
+        # 배너가 한 개도 없을 때의 처리
+        banner_list = self.engine.notice_manager.list_banner(self.session_key_sysop)
+        self.assertEqual(0, len(banner_list))
+
     def tearDown(self):
         arara.model.clear_test_database()
         time.time = self.org_time
