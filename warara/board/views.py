@@ -67,6 +67,8 @@ def get_article_list(request, r, mode):
         heading = request.GET.get('heading', None)
         include_all_headings = (heading == None)
         article_result = server.article_manager.article_list(sess, r['board_name'], heading, page_no, page_length, include_all_headings)
+    elif mode == 'total_list':
+        article_result = server.article_manager.article_list(sess, u"", u"", page_no, page_length, True)
     elif mode == 'read':
         #TODO: heading 과 include_all_headings
         article_result = server.article_manager.article_list_below(sess, r['board_name'], u"", int(r['article_id']), page_length, True)
@@ -118,15 +120,20 @@ def get_article_list(request, r, mode):
         r['prev_page_group'] = {'mark':r['prev'], 'no':page_o.page(page_o.page(page_range_no).previous_page_number()).end_index()}
         r['first_page'] = {'mark':r['prev_group'], 'no':1}
 
-    #read_only_control
-    board_dict = server.board_manager.get_board(r['board_name'])
-    r['board_dict'] = board_dict
-
-    # heading control
-    if len(board_dict.headings) == 0:
+    if mode == 'total_list':
+        r['board_desc'] = u'All articles in ARA BBS!'
         r['have_heading'] = False
     else:
-        r['have_heading'] = True
+        #read_only_control
+        board_dict = server.board_manager.get_board(r['board_name'])
+        r['board_dict'] = board_dict
+        r['board_desc'] = board_dict.board_description
+
+        # heading control
+        if len(board_dict.headings) == 0:
+            r['have_heading'] = False
+        else:
+            r['have_heading'] = True
 
 @warara.wrap_error
 def list(request, board_name):
@@ -134,6 +141,17 @@ def list(request, board_name):
     sess, r = warara.check_logged_in(request)
     r['board_name'] = board_name
     get_article_list(request, r, 'list')
+
+    rendered = render_to_string('board/list.html', r)
+    return HttpResponse(rendered)
+
+@warara.wrap_error
+def total_list(request):
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+    # board_name 이 없기 때문에 사용한 Hack.
+    r['board_name'] = u'All Articles'
+    get_article_list(request, r, 'total_list')
 
     rendered = render_to_string('board/list.html', r)
     return HttpResponse(rendered)

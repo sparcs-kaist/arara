@@ -44,7 +44,7 @@
                         {% if have_heading %}
                         {% ifnotequal article.heading '' %} <em>{{article.heading}}</em><strong> | </strong>{% endifnotequal %}
                         {% endif %}
-                        <a href="/board/{{board_name}}/{{article.id}}/?page_no={{page_no}}">{{article.title|truncatechars:"60"}}</a>
+                        <a href="/board/{{article.board_name}}/{{article.id}}/?page_no={{page_no}}">{{article.title|truncatechars:"60"}}</a>
                         {%if article.reply_count%}[{{article.reply_count}}]{%endif%}
                     {% else %}
                         {{article.title|truncatechars:"60"}}{% if article.reply_count%} [{{article.reply_count}}]{% endif %}

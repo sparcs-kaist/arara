@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     (r'^account/', include('warara.account.urls')),
     (r'^blacklist/', include('warara.blacklist.urls')),
     (r'^board/', include('warara.board.urls')),
+    (r'^all/', 'warara.board.views.total_list'), # Hack.
     (r'^message/', include('warara.message.urls')),
     (r'^sysop/', include('warara.sysop.urls')),
     (r'^main/', include('warara.main.urls')),
