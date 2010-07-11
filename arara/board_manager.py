@@ -89,6 +89,41 @@ class BoardManager(object):
             session.close()
             raise InvalidOperation('already added')
 
+    def _add_bot_board(self, board_name, board_description = '', heading_list = [], hide = True):
+        '''
+        BOT용 보드를 신설한다.
+        주의 : 이 함수는 BOT Manager에서만 사용되어야 한다
+
+        @type  board_name: string
+        @param board_name: 개설할 Board Name
+        @type  board_description: string
+        @param board_description: 보드에 대한 한줄 설명 (초기값 : '' Description 없음)
+        @type  heading_list: list of string
+        @param heading_list: 보드에 존재할 말머리 목록 (초기값 : [] 아무 말머리 없음)
+        @type  hide: Boolean
+        @param hide: 게시판을 숨길지의 여부. (초기값 : True, 숨김)
+        @rtype: boolean, string 
+        @return:
+            1. 성공: None
+            2. 실패:
+                1. 존재하는 게시판: 'board already exist'
+                2. 데이터베이스 오류: 'DATABASE_ERROR'
+        '''
+        session = model.Session()
+        board_to_add = model.Board(smart_unicode(board_name), smart_unicode(board_description))
+        board_to_add.hide = hide
+
+        try:
+            session.add(board_to_add)
+            session.commit()
+            session.close()
+            # 보드에 변경이 발생하므로 캐시 초기화
+            self.cache_board_list()
+        except IntegrityError:
+            session.rollback()
+            session.close()
+            raise InvalidOperation('Integrity Error!')
+    
     def _get_board(self, board_name):
         try:
             return self.all_board_dict[board_name]
