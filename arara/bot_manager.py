@@ -46,7 +46,12 @@ class BotManager(object):
         if not self.weather_bot:
             raise InvalidOperation('Weather Bot is not enabled!')
         self.weather_bot.write_weather_article()
-        
+
+    def get_weather_info(self, session_key):
+        if not self.weather_bot:
+            raise InvalidOperation('Weather Bot is not enabled!')
+        return self.weather_bot.recent_weather_info(session_key)
+
 class WeatherBot(object):
     def __init__(self, engine, manager):
         import thread
@@ -98,7 +103,6 @@ class WeatherBot(object):
     
     def write_weather_article(self):
         '''
-        (Board Manager에서 WEATHER_BOARD_NAME에 해당하는 보드를 미리 생성해주어야 함. 그렇지 않으면 동작하지 않음.)
         날씨 정보를 긁어와 WEATHER_BOARD_NAME 게시판에 새 글로 작성함
         WeatherBot.process에서 일정 주기로 호출하거나, SYSOP 페이지에서 호출한다
 
@@ -149,4 +153,59 @@ class WeatherBot(object):
             logger.exception('[WRBot] Check weather board name')
             self.engine.login_manager.logout(session_key)
             return False
+
+    def recent_weather_info(self, session_key):
+        '''
+        WEATHER_BOARD_NAME 게시판에서 가장 최신 글을 읽어와 Parsing한 후 WeatherInfo 객체로 만들어주는 함수.
+        WeatherInfo는 다음과 같은 구성요소들로 이루어져 있다
+        WeatherInfo {city, current_temperature, current_condition, current_icon_url, tomorrow_icon_url, day_after_tomorrow_icon_url} 
+
+        @type  session_key: string
+        @param session_key: User Key
+        @rtype: WeatherInfo object
+        @return:
+            1. 성공 시 : WeatherInfo Object
+            2. 실패 시 : InvalidOperation
+        '''
+
+        # Read member's campus data. If user doesn't set campus, then return empty campus
+        if session_key == '':
+            return WeatherInfo()
+        member = self.engine.member_manager.get_info(unicode(session_key))
+        member.campus = member.campus.lower()
+        if member.campus == '':
+            return WeatherInfo()
+        
+        # Parsing content by xml.dom.minidom.
+        import xml.dom.minidom
+        result = self.engine.article_manager.read_recent_article(session_key, self.board_name)
+        weather_xml = xml.dom.minidom.parseString(result[0].content)
+        weather_info_dict = {}
+
+        weather_info = weather_xml.getElementsByTagName('weather')
+        for element in weather_info:
+            city_code = element.getElementsByTagName('forecast_information')[0].getElementsByTagName('city')[0].getAttribute('data')
+            city_code = city_code.lower()
+
+            # If this element is same with member's campus location : Fill the dict
+            if city_code == member.campus:
+                current_weather_node = element.getElementsByTagName('current_conditions')[0]
+                tomorrow_weather_node = element.getElementsByTagName('forecast_conditions')[0]
+                day_after_tomorrow_weather_node = element.getElementsByTagName('forecast_conditions')[1]
+
+                weather_info_dict['city'] = city_code
+                weather_info_dict['current_temperature'] = int(current_weather_node.getElementsByTagName('temp_c')[0].getAttribute('data'))
+                weather_info_dict['current_condition'] = current_weather_node.getElementsByTagName('condition')[0].getAttribute('data')
+                weather_info_dict['current_icon_url'] = current_weather_node.getElementsByTagName('icon')[0].getAttribute('data')
+                weather_info_dict['tomorrow_icon_url'] = tomorrow_weather_node.getElementsByTagName('icon')[0].getAttribute('data')
+                weather_info_dict['day_after_tomorrow_icon_url'] = day_after_tomorrow_weather_node.getElementsByTagName('icon')[0].getAttribute('data')
+                break
+
+        if len(weather_info_dict) != 6:
+            return WeatherInfo()
+        else:
+            return WeatherInfo(**weather_info_dict)
+
+
+
 

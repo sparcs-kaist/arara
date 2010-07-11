@@ -1,0 +1,100 @@
+<araraWeatherInfo>
+	<xml_api_reply version="1">
+		<weather mobile_row="0" mobile_zipped="1" module_id="0" row="0" section="0" tab_id="0">
+			<forecast_information>
+				<city data="Seoul"/>
+				<postal_code data="Seoul"/>
+				<latitude_e6 data=""/>
+				<longitude_e6 data=""/>
+				<forecast_date data="2010-07-12"/>
+				<current_date_time data="2010-07-11 20:00:00 +0000"/>
+				<unit_system data="US"/>
+			</forecast_information>
+			<current_conditions>
+				<condition data="Partly Cloudy"/>
+				<temp_f data="70"/>
+				<temp_c data="21"/>
+				<humidity data="Humidity: 73%"/>
+				<icon data="/ig/images/weather/partly_cloudy.gif"/>
+				<wind_condition data="Wind: SE at 4 mph"/>
+			</current_conditions>
+			<forecast_conditions>
+				<day_of_week data="Mon"/>
+				<low data="68"/>
+				<high data="89"/>
+				<icon data="/ig/images/weather/chance_of_rain.gif"/>
+				<condition data="Chance of Rain"/>
+			</forecast_conditions>
+			<forecast_conditions>
+				<day_of_week data="Tue"/>
+				<low data="71"/>
+				<high data="87"/>
+				<icon data="/ig/images/weather/chance_of_storm.gif"/>
+				<condition data="Chance of Storm"/>
+			</forecast_conditions>
+			<forecast_conditions>
+				<day_of_week data="Wed"/>
+				<low data="64"/>
+				<high data="84"/>
+				<icon data="/ig/images/weather/chance_of_rain.gif"/>
+				<condition data="Chance of Rain"/>
+			</forecast_conditions>
+			<forecast_conditions>
+				<day_of_week data="Thu"/>
+				<low data="73"/>
+				<high data="82"/>
+				<icon data="/ig/images/weather/chance_of_rain.gif"/>
+				<condition data="Chance of Rain"/>
+			</forecast_conditions>
+		</weather>
+	</xml_api_reply>
+	<xml_api_reply version="1">
+		<weather mobile_row="0" mobile_zipped="1" module_id="0" row="0" section="0" tab_id="0">
+			<forecast_information>
+				<city data="Daejeon"/>
+				<postal_code data="Daejeon"/>
+				<latitude_e6 data=""/>
+				<longitude_e6 data=""/>
+				<forecast_date data="2010-07-12"/>
+				<current_date_time data="2010-07-11 20:00:00 +0000"/>
+				<unit_system data="US"/>
+			</forecast_information>
+			<current_conditions>
+				<condition data="Mostly Cloudy"/>
+				<temp_f data="70"/>
+				<temp_c data="25"/>
+				<humidity data="Humidity: 88%"/>
+				<icon data="/ig/images/weather/mostly_cloudy.gif"/>
+				<wind_condition data="Wind: E at 1 mph"/>
+			</current_conditions>
+			<forecast_conditions>
+				<day_of_week data="Mon"/>
+				<low data="68"/>
+				<high data="80"/>
+				<icon data="/ig/images/weather/chance_of_rain.gif"/>
+				<condition data="Chance of Rain"/>
+			</forecast_conditions>
+			<forecast_conditions>
+				<day_of_week data="Tue"/>
+				<low data="66"/>
+				<high data="84"/>
+				<icon data="/ig/images/weather/chance_of_rain.gif"/>
+				<condition data="Chance of Rain"/>
+			</forecast_conditions>
+			<forecast_conditions>
+				<day_of_week data="Wed"/>
+				<low data="64"/>
+				<high data="82"/>
+				<icon data="/ig/images/weather/chance_of_rain.gif"/>
+				<condition data="Chance of Rain"/>
+			</forecast_conditions>
+			<forecast_conditions>
+				<day_of_week data="Thu"/>
+				<low data="66"/>
+				<high data="84"/>
+				<icon data="/ig/images/weather/chance_of_rain.gif"/>
+				<condition data="Chance of Rain"/>
+			</forecast_conditions>
+		</weather>
+	</xml_api_reply>
+</araraWeatherInfo>
