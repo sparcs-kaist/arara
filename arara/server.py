@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 from middleware.thrift_middleware import Server
 from etc.arara_settings import ARARA_SERVER_HOST, ARARA_SERVER_BASE_PORT
 
