@@ -114,14 +114,24 @@ class WeatherBot(object):
 
         # 날씨 정보를 받아온다(from google)
         import urllib
+        import xml.dom.minidom
         today_string = time.strftime("%Y-%m-%d (%a) %H:%M:%S", time.localtime())
-        xmlsession = urllib.urlopen('http://www.google.com/ig/api?weather=Daejeon')
-        weather_xml = xmlsession.read()
-        xmlsession.close()
-           
+
+        # Dom 객체 초기화
+        dom_implementation = xml.dom.minidom.getDOMImplementation()
+        new_document = dom_implementation.createDocument(None, "araraWeatherInfo", None)
+
+        # 각 캠퍼스의 정보를 받아옴
+        for campus_location in BOT_SERVICE_SETTING['weather_service_area']:
+            xmlsession = urllib.urlopen('http://www.google.com/ig/api?weather=' + campus_location + '&;ie=utf-8&oe=utf-8&hl=en')
+            weather_xml = xml.dom.minidom.parseString(xmlsession.read())
+            new_document.documentElement.appendChild(weather_xml.documentElement)
+            xmlsession.close()
+
+        contents = new_document.documentElement.toprettyxml()
         # weather_board_name 게시판에 새 글로 작성. 실패시 log를 남기고 종료.
         try:
-            article_dic = {'title': today_string, 'content': weather_xml, 'heading': u''}
+            article_dic = {'title': today_string, 'content': contents, 'heading': u''}
             self.engine.article_manager.write_article(session_key, self.board_name, WrittenArticle(**article_dic))
 
             # 성공적으로 글을 작성하였음. log를 남기고 종료

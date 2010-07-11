@@ -4,7 +4,7 @@ import time
 import os
 import sys
 import logging
-import urllib
+import xml.dom.minidom
 import thread
 thrift_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'gen-py'))
 sys.path.append(thrift_path)
@@ -18,19 +18,8 @@ from arara import arara_engine
 import etc.arara_settings
 from etc.arara_settings import BOT_SERVICE_SETTING, BOT_SERVICE_LIST
 
-class mockXmlObject():
-    def __init__(self):
-        self.strToReturn = u'melong. this is xml'
-        pass
-
-    def read(self):
-        return self.strToReturn
-
-    def close(self):
-        self.strToReturn = u'closed'
-
-def stub_urlopen(url):
-    return mockXmlObject()
+def stub_toprettyxml(url):
+    return u'melong. this is xml'
 
 def stub_strftime(formatstring, target):
     return u'melong. this is time'
@@ -42,8 +31,8 @@ class BotManagerTest(unittest.TestCase):
     def setUp(self):
         # Before Initialization Engines, BOTs object should be Mock object
         ## This is for Weather Bot
-        self.org_urlopen = urllib.urlopen
-        urllib.urlopen = stub_urlopen
+        self.org_toprettyxml = xml.dom.minidom.Element.toprettyxml
+        xml.dom.minidom.Element.toprettyxml = stub_toprettyxml
         self.org_strftime = time.strftime
         time.strftime = stub_strftime
         self.org_start_new_thread = thread.start_new_thread
@@ -74,7 +63,7 @@ class BotManagerTest(unittest.TestCase):
 
     def tearDown(self):
         # Restore Stub Code
-        urllib.urlopen = self.org_urlopen
+        xml.dom.minidom.Element.toprettyxml = self.org_toprettyxml
         time.strftime = self.org_strftime
         thread.start_new_thread = self.org_start_new_thread
         etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED

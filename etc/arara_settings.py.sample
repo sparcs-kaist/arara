@@ -41,7 +41,8 @@ BOT_ACCOUNT_PASSWORD = u'i_am_ara_bot'
 # BOTs list to be serviced in ARAra
 BOT_SERVICE_LIST = ['weather']
 BOT_SERVICE_SETTING = {'weather_refresh_period': 60, 
-                       'weather_board_name'    : '_weather'}
+                       'weather_board_name'    : '_weather',
+                       'weather_service_area'  : ('seoul', 'daejeon') }
 
 # SYSOP Initialization Setting
 SYSOP_INITIAL_USERNAME = u'SYSOP'
