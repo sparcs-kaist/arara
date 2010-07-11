@@ -43,6 +43,15 @@ class NoticeManagerTest(unittest.TestCase):
         time.time = stub_time
         STUB_TIME_CURRENT = STUB_TIME_INITIAL
 
+    def _to_dict(self, board_object):
+        # ArticleManagerTest._to_dict 를 참고하여 구현하였다.
+
+        FIELD_LIST = ['due_date', 'weight', 'issued_date', 'content', 'id', 'valid']
+        result_dict = {}
+        for field in FIELD_LIST:
+            result_dict[field] = board_object.__dict__[field]
+        return result_dict
+
     def testAddBanner(self):
         # 배너 하나를 추가한다
         notice_reg_dic = {'content' : u'/media/image/banner_1.png', 'due_date' : 31537001.100000001, 'weight' : 1}
@@ -50,9 +59,9 @@ class NoticeManagerTest(unittest.TestCase):
         self.assertEqual(1, banner_1)
         # 배너가 추가되었는지 확인한다
         banner_list = self.engine.notice_manager.list_banner(self.session_key_sysop)
-        expected_result = "[Notice(due_date=31537001.100000001, weight=1, issued_date=31536000.100000001, content=u'/media/image/banner_1.png', valid=False, id=1)]"
+        expected_result = {'due_date': 31537001.100000001, 'weight': 1, 'issued_date': 31536000.100000001, 'content': u'/media/image/banner_1.png', 'valid': False, 'id':1}
         self.assertEqual(1, len(banner_list))
-        self.assertEqual(expected_result, repr(banner_list))
+        self.assertEqual(expected_result, self._to_dict(banner_list[0]))
         # 배너를 하나 더 추가한다
         notice_reg_dic = {'content' : u'/media/image/banner_2.png', 'due_date' : 31636001.100000001, 'weight' : 3}
         banner_2 = self.engine.notice_manager.add_banner(self.session_key_sysop, WrittenNotice(**notice_reg_dic)) 
@@ -60,8 +69,12 @@ class NoticeManagerTest(unittest.TestCase):
         # 배너가 추가되었는지 확인한다
         banner_list = self.engine.notice_manager.list_banner(self.session_key_sysop)
         expected_result = "[Notice(due_date=31537001.100000001, weight=1, issued_date=31536000.100000001, content=u'/media/image/banner_1.png', valid=False, id=1), Notice(due_date=31636001.100000001, weight=3, issued_date=31536000.100000001, content=u'/media/image/banner_2.png', valid=False, id=2)]"
+
+        expected_result1 = {'due_date': 31537001.100000001, 'weight': 1, 'issued_date': 31536000.100000001, 'content': u'/media/image/banner_1.png', 'valid': False, 'id':1}
+        expected_result2 = {'due_date': 31636001.100000001, 'weight': 3, 'issued_date': 31536000.100000001, 'content': u'/media/image/banner_2.png', 'valid': False, 'id':2}
         self.assertEqual(2, len(banner_list))
-        self.assertEqual(expected_result, repr(banner_list))
+        self.assertEqual(expected_result1, self._to_dict(banner_list[0]))
+        self.assertEqual(expected_result2, self._to_dict(banner_list[1]))
 
     def testModifyBannerValidity(self):
         # 배너 하나를 추가한다
@@ -71,8 +84,8 @@ class NoticeManagerTest(unittest.TestCase):
         self.engine.notice_manager.modify_banner_validity(self.session_key_sysop, banner_1, True)
         # 배너의 valid가 바뀌었는지 확인한다
         banner_list = self.engine.notice_manager.list_banner(self.session_key_sysop)
-        expected_result = "[Notice(due_date=31537001.100000001, weight=1, issued_date=31536000.100000001, content=u'/media/image/banner_1.png', valid=True, id=1)]"
-        self.assertEqual(expected_result, repr(banner_list))
+        expected_result = {'due_date': 31537001.100000001, 'weight': 1, 'issued_date': 31536000.100000001, 'content': u'/media/image/banner_1.png', 'valid': True, 'id':1}
+        self.assertEqual(expected_result, self._to_dict(banner_list[0]))
 
     def tearDown(self):
         arara.model.clear_test_database()
