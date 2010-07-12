@@ -19,7 +19,7 @@ log_method_call_important = log_method_call_with_source_important('search_manage
 
 READ_ARTICLE_WHITELIST = ('id', 'title', 'contsent', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable')
 SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'heading', 'date', 'last_modified_date', 'reply_count',
-                    'deleted', 'author_username', 'author_nickname', 'vote', 'hit', 'content')
+                    'deleted', 'author_username', 'author_nickname', 'vote', 'hit', 'content', 'board_name')
 SEARCH_DICT = ('title', 'content', 'author_nickname', 'author_username', 'date', 'query')
 
 class SearchManager(object):
