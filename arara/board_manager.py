@@ -220,6 +220,56 @@ class BoardManager(object):
         for board in self.all_board_list:
             self.all_board_dict[board.board_name] = board
 
+    def _get_heading(self, session, board, heading):
+        '''
+        Internal Function - 주어진 heading 객체를 찾아낸다.
+
+        @type  session: SQLAlchemy Session object
+        @param session: 현재 사용중인 session
+        @type  board: Board object
+        @param board: 선택된 게시판 object
+        @type  heading: unicode string
+        @param heading: 선택한 말머리
+        @rtype : BoardHeading object
+        @return:
+            1. 선택된 BoardHeading 객체 (단, heading == u"" 일 때는 None)
+            2. 실패:
+        '''
+        heading = smart_unicode(heading)
+        try:
+            if heading == u"":
+                return None
+            return session.query(model.BoardHeading).filter_by(board=board, heading=heading).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('heading not exist')
+
+    def _get_heading_by_boardid(self, session, board_id, heading):
+        '''
+        Internal Function - 주어진 heading 객체를 찾아낸다. 단 board_id 를 이용한다.
+
+        @type  session: SQLAlchemy Session object
+        @param session: 현재 사용중인 session
+        @type  board_id: Board id
+        @param board_id: 선택된 게시판의 id
+        @type  heading: unicode string
+        @param heading: 선택한 말머리
+        @rtype : BoardHeading object
+        @return:
+            1. 선택된 BoardHeading 객체 (단, heading == u"" 일 때는 None)
+            2. 실패:
+        '''
+        heading = smart_unicode(heading)
+        try:
+            if heading == u"":
+                return None
+            return session.query(model.BoardHeading).filter_by(board_id=board_id, heading=heading).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('heading not exist')
+
+
+
     @log_method_call
     def get_board_list(self):
         if self.all_board_list == None:

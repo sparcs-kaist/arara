@@ -40,54 +40,6 @@ class ArticleManager(object):
         self.logger = logging.getLogger('article_manager')
         self.engine = engine
 
-    def _get_heading(self, session, board, heading):
-        '''
-        Internal Function - 주어진 heading 객체를 찾아낸다.
-
-        @type  session: SQLAlchemy Session object
-        @param session: 현재 사용중인 session
-        @type  board: Board object
-        @param board: 선택된 게시판 object
-        @type  heading: unicode string
-        @param heading: 선택한 말머리
-        @rtype : BoardHeading object
-        @return:
-            1. 선택된 BoardHeading 객체 (단, heading == u"" 일 때는 None)
-            2. 실패:
-                TODO 구현할 것
-        '''
-        try:
-            if heading == u"":
-                return None
-            return session.query(model.BoardHeading).filter_by(board=board, heading=heading).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('heading not exist')
-
-    def _get_heading_by_boardid(self, session, board_id, heading):
-        '''
-        Internal Function - 주어진 heading 객체를 찾아낸다. 단 board_id 를 이용한다.
-
-        @type  session: SQLAlchemy Session object
-        @param session: 현재 사용중인 session
-        @type  board_id: Board id
-        @param board_id: 선택된 게시판의 id
-        @type  heading: unicode string
-        @param heading: 선택한 말머리
-        @rtype : BoardHeading object
-        @return:
-            1. 선택된 BoardHeading 객체 (단, heading == u"" 일 때는 None)
-            2. 실패:
-                TODO 구현할 것
-        '''
-        try:
-            if heading == u"":
-                return None
-            return session.query(model.BoardHeading).filter_by(board_id=board_id, heading=heading).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('heading not exist')
-
     def _article_thread_to_list(self, article_thread, session_key, blacklisted_userid):
         # 기존에 반복문 2개로 하던 걸 1개로 줄여봄.
         stack = []
@@ -436,7 +388,7 @@ class ArticleManager(object):
 
             if not include_all_headings:
                 # 특정 말머리만 선택한다
-                heading = self._get_heading_by_boardid(session, board_id, heading_name)
+                heading = self.engine.board_manager._get_heading_by_boardid(session, board_id, heading_name)
                 desired_query = desired_query.filter_by(heading=heading)
         else:
             # 모든 board 에 있는 글을 선택한다.
@@ -678,7 +630,7 @@ class ArticleManager(object):
         total_article_query = session.query(model.Article).filter_by(board_id=board_id, root_id=None, destroyed=False)
         heading = None # 뒤에서 heading 재활용을 위해 그냥 scope 에 선언
         if not include_all_headings:
-            heading = self._get_heading_by_boardid(session, board_id, heading_name)
+            heading = self.engine.board_manager._get_heading_by_boardid(session, board_id, heading_name)
             total_article_query = total_article_query.filter_by(heading=heading)
 
         total_article_count = total_article_query.count()
@@ -813,7 +765,7 @@ class ArticleManager(object):
             heading = None
             heading_str = smart_unicode(article_dic.heading)
             if heading_str != u"":
-                heading = self._get_heading(session, board, heading_str)
+                heading = self.engine.board_manager._get_heading(session, board, heading_str)
             new_article = model.Article(board,
                                         heading,
                                         smart_unicode(article_dic.title),
@@ -870,7 +822,7 @@ class ArticleManager(object):
         heading = None
         heading_str = smart_unicode(reply_dic.heading)
         if heading_str != u"":
-            heading = self._get_heading(session, board, heading_str)
+            heading = self.engine.board_manager._get_heading(session, board, heading_str)
 
         new_reply = model.Article(board,
                                 heading,
@@ -948,7 +900,7 @@ class ArticleManager(object):
             if cond:
                 heading = None
                 if not cond2:
-                    heading = self._get_heading_by_boardid(session, board_id, new_heading)
+                    heading = self.engine.board_manager._get_heading_by_boardid(session, board_id, new_heading)
                 article.heading = heading
             article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
             session.commit()
