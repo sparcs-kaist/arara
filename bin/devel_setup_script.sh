@@ -189,7 +189,7 @@ BOT_ACCOUNT_USERNAME = u'BOT'
 BOT_ACCOUNT_PASSWORD = u'i_am_ara_bot'
 # BOTs list to be serviced in ARAra
 BOT_SERVICE_LIST = ['weather']
-BOT_SERVICE_SETTING = {'weather_refresh_period': 60, 
+BOT_SERVICE_SETTING = {'weather_refresh_period': 6000, 
                        'weather_board_name'    : '_weather',
                        'weather_service_area'  : ('seoul', 'daejeon') }
 
@@ -322,6 +322,8 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 import tempfile
 #login = os.getlogin()
 login = os.getenv('USER')
+if login == None:
+    login = 'www-data'
 temp_dir = tempfile.gettempdir()
 session_dir = os.path.join(temp_dir, 'warara-' + login)
 #session_dir = os.path.join(temp_dir, 'warara')
@@ -356,6 +358,7 @@ do
             supervisord >& /dev/null;
             python bin/warara_server.py -p $((base_port+12)) & >& /dev/null;
             echo "Connect to http://143.248.234.153:$((base_port+12))"
+	    echo "You might need to manually check something else."
             out=1;
             ;;
         [Nn] )

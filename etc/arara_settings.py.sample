@@ -40,7 +40,7 @@ BOT_ACCOUNT_USERNAME = u'BOT'
 BOT_ACCOUNT_PASSWORD = u'i_am_ara_bot'
 # BOTs list to be serviced in ARAra
 BOT_SERVICE_LIST = ['weather']
-BOT_SERVICE_SETTING = {'weather_refresh_period': 60, 
+BOT_SERVICE_SETTING = {'weather_refresh_period': 14400, 
                        'weather_board_name'    : '_weather',
                        'weather_service_area'  : ('seoul', 'daejeon') }
 

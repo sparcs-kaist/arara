@@ -1,10 +1,10 @@
 #-*- coding: utf8 -*-
 # ARARA Server Setting
-ARARA_SERVER_HOST = 'swingfixer.kaist.ac.kr'
+ARARA_SERVER_HOST = '127.0.0.1'
 ARARA_SERVER_BASE_PORT = 10000
 
 # Mail Server Setting
-WARARA_SERVER_ADDRESS = 'swingfixer.kaist.ac.kr'
+WARARA_SERVER_ADDRESS = '127.0.0.1'
 
 # Web Server FILEDIR Setting
 FILE_DIR = '/home/ara/arara/files'
