@@ -132,6 +132,20 @@ class BoardManager(object):
         return board
 
     def _get_board_from_session(self, session, board_name):
+        '''
+        DB 로부터 주어진 이름의 board 에 대한 정보를 읽어들인다.
+        Internal Use Only.
+
+        @type  session: SQLAlchemy Session
+        @param session: 사용할 Session
+        @type  board_name: string
+        @param board_name: 불러올 게시판의 이름
+        @rtype: SQLAlchey Board object
+        @return:
+            1. 성공시 - 찾고자 하는 Board 에 대한 SQLAlchemy Board 객체
+            2. 실패시
+                1. 존재하지 않는 게시판 : InvalidOperation('board does not exist')
+        '''
         try:
             board = session.query(model.Board).filter_by(board_name=smart_unicode(board_name)).one()
         except InvalidRequestError:
@@ -145,6 +159,15 @@ class BoardManager(object):
 
     @log_method_call
     def get_board_id(self, board_name):
+        '''
+        주어진 이름의 게시판의 id 를 찾는다.
+
+        @type  board_name: string
+        @param board_name: id 를 찾고자 하는 게시판의 이름
+        @rtype: int
+        @return: 1. 찾고자 한 게시판의 id
+                 2. 실패시 - InvalidOperatino('board does not exist')
+        '''
         return self._get_board(board_name).id
 
     @log_method_call

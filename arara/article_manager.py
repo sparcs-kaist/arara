@@ -40,17 +40,6 @@ class ArticleManager(object):
         self.logger = logging.getLogger('article_manager')
         self.engine = engine
 
-    def _get_board(self, session, board_name):
-        try:
-            board = session.query(model.Board).filter_by(board_name=smart_unicode(board_name)).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation("BOARD_NOT_EXIST")
-        return board
-
-    def _get_board_id(self, board_name):
-        return self.engine.board_manager.get_board_id(board_name)
-
     def _get_heading(self, session, board, heading):
         '''
         Internal Function - 주어진 heading 객체를 찾아낸다.
@@ -255,7 +244,7 @@ class ArticleManager(object):
                 1. Not Existing Board: InvalidOperation Exception
                 2. 데이터베이스 오류: InternalError Exception
         '''
-        board_id = self._get_board_id(board_name)
+        board_id = self.board_manager.get_board_id(board_name)
         return self._get_best_article(None, board_id, count, 86400, 'today')
 
     @log_method_call
@@ -292,7 +281,7 @@ class ArticleManager(object):
                 1. Not Existing Board: InvalidOperation Exception 
                 2. 데이터베이스 오류: InternalError Exception
         '''
-        board_id = self._get_board_id(board_name)
+        board_id = self.engine.board_manager.get_board_id(board_name)
         return self._get_best_article(None, board_id, count, 604800, 'weekly')
 
     @log_method_call
@@ -442,7 +431,7 @@ class ArticleManager(object):
 
         if board_name != u'':
             # 해당 board 에 있는 글만 선택한다
-            board_id = self._get_board_id(board_name)
+            board_id = self.engine.board_manager.get_board_id(board_name)
             desired_query = desired_query.filter_by(board_id=board_id, root_id=None, destroyed=False)
 
             if not include_all_headings:
@@ -638,7 +627,7 @@ class ArticleManager(object):
                 4. 데이터베이스 오류: InternalError Exception 
         '''
         
-        board_id = self._get_board_id(board_name)
+        board_id = self.engine.board_manager.get_board_id(board_name)
         session = model.Session()
         blacklisted_userid = self._get_blacklist_userid(session_key)
 
@@ -682,7 +671,7 @@ class ArticleManager(object):
         @return:
             선택한 게시판의 선택한 page 에 있는 글 (Article 객체) 의 list
         '''
-        board_id = self._get_board_id(board_name)
+        board_id = self.engine.board_manager.get_board_id(board_name)
         session = model.Session()
 
         # 전체 글 갯수를 센다
@@ -775,7 +764,7 @@ class ArticleManager(object):
         '''
 
         session = model.Session()
-        board = self._get_board(session, board_name)
+        board = self.engine.board_manager._get_board_from_session(session, board_name)
         article = self._get_article(session, board.id, article_no)
         user = self._get_user(session, session_key)
         vote_unique_check = session.query(model.ArticleVoteStatus).filter_by(user_id=user.id, board_id=board.id, article_id = article.id).count()
@@ -818,7 +807,7 @@ class ArticleManager(object):
 
         session = model.Session()
         author = self._get_user(session, session_key)
-        board = self._get_board(session, board_name)
+        board = self.engine.board_manager._get_board_from_session(session, board_name)
         if not board.read_only:
             # 글에 적합한 heading 객체를 찾는다
             heading = None
@@ -875,7 +864,7 @@ class ArticleManager(object):
 
         session = model.Session()
         author = self._get_user(session, session_key)
-        board = self._get_board(session, board_name)
+        board = self.engine.board_manager._get_board_from_session(session, board_name)
         article = self._get_article(session, board.id, article_no)
 
         heading = None
@@ -939,7 +928,7 @@ class ArticleManager(object):
                 5. 데이터베이스 오류: InternalError Exception 
         '''
 
-        board_id = self._get_board_id(board_name)
+        board_id = self.engine.board_manager.get_board_id(board_name)
         session = model.Session()
         author_id = self._get_user_id(session_key)
         article = self._get_article(session, board_id, no)
@@ -993,7 +982,7 @@ class ArticleManager(object):
                 5. 데이터베이스 오류: InternalError Exception
         '''
 
-        board_id = self._get_board_id(board_name)
+        board_id = self.engine.board_manager.get_board_id(board_name)
         session = model.Session()
         author = self._get_user(session, session_key)
         article = self._get_article(session, board_id, no)
@@ -1068,7 +1057,7 @@ class ArticleManager(object):
         session.close()
         # 시삽만 이 작업을 할 수 있다.
         if user.is_sysop:
-            board_id = self._get_board_id(board_name)
+            board_id = self.engine.board_manager.get_board_id(board_name)
             self._destroy_article(board_id, no)
         else:
             raise InvalidOperation("NO_PERMISSION")
@@ -1148,7 +1137,7 @@ class ArticleManager(object):
         session.close()
         # 시삽만 이 작업을 할 수 있다.
         if user.is_sysop:
-            board_id = self._get_board_id(board_name)
+            board_id = self.engine.board_manager.get_board_id(board_name)
             return self._fix_article_concurrency(board_id, no)
         else:
             session.close()
