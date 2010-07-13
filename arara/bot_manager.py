@@ -37,6 +37,7 @@ class BotManager(object):
             if not filter(lambda x:x.board_name == board_name, board_list):
                 self.engine.board_manager._add_bot_board(board_name)
             return True
+        # TODO: 상황에 따라 다른 대처가 필요하다.
         except:
             return False
 
@@ -62,10 +63,17 @@ class WeatherBot(object):
         self.board_name = BOT_SERVICE_SETTING['weather_board_name']
         self.refresh_period = BOT_SERVICE_SETTING['weather_refresh_period']
 
-        # Board Initialization과 Manager Status check가 모두 끝나야만 통과
-        while not (self.manager._init_board(self.board_name) and self.check_manager_status()):
+        # Check 1. Board Initialization
+        while not (self.manager._init_board(self.board_name)):
             pass
+
+        # Check 2. Manager Status Check
+        while not (self.check_manager_status()):
+            pass
+
+        # Check를 모두 통과하면 이제 새로운 스레드를 시작한다
         thread.start_new_thread(self.process, tuple())
+
     def check_manager_status(self):
         '''
         Weather Bot에 필요한 각 Manager들이 제대로 작동하고 있는지 검사한다.
@@ -78,6 +86,7 @@ class WeatherBot(object):
         try:
             # Login Manager(혹은 연동되는 Manager)가 작동하고 있지 않거나, BOT_ACCOUNT_USERNAME, BOT_ACCOUNTPASSWORD의 설정이 잘못되었을 경우 문제가 발생한다
             session_key = self.engine.login_manager.login(BOT_ACCOUNT_USERNAME, BOT_ACCOUNT_PASSWORD, u'127.0.0.1')
+        # TODO: 상황에 따라 다른 대처가 필요하다
         except:
             return False
 
@@ -87,6 +96,7 @@ class WeatherBot(object):
             self.engine.article_manager.article_list(session_key, self.board_name, u'')
             self.engine.login_manager.logout(session_key)
             return True
+        # TODO: 상황에 따라 다른 대처가 필요하다
         except:
             self.engine.login_manager.logout(session_key)
             return False
