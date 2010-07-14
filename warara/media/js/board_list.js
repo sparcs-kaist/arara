@@ -139,7 +139,9 @@ $(document).ready(function(){
     });
 
     $(".heading_list").change(function() {
-        if ($(".heading_list > option:selected").attr('name') == "all")
+        if ($("#board_search_content").val() != "")
+            $("#board_search_submit").click();
+        else if ($(".heading_list > option:selected").attr('name') == "all")
         {
             var redirection_url = decodeURIComponent(location.href);
             
