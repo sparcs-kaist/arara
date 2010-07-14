@@ -216,7 +216,7 @@ class BoardManager(object):
     def cache_board_list(self):
         # Board 의 목록을 DB 로부터 memory 로 옮겨 둔다.
         session = model.Session()
-        boards = session.query(model.Board).filter_by(deleted=False).all()
+        boards = session.query(model.Board).filter_by(deleted=False).order_by(model.Board.order).all()
         board_dict_list = self._get_dict_list(boards, BOARD_MANAGER_WHITELIST)
         session.close()
         # Board Heading 도 전부 가져온다.
