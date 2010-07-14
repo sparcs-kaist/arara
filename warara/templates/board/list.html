@@ -103,7 +103,7 @@
                     <input type="hidden" value="{{smi.val}}"{%if smi.selected%} name="{{smi.val}}"{%endif%}></input>
                 </span>
             {% endfor %}
-            <input type="text" name="search_word" class="small_form" id="board_search_content"></input>
+            <input type="text" name="search_word" class="small_form" id="board_search_content" value="{{ search_word }}"></input>
             <input type="hidden" name="search_heading" id="board_search_heading" value="" />
             <input class="" type="submit" value="{% trans "search" %}" id="board_search_submit"></input>
         </form>

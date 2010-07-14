@@ -369,6 +369,7 @@ def search(request, board_name):
     r['search_method_list'] = [{'val':'title', 'text':'title'}, {'val':'content', 'text':'content'},
             {'val':'author_nickname', 'text':'nickname'}, {'val':'author_username', 'text':'id'}]
     search_word = request.GET.get('search_word', '')
+    r['search_word'] = search_word
     r['selected_method_list'] = []
 
     r['chosen_search_method'] = request.GET.get('chosen_search_method', '')
