@@ -72,8 +72,12 @@ def get_article_list(request, r, mode):
         article_result = server.article_manager.article_list(sess, u"", u"", page_no, page_length, True)
     elif mode == 'read':
         #TODO: heading 과 include_all_headings
-        heading = None
-        article_result = server.article_manager.article_list_below(sess, r['board_name'], u"", int(r['article_id']), page_length, True)
+        if request.session.has_key('heading'):
+            heading = request.session['heading']
+        else:
+            heading = None
+        include_all_headings = (heading == None)
+        article_result = server.article_manager.article_list_below(sess, r['board_name'], heading, int(r['article_id']), page_length, include_all_headings)
         r['page_no'] = article_result.current_page
     elif mode == 'search':
         for k, v in r['search_method'].items():
