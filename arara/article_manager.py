@@ -600,6 +600,72 @@ class ArticleManager(object):
         session.close()
         return article_dict_list
 
+    def _get_total_article_count(self, session, board_id, heading_id, include_all_headings = True):
+        '''
+        Internal.
+        주어진 게시판에 있는 선택된 말머리에 해당되는 모든 글의 갯수를 센다.
+
+        @type  session: SQLAlchemy Session
+        @param session: 사용중인 session
+        @type  board_name: int
+        @param board_name: 글 갯수를 가져올 게시판의 id
+        @type  heading_id: int
+        @param heading_id: 글 갯수를 가져올 말머리의 id (없을 경우 None)
+        @type  include_all_headings: bool
+        @param include_all_headings: 모든 말머리를 가져올 것인지의 여부
+        @rtype: int
+        @return: 해당 게시판의 해당되는 말머리의 모든 글의 갯수
+        '''
+        query = session.query(model.Article)
+
+        if board_id == None:
+            query = query.filter_by(root_id=None, destroyed=False)
+        else:
+            query = query.filter_by(board_id=board_id, root_id=None, destroyed=False)
+            if not include_all_headings:
+                query = query.filter_by(heading_id=heading_id)
+
+        return query.count()
+
+
+    def _get_remaining_article_count(self, session, board_id, heading_id, no, include_all_headings = True, order_by = LIST_ORDER_ROOT_ID):
+        '''
+        Internal.
+        주어진 게시판에 있는 선택된 말머리에 해당되는 글들 중 no 번 글 이후로 몇 개의 글이 있는지 센다.
+
+        @type  session: SQLAlchemy Session
+        @param session: 사용중인 session
+        @type  board_id: int
+        @param board_id: 글을 가져올 게시판의 id
+        @type  heading_id: int
+        @param heading_id: 목록에서 보여줄 선택된 말머리
+        @type  no: int
+        @param no: 글번호
+        @type  include_all_headings: boolean
+        @param include_all_headings: 모든 말머리를 보여줄 것인지의 여부
+        @type  order_by: int - LIST_ORDER
+        @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
+        @rtype: int
+        @return: 해당 게시판의 해당되는 말머리에서 no 번 이후 글의 개수 
+        '''
+        query = session.query(model.Article)
+
+        if board_id == None:
+            query = query.filter(and_(
+                    model.articles_table.c.root_id==None,
+                    model.articles_table.c.destroyed==False,
+                    model.articles_table.c.id < no))
+        else:
+            query = query.filter(and_(
+                    model.articles_table.c.board_id==board_id,
+                    model.articles_table.c.root_id==None,
+                    model.articles_table.c.destroyed==False,
+                    model.articles_table.c.id < no))
+            if not include_all_headings:
+                query = query.filter_by(heading_id=heading_id)
+
+        return query.count()
+
     def _article_list_below(self, session_key, board_name, heading_name, no, page_length, include_all_headings = True, order_by = LIST_ORDER_ROOT_ID):
         '''
         Internal.
@@ -623,28 +689,23 @@ class ArticleManager(object):
         @return:
             선택한 게시판의 선택한 page 에 있는 글 (Article 객체) 의 list
         '''
-        board_id = self.engine.board_manager.get_board_id(board_name)
+        # TODO : session 을 굳이 따로 사용할 필요가 있나?
         session = model.Session()
 
-        # 전체 글 갯수를 센다
-        total_article_query = session.query(model.Article).filter_by(board_id=board_id, root_id=None, destroyed=False)
-        heading = None # 뒤에서 heading 재활용을 위해 그냥 scope 에 선언
-        if not include_all_headings:
-            heading = self.engine.board_manager._get_heading_by_boardid(session, board_id, heading_name)
-            total_article_query = total_article_query.filter_by(heading=heading)
+        # Heading ID, Board ID 를 구한다
+        board_id = None
+        if board_name != u"":
+            board_id = self.engine.board_manager.get_board_id(board_name)
 
-        total_article_count = total_article_query.count()
+        heading_id = None
+        if not include_all_headings and heading_name != u"":
+            heading_id = self.engine.board_manager._get_heading_by_boardid(session, board_id, heading_name).id
 
-        # 선택된 글 이후로 남은 글 갯수를 센다
-        remaining_article_query = session.query(model.Article).filter(and_(
-                model.articles_table.c.board_id==board_id,
-                model.articles_table.c.root_id==None,
-                model.articles_table.c.destroyed==False,
-                model.articles_table.c.id < no))
-        if not include_all_headings:
-            remaining_article_query = remaining_article_query.filter_by(heading=heading)
+        # 게시판의 모든 글의 갯수를 확보한다.
+        total_article_count = self._get_total_article_count(session, board_id, heading_id, include_all_headings)
 
-        remaining_article_count = remaining_article_query.count()
+        # 게시판에 선택된 글 이후의 글의 갯수를 센다
+        remaining_article_count = self._get_remaining_article_count(session, board_id, heading_id, no, include_all_headings, order_by)
 
         session.close()
         # 이로부터 합당한 쪽번호를 계산한다

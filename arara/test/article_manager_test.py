@@ -700,6 +700,16 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(u'total1',  l.hit[19].board_name)
         self.assertEqual(3, l.last_page)
 
+        # article_list_below 에 대해서도!
+        l = self.engine.article_manager.article_list_below(self.session_key_mikkang, u'', u'', 34, 20, True)
+        self.assertEqual(u'TITLE34', l.hit[0].title)
+        self.assertEqual(u'total2',  l.hit[0].board_name)
+        self.assertEqual(u'TITLE33', l.hit[1].title)
+        self.assertEqual(u'total1',  l.hit[1].board_name)
+        self.assertEqual(u'TITLE15', l.hit[19].title)
+        self.assertEqual(u'total1',  l.hit[19].board_name)
+        self.assertEqual(3, l.last_page)
+
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(ArticleManagerTest)
 
