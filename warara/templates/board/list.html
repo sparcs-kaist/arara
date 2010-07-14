@@ -42,7 +42,7 @@
                 <td class="column title_col{%if article.deleted%} deleted{%endif%}">
                     {% if logged_in %}
                         {% if have_heading %}
-                        {% ifnotequal article.heading '' %} <em>{{article.heading}}</em><strong> | </strong>{% endifnotequal %}
+                        {% ifnotequal article.heading '' %} <strong>[{{article.heading}}]</strong> {% endifnotequal %}
                         {% endif %}
                         <a href="/board/{{article.board_name}}/{{article.id}}/?page_no={{page_no}}">{{article.title|truncatechars:"60"}}</a>
                         {%if article.reply_count%}[{{article.reply_count}}]{%endif%}
@@ -81,6 +81,19 @@
     {% endifequal %}
 </div>
 {% if logged_in %}
+<div id="heading_buttons" class="width_full">
+    <form name="heading_search" method="GET" action="/board/{{board_name}}" id="heading_search">
+        {% if have_heading %}
+            <select name="heading" class="heading_list">
+                <option value="" name="all">{% trans "All" %}</option>
+                <option value="" {% ifequal default_heading "" %}selected="selected"{% endifequal %}>{% trans "No Heading" %}</option>
+                {% for heading in board_heading_list %}
+                    <option value={{ heading }} {% ifequal heading default_heading %}selected="selected"{% endifequal %}>{{ heading }}</option>
+                {% endfor %}
+            </select>
+        {% endif %}
+    </form>
+</div>
 <div id="board_buttons" class="width_full">
     <div id="board_search">
         <form name="board_search" method="GET" action="/board/{{board_name}}/search">
@@ -91,6 +104,7 @@
                 </span>
             {% endfor %}
             <input type="text" name="search_word" class="small_form" id="board_search_content"></input>
+            <input type="hidden" name="search_heading" id="board_search_heading" value="" />
             <input class="" type="submit" value="{% trans "search" %}" id="board_search_submit"></input>
         </form>
     </div>

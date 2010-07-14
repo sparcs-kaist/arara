@@ -120,6 +120,10 @@ td {
     margin-left: 0.3em;
 }
 
+#heading_buttons {
+    float: left;
+}
+
 #board_search {
     float: left;
 }

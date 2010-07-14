@@ -65,12 +65,14 @@ def get_article_list(request, r, mode):
     if mode == 'list':
         # GET 으로 넘어온 말머리가 있는지 본다.
         heading = request.GET.get('heading', None)
+        request.session['heading'] = heading
         include_all_headings = (heading == None)
         article_result = server.article_manager.article_list(sess, r['board_name'], heading, page_no, page_length, include_all_headings)
     elif mode == 'total_list':
         article_result = server.article_manager.article_list(sess, u"", u"", page_no, page_length, True)
     elif mode == 'read':
         #TODO: heading 과 include_all_headings
+        heading = None
         article_result = server.article_manager.article_list_below(sess, r['board_name'], u"", int(r['article_id']), page_length, True)
         r['page_no'] = article_result.current_page
     elif mode == 'search':
@@ -78,8 +80,9 @@ def get_article_list(request, r, mode):
             del r['search_method'][k]
             r['search_method'][str(k)] = v
         search_method = SearchQuery(**r['search_method'])
-        #TODO: heading 과 include_all_headings
-        article_result = server.search_manager.search(sess, False, r['board_name'], u"", search_method, page_no, page_length, True)
+        heading = request.GET.get('search_heading', None)
+        include_all_headings = (heading == None)
+        article_result = server.search_manager.search(sess, False, r['board_name'], heading, search_method, page_no, page_length, include_all_headings)
 
     # XXX 2010.05.18. page_range_length 는 글 목록 하단에 표시하는 page 들의 갯수이다.
     page_range_length = 10
@@ -134,6 +137,8 @@ def get_article_list(request, r, mode):
             r['have_heading'] = False
         else:
             r['have_heading'] = True
+            r['board_heading_list'] = board_dict.headings
+            r['default_heading'] = heading
 
 @warara.wrap_error
 def list(request, board_name):

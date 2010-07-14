@@ -137,4 +137,26 @@ $(document).ready(function(){
             }
 		}
     });
+
+    $(".heading_list").change(function() {
+        if ($(".heading_list > option:selected").attr('name') == "all")
+        {
+            var redirection_url = decodeURIComponent(location.href);
+            
+            redirection_url = redirection_url.substring(0, redirection_url.indexOf('?'));
+
+            $(location).attr('href', redirection_url);
+        }
+        else
+            $("#heading_search").submit();
+    });
+
+    $("#board_search_submit").click(function() {
+        var searchHeading = $(".heading_list > option:selected").val();
+
+        if ($(".heading_list > option:selected").attr('name') == "all")
+            $("#board_search_heading").attr('disabled', 'disabled');
+        else
+            $("#board_search_heading").attr('value', searchHeading);
+    });
 });
