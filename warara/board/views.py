@@ -65,7 +65,10 @@ def get_article_list(request, r, mode):
     if mode == 'list':
         # GET 으로 넘어온 말머리가 있는지 본다.
         heading = request.GET.get('heading', None)
-        request.session['heading'] = heading
+        if heading == None and request.GET.has_key('page_no'):
+            heading = request.session['heading']
+        else:
+            request.session['heading'] = heading
         include_all_headings = (heading == None)
         article_result = server.article_manager.article_list(sess, r['board_name'], heading, page_no, page_length, include_all_headings)
     elif mode == 'total_list':
