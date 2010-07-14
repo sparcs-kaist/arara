@@ -19,7 +19,7 @@ log_method_call_important = log_method_call_with_source_important('article_manag
 
 # TODO: WRITE_ARTICLE_DICT 는 사실 쓰이지 않는다... SPEC 표시 용도일까?
 WRITE_ARTICLE_DICT = ('title', 'heading', 'content')
-READ_ARTICLE_WHITELIST = ('id', 'heading', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'author_nickname', 'author_id', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable', 'attach')
+READ_ARTICLE_WHITELIST = ('id', 'heading', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'author_nickname', 'author_id', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable', 'attach', 'board_name')
 LIST_ARTICLE_WHITELIST = ('id', 'title', 'heading', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'author_nickname', 'author_id', 'vote', 'hit', 'board_name')
 # TODO SEARCH_ARTICLE_WHITELIST 는 왜 여기에도 있는 걸까?
