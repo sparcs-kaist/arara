@@ -250,10 +250,22 @@ def write_(request, board_name):
 
     return HttpResponseRedirect('/board/%s/%s' % (board_name, str(article_id)))
 
-@warara.wrap_error
-def read(request, board_name, article_id):
+def _read(request, r, sess, board_name, article_id):
+    '''
+    실제로 미들웨어에 접속하여 글을 읽어오는 함수.
+
+    @type  request: Django Request
+    @param request: Django Request
+    @type  r: dictionary
+    @param r: 렌더링에 사용될 dictionary
+    @type  sess: string
+    @param sess: LoginManager 에서 넘어온 세션
+    @type  board_name: string
+    @param board_name: 읽어올 글이 있는 게시판의 이름
+    @type  article_id: string (int)
+    @param article_id: 읽어올 글의 번호
+    '''
     server = warara_middleware.get_server()
-    sess, r = warara.check_logged_in(request)
     article_list = server.article_manager.read_article(sess, board_name, int(article_id))
     username = request.session['arara_username']
     userid = request.session['arara_userid']
@@ -299,7 +311,25 @@ def read(request, board_name, article_id):
     r['article_read_list'] = article_list
     r['root_article'] = article_list[0]
 
-    #article_below_list
+@warara.wrap_error
+def read(request, board_name, article_id):
+    '''
+    주어진 게시판의 주어진 글을 읽어온다.
+
+    @type  request: Django Request
+    @param request: Request
+    @type  board_name: string
+    @param board_name: 읽고자 하는 글이 있는 Board Name
+    @type  article_id: string (int)
+    @param article_id: 읽고자 하는 글의 번호
+    '''
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+
+    # 글의 정보를 r 에 저장
+    _read(request, r, sess, board_name, article_id)
+
+    # 화면 하단의 글목록의 정보를 r 에 저장
     get_article_list(request, r, 'read')
 
     rendered = render_to_string('board/read.html', r)
