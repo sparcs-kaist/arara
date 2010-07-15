@@ -1,0 +1,189 @@
+{% extends "all/list.html" %}
+
+{% block style %}
+{{block.super}}
+<link rel="stylesheet" type="text/css" href="/media/style/board_read.css"></link>
+<link type="text/css" href="/media/thirdparty/css/smoothness/jquery-ui-1.7.custom.css" rel="Stylesheet" /> 
+{% endblock style %}
+
+{% block script %}
+{{block.super}}
+<!--<script type="text/javascript" src="/media/thirdparty/jquery-ui-1.7.custom.min.js"></script>-->
+<script type="text/javascript" src="/media/js/board_read.js"></script>
+{% endblock script %}
+
+{% block article_content %}
+{% load i18n %}
+
+{% for article in article_read_list %}
+<div class="article article_depth_{{article.depth}}">
+    {% for depth in article.depth_list %}
+    <img class="reply_title_img img_{{depth}}" src="/media/image/board/read_reply_hierarchy.jpg"></img>
+    {% endfor %}
+    {% ifequal article.id article.root_id %}
+    <h1 class="root_article_title"><a href="#">{{article.title}}</a></h1>
+    <div id="root_article_info" rel="{{article.id}}">
+        <span class="nickname user_nickname">{{article.author_nickname}}<span class="hidden username">{{article.author_username}}</span></span>
+        <span class="user_name">{{article.author_username}}</span>
+        <span class="article_date">{{article.date|date:"Y/m/d H:i:s"}}</span>
+        <span class="vote">{% trans "vote: " %}<span class="vote_num_{{article.id}}">{{article.vote}}</span> |</span>
+        <span class="hit">{% trans "hit: " %}{{article.hit}} |</span>
+        <div class="clear_float"></div>
+    </div>
+    {% else %}
+    <div class="article_reply_title">
+        <h1><a href="#">{{article.title}}</a></h1>
+        <span class="article_info">
+            <span class="nickname user_nickname">{{article.author_nickname}}<span class="hidden username">{{article.author_username}}</span></span>
+            <span class="user_name">{{article.author_username}}</span> |
+            <span class="vote">{% trans "vote: " %}<span class="vote_num_{{article.id}}">{{article.vote}}</span> </span> |
+            <span class="article_date">{{article.date|date:"Y/m/d H:i:s"}}</span>
+        </span>
+        <div class="clear_float"></div>
+    </div>
+    {% endifequal %}
+    <div class="article_content{%ifequal article.read_status "R" %} previously_read{% endifequal %}">
+        <div class="{%ifequal article.id article.root_id%}article_root_text{%else%}article_text{%endifequal%}">
+            {% if not article.blacklisted %}
+            {% for image in article.image %}
+            {{image|safe}}
+            {% endfor %}
+            {{article.content|safe|linebreaksbr}}
+            {% else %}
+            {% trans "BLACKLISTED" %}
+            {% endif %}
+        </div>
+        <div class="article_file">
+            {% if article.attach %}
+            {% trans "file(s) : " %}
+            {% endif %}
+            {% for file in article.attach %}
+            <a href="/board/{{article.board_name}}/{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" target="_blank">{{file.filename}}</a>
+            {% endfor %}
+        </div>
+        <div class="article_read_buttons">
+            {% if not article.deleted %}
+            <a class="article_reply_show" href="#">{% trans "reply" %}</a>
+            {% if article.flag_modify %}
+            <a class="article_modify" href="/board/{{article.board_name}}/write?article_id={{article.id}}">{% trans "modify" %}</a>
+            <a class="article_delete" href="/all/{{article.root_id}}/{{article.id}}/delete/">{% trans "delete" %}</a>
+            {% endif %}
+            <a class="article_vote" rel="{{article.id}}" href="/all/{{article.root_id}}/{{article.id}}/vote">{% trans "vote" %}</a>
+            {% endif %}
+        </div>
+        <div class="clear_float"></div>
+        <div class="article_reply">
+            <form class="article_reply_form" action="/all/{{article.id}}/reply/" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="root_id" value="{{article.root_id}}" />
+                <ul>
+                    <li><input type="text" name="title" class="write_reply_title" value="{{article.title}}" /></li>
+                    <li><textarea name="content">{{default_text}}</textarea></li>
+                </ul>
+                <input type="hidden" value="{{article_no}}" name="article_no"></input>
+                <div class="article_write_file">
+                    <div class="file_line">
+                        <span class="article_write_file_caption">{% trans "file 1" %}</span>
+                        <div class="file_upload_p">
+                            <div class="file_upload_t">
+                                <input type="file" name="file1" class="file_upload" size=5></input>
+                            </div>
+                            <div class="file_upload_f">
+                                <input name="file1_fi" class="file_input_f"></input> <!-- file1 fake input -->
+                                <div class="file_search_button">
+                                    {% trans "search" %}
+                                </div>
+                            </div>
+                            <input type="button" name="file_input_add" class="small_btn" value="+"></input>
+                        </div>
+                    </div>
+                </div>
+                <input type="submit" class="write_reply small_btn" name="reply_submit" value="{% trans "write" %}" />
+                <input type="button" class="cancel_reply small_btn" value="{% trans "cancel" %}"></input>
+                <div class="clear_float"></div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+<!-- 2010.05.15. "Reply to main article" 기능을 추가.  -->
+<!-- letyoursoulbefree 권하기를, reply to main 앞에 달리는 사각형을 좀 더 진하게 하는게 어떨까 하더라. -->
+<!-- combacsa 고민하기를, root_article 만 있는 경우에는 굳이 이하의 내용이 나올 필요가 있나 싶다. if 써서 이하의 div 는 아예 빼버리는 건 어떨지. -->
+<div class="article article_depth_{{root_article.depth}}">
+<div class="article_content">
+
+<div class="clear_float"></div>
+<div class="clear_float"></div>
+<div class="article_read_buttons">
+    <a class="article_reply_show_strong">
+    {% if not root_article.deleted %}
+    <a class="article_reply_show" href="#">{% trans "Reply to main" %}</a>
+    {% else %}
+    <a>{% trans "main article was deleted, can't reply" %}</a>
+    {% endif %}
+    </a>
+</div>
+
+<div class="article_reply">
+    <form class="article_reply_form" action="/all/{{root_article.id}}/reply/" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="root_id" value="{{root_article.root_id}}" />
+        <ul>
+            <li><input type="text" name="title" class="write_reply_title" value="{{root_article.title}}" /></li>
+            <li><textarea name="content">{{default_text}}</textarea></li>
+        </ul>
+        <input type="hidden" value="{{article_no}}" name="article_no"></input>
+        <div class="article_write_file">
+            <div class="file_line">
+                <span class="article_write_file_caption">{% trans "file 1" %}</span>
+                <div class="file_upload_p">
+                    <div class="file_upload_t">
+                        <input type="file" name="file1" class="file_upload" size=5></input>
+                    </div>
+                    <div class="file_upload_f">
+                        <input name="file1_fi" class="file_input_f"></input> <!-- file1 fake input -->
+                        <div class="file_search_button">
+                            {% trans "search" %}
+                        </div>
+                    </div>
+                    <input type="button" name="file_input_add" class="small_btn" value="+"></input>
+                </div>
+            </div>
+        </div>
+        <input type="submit" class="write_reply small_btn" name="reply_submit" value="{% trans "write" %}" />
+        <input type="button" class="cancel_reply small_btn" value="{% trans "cancel" %}"></input>
+        <div class="clear_float"></div>
+    </form>
+</div>
+
+<div class="clear_float"></div>
+</div>
+<div class="clear_float"></div>
+</div>
+
+
+<!-- 2010.05.15.     -->
+<!-- 그게 여기까지.  -->
+
+<div id="file_line_model">
+    <div class="file_line">
+        <span class="article_write_file_caption">{% trans "file 1" %}</span>
+        <div class="file_upload_p">
+            <div class="file_upload_t">
+                <input type="file" name="file1" class="file_upload" size=95></input>
+            </div>
+            <div class="file_upload_f">
+                <input name="file1_fi" class="file_input_f"></input> <!-- file1 fake input -->
+                <div class="file_search_button">
+                    {% trans "search" %}
+                </div>
+            </div>
+            <input type="button" name="file_input_delete" class="small_btn" value="-"></input>
+        </div>
+    </div>
+</div>
+<div id="article_nav_buttons">
+    <a class="btn" id="list_link" href="/all/?page_no={{page_no}}">{% trans "list" %}</a>
+</div>
+
+{% endblock article_content %}

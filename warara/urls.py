@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     (r'^blacklist/', include('warara.blacklist.urls')),
     (r'^board/', include('warara.board.urls')),
     (r'^message/', include('warara.message.urls')),
+    (r'^all/', include('warara.all.urls')),
     (r'^sysop/', include('warara.sysop.urls')),
     (r'^main/', include('warara.main.urls')),
 
