@@ -38,7 +38,7 @@ class BoardManagerTest(unittest.TestCase):
     def _to_dict(self, board_object):
         # ArticleManagerTest._to_dict 를 참고하여 구현하였다.
 
-        FIELD_LIST = ['read_only', 'board_name', 'board_description', 'hide', 'id', 'headings']
+        FIELD_LIST = ['read_only', 'board_name', 'board_description', 'hide', 'id', 'headings', 'order']
         result_dict = {}
         for field in FIELD_LIST:
             result_dict[field] = board_object.__dict__[field]
@@ -49,18 +49,18 @@ class BoardManagerTest(unittest.TestCase):
         self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'Garbages Board')
         board_list = self.engine.board_manager.get_board_list()
         self.assertEqual(1, len(board_list))
-        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': False, 'id':1, 'headings': []}, self._to_dict(board_list[0]))
+        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': False, 'id':1, 'headings': [], 'order':1}, self._to_dict(board_list[0]))
         # Add another board 'ToSysop'
         self.engine.board_manager.add_board(self.session_key_sysop, u'ToSysop', u'The comments to SYSOP')
         board_list = self.engine.board_manager.get_board_list()
         self.assertEqual(2, len(board_list))
-        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': False, 'id': 1, 'headings': []}, self._to_dict(board_list[0]))
-        self.assertEqual({'read_only': False, 'board_name': u'ToSysop', 'board_description': u'The comments to SYSOP', 'hide': False, 'id': 2, 'headings': []}, self._to_dict(board_list[1]))
+        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': False, 'id': 1, 'headings': [], 'order':1}, self._to_dict(board_list[0]))
+        self.assertEqual({'read_only': False, 'board_name': u'ToSysop', 'board_description': u'The comments to SYSOP', 'hide': False, 'id': 2, 'headings': [], 'order':2}, self._to_dict(board_list[1]))
         # Check if you can get each board
         garbages = self.engine.board_manager.get_board(u'garbages')
-        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': False, 'id': 1, 'headings': []}, self._to_dict(garbages))
+        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': False, 'id': 1, 'headings': [], 'order':1}, self._to_dict(garbages))
         tosysop = self.engine.board_manager.get_board(u'ToSysop')
-        self.assertEqual({'read_only': False, 'board_name': u'ToSysop', 'board_description': u'The comments to SYSOP', 'hide': False, 'id': 2, 'headings': []}, self._to_dict(tosysop))
+        self.assertEqual({'read_only': False, 'board_name': u'ToSysop', 'board_description': u'The comments to SYSOP', 'hide': False, 'id': 2, 'headings': [], 'order':2}, self._to_dict(tosysop))
         # Try to delete the board
         self.engine.board_manager.delete_board(self.session_key_sysop, u'garbages')
         self.assertEqual(1, self.engine.board_manager.get_board(u'ToSysop').order)
@@ -118,14 +118,14 @@ class BoardManagerTest(unittest.TestCase):
         self.engine.board_manager._add_bot_board(u'garbages', u'Garbages Board', [], True)
         board_list = self.engine.board_manager.get_board_list()
         self.assertEqual(1, len(board_list))
-        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': True, 'id':1, 'headings': []}, self._to_dict(board_list[0]))
+        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': True, 'id':1, 'headings': [], 'order':None}, self._to_dict(board_list[0]))
         self.engine.board_manager.delete_board(self.session_key_sysop, u'garbages')
 
         # Bot용 Board에서 hide 옵션을 False로 주었을 때 잘 동작하는가?
         self.engine.board_manager._add_bot_board(u'bobobot', u'boboboard', [], False)
         board_list = self.engine.board_manager.get_board_list()
         self.assertEqual(1, len(board_list))
-        self.assertEqual({'read_only': False, 'board_name': u'bobobot', 'board_description': u'boboboard', 'hide': False, 'id':2, 'headings': []}, self._to_dict(board_list[0]))
+        self.assertEqual({'read_only': False, 'board_name': u'bobobot', 'board_description': u'boboboard', 'hide': False, 'id':2, 'headings': [], 'order':None}, self._to_dict(board_list[0]))
         self.engine.board_manager.delete_board(self.session_key_sysop, u'garbages')
 
         # 이미 있는 Board를 추가하면 에러를 잘 잡아내는가?
@@ -163,7 +163,7 @@ class BoardManagerTest(unittest.TestCase):
         self.engine.board_manager.hide_board(self.session_key_sysop, u'garbages')
         board_list = self.engine.board_manager.get_board_list()
         self.assertEqual(1, len(board_list))
-        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': True, 'id': 1, 'headings': []}, self._to_dict(board_list[0]))
+        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': True, 'id': 1, 'headings': [], 'order':1}, self._to_dict(board_list[0]))
         # Test 2. can hide already hidden board?
         try:
             self.engine.board_manager.hide_board(self.session_key_sysop, u'garbages')
@@ -175,7 +175,7 @@ class BoardManagerTest(unittest.TestCase):
         self.engine.board_manager.return_hide_board(self.session_key_sysop, u'garbages')
         board_list = self.engine.board_manager.get_board_list()
         self.assertEqual(1, len(board_list))
-        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': False, 'id': 1, 'headings': []}, self._to_dict(board_list[0]))
+        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': False, 'id': 1, 'headings': [], 'order':1}, self._to_dict(board_list[0]))
 
         # Test 4. can return_hide not hidden board?
         try:
@@ -229,7 +229,7 @@ class BoardManagerTest(unittest.TestCase):
         self.engine.board_manager.edit_board(self.session_key_sysop, u'garbages', u'recycle', u'Recycle Board')
         board_list = self.engine.board_manager.get_board_list()
         self.assertEqual(1, len(board_list))
-        expected_board = {'read_only': False, 'board_name': u'recycle', 'board_description': u'Recycle Board', 'hide': False, 'id': 1, 'headings': []}
+        expected_board = {'read_only': False, 'board_name': u'recycle', 'board_description': u'Recycle Board', 'hide': False, 'id': 1, 'headings': [], 'order':1}
         self.assertEqual(expected_board, self._to_dict(board_list[0]))
         # TEST 1-1. 바뀐 이름의 보드는 존재하지 않아야 한다
         try:
