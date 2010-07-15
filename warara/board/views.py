@@ -82,6 +82,9 @@ def get_article_list(request, r, mode):
         include_all_headings = (heading == None)
         article_result = server.article_manager.article_list_below(sess, r['board_name'], heading, int(r['article_id']), page_length, include_all_headings)
         r['page_no'] = article_result.current_page
+    elif mode == 'total_read':
+        article_result = server.article_manager.article_list_below(sess, u'', u'', int(r['article_id']), page_length, True)
+        r['page_no'] = article_result.current_page
     elif mode == 'search':
         for k, v in r['search_method'].items():
             del r['search_method'][k]
@@ -130,7 +133,7 @@ def get_article_list(request, r, mode):
         r['prev_page_group'] = {'mark':r['prev'], 'no':page_o.page(page_o.page(page_range_no).previous_page_number()).end_index()}
         r['first_page'] = {'mark':r['prev_group'], 'no':1}
 
-    if mode == 'total_list':
+    if mode == 'total_list' or mode == 'total_read':
         r['board_desc'] = u'All articles in ARA BBS!'
         r['have_heading'] = False
     else:
@@ -155,17 +158,6 @@ def list(request, board_name):
     get_article_list(request, r, 'list')
 
     rendered = render_to_string('board/list.html', r)
-    return HttpResponse(rendered)
-
-@warara.wrap_error
-def total_list(request):
-    server = warara_middleware.get_server()
-    sess, r = warara.check_logged_in(request)
-    # board_name 이 없기 때문에 사용한 Hack.
-    r['board_name'] = u'All Articles'
-    get_article_list(request, r, 'total_list')
-
-    rendered = render_to_string('board/total_list.html', r)
     return HttpResponse(rendered)
 
 @warara.wrap_error
@@ -437,6 +429,8 @@ def delete(request, board_name, root_id, article_no):
     @return: 삭제된 글이 달려 있던 루트 글로 이동
 
     '''
+    _delete(request, board_name, root_id, article_no)
+
     return HttpResponseRedirect('/board/%s/%s' % (board_name, root_id))
 
 def destroy(request, board_name, root_id, article_no):
