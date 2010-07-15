@@ -86,12 +86,13 @@ class UserActivation(object):
         return "<UserActivation('%s', '%s')>" % (self.user.username, self.activation_code)
 
 class Board(object):
-    def __init__(self, board_name, board_description):
+    def __init__(self, board_name, board_description, order):
         self.board_name = smart_unicode(board_name)
         self.board_description = smart_unicode(board_description)
         self.deleted = False
         self.read_only = False
         self.hide = False
+        self.order = order
 
     def __repr__(self):
         return "<Board('%s', '%s')>" % (self.board_name, self.board_description)
@@ -253,6 +254,7 @@ board_table = Table('boards', metadata,
     Column('deleted', Boolean),
     Column('read_only', Boolean),
     Column('hide', Boolean),
+    Column('order', Integer),
     mysql_engine='InnoDB'
 )
 

@@ -267,6 +267,40 @@ class BoardManagerTest(unittest.TestCase):
         except InvalidOperation:
             pass
 
+    def test_change_board_order(self):
+        #테스트에 사용할 보드 추가(1,2,3,4,5,6,7,8,9)
+        for i in range(1,10):
+            self.engine.board_manager.add_board(self.session_key_sysop, u'board'+unicode(i), u'board')
+        # 뒤에 있는 보드를 앞으로 옮기기 테스트 : board9를 첫 번째로 옮깁니다.(9,1,2,3,4,5,6,7,8)
+        self.engine.board_manager.change_board_order(self.session_key_sysop, u'board9', 1)
+        self.assertEqual(1, self.engine.board_manager.get_board(u'board9').order)
+        self.assertEqual(2, self.engine.board_manager.get_board(u'board1').order)
+        self.assertEqual(9, self.engine.board_manager.get_board(u'board8').order)
+        # 앞에 있는 보드를 뒤로 옮기기 테스트: board2를 여섯 번째로 옮깁니다.(9,1,3,4,5,2,6,7,8)
+        self.engine.board_manager.change_board_order(self.session_key_sysop, u'board2', 6)
+        self.assertEqual(6, self.engine.board_manager.get_board(u'board2').order)
+        self.assertEqual(5, self.engine.board_manager.get_board(u'board5').order)
+        self.assertEqual(3, self.engine.board_manager.get_board(u'board3').order)
+        # 잘못된 order(범위 초과)로 바꾸기를 시도합니다.
+        try:
+            self.engine.board_manager.change_board_order(self.session_key_sysop, u'board1', 10)
+            self.fail("An invalid order provided. The change function must fail.")
+        except:
+            pass
+        # 없는 board의 순서를 바꾸기를 시도합니다.
+        try:
+            self.engine.board_manager.change_board_order(self.session_key_sysop, u'boardnotexist', 1)
+            self.fail("An invalid board provided. The change function must fail.")
+        except:
+            pass
+        # 순서를 지정할 수 없는 bot이 만든 board의 순서 바꾸기를 시도합니다.
+        try:
+            self.engine.board_manager._add_bot_board(u'botboard', u'bot board', [], True)
+            self.engine.board_manager.change_board_order(self.session_key_sysop, u'botboard', 1)
+            self.fail("Tried to change the order of 'not-ordered' board. The change function must fail.")
+        except:
+            pass
+
     def tearDown(self):
         arara.model.clear_test_database()
         etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED

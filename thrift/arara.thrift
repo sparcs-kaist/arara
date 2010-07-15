@@ -124,6 +124,7 @@ struct Board {
     4: i32 id,
     5: bool hide,
     6: list<string> headings,
+    7: i32 order,
 }
 
 struct WrittenArticle {
@@ -401,6 +402,10 @@ service ARAraThriftInterface {
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void edit_board(1:string session_key, 2:string board_name,
                     3:string new_name, 4:string new_description)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void change_board_order(1:string session_key, 2:string board_name, 
+                            3:i32 new_order)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// BoardManager Part End

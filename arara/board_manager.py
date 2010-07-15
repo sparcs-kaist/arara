@@ -10,7 +10,7 @@ from arara_thrift.ttypes import *
 log_method_call = log_method_call_with_source('board_manager')
 log_method_call_important = log_method_call_with_source_important('board_manager')
 
-BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only', 'hide', 'id', 'headings')
+BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only', 'hide', 'id', 'headings', 'order')
 
 class BoardManager(object):
     '''
@@ -71,7 +71,15 @@ class BoardManager(object):
         '''
         self._is_sysop(session_key)
         session = model.Session()
-        board_to_add = model.Board(smart_unicode(board_name), board_description)
+
+        # Find the order of the board adding
+        board_order_list = session.query(model.Board.order).filter(model.Board.order != None).order_by(model.Board.order)
+        if board_order_list.count() == 0:
+            board_order = 1
+        else:
+            board_order=board_order_list.all()[-1].order+1
+
+        board_to_add = model.Board(smart_unicode(board_name), board_description, board_order)
         try:
             session.add(board_to_add)
             # Board Heading 들도 추가한다.
@@ -110,7 +118,7 @@ class BoardManager(object):
                 2. 데이터베이스 오류: 'DATABASE_ERROR'
         '''
         session = model.Session()
-        board_to_add = model.Board(smart_unicode(board_name), smart_unicode(board_description))
+        board_to_add = model.Board(smart_unicode(board_name), smart_unicode(board_description), order=None)
         board_to_add.hide = hide
 
         try:
@@ -341,6 +349,61 @@ class BoardManager(object):
         session.close()
         # 보드에 변경이 발생하므로 캐시 초기화
         self.cache_board_list()
+
+    @require_login
+    @log_method_call_important
+    def change_board_order(self, session_key, board_name, new_order):
+        """
+        보드의 순서를 바꾼다. 
+
+        @type  session_key: string
+        @param session_key: User Key (must be SYSOP)
+        @type  board_name: string
+        @param board_name: 순서를 변경할 보드의 이름
+        @type  new_order: int
+        @param new_order: 보드가 표시될 순서
+        @rtype: boolean, string
+        @return:
+            1. 성공: None
+            2. 실패:
+                1. 로그인되지 않은 유저: 'NOT_LOGGEDIN'
+                2. 시삽이 아닌 경우: 'no permission'
+                3. 존재하지 않는 게시판: 'board does not exist'
+                4. 순서를 지정할 수 없는 게시판: 'invalid board'
+                5. 잘못된 순서(범위 초과): 'invalid order'
+                6. 데이터베이스 오류: 'DATABASE_ERROR'
+        """
+
+        self._is_sysop(session_key)
+        session = model.Session()
+
+        board_name = smart_unicode(board_name)
+
+        board_list = session.query(model.Board).filter(model.Board.order != None).order_by(model.Board.order).all()
+        current_board = self._get_board_from_session(session, board_name)
+
+        #올파른 게시판인지, order인지 검사한다. 
+        if not 0 < new_order <= len(board_list):
+            raise InvalidOperation('invalid order')
+        if current_board.order == None:
+            raise InvalidOperation('invalid board')
+
+        #new_order부터 current_board의 order까지의 모든 보드의 order를 조정한다.
+        if new_order<current_board.order:
+            for board in board_list[new_order-1:current_board.order]:
+                board.order += 1
+        else:
+            for board in board_list[current_board.order:new_order]:
+                board.order -= 1
+
+        #현재 보드의 order를 new_order로 변경한다. 
+        current_board.order = new_order
+
+        session.commit()
+        session.close()
+
+        self.cache_board_list()
+
 
     @require_login
     @log_method_call_important
