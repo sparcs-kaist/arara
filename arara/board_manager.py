@@ -521,7 +521,12 @@ class BoardManager(object):
     def delete_board(self, session_key, board_name):
         self._is_sysop(session_key)
         session = model.Session()
-        board = self._get_board_from_session(session, board_name)
+        board = self._get_board_from_session(session, smart_unicode(board_name))
+
+        if board.order != None:
+            self.change_board_order(session_key, board_name, session.query(model.Board).filter(model.Board.order != None).count())
+            board.order = None
+
         board.deleted = True
         session.commit()
         session.close()

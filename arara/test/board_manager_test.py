@@ -62,8 +62,9 @@ class BoardManagerTest(unittest.TestCase):
         tosysop = self.engine.board_manager.get_board(u'ToSysop')
         self.assertEqual({'read_only': False, 'board_name': u'ToSysop', 'board_description': u'The comments to SYSOP', 'hide': False, 'id': 2, 'headings': []}, self._to_dict(tosysop))
         # Try to delete the board
-        self.engine.board_manager.delete_board(self.session_key_sysop, u'ToSysop')
         self.engine.board_manager.delete_board(self.session_key_sysop, u'garbages')
+        self.assertEqual(1, self.engine.board_manager.get_board(u'ToSysop').order)
+        self.engine.board_manager.delete_board(self.session_key_sysop, u'ToSysop')
 
     def testAbNormalAddAndRemoveOneBoard(self):
         # Add Existing Board
