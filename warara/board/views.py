@@ -336,7 +336,19 @@ def read(request, board_name, article_id):
     return HttpResponse(rendered)
 
 @warara.wrap_error
-def reply(request, board_name, article_id):
+def _reply(request, board_name, article_id):
+    '''
+    주어진 게시판의 주어진 글에 실제로 reply 를 단다.
+
+    @type  request: Django Request
+    @param request: Request
+    @type  board_name: string
+    @param board_name: reply를 달고자 하는 글이 있는 board name
+    @type  article_id: string (int)
+    @param article_id: reply를 달고자 하는 글의 번호
+    @rtype: int
+    @return: reply 가 달리는 글의 root id
+    '''
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
     reply_dic = {}
@@ -357,6 +369,25 @@ def reply(request, board_name, article_id):
             fp = open('%s/%s/%s' % (FILE_DIR, file.file_path, file.saved_filename), 'wb')
             fp.write(file_ob.read())
 
+    return root_id
+
+@warara.wrap_error
+def reply(request, board_name, article_id):
+    '''
+    주어진 게시판의 주어진 글에 reply 를 단다.
+
+    @type  request: Django Request
+    @param request: Request
+    @type  board_name: string
+    @param board_name: reply를 달고자 하는 글이 있는 board name
+    @type  article_id: string (int)
+    @param article_id: reply를 달고자 하는 글의 번호
+    @rtype: HttpResponseRedirect
+    @return: 답글이 달린 원글을 읽는 페이지로 재전송
+
+    '''
+    root_id = _reply(request, board_name, article_id)
+
     return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(root_id)))
 
 @warara.wrap_error
@@ -371,11 +402,41 @@ def vote(request, board_name, root_id, article_no):
     return HttpResponse("OK")
 
 @warara.wrap_error
-def delete(request, board_name, root_id, article_no):
+def _delete(request, board_name, root_id, article_no):
+    '''
+    주어진 게시판의 주어진 글을 실제로 지운다.
+
+    @type  request: Django Request
+    @param request: Request
+    @type  board_name: string
+    @param board_name: 지우고자 하는 글이 있는 board name
+    @type  root_id: string (int)
+    @param root_id: 지우고자 하는 글이 달린 원글의 번호
+    @type  article_id: string (int)
+    @param article_id: 지우고자 하는 글의 번호
+    '''
+    # XXX 어째서 root_id 가 있어야 글을 지울 수 있는 걸까 ???
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
     server.article_manager.delete_article(sess, board_name, int(article_no))
 
+@warara.wrap_error
+def delete(request, board_name, root_id, article_no):
+    '''
+    주어진 게시판의 주어진 글을 지운다.
+
+    @type  request: Django Request
+    @param request: Request
+    @type  board_name: string
+    @param board_name: 지우고자 하는 글이 있는 board name
+    @type  root_id: string (int)
+    @param root_id: 지우고자 하는 글이 달린 원글의 번호
+    @type  article_id: string (int)
+    @param article_id: 지우고자 하는 글의 번호
+    @rtype: HttpResponseRedirect
+    @return: 삭제된 글이 달려 있던 루트 글로 이동
+
+    '''
     return HttpResponseRedirect('/board/%s/%s' % (board_name, root_id))
 
 def destroy(request, board_name, root_id, article_no):
@@ -389,10 +450,20 @@ def destroy(request, board_name, root_id, article_no):
     return HttpResponseRedirect('/board/%s' % board_name)
     # XXX 여기까지.
 
-@warara.wrap_error
-def search(request, board_name):
-    server = warara_middleware.get_server()
-    sess, r = warara.check_logged_in(request);
+def _search(request, r, sess, board_name):
+    '''
+    주어진 게시판에서 실제로 글을 검색한다.
+
+    @type  request: Django Request
+    @param request: Django Request
+    @type  r: dictionary
+    @param r: 렌더링에 사용될 dictionary
+    @type  sess: string
+    @param sess: LoginManager 에서 넘어온 세션
+    @type  board_name: string
+    @param board_name: 검색하려는 글이 있는 게시판의 이름
+    '''
+
     r['board_name'] = board_name
 
     r['selected_method_list'] = ['title', 'content', 'author_nickname', 'author_username']
@@ -423,6 +494,20 @@ def search(request, board_name):
     path = request.get_full_path()
     path = path.split('?')[0]
     r['path'] = path + "?search_word=" + search_word + "&chosen_search_method=" + r['chosen_search_method']
+
+@warara.wrap_error
+def search(request, board_name):
+    '''
+    @type  request: Django Request
+    @param request: Request
+    @type  board_name: string
+    @param board_name: 검색하려는 글이 있는 board name
+    '''
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request);
+
+    _search(request, r, sess, board_name)
+
     rendered = render_to_string('board/list.html', r)
     return HttpResponse(rendered)
 
