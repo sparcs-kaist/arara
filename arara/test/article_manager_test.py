@@ -710,6 +710,23 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(u'total1',  l.hit[19].board_name)
         self.assertEqual(3, l.last_page)
 
+    def test__get_article(self):
+        # 두 개의 서로 다른 게시판에 글을 쓴다.
+        self._dummy_article_write(self.session_key_mikkang, u"1", u"board")
+        self._dummy_article_write(self.session_key_mikkang, u"a", u"board_h")
+        # SQLAlchemy Session 을 열고 테스트해보자.
+        session = arara.model.Session()
+        result11 = self.engine.article_manager._get_article(session, 1, 1)
+        result12 = self.engine.article_manager._get_article(session, 2, 2)
+        result21 = self.engine.article_manager._get_article(session, None, 1)
+        result22 = self.engine.article_manager._get_article(session, None, 2)
+        self.assertEqual(1, result11.id)
+        self.assertEqual(1, result21.id)
+        self.assertEqual(2, result12.id)
+        self.assertEqual(2, result22.id)
+        # 세션을 닫는다.
+        session.close()
+
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(ArticleManagerTest)
 

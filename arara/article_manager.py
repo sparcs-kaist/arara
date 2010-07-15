@@ -150,8 +150,24 @@ class ArticleManager(object):
         return self.engine.login_manager.get_user_id(session_key)
 
     def _get_article(self, session, board_id, article_id):
+        '''
+        Internal Function.
+        SQLAlchemy 세션을 이용하여 게시판의 글을 하나 읽어온다.
+
+        @type  session: SQLAlchemy session
+        @param session: 현재 사용중인 SQLAlchemy session
+        @type  board_id: int
+        @param board_id: 읽고자 하는 글이 있는 게시판의 id (단, None 일 때는 모든 게시판이라 가정)
+        @type  article_id: int
+        @param article_id: 읽고자 하는 글의 id
+        @rtype: model.Article
+        @return: DB 에서 읽어들인 SQLAlchemy Article 객체
+        '''
         try:
-            article = session.query(model.Article).filter_by(board_id=board_id, id=article_id).one()
+            if board_id:
+                article = session.query(model.Article).filter_by(board_id=board_id, id=article_id).one()
+            else:
+                article = session.query(model.Article).filter_by(id = article_id).one()
         except InvalidRequestError:
             session.close()
             raise InvalidOperation("article does not exist")
