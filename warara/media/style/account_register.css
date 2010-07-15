@@ -10,7 +10,15 @@
     width: 67.5em;
     margin: 0 0 0 1.3em;
     float: left;
-    _display: inline;
+    display: inline-block;
+    _width: 98%;
+}
+
+#confirm_key_information {
+    width: 67.5em;
+    margin: 0 0 0 1.3em;
+    float: left;
+    display: inline-block;
     _width: 98%;
 }
 
@@ -211,16 +219,76 @@
 
 #register_cancel {
     position: relative;
-    top: 0.45em;
 }
 
 #register_cancel input {
     background: url('/media/image/small_btn_bg.png') repeat-x bottom;
     border:1px solid #DADADA;
-    height: 1.9em;
+    height: 3em;
+    padding: 0 1%;
     vertical-align: top;
 }
 
+#confirm_buttons {
+    width: 100%
+    padding: 0.3em 0;
+    vertical-align: center;
+    clear: left;
+    margin: 0 0 2em 0;
+}
+
+#confirm_submit {
+    margin: 0 0 0 40%
+}
+
+#confirm_submit input {
+    background: url('/media/image/big_btn_bg.png') repeat-x bottom;
+    border:1px solid #DADADA;
+    height: 3em;
+    padding: 0 1%;
+    vertical-align: top;
+}
+
+#confirm_cancel {
+    position: relative;
+}
+
+#confirm_cancel input {
+    background: url('/media/image/small_btn_bg.png') repeat-x bottom;
+    border:1px solid #DADADA;
+    height: 3.0em;
+    vertical-align: top;
+}
+#confirm_passive_buttons {
+    width: 100%
+    padding: 0.3em 0;
+    vertical-align: center;
+    clear: left;
+    margin: 0 0 2em 0;
+}
+
+#confirm_passive_submit {
+    margin: 0 0 0 40%
+}
+
+#confirm_passive_submit input {
+    background: url('/media/image/big_btn_bg.png') repeat-x bottom;
+    border:1px solid #DADADA;
+    height: 3em;
+    padding: 0 1%;
+    vertical-align: top;
+}
+
+#confirm_passive_cancel {
+    position: relative;
+}
+
+#confirm_passive_cancel input {
+    background: url('/media/image/small_btn_bg.png') repeat-x bottom;
+    border:1px solid #DADADA;
+    height: 3.0em;
+    vertical-align: top;
+}
 /* Account Common */
 .account_administer {
     float: right;

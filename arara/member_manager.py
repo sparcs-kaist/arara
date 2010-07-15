@@ -285,8 +285,9 @@ class MemberManager(object):
             content = MAIL_CONTENT
             confirm_url = 'http://' + SERVER_ADDRESS + '/account/confirm/%s/%s' % (username.strip(), activation_code)
             confirm_link = '<a href=\'%s\'>%s</a>' % (confirm_url, confirm_url)
+            confirm_key = '<br />Confirm Key : %s' % activation_code
             title = MAIL_TITLE
-            msg = MIMEText(content+confirm_link, _subtype="html", _charset='euc_kr')
+            msg = MIMEText(content+confirm_link+confirm_key, _subtype="html", _charset='euc_kr')
             msg['Subject'] = title
             msg['From'] = sender
             msg['To'] = email

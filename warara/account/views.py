@@ -31,7 +31,26 @@ def register(request):
     rendered = render_to_string('account/register.html', r)
     return HttpResponse(rendered)
 
+def confirm_passive(request):
+    if request.method == 'POST':
+        username = request.POST['id']
+        nickname = request.POST['nickname']
+        confirm_key = request.POST['confirm_key'];
+    server = warara_middleware.get_server()
+    try:
+        server.member_manager.confirm(username, confirm_key)
+        return HttpResponseRedirect("/main/")
+    except InvalidOperation:
+        return HttpResponse('<script>alert("Confirm failed! \\n\\n  -Wrong confirm key? \\n  -Alreday confirmed?\\n  -Wrong username?);</script>')
+    except InternalError:
+        return HttpResponse('<script>alert("Confirm failed! \\n\\nPlease contact ARA SYSOP.");</script>')
 
+def confirm_passive_url(request):
+    if request.method == 'POST':
+        username = request.POST['id']
+        nickname = request.POST['nickname']
+    rendered = render_to_string('account/mail_confirm_passive.html',{'username':username,'nickname':nickname})
+    return HttpResponse(rendered)
 
 @warara.wrap_error
 def confirm_user(request, username, confirm_key):
