@@ -63,6 +63,24 @@
     overflow-y: auto;
 }
 
+#article_signature {
+	width: 98%;
+	padding-left: 2%;
+}
+
+#signature_check {
+	float: left;
+	padding-right: 2%;
+}
+
+#article_signature textarea {
+    font-size: small;
+    border: 1px solid #ddd;
+    height: 5em;
+    width: 83%;
+    overflow-y: auto;
+}
+
 #article_delete_file {
     width: 98%;
     padding-left: 2%;

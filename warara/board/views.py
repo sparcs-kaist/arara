@@ -179,7 +179,6 @@ def write(request, board_name):
     article_id = request.GET.get('article_id', 0)
     r['t_write'] = 'write'
     user_info = server.member_manager.get_info(sess)
-    r['default_text'] = user_info.signature
 
     if article_id:
         sess = request.session["arara_session_key"]
@@ -191,6 +190,9 @@ def write(request, board_name):
         r['t_write'] = 'modify'
         r['article'] = article_list[0]
     r['board_name'] = board_name
+
+    # 시그 선택할 수 있도록 시그를 보여준다.
+    r['user_signature'] = user_info.signature 
 
     # heading control
     board_dict = server.board_manager.get_board(board_name)
@@ -211,6 +213,9 @@ def write_(request, board_name):
     article_dic = {}
     r['url'] = ''.join(['/board/', board_name, '/'])
     article_dic['content'] = request.POST.get('text', '')
+    use_signature = request.POST.get('signature_check', None)
+    if use_signature:
+        article_dic['content'] += '\n\n' + request.POST.get('signature', '')
     article_dic['title'] = request.POST.get('title', '')
     article_dic['heading'] = request.POST.get('heading', '') # Heading !!!
     if request.POST.get('write_type', 0) == 'modify':

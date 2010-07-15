@@ -37,8 +37,16 @@
     </div>
     {% endif %}
     <div id="article_write_text">
-        <textarea name="text">{{default_text}}</textarea>
+        <textarea name="text">{% if default_text %}{{ default_text }}{% endif %}</textarea>
     </div>
+    <br />
+    <div id="article_signature">
+        <div id="signature_check">
+            <input type="checkbox" name="signature_check" value="signature_check" checked="checked">{% trans "Use Signature" %}</input>
+        </div>
+        <textarea name="signature" readonly="readonly">{{ user_signature }}</textarea>
+    </div>
+    <br />
     {% if article.attach %}
     <div id="article_delete_file">
         <caption>{% trans "file(s) : " %}</caption>
