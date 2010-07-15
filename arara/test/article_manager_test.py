@@ -448,6 +448,14 @@ class ArticleManagerTest(unittest.TestCase):
         except InvalidOperation:
             pass
 
+        #Now, SYSOP is trying to vote the article without board name.
+        self.engine.article_manager.vote_article(self.session_key_sysop, u'', article_no)
+        # Then. the vote status must be updated AGAIN!
+        result = self.engine.article_manager.read_article(self.session_key_mikkang, u'board', 1)
+        expected_result['vote'] = 3
+        self.assertEqual(1, len(result))
+        self.assertEqual(expected_result, self._to_dict(result[0]))
+
     def _vote(self, article_num, vote_num, board_name):
         vote_order = [self.session_key_mikkang, self.session_key_serialx, self.session_key_hodduc, self.session_key_sillo, self.session_key_orcjun, self.session_key_letyoursoulbefree, self.session_key_koolvibes, self.session_key_wiki]
         for i in range(vote_num):

@@ -780,12 +780,12 @@ class ArticleManager(object):
         @type  session_key: string
         @param session_key: User Key
         @type  board_name: string
-        @param board_name: BBS Name
+        @param board_name: BBS Name (u"" 을 주면 모든 게시판에 대하여)
         @type  article_no: integer
         @param article_no: Article No
-        @rtype: boolean
+        @rtype: void
         @return:
-            1. 추천 성공: True
+            1. 추천 성공: Nothing~
             2. 추천 실패:
                 1. 존재하지 않는 게시판: InvalidOperation Exception
                 2. 로그인되지 않은 유저: InvalidOperation Exception
@@ -793,20 +793,26 @@ class ArticleManager(object):
         '''
 
         session = model.Session()
-        board = self.engine.board_manager._get_board_from_session(session, board_name)
-        article = self._get_article(session, board.id, article_no)
+        board_id = None
+        if smart_unicode(board_name) !=  u"":
+            board_id = self.engine.board_manager.get_board_id(board_name)
+        article = self._get_article(session, board_id, article_no)
         user = self._get_user(session, session_key)
-        vote_unique_check = session.query(model.ArticleVoteStatus).filter_by(user_id=user.id, board_id=board.id, article_id = article.id).count()
+        vote_unique_check_query = session.query(model.ArticleVoteStatus)
+        if board_id:
+            vote_unique_check_query = vote_unique_check_query.filter_by(user_id=user.id, board_id=board_id, article_id = article.id)
+        else:
+            vote_unique_check_query = vote_unique_check_query.filter_by(user_id=user.id, article_id = article.id)
+        vote_unique_check = vote_unique_check_query.count()
         if vote_unique_check:
             session.close()
             raise InvalidOperation('ALREADY_VOTED')
         else:
             article.vote += 1
-            vote = model.ArticleVoteStatus(user, board, article)
+            vote = model.ArticleVoteStatus(user, article.board, article)
             session.add(vote)
             session.commit()
             session.close()
-            return
 
     @require_login
     @log_method_call_important
