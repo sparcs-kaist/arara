@@ -282,6 +282,10 @@ class BoardManagerTest(unittest.TestCase):
         self.assertEqual(6, self.engine.board_manager.get_board(u'board2').order)
         self.assertEqual(5, self.engine.board_manager.get_board(u'board5').order)
         self.assertEqual(3, self.engine.board_manager.get_board(u'board3').order)
+        # 캐시된 보드 리스트를 얻었을 때 order에 의해 정렬되어 있는지 검사합니다. 
+        expected_result = [u'board'+unicode(i) for i in [9,1,3,4,5,2,6,7,8]]
+        actual_result = [board.board_name for board in self.engine.board_manager.get_board_list()]
+        self.assertEqual(expected_result, actual_result)
         # 잘못된 order(범위 초과)로 바꾸기를 시도합니다.
         try:
             self.engine.board_manager.change_board_order(self.session_key_sysop, u'board1', 10)
