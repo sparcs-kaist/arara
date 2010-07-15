@@ -1,0 +1,133 @@
+h3 {
+    clear:both;
+}
+
+fieldset {
+    padding-left:15px;
+    margin:5px;
+    display:block;
+    clear:both;
+}
+
+fieldset legend {
+    font-weight:bold;
+    font-size:10pt;
+    color:#666;
+    width:100%;
+    min-height: 1.6em; 
+    background: #E0E0E0 url(/media/image/base/square.png) no-repeat top left;
+    border-top: 1px #65AA5C solid;
+    border-bottom: 5px #DADADA solid;
+    padding: 0.5em 0 0 0.8em;
+    clear: left;
+    position:relative;
+    margin-left:-15px;
+}
+
+fieldset label {
+    width: 10em;
+    background: url(/media/image/base/square_small.png) no-repeat top left;
+    border-bottom: 1px #CCCCCC solid;
+    padding: 0.5em 0 0 0.7em; 
+    margin-top: 0.7em;
+    float: left;
+    clear: left;
+    display:inline-block;
+    text-align:right;
+    margin-right:10px;
+}
+
+.textfield {
+    margin: 0.66em 0 0.3em 0.5em;
+}
+
+.button {
+    width:45px;
+    min-height:22px;
+    display:inline-block;
+}
+
+#sysop_head {
+    width: 100%;
+    font-size: 1.3em;
+    color: #FFFFFF;
+    font-weight: bold;
+    font-family: tahoma;
+    background: url(/media/image/head_background.png) repeat top left; 
+    margin: 0;
+    padding: 0.7em 0 0.7em 0.7em;
+}
+
+#board_control_panel {
+    with:100%;
+    display:block;
+    clear:both;
+}
+
+#all_board_list {
+    width:500px;
+    float:left;
+}
+
+.hidden_board {
+    background:#dddddd;
+    color:#232323;
+}
+
+.hovering_board {
+    border:2px solid #787878;
+    cursor:pointer;
+}
+
+.selected_board {
+    border:2px solid black;
+}
+
+#board_actions {
+    display:none;
+    float:left;
+    padding:0px;
+}
+
+#board_actions li{
+    list-style:none;
+    margin:0px 0px 5px 0px;
+}
+
+#edit_board {
+    display:none;
+    clear:both;
+}
+
+#apply_changes {
+    float:left;
+    clear:both;
+}
+
+#edit_board label {
+    width:80px;
+}
+
+#board_name {
+    width:200px;
+    float:left;
+}
+
+#board_description {
+    width:300px;
+    float:left;
+}
+
+#add_board form label {
+    width:80px;
+}
+
+#confirm_user form label {
+    width:80px;
+}
+
+#add_banner form label {
+    width:200px;
+}
+
+

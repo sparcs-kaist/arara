@@ -5,80 +5,92 @@
 {{block.super}}
 {% endblock style %}
 
+{% block script %}
+<script src="/media/js/sysop.js"></script>
+{% endblock script %}
+
 {% block content %}
-<div id="add_board">
-    <h3>보드 추가</h3>
-    <form method="post" action="/sysop/add_board/">
-        <span>보드 이름</span><input type="text" name="add_board_name" id="add_board_name"><br>
-        <span>보드 설명</span><input type="text" name="add_board_description" id="add_board_description"><br>
-        <span>말머리 목록</span><input type="text" name="add_board_headings" id="add_board_headings"><br />
-        말머리를 여러개 등록할 때에는 말머리를 쉼표로 구분합니다. (예 : 삽니다,팝니다)<br />
-        <input type="submit" value="추가">
-    </form>
-</div>
-<!-- TODO: division 이름을 remove_board 에서 modify_boards 로 바꾸자. 관련 CSS 수정 일체 필요할 듯. -->
-<div id="remove_board">
-    <h3>보드 삭제 / 숨기기 / 숨김 해제하기</h3>
-    <form method="post" action="/sysop/modify_boards/">
-        {% for board in board_list %}
-        <input type="checkbox" name="{{board.board_name}}" value="{{board.board_name}}">
-        <span>{{board.board_name}}</span>
-        <span>{{board.board_description}}</span>
-        <span>{% if board.hide %}숨김{% endif %}</span><br />
-        {% endfor %}
-        <input type="submit" name="remove"      value="삭제">
-        <input type="submit" name="hide"        value="숨기기">
-        <input type="submit" name="return_hide" value="숨김 해제">
-    </form>
-</div>
-
-<!-- TODO: edit_board 를 위한 css 설정 -->
-<div id="edit_board">
-    <h3> 보드 이름 / 설명 변경 </h3>
-
-    <form method="post" action="/sysop/edit_board/">
-        <input type="text" name="orig_board_name" id="orig_board_name">
-        <input type="text" name="new_board_name" id="new_board_name">
-        <input type="text" name="new_board_description" id="new_board_description">
-        <input type="submit" value="수정">
-    </form>
-</div>
-
-<div id="confirm_user">
-    <h3>사용자 인증</h3>
-    <form method="post" action="/sysop/confirm_user/">
-        <span>사용자 아이디</span><input type="text" name="confirm_username" id="confirm_username">
-        <input type="submit" value="인증">
-    </form>
-</div>
-
-<div id="refresh_weather">
-    <h3>날씨 정보 갱신</h3>
-    <form method="post" action="/sysop/refresh_weather/">
-        <input type="submit" value="갱신" />
-    </form>
-</div>
-
-<div id="select_banner">
-    <div id="add_banner">
-        <h3>배너 추가</h3>
-        <form method="post" action="/sysop/add_banner/">
-            <span>배너 파일 위치 (src 속성에 설정)</span><input type="text" name="banner_path" /><br />
-            <span>배너 게시 기한 (ex. 2010.07.12.)</span><input type="text" name="banner_due_date" /><br />
-            <span>배너 표시 빈도 (숫자 하나. ex.1)</span><input type="text" name="banner_weight" /><br />
-            <input type="submit" value="추가" />
-        </form>
-    </div>
-    <div id="banner_list">
-        <h3>배너 선택</h3>
-        <form method="post" action="/sysop/select_banner/">
-            {% for banner in banner_list %}
-            <input type="checkbox" class="banner_select" name="select_banner_list" value={{ banner.id }} {% if banner.valid %}checked="checked"{% endif %}/>{{ banner.content }}<br />
+<div id="sysop_head">SYSOP</div>
+<fieldset id="board_control_panel">
+    <legend>보드 관리</legend>
+    <h4>아래의 변경사항은 즉각적으로 반영되나, 좌측 메뉴는 화면 새로고침이 필요합니다.</h4>
+    <table id="all_board_list">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Desc</th>
+                <th>Preview</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for board in board_list %}
+            <tr class="{% if board.hide %}hidden_board{% else %}showing_board{% endif %}">
+                <td>{{board.board_name}}</td>
+                <td>{{board.board_description}}</td>
+                <td><a href="/board/{{board.board_name}}" target="_blank">Link</a></td>
+            </tr>
             {% endfor %}
-            사용자들에게 노출될 배너들의 체크박스를 선택합니다.
-            <input type="submit" value="적용" />
-        </form>
+        </tbody>
+    </table>
+    <ul id="board_actions">
+        <li><a href="#">숨김</a></li>
+        <li><a href="#">삭제</a></li>
+        <li><a href="#">위로</a></li>
+        <li><a href="#">아래로</a></li>
+    </ul>
+    <div id="edit_board">
+        <label for="board_name">보드 이름</label>
+        <input type="text" class="textfield" id="board_name" name="board_name" />
+        <label for="board_description">보드 설명</label>
+        <input type="text" class="textfield" id="board_description" name="board_description" /><br />
+        <input type="button" class="button" id="apply_changes" value="적용" />
     </div>
-</div>
+</fieldset>
 
+<fieldset id="add_board">
+    <legend>보드 추가</legend>
+    <form method="post" action="/sysop/add_board/">
+        <label for="add_board_name">보드 이름</label><input type="text" class="textfield" name="add_board_name" id="add_board_name"><br />
+        <label for="add_board_description">보드 설명</label><input type="text" class="textfield" name="add_board_description" id="add_board_description"><br />
+        <label for="add_board_headings">말머리 목록</label><input type="text" class="textfield" name="add_board_headings" id="add_board_headings"><br />
+        <p>말머리를 여러개 등록할 때에는 말머리를 쉼표로 구분합니다. (예 : 삽니다,팝니다)</p>
+        <input type="submit" class="button" value="추가">
+    </form>
+</fieldset>
+
+<fieldset id="confirm_user">
+    <legend>사용자 인증</legend>
+    <form method="post" action="/sysop/confirm_user/">
+        <label for="confirm_username">사용자 아이디</label><input type="text" class="textfield" name="confirm_username" id="confirm_username" />
+        <input type="submit" class="button" value="인증" />
+    </form>
+</fieldset>
+
+<fieldset id="refresh_weather">
+    <legend>날씨 정보 갱신</legend>
+    <form method="post" action="/sysop/refresh_weather/">
+        <input type="submit" class="button" value="갱신" />
+    </form>
+</fieldset>
+
+<fieldset id="add_banner">
+    <legend>배너 추가</legend>
+    <form method="post" action="/sysop/add_banner/">
+        <label for="banner_path">배너 파일 위치 (src 속성에 설정)</label><input type="text" class="textfield" name="banner_path" id="banner_path" /><br />
+        <label for="banner_due_date">배너 게시 기한 (ex. 2010.07.12.)</label><input type="text" class="textfield" name="banner_due_date" id="banner_due_date" /><br />
+        <label for="banner_weight">배너 표시 빈도 (숫자 하나. ex.1)</label><input type="text" class="textfield" name="banner_weight" id="banner_weight" /><br />
+        <input type="submit" class="button" value="추가" />
+    </form>
+</fieldset>
+
+<fieldset id="banner_list">
+    <legend>배너 선택</legend>
+    <form method="post" action="/sysop/select_banner/">
+        {% for banner in banner_list %}
+        <input type="checkbox" class="banner_select" name="select_banner_list" value={{ banner.id }} {% if banner.valid %}checked="checked"{% endif %}>{{ banner.content }}<br />
+        {% endfor %}
+        사용자들에게 노출될 배너들의 체크박스를 선택합니다.
+        <input type="submit" class="button" value="적용" />
+    </form>
+</fieldset>
 {% endblock content %}

@@ -40,34 +40,49 @@ def add_board(request):
     return HttpResponseRedirect('/sysop/')
 
 @warara.wrap_error
-def modify_boards(request):
+def modify_board(request):
     '''
-    선택된 보드들을 삭제 / 숨김 / 숨김 해제한다.
+    선택된 보드를 삭제 / 숨김 / 숨김 해제한다.
     '''
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
     board_list = server.board_manager.get_board_list()
-    # 어떤 명령을 주었는지 확인한다.
-    action = None
-    if request.POST.get('remove', None) != None:
-        action = 'remove'
-    elif request.POST.get('hide', None) != None:
-        action = 'hide'
-    elif request.POST.get('return_hide', None) != None:
-        action = 'return_hide'
-    else:
-        raise InvalidOperation("unknown_sysop_board_modification_command")
-    # 주어진 명령을 선택된 모든 보드에 대하여 시행한다.
+    # 어떤 보드에 대한 명령인지 확인하고 해당 보드의 객체를 얻는다. 
+    requested_board_name = request.POST.get(u'board_name', None)
+    if requested_board_name == None:
+        msg = "board not specified"
+        HttpResponseRedirect('/sysop/')
+    requested_board = None
     for board in board_list:
-        if request.POST.get(board.board_name, None):
-            if action == 'remove':
-                msg = server.board_manager.delete_board(sess, board.board_name)
-            elif action == 'hide':
-                msg = server.board_manager.hide_board(sess, board.board_name)
-            elif action == 'return_hide':
-                msg = server.board_manager.return_hide_board(sess, board.board_name)
-            # 그 밖의 경우는 위에서 필터링되므로 신경쓰지 않는다.
-    return HttpResponseRedirect('/sysop/')
+        if requested_board_name == board.board_name:
+            requested_board = board
+            break
+    if requested_board == None:
+        msg = "unknown board"
+        HttpResponseRedirect('/sysop/')
+    # 어떤 명령을 주었는지 확인하고 처리한다.
+    action = request.POST.get('action', None)
+    if action == None:
+        msg = "action not specified"
+        return HttpResponseRedirect('/sysop/')
+    if action == 'remove':
+        msg = server.board_manager.delete_board(sess, requested_board.board_name)
+    elif action == 'hide':
+        msg = server.board_manager.hide_board(sess, requested_board.board_name)
+    elif action == 'return_hide':
+        msg = server.board_manager.return_hide_board(sess, requested_board.board_name)
+    else:
+        msg = "unknown_sysop_board_modification_command"
+        return HttpResponseRedirect('/sysop/')
+    # AJAX로 온 요청일 때에는 갱신된 보드 정보를 보낸다. 
+    if request.is_ajax() or True:
+        response = "SUCCESS\t" + action + "\t" + requested_board_name + "\n"
+        board_list = server.board_manager.get_board_list()
+        for board in board_list:
+            response += board.board_name + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\n"
+        return HttpResponse(response.strip())
+    else:
+        return HttpResponseRedirect('/sysop/')
 
 @warara.wrap_error
 def edit_board(request):
