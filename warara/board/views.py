@@ -185,6 +185,7 @@ def write(request, board_name):
         sess = request.session["arara_session_key"]
         article_list = server.article_manager.read_article(sess, board_name, int(article_id))
         r['default_title'] = article_list[0].title
+        r['default_heading'] = article_list[0].heading
         r['default_text'] = article_list[0].content
         r['article_no'] = article_list[0].id
         r['t_write'] = 'modify'
