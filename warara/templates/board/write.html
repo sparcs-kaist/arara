@@ -29,7 +29,7 @@
     <div id="article_write_heading">
         <caption>{% trans "heading : " %}</caption>
         <select name="heading">
-            <option value=""{% if default_heading and default_heading == '' %} selected="selected"{% endif %}></option>
+            <option value=""{% if default_heading and default_heading == '' %} selected="selected"{% endif %}>{% trans "No Heading" %}</option>
             {% for heading in board_heading_list %}
             <option value={{ heading }} {% if default_heading and default_heading == heading %} selected="selected"{% endif %}>{{ heading }}</option>
             {% endfor %}
