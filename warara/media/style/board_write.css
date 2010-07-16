@@ -64,13 +64,13 @@
 }
 
 #article_signature {
-	width: 98%;
-	padding-left: 2%;
+    width: 98%;
+    padding-left: 2%;
 }
 
 #signature_check {
-	float: left;
-	padding-right: 2%;
+    float: left;
+    padding-right: 2%;
 }
 
 #article_signature textarea {
