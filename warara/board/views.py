@@ -93,6 +93,12 @@ def get_article_list(request, r, mode):
         heading = request.GET.get('search_heading', None)
         include_all_headings = (heading == None)
         article_result = server.search_manager.search(sess, False, r['board_name'], heading, search_method, page_no, page_length, include_all_headings)
+    elif mode == 'total_search':
+        for k, v in r['search_method'].items():
+            del r['search_method'][k]
+            r['search_method'][str(k)] = v
+        search_method = SearchQuery(**r['search_method'])
+        article_result = server.search_manager.search(sess, False, u'', u'', search_method, page_no, page_length, True) 
 
     # XXX 2010.05.18. page_range_length 는 글 목록 하단에 표시하는 page 들의 갯수이다.
     page_range_length = 10
@@ -133,7 +139,7 @@ def get_article_list(request, r, mode):
         r['prev_page_group'] = {'mark':r['prev'], 'no':page_o.page(page_o.page(page_range_no).previous_page_number()).end_index()}
         r['first_page'] = {'mark':r['prev_group'], 'no':1}
 
-    if mode == 'total_list' or mode == 'total_read':
+    if mode == 'total_list' or mode == 'total_read' or mode == 'total_search':
         r['board_desc'] = u'All articles in ARA BBS!'
         r['have_heading'] = False
     else:
@@ -463,8 +469,11 @@ def _search(request, r, sess, board_name):
     @type  board_name: string
     @param board_name: 검색하려는 글이 있는 게시판의 이름
     '''
-
-    r['board_name'] = board_name
+    
+    if board_name != u'':
+        r['board_name'] = board_name
+    else:
+        r['board_name'] = u'All Articles'
 
     r['selected_method_list'] = ['title', 'content', 'author_nickname', 'author_username']
     r['search_method_list'] = [{'val':'title', 'text':'title'}, {'val':'content', 'text':'content'},
@@ -485,7 +494,10 @@ def _search(request, r, sess, board_name):
                 r['selected_method_list'].append(method['val'])
                 r['search_method'][method['val']] = search_word
         r['chosen_search_method'] = r['chosen_search_method'].strip('|')
-    get_article_list(request, r, 'search')
+    if board_name != u'':
+        get_article_list(request, r, 'search')
+    else:
+        get_article_list(request, r, 'total_search')
 
     r['method'] = 'search'
     # XXX 2010.05.14.

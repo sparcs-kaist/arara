@@ -181,7 +181,7 @@ class SearchManager(object):
         WRONG_DICTIONARY 에러를 리턴한다.
 
         검색을 요청할 때 board_name을 지정하면, 그 보드만 검색을,
-        board_name을 'no_board'(string)로 지정하면 전체 보드 검색을 시도한다.
+        board_name을 u''(string)로 지정하면 전체 보드 검색을 시도한다.
 
         기본적으로 전체검색은 K-Search를 사용하지만,
         K-Search가 비정상적으로 작동할경우 자체 쿼리 검색을 사용한다.
@@ -247,11 +247,10 @@ class SearchManager(object):
         ret_dict = {}
 
         start_time = time.time()
-
-        if board_name.upper() == 'NO_BOARD':
-            board = None
-        else:
+        if board_name != u'':
             board = self._get_board(session, board_name)
+        else:
+            board = None
                 
         query = session.query(model.Article).filter_by(is_searchable=True)
 
@@ -262,7 +261,7 @@ class SearchManager(object):
             if not include_all_headings:
                 heading_id = self._get_heading_id(session, board, heading_name)
                 query = query.filter_by(heading_id= heading_id)
-
+       
         if all_flag:
             query_text = query_dict['query']
             ret, result = self._search_via_ksearch(query, page, page_length)

@@ -947,15 +947,19 @@ class ArticleManager(object):
         user_ip = self.engine.login_manager.get_user_ip(session_key)
 
         session = model.Session()
+        board_id = None
         author = self._get_user(session, session_key)
+        if smart_unicode(board_name) != u'':
+            board_id = self.engine.board_manager.get_board_id(board_name)
+        article = self._get_article(session, board_id, article_no)
+        board_name = article.board.board_name
         board = self.engine.board_manager._get_board_from_session(session, board_name)
-        article = self._get_article(session, board.id, article_no)
-
         heading = None
-        heading_str = smart_unicode(reply_dic.heading)
-        if heading_str != u"":
-            heading = self.engine.board_manager._get_heading(session, board, heading_str)
-
+        if smart_unicode(board_name) != u'':
+            heading_str = smart_unicode(reply_dic.heading)
+            if heading_str != u"":
+                heading = self.engine.board_manager._get_heading(session, board, heading_str)
+        
         new_reply = model.Article(board,
                                 heading,
                                 smart_unicode(reply_dic.title),
@@ -1066,10 +1070,13 @@ class ArticleManager(object):
                 5. 데이터베이스 오류: InternalError Exception
         '''
 
-        board_id = self.engine.board_manager.get_board_id(board_name)
         session = model.Session()
         author = self._get_user(session, session_key)
-        article = self._get_article(session, board_id, no)
+        if board_name != u"":
+            board_id = self.engine.board_manager.get_board_id(board_name)
+            article = self._get_article(session, board_id, no)
+        else:
+            article = self._get_article(session, None, no)
         if article.author_id == author.id or author.is_sysop:
             if article.deleted:
                 session.close()
