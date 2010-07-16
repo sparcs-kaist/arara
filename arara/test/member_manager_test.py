@@ -246,6 +246,23 @@ class MemberManagerTest(unittest.TestCase):
         except InvalidOperation:
             pass
 
+    def testUserToSysop(self):
+        session_key = self.engine.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.145')
+        #Prevent user from using user_to_sysop
+        try:
+            self.engine.member_manager.user_to_sysop(session_key, u'combacsa')
+            self.fail()
+        except InvalidOperation:
+            pass
+
+        session_key = self.engine.login_manager.login(u'SYSOP', u'SYSOP', u'127.0.0.1')
+        self.engine.member_manager.user_to_sysop(session_key, u'combacsa')
+        self.engine.login_manager.logout(session_key)
+        
+        session_key = self.engine.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.145')
+        #check if user is not SYSOP
+        self.assertEqual(True, self.engine.member_manager.is_sysop(session_key))
+
 
     def tearDown(self):
         arara.model.clear_test_database()

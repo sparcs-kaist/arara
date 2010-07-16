@@ -826,4 +826,43 @@ class MemberManager(object):
         session.close()
         return user.is_sysop
 
+
+    def user_to_sysop(self, session_key, username):
+        '''
+        user를 SYSOP으로 바꿔주는 함수
+
+        @type session_key: string
+        @param session_key: User Key
+        @type username_string
+        @param username: Username that will be SYSOP
+        @return:
+            1. 성공했을 경우: void
+            2. 실패했을 경우: Invalid Operation
+        '''
+
+        if not self.is_sysop(session_key):
+            raise InvalidOperation('no permission')
+
+        username = smart_unicode(username)
+        session = model.Session()
+
+        try:
+            user = session.query(model.User).filter(model.User.username == username).one()
+            if user.is_sysop:
+                raise InvalidOperation('already sysop..')
+            user.is_sysop = True
+            session.commit()
+            session.close()
+        except InvalidReqeustError:
+            session.close()
+            raise InvalidOperation('user does not exist')
+
+
+
+
+
+
+
+
+
 # vim: set et ts=8 sw=4 sts=4
