@@ -370,6 +370,59 @@ class ArticleManager(object):
             pass
         return set(blacklist_list)
 
+    def _get_basic_query(self, session, board_name, heading_name, include_all_headings):
+        '''
+        Internal.
+        주어진 게시판 이름에 알맞는 SQLAlchemy Query 를 돌려준다. 이때 root_id 가 None 인 글만 목록에 포함된다.
+
+        @type  session: SQLAlchemy Session
+        @param session: SQLAlchemy Session
+        @type  board_name: string
+        @param board_name: 보드의 이름
+        @type  heading_name: string
+        @param heading_name: 말머리의 이름 (include_all_headings == True 일 때는 무시됨)
+        @type  include_all_headings: Boolean
+        @param include_all_headings: 모든 말머리에 대해 적용할 것인가의 여부
+        @rtype: SQLAlchemy Query
+        @return: 선택된 board_name, heading_name, include_all_headings 가 적용된 Query
+        '''
+        query = session.query(model.Article)
+
+        if board_name != u'':
+            # 해당 board 에 있는 글만 선택한다.
+            board_id = self.engine.board_manager.get_board_id(board_name)
+            query = query.filter_by(board_id=board_id, root_id=None, destroyed=False)
+
+            if not include_all_headings:
+                # 특정 말머리만 선택한다
+                heading = self.engine.board_manager._get_heading_by_boardid(session, board_id, heading_name)
+                query = query.filter_by(heading=heading)
+        else:
+            # 모든 board 에 있는 글을 선택한다.
+            query = query.filter_by(root_id=None, destroyed=False)
+
+        return query
+
+    def _get_ordered_query(self, session, query, order_by):
+        '''
+        Internal.
+        주어진 Query 에 적합한 order_by 결과를 돌려준다.
+
+        @type  session: SQLAlchemy Session
+        @param session: SQLAlchemy Session
+        @type  query: SQLAlchemy Query
+        @param query: SQLAlchemy Query
+        @type  order_by: int
+        @param order_by: 원하는 게시물 정렬 방식. 보통 LIST_ORDER_ROOT_ID.
+        '''
+        if order_by == LIST_ORDER_ROOT_ID:
+            return query.order_by(model.Article.id.desc())
+        elif order_by == LIST_ORDER_LAST_REPLY_DATE:
+            return query.order_by(model.Article.last_reply_date.desc())
+        else:
+            session.close()
+            raise InvalidOperation("WRONG_ORDERING")
+
     def _get_article_list(self, board_name, heading_name, page, page_length, include_all_headings = True, order_by = LIST_ORDER_ROOT_ID):
         '''
         Internal.
@@ -395,43 +448,27 @@ class ArticleManager(object):
             4. article_last_reply_id_list : 글 목록의 각 글에 달린 마지막 reply 의 번호목록
         '''
         session = model.Session()
-        desired_query = session.query(model.Article)
+        # Part 1. Query : Board Name, Heading Name 을 따르는 모든 글
+        desired_query = self._get_basic_query(session, board_name, heading_name, include_all_headings)
 
-        if board_name != u'':
-            # 해당 board 에 있는 글만 선택한다
-            board_id = self.engine.board_manager.get_board_id(board_name)
-            desired_query = desired_query.filter_by(board_id=board_id, root_id=None, destroyed=False)
-
-            if not include_all_headings:
-                # 특정 말머리만 선택한다
-                heading = self.engine.board_manager._get_heading_by_boardid(session, board_id, heading_name)
-                desired_query = desired_query.filter_by(heading=heading)
-        else:
-            # 모든 board 에 있는 글을 선택한다.
-            desired_query = desired_query.filter_by(root_id=None, destroyed=False)
-
+        # Part 2. 글의 갯수와 페이지번호 구하기
         article_count = desired_query.count()
         last_page = self._get_last_page(article_count, page_length)
         # Page 에 0 이 들어오면 계속 잘못 작동하고 있다. 이를 막기 위해 page 의 시작점을 0 으로 설정한다.
         # XXX 가능하면 TEST CODE 도 만들자.
         if page == 0:
             page = 1
-        # 페이지가 넘치면? InvalidOperation.
-        if page > last_page:
+        # 페이지가 비정상 범위라면? InvalidOperation.
+        if (page > last_page) or (page < 0):
             session.close()
             raise InvalidOperation('WRONG_PAGENUM')
-        # Page 의 시작 글과 끝 글의 번째수를 구하고 Query 를 날린다.
+        # Page 의 시작 글과 끝 글의 번째수를 구한다.
         offset = page_length * (page - 1)
         last = offset + page_length
 
-        # 목록의 정렬. 근데 조금 비효율적인 것 같기도 하고 ...
-        article_list = None
-        if order_by == LIST_ORDER_ROOT_ID:
-            article_list = list(desired_query.order_by(model.Article.id.desc())[offset:last])
-        elif order_by == LIST_ORDER_LAST_REPLY_DATE:
-            article_list = list(desired_query.order_by(model.Article.last_reply_date.desc())[offset:last])
-        else:
-            article_list = list(desired_query.order_by(model.Article.id.desc())[offset:last])
+        # Part 3. 목록의 정렬.
+        desired_query = self._get_ordered_query(session, desired_query, order_by)
+        article_list  = list(desired_query[offset:last])
 
         session.close()
         # 적당히 리턴한다.
