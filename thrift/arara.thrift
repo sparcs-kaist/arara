@@ -145,21 +145,22 @@ struct Article {
     4:  string content,
     5:  double date,
     6:  i32 hit = 0,
-    7:  i32 vote,
-    8:  bool deleted = 0,
-    9:  i32 root_id,
-    10:  string author_username,
-    11: string author_nickname,
-    12: i32 author_id,
-    13: bool blacklisted = 0,
-    14: bool is_searchable = 1,
-    15: double last_modified_date,
-    16: optional i32 depth,  // Only used in the 'read' function
-    17: optional string read_status,
-    18: optional i32 reply_count,
-    19: optional string type
-    20: optional string board_name,
-    21: optional list<AttachDict> attach,
+    7:  i32 positive_vote,
+    8:  i32 negative_vote,
+    9:  bool deleted = 0,
+    10:  i32 root_id,
+    11:  string author_username,
+    12: string author_nickname,
+    13: i32 author_id,
+    14: bool blacklisted = 0,
+    15: bool is_searchable = 1,
+    16: double last_modified_date,
+    17: optional i32 depth,  // Only used in the 'read' function
+    18: optional string read_status,
+    19: optional i32 reply_count,
+    20: optional string type
+    21: optional string board_name,
+    22: optional list<AttachDict> attach,
     #19: optional i32 next,
     #20: optional i32 prev,
 }
@@ -480,7 +481,7 @@ service ARAraThriftInterface {
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void vote_article(1:string session_key, 2:string board_name,
-                      3:id_t article_no)
+                      3:id_t article_no, 4:bool positive_vote)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     i32 write_article(1:string session_key, 2:string board_name,

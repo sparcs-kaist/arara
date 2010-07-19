@@ -19,14 +19,14 @@ log_method_call_important = log_method_call_with_source_important('article_manag
 
 # TODO: WRITE_ARTICLE_DICT 는 사실 쓰이지 않는다... SPEC 표시 용도일까?
 WRITE_ARTICLE_DICT = ('title', 'heading', 'content')
-READ_ARTICLE_WHITELIST = ('id', 'heading', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'author_nickname', 'author_id', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable', 'attach', 'board_name')
+READ_ARTICLE_WHITELIST = ('id', 'heading', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'author_nickname', 'author_id', 'positive_vote', 'negative_vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable', 'attach', 'board_name')
 LIST_ARTICLE_WHITELIST = ('id', 'title', 'heading', 'date', 'last_modified_date', 'reply_count',
-                    'deleted', 'author_username', 'author_nickname', 'author_id', 'vote', 'hit', 'board_name')
+                    'deleted', 'author_username', 'author_nickname', 'author_id', 'positive_vote', 'negative_vote', 'hit', 'board_name')
 # TODO SEARCH_ARTICLE_WHITELIST 는 왜 여기에도 있는 걸까?
 SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'heading', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'author_nickname', 'author_id', 'vote', 'hit', 'content')
 BEST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
-                    'deleted', 'author_username', 'author_nickname', 'author_id', 'vote', 'hit', 'last_page', 'board_name')
+                    'deleted', 'author_username', 'author_nickname', 'author_id', 'positive_vote', 'negative_vote', 'hit', 'last_page', 'board_name')
 
 LIST_ORDER_ROOT_ID         = 0
 LIST_ORDER_LAST_REPLY_DATE = 1
@@ -87,7 +87,7 @@ class ArticleManager(object):
                     not_(model.board_table.c.deleted==True),
                     not_(model.articles_table.c.deleted==True)))
 
-        joined_best_article = query.order_by(model.Article.vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc())[:count]
+        joined_best_article = query.order_by(model.Article.positive_vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc())[:count]
         best_article = [article for article, _ in joined_best_article]
         best_article_dict_list = self._get_dict_list(best_article, BEST_ARTICLE_WHITELIST)
         session.close()
@@ -773,9 +773,9 @@ class ArticleManager(object):
 
     @require_login
     @log_method_call_important
-    def vote_article(self, session_key, board_name, article_no):
+    def vote_article(self, session_key, board_name, article_no, positive_vote=True):
         '''
-        DB의 게시물 하나의 추천수를 증가시킴
+        DB의 게시물 하나를 추천하거나 반대함
 
         @type  session_key: string
         @param session_key: User Key
@@ -783,6 +783,8 @@ class ArticleManager(object):
         @param board_name: BBS Name (u"" 을 주면 모든 게시판에 대하여)
         @type  article_no: integer
         @param article_no: Article No
+        @type  positive_vote: bool
+        @param positive_vote: 추천/반대 여부
         @rtype: void
         @return:
             1. 추천 성공: Nothing~
@@ -808,7 +810,10 @@ class ArticleManager(object):
             session.close()
             raise InvalidOperation('ALREADY_VOTED')
         else:
-            article.vote += 1
+            if positive_vote:
+                article.positive_vote += 1
+            else:
+                article.negative_vote += 1
             vote = model.ArticleVoteStatus(user, article.board, article)
             session.add(vote)
             session.commit()
