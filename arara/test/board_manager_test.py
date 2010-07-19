@@ -118,14 +118,14 @@ class BoardManagerTest(unittest.TestCase):
         self.engine.board_manager._add_bot_board(u'garbages', u'Garbages Board', [], True)
         board_list = self.engine.board_manager.get_board_list()
         self.assertEqual(1, len(board_list))
-        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': True, 'id':1, 'headings': [], 'order':None}, self._to_dict(board_list[0]))
+        self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': True, 'id':1, 'headings': [], 'order':1}, self._to_dict(board_list[0]))
         self.engine.board_manager.delete_board(self.session_key_sysop, u'garbages')
 
         # Bot용 Board에서 hide 옵션을 False로 주었을 때 잘 동작하는가?
         self.engine.board_manager._add_bot_board(u'bobobot', u'boboboard', [], False)
         board_list = self.engine.board_manager.get_board_list()
         self.assertEqual(1, len(board_list))
-        self.assertEqual({'read_only': False, 'board_name': u'bobobot', 'board_description': u'boboboard', 'hide': False, 'id':2, 'headings': [], 'order':None}, self._to_dict(board_list[0]))
+        self.assertEqual({'read_only': False, 'board_name': u'bobobot', 'board_description': u'boboboard', 'hide': False, 'id':2, 'headings': [], 'order':1}, self._to_dict(board_list[0]))
         self.engine.board_manager.delete_board(self.session_key_sysop, u'garbages')
 
         # 이미 있는 Board를 추가하면 에러를 잘 잡아내는가?

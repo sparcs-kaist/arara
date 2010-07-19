@@ -254,7 +254,7 @@ board_table = Table('boards', metadata,
     Column('deleted', Boolean),
     Column('read_only', Boolean),
     Column('hide', Boolean),
-    Column('order', Integer),
+    Column('order', Integer, nullable=True),
     mysql_engine='InnoDB'
 )
 

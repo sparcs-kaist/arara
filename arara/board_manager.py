@@ -118,7 +118,15 @@ class BoardManager(object):
                 2. 데이터베이스 오류: 'DATABASE_ERROR'
         '''
         session = model.Session()
-        board_to_add = model.Board(smart_unicode(board_name), smart_unicode(board_description), order=None)
+
+        # Find the order of the board adding
+        board_order_list = session.query(model.Board.order).filter(model.Board.order != None).order_by(model.Board.order)
+        if board_order_list.count() == 0:
+            board_order = 1
+        else:
+            board_order=board_order_list.all()[-1].order+1
+
+        board_to_add = model.Board(smart_unicode(board_name), smart_unicode(board_description), order=board_order)
         board_to_add.hide = hide
 
         try:
