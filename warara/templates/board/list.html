@@ -74,7 +74,7 @@
     {% if first_page.no %}<a href="/board/{{board_name}}/?page_no={{first_page.no}}">{{first_page.mark}}</a> {% endif %}
     {% if prev_page_group.no %}<a href="/board/{{board_name}}/?page_no={{prev_page_group.no}}">{{prev_page_group.mark}}</a> {% endif %}
     {% for page in page_list %}
-    <a href="/board/{{board_name}}/?page_no={{page}}"{%ifequal page page_no%} class="bold"{%endifequal%}>{{page}}</a>
+    <a href="/board/{{board_name}}/?page_no={{page}}"{%ifequal page page_no%} class="bold" id="now_page" {%endifequal%}>{{page}}</a>
     {% endfor %}
     {% if next_page_group.no %}<a href="/board/{{board_name}}/?page_no={{next_page_group.no}}">{{next_page_group.mark}}</a> {% endif %}
     {% if last_page.no %}<a href="/board/{{board_name}}/?page_no={{last_page.no}}">{{last_page.mark}}</a> {% endif %}

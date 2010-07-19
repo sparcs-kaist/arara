@@ -125,6 +125,15 @@ $(document).ready(function(){
                     if (cursor_pos < 1) cursor_pos = 1;
                     update_table(cursor_pos);
                     break;
+                case 78: // N
+                    //일단 되는 경우만 생각하고 짜보자
+                    //cursor_pos = 0;
+                    //location.href = 
+                    if(!($("#now_page").is(":last-child"))) location.href = $("#now_page").next().attr("href");
+                    break;
+                case 80: // P
+                    if(!($("#now_page").is(":first-child"))) location.href = $("#now_page").prev().attr("href");
+                    break;
                 case 98:
                     $show_user_popup($("#article_table tr .username").eq(cursor_pos-1));
                     $focus_user_popup();
