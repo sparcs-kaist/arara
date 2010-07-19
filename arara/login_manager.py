@@ -24,6 +24,7 @@ class LoginManager(object):
     '''
     
     def __init__(self, engine):
+        self.lock_session_dic = thread.allocate_lock()
         self.engine = engine
         self.session_dic = {}
         self.session_checker = thread.start_new_thread(self._check_session_status, tuple())
@@ -132,12 +133,13 @@ class LoginManager(object):
             self.logger.warning("Internal Error occur on MemberManager.authenticate(): %s" % repr(e))
             raise InternalError("Ask SYSOP")
 
-        hash = hashlib.md5(username+password+datetime.datetime.today().__str__()).hexdigest()
-        self.session_dic[hash] = {'id': msg.id, 'username': username, 'ip': user_ip,
-                'nickname': msg.nickname, 'logintime': msg.last_login_time,
-                'current_action': 'login_manager.login()',
-                'last_action_time': time.time()}
-        self.logger.info("User '%s' has LOGGED IN from '%s' as '%s'", username, user_ip, hash)
+        with self.lock_session_dic:
+            hash = hashlib.md5(username+password+datetime.datetime.today().__str__()).hexdigest()
+            self.session_dic[hash] = {'id': msg.id, 'username': username, 'ip': user_ip,
+                    'nickname': msg.nickname, 'logintime': msg.last_login_time,
+                    'current_action': 'login_manager.login()',
+                    'last_action_time': time.time()}
+            self.logger.info("User '%s' has LOGGED IN from '%s' as '%s'", username, user_ip, hash)
         return hash
 
     def logout(self, session_key):
@@ -149,43 +151,46 @@ class LoginManager(object):
         '''
 
         try:
-            username = self.session_dic[session_key]['username']
-            self.engine.member_manager._logout_process(username)
-            self.logger.info("User '%s' has LOGGED OUT" % username)
-            del self.session_dic[session_key]
+            with self.lock_session_dic:
+                username = self.session_dic[session_key]['username']
+                self.engine.member_manager._logout_process(username)
+                self.logger.info("User '%s' has LOGGED OUT" % username)
+                del self.session_dic[session_key]
         except KeyError:
             raise NotLoggedIn()
 
     def _update_monitor_status(self, session_key, action):
         '''현재 사용자가 어떤 일을 하고있는지 update 하는 메소드.'''
-        action = smart_unicode(action)
-        if self.session_dic.has_key(session_key):
-            self.session_dic[session_key]['current_action'] = action
-            self.update_session(session_key)
-            return True
-        else:
-            return False
+        action = smart_unicode(action)  
+        with self.lock_session_dic:
+            if self.session_dic.has_key(session_key):
+                self.session_dic[session_key]['current_action'] = action
+                self.update_session(session_key)
+                return True
+            else:
+                return False
 
     def _check_session_status(self):
         while True:
+            logger = logging.getLogger('SESSION CLEANER')
             try:
-                logger = logging.getLogger('SESSION CLEANER')
-                logger.info("=================== SESSION CLEANING STARTED") 
-                current_time = time.time()
-                for session_key in self.session_dic.keys():
-                    if not self.session_dic.has_key(session_key):
-                        # XXX Session Clearner 가 도는 중에 Logout 해버리면 이게 문제가 될 수 있다.
-                        continue
-                    session_time = self.session_dic[session_key]['last_action_time']
-                    username = self.session_dic[session_key]['username']
-                    diff_time = current_time - session_time
-                    if diff_time > SESSION_EXPIRE_TIME:
-                        logger.info("==SESSION CLEANER== TARGET DETECTED: USERNAME<%s> (Last: %s, No action for %s)",
-                                username, session_time, diff_time)
-                        logger.debug("==SESSION CLEANER==: LOGGING OUT %s ", username)
-                        self.logout(session_key)
-                        logger.info("==SESSION CLEANER==: USERNAME<%s> SUCCESFULLY DELETED!", username)
-                logger.info("=================== SESSION CLEANING FINISHED") 
+                with self.lock_session_dic:
+                    logger.info("=================== SESSION CLEANING STARTED") 
+                    current_time = time.time()
+                    for session_key in self.session_dic.keys():
+                        if not self.session_dic.has_key(session_key):
+                            # XXX Session Clearner 가 도는 중에 Logout 해버리면 이게 문제가 될 수 있다.
+                            continue
+                        session_time = self.session_dic[session_key]['last_action_time']
+                        username = self.session_dic[session_key]['username']
+                        diff_time = current_time - session_time
+                        if diff_time > SESSION_EXPIRE_TIME:
+                            logger.info("==SESSION CLEANER== TARGET DETECTED: USERNAME<%s> (Last: %s, No action for %s)",
+                                    username, session_time, diff_time)
+                            logger.debug("==SESSION CLEANER==: LOGGING OUT %s ", username)
+                            self.logout(session_key)
+                            logger.info("==SESSION CLEANER==: USERNAME<%s> SUCCESFULLY DELETED!", username)
+                    logger.info("=================== SESSION CLEANING FINISHED") 
             except Exception:
                 logger.exception("EXCEPTION at SESSION CLEANER")
             time.sleep(SESSION_EXPIRE_TIME)
@@ -268,13 +273,14 @@ class LoginManager(object):
         '''
 
         ret = []
-        if self.session_dic.has_key(session_key):
-            for user_info in self.session_dic.values():
-                del user_info["last_action_time"]
-                ret.append(Session(**user_info))
-            return ret
-        else:
-            raise NotLoggedIn()
+        with self.lock_session_dic:
+            if self.session_dic.has_key(session_key):
+                for user_info in self.session_dic.values():
+                    del user_info["last_action_time"]
+                    ret.append(Session(**user_info))
+                return ret
+            else:
+                raise NotLoggedIn()
 
     @log_method_call
     def is_logged_in(self, session_key):
