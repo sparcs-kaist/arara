@@ -109,12 +109,10 @@ def get_article_list(request, r, mode):
         page_range_no += 1
 
     article_list = article_result.hit
-    for i in range(len(article_list)):
-        if article_list[i].deleted:
-            article_list[i].title = '-- Deleted --'
-            article_list[i].author_username = ''
-
     for article in article_list:
+        if article.deleted:
+            article.title = '-- Deleted --'
+            article.author_username = ''
         article.date = datetime.datetime.fromtimestamp(article.date)
 
     r['article_list'] = article_list
