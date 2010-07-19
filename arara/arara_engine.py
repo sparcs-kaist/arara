@@ -75,6 +75,7 @@ class ARAraEngine(object):
             'get_board_list': self.board_manager.get_board_list,
             'add_read_only_board': self.board_manager.add_read_only_board,
             'return_read_only_board': self.board_manager.return_read_only_board,
+            'change_board_order': self.board_manager.change_board_order,
             'hide_board': self.board_manager.hide_board,
             'return_hide_board': self.board_manager.return_hide_board,
             'delete_board': self.board_manager.delete_board,
