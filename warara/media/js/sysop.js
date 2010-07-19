@@ -57,8 +57,6 @@ function update_list(data){
 
 function set_item_action(){
     $("#all_board_list tbody tr").click( function(event) {
-        event.preventDefault();
-
         $("#board_actions").show();
         $("#edit_board").show();
 
