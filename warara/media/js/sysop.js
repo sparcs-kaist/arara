@@ -57,7 +57,7 @@ function update_list(data){
 
 function set_item_action(){
     $("#all_board_list tbody tr").click( function(event) {
-        event.stopPropagation();
+        event.preventDefault();
 
         $("#board_actions").show();
         $("#edit_board").show();
@@ -85,21 +85,21 @@ $(document).ready( function() {
     // 숨기기/보이기 버튼
     $("#board_actions li:nth-child(1) a").unbind()
     $("#board_actions li:nth-child(1) a").click( function(event) {
-        event.stopPropagation();
+        event.preventDefault();
         request_action("toggle_hide");
     });
 
     // 삭제 버튼
     $("#board_actions li:nth-child(2) a").unbind()
     $("#board_actions li:nth-child(2) a").click( function(event) {
-        event.stopPropagation();
-        request_action("remvoe");
+        event.preventDefault();
+        request_action("remove");
     });
 
     // 보드 이름/설명 적용 버튼
     $("#apply_changes").unbind();
     $("#apply_changes").click( function(event) {
-        event.stopPropagation();
+        event.preventDefault();
         request_action("edit");
     });
 
