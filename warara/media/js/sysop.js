@@ -33,7 +33,7 @@ function update_list(data){
     if(action_done == "hide" || action_done == "return_hide"){
         $("#board_actions li:nth-child(1) a").html((action_done == "hide" ? "보이기" : "숨기기"));
         selected_board.is_hidden = (action_done == "hide")
-    } else if(action_done == "delete"){
+    } else if(action_done == "remove"){
         $("#board_actions").hide();
         $("#edit_board").hide();
         selected_board = null;
@@ -101,6 +101,20 @@ $(document).ready( function() {
     $("#apply_changes").click( function(event) {
         event.preventDefault();
         request_action("edit");
+    });
+
+    // 위로 버튼
+    $("#board_actions li:nth-child(3) a").unbind()
+    $("#board_actions li:nth-child(3) a").click( function(event) {
+        event.preventDefault();
+        request_action("moveup");
+    });
+
+    // 아래로 버튼
+    $("#board_actions li:nth-child(4) a").unbind()
+    $("#board_actions li:nth-child(4) a").click( function(event) {
+        event.preventDefault();
+        request_action("movedown");
     });
 
     set_item_action();

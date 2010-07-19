@@ -71,6 +71,12 @@ def modify_board(request):
         msg = server.board_manager.hide_board(sess, requested_board.board_name)
     elif action == 'return_hide':
         msg = server.board_manager.return_hide_board(sess, requested_board.board_name)
+    elif action == 'moveup':
+        if requested_board.order > 1:
+            msg = server.board_manager.change_board_order(sess, requested_board.board_name, requested_board.order - 1)
+    elif action == 'movedown':
+        if requested_board.order < len(filter(lambda b:b.order != None, board_list)):
+            msg = server.board_manager.change_board_order(sess, requested_board.board_name, requested_board.order + 1)
     else:
         msg = "unknown_sysop_board_modification_command"
         return HttpResponseRedirect('/sysop/')
