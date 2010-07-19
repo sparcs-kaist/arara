@@ -81,7 +81,7 @@ def modify_board(request):
         msg = "unknown_sysop_board_modification_command"
         return HttpResponseRedirect('/sysop/')
     # AJAX로 온 요청일 때에는 갱신된 보드 정보를 보낸다. 
-    if request.is_ajax() or True:
+    if request.is_ajax():
         response = "SUCCESS\t" + action + "\t" + requested_board_name + "\n"
         board_list = server.board_manager.get_board_list()
         for board in board_list:
@@ -102,7 +102,15 @@ def edit_board(request):
     new_board_name = request.POST['new_board_name']
     new_board_description = request.POST['new_board_description']
     server.board_manager.edit_board(sess, original_board_name, new_board_name, new_board_description)
-    return HttpResponseRedirect('/sysop/')
+
+    if request.is_ajax():
+        response = "SUCCESS\tedit\t" + new_board_name + "\n"
+        board_list = server.board_manager.get_board_list()
+        for board in board_list:
+            response += board.board_name + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\n"
+        return HttpResponse(response.strip())
+    else:
+        return HttpResponseRedirect('/sysop/')
 
 @warara.wrap_error
 def confirm_user(request):
