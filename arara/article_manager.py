@@ -173,13 +173,44 @@ class ArticleManager(object):
             raise InvalidOperation("article does not exist")
         return article
 
-    def _get_last_page(self, article_count, page_length):
+    def _get_page_info(self, session, article_count, page, page_length):
+        '''
+        Internal.
+        요청한 페이지에 해당되는 글의 번호 대역을 알아낸다.
+
+        @type  session: SQLAlchemy session
+        @param session: 현재 사용중인 SQLAlchemy session
+        @type  article_count: int
+        @param article_count: Query 의 모든 글의 갯수
+        @type  page: int
+        @param page: 글의 번호 대역을 알고자 하는 page
+        @type  page_length: int
+        @param page_length: 페이지당 글의 갯수
+        @rtype: (int, int, int)
+        @return: last page 번호, 주어진 page 의 첫 글의 위치, 마지막 글의 위치
+        '''
+        # part 1. last page 구하기 
         last_page = int(article_count / page_length)
         if article_count % page_length != 0:
             last_page += 1
         elif article_count == 0:
             last_page += 1
-        return last_page
+
+        # part 2. page 번호 보정
+        # Page 에 0 이 들어오면 계속 잘못 작동하고 있다. 이를 막기 위해 page 의 시작점을 0 으로 설정한다.
+        # XXX 가능하면 TEST CODE 도 만들자.
+        if page == 0:
+            page = 1
+        # 페이지가 비정상 범위라면? InvalidOperation.
+        if (page > last_page) or (page < 0):
+            session.close()
+            raise InvalidOperation('WRONG_PAGENUM')
+
+        # part 3. Page 의 시작 글과 끝 글의 번째수를 구한다.
+        offset = page_length * (page - 1)
+        last = offset + page_length
+
+        return last_page, offset, last
 
     @log_method_call
     def get_today_best_list(self, count=5):
@@ -275,10 +306,11 @@ class ArticleManager(object):
 
         try:
             session = model.Session()
-            offset = page_length * (page - 1)
-            last = offset + page_length
-            # XXX: 갖고 와서 빼는군여. 가져올 때 빼세요.
-            article_list = session.query(model.Article).filter_by(root_id=None).order_by(model.Article.id.desc())[offset:last]
+            desired_query = self._get_basic_query(session, u'', u'', True)
+            article_count = desired_query.count()
+            last_page, offset, last = self._get_page_info(session, article_count, page, page_length)
+            article_list = desired_query.order_by(model.Article.id.desc())[offset:last]
+
             article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
             article_number = []
             for article in article_dict_list:
@@ -290,10 +322,6 @@ class ArticleManager(object):
                 if read_stats_list[i] == 'N':
                     not_read_article_number.append(article_number[i])
             article_count = len(not_read_article_number) 
-            last_page = self._get_last_page(article_count, page_length)
-            if page > last_page:
-                session.close()
-                raise InvalidOperation('WRONG_PAGENUM')
 
             session.close()
             ret = ArticleNumberList()
@@ -334,12 +362,7 @@ class ArticleManager(object):
             article_count = article_list = session.query(model.Article).filter(and_(
                                 model.articles_table.c.root_id==None,
                                 model.articles_table.c.last_modified_date > user.last_logout_time)).count()
-            last_page = self._get_last_page(article_count, page_length)
-            if page > last_page:
-                session.close()
-                raise InvalidOperation('WRONG_PAGENUM')
-            offset = page_length * (page - 1)
-            last = offset + page_length
+            last_page, offset, last = self._get_page_info(session, article_count, page, page_length)
 
             article_list = session.query(model.Article).filter(and_(
                     model.articles_table.c.root_id==None,
@@ -450,21 +473,10 @@ class ArticleManager(object):
         session = model.Session()
         # Part 1. Query : Board Name, Heading Name 을 따르는 모든 글
         desired_query = self._get_basic_query(session, board_name, heading_name, include_all_headings)
-
-        # Part 2. 글의 갯수와 페이지번호 구하기
         article_count = desired_query.count()
-        last_page = self._get_last_page(article_count, page_length)
-        # Page 에 0 이 들어오면 계속 잘못 작동하고 있다. 이를 막기 위해 page 의 시작점을 0 으로 설정한다.
-        # XXX 가능하면 TEST CODE 도 만들자.
-        if page == 0:
-            page = 1
-        # 페이지가 비정상 범위라면? InvalidOperation.
-        if (page > last_page) or (page < 0):
-            session.close()
-            raise InvalidOperation('WRONG_PAGENUM')
-        # Page 의 시작 글과 끝 글의 번째수를 구한다.
-        offset = page_length * (page - 1)
-        last = offset + page_length
+
+        # Part 2. 페이지번호 관련 정보 구하기
+        last_page, offset, last = self._get_page_info(session, article_count, page, page_length)
 
         # Part 3. 목록의 정렬.
         desired_query = self._get_ordered_query(session, desired_query, order_by)
