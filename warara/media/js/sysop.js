@@ -46,7 +46,7 @@ function update_list(data){
     for(i=1;i<splited_data.length;i++){
         board = splited_data[i].split("\t");
 
-        if(board[0] == selected_board.board_name){
+        if(selected_board != null && board[0] == selected_board.board_name){
             $("#all_board_list tbody").append('<tr class="' + board[2] + ' selected_board"><td>' + board[0] + "</td><td>" + board[1] + '</td><td><a href="/board/' + board[0] + '" target="_blank">Link</a></td></tr>');
         } else {
             $("#all_board_list tbody").append('<tr class="' + board[2] + '"><td>' + board[0] + '</td><td>' + board[1] + '</td><td><a href="/board/' + board[0] + '" target="_blank">Link</a></td></tr>');
