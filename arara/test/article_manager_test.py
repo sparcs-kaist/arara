@@ -588,16 +588,14 @@ class ArticleManagerTest(unittest.TestCase):
 
         # TEST 1 : 모든 heading 을 불러와보자
         result = self.engine.article_manager._get_article_list(u'board_h', u"", 1, 5)
-        article_dict_list = list(result[0]) # 이건 generator 이다
-        last_page         = result[1]
-        article_count     = result[2]
-        last_reply_id_list= result[3]
-        article_dict_list_id_only = [x['id'] for x in article_dict_list]
+        article_list  = result[0]
+        last_page     = result[1]
+        article_count = result[2]
+        article_list_id_only = [x.id for x in article_list]
 
-        self.assertEqual([55, 54, 53, 52, 51], article_dict_list_id_only)
+        self.assertEqual([55, 54, 53, 52, 51], article_list_id_only)
         self.assertEqual(11, last_page)
         self.assertEqual(55, article_count)
-        self.assertEqual([55, 54, 53, 52, 51], last_reply_id_list)
 
         # 관심 있는 것은 글의 id 와 heading 이다.
         result = self.engine.article_manager._article_list(self.session_key_serialx, u"board_h", u"", 1, 5)
@@ -614,16 +612,14 @@ class ArticleManagerTest(unittest.TestCase):
 
         # TEST 2 : heading 이 없는 것만
         result = self.engine.article_manager._get_article_list(u'board_h', u"", 1, 5, False)
-        article_dict_list = list(result[0])
-        last_page         = result[1]
-        article_count     = result[2]
-        last_reply_id_list= result[3]
-        article_dict_list_id_only = [x['id'] for x in article_dict_list]
+        article_list  = result[0]
+        last_page     = result[1]
+        article_count = result[2]
+        article_list_id_only = [x.id for x in article_list]
 
-        self.assertEqual([54, 52, 50, 48, 46], article_dict_list_id_only)
+        self.assertEqual([54, 52, 50, 48, 46], article_list_id_only)
         self.assertEqual(6, last_page)
         self.assertEqual(27, article_count)
-        self.assertEqual([54, 52, 50, 48, 46], last_reply_id_list)
 
         result = self.engine.article_manager._article_list(self.session_key_serialx, u"board_h", u"", 1, 5, False)
         self.assertEqual(27, result.results)
@@ -639,16 +635,14 @@ class ArticleManagerTest(unittest.TestCase):
 
         # TEST 3 : heading == head1
         result = self.engine.article_manager._get_article_list(u'board_h', u"head1", 1, 5, False)
-        article_dict_list = list(result[0])
-        last_page         = result[1]
-        article_count     = result[2]
-        last_reply_id_list= result[3]
-        article_dict_list_id_only = [x['id'] for x in article_dict_list]
+        article_list  = result[0]
+        last_page     = result[1]
+        article_count = result[2]
+        article_list_id_only = [x.id for x in article_list]
 
-        self.assertEqual([55, 53, 51, 49, 47], article_dict_list_id_only)
+        self.assertEqual([55, 53, 51, 49, 47], article_list_id_only)
         self.assertEqual(6, last_page)
         self.assertEqual(28, article_count)
-        self.assertEqual([55, 53, 51, 49, 47], last_reply_id_list)
 
         result = self.engine.article_manager._article_list(self.session_key_serialx, u"board_h", u"head1", 1, 5, False)
         self.assertEqual(28, result.results)

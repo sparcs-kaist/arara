@@ -463,12 +463,11 @@ class ArticleManager(object):
         @param include_all_headings: 모든 글머리의 글을 가져올지에 대한 여부
         @type  order_by: int - LIST_ORDER
         @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
-        @rtype: (list<article_dict>, int, int, list<int>)
+        @rtype: (list<model.Article>, int, int, list<int>)
         @return:
-            1. article_dict_list : article_dict 의 list
-            2. last page         : 글 목록의 마지막 페이지의 번호
-            3. article_count     : 글의 전체 갯수
-            4. article_last_reply_id_list : 글 목록의 각 글에 달린 마지막 reply 의 번호목록
+            1. article_list  : model.Article 의 list
+            2. last page     : 글 목록의 마지막 페이지의 번호
+            3. article_count : 글의 전체 갯수
         '''
         session = model.Session()
         # Part 1. Query : Board Name, Heading Name 을 따르는 모든 글
@@ -484,9 +483,8 @@ class ArticleManager(object):
 
         session.close()
         # 적당히 리턴한다.
-        article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
-        article_last_reply_id_list = [article.last_reply_id for article in article_list]
-        return article_dict_list, last_page, article_count, article_last_reply_id_list
+
+        return article_list, last_page, article_count
 
     def _article_list(self, session_key, board_name, heading_name, page, page_length, include_all_headings = True, order_by = LIST_ORDER_ROOT_ID):
         '''
@@ -513,12 +511,10 @@ class ArticleManager(object):
         '''
         blacklisted_users = self._get_blacklist_userid(session_key)
 
-        article_dict_list, last_page, article_count, article_last_reply_id_list = self._get_article_list(board_name, heading_name, page, page_length, include_all_headings, order_by)
-        # InvalidOperation(board not exist) 는 여기서 알아서 불릴 것이므로 제거.
+        article_list, last_page, article_count = self._get_article_list(board_name, heading_name, page, page_length, include_all_headings, order_by)
+        article_dict_list = list(self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST))
+        article_last_reply_id_list = [article.last_reply_id for article in article_list]
 
-        # article_dict_list 를 generator 에서 list화.
-        # 어차피 이 함수가 끝날때까지 append 되는 새 list 를 return 하므로 상관없다.
-        article_dict_list = [x for x in article_dict_list]
         article_id_list = [article['id'] for article in article_dict_list]
         read_stats_list = None # Namespace 에 등록. Assign 은 요 바로 다음에서.
 
