@@ -712,6 +712,47 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(u'total1',  l.hit[19].board_name)
         self.assertEqual(3, l.last_page)
 
+        # 게시판 'total1'을 숨겼을 때 제대로 나타나는지 검사!
+        self.engine.board_manager.hide_board(self.session_key_sysop, u'total1')
+        l = self.engine.article_manager.article_list(self.session_key_mikkang, u'', u'', 1, 20, True)
+        self.assertEqual(u'TITLE54', l.hit[0].title)
+        self.assertEqual(u'total2',  l.hit[0].board_name)
+        self.assertEqual(u'TITLE52', l.hit[1].title)
+        self.assertEqual(u'total2',  l.hit[1].board_name)
+        self.assertEqual(u'TITLE16', l.hit[19].title)
+        self.assertEqual(u'total2',  l.hit[19].board_name)
+        self.assertEqual(2, l.last_page)
+        
+        l = self.engine.article_manager.article_list_below(self.session_key_mikkang, u'', u'', 14, 20, True)
+        self.assertEqual(u'TITLE14', l.hit[0].title)
+        self.assertEqual(u'total2',  l.hit[0].board_name)
+        self.assertEqual(u'TITLE12', l.hit[1].title)
+        self.assertEqual(u'total2',  l.hit[1].board_name)
+        self.assertEqual(u'TITLE0', l.hit[7].title)
+        self.assertEqual(u'total2',  l.hit[7].board_name)
+        self.assertEqual(2, l.last_page)
+
+        # 게시판 'total1'을 숨김 해제하고 'total2'를 지웠을 때 제대로 나타나는지 검사!
+        self.engine.board_manager.return_hide_board(self.session_key_sysop, u'total1')
+        self.engine.board_manager.delete_board(self.session_key_sysop, u'total2')
+        l = self.engine.article_manager.article_list(self.session_key_mikkang, u'', u'', 1, 20, True)
+        self.assertEqual(u'TITLE53', l.hit[0].title)
+        self.assertEqual(u'total1',  l.hit[0].board_name)
+        self.assertEqual(u'TITLE51', l.hit[1].title)
+        self.assertEqual(u'total1',  l.hit[1].board_name)
+        self.assertEqual(u'TITLE15', l.hit[19].title)
+        self.assertEqual(u'total1',  l.hit[19].board_name)
+        self.assertEqual(2, l.last_page)
+        
+        l = self.engine.article_manager.article_list_below(self.session_key_mikkang, u'', u'', 13, 20, True)
+        self.assertEqual(u'TITLE13', l.hit[0].title)
+        self.assertEqual(u'total1',  l.hit[0].board_name)
+        self.assertEqual(u'TITLE11', l.hit[1].title)
+        self.assertEqual(u'total1',  l.hit[1].board_name)
+        self.assertEqual(u'TITLE1', l.hit[6].title)
+        self.assertEqual(u'total1',  l.hit[6].board_name)
+        self.assertEqual(2, l.last_page)
+
     def test__get_article(self):
         # 두 개의 서로 다른 게시판에 글을 쓴다.
         self._dummy_article_write(self.session_key_mikkang, u"1", u"board")

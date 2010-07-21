@@ -422,7 +422,11 @@ class ArticleManager(object):
                 query = query.filter_by(heading=heading)
         else:
             # 모든 board 에 있는 글을 선택한다.
-            query = query.filter_by(root_id=None, destroyed=False)
+            query = query.filter(and_(
+                    model.articles_table.c.root_id==None,
+                    model.articles_table.c.destroyed==False,
+                    model.Article.board.has(model.Board.hide==False),
+                    model.Article.board.has(model.Board.deleted==False)))
 
         return query
 
@@ -668,8 +672,8 @@ class ArticleManager(object):
 
         @type  session: SQLAlchemy Session
         @param session: 사용중인 session
-        @type  board_name: int
-        @param board_name: 글 갯수를 가져올 게시판의 id
+        @type  board_id: int
+        @param board_id: 글 갯수를 가져올 게시판의 id
         @type  heading_id: int
         @param heading_id: 글 갯수를 가져올 말머리의 id (없을 경우 None)
         @type  include_all_headings: bool
@@ -680,7 +684,11 @@ class ArticleManager(object):
         query = session.query(model.Article)
 
         if board_id == None:
-            query = query.filter_by(root_id=None, destroyed=False)
+            query = query.filter(and_(
+                    model.articles_table.c.root_id==None,
+                    model.articles_table.c.destroyed==False,
+                    model.Article.board.has(model.Board.hide==False),
+                    model.Article.board.has(model.Board.deleted==False)))
         else:
             query = query.filter_by(board_id=board_id, root_id=None, destroyed=False)
             if not include_all_headings:
@@ -715,7 +723,9 @@ class ArticleManager(object):
             query = query.filter(and_(
                     model.articles_table.c.root_id==None,
                     model.articles_table.c.destroyed==False,
-                    model.articles_table.c.id < no))
+                    model.articles_table.c.id < no,
+                    model.Article.board.has(model.Board.hide==False),
+                    model.Article.board.has(model.Board.deleted==False)))
         else:
             query = query.filter(and_(
                     model.articles_table.c.board_id==board_id,
