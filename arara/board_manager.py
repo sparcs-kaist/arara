@@ -752,3 +752,76 @@ class BoardManager(object):
         session.close()
         # 보드에 변경이 발생하므로 캐시 초기화
         self.cache_board_list()
+    
+    def has_bbsManager(self, board_name):
+        '''
+        게시판에 관리자가 설정 되었는지 여부를 알려준다.
+        @type   board_name: string
+        @param  board_name: 관리자 유무를 확인할 보드
+        @rtype: bool
+        @return: bbs_managers table 안에 게시판id와 관리자 id가 등록 되었는지 여부
+        '''
+        session = model.Session()
+        board_id = session.query(model.Board).filter_by(board_name=board_name).one().id
+        query = session.query(model.BBSManager).filter_by(board_id=board_id)
+        try:
+            managed_board = query.one()
+            session.close()
+            return True
+        except InvalidRequestError:
+            session.close()
+            return False
+
+    @require_login
+    def add_bbs_manager(self, session_key, board_name, username):
+        '''
+        시삽이 각 게시판의 관리자(들) 등록.(한 관리자가 여러 게시판 관리도 가능)
+        @type   session_key: string
+        @param  session_key: User Key (SYSOP)
+        @type   board_name: string
+        @param  board_name: 관리자를 지정할 보드
+        @type   username: string
+        @param  username: 관리자가 될 사용자
+        '''
+        self._is_sysop(session_key)
+        session = model.Session()
+        board = session.query(model.Board).filter_by(board_name=board_name).one()
+        user = session.query(model.User).filter_by(username=username).one()
+        bbs_manager = model.BBSManager(board, user)
+        session.add(bbs_manager)
+        session.commit()
+        session.close()
+
+    @require_login
+    def remove_bbs_manager(self, session_key, board_name, username):
+        '''
+        더이상 관리자가 아닌 사용자의 게시판 관리자 record를 지운다.
+        아직 테스트코드 없음.
+        @type   session_key: string
+        @param  session_key: User Key (SYSOP)
+        @type   board_name: string
+        @param  board_name: 관리자를 지울 보드
+        @type   username: string
+        @param  username: 관리자가 아니게 된 사용자
+
+        '''
+        self._is_sysop(session_key)
+        session = model.Session()
+        board = session.query(model.Board).filter_by(board_name=board_name).one()
+        user = session.query(model.User).filter_by(username=username).one()
+        bbs_manager = session.query(model.BBSManager).filter_by(board_id=board.id, user_id=user.id).one()
+        # TODO: db에서 record 지우기(?)
+        session.commit()
+        session.close()
+   
+    def get_bbs_managerID(self, board_name):
+        '''
+        현 게시판 관리자(들)의 User.id를 가져온다.
+        '''
+        # TODO: 여러명의 id를 어떻게 return 해야 할까 (다시 수정해야 함)
+        session = model.Session()
+        board_id = self.get_board_id(board_name)
+        if self._has_bbsManager(board_name):
+            managed_board = session.query(model.BBSManager).filter_by(board_id=board_id).one()
+            session.close()
+            return managed_board.manager_id

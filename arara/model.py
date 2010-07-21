@@ -76,6 +76,14 @@ class User(object):
     def __repr__(self):
         return "<User('%s', '%s')>" % (self.username, self.nickname)
 
+class BBSManager(object):
+    def __init__(self, board, manager):
+        self.board = board
+        self.manager = manager
+
+    def __repr__(self):
+        return "<BBSManager('%s'. '%s')>" % (self.board, self.manager)
+
 class UserActivation(object):
     def __init__(self, user, activation_code):
         self.user = user
@@ -249,6 +257,13 @@ users_table = Table('users', metadata,
     mysql_engine='InnoDB'
 )
 
+bbs_managers_table = Table('bbs_managers', metadata,
+    Column('id', Integer, primary_key=True),
+    Column('board_id', Integer, ForeignKey('boards.id')),
+    Column('manager_id', Integer, ForeignKey('users.id')),
+    mysql_engine='InnoDB'
+)
+
 user_activation_table = Table('user_activation', metadata,
     Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
     Column('activation_code', Unicode(50), unique=True),
@@ -411,6 +426,11 @@ mapper(Banner, banner_table)
 mapper(Welcome, welcome_table)
 
 mapper(User, users_table)
+
+mapper(BBSManager, bbs_managers_table, properties={
+    'board': relation(Board, backref='management', lazy=True),
+    'manager': relation(User, backref='managing_board', lazy=True),
+})
 
 mapper(UserActivation, user_activation_table, properties={
     'user':relation(User, backref='activation', uselist=False)

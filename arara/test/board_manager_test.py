@@ -386,6 +386,23 @@ class BoardManagerTest(unittest.TestCase):
         except:
             pass
 
+    def testAssignBBSManager(self):
+        # 보드마다 관리자 임명 테스트
+        # Add one board 'test'  
+        self.assertEqual(0, len(self.engine.board_manager.get_board_list()))
+        self.engine.board_manager.add_board(self.session_key_sysop, u'test', u'Testing Board')
+        self.assertEqual(1, len(self.engine.board_manager.get_board_list()))
+        # Add BBS Manager by SYSOP
+        self.assertEqual(False, self.engine.board_manager.has_bbsManager(u'test'))
+        self.engine.board_manager.add_bbs_manager(self.session_key_sysop, u'test', u'mikkang')
+        self.assertEqual(True, self.engine.board_manager.has_bbsManager(u'test'))
+        # Add another bbs manager
+        user_reg_dic = {'username':u'jean', 'password':u'jean', 'nickname':u'jean', 'email':u'jean@example.com', 'signature':u'jean', 'self_introduction':u'jean', 'default_language':u'english', 'campus':u'daejeon' }
+        register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
+        self.engine.member_manager.confirm(u'jean', register_key)
+        self.engine.board_manager.add_bbs_manager(self.session_key_sysop, u'test', u'jean')
+        # TODO: BBSManager 에 한 게시판에 대해 몇명의 관리자가 누가 있는지 확인할 테스트코드
+
     def tearDown(self):
         arara.model.clear_test_database()
         etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
