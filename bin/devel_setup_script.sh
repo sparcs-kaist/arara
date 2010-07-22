@@ -340,6 +340,7 @@ mkdir run >& /dev/null
 supervisorctl stop all >& /dev/null
 supervisorctl shutdown >& /dev/null
 killall -u $USER python >& /dev/null
+make clean
 
 echo ""
 echo "Completed."
