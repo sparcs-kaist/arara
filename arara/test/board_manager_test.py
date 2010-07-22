@@ -399,6 +399,15 @@ class BoardManagerTest(unittest.TestCase):
         self.engine.board_manager.add_bbs_manager(self.session_key_sysop, u'test', u'jean')
         # TODO: BBSManager 에 한 게시판에 대해 몇명의 관리자가 누가 있는지 확인할 테스트코드
 
+    def testRemoveBBSManager(self):
+        # 게시판 관리자 권한 지우기 테스트. by SYSOP
+        self.engine.board_manager.add_board(self.session_key_sysop, u'test', u'Testing Board')
+        self.engine.board_manager.add_bbs_manager(self.session_key_sysop, u'test', u'mikkang')
+        self.assertEqual(True, self.engine.board_manager.has_bbs_manager(u'test'))
+        self.engine.board_manager.remove_bbs_manager(self.session_key_sysop, u'test', u'mikkang')
+        self.assertEqual(False, self.engine.board_manager.has_bbs_manager(u'test'))
+
+
     def tearDown(self):
         arara.model.clear_test_database()
         etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED

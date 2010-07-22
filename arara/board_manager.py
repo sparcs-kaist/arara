@@ -812,9 +812,13 @@ class BoardManager(object):
         self._is_sysop(session_key)
         session = model.Session()
         board = session.query(model.Board).filter_by(board_name=board_name).one()
-        user = session.query(model.User).filter_by(username=username).one()
-        bbs_manager = session.query(model.BBSManager).filter_by(board_id=board.id, user_id=user.id).one()
-        # TODO: db에서 record 지우기(?)
+        try:
+            user = session.query(model.User).filter_by(username=username).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('username not exist')
+        bbs_manager = session.query(model.BBSManager).filter_by(board_id=board.id, manager_id=user.id).one()
+        session.delete(bbs_manager)
         session.commit()
         session.close()
    
