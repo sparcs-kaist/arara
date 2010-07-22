@@ -20,7 +20,7 @@
         {% trans "write an article" %}
     </span>
 </div>
-<form name="article_write" action="/board/{{board_name}}/write/" method="post" enctype="multipart/form-data">
+<form name="article_write" action="/board/{{board_name}}/write/" method="post" enctype="multipart/form-data" id="article_write">
     <div id="article_write_title">
         <caption>{% trans "title : " %}</caption>
         <input type="text" value="{{default_title}}" name="title"></input>
@@ -95,7 +95,7 @@
     </div>
     <div id="article_write_buttons">
         <input type="button" value="{% trans "preview" %}" class="small_btn"></input>
-        <input type="submit" value="{{t_write}}" name="article_write" class="big_btn"></input>
+        <input type="submit" value="{{t_write}}" name="article_write" class="big_btn" id="write_button"></input>
         <input type="button" value="{% trans "cancel" %}" name="cancel" class="small_btn"></input>
         <input type="hidden" value="{{t_write}}" name="write_type"></input>
         <input type="hidden" value="{{article_no}}" name="article_no"></input>

@@ -75,4 +75,9 @@ $(document).ready(function() {
                 break;
                 }
     });
+
+    $("#write_button").click(function(event) {
+       $("#article_write").submit();
+       $("#write_button").attr("disabled", "disabled");
+    });
 });
