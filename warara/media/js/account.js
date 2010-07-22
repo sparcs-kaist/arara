@@ -6,6 +6,7 @@ $(document).ready(function(){
     var id;
     var nickname;
     var email;
+    var isKAISTmail;
     
     $("input.required_field").focus(function() {
         $(this).parent().children("label").children("span.feedback").text("");
@@ -72,8 +73,14 @@ $(document).ready(function(){
                             $emailDupleTest = data;
                             if ($emailDupleTest == 1)
                                 {$("#email").parent().children("label").children("span.feedback").text("The email is not available");}
-                            else 
-                                {$("#email").parent().children("label").children("span.feedback").text("");}
+                            else {
+                                if (document.form.email.value.match(/@kaist.ac.kr/)) {
+                                    $("#email").parent().children("label").children("span.feedback").text("");
+                                }
+                                else {
+                                    $("#email").parent().children("label").children("span.feedback").text("The email does not belongs to KAIST mail");
+                                }
+                            }
                         }
                     );
                 }
@@ -127,6 +134,13 @@ $(document).ready(function(){
         if ($idDupleTest == 1 || $nickDupleTest == 1 || $emailDupleTest == 1) {
             $(".submit").parent().parent().children("label").children("span.feedback").text("Please confirm your form");
             event.preventDefault();
+        }
+        if (!document.form.email.value.match(/@kaist.ac.kr/)) {
+            isKAISTmail = confirm("If your email does not belongs to KAIST mail,\nyou may get less right to use ARA.");
+            if (!isKAISTmail) {
+                $(".submit").parent().parent().children("label").children("span.feedback").text("Please change your mail into KAIST mail");
+                event.preventDefault();
+            }
         }
     });
 
