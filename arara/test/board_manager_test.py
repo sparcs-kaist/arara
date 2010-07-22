@@ -387,15 +387,11 @@ class BoardManagerTest(unittest.TestCase):
             pass
 
     def testAssignBBSManager(self):
-        # 보드마다 관리자 임명 테스트
-        # Add one board 'test'  
-        self.assertEqual(0, len(self.engine.board_manager.get_board_list()))
+        # 보드마다 관리자 임명 테스트, add BBS Manager by SYSOP
         self.engine.board_manager.add_board(self.session_key_sysop, u'test', u'Testing Board')
-        self.assertEqual(1, len(self.engine.board_manager.get_board_list()))
-        # Add BBS Manager by SYSOP
-        self.assertEqual(False, self.engine.board_manager.has_bbsManager(u'test'))
+        self.assertEqual(False, self.engine.board_manager.has_bbs_manager(u'test'))
         self.engine.board_manager.add_bbs_manager(self.session_key_sysop, u'test', u'mikkang')
-        self.assertEqual(True, self.engine.board_manager.has_bbsManager(u'test'))
+        self.assertEqual(True, self.engine.board_manager.has_bbs_manager(u'test'))
         # Add another bbs manager
         user_reg_dic = {'username':u'jean', 'password':u'jean', 'nickname':u'jean', 'email':u'jean@example.com', 'signature':u'jean', 'self_introduction':u'jean', 'default_language':u'english', 'campus':u'daejeon' }
         register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))

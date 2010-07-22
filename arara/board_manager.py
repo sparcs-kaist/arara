@@ -753,7 +753,7 @@ class BoardManager(object):
         # 보드에 변경이 발생하므로 캐시 초기화
         self.cache_board_list()
     
-    def has_bbsManager(self, board_name):
+    def has_bbs_manager(self, board_name):
         '''
         게시판에 관리자가 설정 되었는지 여부를 알려준다.
         @type   board_name: string
@@ -762,7 +762,7 @@ class BoardManager(object):
         @return: bbs_managers table 안에 게시판id와 관리자 id가 등록 되었는지 여부
         '''
         session = model.Session()
-        board_id = session.query(model.Board).filter_by(board_name=board_name).one().id
+        board_id = self.get_board_id(board_name)
         query = session.query(model.BBSManager).filter_by(board_id=board_id)
         try:
             managed_board = query.one()
@@ -786,7 +786,11 @@ class BoardManager(object):
         self._is_sysop(session_key)
         session = model.Session()
         board = session.query(model.Board).filter_by(board_name=board_name).one()
-        user = session.query(model.User).filter_by(username=username).one()
+        try:
+            user = session.query(model.User).filter_by(username=username).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('username not exist')
         bbs_manager = model.BBSManager(board, user)
         session.add(bbs_manager)
         session.commit()
@@ -814,11 +818,15 @@ class BoardManager(object):
         session.commit()
         session.close()
    
-    def get_bbs_managerID(self, board_name):
+    def get_bbs_managers(self, board_name):
         '''
-        현 게시판 관리자(들)의 User.id를 가져온다.
+        현 게시판 관리자(들)을 return한다.
+        @type   board_name: string
+        @param  board_name: 관리자를 확인할 게시판
+        @rtype: list
+        @return: list of user object(s)
         '''
-        # TODO: 여러명의 id를 어떻게 return 해야 할까 (다시 수정해야 함)
+        # TODO: 여러명의 user들을 어떻게 return 해야 할까 (다시 수정해야 함)
         session = model.Session()
         board_id = self.get_board_id(board_name)
         if self._has_bbsManager(board_name):
