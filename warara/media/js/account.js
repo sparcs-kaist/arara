@@ -78,7 +78,7 @@ $(document).ready(function(){
                                     $("#email").parent().children("label").children("span.feedback").text("");
                                 }
                                 else {
-                                    $("#email").parent().children("label").children("span.feedback").text("The email does not belongs to KAIST mail");
+                                    $("#email").parent().children("label").children("span.feedback").text("The email address does not belong to KAIST mail");
                                 }
                             }
                         }
@@ -136,7 +136,7 @@ $(document).ready(function(){
             event.preventDefault();
         }
         if (!document.form.email.value.match(/@kaist.ac.kr/)) {
-            isKAISTmail = confirm("If your email does not belongs to KAIST mail,\nyou may get less right to use ARA.");
+            isKAISTmail = confirm("If your email address does not belong to KAIST,\nyou may have restricted serivce for maintanance.");
             if (!isKAISTmail) {
                 $(".submit").parent().parent().children("label").children("span.feedback").text("Please change your mail into KAIST mail");
                 event.preventDefault();
