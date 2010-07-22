@@ -389,11 +389,17 @@ def reply(request, board_name, article_id):
     return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(root_id)))
 
 @warara.wrap_error
-def vote(request, board_name, root_id, article_no):
+def vote(request, board_name, root_id, article_no, vote_type):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
+
+    if vote_type == '+':
+        positive_vote = True
+    else:
+        positive_vote = False
+
     try:
-        server.article_manager.vote_article(sess, board_name, int(article_no))
+        server.article_manager.vote_article(sess, board_name, int(article_no), positive_vote)
     except InvalidOperation, e:
         return HttpResponse("ALREADY_VOTED")
 

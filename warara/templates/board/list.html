@@ -54,7 +54,7 @@
                         <span class="nickname">{{article.author_nickname|truncatechars:"8"}}<span class="hidden username">{{article.author_username}}</span></span>
                 </td>
                 <td class="column date_col">{{article.date|date:"Y/m/d"}}</td>
-                <td class="column vote_col">{{article.vote}}</td>
+                <td class="column vote_col">{{article.positive_vote}} / {{article.negative_vote}}</td>
                 <td class="column hit_col">{{article.hit}}</td>
             </tr>
             {% endfor %}

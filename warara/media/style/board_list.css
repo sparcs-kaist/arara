@@ -42,17 +42,17 @@
     font-family: Verdana;
 }
 .column.author_col{
-    width: 20%;
+    width: 18%;
     font-family: Gulim;
     padding-left: 0.5em;
     padding-right: 0;
 }
 .column.date_col{
-    width: 10%;
+    width: 8%;
     font-family: Verdana;
 }
 .column.vote_col{
-    width: 1%;
+    width: 10%;
     padding-right: 0em;
     font-family: Verdana;
 }
@@ -61,7 +61,7 @@
     font-family: Verdana;
 }
 .column.title_col{
-    width: 68%;
+    width: 60%;
     font-family: Gulim;
 }
 
