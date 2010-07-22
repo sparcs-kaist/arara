@@ -4,7 +4,7 @@ import datetime
 import warara
 
 from django.template.loader import render_to_string
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.cache import cache
 
 from libs import timestamp2datetime
@@ -17,6 +17,12 @@ from arara_thrift.ttypes import *
 @warara.wrap_error
 def index(request):
     server = warara_middleware.get_server()
+    sess, ctx = warara.check_logged_in(request)
+
+    # Redirect to main page if user logged in
+    if ctx['logged_in']:
+        return HttpResponseRedirect('/main/')
+
     if request.session.get('django_language', 0):
         request.session["django_language"] = "en"
     r = server.login_manager.total_visitor()
