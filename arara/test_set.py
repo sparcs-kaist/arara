@@ -21,8 +21,7 @@ def suite():
         test.article_manager_test.suite(),
         test.blacklist_manager_test.suite(),
         test.board_manager_test.suite(),
-        #현재 bot manager test 는 무언가 잘못 구현되어 있다.
-        #test.bot_manager_test.suite(),
+        test.bot_manager_test.suite(),
         test.file_manager_test.suite(),
         test.login_manager_test.suite(),
         test.member_manager_test.suite(),
