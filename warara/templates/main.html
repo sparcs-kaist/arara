@@ -21,18 +21,21 @@
                     <li> <b> {{weather_info.city}} Campus </b> </li>
                     <li> <img src="http://www.google.com{{weather_info.current_icon_url}}" alt="{{weather_info.current_condition}}" style="width:60px; height:60px;"/> </li>
                     <li> {{weather_info.current_condition}} </li>
+                    <li> {{weather_info.current_temperature}}˚C </li>
                 </ul>
             </div>
             <div class="weather_forecast_contents">
                 <ul>
                     <li> <b> Tomorrow </b> </li>
                     <li> <img src="http://www.google.com{{weather_info.tomorrow_icon_url}}" /> </li>
+                    <li> {{weather_info.tomorrow_temperature_high}}˚C / {{weather_info.tomorrow_temperature_low}}˚C </li>
                 </ul>
             </div>
             <div class="weather_forecast_contents">
                 <ul>
                     <li> <b> Day after tomorrow </b> </li>
                     <li> <img src="http://www.google.com{{weather_info.day_after_tomorrow_icon_url}}" /> </li>
+                    <li> {{weather_info.day_after_tomorrow_temperature_high}}˚C / {{weather_info.day_after_tomorrow_temperature_low}}˚C </li>
                 </ul>
             </div>
         </div>

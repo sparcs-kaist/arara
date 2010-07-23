@@ -251,7 +251,11 @@ struct WeatherInfo {
     3:string current_condition,
     4:string current_icon_url,
     5:string tomorrow_icon_url,
-    6:string day_after_tomorrow_icon_url,
+    6:i32 tomorrow_temperature_high,
+    7:i32 tomorrow_temperature_low,
+    8:string day_after_tomorrow_icon_url,
+    9:i32 day_after_tomorrow_temperature_high,
+    10:i32 day_after_tomorrow_temperature_low,
 }
 
 ////////////////////////////////////////

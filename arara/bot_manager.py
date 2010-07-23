@@ -143,7 +143,7 @@ class WeatherBot(object):
 
         # 각 캠퍼스의 정보를 받아옴
         for campus_location in BOT_SERVICE_SETTING['weather_service_area']:
-            xmlsession = urllib.urlopen('http://www.google.com/ig/api?weather=' + campus_location + '&;ie=utf-8&oe=utf-8&hl=en')
+            xmlsession = urllib.urlopen('http://www.google.com/ig/api?weather=' + campus_location + '&;ie=utf-8&oe=utf-8&hl=ko')
             weather_xml = xml.dom.minidom.parseString(xmlsession.read())
             new_document.documentElement.appendChild(weather_xml.documentElement)
             xmlsession.close()
@@ -167,7 +167,7 @@ class WeatherBot(object):
         '''
         WEATHER_BOARD_NAME 게시판에서 가장 최신 글을 읽어와 Parsing한 후 WeatherInfo 객체로 만들어주는 함수.
         WeatherInfo는 다음과 같은 구성요소들로 이루어져 있다
-        WeatherInfo {city, current_temperature, current_condition, current_icon_url, tomorrow_icon_url, day_after_tomorrow_icon_url} 
+        WeatherInfo {city, current_temperature, current_condition, current_icon_url, tomorrow_icon_url, tomorrow_temperature_high, tomorrow_temperature_low, day_after_tomorrow_icon_url, day_after_tomorrow_temperature_high, day_after_tomorrow_temperature_low} 
 
         @type  session_key: string
         @param session_key: User Key
@@ -202,15 +202,19 @@ class WeatherBot(object):
                 tomorrow_weather_node = element.getElementsByTagName('forecast_conditions')[0]
                 day_after_tomorrow_weather_node = element.getElementsByTagName('forecast_conditions')[1]
 
-                weather_info_dict['city'] = city_code
+                weather_info_dict['city'] = city_code[0].upper() + city_code[1:].lower()
                 weather_info_dict['current_temperature'] = int(current_weather_node.getElementsByTagName('temp_c')[0].getAttribute('data'))
                 weather_info_dict['current_condition'] = current_weather_node.getElementsByTagName('condition')[0].getAttribute('data')
                 weather_info_dict['current_icon_url'] = current_weather_node.getElementsByTagName('icon')[0].getAttribute('data')
                 weather_info_dict['tomorrow_icon_url'] = tomorrow_weather_node.getElementsByTagName('icon')[0].getAttribute('data')
+                weather_info_dict['tomorrow_temperature_high'] = int(tomorrow_weather_node.getElementsByTagName('high')[0].getAttribute('data'))
+                weather_info_dict['tomorrow_temperature_low'] = int(tomorrow_weather_node.getElementsByTagName('low')[0].getAttribute('data'))
                 weather_info_dict['day_after_tomorrow_icon_url'] = day_after_tomorrow_weather_node.getElementsByTagName('icon')[0].getAttribute('data')
+                weather_info_dict['day_after_tomorrow_temperature_high'] = int(day_after_tomorrow_weather_node.getElementsByTagName('high')[0].getAttribute('data'))
+                weather_info_dict['day_after_tomorrow_temperature_low'] = int(day_after_tomorrow_weather_node.getElementsByTagName('low')[0].getAttribute('data'))
                 break
 
-        if len(weather_info_dict) != 6:
+        if len(weather_info_dict) != 10:
             return WeatherInfo()
         else:
             return WeatherInfo(**weather_info_dict)

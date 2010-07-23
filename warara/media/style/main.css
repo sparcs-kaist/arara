@@ -82,6 +82,7 @@
 }
 #weather_today_content ul li {
     list-style-type: none;
+    font-weight: bold;
 }
 
 .weather_forecast_contents {
