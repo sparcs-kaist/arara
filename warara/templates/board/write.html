@@ -42,7 +42,7 @@
     <br />
     <div id="article_signature">
         <div id="signature_check">
-            <input type="checkbox" name="signature_check" value="signature_check" checked="checked">{% trans "Use Signature" %}</input>
+		<input type="checkbox" name="signature_check" value="signature_check" {% if not modify %}checked="checked"{% endif %}>{% trans "Use Signature" %}</input>
         </div>
         <textarea name="signature" readonly="readonly">{{ user_signature }}</textarea>
     </div>
