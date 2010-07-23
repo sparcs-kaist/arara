@@ -605,7 +605,10 @@ class MemberManager(object):
         session = model.Session()
         user = session.query(model.User).filter_by(username=username).one()
         for key, value in user_modification.__dict__.items():
-            setattr(user, key, value)
+            if type(value) in [str, unicode]:
+                setattr(user, key, smart_unicode(value))
+            else:
+                setattr(user, key, value)
         session.commit()
         session.close()
         return
