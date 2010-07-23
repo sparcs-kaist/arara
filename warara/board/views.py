@@ -193,6 +193,9 @@ def write(request, board_name):
         r['article_no'] = article_list[0].id
         r['t_write'] = 'modify'
         r['article'] = article_list[0]
+        r['modify'] = True
+    else:
+        r['modify'] = False
     r['board_name'] = board_name
 
     # 시그 선택할 수 있도록 시그를 보여준다.
@@ -236,7 +239,7 @@ def write_(request, board_name):
 
     else:
         article_id = server.article_manager.write_article(sess, board_name, WrittenArticle(**article_dic))
-    
+
     #upload file
     if request.FILES:
         file = {}
