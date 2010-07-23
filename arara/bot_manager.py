@@ -68,8 +68,7 @@ class WeatherBot(object):
             pass
 
         # Check 2. Manager Status Check
-        while not (self.check_manager_status()):
-            pass
+        self.check_manager_status()
 
         # Check를 모두 통과하면 이제 새로운 스레드를 시작한다
         thread.start_new_thread(self.process, tuple())
@@ -78,28 +77,28 @@ class WeatherBot(object):
         '''
         Weather Bot에 필요한 각 Manager들이 제대로 작동하고 있는지 검사한다.
 
-        @rtype: Bool
+        @rtype: void
         @return:
-            1. 잘 작동하고 있을 경우: True
-            2. 잘 작동하고 있지 않을 경우: False
+            1. 로그인에 실패했을 경우: Invalid Operation
+            2. 보드 접근에 실패했을 경우: Invalid Operation
+            3. 검사에 성공했을 경우: void
         '''
         try:
-            # Login Manager(혹은 연동되는 Manager)가 작동하고 있지 않거나, BOT_ACCOUNT_USERNAME, BOT_ACCOUNTPASSWORD의 설정이 잘못되었을 경우 문제가 발생한다
+            # BOT_ACCOUNT_USERNAME, BOT_ACCOUNTPASSWORD의 설정이 잘못되었을 경우 문제가 발생한다
             session_key = self.engine.login_manager.login(BOT_ACCOUNT_USERNAME, BOT_ACCOUNT_PASSWORD, u'127.0.0.1')
         # TODO: 상황에 따라 다른 대처가 필요하다
         except:
-            return False
+            raise InvalidOperation('Weather BOT cannot login with bot account')
 
         try:
-            # Article Manager(혹은 연동되는 Manager)가 작동하고 있지 않거나, Board name 설정이 잘못된 경우
+            # Board name 설정이 잘못된 경우 문제가 발생한다
             # weather용 board에 대한 article_list를 Test용 함수로 사용한다.
             self.engine.article_manager.article_list(session_key, self.board_name, u'')
             self.engine.login_manager.logout(session_key)
-            return True
         # TODO: 상황에 따라 다른 대처가 필요하다
         except:
             self.engine.login_manager.logout(session_key)
-            return False
+            raise InvalidOperation('Weather BOT cannot get article list from weather board')
 
     def process(self):
         '''
