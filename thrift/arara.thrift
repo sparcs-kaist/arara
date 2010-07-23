@@ -117,6 +117,11 @@ struct BlacklistInformation {
     7: i32 id
 }
 
+struct Category {
+    1: i32 id
+    2: string category_name
+}
+ 
 struct Board {
     1: bool read_only,
     2: string board_name,
@@ -125,6 +130,7 @@ struct Board {
     5: bool hide,
     6: list<string> headings,
     7: i32 order,
+    8: i32 category_id
 }
 
 struct WrittenArticle {

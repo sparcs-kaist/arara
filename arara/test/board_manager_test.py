@@ -44,6 +44,86 @@ class BoardManagerTest(unittest.TestCase):
             result_dict[field] = board_object.__dict__[field]
         return result_dict
 
+    def _to_dict_category(self, category_object):
+        FIELD_LIST = ['id', 'category_name']
+        result_dict = {}
+        for field in FIELD_LIST:
+            result_dict[field] = category_object.__dict__[field]
+        return result_dict
+
+    #adding and removing a category
+    def testNormalAddAndRemoveOneCategory(self):
+        #Add one category 'miscellaneous'
+        self.engine.board_manager.add_category(self.session_key_sysop, u'miscellaneous')
+        category_list = self.engine.board_manager.get_category_list()
+        self.assertEqual(1, len(category_list))
+        self.assertEqual({'id':1, 'category_name': u'miscellaneous'}, self._to_dict_category(category_list[0]))
+        #Add another category 'fun stuff'
+        self.engine.board_manager.add_category(self.session_key_sysop, u'fun stuff')
+        category_list = self.engine.board_manager.get_category_list()
+        self.assertEqual(2, len(category_list))
+        self.assertEqual({'id':1, 'category_name': u'miscellaneous'}, self._to_dict_category(category_list[0]))
+        self.assertEqual({'id':2, 'category_name': u'fun stuff'}, self._to_dict_category(category_list[1]))
+
+        #check if you can get each category
+        miscellaneous = self.engine.board_manager.get_category(u'miscellaneous')
+        self.assertEqual({'id':1, 'category_name' : u'miscellaneous'}, self._to_dict_category(miscellaneous))
+        fun_stuff = self.engine.board_manager.get_category(u'fun stuff')
+        self.assertEqual({'id':2, 'category_name' : u'fun stuff'}, self._to_dict_category(fun_stuff))
+
+        #try to delete the category
+        self.engine.board_manager.delete_category(self.session_key_sysop, u'miscellaneous')
+        self.engine.board_manager.delete_category(self.session_key_sysop, u'fun stuff')
+
+    def testAbNormalAddandRemoveOneCategory(self):
+        #Add Existing Category
+        self.engine.board_manager.add_category(self.session_key_sysop, u'miscellaneous')
+        try:
+            self.engine.board_manager.add_category(self.session_key_sysop, u'miscellaneous')
+            self.fail()
+        except InvalidOperation:
+            pass
+        #Remove a Category that never existed
+        try:
+            self.engine.board_manager.delete_category(self.session_key_sysop, u'notice')
+            self.fail()
+        except InvalidOperation:
+            pass
+
+        #access a nonexisting category
+        try:
+            self.engine.board_manager.get_category(u'notice')
+            self.fail()
+        except InvalidOperation:
+            pass
+        #delete category with normal user session
+        try:
+            self.engine.board_manager.delete_category(self.session_key, u'miscellaneous')
+            self.fail()
+        except InvalidOperation:
+            pass
+        self.engine.board_manager.delete_category(self.session_key_sysop, u'miscellaneous')
+        #access a deleted category
+        try:
+            self.engine.board_manager.get_category(u'miscellaneous')
+            self.fail()
+        except InvalidOperation:
+            pass
+
+        #delete a deleted category
+        try:
+            self.engine.board_manager.delete_category(self.session_key_sysop, u'miscellaneous')
+            self.fail()
+        except InvalidOperation:
+            pass
+        #try to add a new category with a normal user session
+        try:
+            self.engine.board_manager.add_category(self.session_key, u'normal user')
+            self.fail()
+        except InvalidOperation:
+            pass
+
+
     def testNormalAddAndRemoveOneBoard(self):
         # Add one board 'garbages'
         self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'Garbages Board')

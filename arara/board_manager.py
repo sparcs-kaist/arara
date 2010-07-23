@@ -12,6 +12,8 @@ log_method_call_important = log_method_call_with_source_important('board_manager
 
 BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only', 'hide', 'id', 'headings', 'order')
 
+CATEGORY_WHITELIST = ('category_name', 'id')
+
 class BoardManager(object):
     '''
     보드 추가 삭제 및 관리 관련 클래스
@@ -25,6 +27,10 @@ class BoardManager(object):
         self.all_board_and_heading_list = None
         self.all_board_and_heading_dict = None
         self.cache_board_list()
+        #added category list and dict, cache function
+        self.all_category_list = None
+        self.all_category_dict = None
+        self.cache_category_list()
 
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
@@ -47,7 +53,41 @@ class BoardManager(object):
 
     @require_login
     @log_method_call_important
-    def add_board(self, session_key, board_name, board_description, heading_list = []):
+
+    def add_category(self, session_key, category_name):
+        '''
+        카테고리 추가하는 함수
+
+        @type  session_key: string
+        @param session_key: User Key (must be SYSOP)
+        @type  category_name: string
+        @param category_name: name of category
+        @rtype: void
+        @return: 
+            1.성공 : 없음
+            2.오류가 있을 경우 InvalidOperation
+
+        '''
+        self._is_sysop(session_key)
+        session = model.Session()
+        category_to_add = model.Category(smart_unicode(category_name))
+        try:
+            session.add(category_to_add)
+            session.commit()
+            session.close()
+            self.cache_category_list()
+
+        except IntegrityError:
+            session.rollback()
+            session.close()
+            raise InvalidOperation('already added')
+
+
+
+    @require_login
+    @log_method_call_important
+    def add_board(self, session_key, board_name, board_description, heading_list = [], category_name = None):
+
         '''
         보드를 신설한다.
 
@@ -59,6 +99,8 @@ class BoardManager(object):
         @param board_description: 보드에 대한 한줄 설명
         @type  heading_list: list of string
         @param heading_list: 보드에 존재할 말머리 목록 (초기값 : [] 아무 말머리 없음)
+        @type  category_name: string
+        @param category_name: 보드가 속하는 카테고리의 이름(초기값 : None 카테고리 없음)
         @rtype: boolean, string 
         @return:
             1. 성공: None
@@ -79,7 +121,11 @@ class BoardManager(object):
         else:
             board_order=board_order_list.all()[-1].order+1
 
-        board_to_add = model.Board(smart_unicode(board_name), board_description, board_order)
+        category = None
+        if category_name != None:
+            category = self.get_category(category_name)
+
+        board_to_add = model.Board(smart_unicode(board_name), board_description, board_order, category)
         try:
             session.add(board_to_add)
             # Board Heading 들도 추가한다.
@@ -92,12 +138,14 @@ class BoardManager(object):
             session.close()
             # 보드에 변경이 발생하므로 캐시 초기화
             self.cache_board_list()
+
+
         except IntegrityError:
             session.rollback()
             session.close()
             raise InvalidOperation('already added')
 
-    def _add_bot_board(self, board_name, board_description = '', heading_list = [], hide = True):
+    def _add_bot_board(self, board_name, board_description = '', heading_list = [], hide = True, category_name = None):
         '''
         BOT용 보드를 신설한다.
         주의 : 이 함수는 BOT Manager에서만 사용되어야 한다
@@ -110,6 +158,8 @@ class BoardManager(object):
         @param heading_list: 보드에 존재할 말머리 목록 (초기값 : [] 아무 말머리 없음)
         @type  hide: Boolean
         @param hide: 게시판을 숨길지의 여부. (초기값 : True, 숨김)
+        @type  category_name: string
+        @param category_name: 보드가 속한 카테고리 이름 (초기값 : None 카테고리 없음)
         @rtype: boolean, string 
         @return:
             1. 성공: None
@@ -118,6 +168,9 @@ class BoardManager(object):
                 2. 데이터베이스 오류: 'DATABASE_ERROR'
         '''
         session = model.Session()
+        category = None
+        if category_name != None:
+            category = self.get_category(category_name)
 
         # Find the order of the board adding
         board_order_list = session.query(model.Board.order).filter(model.Board.order != None).order_by(model.Board.order)
@@ -126,7 +179,7 @@ class BoardManager(object):
         else:
             board_order=board_order_list.all()[-1].order+1
 
-        board_to_add = model.Board(smart_unicode(board_name), smart_unicode(board_description), order=board_order)
+        board_to_add = model.Board(smart_unicode(board_name), smart_unicode(board_description), order=board_order, category=None)
         board_to_add.hide = hide
 
         try:
@@ -169,6 +222,46 @@ class BoardManager(object):
             raise InvalidOperation('board does not exist')
         return board
 
+    def _get_category(self, category_name):
+        '''
+        주어진 이름의 Thrift Category 객체를 리턴한다.
+
+        @type  category_name: string
+        @param category_name: 불러올 카테고리의 이름
+        @rtype: Thrift Category 객체
+        @return:
+            1. 성공 : 찾고자 하는 Thrift Category 객체
+            2. 실패 : 존재하지 않는 카테고리 : InvalidOperation('category does not exist')
+        '''
+        try:
+            return self.all_category_dict[category_name]
+        except KeyError:
+            raise InvalidOperation('category does not exist')
+        return category
+
+    def _get_category_from_session(self, session, category_name):
+        '''
+        DB 로부터 주어진 이름의 category 에 대한 정보를 읽어들인다.
+        Internal Use Only.
+
+        @type  session: SQLAlchemy Session
+        @param session: 사용할 Session
+        @type  category_name: string
+        @param category_name: 불러올 게시판의 이름
+        @rtype: SQLAlchemy Category object
+        @return:
+            1. 성공시 - 찾고자 하는 Category 에 대한 SQLAlchemy category 객체
+            2. 실패시
+                1. 존재하지 않는 게시판 : InvalidOperation('category does not exist')
+        '''
+     
+        try:
+            category = session.query(model.Category).filter_by(category_name=smart_unicode(category_name)).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('category does not exist')
+        return category
+
     @log_method_call
     def get_board(self, board_name):
         return self._get_board(board_name)
@@ -185,6 +278,34 @@ class BoardManager(object):
                  2. 실패시 - InvalidOperatino('board does not exist')
         '''
         return self._get_board(board_name).id
+
+    @log_method_call
+    def get_category(self, category_name):
+        '''
+        주어진 이름의 카테고리를 찾는다.
+
+        @type  category_name: string
+        @param category_name: 찾고자 하는 카테고리의 이름
+        @rtype: Thrift Category 객체
+        @return: 1. 성공- 찾고자 한 Thrift Category 객체
+                 2. 실패- InvalidOperation('category does not exist')
+        '''
+        
+        return self._get_category(category_name)
+
+    @log_method_call
+    def get_category_id(self, category_name):
+        '''
+        주어진 이름의 카테고리의 id 를 찾는다.
+
+        @type  board_name: string
+        @param board_name: id 를 찾고자 하는 카테고리의 이름
+        @rtype: int
+        @return: 1. 찾고자 한 카테고리의 id
+                 2. 실패시 - InvalidOperation('category does not exist')
+        '''
+
+        return self._get_category(category_name).id
 
     @log_method_call
     def get_board_heading_list_fromid(self, board_id):
@@ -220,6 +341,17 @@ class BoardManager(object):
         '''
         board_id = self.get_board_id(board_name)
         return self.get_board_heading_list_fromid(board_id)
+
+    def cache_category_list(self):
+        session = model.Session()
+        categories = session.query(model.Category).filter_by().all()
+        category_dict_list = self._get_dict_list(categories, CATEGORY_WHITELIST)
+        session.close()
+
+        self.all_category_list = [Category(**d) for d in category_dict_list]
+        self.all_category_dict = {}
+        for category in self.all_category_list:
+            self.all_category_dict[category.category_name] = category
 
     def cache_board_list(self):
         # Board 의 목록을 DB 로부터 memory 로 옮겨 둔다.
@@ -291,6 +423,13 @@ class BoardManager(object):
         if self.all_board_list == None:
             self.cache_board_list()
         return self.all_board_list
+
+    @log_method_call
+    def get_category_list(self):
+        if self.all_category_list == None:
+            self.cache_category_list()
+        return self.all_category_list
+
 
     @require_login
     @log_method_call_important
@@ -413,9 +552,46 @@ class BoardManager(object):
         self.cache_board_list()
 
 
+
     @require_login
     @log_method_call_important
-    def edit_board(self, session_key, board_name, new_name, new_description):
+    #Category이름을 변경하는 함수
+    def edit_category(self, category_name, category_new_name):
+        '''
+        카테고리의 이름을 변경한다.
+
+        @type  category_name: string
+        @param category_name: 변경할 카테고리의 이름
+        @type  category_new_name: string
+        @param category_new_name: 카테고리의 새 이름
+        @rtype: void
+        @return:
+            1.성공 : 아무것도 리턴하지 않음
+            2.실패 : 이미 있는 카테고리의 이름일 경우 InvalidOperation(category already exists)
+                     
+        '''
+        self._is_sysop(session_key)
+        category_name = smart_unicode(category_name)
+        category_new_name = smart_unicode(category_new_name)
+
+        session = model.Session()
+        category = self._get_category_from_session(session, category)
+
+        try:
+            session.commit()
+            session.close()
+        except IntegrityError:
+            raise InvalidOperation("category already exists")
+        except InvalidRequestError:
+            raise InternalError()
+        self.cache_category_list()
+
+
+
+    @require_login
+    @log_method_call_important
+    
+    def edit_board(self, session_key, board_name, new_name, new_description, new_category_name=None):
         '''
         보드의 이름과 설명을 변경한다. 이름이나 설명을 바꾸고 싶지 않으면 파라메터로 길이가 0 인 문자열을 주면 된다.
 
@@ -427,6 +603,8 @@ class BoardManager(object):
         @param new_name: 보드에게 할당할 새 이름 (미변경시 '')
         @type  new_description: string
         @param new_description: 보드에게 할당할 새 설명 (미변경시 '')
+        @type  new_category_name: string
+        @param new_category_name: 보드에게 할당할 새 카테고리 (미변경시 값을 주지 않음. 초기값 None)
         @rtype: void
         @return:
             1. 성공: 아무것도 리턴하지 않음
@@ -449,6 +627,9 @@ class BoardManager(object):
             board.board_name = new_name
         if new_description != u'':
             board.board_description = new_description
+        if new_category_name != None :
+            board.category = self.get_category_from_session(session, new_category_name)
+
         try:
             session.commit()
             session.close()
@@ -523,6 +704,37 @@ class BoardManager(object):
         session.close()
         # 보드에 변경이 발생하므로 캐시 초기화
         self.cache_board_list()
+
+
+    @require_login
+    @log_method_call_important
+    def delete_category(self, session_key, category_name):
+        '''
+        카테고리를 삭제하는 함수
+        삭제된 카테고리에 속해있던 보드들의 카테고리는 None이 된다.
+
+        @type  session_key : string
+        @param session_key : User Key
+        @type category_name : string
+        @param category_name : 삭제할 카테고리의 이름
+        @rtype : void
+        @return :
+            1. 성공: 리턴 안함
+            2. 실패: InvalidOperation(category does not exist)
+        '''
+
+        self._is_sysop(session_key)
+        session = model.Session()
+        category = self._get_category_from_session(session, category_name)
+        for board in session.query(model.Board).filter_by(category= category).all():
+            board.category = None
+        session.delete(category)
+        session.commit()
+        session.close()
+        self.cache_category_list()
+
+
+
 
     @require_login
     @log_method_call_important

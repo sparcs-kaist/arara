@@ -85,14 +85,22 @@ class UserActivation(object):
     def __repr__(self):
         return "<UserActivation('%s', '%s')>" % (self.user.username, self.activation_code)
 
+class Category(object):
+    def __init__(self, category_name):
+        self.category_name = smart_unicode(category_name)
+
+    def __repr__(self):
+        return "<Category('%s')>" % (self.category_name)
+
 class Board(object):
-    def __init__(self, board_name, board_description, order):
+    def __init__(self, board_name, board_description, order, category):
         self.board_name = smart_unicode(board_name)
         self.board_description = smart_unicode(board_description)
         self.deleted = False
         self.read_only = False
         self.hide = False
         self.order = order
+        self.category = category
 
     def __repr__(self):
         return "<Board('%s', '%s')>" % (self.board_name, self.board_description)
@@ -249,12 +257,19 @@ user_activation_table = Table('user_activation', metadata,
 
 board_table = Table('boards', metadata,
     Column('id', Integer, primary_key=True),
+    Column('category_id', Integer, ForeignKey('categories.id')),
     Column('board_name', Unicode(30), unique=True),
     Column('board_description', Unicode(300)),
     Column('deleted', Boolean),
     Column('read_only', Boolean),
     Column('hide', Boolean),
     Column('order', Integer, nullable=True),
+    mysql_engine='InnoDB'
+)
+
+category_table = Table('categories', metadata,
+    Column('id', Integer, primary_key=True),
+    Column('category_name', Unicode(30), unique=True),
     mysql_engine='InnoDB'
 )
 
@@ -378,6 +393,8 @@ visitor_table = Table('visitors', metadata,
     mysql_engine='InnoDB'
 )
 
+'''추가'''
+mapper(Category, category_table)
 
 mapper(Visitor, visitor_table)
 
@@ -428,7 +445,9 @@ mapper(ReadStatus, read_status_table, properties={
     'user': relation(User, backref='read_status'),
 })
 
-mapper(Board, board_table)
+mapper(Board, board_table, properties={
+    'category': relation(Category, backref='boards')
+})
 
 mapper(BoardHeading, board_heading_table, properties={
     'board': relation(Board, backref='headings', lazy=False),
