@@ -117,21 +117,30 @@ class BotManagerTest(unittest.TestCase):
 
         # Seoul 캠퍼스에 사는 Mikkang 유저에 대한 날씨 정보를 잘 들고 오는가?
         result = self.engine.bot_manager.get_weather_info(self.session_key_mikkang)
-        self.assertEqual(result.city, 'seoul')
+        self.assertEqual(result.city, 'Seoul')
         self.assertEqual(result.current_temperature, 21)
         self.assertEqual(result.current_condition, u'Partly Cloudy')
         self.assertEqual(result.current_icon_url, u'/ig/images/weather/partly_cloudy.gif')
         self.assertEqual(result.tomorrow_icon_url, u'/ig/images/weather/chance_of_rain.gif')
         self.assertEqual(result.day_after_tomorrow_icon_url, u'/ig/images/weather/chance_of_storm.gif')
+        self.assertEqual(result.tomorrow_temperature_high, 89)
+        self.assertEqual(result.tomorrow_temperature_low, 68)
+        self.assertEqual(result.day_after_tomorrow_temperature_high, 87)
+        self.assertEqual(result.day_after_tomorrow_temperature_low, 71)
 
         # Daejeon 캠퍼스에 사는 Hodduc 유저에 대한 날씨 정보를 잘 들고 오는가?
         result = self.engine.bot_manager.get_weather_info(self.session_key_hodduc)
-        self.assertEqual(result.city, 'daejeon')
+        self.assertEqual(result.city, 'Daejeon')
         self.assertEqual(result.current_temperature, 25)
         self.assertEqual(result.current_condition, u'Mostly Cloudy')
         self.assertEqual(result.current_icon_url, u'/ig/images/weather/mostly_cloudy.gif')
         self.assertEqual(result.tomorrow_icon_url, u'/ig/images/weather/chance_of_rain.gif')
         self.assertEqual(result.day_after_tomorrow_icon_url, u'/ig/images/weather/chance_of_rain.gif')
+        self.assertEqual(result.tomorrow_temperature_high, 80)
+        self.assertEqual(result.tomorrow_temperature_low, 68)
+        self.assertEqual(result.day_after_tomorrow_temperature_high, 84)
+        self.assertEqual(result.day_after_tomorrow_temperature_low, 66)
+
 
         # Restore Stub Code
         xml.dom.minidom.parseString = self.org_parseString
