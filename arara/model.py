@@ -124,7 +124,8 @@ class Article(object):
         self.deleted = False
         self.date = datetime.datetime.fromtimestamp(time.time())
         self.hit = 0
-        self.vote = 0
+        self.positive_vote = 0
+        self.negative_vote = 0
         self.reply_count = 0
         self.is_searchable = True
         if parent:
@@ -290,7 +291,8 @@ articles_table = Table('articles', metadata,
     Column('author_ip', Unicode(15)),
     Column('date', DateTime),
     Column('hit', Integer),
-    Column('vote', Integer),
+    Column('positive_vote', Integer),
+    Column('negative_vote', Integer),
     Column('deleted', Boolean),
     Column('root_id', Integer, ForeignKey('articles.id'), nullable=True),
     Column('parent_id', Integer, ForeignKey('articles.id'), nullable=True),

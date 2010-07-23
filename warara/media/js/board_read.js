@@ -104,7 +104,10 @@ $(document).ready(function(){
 
     $(".article_vote").click(function(event){
             var vote_url = $(this).attr("href");
-            $vote_num = $(".vote_num_" + $(this).attr("rel"));
+            if ($(this).attr("name") == "article_vote_up")
+                $vote_num = $(".positive_vote_num_" + $(this).attr("rel"));
+            else
+                $vote_num = $(".negative_vote_num_" + $(this).attr("rel"));
             $.get(vote_url, function(data){
                 if(data == "OK"){
                 alert("Successfully voted");
