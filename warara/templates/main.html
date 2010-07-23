@@ -11,6 +11,34 @@
 
 {% block content %}
 {% load i18n %}
+{% if has_weather %}
+<div id="weather" class="weathers">
+    <div id="weather_table">
+        <div class="best_articles_caption">{% trans "Weather" %}</div>
+        <div class="best_articles_content_margin">
+            <div id="weather_today_content" class="weather_contents">
+                <ul>
+                    <li> <b> {{weather_info.city}} Campus </b> </li>
+                    <li> <img src="http://www.google.com{{weather_info.current_icon_url}}" alt="{{weather_info.current_condition}}" style="width:60px; height:60px;"/> </li>
+                    <li> {{weather_info.current_condition}} </li>
+                </ul>
+            </div>
+            <div class="weather_forecast_contents">
+                <ul>
+                    <li> <b> Tomorrow </b> </li>
+                    <li> <img src="http://www.google.com{{weather_info.tomorrow_icon_url}}" /> </li>
+                </ul>
+            </div>
+            <div class="weather_forecast_contents">
+                <ul>
+                    <li> <b> Day after tomorrow </b> </li>
+                    <li> <img src="http://www.google.com{{weather_info.day_after_tomorrow_icon_url}}" /> </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 <div id="todays_best" class="best_articles">
     <div id="todays_best_table" class="best_articles_table">
         <div class="best_articles_caption">{% trans "Today's Best" %}</div>
@@ -63,34 +91,6 @@
         </div>
     </div>
 </div>
-{% if has_weather %}
-<div id="weather" class="weathers">
-    <div id="weather_table">
-        <div class="best_articles_caption">{% trans "Weather" %}</div>
-        <div class="best_articles_content_margin">
-            <div id="weather_today_content" class="weather_contents">
-                <ul>
-                    <li> <b> {{weather_info.city}} Campus </b> </li>
-                    <li> <img src="http://www.google.com{{weather_info.current_icon_url}}" alt="{{weather_info.current_condition}}" style="width:60px; height:60px;"/> </li>
-                    <li> {{weather_info.current_condition}} </li>
-                <ul>
-            </div>
-            <div id="weather_forecast_content">
-                <ul>
-                    <li> <b> Tomorrow </b> </li>
-                    <li> <img src="http://www.google.com{{weather_info.tomorrow_icon_url}}" /> </li>
-                </ul>
-            </div>
-            <div id="weather_forecast_content">
-                <ul>
-                    <li> <b> Day after tomorrow </b> </li>
-                    <li> <img src="http://www.google.com{{weather_info.day_after_tomorrow_icon_url}}" /> </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-{% endif %}
 {% if has_banner %}
 <div id="banner" class="best_articles">
     <div id="weekly_best_table" class="best_articles_table">

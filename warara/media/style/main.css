@@ -71,7 +71,7 @@
 .weathers {
     width: 200px;
     border: 1px solid #EAEAEA;
-    margin: 0 0 0 10px;
+    margin: 10px 0 0 10px;
     float: right;
 }
 #weather_today_content {
@@ -84,12 +84,12 @@
     list-style-type: none;
 }
 
-#weather_forecast_content {
+.weather_forecast_contents {
     width: 180px; 
     text-align: center;
     margin-left: -20px;
 }
-#weather_forecast_content ul li {
+.weather_forecast_contents ul li {
     list-style-type: none;
 }
 
