@@ -296,13 +296,13 @@ div.file_upload_f input {
 }
 
 input.write_reply {
-	margin-right: 8%;
 	float: right;
+	margin-right: 1%;
 }
 
 input.cancel_reply {
 	float: right;
-	margin-right: 1%;
+	margin-right: 8%;
 }
 
 #file_line_model{
