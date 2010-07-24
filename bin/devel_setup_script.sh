@@ -3,8 +3,6 @@
 echo "Welcome, $USER! Beginning ARARA development environment setup."
 echo ""
 
-make > /dev/null
-
 echo -n "Input your base port number: "
 read base_port
 
@@ -341,6 +339,7 @@ supervisorctl stop all >& /dev/null
 supervisorctl shutdown >& /dev/null
 killall -u $USER python >& /dev/null
 make clean
+make > /dev/null
 
 echo ""
 echo "Completed."
