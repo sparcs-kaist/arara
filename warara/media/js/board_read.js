@@ -153,5 +153,9 @@ $(document).ready(function(){
                     }
                     });
 
+    $(".write_reply.small_btn").click(function(event) {
+        $(this).parent().submit();
+        $(this).attr("disabled", "disabled");
+    });
 });
 
