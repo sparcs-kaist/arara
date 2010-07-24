@@ -770,6 +770,37 @@ class ArticleManagerTest(unittest.TestCase):
         # 세션을 닫는다.
         session.close()
 
+    def test_check_article_exist(self):
+        # 글을 하나도 안 썼을 때의 상황을 테스트한다
+        try:
+            self.engine.article_manager.check_article_exist([1, 2, 3])
+            self.fail("nonexisting article must fail to check_article_exist")
+        except InvalidOperation:
+            pass
+        # 글을 쓴다
+        self._dummy_article_write(self.session_key_mikkang, u"1", u"board")
+        self._dummy_article_write(self.session_key_mikkang, u"1", u"board_h")
+        # 리스트, 숫자 모두 통과한다
+        self.engine.article_manager.check_article_exist([1, 2])
+        self.engine.article_manager.check_article_exist(1)
+        self.engine.article_manager.check_article_exist(2)
+        # 여전히, 존재하지 않는 글에 대해서는 실패한다
+        try:
+            self.engine.article_manager.check_article_exist([1, 2, 3])
+            self.fail("nonexisting article must fail to check_article_exist")
+        except InvalidOperation:
+            pass
+        try:
+            self.engine.article_manager.check_article_exist(3)
+            self.fail("nonexisting article must fail to check_article_exist")
+        except InvalidOperation:
+            pass
+        # 글을 쓴다
+        self._dummy_article_write(self.session_key_mikkang, u"1", u"board")
+        # 이번엔 말끔히 통과한다
+        self.engine.article_manager.check_article_exist([1, 2, 3])
+        self.engine.article_manager.check_article_exist(3)
+
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(ArticleManagerTest)
 

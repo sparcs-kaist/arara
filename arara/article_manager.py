@@ -2,10 +2,12 @@
 import datetime
 import time
 import logging
+import thread
 
 from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy import and_, or_, not_
 from sqlalchemy.orm import eagerload
+from sqlalchemy.sql import func, select
 from arara import model
 from arara.util import require_login, filter_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
@@ -39,6 +41,10 @@ class ArticleManager(object):
     def __init__(self, engine):
         self.logger = logging.getLogger('article_manager')
         self.engine = engine
+        # 전체 글 갯수, 이를 기억하기 위한 Lock
+        self.lock_maximum_article_id = thread.allocate_lock()
+        self.maximum_article_id = 0
+        self._update_maximum_article_id()
 
     def _article_thread_to_list(self, article_thread, session_key, blacklisted_userid):
         # 기존에 반복문 2개로 하던 걸 1개로 줄여봄.
@@ -924,6 +930,8 @@ class ArticleManager(object):
             new_article.last_reply_id  = id
             session.commit()
             session.close()
+            # 글이 새로 작성되었으므로 가장 큰 글 번호를 이에 알맞게 update 한다.
+            self._update_maximum_article_id()
         else:
             session.close()
             raise InvalidOperation('READ_ONLY_BOARD')
@@ -996,6 +1004,8 @@ class ArticleManager(object):
             article.root.last_reply_id = new_reply.id
         session.commit()
         session.close()
+        # 글이 새로 작성되었으므로 가장 큰 글 번호를 이에 알맞게 update 한다.
+        self._update_maximum_article_id()
         return id
 
     @require_login
@@ -1207,6 +1217,61 @@ class ArticleManager(object):
             session.rollback()
             session.close()
             raise InvalidOperation("Internal Error")
+
+    def _get_maximum_article_id(self):
+        '''
+        Internal.
+        현존하는 가장 큰 번호의 게시물의 id 를 알아낸다.
+
+        @rtype: int
+        @return:
+            1. 평상시 : 가장 큰 번호의 게시물의 id
+            2. 글이 존재하지 않을 경우 : 0
+        '''
+        session = model.Session()
+        try:
+            top_article = session.query(model.Article).from_statement(
+                    select(
+                        [model.articles_table],
+                        select([func.max(model.articles_table.c.id)]).label('top_article_id')==model.articles_table.c.id)
+                    ).first()
+        except IndexError:
+            session.close()
+            return 0
+        session.close()
+        if top_article == None:
+            return 0
+        return top_article.id
+
+    def _update_maximum_article_id(self):
+        '''
+        Internal.
+        현존하는 가장 큰 번호의 게시물의 id 를 내부 변수에 저장한다.
+        '''
+        with self.lock_maximum_article_id:
+            self.maximum_article_id = self._get_maximum_article_id()
+
+    def check_article_exist(self, no_data):
+
+        '''
+        주어진 번호의 글 / 글들이 현존하는 모든 글의 갯수에 비해 높지 않음을 확인한다.
+
+        @type  no_data: int / list
+        @param no_data: 체크하고자 하는 글 / 글들의 번호 / 번호들
+        @rtype: void
+        @return:
+            1. 평상시 : void
+            2. 글이 존재하지 않을 경우 : InvalidOperation('ARTICLE_NOT_EXIST')
+        '''
+        if type(no_data) == list:
+            # 가끔 텅 빈 리스트를 파라메터로 집어넣는 경우도 있다
+            if not no_data:
+                return
+            no_data = max(no_data)
+
+        # 실존하는 게시물인지의 여부는 가장 큰 게시물의 번호보다 크지 않음으로 검사 끝.
+        if no_data > self.maximum_article_id:
+            raise InvalidOperation('ARTICLE_NOT_EXIST')
 
     @require_login
     @log_method_call_important

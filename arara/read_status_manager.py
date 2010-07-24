@@ -138,25 +138,8 @@ class ReadStatusManager(object):
         return return_list
 
     def _check_article_exist(self, no_data):
-        session = model.Session()
-        try:
-            top_article = session.query(model.Article).from_statement(
-                    select(
-                        [model.articles_table],
-                        select([func.max(model.articles_table.c.id)]).label('top_article_id')==model.articles_table.c.id)
-                    ).first()
-        except IndexError:
-            session.close()
-            raise InvalidOperation('ARTICLE_NOT_EXIST')
-        session.close()
-        if type(no_data) == list:
-            for no in no_data:
-                if no > top_article.id:
-                    
-                    raise InvalidOperation('ARTICLE_NOT_EXIST')
-        else:
-            if no_data > top_article.id:
-                raise InvalidOperation('ARTICLE_NOT_EXIST')
+        # 함수의 내용이 ArticleManager 로 옮겨갔다. 
+        self.engine.article_manager.check_article_exist(no_data)
 
     def _initialize_data(self, user_id):
         if not self.read_status.has_key(user_id):
