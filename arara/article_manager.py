@@ -495,6 +495,52 @@ class ArticleManager(object):
 
         return article_list, last_page, article_count
 
+    def _get_read_status_generator(self, session_key, article_list):
+        '''
+        @type  session_key: string
+        @param session_key: Login Session
+        @type  article_list: list<SQLAlchemy model.Article>
+        @param article_list: SQLAlchemy 형식의 글 객체의 모음
+        @rtype: generator<dict>
+        @return:
+            LIST_ARTICLE_WHITELIST 를 통과한 article dictionary를 그때 그때 yield 한다
+        '''
+        for article in article_list:
+            article_dict = self._get_dict(article, LIST_ARTICLE_WHITELIST)
+            try:
+                read_status_main = self.engine.read_status_manager.check_stat(session_key, article.id)
+                read_status_sub  = self.engine.read_status_manager.check_stat(session_key, article.last_reply_id)
+                if read_status_main == 'R' and read_status_sub == 'N':
+                    read_status_main = 'U'
+                article_dict['read_status'] = read_status_main
+                yield article_dict
+            except NotLoggedIn, InvalidOperation:
+                article_dict['read_status'] = 'N'
+                yield article_dict
+        raise StopIteration
+
+    def _thrift_article_generator(self, article_dict_list_generator, blacklisted_users):
+        '''
+        @type  article_dict_list_generator: generator<dict> (LIST_ARTICLE_WHITELIST)
+        @param article_dict_list_generator: Thrift 객체로 만들어버릴 딕셔너리의 모음
+        @type  blacklisted_users: list<int>
+        @param blacklisted_users: 블랙리스트에 들어있는 사용자의 id
+        @rtype: generator<Thrift.Article>
+        @return: Thrift Article들의 모임
+        '''
+        for article in article_dict_list_generator:
+            if article['author_id'] in blacklisted_users:
+                article['blacklisted'] = True
+            else:
+                article['blacklisted'] = False
+            if not article.has_key('type'):
+                article['type'] = 'normal'
+
+            article['date'] = datetime2timestamp(article['date'])
+            article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
+            yield Article(**article)
+        raise StopIteration
+
     def _article_list(self, session_key, board_name, heading_name, page, page_length, include_all_headings = True, order_by = LIST_ORDER_ROOT_ID):
         '''
         Internal.
@@ -518,44 +564,19 @@ class ArticleManager(object):
         @return:
             선택한 게시판의 선택한 page 에 있는 글 (Article 객체) 의 list
         '''
-        blacklisted_users = self._get_blacklist_userid(session_key)
-
+        # Phase 1. SQLAlchemy Article List, Last Page, Article Count 를 구한다.
         article_list, last_page, article_count = self._get_article_list(board_name, heading_name, page, page_length, include_all_headings, order_by)
-        article_dict_list = list(self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST))
-        article_last_reply_id_list = [article.last_reply_id for article in article_list]
 
-        article_id_list = [article['id'] for article in article_dict_list]
-        read_stats_list = None # Namespace 에 등록. Assign 은 요 바로 다음에서.
+        # Phase 2. SQLAlchemy Article List -> Article Dictionary (ReadStatus Marked)
+        article_dict_list_generator = self._get_read_status_generator(session_key, article_list)
 
-        try:
-            read_stats_list = self.engine.read_status_manager.check_stats(session_key, article_id_list)
-            read_stats_list_sub = self.engine.read_status_manager.check_stats(session_key, article_last_reply_id_list)
-            for idx, item in enumerate(read_stats_list_sub):
-                if read_stats_list[idx] == 'R':
-                    if item == 'N':
-                        read_stats_list[idx] = 'U'
+        # Phase 3. Article Dictionary -> Thrift Article Object (Blacklisted Marked)
+        blacklisted_users = self._get_blacklist_userid(session_key)
+        article_list_generator = self._thrift_article_generator(article_dict_list_generator, blacklisted_users)
 
-        except NotLoggedIn, InvalidOperation:
-            read_stats_list = ['N'] * len(article_id_list)
-
-        # 이상의 내용을 바탕으로 article_list 를 채운다.
+        # 준비 완료. 이제 이를 바탕으로 Article List 객체를 돌려준다.
         article_list = ArticleList()
-        article_list.hit = [None] * len(article_id_list)
-
-        for idx, article in enumerate(article_dict_list):
-            if article['author_id'] in blacklisted_users:
-                article['blacklisted'] = True
-            else:
-                article['blacklisted'] = False
-            if not article.has_key('type'):
-                article['type'] = 'normal'
-
-            article['read_status'] = read_stats_list[idx]
-
-            article['date'] = datetime2timestamp(article['date'])
-            article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
-            article_list.hit[idx] = Article(**article)
-
+        article_list.hit = list(article_list_generator)
         article_list.last_page = last_page
         article_list.results = article_count
         return article_list
