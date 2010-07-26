@@ -4,19 +4,12 @@ $(document).ready(function(){
     //$(".article_reply .ui-wrapper").css('height', '');
     //$(".article_reply .ui-wrapper").css('width', '');
 
-
-    // Dynamically resize the reply textarea
-    var resize = function() {
-        var size = this.scrollHeight;
-        var minheight = 100;
-        var maxheight = 500;
-        if (size > minheight && size < maxheight)
-            $(this).height(size);
-        if (size > maxheight)
-            $(this).height(maxheight);
-    }
-
-    $(".article_reply textarea").change(resize).keyup(resize);
+    $(".article_reply textarea").autoResize({
+        onResize : function() { },
+        animateCallback : function() { },
+        animateDuration : 50,
+        extraSpace : 20
+    });
 
     $(".article_reply").hide();
     $(".article_reply_show").click(function(event) {
