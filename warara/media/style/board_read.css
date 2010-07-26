@@ -129,6 +129,7 @@ h1.root_article_title a {
 .article_root_text {
 	line-height: 180%;
 	color: black;
+    word-wrap:break-word;
 }
 
 div.article_reply {
@@ -188,6 +189,7 @@ div.article_reply {
 	line-height: 180%;
 	color: black;
 	margin-left: 2%;
+    word-wrap:break-word;
 }
 
 .article_file {
