@@ -35,8 +35,15 @@ LIST_ORDER_LAST_REPLY_DATE = 1
 
 class ArticleManager(object):
     '''
-    게시글 및 검색 처리 클래스
-    현재 게시글 표시방식이 절묘하기 때문에 read 메소드에 관한 논의가 필요.
+    글 (게시물) 과 관련된 거의 모든 일을 수행한다.
+
+        - 게시물 읽기 / 쓰기 / 수정 / 삭제 / 목록 / 추천
+        - 특수 목적의 글 목록 (투데이 / 위클리 베스트 등)
+
+    주요 용어
+
+        - 루트 글 : 답글이 아닌 글 (목록에 반드시 나오는 글)
+        - 답글 : 루트 글 혹은 다른 답글에 귀속되어 있는 글
     '''
     def __init__(self, engine):
         self.logger = logging.getLogger('article_manager')
@@ -47,7 +54,18 @@ class ArticleManager(object):
         self._update_maximum_article_id()
 
     def _article_thread_to_list(self, article_thread, session_key, blacklisted_userid):
-        # 기존에 반복문 2개로 하던 걸 1개로 줄여봄.
+        '''
+        @type  article_thread: model.Article (children eager loaded)
+        @param article_thread: list화 할 루트 글 객체
+        @type  sessino_key: string
+        @param session_key: 사용자 Login Session
+        @type  blacklisted_userid: set<int>
+        @param blacklisted_userid: session_key 로 주어진 사용자의 blacklist 목록
+        @rtype: list<dict(READ_ARTICLE_WHITELIST applied)>
+        @return: article_thread 로 주어진 루트 글과 여기에 속한 모든 답글들을 일렬로 세운 list
+        '''
+        # TODO: destroy 된 글을 중간에 보이지 않게 하기
+        # TODO: mark_as_read_list 별도로 분리하기
         stack = []
         ret = []
         article_id_list = []
@@ -73,6 +91,23 @@ class ArticleManager(object):
         return ret
 
     def _get_best_article(self, session_key, board_id, count, time_to_filter, best_type):
+        '''
+        @type  sessino_key: string
+        @param session_key: 사용자 Login Session
+        @type  board_id: int
+        @param board_id: best article 을 가져오고자 하는 board
+        @type  count: int
+        @param count: 몇 개의 best article 을 가져올 것인가?
+        @type  time_to_filter: int
+        @param time_to_filter: 몇 초 이내의 글만을 대상으로 할 것인가?
+        @type  best_type: string
+        @param best_type: 글 목록을 돌려줄 때 저장할 목록의 속성 (today / weekly)
+        @rtype: list<ttypes.Article>
+        @return: Best Article들
+        '''
+        #TODO: Query 의 코드 중복 제거하기 (성능 분석 포함)
+        #TODO: Query 부분과 글목록화 부분 분리하기
+        #TODO: root 글이 아닌 글도 포함될 수 있도록 하기
         session = model.Session()
         time_to_filter = datetime.datetime.fromtimestamp(time.time()-time_to_filter)
         if board_id:
@@ -106,6 +141,16 @@ class ArticleManager(object):
         return best_article_list
 
     def _get_dict(self, item, whitelist=None):
+        '''
+        @type  item: model.Article
+        @param item: dictionary 로 바꿀 객체 (여기서는 글)
+        @type  whitelist: list
+        @param whitelist: dictionary 에 남아있을 필드의 목록
+        @rtype: dict
+        @return: item 에서 whitelist 에 있는 필드만 남기고 적절히 dictionary 로 변환한 결과물
+        '''
+        # TODO: 여기서 할 필요가 없는 query (file 관련) filemanager 로 옮기기
+        # TODO: 여기 저기 흩어져 있는 datetime2timestamp 이리로 모으기
         session = model.Session()
         item_dict = item.__dict__
         if not item_dict.get('title'):
@@ -139,10 +184,27 @@ class ArticleManager(object):
             return item_dict
 
     def _get_dict_list(self, raw_list, whitelist=None):
+        '''
+        @type  raw_list: iterable(list, generator)<model.Article>
+        @param raw_list: _get_dict 에 통과시키고 싶은 대상물의 모임
+        @type  whitelist: list<string>
+        @param whitelist: _get_dict 에 넘겨줄 whitelist
+        @rtype: generator<dict(whitelist filtered)>
+        @return: _get_dict 를 통과시킨 raw_list 의 원소들을 하나씩 yield
+        '''
         for item in raw_list:
             yield self._get_dict(item, whitelist)
 
     def _get_user(self, session, session_key):
+        '''
+        @type  session: SQLAlchemy session
+        @param session: SQLAlchemy session
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        @rtype: model.User
+        @return: 주어진 session_key 로 로그인되어 있는 사용자에 대한 SQLAlchemy 객체
+        '''
+        # TODO: MemberManager 로 옮기기 (ArticleManager 에 이 함수가 존재할 이유가 없음)
         user_id = self.engine.login_manager.get_user_id(session_key)
         try:
             user = session.query(model.User).filter_by(id=user_id).one()
@@ -152,21 +214,28 @@ class ArticleManager(object):
         return user
 
     def _get_user_id(self, session_key):
+        '''
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        @rtype: int
+        @return: 주어진 session_key 로 로그인되어 있는 사용자의 고유 id
+        '''
+        # TODO: LoginManager 에서 직접 호출하도록 관련 함수 호출을 수정하기
         return self.engine.login_manager.get_user_id(session_key)
 
     def _get_article(self, session, board_id, article_id):
         '''
         Internal Function.
-        SQLAlchemy 세션을 이용하여 게시판의 글을 하나 읽어온다.
+        SQLAlchemy 세션을 이용하여 (게시판의) 글을 하나 읽어온다.
 
         @type  session: SQLAlchemy session
-        @param session: 현재 사용중인 SQLAlchemy session
+        @param session: SQLAlchemy session
         @type  board_id: int
         @param board_id: 읽고자 하는 글이 있는 게시판의 id (단, None 일 때는 모든 게시판이라 가정)
         @type  article_id: int
         @param article_id: 읽고자 하는 글의 id
         @rtype: model.Article
-        @return: DB 에서 읽어들인 SQLAlchemy Article 객체
+        @return: 선택한 Article 객체
         '''
         try:
             if board_id:
@@ -180,7 +249,6 @@ class ArticleManager(object):
 
     def _get_page_info(self, session, article_count, page, page_length):
         '''
-        Internal.
         요청한 페이지에 해당되는 글의 번호 대역을 알아낸다.
 
         @type  session: SQLAlchemy session
@@ -194,6 +262,8 @@ class ArticleManager(object):
         @rtype: (int, int, int)
         @return: last page 번호, 주어진 page 의 첫 글의 위치, 마지막 글의 위치
         '''
+        # TODO: 이 함수에서 session 을 사용할 필요가 전혀 없으므로 제거시키기
+
         # part 1. last page 구하기 
         last_page = int(article_count / page_length)
         if article_count % page_length != 0:
@@ -224,7 +294,7 @@ class ArticleManager(object):
 
         @type  count: integer
         @param count: Number of today's best articles to get
-        @rtype: list
+        @rtype: list<ttypes.Article>
         @return:
             1. 투베를 가져오는데 성공: Article list of Today's Best
             2. 투베를 가져오는데 실패:
@@ -248,6 +318,7 @@ class ArticleManager(object):
                 1. Not Existing Board: InvalidOperation Exception
                 2. 데이터베이스 오류: InternalError Exception
         '''
+        # TODO: 굳이 위 함수(get_today_best_list)와 이 함수가 따로 존재할 필요가 있을까?
         board_id = self.board_manager.get_board_id(board_name)
         return self._get_best_article(None, board_id, count, 86400, 'today')
 
@@ -256,10 +327,8 @@ class ArticleManager(object):
         '''
         전체 보드에서 윅베를 가져오는 함수
 
-        @type  board_name: string
-        @param board_name: Board Name
         @type  count: integer
-        @param count: Number of today's best articles to get
+        @param count: Number of weekly best articles to get
         @rtype: list
         @return:
             1. 투베를 가져오는데 성공: Article list of Today's Best
@@ -277,7 +346,7 @@ class ArticleManager(object):
         @type  board_name: string
         @param board_name: Board Name
         @type  count: integer
-        @param count: Number of today's best articles to get
+        @param count: Number of weekly best articles to get
         @rtype: list
         @return:
             1. 투베를 가져오는데 성공: Article list of Today's Best
@@ -288,109 +357,11 @@ class ArticleManager(object):
         board_id = self.engine.board_manager.get_board_id(board_name)
         return self._get_best_article(None, board_id, count, 604800, 'weekly')
 
-    @log_method_call
-    @require_login
-    def not_read_article_list(self, session_key, page=1, page_length=20):
-        '''
-        사용자가 안 읽은 글들의 no을 리던해주는 함수
-
-        @type  session_key: string
-        @param session_key: User Key
-        @rtype: boolean, list
-        @type  page: integer
-        @param page: Page Number to Request
-        @type  page_length: integer
-        @param page_length: Count of Article on a Page
-        @rtype: list
-        @return:
-            1. 리스트 읽어오기 성공: Not Read Article List
-            2. 리스트 읽어오기 실패:
-                1. 페이지 번호 오류: InvalidOperation Exception 
-                2. 데이터베이스 오류: InternalError Exception
-        '''
-
-        try:
-            session = model.Session()
-            desired_query = self._get_basic_query(session, u'', u'', True)
-            article_count = desired_query.count()
-            last_page, offset, last = self._get_page_info(session, article_count, page, page_length)
-            article_list = desired_query.order_by(model.Article.id.desc())[offset:last]
-
-            article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
-            article_number = []
-            for article in article_dict_list:
-                article_number.append(article['id'])
-            read_stats_list = self.engine.read_status_manager.check_stats(session_key, article_number)
-            #not_read_article = filter(lambda x : x = 'N', read_stats_list) 
-            not_read_article_number = []
-            for i in range(len(read_stats_list)):
-                if read_stats_list[i] == 'N':
-                    not_read_article_number.append(article_number[i])
-            article_count = len(not_read_article_number) 
-
-            session.close()
-            ret = ArticleNumberList()
-            ret.hit = not_read_article_number
-            ret.last_page = last_page
-            ret.results = article_count
-            return ret
-        except InvalidRequestError:
-            session.close()
-            raise InternalError('DATABASE_ERROR')
-
-
-    @log_method_call
-    @require_login
-    def new_article_list(self, session_key, page=1, page_length=20):
-        '''
-        제대로 작동하지 않는 함수. 다시 코딩하여야 함.
-        사용자가 로그아웃한 이후 게시판에 새로 올라온 글 또는 수정된 글들을 불러오는 함수
-
-        @type  session_key: string
-        @param session_key: User Key
-        @rtype: boolean, list
-        @type  page: integer
-        @param page: Page Number to Request
-        @type  page_length: integer
-        @param page_length: Count of Article on a Page
-        @rtype: list
-        @return:
-            1. 리스트 읽어오기 성공: New Article List
-            2. 리스트 읽어오기 실패:
-                1. 페이지 번호 오류: InvalidOperation Exception 
-                2. 데이터베이스 오류: InternalError Exception
-        '''
-
-        try:
-            session = model.Session()
-            user = self._get_user(session, session_key)
-            article_count = article_list = session.query(model.Article).filter(and_(
-                                model.articles_table.c.root_id==None,
-                                model.articles_table.c.last_modified_date > user.last_logout_time)).count()
-            last_page, offset, last = self._get_page_info(session, article_count, page, page_length)
-
-            article_list = session.query(model.Article).filter(and_(
-                    model.articles_table.c.root_id==None,
-                    model.articles_table.c.last_modified_date > user.last_logout_time)).order_by(model.Article.id.desc())[offset:last]
-            article_dict_list = self._get_dict_list(article_list, LIST_ARTICLE_WHITELIST)
-            session.close()
-
-            ret = ArticleList()
-            ret.hit = list()
-            for article in article_dict_list:
-                article['read_status'] = 'N'
-                article['date'] = datetime2timestamp(article['date'])
-                article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
-                ret.hit.append(Article(**d))
-            ret.last_page = last_page
-            ret.results = article_count
-            return ret
-        except InvalidRequestError:
-            session.close()
-            raise InternalError('DATABASE_ERROR')
-
-
     def _get_blacklist_userid(self, session_key):
+        '''
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        '''
         try:
             blacklist_list = self.engine.blacklist_manager.get_article_blacklisted_userid_list(session_key)
         except NotLoggedIn:
@@ -414,6 +385,7 @@ class ArticleManager(object):
         @rtype: SQLAlchemy Query
         @return: 선택된 board_name, heading_name, include_all_headings 가 적용된 Query
         '''
+        # TODO: 좀더 조립식으로 만들기 위해서는 board_name, heading_name 대신 board_id, heading_id 를 받아야지 않을까
         query = session.query(model.Article)
 
         if board_name != u'':
@@ -426,7 +398,7 @@ class ArticleManager(object):
                 heading = self.engine.board_manager._get_heading_by_boardid(session, board_id, heading_name)
                 query = query.filter_by(heading=heading)
         else:
-            # 모든 board 에 있는 글을 선택한다.
+            # 모든 board 에 있는 글을 선택한다. 단 hide 된 보드나 delete 된 보드는 제외한다.
             query = query.filter(and_(
                     model.articles_table.c.root_id==None,
                     model.articles_table.c.destroyed==False,
@@ -446,6 +418,8 @@ class ArticleManager(object):
         @param query: SQLAlchemy Query
         @type  order_by: int
         @param order_by: 원하는 게시물 정렬 방식. 보통 LIST_ORDER_ROOT_ID.
+        @rtype: SQLAlchemy Query
+        @return: 정렬방식이 적용된 SQLAlchemy Query
         '''
         if order_by == LIST_ORDER_ROOT_ID:
             return query.order_by(model.Article.id.desc())
@@ -498,7 +472,7 @@ class ArticleManager(object):
     def _get_read_status_generator(self, session_key, article_list):
         '''
         @type  session_key: string
-        @param session_key: Login Session
+        @param session_key: 사용자 Login Session
         @type  article_list: list<SQLAlchemy model.Article>
         @param article_list: SQLAlchemy 형식의 글 객체의 모음
         @rtype: generator<dict>
@@ -547,7 +521,7 @@ class ArticleManager(object):
         주어진 게시판의 주어진 페이지에 있는 글의 목록을 가져와 Thrift 형식의 Article 객체의 list 로 돌려준다.
 
         @type  session_key: string
-        @param session_key: 사용자의 session_key
+        @param session_key: 사용자 Login Session
         @type  board_name: string
         @param board_name: 글을 가져올 게시판의 이름
         @type  heading_name: string
@@ -587,7 +561,7 @@ class ArticleManager(object):
         게시판의 게시글 목록 읽어오기
 
         @type  session_key: string
-        @param session_key: User Key
+        @param session_key: 사용자 Login Session
         @type  board_name: string
         @param board_name : BBS Name (0글자 문자열을 넘기면 모든 게시판에 대하여 적용)
         @type  heading_name: string
@@ -614,17 +588,15 @@ class ArticleManager(object):
         '''
         DB로부터 게시글 하나를 읽어옴
 
-        Article Dictionary { no, read_status, title, content, author, date, hit, vote }
-
         @type  session_key: string
-        @param session_key: User Key
-        @type  no: number
-        @param no: Article Number
+        @param session_key: 사용자 Login Session
         @type board_name: string
         @param board_name : BBS Name
-        @rtype: dictionary
+        @type  no: int
+        @param no: Article Number
+        @rtype: list<ttypes.Article>
         @return:
-            1. Read 성공: Article Dictionary
+            1. Read 성공: 선택한 글과 그 글에 딸린 글들의 list
             2. Read 실패:
                 1. 존재하지 않는 게시물번호: InvalidOperation Exception
                 2. 존재하지 않는 게시판: InvalidOperation Exception
@@ -652,23 +624,24 @@ class ArticleManager(object):
 
     def read_recent_article(self, session_key, board_name):
         '''
-        DB로부터 가장 최근의 게시글 하나만을 읽어옴
+        DB로부터 주어진 게시판의 최근의 게시글 하나만을 읽어옴
 
         Article Dictionary { no, read_status, title, content, author, date, hit, vote }
 
         @type  session_key: string
-        @param session_key: User Key
-        @type board_name: string
+        @param session_key: 사용자 Login Session
+        @type  board_name: string
         @param board_name : BBS Name
-        @rtype: dictionary
+        @rtype: list<ttypes.Article>
         @return:
-            1. Read 성공: Article Dictionary
+            1. Read 성공: list<ttypes.Article>
             2. Read 실패:
                 1. 최근 게시물이 존재하지 않음: InvalidOperation Exception
                 2. 존재하지 않는 게시판: InvalidOperation Exception
                 3. 로그인되지 않은 유저: InvalidOperation Exception
                 4. 데이터베이스 오류: InternalError Exception 
         '''
+        # TODO: 위의 read_article 과 엮어서 조립식으로 만들기
         
         board_id = self.engine.board_manager.get_board_id(board_name)
         session = model.Session()
@@ -782,7 +755,7 @@ class ArticleManager(object):
         @param include_all_headings: 모든 말머리를 보여줄 것인지의 여부
         @type  order_by: int - LIST_ORDER
         @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
-        @rtype: list<Article>
+        @rtype: ttypes.ArticleList
         @return:
             선택한 게시판의 선택한 page 에 있는 글 (Article 객체) 의 list
         '''
@@ -832,18 +805,18 @@ class ArticleManager(object):
         게시물을 읽을 때 밑에 표시될 게시글 목록을 가져오는 함수
 
         @type  session_key: string
-        @param session_key: User Key
+        @param session_key: 사용자 Login Session
         @type  board_name: string
         @param board_name: Board Name
         @type  heading_name: string
         @param heading_name: 가져올 글의 글머리 이름
-        @type  no: integer
+        @type  no: int
         @param no: Article No
-        @type  page_length: integer
+        @type  page_length: int
         @param page_length: Number of articles to be displayed on a page
         @type  include_all_headings: boolean
         @param include_all_headings: 모든 글머리의 글을 가져올지에 대한 여부
-        @rtype: Article List
+        @rtype: ttypes.ArticleList
         @return:
             1. 목록 가져오기 성공: Article List
             2. 목록 가져오기 실패:
@@ -859,16 +832,16 @@ class ArticleManager(object):
         DB의 게시물 하나를 추천하거나 반대함
 
         @type  session_key: string
-        @param session_key: User Key
+        @param session_key: 사용자 Login Session
         @type  board_name: string
         @param board_name: BBS Name (u"" 을 주면 모든 게시판에 대하여)
-        @type  article_no: integer
+        @type  article_no: int
         @param article_no: Article No
         @type  positive_vote: bool
         @param positive_vote: 추천/반대 여부
         @rtype: void
         @return:
-            1. 추천 성공: Nothing~
+            1. 추천 성공: Nothing
             2. 추천 실패:
                 1. 존재하지 않는 게시판: InvalidOperation Exception
                 2. 로그인되지 않은 유저: InvalidOperation Exception
@@ -906,15 +879,13 @@ class ArticleManager(object):
         '''
         DB에 게시글 하나를 작성함
 
-        Article Dictionary { title, content, is_searchable, attach}
-
         @type  session_key: string
-        @param session_key: User Key
-        @type  article_dic: dictionary
+        @param session_key: 사용자 Login Session
+        @type  article_dic: dict(WrittenArticle)
         @param article_dic: Article Dictionary
-        @type board_name: string
-        @param board_name : BBS Name
-        @rtype: string
+        @type  board_name: string
+        @param board_name: BBS Name
+        @rtype: int
         @return:
             1. Write 성공: Article Number
             2. Write 실패:
@@ -964,16 +935,14 @@ class ArticleManager(object):
         '''
         댓글 하나를 해당하는 글에 추가
 
-        Reply Dictionary { title, content }
-
         @type  session_key: string
-        @param session_key: User Key
-        @type  reply_dic: dictionary
-        @param reply_dic: Reply Dictionary
+        @param session_key: 사용자 Login Session
         @type  board_name: string
         @param board_name: BBS Name
-        @type article_no: integer
+        @type  article_no: int
         @param article_no: Article No in which the reply will be added
+        @type  reply_dic: dict
+        @param reply_dic: Reply Dictionary
         @rtype: string
         @return:
             1. 작성 성공: Article Number
@@ -1035,17 +1004,14 @@ class ArticleManager(object):
         '''
         DB의 해당하는 게시글 수정
 
-        Article Dictionary { title, content, attach1, attach2 }
-        attach1, attach2는 아직 구현되지 않음.
-
         @type  session_key: string
-        @param session_key: User Key
-        @type  no: integer
+        @param session_key: 사용자 Login Session
+        @type  board_name: string
+        @param board_name : BBS Name
+        @type  no: int
         @param no: Article Number
         @type  article_dic : dictionary
         @param article_dic : Article Dictionary
-        @type board_name: string
-        @param board_name : BBS Name
         @rtype: string
         @return:
             1. Modify 성공: Article Number
@@ -1095,10 +1061,10 @@ class ArticleManager(object):
         DB에 해당하는 글 삭제
         
         @type  session_key: string
-        @param session_key: User Key
-        @type board_name: string
-        @param board_name : BBS Name
-        @type  no: number
+        @param session_key: 사용자 Login Session
+        @type  board_name: string
+        @param board_name: BBS Name
+        @type  no: int
         @param no: Article Number
         @rtype: boolean 
         @return:
@@ -1140,7 +1106,14 @@ class ArticleManager(object):
         return True
 
     def _destroy_article(self, board_id, no):
-        # XXX Internal use only
+        '''
+        주어진 글을 destroy 한다. destroy 된 글은 아예 글 목록에서 보이지 않게 된다.
+
+        @type  board_id: int
+        @param board_id: 해당 게시물이 있는 board id
+        @type  no: int
+        @param no: 해당 게시물의 id
+        '''
         session = model.Session()
         article = self._get_article(session, board_id, no)
         # 이미 destroyed 인 것은 고려할 필요가 없다.
@@ -1167,8 +1140,8 @@ class ArticleManager(object):
         주어진 글이 Destroy 할만한 글인지 판단하여, 만일 그렇다면 Destroy 함.
         
         @type  session_key: string
-        @param session_key: User Key
-        @type board_name: string
+        @param session_key: 사용자 Login Session
+        @type  board_name: string
         @param board_name : BBS Name
         @type  no: number
         @param no: Article Number
@@ -1196,7 +1169,14 @@ class ArticleManager(object):
         return True
 
     def _fix_article_concurrency(self, board_id, no):
-        '''Internal use only.'''
+        '''
+        주어진 글의 reply 갯수를 바로잡고 last_reply_date 또한 바로잡는다.
+
+        @type  board_id: int
+        @param board_id: 게시물이 있는 board 의 id
+        @type  no: int
+        @param no: 게시물의 번호
+        '''
         session = model.Session()
         article = session.query(model.Article).options(eagerload('children')).filter_by(id=no).one()
 
@@ -1241,7 +1221,6 @@ class ArticleManager(object):
 
     def _get_maximum_article_id(self):
         '''
-        Internal.
         현존하는 가장 큰 번호의 게시물의 id 를 알아낸다.
 
         @rtype: int
@@ -1266,7 +1245,6 @@ class ArticleManager(object):
 
     def _update_maximum_article_id(self):
         '''
-        Internal.
         현존하는 가장 큰 번호의 게시물의 id 를 내부 변수에 저장한다.
         '''
         with self.lock_maximum_article_id:
@@ -1302,8 +1280,8 @@ class ArticleManager(object):
         올바르지 않다면 이를 고침.
         
         @type  session_key: string
-        @param session_key: User Key
-        @type board_name: string
+        @param session_key: 사용자 Login Session (시삽이어야 함)
+        @type  board_name: string
         @param board_name : BBS Name
         @type  no: number
         @param no: Article Number

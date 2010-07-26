@@ -90,8 +90,6 @@ class ARAraEngine(object):
             'get_today_best_list_specific': self.article_manager.get_today_best_list_specific,
             'get_weekly_best_list': self.article_manager.get_weekly_best_list,
             'get_weekly_best_list_specific': self.article_manager.get_weekly_best_list_specific,
-            'not_read_article_list': self.article_manager.not_read_article_list,
-            'new_article_list': self.article_manager.new_article_list,
             'article_list': self.article_manager.article_list,
             'read_article': self.article_manager.read_article,
             'read_recent_article': self.article_manager.read_recent_article,

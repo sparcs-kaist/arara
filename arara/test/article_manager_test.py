@@ -668,18 +668,6 @@ class ArticleManagerTest(unittest.TestCase):
         l = self.engine.article_manager.article_list_below(self.session_key_mikkang, u'board', u'', 95, 10)
         self.assertEqual(l.hit[0].id, 100)
 
-    def test_not_read_article_list(self):
-        for i in range(110):
-            self._dummy_article_write(self.session_key_mikkang)
-
-        l = self.engine.article_manager.not_read_article_list(self.session_key_mikkang)
-        self.assertEqual(l.hit, [110, 109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91])
-
-        _ = self.engine.article_manager.read_article(self.session_key_mikkang, u'board', 110)
-        l = self.engine.article_manager.not_read_article_list(self.session_key_mikkang)
-        # XXX: 잘못 구현되어 있습니당. article_manager.py의 주석 참조
-        self.assertEqual(l.hit, [109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91])
-
     def test_article_list_for_all_board(self):
         # 테스트용 게시판을 두 개 만들자.
         self.engine.board_manager.add_board(self.session_key_sysop, u'total1', u'Test Board', [])
