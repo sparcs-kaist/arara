@@ -315,7 +315,7 @@ link_table = Table('links', metadata,
     Column('link_url', Unicode(100)),
     Column('ishidden', Boolean),
     Column('deleted', Boolean),
-    Column('order', integer),
+    Column('order', Integer),
     mysql_engine='InnoDB'
 )
 
