@@ -113,6 +113,18 @@ class Board(object):
     def __repr__(self):
         return "<Board('%s', '%s')>" % (self.board_name, self.board_description)
 
+class Link(object):
+    def __init__(self, link_name, link_description, link_url, order):
+        self.link_name = smart_unicode(link_name)
+        self.link_description = smart_unicode(link_description)
+        self.link_url = smart_unicode(link_url)
+        self.ishidden = False
+        self.deleted = False
+        self.order = order
+    
+    def __repr__(self):
+        return "<Link('%s', '%s', '%s')>" % (self.link_name, self.link_description, self.link_url)
+
 class BoardHeading(object):
     def __init__(self, board, heading):
         self.board = board
@@ -296,6 +308,17 @@ board_heading_table = Table('board_headings', metadata,
     mysql_engine='InnoDB'
 )
 
+link_table = Table('links', metadata, 
+    Column('id', Integer, primary_key=True),
+    Column('link_name', Unicode(30), unique=True),
+    Column('link_description', Unicode(300)),
+    Column('link_url', Unicode(100)),
+    Column('ishidden', Boolean),
+    Column('deleted', Boolean),
+    Column('order', integer),
+    mysql_engine='InnoDB'
+)
+
 articles_table = Table('articles', metadata,
     Column('id', Integer, primary_key=True),
     Column('title', Unicode(200)),
@@ -420,6 +443,8 @@ mapper(File, file_table, properties={
     'board':relation(Board, backref=None, lazy=True),
     'article':relation(Article, backref=None, lazy=True),
 })
+
+mapper(Link, link_table)
 
 mapper(Banner, banner_table)
 
