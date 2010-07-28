@@ -319,7 +319,7 @@ class ArticleManager(object):
                 2. 데이터베이스 오류: InternalError Exception
         '''
         # TODO: 굳이 위 함수(get_today_best_list)와 이 함수가 따로 존재할 필요가 있을까?
-        board_id = self.board_manager.get_board_id(board_name)
+        board_id = self.engine.board_manager.get_board_id(board_name)
         return self._get_best_article(None, board_id, count, 86400, 'today')
 
     @log_method_call

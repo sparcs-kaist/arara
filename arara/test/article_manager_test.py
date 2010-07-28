@@ -462,85 +462,97 @@ class ArticleManagerTest(unittest.TestCase):
             self.engine.article_manager.vote_article(vote_order[i], board_name, article_num)
 
     def test_todays_best_and_weekly_best(self):
-        # XXX : Insufficient. To test properly, we must faking time sharply.
-        # XXX : 왜 content=None 이어야 하지 ??
+        # Phase 1.
+        # Preparation - Step 1. Writing articles
+        self._dummy_article_write(self.session_key_mikkang, u"", u"board")      #1
+        self._dummy_article_write(self.session_key_mikkang, u"", u"board_hide") #2
+        self._dummy_article_write(self.session_key_mikkang, u"", u"board_del")  #3
+        self._dummy_article_write(self.session_key_mikkang, u"", u"board_hide") #4
+        self._dummy_article_write(self.session_key_mikkang, u"", u"board")      #5
+        self._dummy_article_write(self.session_key_mikkang, u"", u"board")      #6
+        self._dummy_article_write(self.session_key_mikkang, u"", u"board_del")  #7
+        self._dummy_article_write(self.session_key_mikkang, u"", u"board_hide") #8
+        self._dummy_article_write(self.session_key_mikkang, u"", u"board_del")  #9
 
-        article = [0] * 9
-
-        article[0] = self._dummy_article_write(self.session_key_mikkang)
-        self._vote(article[0], 4, u'board')
-        article[1] = self._dummy_article_write(self.session_key_mikkang)
-        self._vote(article[1], 8, u'board')
-        article[2] = self._dummy_article_write(self.session_key_mikkang)
-        self._vote(article[2], 3, u'board')
-
-        article[3] = self._dummy_article_write(self.session_key_hodduc, "", u'board_hide')          
-        self._vote(article[3], 0, u'board_hide')
-        article[4] = self._dummy_article_write(self.session_key_hodduc, "", u'board_hide')          
-        self._vote(article[4], 7, u'board_hide')
-        article[5] = self._dummy_article_write(self.session_key_hodduc, "", u'board_hide')          
-        self._vote(article[5], 6, u'board_hide')
-
-        article[6] = self._dummy_article_write(self.session_key_sillo, "", u'board_del')
-        self._vote(article[6], 2, u'board_del')
-        article[7] = self._dummy_article_write(self.session_key_sillo, "", u'board_del')
-        self._vote(article[7], 5, u'board_del')
-        article[8] = self._dummy_article_write(self.session_key_sillo, "", u'board_del')
-        self._vote(article[8], 1, u'board_del')
+        # Preparation - Step 2. Vote (article no, vote num, board name)
+        self._vote(4, 8, u"board_hide")
+        self._vote(9, 7, u"board_del")
+        self._vote(2, 6, u"board_hide")
+        self._vote(6, 5, u"board")
+        self._vote(7, 4, u"board_del")
+        self._vote(8, 3, u"board_hide")
+        self._vote(5, 2, u"board")
+        self._vote(3, 1, u"board_del")
 
         # 추천한 대로 잘 뽑히는가?
         result = self.engine.article_manager.get_weekly_best_list(5)
         self.assertEqual(len(result), 5)
-        self.assertEqual(article[1], result[0].id)
-        self.assertEqual(article[4], result[1].id)
-        self.assertEqual(article[5], result[2].id)
-        self.assertEqual(article[7], result[3].id)
-        self.assertEqual(article[0], result[4].id)
+        self.assertEqual([4, 9, 2, 6, 7], [x.id for x in result])
+
+        result = self.engine.article_manager.get_today_best_list(5)
+        self.assertEqual(len(result), 5)
+        self.assertEqual([4, 9, 2, 6, 7], [x.id for x in result])
 
         # 특정 게시판만 뽑을때는 잘 뽑히는가?
         result = self.engine.article_manager.get_weekly_best_list_specific('board_del')
         self.assertEqual(len(result), 3)
-        self.assertEqual(article[7], result[0].id)
-        self.assertEqual(article[6], result[1].id)
-        self.assertEqual(article[8], result[2].id)
+        self.assertEqual([9, 7, 3], [x.id for x in result])
 
+        result = self.engine.article_manager.get_today_best_list_specific('board_del')
+        self.assertEqual(len(result), 3)
+        self.assertEqual([9, 7, 3], [x.id for x in result])
 
         # 게시판을 숨기면 잘 갱신되는가?
         self.engine.board_manager.hide_board(self.session_key_sysop, u'board_hide')
         result = self.engine.article_manager.get_weekly_best_list(5)
         self.assertEqual(len(result), 5)
-        self.assertEqual(article[1], result[0].id)
-        self.assertEqual(article[7], result[1].id)
-        self.assertEqual(article[0], result[2].id)
-        self.assertEqual(article[2], result[3].id)
-        self.assertEqual(article[6], result[4].id)
+        self.assertEqual([9, 6, 7, 5, 3], [x.id for x in result])
+
+        result = self.engine.article_manager.get_today_best_list(5)
+        self.assertEqual(len(result), 5)
+        self.assertEqual([9, 6, 7, 5, 3], [x.id for x in result])
+
+        # 보드를 지우면 잘 갱신되는가?
+        self.engine.board_manager.delete_board(self.session_key_sysop, u'board_del')
+        result = self.engine.article_manager.get_weekly_best_list(5)
+        self.assertEqual(len(result), 3)
+        self.assertEqual([6, 5, 1], [x.id for x in result])
+
+        result = self.engine.article_manager.get_today_best_list(5)
+        self.assertEqual(len(result), 3)
+        self.assertEqual([6, 5, 1], [x.id for x in result])
 
         # 게시판을 숨김해제하면 잘 갱신되는가?
         self.engine.board_manager.return_hide_board(self.session_key_sysop, u'board_hide')
         result = self.engine.article_manager.get_weekly_best_list(5)
         self.assertEqual(len(result), 5)
-        self.assertEqual(article[1], result[0].id)
-        self.assertEqual(article[4], result[1].id)
-        self.assertEqual(article[5], result[2].id)
-        self.assertEqual(article[7], result[3].id)
-        self.assertEqual(article[0], result[4].id)
+        self.assertEqual([4, 2, 6, 8, 5], [x.id for x in result])
+
+        result = self.engine.article_manager.get_today_best_list(5)
+        self.assertEqual(len(result), 5)
+        self.assertEqual([4, 2, 6, 8, 5], [x.id for x in result])
 
         # 게시물을 지우면 잘 갱신되는가?
-        self.engine.article_manager.delete_article(self.session_key_sillo, u'board_del', article[6])
-        result = self.engine.article_manager.get_weekly_best_list_specific('board_del')
-        self.assertEqual(len(result), 2)
-        self.assertEqual(article[7], result[0].id)
-        self.assertEqual(article[8], result[1].id)
-
-        # 보드를 지우면 잘 갱신되는가?
-        self.engine.board_manager.delete_board(self.session_key_sysop, u'board_del')
+        self.engine.article_manager.delete_article(self.session_key_mikkang, u'board_hide', 2)
         result = self.engine.article_manager.get_weekly_best_list(5)
         self.assertEqual(len(result), 5)
-        self.assertEqual(article[1], result[0].id)
-        self.assertEqual(article[4], result[1].id)
-        self.assertEqual(article[5], result[2].id)
-        self.assertEqual(article[0], result[3].id)
-        self.assertEqual(article[2], result[4].id)
+        self.assertEqual([4, 6, 8, 5, 1], [x.id for x in result])
+
+        # 하루가 지났다. 새로운 글이 하나 올라왔다
+        global STUB_TIME_CURRENT
+        STUB_TIME_CURRENT += 86400
+        self._dummy_article_write(self.session_key_mikkang, u"", u"board_hide") #10
+        self._vote(10, 7, u"board_hide")
+
+        # Weekly Best 와 Today's Best 를 구해봐!
+        result = self.engine.article_manager.get_weekly_best_list(5)
+        self.assertEqual(len(result), 5)
+        self.assertEqual([4, 10, 6, 8, 5], [x.id for x in result])
+
+        result = self.engine.article_manager.get_today_best_list(5)
+        self.assertEqual(len(result), 1)
+        self.assertEqual([10], [x.id for x in result])
+
     def test_many_replies(self):
         article_id = self._dummy_article_write(self.session_key_mikkang)
         reply_dic = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
