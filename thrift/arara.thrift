@@ -419,6 +419,17 @@ service ARAraThriftInterface {
                             3:i32 new_order)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void add_bbs_manager(1:string session_key, 2:string board_name,
+                         3:string user_name)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void remove_bbs_manager(1:string session_key, 2:string board_name,
+                         3:string user_name)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<PublicUserInformation> get_bbs_managers(1:string board_name)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// BoardManager Part End
 /// ReadStatusManager Part Begin
     string check_stat(1:string session_key, 2:i32 no)
