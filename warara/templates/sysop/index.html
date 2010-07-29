@@ -47,6 +47,26 @@
     </div>
 </fieldset>
 
+<fieldset id="bbs_manager_panel">
+    <legend>보드 관리자</legend>
+    <table id="bbs_managers_list">
+        <thead>
+            <tr>
+                <th>board name</th>
+                <th>managers</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for manager_info in  bbs_managers_list %}
+            <tr class="{% if manager_info.board.hide %}hidden_board{% else %}showing_board{% endif %}">
+                <td>{{manager_info.board.board_name}}</td>
+                <td>{% for manager in manager_info.managers %} {{manager.username}} {% endfor %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</fieldset>
+
 <fieldset id="add_board">
     <legend>보드 추가</legend>
     <form method="post" action="/sysop/add_board/">

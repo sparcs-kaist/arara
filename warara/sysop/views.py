@@ -15,6 +15,14 @@ def index(request):
 
     board_list = server.board_manager.get_board_list()
     r['board_list'] = board_list
+    
+    bbs_managers_list = []
+    for board in board_list:
+        bbs_managers = server.board_manager.get_bbs_managers(board.board_name)
+        bbs_managers_list.append({'board': board, 'managers': bbs_managers})
+    r['bbs_managers_list'] = bbs_managers_list
+
+
 
     # TODO: 배너를 단순히 나열하기보다는 배너의 날짜 등을 함께 표시하는 것이 어떨까?
     banner_list = server.notice_manager.list_banner(sess)
