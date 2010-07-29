@@ -415,7 +415,7 @@ class ArticleManagerTest(unittest.TestCase):
         article_no0 = self._dummy_article_write(self.session_key_mikkang)
         article_no1 = self._dummy_article_write(self.session_key_mikkang)
         # Modify nickname of first article when the User is a sysop
-        result = self.engine.article_manager.modify_nickname(self.session_key_sysop, u'board', article_no0, u'MODIFIED NICKNAME')
+        result = self.engine.article_manager.modify_nickname_in_article(self.session_key_sysop, u'board', article_no0, u'MODIFIED NICKNAME')
         self.assertEqual(article_no0, result)
         # Now check it is modified or not
         result = self.engine.article_manager.read_article(self.session_key_mikkang, u'board', 1)

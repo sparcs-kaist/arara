@@ -1055,7 +1055,7 @@ class ArticleManager(object):
 
     @require_login
     @log_method_call_important
-    def modify_nickname(self, session_key, board_name, no, new_nickname):
+    def modify_nickname_in_article(self, session_key, board_name, no, new_nickname):
         '''
         사용자가 SYSOP일 경우 해당하는 게시글의 닉네임을 변경할 수 있도록 함.
 
