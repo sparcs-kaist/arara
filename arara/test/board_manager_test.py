@@ -397,7 +397,9 @@ class BoardManagerTest(unittest.TestCase):
         register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
         self.engine.member_manager.confirm(u'jean', register_key)
         self.engine.board_manager.add_bbs_manager(self.session_key_sysop, u'test', u'jean')
-        # TODO: BBSManager 에 한 게시판에 대해 몇명의 관리자가 누가 있는지 확인할 테스트코드
+        bbs_managers = self.engine.board_manager.get_bbs_managers(u'test')
+        self.assertEqual(u'mikkang', bbs_managers[0].username)
+        self.assertEqual(u'jean',bbs_managers[1].username)
 
     def testRemoveBBSManager(self):
         # 게시판 관리자 권한 지우기 테스트. by SYSOP

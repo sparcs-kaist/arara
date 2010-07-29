@@ -3,7 +3,7 @@ from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
 from arara import model
 from arara.util import filter_dict, require_login
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
-from arara.util import smart_unicode
+from arara.util import smart_unicode, datetime2timestamp
 
 from arara_thrift.ttypes import *
 
@@ -13,6 +13,9 @@ log_method_call_important = log_method_call_with_source_important('board_manager
 BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only', 'hide', 'id', 'headings', 'order')
 
 CATEGORY_WHITELIST = ('category_name', 'id')
+
+USER_QUERY_WHITELIST = ('username', 'nickname', 'email',
+        'signature', 'self_introduction', 'campus', 'last_login_ip', 'last_logout_time')
 
 class BoardManager(object):
     '''
@@ -883,16 +886,29 @@ class BoardManager(object):
     def get_bbs_managers(self, board_name):
         '''
         현 게시판 관리자(들)을 return한다.
+        프론트엔드에서 게시판 정보도 함께 나타내기 위해 board_name도 포함되어있다.
 
         @type   board_name: string
         @param  board_name: 관리자를 확인할 게시판
-        @rtype: list
-        @return: list of user object(s)
+        @rtype: list<PublicUserInformation>
+        @return: 보드의 관리자들의 list
         '''
-        # TODO: 여러명의 user들을 어떻게 return 해야 할까 (다시 수정해야 함)
         session = model.Session()
         board_id = self.get_board_id(board_name)
-        if self._has_bbsManager(board_name):
-            managed_board = session.query(model.BBSManager).filter_by(board_id=board_id).one()
+        try:
+            bbs_managers = []
+            managements = session.query(model.BBSManager).filter_by(board_id=board_id).all()
+            for management in managements:
+                query = session.query(model.User).filter_by(id=management.manager_id).one()
+                manager_dict = filter_dict(query.__dict__, USER_QUERY_WHITELIST)
+                if manager_dict['last_logout_time']:
+                    manager_dict['last_logout_time'] = datetime2timestamp(manager_dict['last_logout_time'])
+                else:
+                    manager_dict['last_logout_time'] = 0
+                manager = PublicUserInformation(**manager_dict)
+                bbs_managers.append(manager)
             session.close()
-            return managed_board.manager_id
+            return bbs_managers           
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('bbs manager not exist')
