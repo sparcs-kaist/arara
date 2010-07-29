@@ -115,7 +115,11 @@ def edit_board(request):
         response = "SUCCESS\tedit\t" + new_board_name + "\n"
         board_list = server.board_manager.get_board_list()
         for board in board_list:
-            response += board.board_name + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\n"
+            bbs_managers = server.board_manager.get_bbs_managers(board.board_name)          
+            managers_string=""
+            for manager in bbs_managers:
+                managers_string+="<input type=\"checkbox\" class=\"checkbox\" id=\"selected_manager\" />"+manager.username+" "
+            response += board.board_name + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\t" + managers_string + "\n"
         return HttpResponse(response.strip())
     else:
         return HttpResponseRedirect('/sysop/')
