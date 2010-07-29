@@ -11,7 +11,7 @@ from sqlalchemy.orm import *
 from sqlalchemy.databases.mysql import MSLongBlob
 
 def smart_unicode(string):
-    # TODO: util.py 나 적당한 곳으로 옮긴다.
+    # TODO: util.py 나 적당한 곳으로 옮긴다. util.py 에 있지 않나?
     if type(string) == str:
         return unicode(string, 'UTF-8', 'replace')
     else:
@@ -22,6 +22,16 @@ SALT_SET = string.lowercase + string.uppercase + string.digits + './'
 class User(object):
     def __init__(self, username, password, nickname, email, signature,
                  self_introduction, default_language, campus):
+        '''
+        @type username: string
+        @type password: string
+        @type nickname: string
+        @type email: string
+        @type signature: string
+        @type self_introduction: string
+        @type default_language: string
+        @type capus: string
+        '''
         self.username = smart_unicode(username)
         self.set_password(password)
         self.nickname = smart_unicode(nickname)
@@ -41,6 +51,10 @@ class User(object):
 
     @classmethod
     def encrypt_password(cl, raw_password, salt):
+        '''
+        @type raw_password: string
+        @type salt: string
+        '''
         pw = crypt.crypt(raw_password, salt)
         asc1 = pw[1:2]
         asc2 = pw[3:4]
@@ -61,13 +75,24 @@ class User(object):
         return pw
 
     def crypt_password(self, raw_password):
+        '''
+        @type raw_password: string
+        @rtype: string
+        '''
         salt = ''.join(random.sample(SALT_SET, 2))
         return self.encrypt_password(raw_password, salt)
 
     def set_password(self, password):
+        '''
+        @type password: string
+        '''
         self.password = smart_unicode(self.crypt_password(password))
 
     def compare_password(self, password):
+        '''
+        @type password: string
+        @rtype: boolean
+        '''
         hash_from_user = self.encrypt_password(password, self.password)
         hash_from_db = self.password
         hash_from_user = smart_unicode(hash_from_user.strip())
@@ -79,14 +104,22 @@ class User(object):
 
 class BBSManager(object):
     def __init__(self, board, manager):
+        '''
+        @type board: model.Board
+        @type manager: model.User
+        '''
         self.board = board
         self.manager = manager
 
     def __repr__(self):
-        return "<BBSManager('%s'. '%s')>" % (self.board, self.manager)
+        return "<BBSManager('%s', '%s')>" % (self.board, self.manager)
 
 class UserActivation(object):
     def __init__(self, user, activation_code):
+        '''
+        @type user: model.User
+        @type activation_code: string
+        '''
         self.user = user
         self.activation_code = smart_unicode(activation_code)
         self.issued_date = datetime.datetime.fromtimestamp(time.time())
@@ -96,6 +129,9 @@ class UserActivation(object):
 
 class Category(object):
     def __init__(self, category_name):
+        '''
+        @type category_name: string
+        '''
         self.category_name = smart_unicode(category_name)
 
     def __repr__(self):
@@ -103,6 +139,12 @@ class Category(object):
 
 class Board(object):
     def __init__(self, board_name, board_description, order, category):
+        '''
+        @type board_name: string
+        @type board_description: string
+        @type order: int
+        @type category: model.Category
+        '''
         self.board_name = smart_unicode(board_name)
         self.board_description = smart_unicode(board_description)
         self.deleted = False
@@ -116,6 +158,12 @@ class Board(object):
 
 class Link(object):
     def __init__(self, link_name, link_description, link_url, order):
+        '''
+        @type link_name: string
+        @type link_description: string
+        @type link_url: string
+        @type order: int
+        '''
         self.link_name = smart_unicode(link_name)
         self.link_description = smart_unicode(link_description)
         self.link_url = smart_unicode(link_url)
@@ -128,6 +176,10 @@ class Link(object):
 
 class BoardHeading(object):
     def __init__(self, board, heading):
+        '''
+        @type board: model.Board
+        @type heading: string
+        '''
         self.board = board
         self.heading = smart_unicode(heading)
 
@@ -136,6 +188,15 @@ class BoardHeading(object):
 
 class Article(object):
     def __init__(self, board, heading, title, content, author, author_ip, parent):
+        '''
+        @type board: model.Board
+        @type heading: model.BoardHeading
+        @type title: string
+        @type content: string
+        @type author: model.User
+        @type author_ip: string
+        @type parent: model.Article
+        '''
         self.board = board
         self.heading = heading
         self.title = smart_unicode(title)
@@ -167,12 +228,21 @@ class Article(object):
 
 class ArticleVoteStatus(object):
     def __init__(self, user, board, article):
+        '''
+        @type user: model.User
+        @type board: model.Board
+        @type article: model.Article
+        '''
         self.user = user
         self.board = board
         self.article = article
 
 class ReadStatus(object):
     def __init__(self, user, read_status_data):
+        '''
+        @type user: model.User
+        @type read_status_data: read_status_manager.ReadStatus
+        '''
         self.user = user
         self.read_status_data = read_status_data
 
@@ -181,6 +251,12 @@ class ReadStatus(object):
 
 class Blacklist(object):
     def __init__(self, user, target_user, block_article, block_message):
+        '''
+        @type user: model.User
+        @type target_user: model.User
+        @type block_article: boolean
+        @type block_message: boolean
+        '''
         self.user = user 
         self.target_user = target_user
         self.block_article = block_article
@@ -193,6 +269,12 @@ class Blacklist(object):
 
 class Message(object):
     def __init__(self, from_user, from_user_ip, to_user, message):
+        '''
+        @type from_user: model.User
+        @type from_user_ip: string
+        @type to_user: model.User
+        @type mesage: string
+        '''
         self.from_user = from_user
         self.from_user_ip = smart_unicode(from_user_ip)
         self.to_user = to_user
@@ -207,6 +289,11 @@ class Message(object):
 
 class Banner(object): 
     def __init__(self, content, weight, due_date): 
+        '''
+        @type content: string
+        @type weight: int
+        @type due_date: datetime
+        '''
         self.content = smart_unicode(content)
         self.valid = False
         self.weight = weight
@@ -218,6 +305,11 @@ class Banner(object):
 
 class Welcome(object): 
     def __init__(self, content, weight, due_date): 
+        '''
+        @type content: string
+        @type weight: int
+        @type due_date: datetime
+        '''
         self.content = smart_unicode(content)
         self.valid = True
         self.weight = weight
@@ -229,6 +321,15 @@ class Welcome(object):
 
 class File(object): 
     def __init__(self, filename, saved_filename, filepath, user, board, article): 
+        '''
+        @type filename: string
+        @type saved_filename: string
+        @type filepath: string
+        @type user: model.User
+        @type board: model.Board
+        @type article: model.Article
+        '''
+        # TODO: 왜 이렇게 많은 정보가 필요하지?
         self.filename = smart_unicode(filename)
         self.saved_filename = smart_unicode(saved_filename)
         self.filepath= filepath 
@@ -249,6 +350,7 @@ class Visitor(object):
     def __repr__(self):
         return "<Visitor<'%d','%d'>" % (self.total, self.today)
 
+# TODO: Table 정의에 Key Index 추가하기
 metadata = MetaData()
 users_table = Table('users', metadata,
     Column('id', Integer, primary_key=True),
@@ -437,7 +539,7 @@ visitor_table = Table('visitors', metadata,
     mysql_engine='InnoDB'
 )
 
-'''추가'''
+# TODO: 아래 mapper 들 좀 제대로 올바르게 정의하기
 mapper(Category, category_table)
 
 mapper(Visitor, visitor_table)
