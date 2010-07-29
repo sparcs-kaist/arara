@@ -400,6 +400,12 @@ class BoardManagerTest(unittest.TestCase):
         bbs_managers = self.engine.board_manager.get_bbs_managers(u'test')
         self.assertEqual(u'mikkang', bbs_managers[0].username)
         self.assertEqual(u'jean',bbs_managers[1].username)
+        # 중복적인 관리자 임명에 대한 체크
+        try:
+            self.engine.board_manager.add_bbs_manager(self.session_key_sysop, u'test', u'jean')
+            self.fail("User is already a manager for the board.")
+        except InvalidOperation:
+            pass
 
     def testRemoveBBSManager(self):
         # 게시판 관리자 권한 지우기 테스트. by SYSOP

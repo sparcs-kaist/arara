@@ -832,6 +832,25 @@ class BoardManager(object):
             session.close()
             return False
 
+    def _is_already_manager(self, board_id, manager_id):
+        '''
+        현 게시판에 사용자가 이미 관리자로 지정되있는지 체크한다.
+        @type   board_id: int
+        @param  board_id: 체크할 게시판 id
+        @type   manager_id: int
+        @param  manager_id: 체크할 사용자 id
+        @rtype: bool
+        @return: 사용자가 게시판의 관리자로 지정되있으면 true를 돌려준다.
+        '''
+        session = model.Session()
+        try:
+            query = session.query(model.BBSManager).filter_by(board_id=board_id, manager_id=manager_id).one()
+            session.close()
+            return True
+        except InvalidRequestError:
+            session.close()
+            return False
+
     @require_login
     def add_bbs_manager(self, session_key, board_name, username):
         '''
@@ -851,6 +870,8 @@ class BoardManager(object):
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('username not exist')
+        if self._is_already_manager(board.id, user.id):
+            raise InvalidOperation('User is already a manager for the board.')
         bbs_manager = model.BBSManager(board, user)
         session.add(bbs_manager)
         session.commit()
