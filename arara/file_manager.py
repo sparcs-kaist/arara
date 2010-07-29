@@ -25,9 +25,21 @@ class FileManager(object):
     '''
     
     def __init__(self, engine):
+        '''
+        @type  engine: ARAraEngine
+        '''
         self.engine = engine
 
     def _get_article(self, session, article_id):
+        '''
+        @type  session: model.Session
+        @param session: 현재 사용중인 SQLAlchemy Session
+        @type  article_id: int
+        @param article_id: 글 번호
+        @rtype: model.Article
+        @return: 읽고자 하는 글
+        '''
+        # TODO: ArticleManager 로 옮기기
         try:
             return session.query(model.Article).filter_by(id=article_id).one()
         except InvalidRequestError:
@@ -41,12 +53,12 @@ class FileManager(object):
         article작성시 파일을 저장할 장소와 저장할 파일명를 리턴해주는 함수
         
         @type  session_key: string
-        @param session_key: User Key
-        @type  article_id: integer
+        @param session_key: 사용자 Login Session
+        @type  article_id: int
         @param article_id: Article Number
         @type  filename: string
         @param filename: File Name
-        @rtype: dictionary
+        @rtype: ttypes.FileInfo
         @return:
             1. 저장 성공: {'file_path': blah1, 'saved_filename': blah2}
             2. 저장 실패:
@@ -58,13 +70,13 @@ class FileManager(object):
 
         file_ext = filename.split('.')[-1]
         if file_ext in DANGER_FILE:
-            return InvalidOperation('danger file detected')
+            raise InvalidOperation('danger file detected')
         
         session = model.Session()
         article = self._get_article(session, article_id)
         filepath_to_save = u''+str(article.board.board_name) + '/' +str(article.date.year) + '/' + str(article.date.month) + '/' + str(article.date.day)
         try:
-            # Generate unique filename by putting timestamp at the end of the hasing string
+            # Generate unique filename by putting timestamp at the end of the hashing string
             ghost_filename = u''+hashlib.md5(filename.encode('utf-8') + str(article.author.id) + str(article.board.id) + str(article.id) + str(time.time())).hexdigest()
             file = model.File(filename, ghost_filename, filepath_to_save, article.author, article.board, article)
             session.add(file)
@@ -76,6 +88,16 @@ class FileManager(object):
             raise InternalError('database error')
 
     def _get_file(self, session, file_id, article):
+        '''
+        @type  session: model.Session
+        @param session: 현재 사용중인 SQLAlchemy Session
+        @type  file_id: int
+        @param file_id: 파일 고유번호
+        @type  article: model.Article
+        @param article: 가져오고자 하는 파일이 연동되어 있는 Article
+        '''
+        # TODO: 아래 쿼리문이 굳이 filter 형식으로 되어있어야 하는 이유가 있는지
+        # TODO: article "객체" 를 받아야 할 이유가 있는지
         try:
             return session.query(model.File).filter(
                     and_(model.file_table.c.id == file_id,
@@ -93,17 +115,18 @@ class FileManager(object):
         '''
         article의 파일을 다운로드 할때 실제로 파일이 저장된 장소와 저장된 파일명을 리턴해주는 함수 
         
-        @type  article_id: Integer 
+        @type  article_id: int
         @param article_id: Article Number 
         @type  filename: string
         @param filename: File Name
-        @rtype: dictionary
+        @rtype: ttypes.DownloadFileInfo
         @return:
             1. 경로 찾기 성공: {'file_path': blah, 'saved_filename': blah, 'real_filename': blah}
             2. 경로 찾기 실패:
                 1. 로그인되지 않은 유저: NotLoggedIn Exception
                 2. 데이터베이스 오류: InternalError Exception
         '''
+        # TODO: 아래 commit 이 왜 필요한지 알아보기
         session = model.Session()
         article = self._get_article(session, article_id)
         file = self._get_file(session, file_id, article)
@@ -122,20 +145,20 @@ class FileManager(object):
         지울 파일이 저장된 장소와 저장된 파일명을 리턴해주는 함수
         
         @type  session_key: string
-        @param session_key: User Key
-        @type  article_id: Integer 
+        @param session_key: 사용자 Login Session
+        @type  article_id: int
         @param article_id: Article Number 
         @type  filename: string
         @param filename: File Name
-        @rtype: dictionary
+        @rtype: FileInfo
         @return:
             1. 성공: {'file_path': 'blah/blah', 'saved_filename': 'blah'}
             2. 실패:
                 1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+        # TODO: download_file함수와 유사하다.. 똑같은 코드가 많다.. 먼가 비효율적이다.. 나중에 하나로 좀 해보자.. 일단 지금은 급하니까.. 복사해놓고...
         #ret, filepath_to_delete= self.download_file(session_key, article_id, filename)
-        #download_file함수와 유사하다.. 똑같은 코드가 많다.. 먼가 비효율적이다.. 나중에 하나로 좀 해보자.. 일단 지금은 급하니까.. 복사해놓고...
         session = model.Session()
         article = self._get_article(session, article_id)
         file = self._get_file(session, file_id, article)
