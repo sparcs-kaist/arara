@@ -52,6 +52,9 @@ class MemberManager(object):
     '''
 
     def __init__(self, engine):
+        '''
+        @type  engine: ARAraEngine
+        '''
         self.engine = engine
         self.logger = logging.getLogger('member_manager')
         self._register_sysop()
@@ -63,9 +66,9 @@ class MemberManager(object):
 
     def _register_without_confirm(self, user_reg_dic, is_sysop):
         '''
-        confirm 과정 없이 사용자를 등록하는 함수
+        confirm 과정 없이 사용자를 활성화된 상태로 등록하는 함수
 
-        @type  user_reg_dic: dict
+        @type  user_reg_dic: dict('username', 'password', 'nickname', 'email', 'signature', 'self_introduction', 'default_language', 'campus')
         @param user_reg_dic: User Information
         @type  is_sysop: boolean
         @param is_sysop: 유저가 시삽권한을 가질지를 결정
@@ -74,6 +77,7 @@ class MemberManager(object):
             1. 사용자 등록이 성공했을 경우 : void
             2. 사용자 등록이 실패했을 경우 : Invalid Operation
         '''
+        # TODO: 예외 상황이 여러 가지가 있을 수 있다. DB 자체 에러, 이미 등록된 유저 등. 나누어야 한다.
         try:
             user = model.User(**user_reg_dic)
             session = model.Session()
@@ -94,7 +98,7 @@ class MemberManager(object):
         @rtype: void
         @return:
             1. 시삽 등록이 성공했을 경우 : void
-            2. 시삽 등록이 실패했을 경우 : Invalid Operation
+            2. 시삽 등록이 실패했을 경우 : InvalidOperation('Cannot add users without confirm')
         '''
         from etc.arara_settings import SYSOP_INITIAL_USERNAME, SYSOP_INITIAL_PASSWORD
         # 이미 시삽이 등록되어 있을 땐 굳이 할 필요가 없다.
@@ -121,6 +125,7 @@ class MemberManager(object):
             1. BOT 계정 등록이 성공했을 경우 : void
             2. BOT 계정 등록이 실패했을 경우 : Invalid Operation
         '''
+        # TODO: BOT 유저의 e-mail 주소 ....
         from etc.arara_settings import BOT_ACCOUNT_USERNAME, BOT_ACCOUNT_PASSWORD
         # 이미 BOT 계정이 등록되어 있을 땐 굳이 할 필요가 없다
         if self.is_registered(BOT_ACCOUNT_USERNAME):
@@ -139,6 +144,14 @@ class MemberManager(object):
 
     @log_method_call
     def _logout_process(self, username):
+        '''
+        사용자의 실질적인 로그아웃을 담당한다.
+
+        @type  username: string
+        @param username: 로그아웃하고자 하는 사용자
+        '''
+        # TODO: 사용자 정보 가져오는 쿼리문을 다른 함수로 빼기
+        # TODO: 발생 가능한 여러 Exception (ReadStatus) 처리
         try:
             self.logger.info("=== LOGOUT PROCESS INITIATED")
             session = model.Session()
@@ -153,7 +166,20 @@ class MemberManager(object):
             raise InvalidOperation('DATABASE_ERROR')
 
     def authenticate(self, username, password, user_ip):
-        username = smart_unicode(username) # XXX(combacsa): Why is this not unicode by default???
+        '''
+        사용자가 입력한 password 로 검사한다.
+
+        @type  username: string
+        @param username: 사용자의 id
+        @type  password: string
+        @param password: 사용자의 비밀번호
+        @type  user_ip: string
+        @param user_ip: 사용자의 IP 주소
+        '''
+        # TODO: user 쿼리 밖으로 빼기
+        # TODO: ret 딕셔너리 만드는 코드 다듬기
+        # TODO: 궁극적으로 비밀번호 저장방식 바꾸기
+        username = smart_unicode(username)
         if username.strip() == u"" or username == u" ":
             raise InvalidOperation('wrong username')
         session = model.Session()
@@ -187,6 +213,14 @@ class MemberManager(object):
             raise InvalidOperation("unexpected error on authentication, contact SYSOP")
    
     def _get_dict(self, item, whitelist=None):
+        '''
+        @type  item: model.User
+        @param item: dictionary 로 바꿀 객체 (여기서는 사용자)
+        @type  whitelist: list
+        @param whitelist: dictionary 에 남아있을 필드의 목록
+        @rtype: dict
+        @return: item 에서 whitelist 에 있는 필드만 남기고 적절히 dictionary 로 변환한 결과물
+        '''
         item_dict = item.__dict__
         if whitelist:
             filtered_dict = filter_dict(item_dict, whitelist)
@@ -195,6 +229,15 @@ class MemberManager(object):
         return filtered_dict
 
     def _get_dict_list(self, raw_list, whitelist=None):
+        '''
+        @type  raw_list: iterable(list, generator)<model.User>
+        @param raw_list: _get_dict 에 통과시키고 싶은 대상물의 모임
+        @type  whitelist: list<string>
+        @param whitelist: _get_dict 에 넘겨줄 whitelist
+        @rtype: list<dict(whitelist filtered)>
+        @return: _get_dict 를 통과시킨 raw_list 의 원소들의 list
+        '''
+        # TODO: Generator 화 하지 않을 이유가 없다.
         return_list = []
         for item in raw_list:
             filtered_dict = self._get_dict(item, whitelist)
@@ -210,12 +253,14 @@ class MemberManager(object):
             2. 이미 가입한 사용자의 경우: InvalidOperation('already added')
             3. 데이터베이스 오류: InternalError('database error')
 
-        @type  user_reg_info: arara_thrift.UserRegistration
+        @type  user_reg_info: ttypes.UserRegistration
         @param user_reg_info: 사용자의 회원가입 정보를 담은 객체
         @rtype: string
         @return: 사용자 인증코드
         '''
-        # XXX Smart Unicode 적용
+        # TODO: 한글 아이디 허용
+
+        # Smart Unicode 적용
         for keys in USER_PUBLIC_KEYS:
             user_reg_info.__dict__[keys] = smart_unicode(user_reg_info.__dict__[keys])
 
@@ -248,8 +293,6 @@ class MemberManager(object):
             raise InternalError('database error')
 
         # If everything is clear, send validation mail to user.
-        # Frontend should send the email I guess, so quoted the line below 090105
-        # Re-uncommented by combacsa, 090112. Frontend never send the email.
         self._send_mail(user.email, user.username, user_activation.activation_code)
         # pipoket: SECURITY ISSUE! PASSWORD SHOULD NOT BE LOGGED!
         #           This logging function will log necessary information but NOT PASSWORD.
@@ -266,12 +309,14 @@ class MemberManager(object):
         @type  email: string
         @param email: 사용자 E-mail
         @type  username: string
-        @param username: User ID
+        @param username: 사용자의 User ID
         @type  activation_code: string
         @param activation_code: Confirm Key
         @rtype: string
         @return: None
         '''
+        # TODO: exception 적절하게 handling 하기
+        # TODO: _charset 이 왜 euc_kr 로 되어있는 걸까?
         from etc.arara_settings import WARARA_SERVER_ADDRESS, MAIL_HOST, MAIL_SENDER
 
         SERVER_ADDRESS = WARARA_SERVER_ADDRESS
@@ -295,7 +340,6 @@ class MemberManager(object):
         except Exception:
             raise
 
-
     @require_login
     @log_method_call_important
     def backdoor_confirm(self, session_key, username):
@@ -308,10 +352,12 @@ class MemberManager(object):
             4. 데이터베이스 오류: InternalError('database error')
 
         @type  session_key: string
-        @param session_key: User Key
+        @param session_key: 사용자 Login Session
         @type  username: string
         @param username: User ID
         '''
+        # TODO: check_sysop 같은 함수를 구현하여 만들자.
+        # TODO: 사용자 Query 하는 함수 별도로 분리하기
         username = smart_unicode(username)
         
         if not self.is_sysop(session_key):
@@ -346,10 +392,11 @@ class MemberManager(object):
             1. 잘못된 인증코드 입력시: InvalidOperation('wrong activation code')
         
         @type  username_to_confirm: string
-        @param username_to_confirm: Confirm Username
+        @param username_to_confirm: Confirm 하고자 하는 Username
         @type  activation_code: string
         @param activation_code: Confirm Key
         '''
+        # TODO: user 쿼리하는 거 별도로 분리하기
         username_to_confirm = smart_unicode(username_to_confirm)
         
         session = model.Session()
@@ -385,16 +432,12 @@ class MemberManager(object):
         등록된 사용자인지의 여부를 알려준다.
         Confirm은 하지 않았더라도 등록되어있으면 True를 리턴한다.
 
-        >>> member_manager.is_registered('mikkang')
-        True
-
         @type  username: string
         @param username: Username to check whether is registered or not
         @rtype: bool
         @return: 사용자의 존재유무
         '''
-        #remove quote when MD5 hash for UI is available
-        #
+        # TODO: Query 분리하기
 
         session = model.Session()
         query = session.query(model.User).filter_by(username=username)
@@ -412,16 +455,12 @@ class MemberManager(object):
         등록된 nickname인지의 여부를 알려준다.
         Confirm은 하지 않았더라도 등록되어있으면 True를 리턴한다.
 
-        >>> member_manager.is_registered_nickname('mikkang')
-        True
-
         @type  nickname: string
         @param nickname: Nickname to check whether is registered or not
         @rtype: bool
         @return: Nickname을 사용하는 사용자의 존재유무
         '''
-        #remove quote when MD5 hash for UI is available
-        #
+        # TODO: Query 분리하기
 
         session = model.Session()
         query = session.query(model.User).filter_by(nickname=nickname)
@@ -439,14 +478,12 @@ class MemberManager(object):
         등록된 이메일인지의 여부를 알려준다.
         Confirm하지 않았더라도 등록되어있으면 True를 리턴한다.
 
-        >>> member_manager.is_registered_email('pipoket@hotmail.com')
-        False
-
         @type  email: string
         @param email: E-mail to check whether registered or not.
         @rtype: bool
         @return: Email 주소를 가진 사용자의 존재유무
         '''
+        # TODO: Query 분리하기
         session = model.Session()
         query = session.query(model.User).filter_by(email=email)
         try:
@@ -461,18 +498,18 @@ class MemberManager(object):
     @log_method_call
     def get_info(self, session_key):
         '''
-        회원 정보 수정을 위해 현재 로그인된 회원의 정보를 가져오는 함수.
+        회원 정보 수정을 위해 현재 로그인된 회원 자신의 정보를 가져오는 함수.
         다른 사용자의 정보를 열람하는 query와 다름.
 
         @type  session_key: string
-        @param session_key: User Key
-        @rtype: dictionary
+        @param session_key: 사용자 Login Session
+        @rtype: ttypes.UserInformation
         @return:
-            1. 가져오기 성공: True, user_dic
+            1. 가져오기 성공: user_dic
             2. 가져오기 실패:
-                1. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN'
-                2. 존재하지 않는 회원: InvalidOperation('MEMBER_NOT_EXIST'
-                3. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
+                1. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN')
+                2. 존재하지 않는 회원: InvalidOperation('MEMBER_NOT_EXIST')
+                3. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR')
         '''
         try:
             session = model.Session()
@@ -499,18 +536,20 @@ class MemberManager(object):
         ---user_password_info {username, current_password, new_password}
 
         @type  session_key: string
-        @param session_key: User Key
-        @type  user_password_info: Dictionary
-        @param user_password_info: User Dictionary
+        @param session_key: 사용자 Login Session
+        @type  user_password_info: ttypes.UserPasswordInfo
+        @param user_password_info: 사용자의 비밀번호 정보
         @rtype: void
         @return:
             1. modify 성공: void
             2. modify 실패:
                 1. 수정 권한 없음: 'NO_PERMISSION'
                 2. 잘못된 현재 패스워드: 'WRONG_PASSWORD'
-                3. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN'
-                4. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
+                3. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN')
+                4. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR')
         '''
+        # TODO: 쿼리 바깥으로 빼기
+        # TODO: 비밀번호 암호화하여 전달하기
         session_info = self.engine.login_manager.get_session(session_key)
         username = smart_unicode(session_info.username)
         session = model.Session()
@@ -548,18 +587,20 @@ class MemberManager(object):
         ---user_password_info {username, current_password, new_password}
 
         @type  session_key: string
-        @param session_key: User Key
-        @type  user_password_info: Dictionary
-        @param user_password_info: User Dictionary
+        @param session_key: 사용자 Login Session (SYSOP)
+        @type  user_password_info: ttypes.UserPasswordInfo
+        @param user_password_info: 사용자의 비밀번호 정보
         @rtype: void
         @return:
             1. modify 성공: void
             2. modify 실패:
                 1. 수정 권한 없음: 'NO_PERMISSION'
                 2. 잘못된 현재 패스워드: 'WRONG_PASSWORD'
-                3. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN'
-                4. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
+                3. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN')
+                4. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR')
         '''
+        # TODO: 쿼리 밖으로 빼기
+        # TODO: check_sysop 구현하여 그걸 쓰기
         if not self.is_sysop(session_key):
             raise InvalidOperation('no permission')
 
@@ -582,10 +623,10 @@ class MemberManager(object):
         password를 제외한 회원 정보 수정
 
         @type  session_key: string
-        @param session_key: User Key
-        @type  user_reg_infot: dictionary
-        @param user_reg_infot: User Dictionary
-        @rtype: string
+        @param session_key: 사용자 Login Session
+        @type  user_reg_infot: ttypes.UserModification
+        @param user_reg_infot: 변경할 사용자 정보
+        @rtype: void
         @return:
             1. modify 성공: void
             2. modify 실패:
@@ -601,14 +642,15 @@ class MemberManager(object):
             raise InvalidOperation('wrong input')
         session = model.Session()
         user = session.query(model.User).filter_by(username=username).one()
+
         for key, value in user_modification.__dict__.items():
+            # 문자열에 한하여 smart_unicode 로 변환하여 저장한다
             if type(value) in [str, unicode]:
                 setattr(user, key, smart_unicode(value))
             else:
                 setattr(user, key, value)
         session.commit()
         session.close()
-        return
 
     # @require_login
     @log_method_call_important
@@ -629,6 +671,7 @@ class MemberManager(object):
                 3. 올바르지 않은 이메일 주소: InvalidOperation('wrong email address')
                 3. 데이터베이스 오류: InternalError('database error')
         '''
+        # TODO: 사용자 쿼리 밖으로 빼기
         session = model.Session()
         username = smart_unicode(username)
         if new_email:
@@ -659,22 +702,21 @@ class MemberManager(object):
     @log_method_call
     def query_by_username(self, session_key, username):
         '''
-        쿼리 함수
+        username 기반 쿼리 함수. 다른 사용자의 정보를 알아내는 데 사용한다.
         
-        ---query_dic { username, nickname, signature, self_introduction, last_login_ip }
-
         @type  session_key: string
-        @param session_key: User Key
+        @param session_key: 사용자 Login Session
         @type  username: string
         @param username: User ID to send Query
-        @rtype: dictionary
+        @rtype: ttypes.PublicUserInformation
         @return:
-            1. 쿼리 성공: True, query_dic
+            1. 쿼리 성공: query_dic
             2. 쿼리 실패:
-                1. 존재하지 않는 아이디: InvalidOperation('QUERY_ID_NOT_EXIST'
-                2. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN'
-                3. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
+                1. 존재하지 않는 아이디: InvalidOperation('QUERY_ID_NOT_EXIST')
+                2. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN')
+                3. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR')
         '''
+        # TODO: 쿼리 밖으로 빼기
         username = smart_unicode(username)
         session = model.Session()
         try:
@@ -695,22 +737,22 @@ class MemberManager(object):
     @log_method_call
     def query_by_nick(self, session_key, nickname):
         '''
-        쿼리 함수
+        nickname 기반 쿼리 함수. 다른 사용자의 정보를 알아내는 데 사용한다.
         
-        ---query_dic { username, nickname, signature, self_introduction, last_login_ip }
 
         @type  session_key: string
-        @param session_key: User Key
-        @type  nickname: string
+        @param session_key: 사용자 Login Session
+        @type  username: string
         @param nickname: User Nickname to send Query
-        @rtype: dictionary
+        @rtype: ttypes.PublicUserInformation
         @return:
-            1. 쿼리 성공: True, query_dic
+            1. 쿼리 성공: query_dic
             2. 쿼리 실패:
                 1. 존재하지 않는 닉네임: InvalidOperation('QUERY_NICK_NOT_EXIST'
                 2. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN'
                 3. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR'
         '''
+        # TODO: 쿼리 밖으로 빼기
         nickname = smart_unicode(nickname)
         session = model.Session()
         try:
@@ -735,14 +777,16 @@ class MemberManager(object):
     def remove_user(self, session_key):
         '''
         session key로 로그인된 사용자를 등록된 사용자에서 제거한다' - 회원탈퇴
+        현재 구현되어 있지 않다.
 
         @type  session_key: string
-        @param session_key: User Key
-        @rtype: String
+        @param session_key: 사용자 Login Session
+        @rtype: void
         @return:
-            1. 성공시: True, 'OK'
-            2. 실패시: InvalidOperation('NOT_LOGGEDIN'
+            1. 성공시: void
+            2. 실패시: NotLoggedIn
         '''
+        # TODO: 밑의 함수는 "정말로 정말로 사용자를 지워버리는 용도" 로 사용하도록 분리한다. 
         raise InvalidOperation('Not Allowed Right Now')
         session = model.Session()
         username = smart_unicode(self.engine.login_manager.get_session(session_key).username)
@@ -759,22 +803,26 @@ class MemberManager(object):
     @log_method_call
     def search_user(self, session_key, search_user, search_key=None):
         '''
-        member_dic 에서 찾고자 하는 username와 nickname에 해당하는 user를 찾아주는 함수
+        찾고자 하는 username와 nickname에 해당하는 user를 찾아주는 함수
         search_key 가 username 또는 nickname 으로 주어질 경우 해당하는 search key로만 찾는다
+        (주어지지 않으면 두 방향 모두에 대하여 찾는다)
 
         @type  session_key: string
-        @param session_key: User Key
+        @param session_key: 사용자 Login Session
         @type  search_user_info: string
         @param search_user_info: User Info(username or nickname)
         @type  search_key: string
         @param search_key: Search key
-        @rtype: dictionary 
+        @rtype: list<ttypes.SearchUserResult>
         @return:
             1. 성공시: True, {'username':'kmb1109','nickname':'mikkang'} 
             2. 실패시: 
                 1. 존재하지 않는 사용자: InvalidOperation('NOT_EXIST_USER'
-                2. 잘못된 검색 키:InvalidOperation('INCORRECT_SEARCH_KEY'
+                2. 잘못된 검색 키:InvalidOperation('INCORRECT_SEARCH_KEY')
         '''
+        # TODO: session_key 를 이용한 Login check
+        # TODO: 쿼리 직접 쓰지 말고 나머지 두 함수 합쳐서 할 것
+        # TODO: SearchUserResult 는 뭐고 PublicUserInformation 는 뭔가?
         search_user = smart_unicode(search_user)
 
         session = model.Session()
@@ -811,12 +859,13 @@ class MemberManager(object):
         로그인한 user가 SYSOP인지 아닌지를 확인하는 함수
         
         @type  session_key: string
-        @param session_key: User Key
+        @param session_key: 사용자 Login Session
         @rtype: bool
         @return:
             1. SYSOP일시: True
             2. SYSOP이 아닐시: False
         '''
+        # TODO: 사용자 쿼리 밖으로 빼기
         session = model.Session()
         user_info = self.engine.login_manager.get_session(session_key)
         try:
@@ -832,14 +881,16 @@ class MemberManager(object):
         '''
         user를 SYSOP으로 바꿔주는 함수
 
-        @type session_key: string
-        @param session_key: User Key
+        @type  session_key: string
+        @param session_key: 사용자 Login Session (must be SYSOP)
         @type username_string
         @param username: Username that will be SYSOP
         @return:
             1. 성공했을 경우: void
             2. 실패했을 경우: Invalid Operation
         '''
+        # TODO: 사용자 쿼리 밖으로 빼기
+        # TODO: sysop 인지 체크하는 거 밖으로 빼기
 
         if not self.is_sysop(session_key):
             raise InvalidOperation('no permission')
@@ -857,13 +908,5 @@ class MemberManager(object):
         except InvalidReqeustError:
             session.close()
             raise InvalidOperation('user does not exist')
-
-
-
-
-
-
-
-
 
 # vim: set et ts=8 sw=4 sts=4
