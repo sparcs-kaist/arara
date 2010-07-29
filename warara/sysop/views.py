@@ -94,9 +94,7 @@ def modify_board(request):
         board_list = server.board_manager.get_board_list()
         for board in board_list:
             bbs_managers = server.board_manager.get_bbs_managers(board.board_name)
-            managers_string=""
-            for manager in bbs_managers:
-                managers_string+="<input type=\"checkbox\" class=\"checkbox\" id=\"selected_manager\" />"+manager.username+" "
+            managers_string = "".join(("<input type=\"checkbox\" class=\"checkbox\" id=\"selected_manager\" />"+manager.username+" " for manager in bbs_managers))
             response += board.board_name + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\t" + managers_string + "\n"
         return HttpResponse(response.strip())
     else:
@@ -120,9 +118,7 @@ def edit_board(request):
         board_list = server.board_manager.get_board_list()
         for board in board_list:
             bbs_managers = server.board_manager.get_bbs_managers(board.board_name)          
-            managers_string=""
-            for manager in bbs_managers:
-                managers_string+="<input type=\"checkbox\" class=\"checkbox\" id=\"selected_manager\" />"+manager.username+" "
+            managers_string = "".join(("<input type=\"checkbox\" class=\"checkbox\" id=\"selected_manager\" />"+manager.username+" " for manager in bbs_managers))
             response += board.board_name + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\t" + managers_string + "\n"
         return HttpResponse(response.strip())
     else:
