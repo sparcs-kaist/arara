@@ -130,6 +130,24 @@ def edit_board(request):
         return HttpResponseRedirect('/sysop/')
 
 @warara.wrap_error
+def add_bbs_manager(request):
+    '''
+    '''
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+
+    board_name = request.POST['board_name']
+    manager = request.POST['manager']
+    server.board_manager.add_bbs_manager(sess, board_name, manager)
+
+    if request.is_ajax():
+        response = "SUCCESS\tadd_manager\t" + board_name
+        response = _ajax_calling(response)
+        return HttpResponse(response)
+    else:
+        return HttpResponseRedirect('/sysop/')
+
+@warara.wrap_error
 def confirm_user(request):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)

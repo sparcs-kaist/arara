@@ -12,6 +12,10 @@ function request_action(action){
         request.data = { orig_board_name : selected_board.board_name, 
                          new_board_name : $("#board_name").val(), 
                          new_board_description : $("#board_description").val() };
+    } else if(action == "add_bbs_manager"){
+	request.url = "/sysop/add_bbs_manager/";
+	request.data = { board_name : selected_board.board_name,
+		         manager : $("#manager").val() };
     } else {
         request.url = "/sysop/modify_board/";
         request.data = { action : action,
@@ -36,6 +40,7 @@ function update_list(data){
     } else if(action_done == "remove"){
         $("#board_actions").hide();
         $("#edit_board").hide();
+	$("#add_manager").hide();
         selected_board = null;
     } else if(action_done == "edit"){
         selected_board.board_name = splited_data[0].split("\t")[2];
@@ -59,6 +64,7 @@ function set_item_action(){
     $("#all_board_list tbody tr").click( function(event) {
         $("#board_actions").show();
         $("#edit_board").show();
+	$("#add_manager").show();
 
         var is_hidden = $(this).attr("class").indexOf("hidden_board") != -1;
         var board_name = $(this).children(":nth-child(1)").html();
@@ -79,6 +85,7 @@ function set_item_action(){
 $(document).ready( function() {
     $("#board_actions").hide();
     $("#edit_board").hide();
+    $("#add_manager").hide();
 
     // 숨기기/보이기 버튼
     $("#board_actions li:nth-child(1) a").unbind()
@@ -99,6 +106,13 @@ $(document).ready( function() {
     $("#apply_changes").click( function(event) {
         event.preventDefault();
         request_action("edit");
+    });
+
+    // 관리자 추가 버튼
+    $("#apply_add_manager").unbind();
+    $("#apply_add_manager").click( function(event) {
+        event.preventDefault();
+        request_action("add_bbs_manager");
     });
 
     // 위로 버튼
