@@ -47,6 +47,19 @@ def add_board(request):
     server.board_manager.add_board(sess, request.POST['add_board_name'], request.POST['add_board_description'], board_headings)
     return HttpResponseRedirect('/sysop/')
 
+def _ajax_calling(response):
+    '''
+    ajax 사용 시 보낼 갱신된 보드 정보(html 태그 포함)를 완성해 돌려준다.
+    '''
+    server = warara_middleware.get_server()
+    board_list = server.board_manager.get_board_list()
+    for board in board_list:
+        bbs_managers = server.board_manager.get_bbs_managers(board.board_name)
+        managers_string = "".join(("<input type=\"checkbox\" class=\"checkbox\" id=\"selected_manager\" />"+manager.username+" " for manager in bbs_managers))
+        response += "\n" + board.board_name + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\t" + managers_string
+    return response
+
+
 @warara.wrap_error
 def modify_board(request):
     '''
@@ -91,11 +104,7 @@ def modify_board(request):
     # AJAX로 온 요청일 때에는 갱신된 보드 정보를 보낸다. 
     if request.is_ajax():
         response = "SUCCESS\t" + action + "\t" + requested_board_name
-        board_list = server.board_manager.get_board_list()
-        for board in board_list:
-            bbs_managers = server.board_manager.get_bbs_managers(board.board_name)
-            managers_string = "".join(("<input type=\"checkbox\" class=\"checkbox\" id=\"selected_manager\" />"+manager.username+" " for manager in bbs_managers))
-            response += "\n" + board.board_name + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\t" + managers_string
+        response = _ajax_calling(response)
         return HttpResponse(response)
     else:
         return HttpResponseRedirect('/sysop/')
@@ -115,11 +124,7 @@ def edit_board(request):
 
     if request.is_ajax():
         response = "SUCCESS\tedit\t" + new_board_name
-        board_list = server.board_manager.get_board_list()
-        for board in board_list:
-            bbs_managers = server.board_manager.get_bbs_managers(board.board_name)
-            managers_string = "".join(("<input type=\"checkbox\" class=\"checkbox\" id=\"selected_manager\" />"+manager.username+" " for manager in bbs_managers))
-            response += "\n" + board.board_name + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\t" + managers_string
+        response = _ajax_calling(response)
         return HttpResponse(response)
     else:
         return HttpResponseRedirect('/sysop/')
