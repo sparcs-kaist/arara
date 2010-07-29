@@ -12,6 +12,10 @@ class BotManager(object):
     ARA BOT Service 관련 클래스
     '''
     def __init__(self, engine):
+        '''
+        @type  engine: ARAraEngine
+        '''
+        # TODO: BOT_ENABLED 를 ARAraEngine 의 생성자로 넣는 게 어떨까
         self.engine = engine
 
         # BOT 설정이 켜져있지 않으면 종료
@@ -27,11 +31,15 @@ class BotManager(object):
         '''
         BOT에게 필요한 Board를 생성한다.
 
+        @type  board_name: string
+        @param board_name: BOT 을 위해 필요한 board
         @rtype: Bool
         @return:
             1. 성공적으로 추가했을 경우: True
             2. 실패했을 경우: False
         '''
+        # TODO: 차라리 Backend 에 board 의 존재 유무를 알려주는 함수를 만들자
+        # TODO: T/F 를 리턴하는 함수일 필요가 있는가?
         try:
             board_list = self.engine.board_manager.get_board_list() 
             if not filter(lambda x:x.board_name == board_name, board_list):
@@ -42,6 +50,13 @@ class BotManager(object):
             return False
 
     def refresh_weather_info(self, session_key):
+        '''
+        WeatherBot 에게 일부러 날씨 정보 갱신 명령을 내린다.
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session (SYSOP)
+        '''
+        # TODO: sysop 이 아니라면 알아서 InvalidOperation 을 raise 해 주는 그런 게 있음 좋겠다
         if not self.engine.member_manager.is_sysop(session_key):
             raise InvalidOperation('You are not SYSOP')
         if not self.weather_bot:
@@ -49,12 +64,24 @@ class BotManager(object):
         self.weather_bot.write_weather_article()
 
     def get_weather_info(self, session_key):
+        '''
+        WeatherBot 이 긁어온 날씨 정보를 참고로 날씨 정보를 얻어낸다.
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        @rtype: ttypes.WeatherInfo
+        @return: 주어진 사용자의 지역에 알맞은 Weather Info
+        '''
         if not self.weather_bot:
             raise InvalidOperation('Weather Bot is not enabled!')
         return self.weather_bot.recent_weather_info(session_key)
 
 class WeatherBot(object):
     def __init__(self, engine, manager):
+        '''
+        @type  engine: ARAraEngine
+        @type  manager: BotManager
+        '''
         import thread
 
         # 설정을 받아옴
@@ -107,6 +134,7 @@ class WeatherBot(object):
         @rtype: void
         @return: void
         '''
+        # TODO: 프로그램이 종료됨이 확실한 순간에는 스레드도 죽이도록 하자
         while self.write_weather_article():
             time.sleep(self.refresh_period)
     
@@ -120,8 +148,8 @@ class WeatherBot(object):
             1. 성공 : True
             2. 실패 : False
         '''
+        # TODO: Return 된 결과로 무엇을 할 수 있는가?
         
-
         logger = logging.getLogger('weather_refresh_bot')
         logger.info("[WRBot] Weather Refresh Bot Started!")
 
@@ -170,8 +198,8 @@ class WeatherBot(object):
         WeatherInfo {city, current_temperature, current_condition, current_icon_url, tomorrow_icon_url, tomorrow_temperature_high, tomorrow_temperature_low, day_after_tomorrow_icon_url, day_after_tomorrow_temperature_high, day_after_tomorrow_temperature_low} 
 
         @type  session_key: string
-        @param session_key: User Key
-        @rtype: WeatherInfo object
+        @param session_key: 사용자 Login Session
+        @rtype: ttypes.WeatherInfo
         @return:
             1. 성공 시 : WeatherInfo Object
             2. 실패 시 : InvalidOperation
@@ -218,7 +246,4 @@ class WeatherBot(object):
             return WeatherInfo()
         else:
             return WeatherInfo(**weather_info_dict)
-
-
-
 
