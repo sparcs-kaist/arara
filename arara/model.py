@@ -11,6 +11,7 @@ from sqlalchemy.orm import *
 from sqlalchemy.databases.mysql import MSLongBlob
 
 def smart_unicode(string):
+    # TODO: util.py 나 적당한 곳으로 옮긴다.
     if type(string) == str:
         return unicode(string, 'UTF-8', 'replace')
     else:
@@ -350,6 +351,7 @@ articles_table = Table('articles', metadata,
     Column('last_reply_date', DateTime),
     # XXX 2010.06.18.
     # 새로운 Field 를 추가한다. last_reply_id 마지막으로 달린 reply 의 글 번호.
+    # TODO: 사실 이 자리에는 id 가 아니라 article 객체가 와야 한다.
     Column('last_reply_id', Integer),
     mysql_engine='InnoDB'
 )
@@ -530,7 +532,12 @@ engine = None
 pool = None
 
 def get_engine():
-    '''Factory method to create database connection.'''
+    '''
+    Database 연결을 하기 위한 connector.
+    etc/arara_settings.py 에 지정한 DB 연결방식대로 DB 에 접속한다.
+
+    mysql / sqlite / 그 밖에 사용자가 직접 SQLAlchemy 에게 넘겨주는 접속 string으로.
+    '''
     global engine
     global pool
     if engine:
@@ -576,15 +583,19 @@ def get_engine():
 Session = None
 
 def init_database():
+    '''
+    Database 와 여기에 접속할 수 있는 Session 을 만든다.
+    '''
     global Session
     get_engine()
     metadata.create_all(engine)
     Session = sessionmaker(bind=engine, autoflush=True, autocommit=False)
 
 def init_test_database():
-    """Test database must reset the database."""
+    '''
+    TEST 를 위한 Database 를 메모리 상에 만든다. 물론 Session 도.
+    '''
     global engine, Session
-    # 데이터베이스를 억지로 새로 만든다.
     engine = create_engine('sqlite://', convert_unicode=True, encoding='utf-8', echo=False)
     Session = sessionmaker(bind=engine, autoflush=True, autocommit=False)
     metadata.create_all(engine)
