@@ -157,7 +157,6 @@ class ArticleManager(object):
             item_dict['title'] = u'Untitled'
         if item_dict.has_key('author_id'):
             item_dict['author_username'] = item.author.username
-            item_dict['author_nickname'] = item.author.nickname
         if item_dict.has_key('board_id'):
             item_dict['board_name'] = item.board.board_name
             del item_dict['board_id']
@@ -1045,6 +1044,46 @@ class ArticleManager(object):
                 if not cond2:
                     heading = self.engine.board_manager._get_heading_by_boardid(session, board_id, new_heading)
                 article.heading = heading
+            article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
+            session.commit()
+            id = article.id
+            session.close()
+        else:
+            session.close()
+            raise InvalidOperation("NO_PERMISSION")
+        return id
+
+    @require_login
+    @log_method_call_important
+    def modify_nickname(self, session_key, board_name, no, new_nickname):
+        '''
+        사용자가 SYSOP일 경우 해당하는 게시글의 닉네임을 변경할 수 있도록 함.
+
+        @type  session_key: string
+        @param session_key: User Key
+        @type  board_name: string
+        @param board_name: BBS Name
+        @type  no: integer
+        @param no: Article Number
+        @type  new_nickname: string
+        @param new_nickname: New Nickname
+        @return:
+            1. Modify 성공: Article Number
+            2. Modify 실패:
+                1. 존재하지 않는 게시물번호: InvalidOperation Exception
+                2. 존재하지 않는 게시판: InvalidOperation Exception
+                3. 로그인 되지 않은 유저거나 시삽이 아닐 경우: InvalidOperation Exception
+                4. 데이터베이스 오류: InternalError Exception
+        '''
+        board_id = self.engine.board_manager.get_board_id(board_name)
+        session = model.Session()
+        author = self._get_user(session, session_key)
+        article = self._get_article(session, board_id, no)
+        if article.deleted == True:
+            session.close()
+            raise InvalidOperation("NO_PERMISSION")
+        if author.is_sysop == True:
+            article.author_nickname = smart_unicode(new_nickname)
             article.last_modified_time = datetime.datetime.fromtimestamp(time.time())
             session.commit()
             id = article.id

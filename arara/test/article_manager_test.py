@@ -409,6 +409,24 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(1, len(result))
         self.assertEqual(expected_result, self._to_dict(result[0]))
 
+    def test_nickname_modification(self):
+        # 유저가 SYSOP일 경우에 nickname이 제대로 변화하는지 확인
+        # Write two articles
+        article_no0 = self._dummy_article_write(self.session_key_mikkang)
+        article_no1 = self._dummy_article_write(self.session_key_mikkang)
+        # Modify nickname of first article when the User is a sysop
+        result = self.engine.article_manager.modify_nickname(self.session_key_sysop, u'board', article_no0, u'MODIFIED NICKNAME')
+        self.assertEqual(article_no0, result)
+        # Now check it is modified or not
+        result = self.engine.article_manager.read_article(self.session_key_mikkang, u'board', 1)
+        expected_result = {'negative_vote': 0, 'positive_vote': 0, 'last_modified_date': 31536001.100000001, 'is_searchable': True, 'author_nickname': u'MODIFIED NICKNAME', 'reply_count': None, 'id': 1, 'title': u'TITLE', 'content': u'CONTENT', 'attach': None, 'type': None, 'author_username': u'mikkang', 'hit': 1, 'root_id': 1, 'deleted': False, 'board_name': u'board', 'date': 31536001.100000001, 'blacklisted': False, 'read_status': None, 'depth': 1, 'author_id': 2, 'heading': u''}
+        self.assertEqual(1, len(result))
+        self.assertEqual(expected_result, self._to_dict(result[0]))
+        result = self.engine.article_manager.read_article(self.session_key_mikkang, u'board', 2)
+        expected_result = {'negative_vote': 0, 'positive_vote': 0, 'last_modified_date': 31536002.100000001, 'is_searchable': True, 'author_nickname': u'mikkang', 'reply_count': None, 'id': 2, 'title': u'TITLE', 'content': u'CONTENT', 'attach': None, 'type': None, 'author_username': u'mikkang', 'hit': 1, 'root_id': 2, 'deleted': False, 'board_name': u'board', 'date': 31536002.100000001, 'blacklisted': False, 'read_status': None, 'depth': 1, 'author_id': 2, 'heading': u''}
+        self.assertEqual(1, len(result))
+        self.assertEqual(expected_result, self._to_dict(result[0]))
+
     def test_read_and_hit_goes_up(self):
         # Write an article
         article_no = self._dummy_article_write(self.session_key_mikkang)
