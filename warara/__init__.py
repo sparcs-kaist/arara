@@ -18,13 +18,15 @@ def check_logged_in(request):
     return sess, r
 
 def wrap_error(f):
-    def check_error(*args, **argv):
+    def check_error(request, *args, **argv):
         r = {} #render item
         try:
-            return f(*args, **argv)
+            return f(request, *args, **argv)
         except NotLoggedIn, e:
             r['error_message'] = "You are not logged in!"
             rendered = render_to_string("error.html", r)
+            if "arara_session_key" in request.session:
+                request.session.clear()
             return HttpResponse(rendered)
         except InvalidOperation, e:
             r['error_message'] = e.why
