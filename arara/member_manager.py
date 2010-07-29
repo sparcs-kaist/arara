@@ -30,9 +30,6 @@ class NoPermission(Exception):
 class WrongPassword(Exception):
     pass
 
-class NotLoggedIn(Exception):
-    pass
-
 # User Public Keys : 사용자 등록시 필요한 Parameter들이 들어있는 Dict의 형식을 결정. (arara.thrift에서는 UserRegistration)
 USER_PUBLIC_KEYS = ['username', 'password', 'nickname', 'email',
         'signature', 'self_introduction', 'default_language', 'campus']
