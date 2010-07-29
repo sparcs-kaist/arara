@@ -22,9 +22,22 @@ class MessagingManager(object):
     '''
 
     def __init__(self, engine):
+        '''
+        @type  engine: ARAraEngine
+        '''
         self.engine = engine
 
     def _get_dict(self, item, whitelist=None, blacklist_users=None):
+        '''
+        @type  item: model.Message
+        @param item: dictionary 로 바꿀 객체 (여기서는 메시지)
+        @type  whitelist: list<string>
+        @param whitelist: dictionary 에 남아있을 필드의 목록
+        @type  blacklist_users: list<string>
+        @param blacklist_users: Blacklist 로 등록되어 있는 사용자의 목록
+        @rtype: dict
+        @return: item 에서 whitelist 에 있는 필드만 남기고 적절히 dictionary 로 변환한 결과물
+        '''
         item_dict = item.__dict__
         if item_dict.has_key('from_id'):
             item_dict['from_'] = item.from_user.username
@@ -50,6 +63,17 @@ class MessagingManager(object):
         return filtered_dict
 
     def _get_dict_list(self, raw_list, whitelist=None, blacklist_users=None):
+        '''
+        @type  raw_list: iterable(list, generator)<model.Message>
+        @param raw_list: _get_dict 에 통과시키고 싶은 대상물의 모임
+        @type  whitelist: list<string>
+        @param whitelist: _get_dict 에 넘겨줄 whitelist
+        @type  blacklist_users: list<string>
+        @param blacklist_users: Blacklist 로 등록되어 있는 사용자의 목록
+        @rtype: list<dict(whitelist filtered)>
+        @return: _get_dict 를 통과시킨 raw_list 의 원소들의 list
+        '''
+        # TODO: Generator 화
         return_list = []
         for item in raw_list:
             filtered_dict = self._get_dict(item, whitelist, blacklist_users)
@@ -57,6 +81,15 @@ class MessagingManager(object):
         return return_list
 
     def _get_user(self, session, username):
+        '''
+        @type  session: model.Session
+        @param session: 사용중인 SQLAlchemy Session
+        @type  username: string
+        @param username: 얻고자 하는 사용자의 username
+        @rtype: model.User
+        @return: 해당되는 사용자의 객체
+        '''
+        # TODO: member_manager 로 옮기기
         try:
             user = session.query(model.User).filter_by(username=smart_unicode(username)).one()
         except InvalidRequestError:
@@ -65,6 +98,15 @@ class MessagingManager(object):
         return user
 
     def _get_user_by_nickname(self, session, nickname):
+        '''
+        @type  session: model.Session
+        @param session: 사용중인 SQLAlchemy Session
+        @type  nickname: string
+        @param nickname: 얻고자 하는 사용자의 nickname
+        @rtype: model.User
+        @return: 해당되는 사용자의 객체
+        '''
+        # TODO: member_manager 로 옮기기
         try:
             user = session.query(model.User).filter_by(nickname=smart_unicode(nickname)).one()
         except InvalidRequestError:
@@ -79,19 +121,20 @@ class MessagingManager(object):
         보낸 쪽지 리스트 읽어오기
 
         @type  session_key: string
-        @param session_key: User Key
-        @type  page: integer
+        @param session_key: 사용자 Login Session
+        @type  page: int
         @param page: Page Number
         @type  page_length: integer
         @param page_length: Number of Messages to get in one page
-        @rtype: MessageList
+        @rtype: ttypes.MessageList
         @return:
             1. 리스트 읽어오기 성공: MessageList
             2. 리스트 읽어오기 실패:
                 1. 로그인되지 않은 사용자: NotLoggedIn Exception
                 2. 데이터베이스 오류: InternalError Exception
         '''
-
+        # TODO: ArticleManager 참고하여 싹 뜯어고치기
+        # TODO: page 관련 정보 처리하는거 ArticleManager 에서 아예 util 로 옮기기
         ret_dict = {}
         user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
@@ -127,21 +170,21 @@ class MessagingManager(object):
     @log_method_call
     def receive_list(self, session_key, page=1, page_length=20):
         '''
-        받은 쪽지 리스트 읽어오기
-
         @type  session_key: string
-        @param session_key: User Key
-        @type  page: integer
+        @param session_key: 사용자 Login Session
+        @type  page: int
         @param page: Page Number
-        @type  page_langth: integer
+        @type  page_length: integer
         @param page_length: Number of Messages to get in one page
-        @rtype: MessageList
+        @rtype: ttypes.MessageList
         @return:
             1. 리스트 읽어오기 성공: MessageList
             2. 리스트 읽어오기 실패:
                 1. 로그인되지 않은 사용자: NotLoggedIn Exception
                 2. 데이터베이스 오류: InternalError Exception
         '''
+        # TODO: ArticleManager 참고하여 싹 뜯어고치기
+        # TODO: page 관련 정보 처리하는거 ArticleManager 에서 아예 util 로 옮기기
 
         ret_dict = {}
         user_info = self.engine.login_manager.get_session(session_key)
@@ -191,8 +234,8 @@ class MessagingManager(object):
         해당 하는 username을 갖는 사용자에게 쪽지를 전송하는 함수 
 
         @type  session_key: string
-        @param session_key: User Key
-        @type  to_username: string, list
+        @param session_key: 사용자 Login Session
+        @type  to_username: string
         @param to_username: Destination username
         @type  msg: string
         @param msg: Message string
@@ -226,7 +269,7 @@ class MessagingManager(object):
         해당 하는 nickname을 갖는 사용자에게 쪽지를 전송하는 함수 
 
         @type  session_key: string
-        @param session_key: User Key
+        @param session_key: 사용자 Login Session
         @type  to_nickname: string
         @param to_nickname: Destination nickname
         @type  msg: string
@@ -259,13 +302,12 @@ class MessagingManager(object):
     def send_message(self, session_key, to_data, msg):
         '''
         쪽지 전송하기
-
         보내는 사람 항목인 to에는 한 명의 아이디 혹은 아이디의 리스트를 보낼 수 있음
-
         현재  스팸 쪽지등의 문제로 인하여 아이디를 리스트로 보낼경우 작동하지 않도록 되어있음. 
+
         @type  session_key: string
-        @param session_key: User Key
-        @type  to_data: string, list
+        @param session_key: 사용자 Login Session
+        @type  to_data: string / list
         @param to_data: Destination username
         @type  msg: string
         @param msg: Message string
@@ -277,6 +319,8 @@ class MessagingManager(object):
                 2. 로그인되지 않은 사용자: NotLoggedIn Exception
                 3. 데이터베이스 오류: InternalError Exception 
         '''
+        # TODO: 밑의 주석 ... 다 지워버리는 게 낫지 않을까?
+        # TODO: 위의 2개 함수와 이 함수의 차이점은?
 
         user_info = self.engine.login_manager.get_session(session_key)
         if type(to_data) == list:
@@ -316,20 +360,21 @@ class MessagingManager(object):
     @log_method_call_important
     def read_received_message(self, session_key, msg_no):
         '''
-        쪽지 하나 읽어오기
+        받은 쪽지 하나 읽어오기
 
         @type  session_key: string
-        @param session_key: User Key
+        @param session_key: 사용자 Login Session
         @type  msg_no: integer
         @param msg_no: Message Number
-        @rtype: dictionary
+        @rtype: ttypes.Message
         @return:
-            1. 읽어오기 성공: True, Message Dictionary
+            1. 읽어오기 성공: Message Dictionary
             2. 읽어오기 실패:
                 1. 메세지가 존재하지 않음: InvalidOperation Exception
                 2. 로그인되지 않은 사용자: NotLoggedIn Exception
                 3. 데이터베이스 오류: InternalError Exception
         '''
+        # TODO: 쿼리 부분 분리하여 좀더 함수 조립식으로 만들기
         
         user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
@@ -352,7 +397,7 @@ class MessagingManager(object):
         쪽지 하나 읽어오기
 
         @type  session_key: string
-        @param session_key: User Key
+        @param session_key: 사용자 Login Session
         @type  msg_no: integer
         @param msg_no: Message Number
         @rtype: dictionary
@@ -363,6 +408,7 @@ class MessagingManager(object):
                 2. 로그인되지 않은 사용자: NotLoggedIn Exception
                 3. 데이터베이스 오류: InternalError Exception
         '''
+        # TODO: 쿼리 부분 분리하여 좀더 함수 조립식으로 만들기
         
         user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
@@ -385,7 +431,7 @@ class MessagingManager(object):
         받은 쪽지 하나 삭제하기
 
         @type  session_key: string
-        @param session_key: User Key
+        @param session_key: 사용자 Login Sesion
         @type  msg_no: integer
         @param msg_no: Message Number
         @rtype: void
@@ -396,6 +442,7 @@ class MessagingManager(object):
                 2. 로그인되지 않은 사용자: NotLoggedIn Exception
                 3. 데이터베이스 오류: InternalError Exception
         '''
+        # TODO: 아래 로지컬 패쓰 좀 개선하기
 
         user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
@@ -426,7 +473,7 @@ class MessagingManager(object):
         보낸 쪽지 하나 삭제하기
 
         @type  session_key: string
-        @param session_key: User Key
+        @param session_key: 사용자 Login Session
         @type  msg_no: integer
         @param msg_no: Message Number
         @rtype: void
@@ -437,6 +484,7 @@ class MessagingManager(object):
                 2. 로그인되지 않은 사용자: NotLoggedIn Exception
                 3. 데이터베이스 오류: InternalError Exception
         '''
+        # TODO: 위 함수와 왜 분리되어 있는지 알 수 없다.
 
         user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
