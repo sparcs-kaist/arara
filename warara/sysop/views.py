@@ -90,13 +90,13 @@ def modify_board(request):
         return HttpResponseRedirect('/sysop/')
     # AJAX로 온 요청일 때에는 갱신된 보드 정보를 보낸다. 
     if request.is_ajax():
-        response = "SUCCESS\t" + action + "\t" + requested_board_name + "\n"
+        response = "SUCCESS\t" + action + "\t" + requested_board_name
         board_list = server.board_manager.get_board_list()
         for board in board_list:
             bbs_managers = server.board_manager.get_bbs_managers(board.board_name)
             managers_string = "".join(("<input type=\"checkbox\" class=\"checkbox\" id=\"selected_manager\" />"+manager.username+" " for manager in bbs_managers))
-            response += board.board_name + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\t" + managers_string + "\n"
-        return HttpResponse(response.strip())
+            response += "\n" + board.board_name + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\t" + managers_string
+        return HttpResponse(response)
     else:
         return HttpResponseRedirect('/sysop/')
 
@@ -114,13 +114,13 @@ def edit_board(request):
     server.board_manager.edit_board(sess, original_board_name, new_board_name, new_board_description)
 
     if request.is_ajax():
-        response = "SUCCESS\tedit\t" + new_board_name + "\n"
+        response = "SUCCESS\tedit\t" + new_board_name
         board_list = server.board_manager.get_board_list()
         for board in board_list:
-            bbs_managers = server.board_manager.get_bbs_managers(board.board_name)          
+            bbs_managers = server.board_manager.get_bbs_managers(board.board_name)
             managers_string = "".join(("<input type=\"checkbox\" class=\"checkbox\" id=\"selected_manager\" />"+manager.username+" " for manager in bbs_managers))
-            response += board.board_name + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\t" + managers_string + "\n"
-        return HttpResponse(response.strip())
+            response += "\n" + board.board_name + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\t" + managers_string
+        return HttpResponse(response)
     else:
         return HttpResponseRedirect('/sysop/')
 
