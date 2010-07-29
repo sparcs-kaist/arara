@@ -140,6 +140,7 @@ class Article(object):
         self.title = smart_unicode(title)
         self.content = smart_unicode(content)
         self.author = author
+        self.author_nickname = author.nickname
         self.author_ip = smart_unicode(author_ip)
         self.deleted = False
         self.date = datetime.datetime.fromtimestamp(time.time())
@@ -326,6 +327,7 @@ articles_table = Table('articles', metadata,
     Column('heading_id', Integer, ForeignKey('board_headings.id'), nullable=True), # TODO: nullable=True 는 어디까지나 임시방편이므로 어서 지운다.
     Column('content', UnicodeText),
     Column('author_id', Integer, ForeignKey('users.id')),
+    Column('author_nickname', Unicode(40)),
     Column('author_ip', Unicode(15)),
     Column('date', DateTime),
     Column('hit', Integer),
