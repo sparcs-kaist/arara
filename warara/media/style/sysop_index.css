@@ -118,6 +118,16 @@ fieldset label {
     float:left;
 }
 
+#manager {
+    width:160px;
+    float:left;
+}
+
+#add_manager {
+    float:left;
+    clear:both;
+}
+
 #add_board form label {
     width:80px;
 }

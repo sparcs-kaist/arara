@@ -19,14 +19,16 @@
             <tr>
                 <th>Name</th>
                 <th>Desc</th>
+                <th>Managers</th>
                 <th>Preview</th>
             </tr>
         </thead>
         <tbody>
-            {% for board in board_list %}
-            <tr class="{% if board.hide %}hidden_board{% else %}showing_board{% endif %}">
-                <td>{{board.board_name}}</td>
-                <td>{{board.board_description}}</td>
+            {% for manager_info in  bbs_managers_list %}
+            <tr class="{% if manager_info.board.hide %}hidden_board{% else %}showing_board{% endif %}">
+                <td>{{manager_info.board.board_name}}</td>
+                <td>{{manager_info.board.board_description}}</td>
+                <td>{% for manager in manager_info.managers %} <input type="checkbox" class="checkbox" id="selected_manager" />{{manager.username}} {% endfor %}</td>
                 <td><a href="/board/{{board.board_name}}" target="_blank">Link</a></td>
             </tr>
             {% endfor %}
@@ -45,26 +47,11 @@
         <input type="text" class="textfield" id="board_description" name="board_description" /><br />
         <input type="button" class="button" id="apply_changes" value="적용" />
     </div>
-</fieldset>
-
-<fieldset id="bbs_manager_panel">
-    <legend>보드 관리자</legend>
-    <table id="bbs_managers_list">
-        <thead>
-            <tr>
-                <th>board name</th>
-                <th>managers</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for manager_info in  bbs_managers_list %}
-            <tr class="{% if manager_info.board.hide %}hidden_board{% else %}showing_board{% endif %}">
-                <td>{{manager_info.board.board_name}}</td>
-                <td>{% for manager in manager_info.managers %} {{manager.username}} {% endfor %}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div id="add_manager">
+        <label for="manager">관리자 추가</label>
+        <input type="text" class="textfield" id="manager" name="manager" />
+        <input type="button" class="button" id="add_manager" value="추가" />
+    </div>
 </fieldset>
 
 <fieldset id="add_board">
