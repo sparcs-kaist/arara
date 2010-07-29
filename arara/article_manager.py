@@ -1060,11 +1060,11 @@ class ArticleManager(object):
         사용자가 SYSOP일 경우 해당하는 게시글의 닉네임을 변경할 수 있도록 함.
 
         @type  session_key: string
-        @param session_key: User Key
+        @param session_key: 사용자 Login Session (SYSOP)
         @type  board_name: string
-        @param board_name: BBS Name
-        @type  no: integer
-        @param no: Article Number
+        @param board_name: 게시물이 있는 Board 의 이름
+        @type  no: int
+        @param no: Article 게시물의 번호
         @type  new_nickname: string
         @param new_nickname: New Nickname
         @return:
@@ -1075,6 +1075,9 @@ class ArticleManager(object):
                 3. 로그인 되지 않은 유저거나 시삽이 아닐 경우: InvalidOperation Exception
                 4. 데이터베이스 오류: InternalError Exception
         '''
+        # TODO: id 를 return 하는 이유는 무엇일까?
+        # TODO: 이미 삭제된 글의 닉네임을 변경하는 것은 막아야 할까?
+        # TODO: 밑의 author 보다는 user 로 변경하는 것이 나을 듯
         board_id = self.engine.board_manager.get_board_id(board_name)
         session = model.Session()
         author = self._get_user(session, session_key)
