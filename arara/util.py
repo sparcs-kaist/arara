@@ -12,46 +12,58 @@ from arara_thrift.ttypes import *
 
 
 def smart_unicode(string):
+    '''
+    주어진 문자열이 unicode 라면 그대로 리턴하고, 그렇지 않다면 unicode 로 만듦.
+
+    @type string: unicode / string
+    @rtype: unicode
+    '''
     if isinstance(string, unicode): return string
     else: return unicode(string, 'utf-8')
 
 def datetime2timestamp(datetime_):
+    '''
+    datetime.datetime 객체를 timestamp 형식으로 바꿈
+    @type datetime_: datetime.datetime
+    @rtype: double
+    '''
+    # TODO: 이 함수도 libs 밑으로 옮긴다.
     return (time.mktime(datetime_.timetuple())
             + datetime_.microsecond / 1e6)
 
 from libs import timestamp2datetime
 
 def update_monitor_status(function):
+    # TODO: 이 함수 뭔가 이상하다. 잘못 구현되어 있는 것 같다.
     def wrapper(self, session_key, *args, **kwargs):
         if 'login_manager' in self.__dict__:
             action = function.func_name
             #ret, msg = self.login_manager._update_monitor_status(session_key, action)
 
 def log_method_call_with_source_important(source):
+    '''
+    지정된 source 에 Logging 하는 decorator 를 내놓는다.
+
+    @type  source: string
+    @param source: Manager 의 명칭
+    '''
 
     def log_method_call(function):
+        '''
+        인위적으로 발생시킨 Exception 이 아닌 Exception 이 발생하면 기록을 남기게 한다.
+
+        @type  function: function
+        @param function: 로그를 남기게 하고 싶은 function
+        '''
         def wrapper(self, session_key, *args, **kwargs):
             logger = logging.getLogger(source)
-            username = session_key
-            #if 'login_manager' in self.__dict__:
-            #    action = source + '.' + function.func_name
-            #    ret, msg = self.login_manager._update_monitor_status(session_key, action)
-            #    try:
-            #        assert ret, msg
-            #    except AssertionError:
-            #        logger.error("EXCEPTION(by %s) %s.%s%s:\n%s", username, source,
-            #                function.func_name, repr(args), traceback.format_exc())
-            #        raise InternalError()
-            #    user_info = self.login_manager.get_session(session_key)
-            #    username = user_info.username
-            logger.info("CALL(by %s) %s.%s%s", username, source,
+            logger.info("CALL(by %s) %s.%s%s", session_key, source,
                     function.func_name, repr(args))
+
             # XXX: (pipoket) This line shows the status of the pool, remove this later
             if model.pool:
                 if arara_settings.ARARA_POOL_DEBUG_MODE:
                     logger.info(model.pool.status())
-            #logger.debug("CURRENT USER STATUS UPDATED: User '%s' calls '%s' function",
-            #        username, user_info.current_action)
             try:
                 ret = function(self, session_key, *args, **kwargs)
             except InvalidOperation:
@@ -61,10 +73,10 @@ def log_method_call_with_source_important(source):
             except NotLoggedIn:
                 raise
             except:
-                logger.error("EXCEPTION(by %s) %s.%s%s:\n%s", username, source,
+                logger.error("EXCEPTION(by %s) %s.%s%s:\n%s", session_key, source,
                         function.func_name, repr(args), traceback.format_exc())
                 raise InternalError()
-            logger.debug("RETURN(by %s) %s.%s%s=%s", username, source,
+            logger.debug("RETURN(by %s) %s.%s%s=%s", session_key, source,
                     function.func_name, repr(args), repr(ret))
 
             return ret
