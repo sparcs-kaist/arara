@@ -381,7 +381,7 @@ service ARAraThriftInterface {
 /// BlacklistManager Part End
 /// BoardManager Part Begin
     void add_board(1:string session_key, 2:string board_name,
-                   3:string board_description, 4:list<string> heading_list)
+                   3:string board_description, 4:list<string> heading_list, 5:string category_name)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     Board get_board(1: string board_name)
