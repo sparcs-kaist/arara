@@ -44,7 +44,7 @@ def add_board(request):
         #TODO: 공백 말머리는 허용하지 말 것
         board_headings = [x.strip() for x in headings_string.split(",")]
 
-    server.board_manager.add_board(sess, request.POST['add_board_name'], request.POST['add_board_description'], board_headings, None)
+    server.board_manager.add_board(sess, request.POST['add_board_name'], request.POST['add_board_description'], board_headings, None, int(request.POST['add_board_type']))
     return HttpResponseRedirect('/sysop/')
 
 def _ajax_calling(response):

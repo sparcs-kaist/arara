@@ -41,6 +41,10 @@ fieldset label {
     margin: 0.66em 0 0.3em 0.5em;
 }
 
+select {
+    margin: 0.66em 0 0.3em 0.5em;
+}
+
 .button {
     width:45px;
     min-height:22px;

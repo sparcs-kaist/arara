@@ -58,6 +58,12 @@
     <legend>보드 추가</legend>
     <form method="post" action="/sysop/add_board/">
         <label for="add_board_name">보드 이름</label><input type="text" class="textfield" name="add_board_name" id="add_board_name"><br />
+        <label for="add_board_type">보드 형식</label>
+        <select name="add_board_type" id="add_board_type">
+            <option value=0>일반 보드</option>
+            <option value=1>사진/그림용 보드</option>
+        </select>
+        <br />
         <label for="add_board_description">보드 설명</label><input type="text" class="textfield" name="add_board_description" id="add_board_description"><br />
         <label for="add_board_headings">말머리 목록</label><input type="text" class="textfield" name="add_board_headings" id="add_board_headings"><br />
         <p>말머리를 여러개 등록할 때에는 말머리를 쉼표로 구분합니다. (예 : 삽니다,팝니다)</p>
