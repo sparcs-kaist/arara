@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
 from arara import model
+from arara.model import BOARD_TYPE_NORMAL, BOARD_TYPE_PICTURE
 from arara.util import filter_dict, require_login
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 from arara.util import smart_unicode, datetime2timestamp
@@ -114,7 +115,7 @@ class BoardManager(object):
 
     @require_login
     @log_method_call_important
-    def add_board(self, session_key, board_name, board_description, heading_list = [], category_name = None):
+    def add_board(self, session_key, board_name, board_description, heading_list = [], category_name = None, board_type = BOARD_TYPE_NORMAL):
 
         '''
         보드를 신설한다.
@@ -155,7 +156,7 @@ class BoardManager(object):
         if category_name != None:
             category = self.get_category(category_name)
 
-        board_to_add = model.Board(smart_unicode(board_name), board_description, board_order, category)
+        board_to_add = model.Board(smart_unicode(board_name), board_description, board_order, category, board_type)
         try:
             session.add(board_to_add)
             # Board Heading 들도 추가한다.
@@ -172,7 +173,7 @@ class BoardManager(object):
         # 보드에 변경이 발생하므로 캐시 초기화
         self.cache_board_list()
 
-    def _add_bot_board(self, board_name, board_description = '', heading_list = [], hide = True, category_name = None):
+    def _add_bot_board(self, board_name, board_description = '', heading_list = [], hide = True, category_name = None, board_type = BOARD_TYPE_NORMAL):
         '''
         BOT용 보드를 신설한다.
         주의 : 이 함수는 BOT Manager에서만 사용되어야 한다
@@ -207,7 +208,7 @@ class BoardManager(object):
         else:
             board_order=board_order_list.all()[-1].order+1
 
-        board_to_add = model.Board(smart_unicode(board_name), smart_unicode(board_description), order=board_order, category=None)
+        board_to_add = model.Board(smart_unicode(board_name), smart_unicode(board_description), order=board_order, category=None, type=board_type)
         board_to_add.hide = hide
 
         try:

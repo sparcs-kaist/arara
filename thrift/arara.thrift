@@ -130,7 +130,7 @@ struct Board {
     5: bool hide,
     6: list<string> headings,
     7: i32 order,
-    8: i32 category_id
+    8: i32 category_id,
 }
 
 struct WrittenArticle {
@@ -381,7 +381,7 @@ service ARAraThriftInterface {
 /// BlacklistManager Part End
 /// BoardManager Part Begin
     void add_board(1:string session_key, 2:string board_name,
-                   3:string board_description, 4:list<string> heading_list, 5:string category_name)
+                   3:string board_description, 4:list<string> heading_list, 5:string category_name, 6:i32 board_type)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     Board get_board(1: string board_name)
