@@ -185,7 +185,7 @@ class ArticleManagerTest(unittest.TestCase):
         result = self.engine.article_manager.article_list(self.session_key_mikkang, u'board', u'')
         self.assertEqual(1, result.last_page)
         self.assertEqual(1, result.results)
-        self.assertEqual(None, result.current_page)
+        self.assertEqual(1, result.current_page)
         self.assertEqual(1, len(result.hit))
 
         expected_result = expected_result1
@@ -239,7 +239,7 @@ class ArticleManagerTest(unittest.TestCase):
         result = self.engine.article_manager.article_list(self.session_key_mikkang, u'board', u'')
         self.assertEqual(1, result.last_page)
         self.assertEqual(2, result.results)
-        self.assertEqual(None, result.current_page)
+        self.assertEqual(1, result.current_page)
 
         expected_result1 = {'negative_vote': 0, 'positive_vote': 0, 'last_modified_date': 31536001.100000001, 'is_searchable': True, 'author_nickname': u'mikkang', 'reply_count': 1, 'id': 1, 'title': u'TITLE', 'content': None, 'attach': None, 'type': 'normal', 'author_username': u'mikkang', 'hit': 0, 'root_id': None, 'deleted': False, 'board_name': u'board', 'date': 31536001.100000001, 'blacklisted': False, 'read_status': 'N', 'depth': None, 'author_id': 2, 'heading': u''}
 

@@ -270,12 +270,7 @@ class ArticleManager(object):
         elif article_count == 0:
             last_page += 1
 
-        # part 2. page 번호 보정
-        # Page 에 0 이 들어오면 계속 잘못 작동하고 있다. 이를 막기 위해 page 의 시작점을 0 으로 설정한다.
-        # XXX 가능하면 TEST CODE 도 만들자.
-        if page == 0:
-            page = 1
-        # 페이지가 비정상 범위라면? InvalidOperation.
+        # part 2. 페이지가 비정상 범위라면? InvalidOperation.
         if (page > last_page) or (page < 0):
             session.close()
             raise InvalidOperation('WRONG_PAGENUM')
@@ -445,7 +440,7 @@ class ArticleManager(object):
         @param include_all_headings: 모든 글머리의 글을 가져올지에 대한 여부
         @type  order_by: int - LIST_ORDER
         @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
-        @rtype: (list<model.Article>, int, int, list<int>)
+        @rtype: (list<model.Article>, int, int)
         @return:
             1. article_list  : model.Article 의 list
             2. last page     : 글 목록의 마지막 페이지의 번호
@@ -498,7 +493,7 @@ class ArticleManager(object):
         @param article_dict_list_generator: Thrift 객체로 만들어버릴 딕셔너리의 모음
         @type  blacklisted_users: list<int>
         @param blacklisted_users: 블랙리스트에 들어있는 사용자의 id
-        @rtype: generator<Thrift.Article>
+        @rtype: generator<ttypes.Article>
         @return: Thrift Article들의 모임
         '''
         for article in article_dict_list_generator:
@@ -513,6 +508,41 @@ class ArticleManager(object):
             article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
             yield Article(**article)
         raise StopIteration
+
+    def _article_list_2_article_list(self, session_key, article_list, current_page, last_page, article_count):
+        '''
+        주어진 list<model.Article> 에 적절한 정보들을 입혀서 Thrift 형식의 Article 객체의 list 로 만든다.
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        @type  article_list: list<model.Article>
+        @param article_list: SQLAlchemy 객체로 되어 있는 글목록
+        @type  current_page: int
+        @param current_page: 글 목록의 현재 페이지 번호
+        @type  last_page: int
+        @param last page: 글 목록의 마지막 페이지의 번호
+        @type  article_count: int
+        @param article_count: 글의 전체 갯수
+        @rtype: list<ttypes.Article>
+        @return: 주어진 article_list 를 SQLAlchemy 형식에서 Thrift 형식으로 변환한 것
+        '''
+        # TODO: article_list 를 아예 generator 로 받아도 될까?
+
+        # Phase 1. SQLAlchemy Article List -> Article Dictionary (ReadStatus Marked)
+        article_dict_list_generator = self._get_read_status_generator(session_key, article_list)
+
+        # Phase 2. Article Dictionary -> Thrift Article Object (Blacklisted Marked)
+        blacklisted_users = self._get_blacklist_userid(session_key)
+        article_list_generator = self._thrift_article_generator(article_dict_list_generator, blacklisted_users)
+
+        # Phase 3. 이제 이를 바탕으로 Article List 객체를 돌려준다.
+        article_list = ArticleList()
+        article_list.hit = list(article_list_generator)
+        article_list.current_page = current_page
+        article_list.last_page = last_page
+        article_list.results = article_count
+
+        return article_list
 
     def _article_list(self, session_key, board_name, heading_name, page, page_length, include_all_headings = True, order_by = LIST_ORDER_ROOT_ID):
         '''
@@ -533,27 +563,18 @@ class ArticleManager(object):
         @param include_all_headings: 모든 글머리의 글을 가져올지에 대한 여부
         @type  order_by: int - LIST_ORDER
         @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
-        @rtype: list<Article>
+        @rtype: list<ttypes.Article>
         @return:
             선택한 게시판의 선택한 page 에 있는 글 (Article 객체) 의 list
         '''
-        # Phase 1. SQLAlchemy Article List, Last Page, Article Count 를 구한다.
+        # Phase 1. page 번호가 0 이 들어오면 1로 교정한다.
+        if page == 0: page = 1
+            
+        # Phase 2. SQLAlchemy Article List, Last Page, Article Count 를 구한다.
         article_list, last_page, article_count = self._get_article_list(board_name, heading_name, page, page_length, include_all_headings, order_by)
 
-        # Phase 2. SQLAlchemy Article List -> Article Dictionary (ReadStatus Marked)
-        article_dict_list_generator = self._get_read_status_generator(session_key, article_list)
-
-        # Phase 3. Article Dictionary -> Thrift Article Object (Blacklisted Marked)
-        blacklisted_users = self._get_blacklist_userid(session_key)
-        article_list_generator = self._thrift_article_generator(article_dict_list_generator, blacklisted_users)
-
-        # 준비 완료. 이제 이를 바탕으로 Article List 객체를 돌려준다.
-        article_list = ArticleList()
-        article_list.hit = list(article_list_generator)
-        article_list.last_page = last_page
-        article_list.results = article_count
-        return article_list
-         
+        return self._article_list_2_article_list(session_key, article_list, page, last_page, article_count)
+        
     @log_method_call
     def article_list(self, session_key, board_name, heading_name, page=1, page_length=20, include_all_headings=True):
         '''
@@ -784,18 +805,7 @@ class ArticleManager(object):
             page_position += 1
 
         # 이상을 바탕으로 _article_list 함수를 호출한다
-        try:
-            below_article_dict_list = self._article_list(session_key, board_name, heading_name, page_position, page_length, include_all_headings, order_by)
-        except Exception:
-            raise
-
-        ret = ArticleList()
-        ret.hit = below_article_dict_list.hit
-        ret.current_page = page_position
-        ret.last_page = below_article_dict_list.last_page
-        ret.results = below_article_dict_list.results
-        return ret
- 
+        return self._article_list(session_key, board_name, heading_name, page_position, page_length, include_all_headings, order_by)
 
     @require_login
     @log_method_call
