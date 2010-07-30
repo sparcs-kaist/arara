@@ -138,13 +138,17 @@ class Category(object):
     def __repr__(self):
         return "<Category('%s')>" % (self.category_name)
 
+BOARD_TYPE_NORMAL = 0
+BOARD_TYPE_PICTURE = 1
+
 class Board(object):
-    def __init__(self, board_name, board_description, order, category):
+    def __init__(self, board_name, board_description, order, category, type = None):
         '''
         @type board_name: string
         @type board_description: string
         @type order: int
         @type category: model.Category
+        @type type: int
         '''
         self.board_name = smart_unicode(board_name)
         self.board_description = smart_unicode(board_description)
@@ -153,6 +157,10 @@ class Board(object):
         self.hide = False
         self.order = order
         self.category = category
+        if type:
+            self.type = type
+        else:
+            self.type = BOARD_TYPE_NORMAL
 
     def __repr__(self):
         return "<Board('%s', '%s')>" % (self.board_name, self.board_description)
@@ -398,6 +406,7 @@ board_table = Table('boards', metadata,
     Column('read_only', Boolean),
     Column('hide', Boolean),
     Column('order', Integer, nullable=True),
+    Column('type', Integer),
     mysql_engine='InnoDB'
 )
 
