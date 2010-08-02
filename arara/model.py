@@ -48,6 +48,7 @@ class User(object):
         self.last_logout_time = None
         self.last_login_ip = u''
         self.is_sysop = False
+        self.portal = False
 
     @classmethod
     def encrypt_password(cl, raw_password, salt):
@@ -370,6 +371,7 @@ users_table = Table('users', metadata,
     Column('last_logout_time', DateTime),
     Column('last_login_ip', Unicode(15)),
     Column('is_sysop', Boolean),
+    Column('portal', Boolean),
     mysql_engine='InnoDB'
 )
 
