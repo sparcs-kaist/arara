@@ -610,34 +610,36 @@ class BoardManager(object):
 
     @require_login
     @log_method_call_important
-    def edit_category(self, category_name, category_new_name):
+    def edit_category(self, session_key, category_name, new_category_name):
         '''
         카테고리의 이름을 변경한다.
 
+        @type  session_key: string
+        @param session_key: 사용자 로그인 Session
         @type  category_name: string
         @param category_name: 변경할 카테고리의 이름
-        @type  category_new_name: string
-        @param category_new_name: 카테고리의 새 이름
+        @type  new_category_name: string
+        @param new_category_name: 카테고리의 새 이름
         @rtype: void
         @return:
             1.성공 : 아무것도 리턴하지 않음
             2.실패 : 이미 있는 카테고리의 이름일 경우 InvalidOperation(category already exists)
                      
         '''
-        # TODO: session_key 가 없다.
         self._is_sysop(session_key)
         category_name = smart_unicode(category_name)
-        category_new_name = smart_unicode(category_new_name)
+        new_category_name = smart_unicode(new_category_name)
 
         session = model.Session()
-        category = self._get_category_from_session(session, category)
+        category = self._get_category_from_session(session, category_name)
+        category.category_name = new_category_name
 
         try:
             session.commit()
             session.close()
         except IntegrityError:
             raise InvalidOperation("category already exists")
-        except InvalidRequestError:
+        except InvalidRequestError: # TODO: 어떤 경우에 이렇게 되나?
             raise InternalError()
         self.cache_category_list()
 

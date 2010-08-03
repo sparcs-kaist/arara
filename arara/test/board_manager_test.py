@@ -123,6 +123,25 @@ class BoardManagerTest(unittest.TestCase):
         except InvalidOperation:
             pass
 
+    def test_edit_category(self):
+        # 테스트에 사용할 category 를 하나 만든다.
+        self.engine.board_manager.add_category(self.session_key_sysop, u'public')
+
+        # TEST 1. category 이름을 바꾼다.
+        self.engine.board_manager.edit_category(self.session_key_sysop, u'public', u'private')
+        #         그러면 새 이름으로 카테고리를 찾을 수 있고, 기존 이름으로 찾을 수 없다. 
+        result = self.engine.board_manager.get_category(u'private')
+        expect = {'id': 1, 'category_name': u'private'}
+        self.assertEqual(expect, self._to_dict_category(result))
+        try:
+            self.engine.board_manager.get_category(u'public')
+            self.fail("nonexisting category was returned.")
+        except InvalidOperation:
+            pass
+
+        # TODO
+        # TEST 2. category 이름을 "이미 존재하는 다른 카테고리와 중복되도록" 바꾼다.
+        # TEST 3. 존재하지 않는 이름의 category 를 바꾸기를 시도한다.
 
     def testNormalAddAndRemoveOneBoard(self):
         # Add one board 'garbages'
