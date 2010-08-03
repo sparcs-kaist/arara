@@ -188,34 +188,45 @@ class LoginManager(object):
                 return True
             else:
                 return False
+    
+    def _clean_specific_session(self, session_key):
+        '''
+        주어진 사용자가 장시간 작업이 없었다면 Logout 시킨다.
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        '''
+        if not self.session_dic.has_key(session_key):
+            # 이미 로그아웃한 사용자라면 이하의 절차가 필요없다.
+            return
+
+        with self.lock_session_dic:
+            current_time = time.time()
+            session_time = self.session_dic[session_key]['last_action_time']
+            diff_time = current_time - session_time
+            if diff_time > SESSION_EXPIRE_TIME:
+                try:
+                    self.logout(session_key)
+                except NotLoggedIn:
+                    # 이미 로그아웃했다면 특별한 문제가 아니다.
+                    pass
 
     def _check_session_status(self):
         '''
         정기적으로 실행되면서 장시간 작업이 없었던 사용자를 Logout 시킨다.
         '''
-        # TODO: 아래 전체적인 구조 다듬기
         while True:
             logger = logging.getLogger('SESSION CLEANER')
+            logger.info("=================== SESSION CLEANING STARTED") 
+
             try:
-                with self.lock_session_dic:
-                    logger.info("=================== SESSION CLEANING STARTED") 
-                    current_time = time.time()
-                    for session_key in self.session_dic.keys():
-                        if not self.session_dic.has_key(session_key):
-                            # XXX Session Clearner 가 도는 중에 Logout 해버리면 이게 문제가 될 수 있다.
-                            continue
-                        session_time = self.session_dic[session_key]['last_action_time']
-                        username = self.session_dic[session_key]['username']
-                        diff_time = current_time - session_time
-                        if diff_time > SESSION_EXPIRE_TIME:
-                            logger.info("==SESSION CLEANER== TARGET DETECTED: USERNAME<%s> (Last: %s, No action for %s)",
-                                    username, session_time, diff_time)
-                            logger.debug("==SESSION CLEANER==: LOGGING OUT %s ", username)
-                            self.logout(session_key)
-                            logger.info("==SESSION CLEANER==: USERNAME<%s> SUCCESFULLY DELETED!", username)
-                    logger.info("=================== SESSION CLEANING FINISHED") 
+                for session_key in self.session_dic.keys():
+                    self._clean_specific_session(session_key)
             except Exception:
-                logger.exception("EXCEPTION at SESSION CLEANER")
+                import traceback
+                logger.exception("EXCEPTION at SESSION CLEANER : \n%s", traceback.format_exc())
+
+            logger.info("=================== SESSION CLEANING FINISHED") 
             time.sleep(SESSION_EXPIRE_TIME)
 
     def update_session(self, session_key):
