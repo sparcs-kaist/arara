@@ -398,6 +398,9 @@ service ARAraThriftInterface {
     list<Board> get_board_list()
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    i32 get_board_type(1: string board_name)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void add_read_only_board(1:string session_key, 2:string board_name)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),

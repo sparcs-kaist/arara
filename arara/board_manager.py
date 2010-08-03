@@ -525,6 +525,19 @@ class BoardManager(object):
         board_id = self.get_board_id(smart_unicode(board_name))
         return self.get_board_heading_list_fromid(board_id)
 
+    @log_method_call
+    def get_board_type(self, board_name):
+        '''
+        주어진 board의 type을 돌려준다.
+
+        @type  board_name: string
+        @param board_name: type을 돌려줄 board의 이름
+        @rtype : integer
+        @return: type을 나타내는 integer
+        '''
+
+        return self._get_board(board_name).type
+
     def cache_category_list(self):
         '''
         DB 로부터 category 목록을 읽어들여 cache 를 생성한다.

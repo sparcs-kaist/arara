@@ -75,6 +75,7 @@ class ARAraEngine(object):
             'add_board': self.board_manager.add_board,
             'get_board': self.board_manager.get_board,
             'get_board_id': self.board_manager.get_board_id,
+            'get_board_type': self.board_manager.get_board_type,
             'get_board_heading_list': self.board_manager.get_board_heading_list,
             'get_board_list': self.board_manager.get_board_list,
             'add_read_only_board': self.board_manager.add_read_only_board,
