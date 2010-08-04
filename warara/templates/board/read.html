@@ -94,8 +94,15 @@
                 <input type="hidden" name="root_id" value="{{article.root_id}}" />
                 <ul>
                     <li><input type="text" name="title" class="write_reply_title" value="{{article.title}}" /></li>
-                    <li><textarea name="content">{{default_text}}</textarea></li>
+                    <li><textarea name="content"></textarea></li>
                 </ul>
+                <div id="article_signature">
+                    <div id="signature_check">
+                    <input type="checkbox" name="signature_check" value="signature_check" {% if not modify %}checked="checked"{% endif %}>{% trans "Use Signature" %}</input>
+                    </div>
+                    <textarea name="signature" readonly="readonly">{{ user_signature }}</textarea>
+                </div>
+                <br />
                 <input type="hidden" value="{{article_no}}" name="article_no"></input>
                 <div class="article_write_file">
                     <div class="file_line">
@@ -147,8 +154,15 @@
         <input type="hidden" name="root_id" value="{{root_article.root_id}}" />
         <ul>
             <li><input type="text" name="title" class="write_reply_title" value="{{root_article.title}}" /></li>
-            <li><textarea name="content">{{default_text}}</textarea></li>
+            <li><textarea name="content"></textarea></li>
         </ul>
+        <div id="article_signature">
+            <div id="signature_check">
+            <input type="checkbox" name="signature_check" value="signature_check" {% if not modify %}checked="checked"{% endif %}>{% trans "Use Signature" %}</input>
+            </div>
+            <textarea name="signature" readonly="readonly">{{ user_signature }}</textarea>
+        </div>
+        <br />
         <input type="hidden" value="{{article_no}}" name="article_no"></input>
         <div class="article_write_file">
             <div class="file_line">

@@ -311,8 +311,7 @@ def _read(request, r, sess, board_name, article_id):
 
     r['board_name'] = board_name
     r['article_id'] = article_id
-    r['default_text'] = server.member_manager.get_info(sess)
-    r['default_text'] = r['default_text'].signature
+    r['user_signature'] = server.member_manager.get_info(sess).signature
     r['article_read_list'] = article_list
     r['root_article'] = article_list[0]
     # move_article 사용시 이동할 보드를 select 태그를 사용해 리스트로 불러와 쓰기 위함.
