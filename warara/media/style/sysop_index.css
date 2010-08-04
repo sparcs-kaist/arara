@@ -108,7 +108,7 @@ select {
     clear:both;
 }
 
-#edit_board label {
+#edit_board label, #add_manager label {
     width:80px;
 }
 
@@ -130,6 +130,10 @@ select {
 #apply_add_manager {
     float:left;
     clear:both;
+}
+
+#apply_remove_manager {
+    float:left;
 }
 
 #add_board form label {
