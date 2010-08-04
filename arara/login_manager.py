@@ -30,9 +30,18 @@ class LoginManager(object):
         self.lock_session_dic = thread.allocate_lock()
         self.engine = engine
         self.session_dic = {}
-        self.session_checker = thread.start_new_thread(self._check_session_status, tuple())
         self.logger = logging.getLogger('login_manager')
         self._create_counter_column()
+        # Engine 이 가동중인 동안 True, 가동을 멈추면 False 가 되는 변수
+        self.engine_online = True
+        # Thread 가동 시작
+        self.session_checker = thread.start_new_thread(self._check_session_status, tuple())
+
+    def shutdown(self):
+        '''
+        LoginManager 의 작동을 멈춘다. 즉 Session Cleaner thread 의 작동을 멈춘다.
+        '''
+        self.engine_online = False
 
     def _create_counter_column(self):
         '''
@@ -215,7 +224,7 @@ class LoginManager(object):
         '''
         정기적으로 실행되면서 장시간 작업이 없었던 사용자를 Logout 시킨다.
         '''
-        while True:
+        while self.engine_online:
             logger = logging.getLogger('SESSION CLEANER')
             logger.info("=================== SESSION CLEANING STARTED") 
 

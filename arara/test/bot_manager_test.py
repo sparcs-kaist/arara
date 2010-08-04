@@ -146,6 +146,7 @@ class BotManagerTest(unittest.TestCase):
         xml.dom.minidom.parseString = self.org_parseString
 
     def tearDown(self):
+        self.engine.shutdown()
         # Restore Stub Code
         xml.dom.minidom.Element.toprettyxml = self.org_toprettyxml
         time.strftime = self.org_strftime

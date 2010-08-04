@@ -166,6 +166,7 @@ class BlacklistManagerTest(unittest.TestCase):
         # TODO : 없는 유저에 대해 작동 안하는 거 확인.
 
     def tearDown(self):
+        self.engine.shutdown()
         arara.model.clear_test_database()
         time.time = self.org_time
         etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED

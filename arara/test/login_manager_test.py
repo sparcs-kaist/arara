@@ -152,6 +152,7 @@ class LoginManagerTest(unittest.TestCase):
         self.assertEqual(result, stub_time_2())
 
     def tearDown(self):
+        self.engine.shutdown()
         time.time = self.org_time
         arara.model.clear_test_database()
         etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED

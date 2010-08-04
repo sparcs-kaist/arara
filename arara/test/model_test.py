@@ -85,6 +85,7 @@ class ModelTest(unittest.TestCase):
         session.close()
 
     def tearDown(self):
+        self.engine.shutdown()
         time.time = self.org_time
         arara.model.clear_test_database()
         etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED

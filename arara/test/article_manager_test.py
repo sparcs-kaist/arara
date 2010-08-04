@@ -69,6 +69,7 @@ class ArticleManagerTest(unittest.TestCase):
         self.engine.board_manager.add_board(self.session_key_sysop, u'board_hide', u'Test Board for hiding board test', [])
 
     def tearDown(self):
+        self.engine.shutdown()
         arara.model.clear_test_database()
         etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
         time.time = self.org_time

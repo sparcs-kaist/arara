@@ -432,6 +432,7 @@ class MessagingManagerTest(unittest.TestCase):
             pass
 
     def tearDown(self):
+        self.engine.shutdown()
         arara.model.clear_test_database()
         # Restore the time
         time.time = self.org_time

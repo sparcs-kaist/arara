@@ -135,3 +135,10 @@ class ARAraEngine(object):
                 
         for x in mapping:
             self.__dict__[x] = mapping[x]
+
+    def shutdown(self):
+        '''
+        엔진이 종료될 때 반드시 수행되어야 하는 동작들을 이행한다.
+        '''
+        # TODO: 필요한 동작들이 무엇일지 잘 생각해 보자.
+        self.login_manager.shutdown()

@@ -93,6 +93,7 @@ class NoticeManagerTest(unittest.TestCase):
         self.assertEqual(0, len(banner_list))
 
     def tearDown(self):
+        self.engine.shutdown()
         arara.model.clear_test_database()
         time.time = self.org_time
 

@@ -58,6 +58,7 @@ class Test(unittest.TestCase):
         self.engine.board_manager.add_board(self.session_key_sysop, u"search2", u"search2", [u'head1', u'head2'])
 
     def tearDown(self):
+        self.engine.shutdown()
         arara.model.clear_test_database()
         # Restore the time
         time.time = self.org_time
