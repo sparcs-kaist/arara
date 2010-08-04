@@ -213,12 +213,16 @@ class LoginManager(object):
             current_time = time.time()
             session_time = self.session_dic[session_key]['last_action_time']
             diff_time = current_time - session_time
-            if diff_time > SESSION_EXPIRE_TIME:
-                try:
-                    self.logout(session_key)
-                except NotLoggedIn:
-                    # 이미 로그아웃했다면 특별한 문제가 아니다.
-                    pass
+            if diff_time <= SESSION_EXPIRE_TIME:
+                # Session Cleanup 이 필요치 않은 경우이다
+                return
+
+        # lock_session_dic 을 release 하고 진행한다
+        try:
+            self.logout(session_key)
+        except NotLoggedIn:
+            # 이미 로그아웃했다면 특별한 문제가 아니다.
+            pass
 
     def _check_session_status(self):
         '''
@@ -228,12 +232,12 @@ class LoginManager(object):
             logger = logging.getLogger('SESSION CLEANER')
             logger.info("=================== SESSION CLEANING STARTED") 
 
-            try:
-                for session_key in self.session_dic.keys():
+            for session_key in self.session_dic.keys():
+                try:
                     self._clean_specific_session(session_key)
-            except Exception:
-                import traceback
-                logger.exception("EXCEPTION at SESSION CLEANER : \n%s", traceback.format_exc())
+                except Exception:
+                    import traceback
+                    logger.exception("EXCEPTION at SESSION CLEANER : \n%s", traceback.format_exc())
 
             logger.info("=================== SESSION CLEANING FINISHED") 
             time.sleep(SESSION_EXPIRE_TIME)
