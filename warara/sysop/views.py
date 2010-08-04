@@ -156,8 +156,6 @@ def remove_bbs_manager(request):
 
     board_name = request.POST['board_name']
     manager = request.POST['manager']
-    managers = request.POST['managers']
-    print board_name, manager, "managers=", managers
     server.board_manager.remove_bbs_manager(sess, board_name, manager)
     if request.is_ajax():
         response = "SUCCESS\tremove_manager\t" + board_name
