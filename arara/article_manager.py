@@ -463,18 +463,20 @@ class ArticleManager(object):
 
         return article_list, last_page, article_count
 
-    def _get_read_status_generator(self, session_key, article_list):
+    def _get_read_status_generator(self, session_key, article_list, whitelist):
         '''
         @type  session_key: string
         @param session_key: 사용자 Login Session
         @type  article_list: list<SQLAlchemy model.Article>
         @param article_list: SQLAlchemy 형식의 글 객체의 모음
+        @type  whitelist: list<string>
+        @param whitelist: self._get_dict 에 통과시킬 whitelist
         @rtype: generator<dict>
         @return:
             LIST_ARTICLE_WHITELIST 를 통과한 article dictionary를 그때 그때 yield 한다
         '''
         for article in article_list:
-            article_dict = self._get_dict(article, LIST_ARTICLE_WHITELIST)
+            article_dict = self._get_dict(article, whitelist)
             try:
                 read_status_main = self.engine.read_status_manager.check_stat(session_key, article.id)
                 read_status_sub  = self.engine.read_status_manager.check_stat(session_key, article.last_reply_id)
@@ -509,7 +511,7 @@ class ArticleManager(object):
             yield Article(**article)
         raise StopIteration
 
-    def _article_list_2_article_list(self, session_key, article_list, current_page, last_page, article_count):
+    def _article_list_2_article_list(self, session_key, article_list, current_page, last_page, article_count, whitelist = LIST_ARTICLE_WHITELIST):
         '''
         주어진 list<model.Article> 에 적절한 정보들을 입혀서 Thrift 형식의 Article 객체의 list 로 만든다.
 
@@ -523,13 +525,15 @@ class ArticleManager(object):
         @param last page: 글 목록의 마지막 페이지의 번호
         @type  article_count: int
         @param article_count: 글의 전체 갯수
+        @type  whitelist: list<string>
+        @param whitelist: filtering 에 사용할 whitelist (Default: LIST_ARTICLE_WHITELIST)
         @rtype: list<ttypes.Article>
         @return: 주어진 article_list 를 SQLAlchemy 형식에서 Thrift 형식으로 변환한 것
         '''
         # TODO: article_list 를 아예 generator 로 받아도 될까?
 
         # Phase 1. SQLAlchemy Article List -> Article Dictionary (ReadStatus Marked)
-        article_dict_list_generator = self._get_read_status_generator(session_key, article_list)
+        article_dict_list_generator = self._get_read_status_generator(session_key, article_list, whitelist)
 
         # Phase 2. Article Dictionary -> Thrift Article Object (Blacklisted Marked)
         blacklisted_users = self._get_blacklist_userid(session_key)
