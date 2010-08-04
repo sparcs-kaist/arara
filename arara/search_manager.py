@@ -19,7 +19,7 @@ log_method_call_important = log_method_call_with_source_important('search_manage
 
 READ_ARTICLE_WHITELIST = ('id', 'title', 'contsent', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable')
 SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'heading', 'date', 'last_modified_date', 'reply_count',
-                    'deleted', 'author_username', 'author_nickname', 'vote', 'hit', 'content', 'board_name')
+                    'deleted', 'author_username', 'author_nickname', 'author_id', 'vote', 'hit', 'content', 'board_name')
 SEARCH_DICT = ('title', 'content', 'author_nickname', 'author_username', 'date', 'query')
 
 class SearchManager(object):
@@ -351,31 +351,12 @@ class SearchManager(object):
         end_time = time.time()
 
         search_list = list(result)
-        search_dict_list = self._get_dict_list(search_list, SEARCH_ARTICLE_WHITELIST)
 
-        # 검색된 글도 읽음 여부를 기억하게 해야 한다!
-        article_last_reply_id_list = [article.last_reply_id for article in search_list]
-        article_id_list = [article.id for article in search_dict_list]
-        try:
-            read_stats_list = self.engine.read_status_manager.check_stats(session_key, article_id_list)
-            read_stats_list_sub = self.engine.read_status_manager.check_stats(session_key, article_last_reply_id_list)
-            for idx, item in enumerate(read_stats_list_sub):
-                if read_stats_list[idx] == 'R':
-                    if item == 'N':
-                        read_stats_list[idx] = 'U'
+        article_list = self.engine.article_manager._article_list_2_article_list(session_key, search_list, page, last_page, article_count, SEARCH_ARTICLE_WHITELIST)
 
-        except NotLoggedIn, InvalidOperation:
-            read_stats_list = ['N'] * len(article_id_list)
-
-        for index, article in enumerate(search_dict_list):
-            article.read_status = read_stats_list[index]
-
-        ret_dict['hit'] = search_dict_list
-        ret_dict['results'] = article_count
-        ret_dict['search_time'] = end_time-start_time
-        ret_dict['last_page'] = last_page
         session.close()
-        return ArticleSearchResult(**ret_dict)
+        article_list.search_time = end_time-start_time
+        return article_list
 
     def _get_query_text(self, query_dict, key):
         query_text = unicode('%' + query_dict[key] + '%')
