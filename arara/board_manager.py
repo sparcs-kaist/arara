@@ -875,6 +875,9 @@ class BoardManager(object):
             raise InvalidOperation('username not exist')
         if self._is_already_manager(board.id, user.id):
             raise InvalidOperation('User is already a manager for the board.')
+        if username==u'SYSOP':
+            raise InvalidOperation('SYSOP does not need to be assigned as manager.')
+        # TODO: 프론트엔드에서 위의 두가지 InvalidOperation들에 대해 메세지를 보여주도록 해야 할까? 현재는 jquery문 안에서 "Failed to apply changes!" 라고만 뜨게됨.
         bbs_manager = model.BBSManager(board, user)
         session.add(bbs_manager)
         session.commit()
