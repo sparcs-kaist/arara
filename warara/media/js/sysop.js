@@ -16,6 +16,10 @@ function request_action(action){
 	request.url = "/sysop/add_bbs_manager/";
 	request.data = { board_name : selected_board.board_name,
 		         manager : $("#manager").val() };
+    } else if(action == "remove_bbs_manager"){
+        request.url = "/sysop/remove_bbs_manager/";
+        request.data = { board_name : selected_board.board_name,
+                         manager : $("#manager").val() };
     } else {
         request.url = "/sysop/modify_board/";
         request.data = { action : action,
@@ -113,6 +117,13 @@ $(document).ready( function() {
     $("#apply_add_manager").click( function(event) {
         event.preventDefault();
         request_action("add_bbs_manager");
+    });
+
+    // 관리자 제거 버튼  
+    $("#apply_remove_manager").unbind();
+    $("#apply_remove_manager").click( function(event) {
+        event.preventDefault();
+        request_action("remove_bbs_manager");
     });
 
     // 위로 버튼
