@@ -148,6 +148,25 @@ def add_bbs_manager(request):
         return HttpResponseRedirect('/sysop/')
 
 @warara.wrap_error
+def remove_bbs_manager(request):
+    '''
+    '''
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+
+    board_name = request.POST['board_name']
+    manager = request.POST['manager']
+    managers = request.POST['managers']
+    print board_name, manager, "managers=", managers
+    server.board_manager.remove_bbs_manager(sess, board_name, manager)
+    if request.is_ajax():
+        response = "SUCCESS\tremove_manager\t" + board_name
+        response = _ajax_calling(response)
+        return HttpResponse(response)
+    else:
+        return HttpResponseRedirect('/sysop/')
+
+@warara.wrap_error
 def confirm_user(request):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
