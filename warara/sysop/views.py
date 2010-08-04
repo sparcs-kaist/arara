@@ -6,7 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 import warara
 from warara import warara_middleware
 
-from arara.util import datetime2timestamp
+from libs import datetime2timestamp
 
 @warara.wrap_error
 def index(request):

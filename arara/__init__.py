@@ -12,8 +12,6 @@ from arara.search_manager import SearchManager
 from arara.file_manager import FileManager
 from arara.bot_manager import BotManager
 
-from arara.arara_engine import ARAraEngine
-
 CLASSES = {'login_manager': LoginManager,
            'member_manager': MemberManager,
            'blacklist_manager': BlacklistManager,
