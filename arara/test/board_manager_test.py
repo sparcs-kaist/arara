@@ -425,6 +425,12 @@ class BoardManagerTest(unittest.TestCase):
             self.fail("User is already a manager for the board.")
         except InvalidOperation:
             pass
+        # 시삽에을 게시판 관리자로 임명하는 경우에 대한 체크
+        try:
+            self.engine.board_manager.add_bbs_manager(self.session_key_sysop, u'test', u'SYSOP')
+            self.fail("SYSOP doesn't need to be assigned as manager.")
+        except InvalidOperation:
+            pass
 
     def testRemoveBBSManager(self):
         # 게시판 관리자 권한 지우기 테스트. by SYSOP

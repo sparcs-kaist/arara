@@ -875,6 +875,9 @@ class BoardManager(object):
             raise InvalidOperation('username not exist')
         if self._is_already_manager(board.id, user.id):
             raise InvalidOperation('User is already a manager for the board.')
+        if user.is_sysop:
+            raise InvalidOperation('SYSOP does not need to be assigned as manager.')
+        # TODO: 내부의 에러 메시지는 장기적으로는 JQuery 쪽에서도 이 에러 메시지를 참고하도록 수정하는 게...
         bbs_manager = model.BBSManager(board, user)
         session.add(bbs_manager)
         session.commit()
