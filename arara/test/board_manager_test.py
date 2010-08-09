@@ -436,6 +436,15 @@ class BoardManagerTest(unittest.TestCase):
             self.fail("SYSOP doesn't need to be assigned as manager.")
         except InvalidOperation:
             pass
+        # 게시판 관리자 권한을 체크하기 (사용자 : mikkang)
+        user_is_bbs_manager = self.engine.board_manager.is_bbs_manager_of(self.session_key, u'test')
+        self.assertEqual(True, user_is_bbs_manager)
+        # 게시판 관리자가 아닌 사용자의 권한 체크
+        user_reg_dic = {'username':u'mmmmm', 'password':u'mmmmm', 'nickname':u'mmmmm', 'email':u'mmmmm@example.com', 'signature':u'mmmmm', 'self_introduction':u'mmmmm', 'default_language':u'english', 'campus':u'seoul' }
+        register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
+        self.engine.member_manager.confirm(u'mmmmm', register_key)
+        user_session_key = self.engine.login_manager.login(u'mmmmm', u'mmmmm', '143.248.234.140')
+        self.assertEqual(False, self.engine.member_manager.is_bbs_manager_of(user_session_key, u'test'))
 
     def testRemoveBBSManager(self):
         # 게시판 관리자 권한 지우기 테스트. by SYSOP

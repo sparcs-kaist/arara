@@ -966,3 +966,30 @@ class BoardManager(object):
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('bbs manager not exist')
+
+    def is_bbs_manager_of(self, session_key, board_name):
+        '''
+        user session_key 와 보드 이름을 받아서 유저가 어떤 보드의 매니저 인지 체크한다.
+        @type   session_key: string
+        @param  session_key: 사용자 Login Session
+        @type   board_name: string
+        @param  board_name: 관리자 체크를 할 보드
+        @rtype: bool
+        @return: 유저가 그 보드의 관리자이면 true 아니면 false를 리턴.
+        '''
+        session = model.Session()
+        user_info = self.engine.login_manager.get_session(session_key)
+        try:
+            user = session.query(model.User).filter_by(username=smart_unicode(user_info.username)).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('user does not exist')
+        try:
+            board = session.query(model.Board).filter_by(board_name=board_name).one()
+            bbs_manager = session.query(model.BBSManager).filter_by(board_id=board.id,manager_id=user.id).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('user is not bbs manager')
+        session.close()
+        return bool(bbs_manager)
+
