@@ -820,6 +820,32 @@ class ArticleManagerTest(unittest.TestCase):
         self.engine.article_manager.check_article_exist([1, 2, 3])
         self.engine.article_manager.check_article_exist(3)
 
+    def test_move_article(self):
+        #유저가 SYSOP 일 경우 글을 선택해서 다른 게시판으로 옮길 수 있는지 테스트 한다.
+        # Write an article, reply to the article, and create board2
+        article_no1 = self._dummy_article_write(self.session_key_mikkang)
+        reply_dic = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
+        global STUB_TIME_CURRENT
+        STUB_TIME_CURRENT += 1.0
+        reply_no2 = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board', 1, reply_dic)
+        STUB_TIME_CURRENT += 1.0
+        reply_no3 = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board', 2, reply_dic)
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board2', u'Test Board2', [])
+        # Vote for article
+        self.engine.article_manager.vote_article(self.session_key_mikkang, u'board', article_no1, True)
+        # Move articles from board to board2
+        result = self.engine.article_manager.move_article(self.session_key_sysop, u'board', article_no1, u'board2')
+        self.assertEqual(article_no1, result)
+        # Check if an article is moved well
+        result = self.engine.article_manager.read_article(self.session_key_mikkang, u'board2', 1)
+        expected_result = {'negative_vote': 0, 'positive_vote': 1, 'last_modified_date': 31536001.100000001, 'is_searchable': True, 'author_nickname': u'mikkang', 'reply_count': None, 'id': 1, 'title': u'TITLE', 'content': u'CONTENT', 'attach': None, 'type': None, 'author_username': u'mikkang', 'hit': 1, 'root_id': 1, 'deleted': False, 'board_name': u'board2', 'date': 31536001.100000001, 'blacklisted': False, 'read_status': None, 'depth': 1, 'author_id': 2, 'heading': u''}
+        self.assertEqual(expected_result, self._to_dict(result[0]))
+        expected_result = {'negative_vote': 0, 'positive_vote': 0, 'last_modified_date': 31536002.100000001, 'is_searchable': True, 'author_nickname': u'mikkang', 'reply_count': None, 'id': 2, 'title': u'dummy', 'content': u'asdf', 'attach': None, 'type': None, 'author_username': u'mikkang', 'hit': 0, 'root_id': 1, 'deleted': False, 'board_name': u'board2', 'date': 31536002.100000001, 'blacklisted': False, 'read_status': None, 'depth': 2, 'author_id': 2, 'heading': u''}
+        self.assertEqual(expected_result, self._to_dict(result[1]))
+        expected_result = {'negative_vote': 0, 'positive_vote': 0, 'last_modified_date': 31536003.100000001, 'is_searchable': True, 'author_nickname': u'mikkang', 'reply_count': None, 'id': 3, 'title': u'dummy', 'content': u'asdf', 'attach': None, 'type': None, 'author_username': u'mikkang', 'hit': 0, 'root_id': 1, 'deleted': False, 'board_name': u'board2', 'date': 31536003.100000001, 'blacklisted': False, 'read_status': None, 'depth': 3, 'author_id': 2, 'heading': u''}
+        self.assertEqual(expected_result, self._to_dict(result[2]))
+        # TODO: article_vote_status table 의 board_id가 바뀌는 것 확인하기? files 의 board_id가 바뀌는 것 확인하기?
+
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(ArticleManagerTest)
 

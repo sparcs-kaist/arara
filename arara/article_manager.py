@@ -684,7 +684,7 @@ class ArticleManager(object):
             session.close()
             raise InvalidOperation('ARTICLE_NOT_EXIST')
 
-        article_dict_list = self._article_thread_to_list(article, session_key, blacklisted_userid)
+        article_dict_lis = self._article_thread_to_list(article, session_key, blacklisted_userid)
         session.close()
         return article_dict_list
 
@@ -1108,6 +1108,76 @@ class ArticleManager(object):
         else:
             session.close()
             raise InvalidOperation("NO_PERMISSION")
+        return id
+
+    @require_login
+    @log_method_call_important
+    def move_article(self, session_key, board_name, no, board_to_move):
+        '''
+        사용자가 (일단) SYSOP일 경우 해당글을 다른 게시판에 속하도록 옮길수 있게 함.
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session (SYSOP)
+        @type  board_name: string
+        @param board_name: 게시물이 있는 Board 의 이름
+        @type  no: int
+        @param no: Article 게시물의 번호
+        @type  board_to_move: string
+        @param board_to_move: 게시물이 옮겨질 Board 이름.
+        @return:
+            1. Modify 성공: Article Number
+            2. Modify 실패:
+                1. 유저가 시삽이 아닐 경우: InvalidOperation Exception
+                2. 존재하지 않는 게시판: InvalidOperation Exception
+                3. 데이터베이스 오류: InternalError Exception
+
+        '''
+        if not self.engine.member_manager.is_sysop(session_key):
+            raise InvalidOperation('no permission')
+        board_id = self.engine.board_manager.get_board_id(board_name)
+        board_move_id = self.engine.board_manager.get_board_id(board_to_move)
+        session = model.Session()
+        article = self._get_article(session, board_id, no)
+        id = article.id
+        if article.board_id != board_move_id:
+            article.board_id = board_move_id
+            query = None
+            try:
+                query = session.query(model.ArticleVoteStatus).filter_by(article_id=id).one()
+            except InvalidRequestError:
+                pass
+            if query:
+                query.board_id = board_move_id
+            file_queries = None
+            try:
+                file_queries = session.query(model.File).filter_by(article_id=id).all()
+            except InvalidRequestError:
+                pass
+            if file_queries:
+                for query in file_queries:
+                    query.board_id = board_move_id
+
+        if article.reply_count != 0:
+            replies = session.query(model.Article).filter_by(root_id=id).all()
+            for reply in replies:
+                reply.board_id = board_move_id
+                query = None
+                try:
+                    query = session.query(model.ArticleVoteStatus).filter_by(article_id=id).one()
+                except InvalidRequestError:
+                    pass
+                if query:
+                    query.board_id = board_move_id
+                file_queries = None
+                try:
+                    file_queries = session.query(model.File).filter_by(article_id=id).all()
+                except InvalidRequestError:
+                    pass
+                if file_queries:
+                    for query in file_queries:
+                        query.board_id = board_move_id
+        session.commit()
+        session.close()
         return id
 
     @require_login
