@@ -102,6 +102,7 @@ class ARAraEngine(object):
             'write_reply': self.article_manager.write_reply,
             'modify_article': self.article_manager.modify_article,
             'modify_nickname_in_article': self.article_manager.modify_nickname_in_article,
+            'move_article': self.article_manager.move_article,
             'delete_article': self.article_manager.delete_article,
             'destroy_article': self.article_manager.destroy_article,
             'fix_article_concurrency': self.article_manager.fix_article_concurrency,

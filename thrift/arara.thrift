@@ -512,6 +512,10 @@ service ARAraThriftInterface {
                                    3:id_t no, 4:string new_nickname)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    i32 move_article(1:string session_key, 2: string board_name,
+                     3:id_t no, 4:string board_to_move)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void delete_article(1:string session_key,
                         2:string board_name,
                         3:id_t no)
