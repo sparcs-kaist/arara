@@ -318,6 +318,11 @@ def _read(request, r, sess, board_name, article_id):
     # move_article 사용시 이동할 보드를 select 태그를 사용해 리스트로 불러와 쓰기 위함.
     board_list = server.board_manager.get_board_list()
     r['board_list'] = board_list
+    is_sysop_or_manager = False
+    if server.member_manager.is_sysop(sess):
+        is_sysop_or_manager = True
+    r['is_sysop_or_manager'] = is_sysop_or_manager
+
 
 @warara.wrap_error
 def read(request, board_name, article_id):
