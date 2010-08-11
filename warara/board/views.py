@@ -315,6 +315,9 @@ def _read(request, r, sess, board_name, article_id):
     r['default_text'] = r['default_text'].signature
     r['article_read_list'] = article_list
     r['root_article'] = article_list[0]
+    # move_article 사용시 이동할 보드를 select 태그를 사용해 리스트로 불러와 쓰기 위함.
+    board_list = server.board_manager.get_board_list()
+    r['board_list'] = board_list
 
 @warara.wrap_error
 def read(request, board_name, article_id):
@@ -438,6 +441,23 @@ def vote(request, board_name, root_id, article_no, vote_type):
         return HttpResponse("ALREADY_VOTED")
 
     return HttpResponse("OK")
+
+@warara.wrap_error
+def move_article(request):
+    '''
+    현재 글과 그 리플들을 다른 게시판으로 이동하며, article_vote_status, files의 보드 정보를 함께 수정한다.
+    @type   request: Django Request
+    @param  request: POST로 넘어온 form 정보.
+    @rtype: HttpResponseRedirect
+    @return: 현재 글이 이동되고 없는 보드의 목록 페이지로 재전송
+    '''
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+    board_name = request.POST['board_name']
+    article_no = request.POST['article_no']
+    board_to_move = request.POST['board_to_move']
+    server.article_manager.move_article(sess, board_name, int(article_no), board_to_move)
+    return HttpResponseRedirect('/board/%s' % board_name)
 
 @warara.wrap_error
 def _delete(request, board_name, root_id, article_no):

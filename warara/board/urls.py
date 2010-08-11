@@ -2,6 +2,7 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
     (r'^$', 'warara.board.views.index'),
+    (r'^move_article/$','warara.board.views.move_article'),
     (r'^(?P<board_name>[\w \[\]\.]+)/$', 'warara.board.views.list'),
     (r'^(?P<board_name>[\w \[\]\.]+)/write/$', 'warara.board.views.write'),
     (r'^([\w \[\]\.]+)/([\d]+)/$', 'warara.board.views.read'),
