@@ -16,6 +16,20 @@
 {% block article_content %}
 {% load i18n %}
 
+{% if is_sysop_or_manager %}
+<fieldset id="move_article">
+    <form action="/board/move_article/" method="post">
+        <select name="board_to_move" id="board_to_move">
+            {% for board in board_list %}
+            <option value="{{board.board_name}}">{{board.board_name}}</option>
+            {% endfor %}
+        </select>
+        <input type="hidden" name="board_name" value="{{root_article.board_name}}" />
+        <input type="hidden" name="article_no" value="{{root_article.id}}" />
+        <input type="submit" id="apply_move_article" value="게시물 이동" />
+    </form>
+</fieldset>
+{% endif %}
 {% for article in article_read_list %}
 <div class="article article_depth_{{article.depth}}">
     {% for depth in article.depth_list %}
