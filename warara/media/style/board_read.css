@@ -16,6 +16,12 @@
 	display: inline;
 }
 
+#move_article {
+	text-align: right;
+	height: 0em;
+	margin-right: -0.7em;
+}
+
 div.article_depth_2 {margin-left: 0em;}
 div.article_depth_3 {margin-left: 1em;}
 div.article_depth_4 {margin-left: 2em;}
