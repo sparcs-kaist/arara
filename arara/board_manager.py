@@ -11,7 +11,7 @@ from arara_thrift.ttypes import *
 log_method_call = log_method_call_with_source('board_manager')
 log_method_call_important = log_method_call_with_source_important('board_manager')
 
-BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only', 'hide', 'id', 'headings', 'order')
+BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only', 'hide', 'id', 'headings', 'order', 'category_id')
 
 CATEGORY_WHITELIST = ('category_name', 'id', 'order')
 
@@ -686,7 +686,7 @@ class BoardManager(object):
         if new_description != u'':
             board.board_description = new_description
         if new_category_name != None :
-            board.category = self.get_category_from_session(session, new_category_name)
+            board.category = self._get_category_from_session(session, new_category_name)
 
         try:
             session.commit()

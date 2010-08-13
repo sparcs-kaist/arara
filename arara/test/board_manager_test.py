@@ -366,6 +366,11 @@ class BoardManagerTest(unittest.TestCase):
             self.fail("Since board 'recycle'exist, it must fail to rename board 'garbages to 'recycle'.")
         except InvalidOperation:
             pass
+        # TEST 5. 카테고리 변경
+        self.engine.board_manager.add_category(self.session_key_sysop, u'cat')
+        self.engine.board_manager.edit_board(self.session_key_sysop, u'garbages', u'', u'', u'cat')
+        board_list = self.engine.board_manager.get_board_list()
+        self.assertEqual(1, self.engine.board_manager.get_board_list()[0].category_id)
 
     def test_change_board_order(self):
         #테스트에 사용할 보드 추가(1,2,3,4,5,6,7,8,9)
