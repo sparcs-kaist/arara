@@ -156,7 +156,7 @@ class BoardManager(object):
 
         category = None
         if category_name != None:
-            category = self.get_category(category_name)
+            category = self._get_category_from_session(session, category_name)
 
         board_to_add = model.Board(smart_unicode(board_name), board_description, board_order, category, board_type)
         try:
@@ -201,7 +201,7 @@ class BoardManager(object):
         session = model.Session()
         category = None
         if category_name != None:
-            category = self.get_category(category_name)
+            category = self_.get_category_from_session(session, category_name)
 
         # Find the order of the board adding
         board_order_list = session.query(model.Board.order).filter(model.Board.order != None).order_by(model.Board.order)

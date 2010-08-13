@@ -440,6 +440,21 @@ class BoardManagerTest(unittest.TestCase):
         self.engine.board_manager.remove_bbs_manager(self.session_key_sysop, u'test', u'mikkang')
         self.assertEqual(False, self.engine.board_manager.has_bbs_manager(u'test'))
 
+    def testBoardWithCategory(self):
+        # 보드를 추가하는 순간부터 특정 카테고리로 집어넣는다
+        self.engine.board_manager.add_category(self.session_key_sysop, u'test_category')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'test', u'Testing Board', [], u'test_category')
+        result = self.engine.board_manager.get_board_list()
+        board1 = {'id': 1, 'read_only': False, 'board_name': 'test', 'hide': False, 'headings': [], 'order': 1, 'board_description': u'Testing Board'}
+        self.assertEqual(1, len(result))
+        self.assertEqual(board1, self._to_dict(result[0]))
+
+        # add_bot_board 로 같은 동작을 테스트.
+        self.engine.board_manager._add_bot_board(u'test2', u'Testing Board', [], u'test_category')
+        result = self.engine.board_manager.get_board_list()
+        board2 = {'id': 2, 'read_only': False, 'board_name': 'test2', 'hide': True, 'headings': [], 'order': 2, 'board_description': u'Testing Board'}
+        self.assertEqual(2, len(result))
+        self.assertEqual(board2, self._to_dict(result[1]))
 
     def tearDown(self):
         self.engine.shutdown()
