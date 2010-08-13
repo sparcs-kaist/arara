@@ -13,7 +13,7 @@ log_method_call_important = log_method_call_with_source_important('board_manager
 
 BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only', 'hide', 'id', 'headings', 'order')
 
-CATEGORY_WHITELIST = ('category_name', 'id')
+CATEGORY_WHITELIST = ('category_name', 'id', 'order')
 
 USER_QUERY_WHITELIST = ('username', 'nickname', 'email',
         'signature', 'self_introduction', 'campus', 'last_login_ip', 'last_logout_time')
@@ -101,7 +101,9 @@ class BoardManager(object):
         self._is_sysop(session_key)
 
         session = model.Session()
-        category_to_add = model.Category(smart_unicode(category_name), None) # Temporary Fix
+        # 모든 category 는 cache 되어 있으므로 category 의 수에 1 더한 값이 새 order 가 됨
+        category_order = len(self.all_category_list) + 1
+        category_to_add = model.Category(smart_unicode(category_name), category_order)
         try:
             session.add(category_to_add)
             session.commit()
@@ -778,6 +780,8 @@ class BoardManager(object):
             1. 성공: 리턴 안함
             2. 실패: InvalidOperation(category does not exist)
         '''
+        # TODO: Category 를 삭제할 경우 Category Ordering 에 문제가 생길 수 있다.
+        # 카테고리 삭제시 기존 Category 들의 ordering 을 재조정하는 함수가 필요.
 
         self._is_sysop(session_key)
         session = model.Session()

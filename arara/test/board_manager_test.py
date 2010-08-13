@@ -45,7 +45,7 @@ class BoardManagerTest(unittest.TestCase):
         return result_dict
 
     def _to_dict_category(self, category_object):
-        FIELD_LIST = ['id', 'category_name']
+        FIELD_LIST = ['id', 'category_name', 'order']
         result_dict = {}
         for field in FIELD_LIST:
             result_dict[field] = category_object.__dict__[field]
@@ -54,22 +54,22 @@ class BoardManagerTest(unittest.TestCase):
     #adding and removing a category
     def testNormalAddAndRemoveOneCategory(self):
         #Add one category 'miscellaneous'
-        self.engine.board_manager.add_category(self.session_key_sysop, u'miscellaneous')
+        self.engine.board_manager.add_category(self.session_key_sysop, 'miscellaneous')
         category_list = self.engine.board_manager.get_category_list()
         self.assertEqual(1, len(category_list))
-        self.assertEqual({'id':1, 'category_name': u'miscellaneous'}, self._to_dict_category(category_list[0]))
+        self.assertEqual({'id':1, 'category_name': u'miscellaneous', 'order': 1}, self._to_dict_category(category_list[0]))
         #Add another category 'fun stuff'
-        self.engine.board_manager.add_category(self.session_key_sysop, u'fun stuff')
+        self.engine.board_manager.add_category(self.session_key_sysop, 'fun stuff')
         category_list = self.engine.board_manager.get_category_list()
         self.assertEqual(2, len(category_list))
-        self.assertEqual({'id':1, 'category_name': u'miscellaneous'}, self._to_dict_category(category_list[0]))
-        self.assertEqual({'id':2, 'category_name': u'fun stuff'}, self._to_dict_category(category_list[1]))
+        self.assertEqual({'id':1, 'category_name': u'miscellaneous', 'order': 1}, self._to_dict_category(category_list[0]))
+        self.assertEqual({'id':2, 'category_name': u'fun stuff', 'order': 2}, self._to_dict_category(category_list[1]))
 
         #check if you can get each category
         miscellaneous = self.engine.board_manager.get_category(u'miscellaneous')
-        self.assertEqual({'id':1, 'category_name' : u'miscellaneous'}, self._to_dict_category(miscellaneous))
+        self.assertEqual({'id':1, 'category_name' : u'miscellaneous', 'order': 1}, self._to_dict_category(miscellaneous))
         fun_stuff = self.engine.board_manager.get_category(u'fun stuff')
-        self.assertEqual({'id':2, 'category_name' : u'fun stuff'}, self._to_dict_category(fun_stuff))
+        self.assertEqual({'id':2, 'category_name' : u'fun stuff', 'order': 2}, self._to_dict_category(fun_stuff))
 
         #try to delete the category
         self.engine.board_manager.delete_category(self.session_key_sysop, u'miscellaneous')
@@ -131,7 +131,7 @@ class BoardManagerTest(unittest.TestCase):
         self.engine.board_manager.edit_category(self.session_key_sysop, u'public', u'private')
         #         그러면 새 이름으로 카테고리를 찾을 수 있고, 기존 이름으로 찾을 수 없다. 
         result = self.engine.board_manager.get_category(u'private')
-        expect = {'id': 1, 'category_name': u'private'}
+        expect = {'id': 1, 'category_name': u'private', u'order': 1}
         self.assertEqual(expect, self._to_dict_category(result))
         try:
             self.engine.board_manager.get_category(u'public')
