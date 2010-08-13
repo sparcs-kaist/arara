@@ -101,7 +101,7 @@ class BoardManager(object):
         self._is_sysop(session_key)
 
         session = model.Session()
-        category_to_add = model.Category(smart_unicode(category_name))
+        category_to_add = model.Category(smart_unicode(category_name), None) # Temporary Fix
         try:
             session.add(category_to_add)
             session.commit()

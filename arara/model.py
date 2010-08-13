@@ -129,11 +129,13 @@ class UserActivation(object):
         return "<UserActivation('%s', '%s')>" % (self.user.username, self.activation_code)
 
 class Category(object):
-    def __init__(self, category_name):
+    def __init__(self, category_name, order):
         '''
         @type category_name: string
+        @type order: int
         '''
         self.category_name = smart_unicode(category_name)
+        self.order = order
 
     def __repr__(self):
         return "<Category('%s')>" % (self.category_name)
@@ -413,6 +415,7 @@ board_table = Table('boards', metadata,
 category_table = Table('categories', metadata,
     Column('id', Integer, primary_key=True),
     Column('category_name', Unicode(30), unique=True),
+    Column('order', Integer, nullable=True),
     mysql_engine='InnoDB'
 )
 
