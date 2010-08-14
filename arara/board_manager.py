@@ -38,6 +38,29 @@ class BoardManager(object):
         self.all_category_list = None
         self.all_category_dict = None
         self.cache_category_list()
+        # Integrity Check
+        self._check_integrity()
+
+    def _check_integrity(self):
+        '''
+        엔진이 기동될 때 최초 1회 실행.
+        '''
+        # TODO: 속도 향상을 위해 query 를 order 와 deleted 에 대해서만 뽑아오거나 하기
+        session = model.Session()
+        try:
+            # 게시판들 중 deleted 가 아니면서 order 가 존재하지 않는 게시판이 있다면
+            # 관리자가 직접 DB 수정을 해야 한다.
+            boards = session.query(model.Board).all()
+            for board in boards:
+                assert board.deleted or board.order != None
+            # 카테고리의 경우에는 무조건 order 가 존재해야 한다.
+            categories = session.query(model.Category).all()
+            for category in categories:
+                assert category.order != None
+        except Exception:
+            session.close()
+            raise
+        session.close()
 
     def _get_dict(self, item, whitelist=None):
         '''
