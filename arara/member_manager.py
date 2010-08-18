@@ -153,7 +153,6 @@ class MemberManager(object):
         # TODO: 사용자 정보 가져오는 쿼리문을 다른 함수로 빼기
         # TODO: 발생 가능한 여러 Exception (ReadStatus) 처리
         try:
-            self.logger.info("=== LOGOUT PROCESS INITIATED")
             session = model.Session()
             user = session.query(model.User).filter_by(username=smart_unicode(username)).one()
             user.last_logout_time = datetime.datetime.fromtimestamp(time.time())

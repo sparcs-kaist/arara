@@ -160,22 +160,31 @@ class LoginManager(object):
             self.logger.info("User '%s' has LOGGED IN from '%s' as '%s'", username, user_ip, hash)
         return hash
 
-    def logout(self, session_key):
+    def _logout(self, session_key):
         '''
-        로그아웃 처리를 담당하는 함수.
+        Thread-Safety 가 없는, 로그아웃 처리 담당 함수.
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
         '''
-
         try:
-            with self.lock_session_dic:
-                username = self.session_dic[session_key]['username']
-                self.engine.member_manager._logout_process(username)
-                self.logger.info("User '%s' has LOGGED OUT" % username)
-                del self.session_dic[session_key]
+            username = self.session_dic[session_key]['username']
+            self.engine.member_manager._logout_process(username)
+            del self.session_dic[session_key]
+            self.logger.info("User '%s' has LOGGED OUT" % username)
         except KeyError:
             raise NotLoggedIn()
+
+    def logout(self, session_key):
+        '''
+        로그아웃 처리를 담당하는 함수.
+        사실상 Thread-safety Wrapper for _logout 이다.
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        '''
+        with self.lock_session_dic:
+            self._logout(session_key)
 
     def _update_monitor_status(self, session_key, action):
         '''
@@ -213,16 +222,9 @@ class LoginManager(object):
             current_time = time.time()
             session_time = self.session_dic[session_key]['last_action_time']
             diff_time = current_time - session_time
-            if diff_time <= SESSION_EXPIRE_TIME:
-                # Session Cleanup 이 필요치 않은 경우이다
-                return
-
-        # lock_session_dic 을 release 하고 진행한다
-        try:
-            self.logout(session_key)
-        except NotLoggedIn:
-            # 이미 로그아웃했다면 특별한 문제가 아니다.
-            pass
+            if diff_time > SESSION_EXPIRE_TIME:
+                # Session Cleaning 이 필요하므로 로그아웃 처리!
+                self._logout(session_key)
 
     def _check_session_status(self):
         '''
