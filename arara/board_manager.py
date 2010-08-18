@@ -977,6 +977,7 @@ class BoardManager(object):
         @rtype: bool
         @return: 유저가 그 보드의 관리자이면 true 아니면 false를 리턴.
         '''
+        # TODO: user 가져오는 것은 다른 함수로 빼내기 (예외처리를 그 속에서)
         session = model.Session()
         user_info = self.engine.login_manager.get_session(session_key)
         try:
@@ -985,11 +986,10 @@ class BoardManager(object):
             session.close()
             raise InvalidOperation('user does not exist')
         try:
-            board = session.query(model.Board).filter_by(board_name=board_name).one()
-            bbs_manager = session.query(model.BBSManager).filter_by(board_id=board.id,manager_id=user.id).one()
+            board_id = self.get_board_id(board_name)
+            bbs_manager = session.query(model.BBSManager).filter_by(board_id=board_id,manager_id=user.id).one()
         except InvalidRequestError:
             session.close()
-            raise InvalidOperation('user is not bbs manager')
+            return False
         session.close()
-        return bool(bbs_manager)
-
+        return True

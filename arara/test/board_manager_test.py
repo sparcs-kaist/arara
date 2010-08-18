@@ -444,7 +444,7 @@ class BoardManagerTest(unittest.TestCase):
         register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
         self.engine.member_manager.confirm(u'mmmmm', register_key)
         user_session_key = self.engine.login_manager.login(u'mmmmm', u'mmmmm', '143.248.234.140')
-        self.assertEqual(False, self.engine.member_manager.is_bbs_manager_of(user_session_key, u'test'))
+        self.assertEqual(False, self.engine.board_manager.is_bbs_manager_of(user_session_key, u'test'))
 
     def testRemoveBBSManager(self):
         # 게시판 관리자 권한 지우기 테스트. by SYSOP
