@@ -1153,9 +1153,9 @@ class ArticleManager(object):
         @param no: Article 게시물의 번호
         @type  board_to_move: string
         @param board_to_move: 게시물이 옮겨질 Board 이름.
-        @rtype: void
+        @rtype: int
         @return:
-            1. Modify 성공: 아무것도 리턴하지 않음
+            1. Modify 성공: 게시물의 번호 (no 파라메터를 그대로)
             2. Modify 실패:
                 1. 유저가 시삽이 아닐 경우: InvalidOperation Exception
                 2. 존재하지 않는 게시판: InvalidOperation Exception
@@ -1188,6 +1188,7 @@ class ArticleManager(object):
             session.close()
             raise InvalidOperation("Database Error")
         session.close()
+        return no
 
     @require_login
     @log_method_call_important
