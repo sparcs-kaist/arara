@@ -451,13 +451,16 @@ def move_article(request):
     @rtype: HttpResponseRedirect
     @return: 현재 글이 이동되고 없는 보드의 목록 페이지로 재전송
     '''
-    server = warara_middleware.get_server()
-    sess, r = warara.check_logged_in(request)
-    board_name = request.POST['board_name']
-    article_no = request.POST['article_no']
-    board_to_move = request.POST['board_to_move']
-    server.article_manager.move_article(sess, board_name, int(article_no), board_to_move)
-    return HttpResponseRedirect('/board/%s' % board_name)
+    # TODO: 굳이 이게 POST 여야 할 필요가 있을까?
+    # TODO: 권한이 있는 사용자의 행동인지 점검할 필요가 있다
+    if request.method == 'POST':
+        server = warara_middleware.get_server()
+        sess, r = warara.check_logged_in(request)
+        board_name = request.POST['board_name']
+        article_no = request.POST['article_no']
+        board_to_move = request.POST['board_to_move']
+        server.article_manager.move_article(sess, board_name, int(article_no), board_to_move)
+        return HttpResponseRedirect('/board/%s' % board_name)
 
 @warara.wrap_error
 def _delete(request, board_name, root_id, article_no):
