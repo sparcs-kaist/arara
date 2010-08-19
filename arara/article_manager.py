@@ -684,7 +684,7 @@ class ArticleManager(object):
             session.close()
             raise InvalidOperation('ARTICLE_NOT_EXIST')
 
-        article_dict_lis = self._article_thread_to_list(article, session_key, blacklisted_userid)
+        article_dict_list = self._article_thread_to_list(article, session_key, blacklisted_userid)
         session.close()
         return article_dict_list
 
@@ -1110,6 +1110,35 @@ class ArticleManager(object):
             raise InvalidOperation("NO_PERMISSION")
         return id
 
+    def _move_article(self, session, article, new_board_id):
+        '''
+        @type  session: SQLAlchemy Session
+        @param session: 현재 사용중인 SQLAlchemy Session
+        @type  article_id: model.Article
+        @param article_id: 속한 Board  를 바꿀 게시물의 객체
+        @type  new_board_id: int
+        @param new_board_id: 해당 게시물이 새롭게 속하게 될 Board 의 고유 id
+        '''
+        if article.board_id != new_board_id:
+            # 글이 속한 Board 를 변경
+            article.board_id = new_board_id
+
+            # 글에 대한 Vote Status 의 Board 정보 변경
+            try:
+                vote_status_queries = session.query(model.ArticleVoteStatus).filter_by(article_id=article.id)
+                for query in vote_status_queries:
+                    query.board_id = new_board_id
+            except InvalidRequestError:
+                pass
+
+            # 해당 글에 대한 첨부 File 에 대한 Board 정보 변경
+            try:
+                file_queries = session.query(model.File).filter_by(article_id=article.id)
+                for query in file_queries:
+                    query.board_id = new_board_id
+            except InvalidRequestError:
+                pass
+
     @require_login
     @log_method_call_important
     def move_article(self, session_key, board_name, no, board_to_move):
@@ -1124,61 +1153,41 @@ class ArticleManager(object):
         @param no: Article 게시물의 번호
         @type  board_to_move: string
         @param board_to_move: 게시물이 옮겨질 Board 이름.
+        @rtype: void
         @return:
-            1. Modify 성공: Article Number
+            1. Modify 성공: 아무것도 리턴하지 않음
             2. Modify 실패:
                 1. 유저가 시삽이 아닐 경우: InvalidOperation Exception
                 2. 존재하지 않는 게시판: InvalidOperation Exception
                 3. 데이터베이스 오류: InternalError Exception
 
         '''
+        # TODO: board_name == board_to_move 일 때는?
+
         if not self.engine.member_manager.is_sysop(session_key):
             raise InvalidOperation('no permission')
+
+        # Phase 1. 게시물의 이동에 앞서 board id 를 준비
         board_id = self.engine.board_manager.get_board_id(board_name)
-        board_move_id = self.engine.board_manager.get_board_id(board_to_move)
+        new_board_id = self.engine.board_manager.get_board_id(board_to_move)
+
+        # Phase 2. Article 객체 얻어오기
         session = model.Session()
         article = self._get_article(session, board_id, no)
-        id = article.id
-        if article.board_id != board_move_id:
-            article.board_id = board_move_id
-            query = None
-            try:
-                query = session.query(model.ArticleVoteStatus).filter_by(article_id=id).one()
-            except InvalidRequestError:
-                pass
-            if query:
-                query.board_id = board_move_id
-            file_queries = None
-            try:
-                file_queries = session.query(model.File).filter_by(article_id=id).all()
-            except InvalidRequestError:
-                pass
-            if file_queries:
-                for query in file_queries:
-                    query.board_id = board_move_id
+        self._move_article(session, article, new_board_id)
 
-        if article.reply_count != 0:
-            replies = session.query(model.Article).filter_by(root_id=id).all()
+        if article.reply_count:
+            replies = session.query(model.Article).filter_by(root_id=article.id).all()
             for reply in replies:
-                reply.board_id = board_move_id
-                query = None
-                try:
-                    query = session.query(model.ArticleVoteStatus).filter_by(article_id=id).one()
-                except InvalidRequestError:
-                    pass
-                if query:
-                    query.board_id = board_move_id
-                file_queries = None
-                try:
-                    file_queries = session.query(model.File).filter_by(article_id=id).all()
-                except InvalidRequestError:
-                    pass
-                if file_queries:
-                    for query in file_queries:
-                        query.board_id = board_move_id
-        session.commit()
+                self._move_article(session, reply, new_board_id)
+
+        try:
+            session.commit()
+        except ConcurrentModificationError: # 가장 나옴직한 예외상황 ...
+            session.rollback()
+            session.close()
+            raise InvalidOperation("Database Error")
         session.close()
-        return id
 
     @require_login
     @log_method_call_important

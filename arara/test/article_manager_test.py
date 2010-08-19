@@ -834,8 +834,7 @@ class ArticleManagerTest(unittest.TestCase):
         # Vote for article
         self.engine.article_manager.vote_article(self.session_key_mikkang, u'board', article_no1, True)
         # Move articles from board to board2
-        result = self.engine.article_manager.move_article(self.session_key_sysop, u'board', article_no1, u'board2')
-        self.assertEqual(article_no1, result)
+        self.engine.article_manager.move_article(self.session_key_sysop, u'board', article_no1, u'board2')
         # Check if an article is moved well
         result = self.engine.article_manager.read_article(self.session_key_mikkang, u'board2', 1)
         expected_result = {'negative_vote': 0, 'positive_vote': 1, 'last_modified_date': 31536001.100000001, 'is_searchable': True, 'author_nickname': u'mikkang', 'reply_count': None, 'id': 1, 'title': u'TITLE', 'content': u'CONTENT', 'attach': None, 'type': None, 'author_username': u'mikkang', 'hit': 1, 'root_id': 1, 'deleted': False, 'board_name': u'board2', 'date': 31536001.100000001, 'blacklisted': False, 'read_status': None, 'depth': 1, 'author_id': 2, 'heading': u''}
