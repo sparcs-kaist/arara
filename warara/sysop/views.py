@@ -44,7 +44,7 @@ def add_board(request):
         #TODO: 공백 말머리는 허용하지 말 것
         board_headings = [x.strip() for x in headings_string.split(",")]
 
-    server.board_manager.add_board(sess, request.POST['add_board_name'], request.POST['add_board_description'], board_headings, None, int(request.POST['add_board_type']))
+    server.board_manager.add_board(sess, request.POST['add_board_name'], request.POST['add_board_description'], board_headings, None, int(request.POST['add_board_type']), int(request.POST['to_read_level']), int(request.POST['to_write_level']))
     return HttpResponseRedirect('/sysop/')
 
 def _ajax_calling(response):
@@ -55,8 +55,8 @@ def _ajax_calling(response):
     board_list = server.board_manager.get_board_list()
     for board in board_list:
         bbs_managers = server.board_manager.get_bbs_managers(board.board_name)
-        managers_string = "".join(("<input type=\"checkbox\" class=\"checkbox\" id=\"selected_manager\" />"+manager.username+" " for manager in bbs_managers))
-        response += "\n" + board.board_name + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\t" + managers_string
+        managers_string = "".join(("*"+manager.username+" " for manager in bbs_managers))
+        response += "\n" + board.board_name + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\t" + str(board.to_read_level) + "\t" + str(board.to_write_level) + "\t" + managers_string
     return response
 
 

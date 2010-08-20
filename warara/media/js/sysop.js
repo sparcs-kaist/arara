@@ -56,9 +56,9 @@ function update_list(data){
         board = splited_data[i].split("\t");
 
         if(selected_board != null && board[0] == selected_board.board_name){
-            $("#all_board_list tbody").append('<tr class="' + board[2] + ' selected_board"><td>' + board[0] + "</td><td>" + board[1] + '</td><td>' + board[3] + '</td><td><a href="/board/' + board[0] + '" target="_blank">Link</a></td></tr>');
+            $("#all_board_list tbody").append('<tr class="' + board[2] + ' selected_board"><td>' + board[0] + "</td><td>" + board[1] + '</td><td>' + board[3] + '</td><td>' + board[4] + '</td><td>' + board[5] + '</td><td><a href="/board/' + board[0] + '" target="_blank">Link</a></td></tr>');
         } else {
-            $("#all_board_list tbody").append('<tr class="' + board[2] + '"><td>' + board[0] + '</td><td>' + board[1]  + '</td><td>' + board[3] + '</td><td><a href="/board/' + board[0] + '" target="_blank">Link</a></td></tr>');
+            $("#all_board_list tbody").append('<tr class="' + board[2] + '"><td>' + board[0] + '</td><td>' + board[1]  + '</td><td>' + board[3] + '</td><td>' + board[4] + '</td><td>' + board[5] + '</td><td><a href="/board/' + board[0] + '" target="_blank">Link</a></td></tr>');
         }
     }
     set_item_action();

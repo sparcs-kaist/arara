@@ -19,6 +19,8 @@
             <tr>
                 <th>Name</th>
                 <th>Desc</th>
+                <th>R_lv</th>
+                <th>W_lv</th>
                 <th>Managers</th>
                 <th>Preview</th>
             </tr>
@@ -28,7 +30,9 @@
             <tr class="{% if manager_info.board.hide %}hidden_board{% else %}showing_board{% endif %}">
                 <td>{{manager_info.board.board_name}}</td>
                 <td>{{manager_info.board.board_description}}</td>
-                <td>{% for manager in manager_info.managers %} <input type="checkbox" class="checkbox" id="selected_manager" />{{manager.username}} {% endfor %}</td>
+                <td>{{manager_info.board.to_read_level}}</td>
+                <td>{{manager_info.board.to_write_level}}</td>
+                <td>{% for manager in manager_info.managers %} *{{manager.username}} {% endfor %}</td>
                 <td><a href="/board/{{board.board_name}}" target="_blank">Link</a></td>
             </tr>
             {% endfor %}
@@ -66,6 +70,18 @@
         </select>
         <br />
         <label for="add_board_description">보드 설명</label><input type="text" class="textfield" name="add_board_description" id="add_board_description"><br />
+         <label for="add_board_auth">사용 권한</label>
+        R:<select name="to_read_level" id="to_read_level">
+            <option value=1>메일인증(non-@kaist)</option>
+            <option value=2>메일인증(@kaist)</option>
+            <option value=3 selected>포탈인증</option>
+        </select>
+        W:<select name="to_write_level" id="to_write_level">
+            <option value=1>메일인증(non-@kaist)</option>
+            <option value=2>메일인증(@kaist)</option>
+            <option value=3 selected>포탈인증</option>
+        </select>
+        <br />
         <label for="add_board_headings">말머리 목록</label><input type="text" class="textfield" name="add_board_headings" id="add_board_headings"><br />
         <p>말머리를 여러개 등록할 때에는 말머리를 쉼표로 구분합니다. (예 : 삽니다,팝니다)</p>
         <input type="submit" class="button" value="추가">
