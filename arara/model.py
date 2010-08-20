@@ -47,7 +47,7 @@ class User(object):
         self.last_logout_time = None
         self.last_login_ip = u''
         self.is_sysop = False
-        self.portal = False
+        self.authentication_mode = 0
 
     @classmethod
     def encrypt_password(cl, raw_password, salt):
@@ -380,7 +380,7 @@ users_table = Table('users', metadata,
     Column('last_logout_time', DateTime),
     Column('last_login_ip', Unicode(15)),
     Column('is_sysop', Boolean),
-    Column('portal', Boolean),
+    Column('authenticaion_mode', Integer), # 0 : 비회원 , 1 : 메일인증(non @kaist), 2 : 메일인증(@kaist), 3 : 포탈인증
     mysql_engine='InnoDB'
 )
 

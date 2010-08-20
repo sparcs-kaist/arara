@@ -941,4 +941,26 @@ class MemberManager(object):
         session.commit()
         session.close()
 
+    def authenticaion_mode(self, session_key):
+        '''
+        로그인한 user의 인증단계를 확인하는 함수
+
+        @type session_key: string
+        @param session_key: 사용자 Login Session
+        @rtype: integer
+        @return:
+            1. 비회원 : 0
+            2. 메일인증(non @kaist) : 1
+            3. 메일인증(@kaist) : 2
+            4. 포탈인증 : 3
+        '''
+        session = model.Session()
+        user_info = self.engine.login_manager.get_session(session_key)
+        try:
+            user = session.query(model.User).filter_by(username=smart_unicode(user_info.username)).one()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('user does not exist')
+        session.close()
+        return user.authentication_mode
 # vim: set et ts=8 sw=4 sts=4
