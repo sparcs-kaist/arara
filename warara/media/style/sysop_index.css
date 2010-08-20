@@ -108,7 +108,7 @@ select {
     clear:both;
 }
 
-#edit_board label, #add_manager label {
+#edit_board label, #change_auth label, #add_manager label {
     width:80px;
 }
 
@@ -120,6 +120,10 @@ select {
 #board_description {
     width:300px;
     float:left;
+}
+
+#change_auth {
+    clear:both;
 }
 
 #manager {
