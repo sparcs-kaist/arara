@@ -941,7 +941,7 @@ class MemberManager(object):
         session.commit()
         session.close()
 
-    def authenticaion_mode(self, session_key):
+    def authentication_mode(self, session_key):
         '''
         로그인한 user의 인증단계를 확인하는 함수
 

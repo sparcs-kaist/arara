@@ -263,6 +263,12 @@ class MemberManagerTest(unittest.TestCase):
         #check if user is not SYSOP
         self.assertEqual(True, self.engine.member_manager.is_sysop(session_key))
 
+    def testAuthenticationMode(self):
+        session_key = self.engine.login_manager.login(u'combacsa',u'combacsa', u'143.248.234.154')
+        check_mode= self.engine.member_manager.authentication_mode(session_key)
+        # 아직 인증단계를 유저별로 나누는 것이 구현이 안되어있기 때문에 기본값 0이 리턴됩니다.
+        self.assertEqual(0, check_mode)
+
 
     def tearDown(self):
         self.engine.shutdown()
