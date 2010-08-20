@@ -143,13 +143,15 @@ BOARD_TYPE_NORMAL = 0
 BOARD_TYPE_PICTURE = 1
 
 class Board(object):
-    def __init__(self, board_name, board_description, order, category, type = None):
+    def __init__(self, board_name, board_description, order, category, type = None, to_read_level = 3, to_write_level = 3):
         '''
         @type board_name: string
         @type board_description: string
         @type order: int
         @type category: model.Category
         @type type: int
+        @type to_read_level: int (0: 비회원, 1: 메일인증(non-@kaist), 2: 메일인증(@kaist), 3: 포탈인증)
+        @type to_write_level: int (0: 비인증, 1: 메일인증(non-@kaist), 2: 메일인증(@kaist), 3: 포탈인증)
         '''
         self.board_name = smart_unicode(board_name)
         self.board_description = smart_unicode(board_description)
@@ -162,6 +164,8 @@ class Board(object):
             self.type = type
         else:
             self.type = BOARD_TYPE_NORMAL
+        self.to_read_level = to_read_level
+        self.to_write_level = to_write_level
 
     def __repr__(self):
         return "<Board('%s', '%s')>" % (self.board_name, self.board_description)
@@ -408,6 +412,8 @@ board_table = Table('boards', metadata,
     Column('hide', Boolean),
     Column('order', Integer, nullable=True),
     Column('type', Integer),
+    Column('to_read_level', Integer),
+    Column('to_write_level',Integer),
     mysql_engine='InnoDB'
 )
 
