@@ -12,6 +12,11 @@ function request_action(action){
         request.data = { orig_board_name : selected_board.board_name, 
                          new_board_name : $("#board_name").val(), 
                          new_board_description : $("#board_description").val() };
+    } else if(action == "change_auth_mode"){
+	request.url = "/sysop/change_auth/";
+	request.data = { orig_board_name : selected_board.board_name,
+	                 change_read_level : $("#change_read_level").val(),
+	                 change_write_level : $("#change_write_level").val() };
     } else if(action == "add_bbs_manager"){
 	request.url = "/sysop/add_bbs_manager/";
 	request.data = { board_name : selected_board.board_name,
@@ -25,7 +30,6 @@ function request_action(action){
         request.data = { action : action,
                          board_name : selected_board.board_name };
     }
-
     $.ajax(request);
 }
 
@@ -44,6 +48,7 @@ function update_list(data){
     } else if(action_done == "remove"){
         $("#board_actions").hide();
         $("#edit_board").hide();
+        $("#change_auth").hide();
 	$("#add_manager").hide();
         selected_board = null;
     } else if(action_done == "edit"){
@@ -68,15 +73,20 @@ function set_item_action(){
     $("#all_board_list tbody tr").click( function(event) {
         $("#board_actions").show();
         $("#edit_board").show();
+        $("#change_auth").show();
 	$("#add_manager").show();
 
         var is_hidden = $(this).attr("class").indexOf("hidden_board") != -1;
         var board_name = $(this).children(":nth-child(1)").html();
         var board_description = $(this).children(":nth-child(2)").html();
+        var board_read_level = $(this).children(":nth-child(3)").html();
+        var board_write_level = $(this).children(":nth-child(4)").html();
         $("#board_actions li:nth-child(1) a").html(is_hidden?"보이기":"숨기기");
-
+        // 현재 보드 설정값 가져와 셋팅하기
         $("#board_name").val(board_name);
         $("#board_description").val(board_description);
+        $("#change_read_level").val(board_read_level);
+        $("#change_write_level").val(board_write_level);
 
         selected_board = { board_name : board_name, is_hidden : is_hidden };
         
@@ -89,6 +99,7 @@ function set_item_action(){
 $(document).ready( function() {
     $("#board_actions").hide();
     $("#edit_board").hide();
+    $("#change_auth").hide();
     $("#add_manager").hide();
 
     // 숨기기/보이기 버튼
@@ -110,6 +121,13 @@ $(document).ready( function() {
     $("#apply_changes").click( function(event) {
         event.preventDefault();
         request_action("edit");
+    });
+
+    // 사용권한 설정
+    $("#apply_change_auth").unbind();
+    $("#apply_change_auth").click( function(event) {
+	event.preventDefault();
+	request_action("change_auth_mode");
     });
 
     // 관리자 추가 버튼

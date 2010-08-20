@@ -51,6 +51,20 @@
         <input type="text" class="textfield" id="board_description" name="board_description" /><br />
         <input type="button" class="button" id="apply_changes" value="적용" />
     </div>
+    <div id="change_auth">
+        <label for="change_auth">사용 권한 설정</label>
+        R:<select name="change_read_level" id="change_read_level">
+            <option value=1>메일인증(non-@kaist)</option>
+            <option value=2>메일인증(@kaist)</option>
+            <option value=3>포탈인증</option>
+        </select>
+        W:<select name="change_write_level" id="change_write_level">
+            <option value=1>메일인증(non-@kaist)</option>
+            <option value=2>메일인증(@kaist)</option>
+            <option value=3>포탈인증</option>
+       </select>
+       <input type="button" class="button" id="apply_change_auth" value="변경" />
+    </div>
     <div id="add_manager">
         <label for="manager">게시판 관리자</label>
         <input type="text" class="textfield" id="manager" name="manager" />

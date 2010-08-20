@@ -130,6 +130,23 @@ def edit_board(request):
         return HttpResponseRedirect('/sysop/')
 
 @warara.wrap_error
+def change_auth(request):
+    '''
+    선택된 보드정보와 읽기/쓰기 권한 정보를 받아서 게시판의 권한 설정을 바꾼다.
+    '''
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+
+    server.board_manager.change_auth(sess, request.POST['orig_board_name'], int(request.POST['change_read_level']), int(request.POST['change_write_level']))
+
+    if request.is_ajax():
+        response = "SUCCESS\tchange_auth\t" + request.POST['orig_board_name']
+        response = _ajax_calling(response)
+        return HttpResponse(response)
+    else:
+        return HttpResponseRedirect('/sysop/')
+
+@warara.wrap_error
 def add_bbs_manager(request):
     '''
     '''
