@@ -476,6 +476,16 @@ class BoardManagerTest(unittest.TestCase):
         self.assertEqual(expect_dict, self.engine.board_manager.all_category_and_board_dict)
         self.assertEqual(expect_list, self.engine.board_manager.all_category_and_board_list)
 
+    def test_get_last_board_order_until_category(self):
+        self.engine.board_manager.add_category(self.session_key_sysop, u'cate1')
+        self.engine.board_manager.add_category(self.session_key_sysop, u'cate2')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board1', '', [], u'cate1')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board2', '', [], u'cate1')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board3', '', [], u'cate2')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board4', '', [], None)
+        self.assertEqual(2, self.engine.board_manager._get_last_board_order_until_category(u'cate1'))
+        self.assertEqual(3, self.engine.board_manager._get_last_board_order_until_category(u'cate2'))
+        self.assertEqual(4, self.engine.board_manager._get_last_board_order_until_category(None))
 
     def tearDown(self):
         self.engine.shutdown()

@@ -142,6 +142,40 @@ class BoardManager(object):
         # 새로운 카테고리가 추가되었으므로 cache 를 update 한다
         self.cache_category_list()
 
+    def _get_last_board_order_until_category(self, category_name):
+        '''
+        주어진 이름의 category 의 가장 뒤에 있는 board 의 순서를 돌려준다.
+
+        @type  category_name: string
+        @param category_name: 카테고리의 이름
+        @rtype: int
+        @return: 해당 category 의 가장 뒤에 있는 board 의 순서
+        '''
+        if category_name == None:
+            board_count = 0
+            if len(self.all_category_and_board_dict[None]) == 0:
+                # category name 이 있는 보드들 뿐이므로 그 보드의 갯수가 곧 order 가 된다
+                board_count = len(self.board_list)
+                return board_count
+            else:
+                # category 가 없는 board 들 중 마지막 것으로 하면 된다
+                board_count = self.all_category_and_board_dict[None][-1].order
+                return board_count
+        else:
+            board_count = 0
+            if len(self.all_category_and_board_dict[category_name]) == 0:
+                # 선택한 category 까지의 board 들의 갯수를 계속 더한다
+                for category in self.all_category_list:
+                    if category.category_name == category_name:
+                        break
+                    else:
+                        board_count += len(self.all_category_and_board_dict[category.category_name])
+                return board_count
+            else:
+                # 선택한 category 의 board 들 중 마지막 것으로 하면 된다.
+                board_count = self.all_category_and_board_dict[category_name][-1].order
+                return board_count
+
     @require_login
     @log_method_call_important
     def add_board(self, session_key, board_name, board_description, heading_list = [], category_name = None, board_type = BOARD_TYPE_NORMAL):
