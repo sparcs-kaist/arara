@@ -155,7 +155,7 @@ class BoardManager(object):
             board_count = 0
             if len(self.all_category_and_board_dict[None]) == 0:
                 # category name 이 있는 보드들 뿐이므로 그 보드의 갯수가 곧 order 가 된다
-                board_count = len(self.board_list)
+                board_count = len(self.all_board_list)
                 return board_count
             else:
                 # category 가 없는 board 들 중 마지막 것으로 하면 된다
@@ -208,17 +208,17 @@ class BoardManager(object):
         self._is_sysop(session_key)
 
         session = model.Session()
-        # Find the order of the board adding
-        board_order_list = session.query(model.Board.order).filter(model.Board.order != None).order_by(model.Board.order)
-        if board_order_list.count() == 0:
-            board_order = 1
-        else:
-            board_order=board_order_list.all()[-1].order+1
+
+        board_order = self._get_last_board_order_until_category(category_name) + 1
+        # board order 와 같거나 뒤에 있던 모든 board 의 순서를 재조정한다.
+        boards = session.query(model.Board).filter(model.Board.order != None).order_by(model.Board.order)[board_order - 1:]
+        # TODO: for문을 돌리지 않고 query 한큐에 해결할 수는 없을까?
+        for board in boards:
+            board.order += 1
 
         category = None
         if category_name != None:
             category = self._get_category_from_session(session, category_name)
-
         board_to_add = model.Board(smart_unicode(board_name), board_description, board_order, category, board_type)
         try:
             session.add(board_to_add)
