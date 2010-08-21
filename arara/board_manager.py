@@ -38,6 +38,10 @@ class BoardManager(object):
         self.all_category_list = None
         self.all_category_dict = None
         self.cache_category_list()
+        # Integrated category & board list
+        self.all_category_and_board_list = None
+        self.all_category_and_board_dict = None
+        self.cache_category_and_board_list()
         # Integrity Check
         self._check_integrity()
 
@@ -428,6 +432,8 @@ class BoardManager(object):
         for category in self.all_category_list:
             self.all_category_dict[category.category_name] = category
 
+        self.cache_category_and_board_list()
+
     def cache_board_list(self):
         '''
         DB 로부터 board 목록을 읽어들여 cache 를 생성한다.
@@ -445,6 +451,43 @@ class BoardManager(object):
         self.all_board_dict = {}
         for board in self.all_board_list:
             self.all_board_dict[board.board_name] = board
+
+        self.cache_category_and_board_list()
+
+    def cache_category_and_board_list(self):
+        '''
+        DB 로부터 Category 별 Board 목록을 읽어들여 cache 를 생성한다.
+        즉, all_category_and_board_dict 는 키가 category 이름이고
+        value 가 board 의 list 인 녀석이 된다.
+        '''
+        session = model.Session()
+        categories = session.query(model.Category).filter_by().all()
+        category_dict_list = self._get_dict_list(categories, CATEGORY_WHITELIST)
+
+        self.all_category_and_board_list = []
+        self.all_category_and_board_dict = {}
+
+        for category in category_dict_list:
+            category_name = category['category_name']
+            category_id   = category['id']
+
+            boards = session.query(model.Board).filter_by(deleted=False).filter_by(category_id=category_id).order_by(model.Board.order).all()
+            board_dict_list = self._get_dict_list(boards, BOARD_MANAGER_WHITELIST)
+            board_list = [Board(**d) for d in board_dict_list]
+
+            self.all_category_and_board_dict[category_name] = board_list
+            self.all_category_and_board_list.append(board_list)
+
+        # Category 가 None 인 board 들도 챙겨준다
+        boards = session.query(model.Board).filter_by(deleted=False).filter_by(category=None).order_by(model.Board.order).all()
+        board_dict_list = self._get_dict_list(boards, BOARD_MANAGER_WHITELIST)
+        board_list = [Board(**d) for d in board_dict_list]
+        
+        self.all_category_and_board_dict[None] = board_list
+        self.all_category_and_board_list.append(board_list)
+
+        # 끝.
+        session.close()
 
     def _get_heading(self, session, board, heading):
         '''
