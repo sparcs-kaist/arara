@@ -758,6 +758,82 @@ class BoardManager(object):
 
     @require_login
     @log_method_call_important
+    def change_category_order(self, session_key, category_name, new_order):
+        '''
+        카테고리의 순서를 변경한다.
+
+        @type  session_key: string
+        @param session_key: 사용자 로그인 Session
+        @type  category_name: string
+        @param category_name: 변경할 카테고리의 이름
+        @type  new_order: int
+        @param new_order: 카테고리의 새로운 순서
+        @rtype: void
+        @return:
+            1.성공 : 아무것도 리턴하지 않음
+            2.실패 : 잘못된 범위의 경우 InvalidOperation('invalid order')
+        '''
+        self._is_sysop(session_key)
+        # 올바른 order 인지 검사
+        if not 0 < new_order <= len(self.all_category_list):
+            raise InvalidOperation('invalid order')
+
+        session = model.Session()
+        current_category = self._get_category_from_session(session, category_name)
+        board_list = session.query(model.Board).filter(model.Board.order != None).order_by(model.Board.order).all()
+        category_list = session.query(model.Category).order_by(model.Category.order).all()
+
+        if new_order < current_category.order :
+            board_offset = len(self.all_category_and_board_dict[current_category.category_name])
+            new_board_offset = 0
+            # 순서가 뒤로 밀리는 category 에 속하는 board 들을 뒤로 밀기
+            for board in board_list:
+                if board.category != None:
+                    if new_order <= board.category.order < current_category.order:
+                        board.order += board_offset
+                        new_board_offset += 1
+            # 위로 올라가는 category 에 속하는 board 들을 앞으로 당기기
+            for board in board_list:
+                if board.category != None:
+                    if board.category.category_name == current_category.category_name:
+                        board.order -= new_board_offset
+            # category 들간의 위치 조정
+            for category in category_list:
+                if new_order <= category.order < current_category.order:
+                    category.order += 1
+        elif category.order < new_order:
+            board_offset = len(self.all_category_and_board_dict[current_category.category_name])
+            new_board_offset = 0
+            # 순서가 위로 끌려오는 category 에 속하는 board 들을 앞으로 끌기
+            for board in board_list:
+                if board.category != None:
+                    if current_category.order < board.category.order <= new_order:
+                        board.order -= board_offset
+                        new_board_offset += 1
+            # 뒤로 밀리는 category 에 속하는 board 들을 뒤로 밀기
+            for board in board_list:
+                if board.category != None:
+                    if board.category.category_name == current_category.category_name:
+                        board.order += new_board_offset
+            # category 들간의 위치 조정
+            for category in category_list:
+                if current_category.order < category.order <= new_order:
+                    category.order -= 1
+
+        current_category.order = new_order
+        try:
+            session.commit()
+            session.close()
+        except InvalidRequestError: #TODO: 어떤 경우에 이렇게 되나??
+            session.rollback()
+            session.close()
+            raise InvalidOperation('DATABASE Error?')
+
+        self.cache_category_list()
+        self.cache_board_list()
+
+    @require_login
+    @log_method_call_important
     
     def edit_board(self, session_key, board_name, new_name, new_description, new_category_name=None):
         '''

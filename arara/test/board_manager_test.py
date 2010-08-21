@@ -487,6 +487,84 @@ class BoardManagerTest(unittest.TestCase):
         self.assertEqual(3, self.engine.board_manager._get_last_board_order_until_category(u'cate2'))
         self.assertEqual(4, self.engine.board_manager._get_last_board_order_until_category(None))
 
+    def test_change_board_order_with_category(self):
+        #카테고리 지정
+        #테스트에 사용할 카테고리 추가(1,2,3)
+        #테스트에 사용하는 보드들(1,2,3  4,5,6,7   8,9,10,11,12  13,14,15)
+        for i in range(1,4):
+            self.engine.board_manager.add_category(self.session_key_sysop, u'category'+unicode(i))
+
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board13', u'test')
+        for i in range(1,4):
+            self.engine.board_manager.add_board(self.session_key_sysop, u'board'+unicode(i), u'test',[] , u'category1')
+        for i in range(4,8):
+            self.engine.board_manager.add_board(self.session_key_sysop, u'board'+unicode(i), u'test', [], u'category2')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board14', u'test')
+        for i in range(8,13):
+            self.engine.board_manager.add_board(self.session_key_sysop, u'board'+unicode(i), u'test', [], u'category3')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board15', u'test')
+
+        self.assertEqual(1, self.engine.board_manager.get_category(u'category1').order)
+        self.assertEqual(2, self.engine.board_manager.get_category(u'category2').order)
+        self.assertEqual(3, self.engine.board_manager.get_category(u'category3').order)
+        self.assertEqual(1, self.engine.board_manager.get_board(u'board1').order)
+        self.assertEqual(13, self.engine.board_manager.get_board(u'board13').order)
+        self.assertEqual(4, self.engine.board_manager.get_board(u'board4').order)
+        self.assertEqual(14, self.engine.board_manager.get_board(u'board14').order)
+        self.assertEqual(8, self.engine.board_manager.get_board(u'board8').order)
+
+        # 잘못된 order로 board 바꾸기
+        try:
+            self.engine.board_manager.change_board_order(self.session_key_sysop, u'board1', 10)
+            self.fail("An invalid order provided. The change function must fail.")
+        except:
+            pass
+
+        try:
+            self.engine.board_manager.change_board_order(self.session_key_sysop, u'board10', 1)
+            self.fail("An invalid order provided. The change function must fail.")
+        except:
+            pass
+
+        #잘못된 order로 카테고리 바꾸기
+        try:
+            self.engine.board_manager.change_category_order(self.session_key_sysop, u'category1', 20)
+            self.fail("An invalid order provided. The change function must fail.")
+        except:
+            pass
+
+        #카테고리 순서 바꾸기
+        self.engine.board_manager.change_category_order(self.session_key_sysop, u'category3', 2)
+        self.assertEqual(1, self.engine.board_manager.get_category(u'category1').order)
+        self.assertEqual(3, self.engine.board_manager.get_category(u'category2').order)
+        self.assertEqual(2, self.engine.board_manager.get_category(u'category3').order)
+        self.assertEqual(1, self.engine.board_manager.get_board(u'board1').order)
+        self.assertEqual(2, self.engine.board_manager.get_board(u'board2').order)
+        self.assertEqual(3, self.engine.board_manager.get_board(u'board3').order)
+        self.assertEqual(4, self.engine.board_manager.get_board(u'board8').order)
+        self.assertEqual(5, self.engine.board_manager.get_board(u'board9').order)
+        self.assertEqual(6, self.engine.board_manager.get_board(u'board10').order)
+        self.assertEqual(7, self.engine.board_manager.get_board(u'board11').order)
+        self.assertEqual(8, self.engine.board_manager.get_board(u'board12').order)
+        self.assertEqual(9, self.engine.board_manager.get_board(u'board4').order)
+        self.assertEqual(10, self.engine.board_manager.get_board(u'board5').order)
+        self.assertEqual(11, self.engine.board_manager.get_board(u'board6').order)
+        self.assertEqual(12, self.engine.board_manager.get_board(u'board7').order)
+        self.assertEqual(13, self.engine.board_manager.get_board(u'board13').order)
+        self.assertEqual(14, self.engine.board_manager.get_board(u'board14').order)
+        self.assertEqual(15, self.engine.board_manager.get_board(u'board15').order)
+
+        #카테고리 삭제 후의 순서
+        #self.engine.board_manager.delete_category(self.session_key_sysop, u'category3')
+
+        #self.assertEqual(4, self.engine.board_manager.get_board(u'board4').order)
+        #self.assertEqual(5, self.engine.board_manager.get_board(u'board5').order)
+        #self.assertEqual(6, self.engine.board_manager.get_board(u'board6').order)
+        #self.assertEqual(7, self.engine.board_manager.get_board(u'board7').order)
+        #self.assertEqual(8, self.engine.board_manager.get_board(u'board13').order)
+        #self.assertEqual(9, self.engine.board_manager.get_board(u'board14').order)
+        #self.assertEqual(10, self.engine.board_manager.get_board(u'board15').order)
+
     def tearDown(self):
         self.engine.shutdown()
         arara.model.clear_test_database()
