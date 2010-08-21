@@ -176,6 +176,59 @@ class BoardManager(object):
                 board_count = self.all_category_and_board_dict[category_name][-1].order
                 return board_count
 
+    def _add_board(self, board_name, board_description, heading_list, category_name, board_type):
+
+        '''
+        보드를 신설한다. 내부 사용 전용.
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session (시삽이어야 함)
+        @type  board_name: string
+        @param board_name: 개설할 Board Name
+        @type  board_description: string
+        @param board_description: 보드에 대한 한줄 설명
+        @type  heading_list: list<string>
+        @param heading_list: 보드에 존재할 말머리 목록 (초기값 : [] 아무 말머리 없음)
+        @type  category_name: string
+        @param category_name: 보드가 속하는 카테고리의 이름(초기값 : None 카테고리 없음)
+        @rtype: boolean, string 
+        @return:
+            1. 성공: None
+            2. 실패:
+                1. 로그인되지 않은 유저: 'NOT_LOGGEDIN'
+                2. 시샵이 아닌 경우: 'no permission'
+                3. 존재하는 게시판: 'board already exist'
+                4. 데이터베이스 오류: 'DATABASE_ERROR'
+
+        '''
+        session = model.Session()
+        board_order = self._get_last_board_order_until_category(category_name) + 1
+        # board order 와 같거나 뒤에 있던 모든 board 의 순서를 재조정한다.
+        boards = session.query(model.Board).filter(model.Board.order != None).order_by(model.Board.order)[board_order - 1:]
+        # TODO: for문을 돌리지 않고 query 한큐에 해결할 수는 없을까?
+        for board in boards:
+            board.order += 1
+
+        category = None
+        if category_name != None:
+            category = self._get_category_from_session(session, category_name)
+        board_to_add = model.Board(smart_unicode(board_name), board_description, board_order, category, board_type)
+        try:
+            session.add(board_to_add)
+            # Board Heading 들도 추가한다.
+            # TODO: heading 에 대한 중복 검사가 필요하다. (지금은 따로 없다)
+            for heading in heading_list:
+                board_heading = model.BoardHeading(board_to_add, smart_unicode(heading))
+                session.add(board_heading)
+            session.commit()
+            session.close()
+        except IntegrityError:
+            session.rollback()
+            session.close()
+            raise InvalidOperation('already added')
+        # 보드에 변경이 발생하므로 캐시 초기화
+        self.cache_board_list()
+
     @require_login
     @log_method_call_important
     def add_board(self, session_key, board_name, board_description, heading_list = [], category_name = None, board_type = BOARD_TYPE_NORMAL):
@@ -206,35 +259,7 @@ class BoardManager(object):
         # TODO: 존재않는 Category 를 집어넣을 때에 대한 대처
         # TODO: board_order 를 좀 더 깔끔하게 구하기
         self._is_sysop(session_key)
-
-        session = model.Session()
-
-        board_order = self._get_last_board_order_until_category(category_name) + 1
-        # board order 와 같거나 뒤에 있던 모든 board 의 순서를 재조정한다.
-        boards = session.query(model.Board).filter(model.Board.order != None).order_by(model.Board.order)[board_order - 1:]
-        # TODO: for문을 돌리지 않고 query 한큐에 해결할 수는 없을까?
-        for board in boards:
-            board.order += 1
-
-        category = None
-        if category_name != None:
-            category = self._get_category_from_session(session, category_name)
-        board_to_add = model.Board(smart_unicode(board_name), board_description, board_order, category, board_type)
-        try:
-            session.add(board_to_add)
-            # Board Heading 들도 추가한다.
-            # TODO: heading 에 대한 중복 검사가 필요하다. (지금은 따로 없다)
-            for heading in heading_list:
-                board_heading = model.BoardHeading(board_to_add, smart_unicode(heading))
-                session.add(board_heading)
-            session.commit()
-            session.close()
-        except IntegrityError:
-            session.rollback()
-            session.close()
-            raise InvalidOperation('already added')
-        # 보드에 변경이 발생하므로 캐시 초기화
-        self.cache_board_list()
+        self._add_board(board_name, board_description, heading_list, category_name, board_type)
 
     def _add_bot_board(self, board_name, board_description = '', heading_list = [], hide = True, category_name = None, board_type = BOARD_TYPE_NORMAL):
         '''
@@ -258,33 +283,13 @@ class BoardManager(object):
                 1. 존재하는 게시판: 'board already exist'
                 2. 데이터베이스 오류: 'DATABASE_ERROR'
         '''
-        # TODO: add_board 를 _add_board 로 분리해 내고 add_board 와 add_bot_board 모두 그 함수를 쓰게 하기
-        session = model.Session()
-        category = None
-        if category_name != None:
-            category = self_.get_category_from_session(session, category_name)
-
-        # Find the order of the board adding
-        board_order_list = session.query(model.Board.order).filter(model.Board.order != None).order_by(model.Board.order)
-        if board_order_list.count() == 0:
-            board_order = 1
-        else:
-            board_order=board_order_list.all()[-1].order+1
-
-        board_to_add = model.Board(smart_unicode(board_name), smart_unicode(board_description), order=board_order, category=None, type=board_type)
-        board_to_add.hide = hide
-
-        try:
-            session.add(board_to_add)
-            session.commit()
-            session.close()
-        except IntegrityError:
-            session.rollback()
-            session.close()
-            raise InvalidOperation('Integrity Error!')
-
+        self._add_board(board_name, board_description, heading_list, category_name, board_type)
         # 보드에 변경이 발생하므로 캐시 초기화
         self.cache_board_list()
+        if hide:
+            self._hide_board(board_name)
+            # 보드에 변경이 발생하므로 캐시 초기화
+            self.cache_board_list()
     
     def _get_board(self, board_name):
         '''
@@ -799,6 +804,31 @@ class BoardManager(object):
         # 보드에 변경이 생겼으므로 캐시 초기화
         self.cache_board_list()
 
+    def _hide_board(self, board_name):
+        '''
+        보드를 숨겨주는 진짜 함수. 내부 사용 전용.
+        @type  board_name: string
+        @param board_name: Board Name
+        @rtype: void
+        @return:
+            1. 성공: void
+            2. 실패:
+                1. 존재하지 않는 게시판: InvalidOperation('board does not exist')
+                2. 이미 숨겨져 있는 보드의 경우: InvalidOperation('already hidden')
+                3. 데이터베이스 오류: InternalError('DATABASE_ERROR')
+        '''
+        # TODO: 주석대로 Exception 뱉니?
+        session = model.Session()
+        board = self._get_board_from_session(session, board_name)
+        if board.hide:
+            session.close()
+            raise InvalidOperation('already hidden')
+        board.hide = True
+        session.commit()
+        session.close()
+        # 보드에 변경이 발생하므로 캐시 초기화
+        self.cache_board_list()
+
     @require_login
     @log_method_call_important
     def hide_board(self, session_key, board_name):
@@ -820,16 +850,7 @@ class BoardManager(object):
                 5. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
         self._is_sysop(session_key)
-        session = model.Session()
-        board = self._get_board_from_session(session, board_name)
-        if board.hide:
-            session.close()
-            raise InvalidOperation('already hidden')
-        board.hide = True
-        session.commit()
-        session.close()
-        # 보드에 변경이 발생하므로 캐시 초기화
-        self.cache_board_list()
+        self._hide_board(board_name)
 
     @require_login
     @log_method_call_important
