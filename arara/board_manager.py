@@ -666,7 +666,7 @@ class BoardManager(object):
     @log_method_call_important
     def change_board_order(self, session_key, board_name, new_order):
         """
-        보드의 순서를 바꾼다. 
+        보드의 순서를 바꾼다. 카테고리의 범위를 넘어서지 않는 선에서.
 
         @type  session_key: string
         @param session_key: 사용자 Login Session (SYSOP)
@@ -690,30 +690,35 @@ class BoardManager(object):
         session = model.Session()
 
         board_name = smart_unicode(board_name)
-
-        board_list = session.query(model.Board).filter(model.Board.order != None).order_by(model.Board.order).all()
         current_board = self._get_board_from_session(session, board_name)
-
-        #올바른 게시판인지, order인지 검사한다. 
-        if not 0 < new_order <= len(board_list):
-            raise InvalidOperation('invalid order')
         if current_board.order == None:
+            session.close()
             raise InvalidOperation('invalid board')
 
-        #new_order부터 current_board의 order까지의 모든 보드의 order를 조정한다.
-        if new_order<current_board.order:
-            for board in board_list[new_order-1:current_board.order]:
-                board.order += 1
-        else:
-            for board in board_list[current_board.order:new_order]:
-                board.order -= 1
+        board_list = session.query(model.Board).filter_by(category=current_board.category).filter(model.Board.order != None).order_by(model.Board.order).all()
+        if not board_list[0].order <= new_order <= board_list[-1].order:
+            session.close()
+            raise InvalidOperation('invalid order')
+
+        if new_order < current_board.order:
+            for board in board_list:
+                if new_order <= board.order < current_board.order:
+                    board.order += 1
+        elif new_order > current_board.order:
+            for board in board_list:
+                if current_board.order < board.order <= new_order:
+                    board.order -= 1
 
         #현재 보드의 order를 new_order로 변경한다. 
         current_board.order = new_order
 
-        session.commit()
-        session.close()
+        try:
+            session.commit()
+        except InvalidRequestError: # TODO: 이게 날 가능성이 있는지 고민해보자
+            session.close()
+            raise InternalError("DATABASE ERROR")
 
+        session.close()
         self.cache_board_list()
 
     @require_login
