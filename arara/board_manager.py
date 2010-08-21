@@ -809,7 +809,7 @@ class BoardManager(object):
         self._is_sysop(session_key)
         session = model.Session()
         category = self._get_category_from_session(session, category_name)
-        for board in session.query(model.Board).filter_by(category= category).all():
+        for board in session.query(model.Board).filter_by(category=category).all():
             board.category = None
         session.delete(category)
         session.commit()
