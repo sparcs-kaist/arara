@@ -394,6 +394,10 @@ def _reply(request, board_name, article_id):
     reply_dic['heading'] = request.POST.get('heading', '') # TODO: HEADING !!
     root_id = request.POST.get('root_id', '')
 
+    use_signature = request.POST.get('signature_check', None)
+    if use_signature:
+        reply_dic['content'] += '\n\n' + request.POST.get('signature', '')
+
     article_id = server.article_manager.write_reply(sess, board_name, int(article_id), WrittenArticle(**reply_dic))
 
     #upload file
