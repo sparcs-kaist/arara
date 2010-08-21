@@ -164,6 +164,29 @@ class MemberManager(object):
             session.close()
             raise InvalidOperation('DATABASE_ERROR')
 
+    def _get_user(self, session, username, errmsg = 'user does not exist'):
+        '''
+        해당 username 의 사용자에 대한 SQLAlchemy 객체를 리턴한다.
+        없으면 적절한 InvalidOperation 을 돌려준다.
+
+        @type  session: SQLAlchemy Session
+        @param session: SQLAlchemy Session
+        @type  username: string
+        @param username: 사용자의 id
+        @type  errmsg: string
+        @param errmsg: 해당 사용자가 없을 경우 돌려줄 에러 문자열
+        @rtype: model.User
+        @return:
+            1. 사용자가 존재할 경우: 해당 사용자에 대한 객체
+            2. 사용자가 존재하지 않을 경우: errmsg 가 포함된 InvalidOperation
+        '''
+        try:
+            user = session.query(model.User).filter_by(username=smart_unicode(username)).one()
+            return user
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation(errmsg)
+
     def authenticate(self, username, password, user_ip):
         '''
         사용자가 입력한 password 로 검사한다.
@@ -182,9 +205,8 @@ class MemberManager(object):
         if username.strip() == u"" or username == u" ":
             raise InvalidOperation('wrong username')
         session = model.Session()
+        user = self._get_user(session, username, 'wrong username')
         try:
-            user = session.query(model.User).filter_by(username=username).one()
-
             if user.compare_password(password):
                 if user.activated:
                     user.last_login_time = datetime.datetime.fromtimestamp(time.time())
@@ -202,9 +224,6 @@ class MemberManager(object):
             else:
                 session.close()
                 raise InvalidOperation('wrong password')
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('wrong username')
         except InvalidOperation:
             raise
         except Exception, e:
@@ -363,11 +382,7 @@ class MemberManager(object):
             raise InvalidOperation('not sysop')
 
         session = model.Session()
-        try:
-            user = session.query(model.User).filter(model.User.username == username).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('user does not exist')
+        user = self._get_user(session, username, 'user does not exist')
         try:
             user_activation = session.query(model.UserActivation).filter_by(user_id=user.id).one()
         except InvalidRequestError:
@@ -399,11 +414,7 @@ class MemberManager(object):
         username_to_confirm = smart_unicode(username_to_confirm)
         
         session = model.Session()
-        try:
-            user = session.query(model.User).filter(model.User.username == username_to_confirm).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('user does not exist')
+        user = self._get_user(session, username_to_confirm, 'user does not exist')
         try:
             user_activation = session.query(model.UserActivation).filter_by(user_id=user.id).one()
         except InvalidRequestError:
@@ -510,22 +521,18 @@ class MemberManager(object):
                 2. 존재하지 않는 회원: InvalidOperation('MEMBER_NOT_EXIST')
                 3. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR')
         '''
-        try:
-            session = model.Session()
-            username = self.engine.login_manager.get_session(session_key).username
-            username = smart_unicode(username)
-            user = session.query(model.User).filter_by(username=username).one()
-            user_dict = filter_dict(user.__dict__, USER_PUBLIC_WHITELIST)
-            if user_dict['last_logout_time']:
-                user_dict['last_logout_time'] = datetime2timestamp(
-                        user_dict['last_logout_time'])
-            else:
-                user_dict['last_logout_time'] = 0
-            session.close()
-            return UserInformation(**user_dict)
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('member does not exist')
+        session = model.Session()
+        username = self.engine.login_manager.get_session(session_key).username
+        username = smart_unicode(username)
+        user = self._get_user(session, username, 'member does not exist')
+        user_dict = filter_dict(user.__dict__, USER_PUBLIC_WHITELIST)
+        if user_dict['last_logout_time']:
+            user_dict['last_logout_time'] = datetime2timestamp(
+                    user_dict['last_logout_time'])
+        else:
+            user_dict['last_logout_time'] = 0
+        session.close()
+        return UserInformation(**user_dict)
 
     @require_login    
     def modify_password(self, session_key, user_password_info):
@@ -552,7 +559,7 @@ class MemberManager(object):
         session_info = self.engine.login_manager.get_session(session_key)
         username = smart_unicode(session_info.username)
         session = model.Session()
-        user = session.query(model.User).filter_by(username=username).one()
+        user = self._get_user(session, username)
         try:
             if not username == user_password_info.username:
                 raise NoPermission()
@@ -605,15 +612,11 @@ class MemberManager(object):
 
         username = smart_unicode(user_password_info.username)
         session = model.Session()
-        try:
-            user = session.query(model.User).filter_by(username=username).one()
-            user.set_password(user_password_info.new_password)
-            session.commit()
-            self.logger.info(u"PASSWORD CHANGE:(username=%s)" % username)
-            session.close()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('user does not exist')
+        user = self._get_user(session, username, 'user does not exist')
+        user.set_password(user_password_info.new_password)
+        session.commit()
+        self.logger.info(u"PASSWORD CHANGE:(username=%s)" % username)
+        session.close()
 
     @require_login
     @log_method_call_important
@@ -640,7 +643,7 @@ class MemberManager(object):
                                USER_PUBLIC_MODIFIABLE_WHITELIST):
             raise InvalidOperation('wrong input')
         session = model.Session()
-        user = session.query(model.User).filter_by(username=username).one()
+        user = self._get_user(session, username)
 
         for key, value in user_modification.__dict__.items():
             # 문자열에 한하여 smart_unicode 로 변환하여 저장한다
@@ -680,7 +683,7 @@ class MemberManager(object):
                 if user_with_email.username != username: # To allow send email to him/her again
                     raise InvalidOperation(u'Other user(username:%s) already uses %s!' % (user_with_email.username, new_email))
             try:
-                user = session.query(model.User).filter_by(username=username).one()
+                user = self._get_user(session, username, 'wrong username')
                 user_activation = session.query(model.UserActivation).filter_by(user=user).one()
                 activation_code = user_activation.activation_code
                 if user.email != new_email:
@@ -715,22 +718,18 @@ class MemberManager(object):
                 2. 로그인되지 않은 유저: InvalidOperation('NOT_LOGGEDIN')
                 3. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR')
         '''
-        # TODO: 쿼리 밖으로 빼기
+        # TODO: Exception 내용 정정
         username = smart_unicode(username)
         session = model.Session()
-        try:
-            query_user = session.query(model.User).filter_by(username=username).one()
-            query_user_dict = filter_dict(query_user.__dict__, USER_QUERY_WHITELIST)
-            if query_user_dict['last_logout_time']:
-                query_user_dict['last_logout_time'] = datetime2timestamp(
-                        query_user_dict['last_logout_time'])
-            else:
-                query_user_dict['last_logout_time'] = 0
-            session.close()
-            return PublicUserInformation(**query_user_dict)
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('Query username does not exist')
+        user = self._get_user(session, username, 'Query username does not exist')
+        query_user_dict = filter_dict(query_user.__dict__, USER_QUERY_WHITELIST)
+        if query_user_dict['last_logout_time']:
+            query_user_dict['last_logout_time'] = datetime2timestamp(
+                    query_user_dict['last_logout_time'])
+        else:
+            query_user_dict['last_logout_time'] = 0
+        session.close()
+        return PublicUserInformation(**query_user_dict)
 
     @require_login
     @log_method_call
@@ -791,7 +790,7 @@ class MemberManager(object):
         username = smart_unicode(self.engine.login_manager.get_session(session_key).username)
         try:
             user = session.query(model.User).filter_by(username=username).one()
-	    session.delete(user)
+            session.delete(user)
             session.commit()
             session.close()
             return
@@ -864,14 +863,9 @@ class MemberManager(object):
             1. SYSOP일시: True
             2. SYSOP이 아닐시: False
         '''
-        # TODO: 사용자 쿼리 밖으로 빼기
         session = model.Session()
         user_info = self.engine.login_manager.get_session(session_key)
-        try:
-            user = session.query(model.User).filter_by(username=smart_unicode(user_info.username)).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('user does not exist')
+        user = self._get_user(session, user_info.username, 'user does not exist')
         session.close()
         return user.is_sysop
 
@@ -897,15 +891,12 @@ class MemberManager(object):
         username = smart_unicode(username)
         session = model.Session()
 
-        try:
-            user = session.query(model.User).filter(model.User.username == username).one()
-            if user.is_sysop:
-                raise InvalidOperation('already sysop..')
-            user.is_sysop = True
-            session.commit()
+        user = self._get_user(session, username, 'user does not exist')
+        if user.is_sysop:
             session.close()
-        except InvalidReqeustError:
-            session.close()
-            raise InvalidOperation('user does not exist')
+            raise InvalidOperation('already sysop..')
+        user.is_sysop = True
+        session.commit()
+        session.close()
 
 # vim: set et ts=8 sw=4 sts=4
