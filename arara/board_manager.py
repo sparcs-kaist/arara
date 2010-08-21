@@ -462,7 +462,7 @@ class BoardManager(object):
         '''
         # TODO: 이 또한 좀더 깔끔하게 Python 스럽게 고칠 수 있다.
         session = model.Session()
-        categories = session.query(model.Category).filter_by().all()
+        categories = session.query(model.Category).order_by(model.Category.order).all()
         category_dict_list = self._get_dict_list(categories, CATEGORY_WHITELIST)
         session.close()
 
@@ -500,7 +500,7 @@ class BoardManager(object):
         value 가 board 의 list 인 녀석이 된다.
         '''
         session = model.Session()
-        categories = session.query(model.Category).filter_by().all()
+        categories = session.query(model.Category).order_by(model.Category.order).all()
         category_dict_list = self._get_dict_list(categories, CATEGORY_WHITELIST)
 
         self.all_category_and_board_list = []
