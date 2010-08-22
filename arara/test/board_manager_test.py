@@ -565,6 +565,25 @@ class BoardManagerTest(unittest.TestCase):
         #self.assertEqual(9, self.engine.board_manager.get_board(u'board14').order)
         #self.assertEqual(10, self.engine.board_manager.get_board(u'board15').order)
 
+    def testAddBotCategory(self):
+        # Bot용 Category 생성 점검
+        self.engine.board_manager._add_bot_category(u'test')
+        self.engine.board_manager._add_bot_board(u'test', 'test', [])
+        board_list = self.engine.board_manager.get_board_list()
+        self.assertEqual(1, len(board_list))
+        self.assertEqual({'read_only': False, 'board_name': u'test', 'board_description': u'test', 'hide': True, 'id':1, 'headings': [], 'order':1}, self._to_dict(board_list[0]))
+        category_list = self.engine.board_manager.get_category_list()
+        self.assertEqual(1, len(category_list))
+        self.assertEqual({'order': 1, 'category_name': 'test', 'id': 1}, self._to_dict_category(category_list[0]))
+
+        # 이미 있는 Category를 추가하면 에러를 잘 잡아내는가?
+        try:
+            self.engine.board_manager._add_bot_category(u'bot')
+            self.engine.board_manager._add_bot_category(u'bot')
+            self.fail('Integrity Error must occur')
+        except InvalidOperation:
+            pass
+
     def tearDown(self):
         self.engine.shutdown()
         arara.model.clear_test_database()

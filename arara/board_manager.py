@@ -107,14 +107,10 @@ class BoardManager(object):
         if not self.engine.member_manager.is_sysop(session_key):
             raise InvalidOperation('no permission')
 
-    @require_login
-    @log_method_call_important
-    def add_category(self, session_key, category_name):
+    def _add_category(self, category_name):
         '''
-        카테고리 추가하는 함수
+        카테고리를 실제로 추가한다. Internal use only.
 
-        @type  session_key: string
-        @param session_key: 사용자 Login Session (시삽이어야 함)
         @type  category_name: string
         @param category_name: name of category
         @rtype: void
@@ -125,8 +121,6 @@ class BoardManager(object):
         '''
         # TODO: category_name 에 공백 문자 금지
         # TODO: 좀더 다양한 예외상황에 대한 처리
-        self._is_sysop(session_key)
-
         session = model.Session()
         # 모든 category 는 cache 되어 있으므로 category 의 수에 1 더한 값이 새 order 가 됨
         category_order = len(self.all_category_list) + 1
@@ -141,6 +135,40 @@ class BoardManager(object):
             raise InvalidOperation('already added')
         # 새로운 카테고리가 추가되었으므로 cache 를 update 한다
         self.cache_category_list()
+
+    @require_login
+    @log_method_call_important
+    def add_category(self, session_key, category_name):
+        '''
+        카테고리를 추가한다.
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session (시삽이어야 함)
+        @type  category_name: string
+        @param category_name: name of category
+        @rtype: void
+        @return: 
+            1.성공 : 없음
+            2.오류가 있을 경우 InvalidOperation
+
+        '''
+        self._is_sysop(session_key)
+        self._add_category(category_name)
+
+    @log_method_call
+    def _add_bot_category(self, category_name):
+        '''
+        BOT 이 직접 카테고리를 추가한다. BOT 에 의해서만 호출되어야 한다.
+
+        @type  category_name: string
+        @param category_name: name of category
+        @rtype: void
+        @return: 
+            1.성공 : 없음
+            2.오류가 있을 경우 InvalidOperation
+        '''
+        # TODO: BOT Manager 내부에서만 호출하는 것을 좀 다른 방식으로 보장해보자
+        self._add_category(category_name)
 
     def _get_last_board_order_until_category(self, category_name):
         '''
