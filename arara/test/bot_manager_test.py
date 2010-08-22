@@ -5,6 +5,7 @@ import os
 import sys
 import logging
 import xml.dom.minidom
+import urllib
 import thread
 thrift_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'gen-py'))
 sys.path.append(thrift_path)
@@ -27,6 +28,21 @@ def stub_strftime(formatstring, target):
 def stub_start_new_thread(function, argument):
     pass
 
+def stub_parseString(string):
+    f = open(os.path.join(os.path.dirname(__file__), 'bot_manager_test_weather_info.xml'), 'r')
+    ret = xml.dom.minidom.parse(f)
+    f.close()
+    return ret
+
+class stub_xmlobject(object):
+    def read(self):
+        return 'stubcode'
+    def close(self):
+        pass
+
+def stub_urlopen(target):
+    return stub_xmlobject()
+
 class BotManagerTest(unittest.TestCase):
     def _get_user_reg_dic(self, id, campus):
         return {'username':id, 'password':id, 'nickname':id, 'email':id + u'@example.com',
@@ -48,6 +64,10 @@ class BotManagerTest(unittest.TestCase):
         time.strftime = stub_strftime
         self.org_start_new_thread = thread.start_new_thread
         thread.start_new_thread = stub_start_new_thread
+        self.org_parseString = stub_parseString
+        xml.dom.minidom.parseString = stub_parseString
+        self.org_urlopen = urllib.urlopen
+        urllib.urlopen = stub_urlopen
 
         # Common preparation for all tests ( Except etc.arara_settings.BOT_ENABLED = False )
         self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
@@ -99,14 +119,6 @@ class BotManagerTest(unittest.TestCase):
         self.session_key_sillo = self._register_user(u'sillo', u'')
         self.engine.bot_manager.refresh_weather_info(self.session_key_sysop)
 
-        def stub_parseString(string):
-            f = open(os.path.join(os.path.dirname(__file__), 'bot_manager_test_weather_info.xml'), 'r')
-            ret = xml.dom.minidom.parse(f)
-            f.close()
-            return ret
-        self.org_parseString = stub_parseString
-        xml.dom.minidom.parseString = stub_parseString
-
         # Session Key가 비었을 때 빈 인스턴스를 잘 들고 오는가?
         result = self.engine.bot_manager.get_weather_info(u"")
         self.assertEqual(result.city, None)
@@ -141,16 +153,14 @@ class BotManagerTest(unittest.TestCase):
         self.assertEqual(result.day_after_tomorrow_temperature_high, 84)
         self.assertEqual(result.day_after_tomorrow_temperature_low, 66)
 
-
-        # Restore Stub Code
-        xml.dom.minidom.parseString = self.org_parseString
-
     def tearDown(self):
         self.engine.shutdown()
         # Restore Stub Code
         xml.dom.minidom.Element.toprettyxml = self.org_toprettyxml
         time.strftime = self.org_strftime
         thread.start_new_thread = self.org_start_new_thread
+        xml.dom.minidom.parseString = self.org_parseString
+        urllib.urlopen = self.org_urlopen
         etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
 
 def suite():
