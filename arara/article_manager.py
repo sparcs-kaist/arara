@@ -1133,6 +1133,26 @@ class ArticleManager(object):
         session.close()
         return self._modify_nickname_in_article(board_name, no, new_nickname)
 
+    def _modify_bot_nickname_in_article(self, board_name, no, new_nickname):
+        '''
+        BOT이 해당하는 게시글의 닉네임을 변경할 수 있도록 함. BOT 만 사용할 것.
+
+        @type  board_name: string
+        @param board_name: 게시물이 있는 Board 의 이름
+        @type  no: int
+        @param no: Article 게시물의 번호
+        @type  new_nickname: string
+        @param new_nickname: New Nickname
+        @return:
+            1. Modify 성공: Article Number
+            2. Modify 실패:
+                1. 존재하지 않는 게시물번호: InvalidOperation Exception
+                2. 존재하지 않는 게시판: InvalidOperation Exception
+                3. 데이터베이스 오류: InternalError Exception
+        '''
+        # TODO: BOT 인지 검사는 어떻게 할까
+        # TODO: TEST 구현
+        return self._modify_nickname_in_article(board_name, no, new_nickname)
 
     def _move_article(self, session, article, new_board_id):
         '''
