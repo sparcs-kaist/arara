@@ -1,9 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#TODO: md5 library 는 Python 2.4 까지만 쓰였다. Python 2.5 부터는 hashlib.
-#      아라라 엔진의 Requirement 를 Python 2.5 로 선언해야 한다.
-import md5 as hashlib
+import hashlib
 import time
 
 from sqlalchemy import and_, or_, not_

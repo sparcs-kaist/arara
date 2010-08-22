@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# TODO: md5 대신 hashlib 을 쓰도록 한다.
-import md5
+import hashlib
 import datetime
 import time
 import logging
@@ -333,7 +332,7 @@ class MemberManager(object):
 
         key = (user_reg_info.username +
             user_reg_info.password + user_reg_info.nickname)
-        activation_code = md5.md5(key).hexdigest()
+        activation_code = hashlib.md5(key).hexdigest()
         
         session = model.Session()
         try:

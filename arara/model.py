@@ -2,7 +2,6 @@
 import datetime
 import crypt
 import time
-import md5
 import string
 import random
 

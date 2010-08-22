@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import md5 as hashlib
+import hashlib
 import logging
 import datetime
 import thread
