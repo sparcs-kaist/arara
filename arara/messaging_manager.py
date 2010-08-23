@@ -80,23 +80,6 @@ class MessagingManager(object):
             return_list.append(Message(**filtered_dict))
         return return_list
 
-    def _get_user(self, session, username):
-        '''
-        @type  session: model.Session
-        @param session: 사용중인 SQLAlchemy Session
-        @type  username: string
-        @param username: 얻고자 하는 사용자의 username
-        @rtype: model.User
-        @return: 해당되는 사용자의 객체
-        '''
-        # TODO: member_manager 로 옮기기
-        try:
-            user = session.query(model.User).filter_by(username=smart_unicode(username)).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('username not found')
-        return user
-
     def _get_user_by_nickname(self, session, nickname):
         '''
         @type  session: model.Session
@@ -138,7 +121,7 @@ class MessagingManager(object):
         ret_dict = {}
         user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
-        sent_user = self._get_user(session, user_info.username)
+        sent_user = self.engine.member_manager._get_user(session, user_info.username)
         sent_messages_count = session.query(model.Message).filter(
                 and_(model.message_table.c.from_id==sent_user.id,
                     not_(model.message_table.c.sent_deleted==True)
@@ -189,7 +172,7 @@ class MessagingManager(object):
         ret_dict = {}
         user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
-        to_user = self._get_user(session, user_info.username)
+        to_user = self.engine.member_manager._get_user(session, user_info.username)
         blacklist_dict_list = self.engine.blacklist_manager.get_blacklist(session_key)
         blacklist_users = set()
         for blacklist_item in blacklist_dict_list:
@@ -250,8 +233,8 @@ class MessagingManager(object):
 
         user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
-        to_user = self._get_user(session, to_username)
-        from_user = self._get_user(session, user_info.username)
+        to_user = self.engine.member_manager._get_user(session, to_username)
+        from_user = self.engine.member_manager._get_user(session, user_info.username)
         from_user_ip = user_info.ip
         message = model.Message(from_user, from_user_ip, to_user, msg)
         try:
@@ -286,7 +269,7 @@ class MessagingManager(object):
         user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
         to_user = self._get_user_by_nickname(session, to_nickname)
-        from_user = self._get_user(session, user_info.username)
+        from_user = self.engine.member_manager._get_user(session, user_info.username)
         from_user_ip = user_info.ip
         message = model.Message(from_user, from_user_ip, to_user, msg)
         try:
@@ -319,33 +302,15 @@ class MessagingManager(object):
                 2. 로그인되지 않은 사용자: NotLoggedIn Exception
                 3. 데이터베이스 오류: InternalError Exception 
         '''
-        # TODO: 밑의 주석 ... 다 지워버리는 게 낫지 않을까?
         # TODO: 위의 2개 함수와 이 함수의 차이점은?
 
         user_info = self.engine.login_manager.get_session(session_key)
         if type(to_data) == list:
             raise InvalidOperation('temporarily disabled')
-            #ret = []
-            #for to in to_data: 
-            #    if self.engine.member_manager.is_registered(to):
-            #        session = model.Session()
-            #        from_user = session.query(model.User).filter_by(username=user_info.username).one()
-            #        from_user_ip = user_info.ip
-            #        to_user = session.query(model.User).filter_by(username=to).one()
-            #        message = model.Message(from_user, from_user_ip, to_user, msg)
-            #        try:
-            #            session.save(message)
-            #            session.commit()
-            #            ret.append('OK')
-            #        except InvalidRequestError:
-            #            return False, "DATABASE_ERROR"
-            #    else:
-            #        ret.append('USER_NOT_EXIST')
-            #return True, ret
         else:
             session = model.Session()
-            to_user = self._get_user(session, to_data)
-            from_user = self._get_user(session, user_info.username)
+            to_user = self.engine.member_manager._get_user(session, to_data)
+            from_user = self.engine.member_manager._get_user(session, user_info.username)
             from_user_ip = user_info.ip
             message = model.Message(from_user, from_user_ip, to_user, msg)
             try:
@@ -378,7 +343,7 @@ class MessagingManager(object):
         
         user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
-        to_user = self._get_user(session, user_info.username)
+        to_user = self.engine.member_manager._get_user(session, user_info.username)
         try:
             message = session.query(model.Message).filter(and_(model.message_table.c.to_id==to_user.id, model.message_table.c.id==msg_no, not_(model.message_table.c.received_deleted==True))).one()
         except InvalidRequestError:
@@ -412,7 +377,7 @@ class MessagingManager(object):
         
         user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
-        from_user = self._get_user(session, user_info.username)
+        from_user = self.engine.member_manager._get_user(session, user_info.username)
         try:
             message = session.query(model.Message).filter(and_(model.message_table.c.from_id==from_user.id, model.message_table.c.id==msg_no, not_(model.message_table.c.sent_deleted==True))).one()
         except InvalidRequestError:
@@ -446,7 +411,7 @@ class MessagingManager(object):
 
         user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
-        user = self._get_user(session, user_info.username)
+        user = self.engine.member_manager._get_user(session, user_info.username)
         try:
             message_to_delete = session.query(model.Message).filter_by(id=msg_no).one()
         except InvalidRequestError:
@@ -488,7 +453,7 @@ class MessagingManager(object):
 
         user_info = self.engine.login_manager.get_session(session_key)
         session = model.Session()
-        user = self._get_user(session, user_info.username)
+        user = self.engine.member_manager._get_user(session, user_info.username)
         try:
             message_to_delete = session.query(model.Message).filter_by(id=msg_no).one()
         except InvalidRequestError:

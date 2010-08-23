@@ -1102,11 +1102,7 @@ class BoardManager(object):
         self._is_sysop(session_key)
         session = model.Session()
         board = session.query(model.Board).filter_by(board_name=board_name).one()
-        try:
-            user = session.query(model.User).filter_by(username=username).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('username not exist')
+        user = self.engine.member_manager._get_user(session, username)
         if self._is_already_manager(board.id, user.id):
             raise InvalidOperation('User is already a manager for the board.')
         if user.is_sysop:
@@ -1134,11 +1130,7 @@ class BoardManager(object):
         self._is_sysop(session_key)
         session = model.Session()
         board = session.query(model.Board).filter_by(board_name=board_name).one()
-        try:
-            user = session.query(model.User).filter_by(username=username).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('username not exist')
+        user = self.engine.member_manager._get_user(session, username)
         bbs_manager = session.query(model.BBSManager).filter_by(board_id=board.id, manager_id=user.id).one()
         session.delete(bbs_manager)
         session.commit()
@@ -1186,12 +1178,7 @@ class BoardManager(object):
         '''
         # TODO: user 가져오는 것은 다른 함수로 빼내기 (예외처리를 그 속에서)
         session = model.Session()
-        user_info = self.engine.login_manager.get_session(session_key)
-        try:
-            user = session.query(model.User).filter_by(username=smart_unicode(user_info.username)).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('user does not exist')
+        user = self.engine.member_manager._get_user_by_session(session, session_key)
         try:
             board_id = self.get_board_id(board_name)
             bbs_manager = session.query(model.BBSManager).filter_by(board_id=board_id,manager_id=user.id).one()

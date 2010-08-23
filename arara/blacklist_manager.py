@@ -58,20 +58,6 @@ class BlacklistManager(object):
         # TODO: generator 화 할 수는 없나?
         return [self._get_dict(item, whitelist) for item in raw_list]
 
-    def _get_user(self, session, username):
-        '''
-        @type  session: SQLAlchemy Session
-        @type  username: string
-        @rtype: model.User
-        '''
-        # TODO: MemberManager 로 옮긴다
-        try:
-            user = session.query(model.User).filter_by(username=smart_unicode(username)).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('username not exist')
-        return user
-
     @require_login
     @log_method_call_important
     def add_blacklist(self, session_key, username, block_article=True, block_message=True):
@@ -106,8 +92,8 @@ class BlacklistManager(object):
             raise InvalidOperation('cannot add yourself')
 
         session = model.Session()
-        user = self._get_user(session, user_info.username)
-        target_user = self._get_user(session, username)
+        user = self.engine.member_manager._get_user(session, user_info.username)
+        target_user = self.engine.member_manager._get_user(session, username)
 
         integrity_chk = session.query(model.Blacklist).filter_by(user_id=user.id, 
                         blacklisted_user_id=target_user.id).all()
@@ -143,7 +129,7 @@ class BlacklistManager(object):
         username = smart_unicode(username)
 
         session = model.Session()
-        blacklisted_user = self._get_user(session, username)
+        blacklisted_user = self.engine.member_manager._get_user(session, username)
 
         try:
             blacklist_to_del = session.query(model.Blacklist).filter_by(user_id=user_id,
@@ -180,7 +166,7 @@ class BlacklistManager(object):
         user_id = self.engine.login_manager.get_user_id(session_key)
 
         session = model.Session()
-        target_user = self._get_user(session, blacklist_info.blacklisted_user_username)
+        target_user = self.engine.member_manager._get_user(session, blacklist_info.blacklisted_user_username)
         try:
             blacklist_to_modify = session.query(model.Blacklist).filter_by(user_id=user_id,
                                     blacklisted_user_id=target_user.id).one()

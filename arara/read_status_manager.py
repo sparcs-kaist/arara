@@ -156,20 +156,6 @@ class ReadStatusManager(object):
         else:
             return False, 'ALREADY_ADDED'
 
-    def _get_user(self, session, username):
-        try:
-            user = session.query(model.User).filter_by(username=smart_unicode(username)).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('user does not exist')
-        return user
-
-    def _get_user_using_session(self, username):
-        session = model.Session()
-        user = self._get_user(session, username)
-        session.close()
-        return user
-
     @require_login
     @log_method_call
     def check_stat(self, session_key, no):
@@ -305,7 +291,7 @@ class ReadStatusManager(object):
     def save_to_database(self, username):
         import traceback
         session = model.Session()
-        user = self._get_user(session, username)
+        user = self.engine.member_manager._get_user(session, username)
         try:
             read_stat = session.query(model.ReadStatus).filter_by(user_id=user.id).one()
             read_stat.read_status_data = self.read_status[user.id]
