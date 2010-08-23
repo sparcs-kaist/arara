@@ -194,34 +194,6 @@ class ArticleManager(object):
         for item in raw_list:
             yield self._get_dict(item, whitelist)
 
-    def _get_user(self, session, session_key):
-        '''
-        @type  session: SQLAlchemy session
-        @param session: SQLAlchemy session
-        @type  session_key: string
-        @param session_key: 사용자 Login Session
-        @rtype: model.User
-        @return: 주어진 session_key 로 로그인되어 있는 사용자에 대한 SQLAlchemy 객체
-        '''
-        # TODO: MemberManager 로 옮기기 (ArticleManager 에 이 함수가 존재할 이유가 없음)
-        user_id = self.engine.login_manager.get_user_id(session_key)
-        try:
-            user = session.query(model.User).filter_by(id=user_id).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('user does not exist')
-        return user
-
-    def _get_user_id(self, session_key):
-        '''
-        @type  session_key: string
-        @param session_key: 사용자 Login Session
-        @rtype: int
-        @return: 주어진 session_key 로 로그인되어 있는 사용자의 고유 id
-        '''
-        # TODO: LoginManager 에서 직접 호출하도록 관련 함수 호출을 수정하기
-        return self.engine.login_manager.get_user_id(session_key)
-
     def _get_article(self, session, board_id, article_id):
         '''
         Internal Function.
@@ -866,7 +838,7 @@ class ArticleManager(object):
         if smart_unicode(board_name) !=  u"":
             board_id = self.engine.board_manager.get_board_id(board_name)
         article = self._get_article(session, board_id, article_no)
-        user = self._get_user(session, session_key)
+        user = self.engine.member_manager._get_user_by_session(session, session_key)
         vote_unique_check_query = session.query(model.ArticleVoteStatus)
         if board_id:
             vote_unique_check_query = vote_unique_check_query.filter_by(user_id=user.id, board_id=board_id, article_id = article.id)
@@ -911,7 +883,7 @@ class ArticleManager(object):
         user_ip = self.engine.login_manager.get_user_ip(session_key)
 
         session = model.Session()
-        author = self._get_user(session, session_key)
+        author = self.engine.member_manager._get_user_by_session(session, session_key)
         board = self.engine.board_manager._get_board_from_session(session, board_name)
         if not board.read_only:
             # 글에 적합한 heading 객체를 찾는다
@@ -969,7 +941,7 @@ class ArticleManager(object):
 
         session = model.Session()
         board_id = None
-        author = self._get_user(session, session_key)
+        author = self.engine.member_manager._get_user_by_session(session, session_key)
         if smart_unicode(board_name) != u'':
             board_id = self.engine.board_manager.get_board_id(board_name)
         article = self._get_article(session, board_id, article_no)
@@ -1038,7 +1010,7 @@ class ArticleManager(object):
 
         board_id = self.engine.board_manager.get_board_id(board_name)
         session = model.Session()
-        author_id = self._get_user_id(session_key)
+        author_id = self.engine.login_manager.get_user_id(session_key)
         article = self._get_article(session, board_id, no)
         if article.deleted == True:
             session.close()
@@ -1125,8 +1097,9 @@ class ArticleManager(object):
                 4. 데이터베이스 오류: InternalError Exception
         '''
         # TODO: SYSOP 체크는 member_manager 에게 넘기자
+        # TODO: author 가 아니라 user
         session = model.Session()
-        author = self._get_user(session, session_key)
+        author = self.engine.member_manager._get_user_by_session(session, session_key)
         if not author.is_sysop:
             session.close()
             raise InvalidOperation("NO_PERMISSION")
@@ -1258,7 +1231,7 @@ class ArticleManager(object):
         '''
 
         session = model.Session()
-        author = self._get_user(session, session_key)
+        author = self.engine.member_manager._get_user_by_session(session, session_key)
         if board_name != u"":
             board_id = self.engine.board_manager.get_board_id(board_name)
             article = self._get_article(session, board_id, no)
@@ -1338,7 +1311,7 @@ class ArticleManager(object):
         '''
 
         session = model.Session()
-        user = self._get_user(session, session_key)
+        user = self.engine.member_manager._get_user_by_session(session, session_key)
         session.close()
         # 시삽만 이 작업을 할 수 있다.
         if user.is_sysop:
@@ -1478,7 +1451,7 @@ class ArticleManager(object):
         '''
 
         session = model.Session()
-        user = self._get_user(session, session_key)
+        user = self.engine.member_manager._get_user_by_session(session, session_key)
         session.close()
         # 시삽만 이 작업을 할 수 있다.
         if user.is_sysop:

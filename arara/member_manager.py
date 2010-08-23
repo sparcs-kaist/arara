@@ -187,6 +187,49 @@ class MemberManager(object):
             session.close()
             raise InvalidOperation(errmsg)
 
+    def _get_user_by_id(self, session, user_id):
+        '''
+        해당 user_id 사용자에 대한 SQLAlchemy 객체를 리턴한다.
+
+        @type  session: SQLAlchemy Session
+        @param session: SQLAlchemy Session
+        @type  user_id: int
+        @param user_id: 사용자 내부 id
+        @rtype: model.User
+        @return:
+            1. 사용자가 존재할 경우: 해당 사용자에 대한 객체
+            2. 사용자가 존재하지 않을 경우: errmsg 가 포함된 InvalidOperation
+        '''
+        try:
+            user = session.query(model.User).filter_by(id=user_id).one()
+            return user
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('user does not exist')
+
+    def _get_user_by_session(self, session, session_key, close_session = True):
+        '''
+        해당 session_key 로 로그인한 사용자에 대한 SQLAlchemy 객체를 리턴한다.
+
+        @type  session: SQLAlchemy Session
+        @param session: SQLAlchemy Session
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        @type  close_session: bool
+        @param close_session: 로그인되지 않은 사용자일 때 session 을 닫을 것인가의 여부 (기본값: True)
+        @rtype: model.User
+        @return:
+            1. 사용자가 존재할 경우: 해당 사용자에 대한 객체
+            2. 사용자가 존재하지 않을 경우: errmsg 가 포함된 InvalidOperation
+        '''
+        try:
+            user_id = self.engine.login_manager.get_user_id(session_key)
+            return self._get_user_by_id(session, user_id)
+        except NotLoggedIn:
+            if close_session:
+                session.close()
+            raise
+
     def authenticate(self, username, password, user_ip):
         '''
         사용자가 입력한 password 로 검사한다.
