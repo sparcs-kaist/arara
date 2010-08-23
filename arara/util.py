@@ -19,7 +19,14 @@ def smart_unicode(string):
     @rtype: unicode
     '''
     if isinstance(string, unicode): return string
-    else: return unicode(string, 'utf-8')
+    else:
+        try:
+            return unicode(string, 'utf-8')
+        except:
+            try:
+                return unicode(string, 'cp949')
+            except:
+                raise
 
 from libs import timestamp2datetime, datetime2timestamp
 

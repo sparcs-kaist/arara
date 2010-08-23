@@ -34,6 +34,14 @@ class Test(unittest.TestCase):
         self.org_time = time.time
         time.time = stub_time
 
+    def test_smart_unicode(self):
+        str = u'ABC123가나다'
+        cp949_string = unicode(str).encode('cp949')
+        utf_8_string = unicode(str).encode('utf-8')
+        self.assertEqual(str, arara.util.smart_unicode(cp949_string))
+        self.assertEqual(str, arara.util.smart_unicode(utf_8_string))
+        self.assertEqual(str, arara.util.smart_unicode(str))
+
     def test_intlist_to_string_to_intlist(self):
         a = range(1024, 0, -3)
         b = arara.util.intlist_to_string(a)
