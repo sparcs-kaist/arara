@@ -21,9 +21,6 @@ class ARAraEngine(object):
     # TODO: 이 클래스를 위한 TEST 는 설계할 수 있는가?
 
     def __init__(self):
-        if sys.version < 2.6:
-            print 'Ara engine requires python 2.6 version at least'
-            sys.exit(1)
         self.login_manager = LoginManager(self)
         self.member_manager = MemberManager(self)
         self.blacklist_manager = BlacklistManager(self)

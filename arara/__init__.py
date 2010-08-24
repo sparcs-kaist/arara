@@ -1,5 +1,8 @@
 #-*- coding: utf-8 -*-
 # TODO: 이 파일의 "목적성" 이 불분명해졌다.
+import sys
+assert sys.version >= 2.6, 'Ara engine requires python version 2.6 at least'
+
 from arara.article_manager import ArticleManager
 from arara.blacklist_manager import BlacklistManager
 from arara.board_manager import BoardManager
