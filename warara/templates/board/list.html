@@ -44,12 +44,14 @@
                         {% ifnotequal article.heading '' %} <strong>[{{article.heading}}]</strong> {% endifnotequal %}
                     {% endif %}
                     {% if logged_in %}
+                        <a href="/board/{{article.board_name}}/{{article.id}}/?page_no={{page_no}}">
                         {% if article.blacklisted %}
                             {% trans "BLACKLISTED" %}
                         {% else %}
-                            <a href="/board/{{article.board_name}}/{{article.id}}/?page_no={{page_no}}">{{article.title|truncatechars:"60"}}</a>
-                            {%if article.reply_count%}[{{article.reply_count}}]{%endif%}
+                            {{article.title|truncatechars:"60"}}
                         {% endif %}
+                        {%if article.reply_count%}[{{article.reply_count}}]{%endif%}
+                        </a>
                     {% else %}
                         {{article.title|truncatechars:"60"}}{% if article.reply_count%} [{{article.reply_count}}]{% endif %}
                     {% endif %}
