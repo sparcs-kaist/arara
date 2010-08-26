@@ -205,7 +205,7 @@ class BoardManager(object):
                 board_count = self.all_category_and_board_dict[category_name][-1].order
                 return board_count
 
-    def _add_board(self, board_name, board_description, heading_list, category_name, board_type):
+    def _add_board(self, board_name, board_description, heading_list, category_name, board_type, to_read_level, to_write_level):
 
         '''
         보드를 신설한다. 내부 사용 전용.
@@ -220,6 +220,12 @@ class BoardManager(object):
         @param heading_list: 보드에 존재할 말머리 목록 (초기값 : [] 아무 말머리 없음)
         @type  category_name: string
         @param category_name: 보드가 속하는 카테고리의 이름(초기값 : None 카테고리 없음)
+        @type  board_type: int
+        @param board_type: 보드의 종류 (0 : 일반 게시판, 1 : 사진 게시판)
+        @type  to_read_level: int
+        @param to_read_level: 게시판 글을 읽기위해 필요한 authentication_mode 레벨 (초기값: 3 포탈인증자 읽기 가능)
+        @type  to_write_level: int
+        @param to_write_level: 게시판 글을 쓰기위해 필요한 authenticatino_mode 레벨 (초기값: 3 포탈인증자 쓰기 가능)
         @rtype: boolean, string 
         @return:
             1. 성공: None
@@ -230,6 +236,8 @@ class BoardManager(object):
                 4. 데이터베이스 오류: 'DATABASE_ERROR'
 
         '''
+        # TODO: 존재않는 Category 를 집어넣을 때에 대한 대처
+        # TODO: board_order 를 좀 더 깔끔하게 구하기
         session = model.Session()
         board_order = self._get_last_board_order_until_category(category_name) + 1
         # board order 와 같거나 뒤에 있던 모든 board 의 순서를 재조정한다.
@@ -241,7 +249,7 @@ class BoardManager(object):
         category = None
         if category_name != None:
             category = self._get_category_from_session(session, category_name)
-        board_to_add = model.Board(smart_unicode(board_name), board_description, board_order, category, board_type)
+        board_to_add = model.Board(smart_unicode(board_name), board_description, board_order, category, board_type, to_read_level, to_write_level)
         try:
             session.add(board_to_add)
             # Board Heading 들도 추가한다.
@@ -260,7 +268,7 @@ class BoardManager(object):
 
     @require_login
     @log_method_call_important
-    def add_board(self, session_key, board_name, board_description, heading_list = [], category_name = None, board_type = BOARD_TYPE_NORMAL):
+    def add_board(self, session_key, board_name, board_description, heading_list = [], category_name = None, board_type = BOARD_TYPE_NORMAL, to_read_level = 3, to_write_level = 3):
 
         '''
         보드를 신설한다.
@@ -275,7 +283,13 @@ class BoardManager(object):
         @param heading_list: 보드에 존재할 말머리 목록 (초기값 : [] 아무 말머리 없음)
         @type  category_name: string
         @param category_name: 보드가 속하는 카테고리의 이름(초기값 : None 카테고리 없음)
-        @rtype: boolean, string 
+        @type  board_type: int
+        @param board_type: 보드의 종류 (0 : 일반 게시판, 1 : 사진 게시판)
+        @type  to_read_level: int
+        @param to_read_level: 게시판 글을 읽기위해 필요한 authentication_mode 레벨 (초기값: 3 포탈인증자 읽기 가능)
+        @type  to_write_level: int
+        @param to_write_level: 게시판 글을 쓰기위해 필요한 authenticatino_mode 레벨 (초기값: 3 포탈인증자 쓰기 가능)
+        @rtype: void
         @return:
             1. 성공: None
             2. 실패:
@@ -285,12 +299,11 @@ class BoardManager(object):
                 4. 데이터베이스 오류: 'DATABASE_ERROR'
 
         '''
-        # TODO: 존재않는 Category 를 집어넣을 때에 대한 대처
-        # TODO: board_order 를 좀 더 깔끔하게 구하기
+        # TODO: 위의 "실패" 주석 제대로 정리하기
         self._is_sysop(session_key)
-        self._add_board(board_name, board_description, heading_list, category_name, board_type)
+        self._add_board(board_name, board_description, heading_list, category_name, board_type, to_read_level, to_write_level)
 
-    def _add_bot_board(self, board_name, board_description = '', heading_list = [], hide = True, category_name = None, board_type = BOARD_TYPE_NORMAL):
+    def _add_bot_board(self, board_name, board_description = '', heading_list = [], hide = True, category_name = None, board_type = BOARD_TYPE_NORMAL, to_read_level = 3, to_write_level = 3):
         '''
         BOT용 보드를 신설한다.
         주의 : 이 함수는 BOT Manager에서만 사용되어야 한다
@@ -305,16 +318,21 @@ class BoardManager(object):
         @param hide: 게시판을 숨길지의 여부. (초기값 : True, 숨김)
         @type  category_name: string
         @param category_name: 보드가 속한 카테고리 이름 (초기값 : None 카테고리 없음)
-        @rtype: boolean, string 
+        @type  board_type: int
+        @param board_type: 보드의 종류 (0 : 일반 게시판, 1 : 사진 게시판)
+        @type  to_read_level: int
+        @param to_read_level: 게시판 글을 읽기위해 필요한 authentication_mode 레벨 (초기값: 3 포탈인증자 읽기 가능)
+        @type  to_write_level: int
+        @param to_write_level: 게시판 글을 쓰기위해 필요한 authenticatino_mode 레벨 (초기값: 3 포탈인증자 쓰기 가능)
+        @rtype: void
         @return:
             1. 성공: None
             2. 실패:
                 1. 존재하는 게시판: 'board already exist'
                 2. 데이터베이스 오류: 'DATABASE_ERROR'
         '''
-        self._add_board(board_name, board_description, heading_list, category_name, board_type)
-        # 보드에 변경이 발생하므로 캐시 초기화
-        self.cache_board_list()
+        # TODO: 위의 "실패" 주석 제대로 정리
+        self._add_board(board_name, board_description, heading_list, category_name, board_type, to_read_level, to_write_level)
         if hide:
             self._hide_board(board_name)
             # 보드에 변경이 발생하므로 캐시 초기화
