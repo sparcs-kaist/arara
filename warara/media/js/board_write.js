@@ -1,15 +1,17 @@
 $(document).ready(function() {
+        // 이제는 사용자가 몇 개의 파일을 올릴 수 있는지 예측하는 변수가 되었다.
+        // 사용자는 file_no 이상의 파일을 올릴 리가 없다.
 		$file_no = 1;
 
 	$("input[name='file_input_add']").click(function(){
 		$file_no++;
-		$("#file_line_model span.article_write_file_caption").text("file " + $file_no);
 		$("#file_line_model .file_upload_t input[type='file']").remove();
 		var file_append = "<input type=\"file\" name=\"file" + $file_no + "\" class=\"file_upload\" size=\"95\"></input>";
 		$("#file_line_model .file_upload_t").append(file_append);
 		$("#article_write_file").append($("#file_line_model").contents().clone());
 
 		$("input[name='file_input_delete']").click(function(){
+			$file_no--;
 			$(this).parent().parent().remove();
 			});
 
@@ -77,7 +79,36 @@ $(document).ready(function() {
     });
 
     $("#write_button").click(function(event) {
-       $("#article_write").submit();
-       $("#write_button").attr("disabled", "disabled");
+        if ( $("input[name='board_type']").val() == 1 )
+        {
+            $file_uploaded = false;
+
+            for ( $i=1 ; $i<=$file_no ; $i++ )
+            {
+                $upload_file_name = $("input[name='file" + $i + "']").val().split('.');
+                $file_extension = $upload_file_name[$upload_file_name.length-1].toLowerCase();
+                // 파일 이름이 없거나 있어도 그림 파일 확장자가 아니면 file_uploaded가 false다
+                if ( $file_extension != "" )
+                    if ( $file_extension != "jpg" && $file_extension != "gif" && $file_extension != "png" && $file_extension != "bmp" )
+                    {
+                        alert("Upload picture file only. ex) jpg, gif, png, bmp");
+
+                        return false;
+                    }
+                    else
+                        $file_uploaded = true;
+            }
+
+            // file_uploaded가 false면 제대로 파일을 올리지 않은 것이므로 경고.
+            if ( !$file_uploaded )
+            {
+                alert("Upload at least one picture file.");
+
+                return false;
+            }
+        }
+        
+        $("#article_write").submit();
+        $("#write_button").attr("disabled", "disabled");
     });
 });

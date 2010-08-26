@@ -61,7 +61,7 @@
     {% endif %}
     <div id="article_write_file">
         <div class="file_line">
-            <span class="article_write_file_caption">{% trans "file 1" %}</span>
+            <span class="article_write_file_caption">{% trans "file" %}</span>
             <div class="file_upload_p">
                 <div class="file_upload_t">
                     <input type="file" name="file1" class="file_upload" size=95></input>
@@ -78,7 +78,7 @@
     </div>
     <div id="file_line_model">
         <div class="file_line">
-            <span class="article_write_file_caption">{% trans "file 1" %}</span>
+            <span class="article_write_file_caption">{% trans "file" %}</span>
             <div class="file_upload_p">
                 <div class="file_upload_t">
                     <input type="file" name="file1" class="file_upload" size=95></input>
@@ -100,6 +100,7 @@
         <input type="hidden" value="{{t_write}}" name="write_type"></input>
         <input type="hidden" value="{{article_no}}" name="article_no"></input>
         <input type="hidden" value="{{board_name}}" name="board_name"></input>
+        <input type="hidden" value="{{board_type}}" name="board_type" />
         <input type="hidden" value="" name="delete_file"></input>
     </div>
 </form>

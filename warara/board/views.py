@@ -210,6 +210,8 @@ def write(request, board_name):
         r['have_heading'] = True
         r['board_heading_list'] = board_dict.headings
 
+    r['board_type'] = board_dict.type
+
     rendered = render_to_string('board/write.html', r)
     return HttpResponse(rendered)
 

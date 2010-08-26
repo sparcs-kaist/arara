@@ -132,6 +132,7 @@ struct Board {
     6: list<string> headings,
     7: i32 order,
     8: i32 category_id,
+    9: i32 type
 }
 
 struct WrittenArticle {
