@@ -468,10 +468,14 @@ class BoardManager(object):
                     3. 존재하지 않는 게시판 : InvalidOperation('board does not exist')
                     4. 이미 존재하는 말머리 : InvalidOperation('heading already exists in board')
         '''
+        # TODO: 위에서 말하는 것과 같은 error message 를 돌려주도록 수정
+        self._is_sysop(session_key)
+
         session = model.Session()
         # 이미 해당 말머리가 존재하는지 검사한다. 
         board = self._get_board_from_session(session, board_name)
         if session.query(model.BoardHeading).filter_by(board = board).filter_by(heading = heading_name).count() != 0:
+            session.close()
             raise InvalidOperation('heading \'%s\' already exists in board \'%s\'' % (heading_name, board_name))
         # 말머리를 추가한다. 
         try:
@@ -482,7 +486,7 @@ class BoardManager(object):
         except:
             session.rollback()
             session.close()
-            raise
+            raise InternalError("unknown error")
 
     @log_method_call
     def get_board_heading_list_fromid(self, board_id):

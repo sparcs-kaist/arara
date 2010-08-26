@@ -310,14 +310,14 @@ class BoardManagerTest(unittest.TestCase):
         try:
             self.engine.board_manager.add_board_heading(self.session_key_sysop, u'BuySell', u'buy')
             self.fail('Must not be able to add an heading already exists')
-        except:
+        except InvalidOperation:
             pass
 
         # 존재하지 않는 게시판에 말머리를 추가할 수는 없다. 
         try:
             self.engine.board_manager.add_board_heading(self.session_key_sysop, u'Garbages', u'trash')
             self.fail('Must not be able to add an heading to a not-exiting board')
-        except:
+        except InvalidOperation:
             pass
 
 
