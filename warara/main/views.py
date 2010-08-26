@@ -36,6 +36,9 @@ def main(request):
     sess, ctx = warara.check_logged_in(request)
     # TODO: rename all 'r' variables to 'ctx' that means 'context'.
 
+    # Set username if user is guest
+    if ctx['username'] == '':
+        ctx['username'] = 'Guest'
     # Get the today best list
     ret = cache.get('today_best_list')
     if not ret:

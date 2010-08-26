@@ -22,6 +22,12 @@
     color: white;
 }
 
+#article_write_author {
+    width: 97.6%;
+    margin: 1em 0em;
+    margin-left: 2%;
+}
+
 #article_write_title {
     width: 97.6%;
     margin: 1em 0em;

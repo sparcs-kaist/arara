@@ -21,6 +21,10 @@
     </span>
 </div>
 <form name="article_write" action="/board/{{board_name}}/write/" method="post" enctype="multipart/form-data" id="article_write">
+    <div id="article_write_author">
+        <caption>{% trans "author : " %}</caption>
+        {{username}}
+    </div>
     <div id="article_write_title">
         <caption>{% trans "title : " %}</caption>
         <input type="text" value="{{default_title}}" name="title"></input>
