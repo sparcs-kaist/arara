@@ -442,6 +442,17 @@ class BoardManagerTest(unittest.TestCase):
         except:
             pass
 
+    def testChangeAuth(self):
+        # 게시판의 읽기/쓰기 권한설정 바꾸기를 테스트, by SYSOP
+        self.engine.board_manager.add_board(self.session_key_sysop, u'test', u'Testing Board')
+        # 읽기/쓰기 권한의 기본값은 3 포탈인증
+        self.assertEqual(3, self.engine.board_manager.get_board(u'test').to_read_level)
+        self.assertEqual(3, self.engine.board_manager.get_board(u'test').to_write_level)
+        # 보드의 권한 값을 바꾸어 봄
+        self.engine.board_manager.change_auth(self.session_key_sysop, u'test', 1, 2)
+        self.assertEqual(1, self.engine.board_manager.get_board(u'test').to_read_level)
+        self.assertEqual(2, self.engine.board_manager.get_board(u'test').to_write_level)
+
     def testAssignBBSManager(self):
         # 보드마다 관리자 임명 테스트, add BBS Manager by SYSOP
         self.engine.board_manager.add_board(self.session_key_sysop, u'test', u'Testing Board')
@@ -462,7 +473,7 @@ class BoardManagerTest(unittest.TestCase):
             self.fail("User is already a manager for the board.")
         except InvalidOperation:
             pass
-        # 시삽에을 게시판 관리자로 임명하는 경우에 대한 체크
+        # 시삽을 게시판 관리자로 임명하는 경우에 대한 체크
         try:
             self.engine.board_manager.add_bbs_manager(self.session_key_sysop, u'test', u'SYSOP')
             self.fail("SYSOP doesn't need to be assigned as manager.")

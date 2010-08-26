@@ -11,7 +11,7 @@ from arara_thrift.ttypes import *
 log_method_call = log_method_call_with_source('board_manager')
 log_method_call_important = log_method_call_with_source_important('board_manager')
 
-BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only', 'hide', 'id', 'headings', 'order', 'category_id', 'type')
+BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only', 'hide', 'id', 'headings', 'order', 'category_id', 'type', 'to_read_level', 'to_write_level')
 
 CATEGORY_WHITELIST = ('category_name', 'id', 'order')
 
@@ -933,7 +933,35 @@ class BoardManager(object):
 
     @require_login
     @log_method_call_important
-    
+    def change_auth(self, session_key, board_name, read_level, write_level):
+        '''
+        보드의 사용자 접근 권한 설정을 바꾼다.
+        @type  session_key: string
+        @param session_key: 시삽의 session key
+        @type  board_name: string
+        @param board_name: 선택된 게시판
+        @type  read_level: int (1~3)
+        @param read_level: 새로 설정된 읽기 권한
+        @type  write_level: int (1~3)
+        @param write_level: 새로 설정된 쓰기 권한
+
+        '''
+        self._is_sysop(session_key)
+        board_id = self.get_board_id(board_name)
+
+        session = model.Session()
+        board = self._get_board_from_session(session, board_name)
+        board.to_read_level = read_level
+        board.to_write_level = write_level
+        try:
+            session.commit()
+        except:
+            session.rollback()
+        session.close()
+        self.cache_board_list()
+
+    @require_login
+    @log_method_call_important
     def edit_board(self, session_key, board_name, new_name, new_description, new_category_name=None):
         '''
         보드의 이름과 설명을 변경한다. 이름이나 설명을 바꾸고 싶지 않으면 파라메터로 길이가 0 인 문자열을 주면 된다.
