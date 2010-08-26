@@ -298,6 +298,29 @@ class BoardManagerTest(unittest.TestCase):
         except InvalidOperation:
             pass
 
+    def test_add_board_heading(self):
+        # 말머리를 가진 board 를 추가한다
+        self.engine.board_manager.add_board(self.session_key_sysop, u'BuySell', u'market', [u'buy'])
+        # 새로운 말머리를 추가한다. 
+        self.engine.board_manager.add_board_heading(self.session_key_sysop, u'BuySell', u'sell')
+        # 잘 추가되었나 검사한다. 
+        self.assertEqual([u'buy', u'sell'], self.engine.board_manager.get_board_heading_list(u'BuySell'))
+        
+        # 이미 있는 말머리를 또 추가하려고 하면 실패해야 한다. 
+        try:
+            self.engine.board_manager.add_board_heading(self.session_key_sysop, u'BuySell', u'buy')
+            self.fail('Must not be able to add an heading already exists')
+        except:
+            pass
+
+        # 존재하지 않는 게시판에 말머리를 추가할 수는 없다. 
+        try:
+            self.engine.board_manager.add_board_heading(self.session_key_sysop, u'Garbages', u'trash')
+            self.fail('Must not be able to add an heading to a not-exiting board')
+        except:
+            pass
+
+
     def test_get_board_heading_list(self):
         # 말머리가 없는 board 에서 아무 말머리도 안 등록되어있는지 확인한다.
         self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'Garbages Board')
