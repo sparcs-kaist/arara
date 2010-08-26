@@ -491,14 +491,14 @@ class BoardManagerTest(unittest.TestCase):
         self.engine.board_manager.add_category(self.session_key_sysop, u'test_category')
         self.engine.board_manager.add_board(self.session_key_sysop, u'test', u'Testing Board', [], u'test_category')
         result = self.engine.board_manager.get_board_list()
-        board1 = {'id': 1, 'read_only': False, 'board_name': 'test', 'hide': False, 'headings': [], 'order': 1, 'board_description': u'Testing Board'}
+        board1 = {'id': 1, 'read_only': False, 'board_name': 'test', 'hide': False, 'headings': [], 'order': 1, 'board_description': u'Testing Board', 'type': 0}
         self.assertEqual(1, len(result))
         self.assertEqual(board1, self._to_dict(result[0]))
 
         # add_bot_board 로 같은 동작을 테스트.
         self.engine.board_manager._add_bot_board(u'test2', u'Testing Board', [], u'test_category')
         result = self.engine.board_manager.get_board_list()
-        board2 = {'id': 2, 'read_only': False, 'board_name': 'test2', 'hide': True, 'headings': [], 'order': 2, 'board_description': u'Testing Board'}
+        board2 = {'id': 2, 'read_only': False, 'board_name': 'test2', 'hide': True, 'headings': [], 'order': 2, 'board_description': u'Testing Board', 'type': 0}
         self.assertEqual(2, len(result))
         self.assertEqual(board2, self._to_dict(result[1]))
 
@@ -603,7 +603,7 @@ class BoardManagerTest(unittest.TestCase):
         self.engine.board_manager._add_bot_board(u'test', 'test', [])
         board_list = self.engine.board_manager.get_board_list()
         self.assertEqual(1, len(board_list))
-        self.assertEqual({'read_only': False, 'board_name': u'test', 'board_description': u'test', 'hide': True, 'id':1, 'headings': [], 'order':1}, self._to_dict(board_list[0]))
+        self.assertEqual({'read_only': False, 'board_name': u'test', 'board_description': u'test', 'hide': True, 'id':1, 'headings': [], 'order':1, 'type': 0}, self._to_dict(board_list[0]))
         category_list = self.engine.board_manager.get_category_list()
         self.assertEqual(1, len(category_list))
         self.assertEqual({'order': 1, 'category_name': 'test', 'id': 1}, self._to_dict_category(category_list[0]))
