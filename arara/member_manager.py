@@ -955,12 +955,6 @@ class MemberManager(object):
             4. 포탈인증 : 3
         '''
         session = model.Session()
-        user_info = self.engine.login_manager.get_session(session_key)
-        try:
-            user = session.query(model.User).filter_by(username=smart_unicode(user_info.username)).one()
-        except InvalidRequestError:
-            session.close()
-            raise InvalidOperation('user does not exist')
-        session.close()
+        user = self._get_user_by_session(session, session_key)
         return user.authentication_mode
 # vim: set et ts=8 sw=4 sts=4
