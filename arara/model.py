@@ -368,10 +368,10 @@ class Visitor(object):
 metadata = MetaData()
 users_table = Table('users', metadata,
     Column('id', Integer, primary_key=True),
-    Column('username', Unicode(40), unique=True),
+    Column('username', Unicode(40), unique=True, index=True),
     Column('password', Unicode(50)),
-    Column('nickname', Unicode(40)),
-    Column('email', Unicode(60), unique=True),
+    Column('nickname', Unicode(40), index=True),
+    Column('email', Unicode(60), unique=True, index=True),
     Column('signature', Unicode(1024)),
     Column('self_introduction', Unicode(1024)),
     Column('default_language', Unicode(5)),  # ko_KR, en_US
@@ -405,12 +405,12 @@ user_activation_table = Table('user_activation', metadata,
 board_table = Table('boards', metadata,
     Column('id', Integer, primary_key=True),
     Column('category_id', Integer, ForeignKey('categories.id')),
-    Column('board_name', Unicode(30), unique=True),
+    Column('board_name', Unicode(30), unique=True, index=True),
     Column('board_description', Unicode(300)),
     Column('deleted', Boolean),
     Column('read_only', Boolean),
     Column('hide', Boolean),
-    Column('order', Integer, nullable=True),
+    Column('order', Integer, nullable=True, index=True),
     Column('type', Integer),
     Column('to_read_level', Integer),
     Column('to_write_level',Integer),
@@ -419,14 +419,14 @@ board_table = Table('boards', metadata,
 
 category_table = Table('categories', metadata,
     Column('id', Integer, primary_key=True),
-    Column('category_name', Unicode(30), unique=True),
+    Column('category_name', Unicode(30), unique=True, index=True),
     Column('order', Integer, nullable=True),
     mysql_engine='InnoDB'
 )
 
 board_heading_table = Table('board_headings', metadata,
     Column('id', Integer, primary_key=True),
-    Column('board_id', Integer, ForeignKey('boards.id')),
+    Column('board_id', Integer, ForeignKey('boards.id'), index=True),
     Column('heading', Unicode(10)),
     mysql_engine='InnoDB'
 )
@@ -445,7 +445,7 @@ link_table = Table('links', metadata,
 articles_table = Table('articles', metadata,
     Column('id', Integer, primary_key=True),
     Column('title', Unicode(200)),
-    Column('board_id', Integer, ForeignKey('boards.id')),
+    Column('board_id', Integer, ForeignKey('boards.id'), index=True),
     Column('heading_id', Integer, ForeignKey('board_headings.id'), nullable=True), # TODO: nullable=True 는 어디까지나 임시방편이므로 어서 지운다.
     Column('content', UnicodeText),
     Column('author_id', Integer, ForeignKey('users.id')),
@@ -460,22 +460,20 @@ articles_table = Table('articles', metadata,
     Column('parent_id', Integer, ForeignKey('articles.id'), nullable=True),
     Column('reply_count', Integer, nullable=False),
     Column('is_searchable', Boolean, nullable=False),
-    Column('last_modified_date', DateTime),
+    Column('last_modified_date', DateTime, index=True),
     # XXX 2010.05.17.
     # destroyed 필드는 nullable = False 로 해야 할 것 같은데
     # 이렇게 하면 테스트 코드가 깨진다.
     # SQLite 자체의 문제인 것 같으나 아직은 확신이 없다.
     Column('destroyed', Boolean),
-    # XXX 여기까지.
-    # XXX 2010.06.17.
-    # 새로운 Field 를 추가한다. last_reply_date 마지막으로 reply 가 달린 / 수정된 시각.
     Column('last_reply_date', DateTime),
-    # XXX 2010.06.18.
-    # 새로운 Field 를 추가한다. last_reply_id 마지막으로 달린 reply 의 글 번호.
     # TODO: 사실 이 자리에는 id 가 아니라 article 객체가 와야 한다.
     Column('last_reply_id', Integer),
     mysql_engine='InnoDB'
 )
+
+Index('articles_board_and_id', articles_table.c.board_id)
+Index('articles_board_and_last_reply_id', articles_table.c.board_id, articles_table.c.last_reply_id)
 
 article_vote_table = Table('article_vote_status', metadata,
     Column('id', Integer, primary_key=True),
@@ -485,19 +483,21 @@ article_vote_table = Table('article_vote_status', metadata,
     mysql_engine='InnoDB'
 )
 
+Index('votes_user_and_board_and_article', article_vote_table.c.board_id, article_vote_table.c.article_id, article_vote_table.c.user_id)
+
 class MyPickleType(PickleType):
     impl = MSLongBlob
 
 read_status_table = Table('read_status', metadata,
     Column('id', Integer, primary_key=True),
-    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('user_id', Integer, ForeignKey('users.id'), index=True),
     Column('read_status_data', MyPickleType),
     mysql_engine='InnoDB'
 )
 
 blacklist_table = Table('blacklists' , metadata,
     Column('id', Integer, primary_key=True),
-    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('user_id', Integer, ForeignKey('users.id'), index=True),
     Column('blacklisted_user_id', Integer, ForeignKey('users.id')),
     Column('blacklisted_date', DateTime),
     Column('last_modified_date', DateTime),
@@ -506,11 +506,13 @@ blacklist_table = Table('blacklists' , metadata,
     mysql_engine='InnoDB'
 )
 
+Index('blacklisted_user_and_user', blacklist_table.c.user_id, blacklist_table.c.blacklisted_user_id)
+
 message_table = Table('messages', metadata,
     Column('id', Integer, primary_key=True),
-    Column('from_id', Integer, ForeignKey('users.id'), nullable=False),
+    Column('from_id', Integer, ForeignKey('users.id'), nullable=False, index=True),
     Column('from_ip', Unicode(15)),
-    Column('to_id', Integer, ForeignKey('users.id'), nullable=False),
+    Column('to_id', Integer, ForeignKey('users.id'), nullable=False, index=True),
     Column('sent_time', DateTime),
     Column('message', Unicode(1000)),
     Column('received_deleted', Boolean),
@@ -545,8 +547,8 @@ file_table = Table('files', metadata,
     Column('saved_filename', Unicode(200)),
     Column('filepath', Text), 
     Column('user_id', Integer, ForeignKey('users.id')),
-    Column('board_id', Integer, ForeignKey('boards.id')),
-    Column('article_id', Integer, ForeignKey('articles.id')),
+    Column('board_id', Integer, ForeignKey('boards.id'), index=True),
+    Column('article_id', Integer, ForeignKey('articles.id'), index=True),
     Column('deleted', Boolean),
     mysql_engine='InnoDB'
 )
