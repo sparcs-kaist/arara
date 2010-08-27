@@ -68,8 +68,8 @@
             <a class="article_modify" href="/board/{{article.board_name}}/write?article_id={{article.id}}">{% trans "modify" %}</a>
             <a class="article_delete" href="/all/{{article.root_id}}/{{article.id}}/delete/">{% trans "delete" %}</a>
             {% endif %}
-            <a class="article_vote" rel="{{article.id}}" href="/all/{{article.root_id}}/{{article.id}}/vote/+" name="article_vote_up">{% trans "Up" %}</a>
-            <a class="article_vote" rel="{{article.id}}" href="/all/{{article.root_id}}/{{article.id}}/vote/-" name="article_vote_down">{% trans "Down" %}</a>
+            <a class="article_vote" rel="{{article.id}}" href="/all/{{article.root_id}}/{{article.id}}/vote/+" name="article_vote_up">{% trans "Vote" %}</a>
+            <a class="article_vote" rel="{{article.id}}" href="/all/{{article.root_id}}/{{article.id}}/vote/-" name="article_vote_down">{% trans "Dislike" %}</a>
             {% endif %}
         </div>
         <div class="clear_float"></div>

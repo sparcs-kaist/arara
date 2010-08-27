@@ -66,7 +66,8 @@ def get_article_list(request, r, mode):
         # GET 으로 넘어온 말머리가 있는지 본다.
         heading = request.GET.get('heading', None)
         if heading == None and request.GET.has_key('page_no'):
-            heading = request.session['heading']
+            if request.session.has_key('heading'):
+                heading = request.session['heading']
         else:
             request.session['heading'] = heading
         include_all_headings = (heading == None)
