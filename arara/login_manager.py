@@ -225,6 +225,7 @@ class LoginManager(object):
             if diff_time > SESSION_EXPIRE_TIME:
                 # Session Cleaning 이 필요하므로 로그아웃 처리!
                 self._logout(session_key)
+                time.sleep(2)
 
     def _check_session_status(self):
         '''
