@@ -195,6 +195,7 @@ def write(request, board_name):
         r['t_write'] = 'modify'
         r['article'] = article_list[0]
         r['modify'] = True
+        r['root_id'] = article_list[0].root_id
     else:
         r['modify'] = False
     r['board_name'] = board_name
@@ -256,7 +257,10 @@ def write_(request, board_name):
 
             fp.write(file_ob.read())
 
-    return HttpResponseRedirect('/board/%s/%s' % (board_name, str(article_id)))
+    if request.POST.get('write_type', 0) == 'modify':
+        return HttpResponseRedirect('/board/%s/%s' % (board_name, request.POST.get('root_id', article_id)))
+    else:
+        return HttpResponseRedirect('/board/%s/%s' % (board_name, str(article_id)))
 
 def _read(request, r, sess, board_name, article_id):
     '''
