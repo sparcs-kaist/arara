@@ -324,8 +324,11 @@ def _read(request, r, sess, board_name, article_id):
     # move_article 사용시 이동할 보드를 select 태그를 사용해 리스트로 불러와 쓰기 위함.
     board_list = server.board_manager.get_board_list()
     r['board_list'] = board_list
-    is_sysop_or_manager = server.member_manager.is_sysop(sess)
-    r['is_sysop_or_manager'] = is_sysop_or_manager
+    # 2010.08.30. 시삽인지 아닌지를 캐싱하지 않기 때문에 아래 함수가 너무 빈번히 호출되고 있다.
+    # 일단 현 단계에서는 사용하지 않도록 막음.
+    # is_sysop_or_manager = server.member_manager.is_sysop(sess)
+    # r['is_sysop_or_manager'] = is_sysop_or_manager
+    r['is_sysop_or_manager'] = False # 캐싱이 도입되면 이 줄을 지우고 위 2줄로 되돌아가자.
 
 
 @warara.wrap_error
