@@ -763,7 +763,7 @@ class MemberManager(object):
         # TODO: Exception 내용 정정
         username = smart_unicode(username)
         session = model.Session()
-        user = self._get_user(session, username, 'Query username does not exist')
+        query_user = self._get_user(session, username, 'Query username does not exist')
         query_user_dict = filter_dict(query_user.__dict__, USER_QUERY_WHITELIST)
         if query_user_dict['last_logout_time']:
             query_user_dict['last_logout_time'] = datetime2timestamp(

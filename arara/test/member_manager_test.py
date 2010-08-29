@@ -269,6 +269,20 @@ class MemberManagerTest(unittest.TestCase):
         # 아직 인증단계를 유저별로 나누는 것이 구현이 안되어있기 때문에 기본값 0이 리턴됩니다.
         self.assertEqual(0, check_mode)
 
+    def test_query_by_username(self):
+        session_key = self.engine.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.145')
+        # query about combacsa
+        result = self.engine.member_manager.query_by_username(session_key, u'combacsa')
+        # TODO: 다른 test 참고하여 to_dict 를 만들고 거기에 맞춰서 딕셔너리로 테스트하게 수정
+        self.assertEqual(PublicUserInformation(username=u'combacsa', last_logout_time=0, self_introduction=u'combacsa', last_login_ip=u'143.248.234.145', signature=u'combacsa', campus=u'Daejeon', nickname=u'combacsa', email=u'combacsa@example.com'), result)
+
+        # query about nonexisting member
+        try:
+            result = self.engine.member_manager.query_by_username(session_key, u'unknonw')
+            self.fail('querying about nonexisting user must fail.')
+        except InvalidOperation:
+            pass
+        # TODO: query_by_username 이외에 다른 함수들에 대해서도 테스트 코드 작성
 
     def tearDown(self):
         self.engine.shutdown()
