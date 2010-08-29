@@ -225,7 +225,9 @@ class LoginManager(object):
             if diff_time > SESSION_EXPIRE_TIME:
                 # Session Cleaning 이 필요하므로 로그아웃 처리!
                 self._logout(session_key)
-                time.sleep(2)
+        # Lock 을 해제한 뒤 다른 작업을 하도록 숨통을 트여주자
+        if diff_time > SESSION_EXPIRE_TIME:
+            time.sleep(2)
 
     def _check_session_status(self):
         '''
@@ -241,6 +243,9 @@ class LoginManager(object):
                 except Exception:
                     import traceback
                     logger.exception("EXCEPTION at SESSION CLEANER : \n%s", traceback.format_exc())
+                # 중간에 엔진이 꺼지면 Session Cleaner 도 죽어야 합당하다
+                if not self.engine_online:
+                    break
 
             logger.info("=================== SESSION CLEANING FINISHED") 
             time.sleep(SESSION_EXPIRE_TIME)
