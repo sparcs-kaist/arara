@@ -435,10 +435,10 @@ class ArticleManager(object):
 
         return article_list, last_page, article_count
 
-    def _get_read_status_generator(self, session_key, article_list, whitelist):
+    def _get_read_status_generator(self, user_id, article_list, whitelist):
         '''
-        @type  session_key: string
-        @param session_key: 사용자 Login Session
+        @type  user_id: int
+        @param user_id: 사용자 고유 id
         @type  article_list: list<SQLAlchemy model.Article>
         @param article_list: SQLAlchemy 형식의 글 객체의 모음
         @type  whitelist: list<string>
@@ -449,14 +449,18 @@ class ArticleManager(object):
         '''
         for article in article_list:
             article_dict = self._get_dict(article, whitelist)
-            try:
-                read_status_main = self.engine.read_status_manager.check_stat(session_key, article.id)
-                read_status_sub  = self.engine.read_status_manager.check_stat(session_key, article.last_reply_id)
-                if read_status_main == 'R' and read_status_sub == 'N':
-                    read_status_main = 'U'
-                article_dict['read_status'] = read_status_main
-                yield article_dict
-            except NotLoggedIn, InvalidOperation:
+            if user_id != -1: # 로그인되어 있는 경우
+                try:
+                    read_status_main = self.engine.read_status_manager._check_stat(user_id, article.id)
+                    read_status_sub  = self.engine.read_status_manager._check_stat(user_id, article.last_reply_id)
+                    if read_status_main == 'R' and read_status_sub == 'N':
+                        read_status_main = 'U'
+                    article_dict['read_status'] = read_status_main
+                    yield article_dict
+                except NotLoggedIn, InvalidOperation:
+                    article_dict['read_status'] = 'N'
+                    yield article_dict
+            else: # 그렇지 않은 경우
                 article_dict['read_status'] = 'N'
                 yield article_dict
         raise StopIteration
@@ -504,11 +508,14 @@ class ArticleManager(object):
         '''
         # TODO: article_list 를 아예 generator 로 받아도 될까?
 
+        # Phase 0. 사용자 고유 id 를 미리 빼낸다. 이를 통해 이후에는 session_key 와 무관하게 됨.
+        user_id = self.engine.login_manager.get_user_id_wo_error(session_key)
+        blacklisted_users = self._get_blacklist_userid(session_key)
+
         # Phase 1. SQLAlchemy Article List -> Article Dictionary (ReadStatus Marked)
-        article_dict_list_generator = self._get_read_status_generator(session_key, article_list, whitelist)
+        article_dict_list_generator = self._get_read_status_generator(user_id, article_list, whitelist)
 
         # Phase 2. Article Dictionary -> Thrift Article Object (Blacklisted Marked)
-        blacklisted_users = self._get_blacklist_userid(session_key)
         article_list_generator = self._thrift_article_generator(article_dict_list_generator, blacklisted_users)
 
         # Phase 3. 이제 이를 바탕으로 Article List 객체를 돌려준다.
