@@ -303,6 +303,25 @@ class LoginManager(object):
             raise NotLoggedIn()
 
     @log_method_call
+    def get_user_id_wo_error(self, session_key):
+        '''
+        세션의 사용자 id 만을 반환하는 함수.
+        만일 로그인되지 않는 사용자이거나 하면 -1 을 리턴한다.
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        @rtype: i32
+        @return: 해당 세션의 사용자의 internal id 혹은 -1
+        '''
+        if self.session_dic.has_key(session_key):
+            try:
+                return self.session_dic[session_key]['id']
+            except KeyError:
+                return -1
+        else:
+            return -1
+
+    @log_method_call
     def get_user_ip(self, session_key):
         '''
         세션의 사용자 ip 만을 반환하는 함수

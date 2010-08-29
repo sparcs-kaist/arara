@@ -85,15 +85,39 @@ class LoginManagerTest(unittest.TestCase):
         self.engine.login_manager.logout(session_key)
 
     def testGetUserId(self):
+        # 정상적인 경우
         session_key = self.engine.login_manager.login(u'pipoket', u'pipoket', '143.248.234.145')
         result = self.engine.login_manager.get_user_id(unicode(session_key))
         self.assertEqual(2, result)
         self.engine.login_manager.logout(session_key)
-
+        # 다른 사용자에 대해서도 테스트
         session_key = self.engine.login_manager.login(u'SYSOP', u'SYSOP', '143.248.234.145')
         result = self.engine.login_manager.get_user_id(unicode(session_key))
         self.assertEqual(1, result)
         self.engine.login_manager.logout(session_key)
+        # 이미 로그아웃한 경우
+        try:
+            self.engine.login_manager.get_user_id(unicode(session_key))
+            self.fail("User already logged out, but was able to get user_id")
+        except NotLoggedIn:
+            pass
+
+    def test_get_user_id_wo_error(self):
+        # 정상적인 경우
+        session_key = self.engine.login_manager.login(u'pipoket', u'pipoket', '143.248.234.145')
+        result = self.engine.login_manager.get_user_id_wo_error(unicode(session_key))
+        self.assertEqual(2, result)
+        self.engine.login_manager.logout(session_key)
+
+        # 이미 로그아웃한 경우
+        session_key = self.engine.login_manager.login(u'SYSOP', u'SYSOP', '143.248.234.145')
+        self.engine.login_manager.logout(session_key)
+        result = self.engine.login_manager.get_user_id_wo_error(unicode(session_key))
+        self.assertEqual(-1, result)
+
+        # 로그인한 적이 없는 경우
+        result = self.engine.login_manager.get_user_id_wo_error(unicode(''))
+        self.assertEqual(-1, result)
 
     def testGetUserIp(self):
         session_key1 = self.engine.login_manager.login(u'pipoket', u'pipoket', '143.248.234.145')
