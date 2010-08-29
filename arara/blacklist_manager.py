@@ -207,6 +207,25 @@ class BlacklistManager(object):
             raise InternalError('database error')
         return blacklist_list
 
+    def _get_article_blacklisted_userid_list(self, user_id):
+        '''
+        @type  user_id: int
+        @param user_id: 사용자 고유 id
+        @rtype: list<int>
+        @return:
+            1. 성공 : 차단된 사용자들의 고유 id 목록
+        '''
+        # TODO: 추가 테스트 구현
+        try:
+            session = model.Session()
+            raw_blacklist = session.query(model.Blacklist).filter_by(user_id=user_id, block_article=True)
+            userid_blacklist = [x.blacklisted_user_id for x in raw_blacklist] # TODO: .all 을 하고 하는것과 이것 중 어느게 성능에서 나을까?
+            session.close()
+        except:
+            session.close()
+            raise InternalError('database error')
+        return userid_blacklist
+
     @require_login
     @log_method_call
     def get_article_blacklisted_userid_list(self,session_key):
@@ -223,16 +242,7 @@ class BlacklistManager(object):
                 2. 데이터베이스 오류: InternalError('DATABASE_ERROR')
         '''
         # TODO: user_id 를 파라메터로 하는 함수 분리
-
         user_id = self.engine.login_manager.get_user_id(session_key)
-        try:
-            session = model.Session()
-            raw_blacklist = session.query(model.Blacklist).filter_by(user_id=user_id, block_article=True).all()
-            session.close()
-            userid_blacklist = [x.blacklisted_user_id for x in raw_blacklist]
-        except:
-            session.close()
-            raise InternalError('database error')
-        return userid_blacklist
+        return self._get_article_blacklisted_userid_list(user_id)
 
 # vim: set et ts=8 sw=4 sts=4
