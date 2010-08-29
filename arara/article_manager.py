@@ -608,12 +608,14 @@ class ArticleManager(object):
         '''
 
         session = model.Session()
-        # XXX 주어진 boar_name 에 맞는지 check
+        # TODO: 주어진 board_name 에 맞는지 check
+        # TODO: require_login 거치는 횟수 줄이기
+        user_id = self.engine.login_manager.get_user_id(session_key)
         blacklisted_userid = self._get_blacklist_userid(session_key)
 
         try:
             article = session.query(model.Article).options(eagerload('children')).filter_by(id=no).one()
-            msg = self.engine.read_status_manager.check_stat(session_key, no)
+            msg = self.engine.read_status_manager._check_stat(user_id, no)
             if msg == 'N':
                 article.hit += 1
                 session.commit()
