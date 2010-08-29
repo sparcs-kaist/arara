@@ -156,14 +156,36 @@ class ReadStatusManager(object):
         else:
             return False, 'ALREADY_ADDED'
 
+    def _check_stat(self, user_id, no):
+        '''
+        읽은 글인지의 여부를 체크. 로그 따로 남기지 않음.
+
+        @type  user_id: int
+        @param user_id: 사용자 고유 id
+        @type  no: integer
+        @param no: Article Number
+        @rtype: string
+        @return:
+            1. 읽은글 여부 체크 성공:
+                1. 이미 읽은 글: 'R'
+                2. 읽지 않은 글: 'N'
+                3. 읽지 않고 통과한 글: 'V' <- 정말 이럴까?
+            2. 읽은글 여부 체크 실패:
+                1. 데이터베이스 오류: InternalError('DATABASE_ERROR') <- 정말 이럴까?
+        '''
+        ret, _ = self._initialize_data(user_id)
+        self._check_article_exist(no)
+        status = self.read_status[user_id].get(no)
+        return status
+
     @require_login
     @log_method_call
     def check_stat(self, session_key, no):
         '''
         읽은 글인지의 여부를 체크
 
-        >>> readstat.check_stat(session_key, 'garbages', 334)
-        True, 'R'
+        >>> readstat.check_stat(session_key, 334)
+        'R'
 
         @type  session_key: string
         @param session_key: User Key
@@ -172,19 +194,16 @@ class ReadStatusManager(object):
         @rtype: string
         @return:
             1. 읽은글 여부 체크 성공:
-                1. 이미 읽은 글: True, 'R'
-                2. 읽지 않은 글: True, 'N'
-                3. 읽지 않고 통과한 글: True, 'V'
+                1. 이미 읽은 글: 'R'
+                2. 읽지 않은 글: 'N'
+                3. 읽지 않고 통과한 글: 'V' <- ... 정말?
             2. 읽은글 여부 체크 실패:
-                1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 로그인되지 않은 유저: NotLoggedIn()
+                2. 데이터베이스 오류: InternalError('DATABASE_ERROR') <- 정말?
         '''
-
+        # TODO: require_login 이 하는 일을 get_user_id 가 이미 하지 않는가?
         user_id = self.engine.login_manager.get_user_id(session_key)
-        ret, _ = self._initialize_data(user_id)
-        self._check_article_exist(no)
-        status = self.read_status[user_id].get(no)
-        return status
+        return self._check_stat(user_id, no)
 
     @require_login
     @log_method_call
