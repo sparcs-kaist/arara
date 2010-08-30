@@ -845,6 +845,20 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(expected_result, self._to_dict(result[2]))
         # TODO: article_vote_status table 의 board_id가 바뀌는 것 확인하기? files 의 board_id가 바뀌는 것 확인하기?
 
+    def test_change_article_heading(self):
+        self.engine.board_manager.add_board(self.session_key_sysop, u'testboard', u'Test Board with heading', [u'heading1', u'heading2'])
+        article1 = self._dummy_article_write(self.session_key_sysop, board_name = 'testboard', heading = 'heading1')
+        article2 = self._dummy_article_write(self.session_key_mikkang, board_name = 'testboard', heading = 'heading1')
+        article3 = self._dummy_article_write(self.session_key_hodduc, board_name = 'testboard', heading = 'heading2')
+        article4 = self._dummy_article_write(self.session_key_sillo, board_name = 'testboard', heading = 'heading2')
+        article5 = self._dummy_article_write(self.session_key_wiki, board_name = 'testboard', heading = 'heading1')
+
+        self.engine.article_manager.change_article_heading(self.session_key_sysop, 'testboard', 'heading1', 'heading2')
+        self.assertEqual(ArticleList(last_page=1, hit=[], results=0, current_page=1), self.engine.article_manager.article_list(self.session_key_sysop, 'testboard', 'heading1', include_all_headings = False))
+        articleListOfHeading2 = self.engine.article_manager.article_list(self.session_key_sysop, 'testboard', 'heading2', include_all_headings = False).hit 
+        self.assertEqual(5, len(articleListOfHeading2))
+        self.assertEqual(Article(negative_vote=0, positive_vote=0, last_modified_date=31536005.100000001, is_searchable=True, author_nickname=u'wiki', reply_count=0, id=5, title=u'TITLE', content=None, attach=None, type='normal', author_username=u'wiki', hit=0, root_id=None, deleted=False, board_name=u'testboard', date=31536005.100000001, blacklisted=False, read_status='N', depth=None, author_id=9, heading=u'heading2'), articleListOfHeading2[0])
+
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(ArticleManagerTest)
 
