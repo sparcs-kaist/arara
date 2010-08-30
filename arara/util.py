@@ -30,13 +30,6 @@ def smart_unicode(string):
 
 from libs import timestamp2datetime, datetime2timestamp
 
-def update_monitor_status(function):
-    # TODO: 이 함수 뭔가 이상하다. 잘못 구현되어 있는 것 같다.
-    def wrapper(self, session_key, *args, **kwargs):
-        if 'login_manager' in self.__dict__:
-            action = function.func_name
-            #ret, msg = self.login_manager._update_monitor_status(session_key, action)
-
 def log_method_call_with_source_important(source):
     '''
     지정된 source 에 Logging 하는 decorator 를 내놓는다.
