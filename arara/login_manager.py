@@ -199,13 +199,15 @@ class LoginManager(object):
         '''
         # TODO: 이 함수를 누가 호출하는지 보고, 왜 T/F 가 필요한지 확인하기
         action = smart_unicode(action)  
-        with self.lock_session_dic:
+        try:
             if self.session_dic.has_key(session_key):
                 self.session_dic[session_key]['current_action'] = action
                 self.update_session(session_key)
                 return True
             else:
                 return False
+        except KeyError:
+            return False
     
     def _clean_specific_session(self, session_key):
         '''
