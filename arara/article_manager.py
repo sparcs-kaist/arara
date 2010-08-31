@@ -335,6 +335,16 @@ class ArticleManager(object):
             pass
         return set(blacklist_list)
 
+    def _get_blacklist_userid_by_userid(self, user_id):
+        '''
+        @type  user_id: int
+        @param user_id: 사용자 고유 id
+        '''
+        if user_id == -1:
+            return set()
+        else:
+            return set(self.engine.blacklist_manager._get_article_blacklisted_userid_list(user_id))
+
     def _get_basic_query(self, session, board_name, heading_name, include_all_headings):
         '''
         Internal.
@@ -510,7 +520,7 @@ class ArticleManager(object):
 
         # Phase 0. 사용자 고유 id 를 미리 빼낸다. 이를 통해 이후에는 session_key 와 무관하게 됨.
         user_id = self.engine.login_manager.get_user_id_wo_error(session_key)
-        blacklisted_users = self._get_blacklist_userid(session_key)
+        blacklisted_users = self._get_blacklist_userid_by_userid(user_id)
 
         # Phase 1. SQLAlchemy Article List -> Article Dictionary (ReadStatus Marked)
         article_dict_list_generator = self._get_read_status_generator(user_id, article_list, whitelist)
