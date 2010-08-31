@@ -335,6 +335,16 @@ class ArticleManager(object):
             pass
         return set(blacklist_list)
 
+    def _get_blacklist_userid_by_userid(self, user_id):
+        '''
+        @type  user_id: int
+        @param user_id: 사용자 고유 id
+        '''
+        if user_id == -1:
+            return set()
+        else:
+            return set(self.engine.blacklist_manager._get_article_blacklisted_userid_list(user_id))
+
     def _get_basic_query(self, session, board_name, heading_name, include_all_headings):
         '''
         Internal.
@@ -510,7 +520,7 @@ class ArticleManager(object):
 
         # Phase 0. 사용자 고유 id 를 미리 빼낸다. 이를 통해 이후에는 session_key 와 무관하게 됨.
         user_id = self.engine.login_manager.get_user_id_wo_error(session_key)
-        blacklisted_users = self._get_blacklist_userid(session_key)
+        blacklisted_users = self._get_blacklist_userid_by_userid(user_id)
 
         # Phase 1. SQLAlchemy Article List -> Article Dictionary (ReadStatus Marked)
         article_dict_list_generator = self._get_read_status_generator(user_id, article_list, whitelist)
@@ -1329,6 +1339,47 @@ class ArticleManager(object):
         else:
             raise InvalidOperation("NO_PERMISSION")
         return True
+
+    @require_login
+    @log_method_call_important
+    def change_article_heading(self, session_key, board_name, original_heading_name, new_heading_name):
+        '''
+        original_heading에 속한 모든 글의 heading을 new_heading으로 변경한다. 
+
+        @type  session_key: string
+        @param session_key: Login session(must to be sysop)
+        @type  board_name: string
+        @param board_name: 말머리가 속한 게시판의 이름
+        @type  original_heading_name: string
+        @param original_heading_name: 원래 말머리 이름
+        @type  new_heading_name: string
+        @param new_heading_name: 새 말머리 이름
+        @rtype: None
+        @return:
+            1. 성공: None
+            2. 실패
+                1. 로그인되지 않은 유저 : NotLoggedIn()
+                2. 시삽이 아닌 경우 : InvalidOperation('no permission')
+                3. 존재하지 않는 게시판 : InvalidOperation('board does not exist')
+                4. 존재하지 않는 말머리 : InvalidOperation('heading not exist')
+        '''
+        if not self.engine.member_manager.is_sysop(session_key):
+            raise InvalidOperation('no permission')
+
+        session = model.Session()
+        # SQLAlchemy 세션에서 board와 heading 객체를 가져온다. 
+        board = self.engine.board_manager._get_board_from_session(session, board_name)
+        original_heading = self.engine.board_manager._get_heading(session, board, original_heading_name)
+        new_heading = self.engine.board_manager._get_heading(session, board, new_heading_name) 
+        try:
+            articleList = session.query(model.Article).filter_by(board = board, heading = original_heading).all()
+            for article in articleList:
+                article.heading = new_heading
+            session.commit()
+            session.close()
+        except:
+            session.close()
+            raise
 
     def _fix_article_concurrency(self, board_id, no):
         '''

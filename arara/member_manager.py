@@ -88,6 +88,8 @@ class MemberManager(object):
         except:
             session.rollback()
             session.close()
+            import traceback
+            self.logger.exception("Special Exception : \n%s", traceback.format_exc())
             raise InvalidOperation('Cannot add users without confirm')
 
     def _register_sysop(self):
