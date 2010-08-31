@@ -115,14 +115,10 @@ def require_login(function):
         if not self.engine.login_manager.is_logged_in(session_key):
             raise NotLoggedIn()
         else:
-            try:
-                assert self.engine.login_manager._update_monitor_status(session_key, str(function.func_name))
-                assert self.engine.login_manager.update_session(session_key)
+            if self.engine.login_manager._update_monitor_status(session_key, str(function.func_name)):
                 return function(self, session_key, *args)
-            except AssertionError:
-                session_logger = logging.getLogger('SESSION UPDATER')
-                session_logger.error(traceback.format_exc())
-                return function(self, session_key, *args)
+            else:
+                raise NotLoggedIn()
 
     return wrapper
 

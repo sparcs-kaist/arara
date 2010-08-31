@@ -45,7 +45,6 @@ class ARAraEngine(object):
             'get_user_ip': self.login_manager.get_user_ip,
             'get_current_online': self.login_manager.get_current_online,
             'is_logged_in': self.login_manager.is_logged_in,
-            '_update_monitor_status': self.login_manager._update_monitor_status,
             'authenticate': self.member_manager.authenticate,
             'register_': self.member_manager.register_,
             'backdoor_confirm': self.member_manager.backdoor_confirm,
