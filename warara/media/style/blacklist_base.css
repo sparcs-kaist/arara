@@ -45,7 +45,7 @@
 
 #blacklist_mypage_content th {
     background: #E0E0E0 url(/media/image/base/square.png) no-repeat top left;
-    border-top: 1px #65AA5C solid;
+    border-top: 1px #555 solid;
     border-left: 1px white solid;
     border-right: 1px white solid;
     border-bottom: 5px #DADADA solid;

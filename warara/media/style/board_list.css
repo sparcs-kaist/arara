@@ -83,10 +83,10 @@
 
 th {
     background: url('/media/image/base/square.png') no-repeat;
-    background-color: #e0e0e0;
+    background-color: #ccc;
     border-bottom: 5px solid #dadada;
     border-top: 1px solid #65aa5c;
-    color:#454545;
+    color:#fff;
     height:24px;
 }
 

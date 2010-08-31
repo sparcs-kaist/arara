@@ -32,7 +32,7 @@
 
 #message_list_table table {
     border: 0em;
-    border-top: 1px solid green;
+    border-top: 1px #555 solid;
     border-collapse: collapse;
 }
 
@@ -49,7 +49,7 @@
 
 #message_list_table th {
     background: #e0e0e0 url(/media/image/base/square.png) no-repeat 0% 0%;
-    border-top: 1px solid green;
+    border-top: 1px #555 solid;
     border-bottom: 5px solid #dadada;
     font-weight: normal;
     text-align: left;

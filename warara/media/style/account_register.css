@@ -61,7 +61,7 @@
 #agreement_sub_title {
     min-height: 1.6em; 
     background: #E0E0E0 url(/media/image/base/square.png) no-repeat top left;
-    border-top: 1px #65AA5C solid;
+    border-top: 1px #555 solid;
     border-bottom: 5px #DADADA solid;
     padding: 0.5em 0 0 0.8em;
     clear: left;
@@ -129,7 +129,7 @@
 .acc_subtitle_name {
     min-height: 1.6em; 
     background: #E0E0E0 url(/media/image/base/square.png) no-repeat top left;
-    border-top: 1px #65AA5C solid;
+    border-top: 1px #555 solid;
     border-bottom: 5px #DADADA solid;
     padding: 0.5em 0 0 0.8em;
     clear: left;

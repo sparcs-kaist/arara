@@ -4,7 +4,8 @@
 
 /* Best_article background */
 .best_articles_caption {
-    background: #F7F7F7 url(/media/image/base/index/raw_ara_w_main_best_titlebar.png) no-repeat top left;
+    color: #fff;
+    background: #ccc url(/media/image/base/index/raw_ara_w_main_best_titlebar.png) no-repeat top left;
     border-bottom: 1px solid #EAEAEA;
     padding : 7px 0 0 10px;
     font-weight: bold;
@@ -12,7 +13,7 @@
 
 .best_articles {
     width: 560px;
-    border: 1px solid #EAEAEA;
+    border: 1px solid #ccc;
     margin: 10px 0 0 10px;
     float: left; 
 }
@@ -70,7 +71,7 @@
 
 .weathers {
     width: 200px;
-    border: 1px solid #EAEAEA;
+    border: 1px solid #ccc;
     margin: 10px 0 0 10px;
     float: right;
 }

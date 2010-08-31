@@ -5,7 +5,7 @@
 	padding: 0.5em 2%;
 	padding-right: 1%;
 	background: url("/media/image/board/read_title_bg.png") no-repeat top left;
-	overflow: hidden;  /* XXX(serialx): 큰 이미지나 텍스트가 레이아웃을 깨는것 방지 */
+	overflow: hidden;  /* XXX(serialx): ???��?지???�스?��? ?�이?�웃??깨는�?방�? */
 }
 
 .float_left {
@@ -170,7 +170,7 @@ div.article_reply {
 
 .article_reply_title {
 	width: 100%;
-	border-top: 1px solid #0d0;
+	border-top: 1px solid #000;
 	background-color: #eee;
 	margin: 1em 0em;
 	margin-top: 1em;
