@@ -523,10 +523,12 @@ def vote(request, board_name, root_id, article_no, vote_type):
 
     try:
         server.article_manager.vote_article(sess, board_name, int(article_no), positive_vote)
+        response = HttpResponse("OK")
     except InvalidOperation, e:
-        return HttpResponse("ALREADY_VOTED")
+        response = HttpResponse("ALREADY_VOTED")
 
-    return HttpResponse("OK")
+    response['Cache-Control'] = 'max-age=0, no-cache=True'
+    return response
 
 @warara.wrap_error
 def move_article(request):
