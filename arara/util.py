@@ -71,6 +71,8 @@ def log_method_call_with_source_important(source):
 
             return ret
 
+        wrapper.__name__ = function.__name__
+        wrapper.__doc__ = function.__doc__
         return wrapper
 
     return log_method_call
@@ -102,6 +104,8 @@ def log_method_call_with_source(source):
 
             return ret
 
+        wrapper.__name__ = function.__name__
+        wrapper.__doc__ = function.__doc__
         return wrapper
 
     return log_method_call
@@ -120,6 +124,8 @@ def require_login(function):
             else:
                 raise NotLoggedIn()
 
+    wrapper.__name__ = function.__name__
+    wrapper.__doc__ = function.__doc__
     return wrapper
 
 
