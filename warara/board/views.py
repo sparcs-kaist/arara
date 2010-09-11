@@ -352,7 +352,10 @@ def read(request, board_name, article_id):
     # 화면 하단의 글목록의 정보를 r 에 저장
     get_article_list(request, r, 'read')
 
-    rendered = render_to_string('board/read.html', r)
+    if article_id:
+        rendered = render_to_string('board/relay_fiction.html', r)
+    else:
+        rendered = render_to_string('board/read.html', r)
     return HttpResponse(rendered)
 
 @warara.wrap_error

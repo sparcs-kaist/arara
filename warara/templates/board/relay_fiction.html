@@ -1,0 +1,97 @@
+{% extends "board/list.html" %}
+
+{% block style %}
+{{block.super}}
+<link rel="stylesheet" type="text/css" href="/media/style/relay_fiction.css"></link>
+{% endblock style %}
+
+{% block script %}
+{{block.super}}
+<script type="text/javascript" src="/media/thirdparty/jquery-ui-1.7.custom.min.js"></script>
+<script type="text/javascript" src="/media/thirdparty/autoresize.jquery.min.js"></script>
+<script type="text/javascript" src="/media/js/relay_fiction.js"></script>
+{% endblock script %}
+
+{% block article_content %}
+{% load i18n %}
+
+{% if is_sysop_or_manager %}
+<fieldset id="move_article">
+    <form action="/board/move_article/" method="post">
+        <select name="board_to_move" id="board_to_move">
+            {% for board in board_list %}
+            <option value="{{board.board_name}}">{{board.board_name}}</option>
+            {% endfor %}
+        </select>
+        <input type="hidden" name="board_name" value="{{root_article.board_name}}" />
+        <input type="hidden" name="article_no" value="{{root_article.id}}" />
+        <input type="submit" id="apply_move_article" value="게시물 이동" />
+    </form>
+</fieldset>
+{% endif %}
+{% for article in article_read_list %}
+<div class="article">
+    {% for depth in article.depth_list %}
+    <img class="reply_title_img img_{{depth}}" src="/media/image/board/read_reply_hierarchy.jpg"></img>
+    {% endfor %}
+    <a name={{article.id}}></a>
+    {% ifequal article.id article.root_id %}
+    <h1 class="root_article_title"><img src="/media/image/relay_fiction_title.png" alt="드립쳐봐 - 2010 KAIST 석림태울제 축제 DIY"></h1>
+    {% endifequal %}
+    <div class="article_content{%ifequal article.read_status "R" %} previously_read{% endifequal %}">
+        <div class="{%ifequal article.id article.root_id%}article_root_text{%else%}article_text{%endifequal%}">
+            {% if not article.blacklisted %}
+            {% for image in article.image %}
+            {{image|safe}}
+            {% endfor %}
+            {{article.content|safe|linebreaksbr}}
+            {% else %}
+            {% trans "BLACKLISTED" %}
+            {% endif %}
+        </div>
+        {% ifnotequal article.id article.root_id %}
+        {% if not article.deleted %}
+        <div class="article_info">
+            <span class="user_nickname">{{article.author_nickname}}<span class="hidden username">{{article.author_username}}</span></span>
+            <span class="user_name">{{article.author_username}}</span> |
+            <span class="vote"><span class="positive_vote_num_{{article.id}}">{{article.positive_vote}}</span> / <span class="negative_vote_num_{{article.id}}">{{article.negative_vote}}</span></span> |
+            <span class="article_date"><a href="#{{article.id}}">{{article.date|date:"y/m/d H:i:s"}}</a></span>
+        </div>
+        <div class="article_read_buttons">
+            {% if article.flag_modify %}
+            <a class="article_modify" href="/board/{{board_name}}/write?article_id={{article.id}}"><img src="/media/image/relay_fiction_modify.png" alt="modify"></a>
+            <a class="article_delete" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/delete/"><img src="/media/image/relay_fiction_delete.png" alt="delete"></a>
+            {% endif %}
+            <a class="article_vote" rel="{{article.id}}" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/vote/+" name="article_vote_up"><img src="/media/image/relay_fiction_vote.png" alt="vote"></a>
+            <a class="article_vote" rel="{{article.id}}" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/vote/-" name="article_vote_down"><img src="/media/image/relay_fiction_dislike.png" alt="dislike"></a>
+        </div>
+        <div class="clear_float"></div>
+        {% endif %}
+        {% endifnotequal %}
+    </div>
+</div>
+{% endfor %}
+
+
+<!-- 2010.05.15. "Reply to main article" 기능을 추가.  -->
+<!-- letyoursoulbefree 권하기를, reply to main 앞에 달리는 사각형을 좀 더 진하게 하는게 어떨까 하더라. -->
+<!-- combacsa 고민하기를, root_article 만 있는 경우에는 굳이 이하의 내용이 나올 필요가 있나 싶다. if 써서 이하의 div 는 아예 빼버리는 건 어떨지. -->
+<div class="article_reply">
+    <form class="article_reply_form" action="/board/{{board_name}}/{{root_article.id}}/reply/" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="root_id" value="{{root_article.root_id}}" />
+        <textarea name="content"></textarea>
+        <input type="hidden" value="{{article_no}}" name="article_no"></input>
+        <input type="submit" class="write_reply small_btn" name="reply_submit" value="{% trans "write" %}" />
+        <div class="clear_float"></div>
+    </form>
+</div>
+
+<!-- 2010.05.15.     -->
+<!-- 그게 여기까지.  -->
+
+<div id="article_nav_buttons">
+    <a class="btn" id="list_link" href="/board/{{board_name}}?page_no={{page_no}}">{% trans "list" %}</a>
+    <a class="btn" id="write_link" href="/board/{{board_name}}/write">{% trans "write" %}</a>
+</div>
+
+{% endblock article_content %}
