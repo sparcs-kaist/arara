@@ -41,7 +41,7 @@
     <h1 class="root_article_title"><img src="/media/image/relay_fiction_title.png" alt="드립쳐봐 - 2010 KAIST 석림태울제 축제 DIY"></h1>
     {% endifequal %}
     <div class="article_content{%ifequal article.read_status "R" %} previously_read{% endifequal %}">
-        <div class="{%ifequal article.id article.root_id%}article_root_text{%else%}article_text{%endifequal%}">
+        <div class="{%ifequal article.id article.root_id%}article_root_text{%else%}article_text{%endifequal%}"{%if article.color %} style="color:{{article.color}}"{%endif%}>
             {% if not article.blacklisted %}
             {% for image in article.image %}
             {{image|safe}}
@@ -77,7 +77,7 @@
 <div class="article_reply">
     <form class="article_reply_form" action="/board/{{board_name}}/{{root_article.id}}/reply/" method="post" enctype="multipart/form-data">
         <input type="hidden" name="root_id" value="{{root_article.root_id}}" />
-        <input type="hidden" name="reply_color" id="reply_color" value="#000000" />
+        <input type="hidden" name="color" id="reply_color" value="#000000" />
         <div id="color_picker_trigger"></div>
         <div id="color_picker"></div>
         <textarea name="content"></textarea>

@@ -10,10 +10,12 @@ from arara_thrift.ttypes import *
 
 import os
 import datetime
+import re
 import warara
 from warara import warara_middleware
 
 from etc.warara_settings import FILE_DIR, FILE_MAXIMUM_SIZE
+from etc.warara_settings import RELAY_FICTION_ARTICLE_NO
 
 IMAGE_FILETYPE = ['jpg', 'jpeg', 'gif', 'png']
 
@@ -302,6 +304,14 @@ def _read(request, r, sess, board_name, article_id):
             article.image = None
             continue
 
+        #XXX imgeffect
+        if int(article_id) == RELAY_FICTION_ARTICLE_NO:
+            pattern = re.compile("<font color=\"(#[0-9a-zA-Z]{6})\">(.*)</font>")
+            match = pattern.search(article.content)
+            if match:
+                article.content = match.group(2)
+                article.color = match.group(1)
+
         if article.__dict__.has_key('attach') and article.attach: #image view
             insert_image_tag_list = []
             for file in article.attach:
@@ -361,7 +371,6 @@ def read(request, board_name, article_id):
     get_article_list(request, r, 'read')
 
     # XXX: Imgeffect
-    from etc.warara_settings import RELAY_FICTION_ARTICLE_NO
     if int(article_id) == RELAY_FICTION_ARTICLE_NO:
         rendered = render_to_string('board/relay_fiction.html', r)
     else:
@@ -444,6 +453,37 @@ def _reply(request, board_name, article_id):
     return root_id
 
 @warara.wrap_error
+def _relay_fiction_reply(request, board_name, article_id):
+    '''
+    이벤트용 임시 답글 함수.
+
+    @type  request: Django Request
+    @param request: Request
+    @type  board_name: string
+    @param board_name: reply를 달고자 하는 글이 있는 board name
+    @type  article_id: string (int)
+    @param article_id: reply를 달고자 하는 글의 번호
+    @rtype: int
+    @return: reply 가 달리는 글의 root id
+    '''
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+    reply_dic = {}
+    color = request.POST.get('color', '#000000')
+    reply_dic['content'] = '<font color=\"' + color + '\">' + request.POST.get('content', '') + '</font>'
+    reply_dic['title'] = request.POST.get('title', '')
+    reply_dic['heading'] = request.POST.get('heading', '') # TODO: HEADING !!
+    root_id = request.POST.get('root_id', '')
+
+    use_signature = request.POST.get('signature_check', None)
+    if use_signature:
+        reply_dic['content'] += '\n\n' + request.POST.get('signature', '')
+
+    article_id = server.article_manager.write_reply(sess, board_name, int(article_id), WrittenArticle(**reply_dic))
+
+    return root_id
+
+@warara.wrap_error
 def reply(request, board_name, article_id):
     '''
     주어진 게시판의 주어진 글에 reply 를 단다.
@@ -458,7 +498,10 @@ def reply(request, board_name, article_id):
     @return: 답글이 달린 원글을 읽는 페이지로 재전송
 
     '''
-    root_id = _reply(request, board_name, article_id)
+    if int(article_id) == RELAY_FICTION_ARTICLE_NO:
+        root_id = _relay_fiction_reply(request, board_name, article_id)
+    else:
+        root_id = _reply(request, board_name, article_id)
 
     return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(root_id)))
 

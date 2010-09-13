@@ -108,5 +108,6 @@ $(document).ready(function(){
         $("#color_picker_trigger").css('background-color', color);
         $(".article_reply textarea").css('color', color);
         $(".article_reply textarea").css('border-color', color);
+        $("#reply_color").val(color);
     });
 });
