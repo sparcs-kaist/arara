@@ -186,6 +186,14 @@ def write(request, board_name):
     user_info = server.member_manager.get_info(sess)
 
     if article_id:
+        # XXX Imgeffect
+        from etc.warara_settings import RELAY_FICTION_ARTICLE_NO
+        article_list = server.article_manager.read_article(sess, board_name, int(article_id))
+        really_root_id = article_list[0].root_id
+        if really_root_id == RELAY_FICTION_ARTICLE_NO:
+            return HttpResponseRedirect('/board/%s/%s' % (board_name, really_root_id))
+        # XXX 여기까지.
+
         sess = request.session["arara_session_key"]
         article_list = server.article_manager.read_article(sess, board_name, int(article_id))
         r['default_title'] = article_list[0].title
@@ -352,10 +360,14 @@ def read(request, board_name, article_id):
     # 화면 하단의 글목록의 정보를 r 에 저장
     get_article_list(request, r, 'read')
 
-    if article_id:
+    # XXX: Imgeffect
+    from etc.warara_settings import RELAY_FICTION_ARTICLE_NO
+    if int(article_id) == RELAY_FICTION_ARTICLE_NO:
         rendered = render_to_string('board/relay_fiction.html', r)
     else:
         rendered = render_to_string('board/read.html', r)
+    # XXX: 여기까지
+
     return HttpResponse(rendered)
 
 @warara.wrap_error
@@ -382,7 +394,13 @@ def read_root(request, board_name, article_id):
     # 화면 하단의 글목록의 정보를 r 에 저장
     get_article_list(request, r, 'read')
 
-    rendered = render_to_string('board/read.html', r)
+    # XXX: Imgeffect
+    from etc.warara_settings import RELAY_FICTION_ARTICLE_NO
+    if (article_id) == RELAY_FICTION_ARTICLE_NO:
+        rendered = render_to_string('board/relay_fiction.html', r)
+    else:
+        rendered = render_to_string('board/read.html', r)
+    # XXX: 여기까지
     return HttpResponse(rendered)
 
 @warara.wrap_error
@@ -498,6 +516,15 @@ def _delete(request, board_name, root_id, article_no):
     # XXX 어째서 root_id 가 있어야 글을 지울 수 있는 걸까 ???
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
+    
+    # XXX Imgeffect
+    from etc.warara_settings import RELAY_FICTION_ARTICLE_NO
+    article_list = server.article_manager.read_article(sess, board_name, int(article_no))
+    really_root_id = article_list[0].root_id
+    if really_root_id == RELAY_FICTION_ARTICLE_NO:
+        return HttpResponseRedirect('/board/%s/%s' % (board_name, root_id))
+    # XXX 여기까지.
+
     server.article_manager.delete_article(sess, board_name, int(article_no))
 
 @warara.wrap_error
