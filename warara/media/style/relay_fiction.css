@@ -145,6 +145,22 @@ div.article_reply {
 	list-style-type: none;
 }
 
+.article_reply #color_picker_trigger{
+    width:15px;
+    height:15px;
+    background-color:black;
+    cursor:pointer;
+    float:left;
+    margin:0.3em;
+}
+
+.article_reply #color_picker{
+    position:absolute;
+    left:55px;
+    z-index:3;
+    display:none;
+}
+
 .article_reply input.write_reply_title{
 	width: 92%;
 	border: 1px solid #666;
@@ -154,7 +170,7 @@ div.article_reply {
     font-size: small;
     border: 1px solid #666;
     height: 16px;
-    width: 91%;
+    width: 89%;
     position: relative;
     display:inline-block;
     float:left;
@@ -182,6 +198,7 @@ div.article_reply {
 }
 
 .article_text {
+    width: 80%;
 	line-height: 180%;
 	color: black;
     padding-left:16px;
@@ -189,34 +206,43 @@ div.article_reply {
     word-wrap:break-word;
     background:url('/media/image/relay_fiction_head_bullet.png') no-repeat;
     background-position:0px 3px;
-    cursor:pointer;
     z-index:1;
+    float:left;
+}
+
+.article_date {
+    width:17%;
+    z-index:1;
+    float:right;
 }
 
 .article_info {
 	position:absolute;
     top:0px;
-    right:73px;
+    right:35px;
     text-align: right;
 	margin: 0.2em 0.5em;
     padding:0px 0px 2px 2px;
     background:white;
     z-index:2;
     display:none;
+    cursor: default;
 }
 
 .article_read_buttons {
 	position: absolute;
     top:0;
     right:0;
-	width: 72px;
+	width: 35px;
     text-align: right;
-	margin: 0.2em 0 0 0;
+	margin: 0.3em 0 0 0;
     padding-left:2px;
     padding-right:0.4em;
+    padding-top:0.1em;
     background:white;
     z-index:2;
     display:none;
+    cursor: default;
 }
 
 .article_read_buttons a{

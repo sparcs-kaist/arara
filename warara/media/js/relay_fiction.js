@@ -90,12 +90,23 @@ $(document).ready(function(){
                 case 113:
                     location.href = $("#list_link").attr("href");
                     break;
-                    }
-                    });
+            }
+        });
 
     $(".write_reply.small_btn").click(function(event) {
         $(this).parent().submit();
         $(this).attr("disabled", "disabled");
     });
-});
 
+    $("#color_picker_trigger").click( function(){
+        $("#color_picker").toggle();
+    });
+
+    $("#color_picker").farbtastic("#reply_color");
+    var color_picker = $.farbtastic($("#color_picker"));
+    color_picker.linkTo( function(color) {
+        $("#color_picker_trigger").css('background-color', color);
+        $(".article_reply textarea").css('color', color);
+        $(".article_reply textarea").css('border-color', color);
+    });
+});

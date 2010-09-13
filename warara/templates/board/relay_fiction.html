@@ -3,6 +3,7 @@
 {% block style %}
 {{block.super}}
 <link rel="stylesheet" type="text/css" href="/media/style/relay_fiction.css"></link>
+<link rel="stylesheet" href="/media/thirdparty/farbtastic/farbtastic.css" type="text/css" />
 {% endblock style %}
 
 {% block script %}
@@ -10,6 +11,7 @@
 <script type="text/javascript" src="/media/thirdparty/jquery-ui-1.7.custom.min.js"></script>
 <script type="text/javascript" src="/media/thirdparty/autoresize.jquery.min.js"></script>
 <script type="text/javascript" src="/media/js/relay_fiction.js"></script>
+<script type="text/javascript" src="/media/thirdparty/farbtastic/farbtastic.js"></script>
 {% endblock script %}
 
 {% block article_content %}
@@ -51,17 +53,13 @@
         </div>
         {% ifnotequal article.id article.root_id %}
         {% if not article.deleted %}
+        <div class="article_date"><a href="#{{article.id}}">{{article.date|date:"y/m/d H:i:s"}}</a></div>
         <div class="article_info">
             <span class="user_nickname">{{article.author_nickname}}<span class="hidden username">{{article.author_username}}</span></span>
             <span class="user_name">{{article.author_username}}</span> |
             <span class="vote"><span class="positive_vote_num_{{article.id}}">{{article.positive_vote}}</span> / <span class="negative_vote_num_{{article.id}}">{{article.negative_vote}}</span></span> |
-            <span class="article_date"><a href="#{{article.id}}">{{article.date|date:"y/m/d H:i:s"}}</a></span>
         </div>
         <div class="article_read_buttons">
-            {% if article.flag_modify %}
-            <a class="article_modify" href="/board/{{board_name}}/write?article_id={{article.id}}"><img src="/media/image/relay_fiction_modify.png" alt="modify"></a>
-            <a class="article_delete" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/delete/"><img src="/media/image/relay_fiction_delete.png" alt="delete"></a>
-            {% endif %}
             <a class="article_vote" rel="{{article.id}}" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/vote/+" name="article_vote_up"><img src="/media/image/relay_fiction_vote.png" alt="vote"></a>
             <a class="article_vote" rel="{{article.id}}" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/vote/-" name="article_vote_down"><img src="/media/image/relay_fiction_dislike.png" alt="dislike"></a>
         </div>
@@ -79,6 +77,9 @@
 <div class="article_reply">
     <form class="article_reply_form" action="/board/{{board_name}}/{{root_article.id}}/reply/" method="post" enctype="multipart/form-data">
         <input type="hidden" name="root_id" value="{{root_article.root_id}}" />
+        <input type="hidden" name="reply_color" id="reply_color" value="#000000" />
+        <div id="color_picker_trigger"></div>
+        <div id="color_picker"></div>
         <textarea name="content"></textarea>
         <input type="hidden" value="{{article_no}}" name="article_no"></input>
         <input type="submit" class="write_reply small_btn" name="reply_submit" value="{% trans "write" %}" />
