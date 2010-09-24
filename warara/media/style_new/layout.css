@@ -1,0 +1,220 @@
+@charset "utf-8";
+
+html { overflow: -moz-scrollbars-vertical; overflow-y: scroll; overflow-x: auto;}
+body { font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; font-size:12px; text-align:center; margin:0; padding:0; line-height:1.6; color:#454545; }
+
+a img { border:0; }
+
+/* 여백제거 */
+p{ margin:0; margin-bottom:1em; }
+h1,h2,h3,h4,h5,h6,form,div,fieldset,input,textarea { margin:0;padding:0; }
+fieldset { border:0; }
+input { font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; }
+
+/* styles for Layout */
+#linksModalBG { display:none; z-index:99; position:absolute; left:0; top:0; width:100%; height:100%; }
+#linksModal { display:none; z-index:100; width:100%; height:100%; z-index:100; left:0; top:0; position:absolute; min-height:502px; min-height:402px; }
+#linksModal .modalMargin { width:100%; height:50%; margin-bottom:-211px; }
+#linksModal .modalWindow { z-index:102; margin:0 auto; padding:0; width:500px !important; width /**/:502px; height:420px !important; height /**/:422px; letter-spacing:-1px; }
+#linksModal .modalWindow .modalTitle { float:left; height:30px; font-weight:bold; line-height:30px; width:460px !important; width /**/:470px; padding-left:10px; text-align:left; }
+#linksModal .modalWindow .quitModal { float:right; height:30px; font-weight:bold; line-height:0; font-size:0; width:30px; }
+#linksModal .modalWindow .modalContents { clear:both; }
+#linksModal .modalWindow ul { float:left; margin:0; padding:0; width:250px; list-style:none; list-style-image:none; text-align:left; }
+#linksModal .modalWindow ul li { margin:0 10px; }
+#linksModal .modalWindow ul li a { display:block; padding:5px; }
+
+#topLinks { font-size:0.9em; line-height:19px; text-align:left; margin:0; padding:0 0 0 20px; overflow:hidden; list-style:none; list-style-image:none; height:19px !important; border-bottom:1px solid; }
+#topLinks li { margin:0 10px 0 0; padding:0; float:left; }
+#topLinks li.kaist { width:150px !important; }
+#topLinks #moreLinks { font-weight:bold; }
+
+#navigation { text-align:left; height:60px !important; verflow:hidden; width:100%; min-width:990px; }
+#navigation h1 { float:left; }
+#navigation h1 a { display:block; width:160px; padding:60px 0 0 0; height:0px !important; overflow:hidden; }
+#navigation ul.menu { float:left; margin:0; padding:0 0 0 10px; list-style:none; list-style-image:none; height:50px; }
+#navigation ul li { float:left; margin:0; padding:0; }
+#navigation ul a { float:left; padding:60px 0 0 0; height:0px !important; overflow:hidden; width:80px; }
+#navigation ul.menuRight { float:right; margin:0; padding:5px 10px 0 0; list-style:none; list-style-image:none; height:50px; height /**/:55px; overflow:hidden; }
+
+#mainWrap { width:100%; min-width:990px; }
+
+#contents { text-align:left; float:right; }
+
+#noMenu #boardInCategory { position:absolute; display:none; z-index:75; height:145px; }
+
+#boardInCategory dl { width:100%; height:138px; margin:0; padding:7px 0 0 0; display:none; letter-spacing:-1px; }
+#boardInCategory dl dt { float:left; width:70px; height:138px; margin:0; padding:0 0 0 20px; }
+#boardInCategory dl dd { margin:0; padding:0; }
+#boardInCategory dl ul { float:left; width:160px; margin:0; padding:2px 0 0 0; list-style:none; list-style-image:none; }
+#boardInCategory dl ul li { margin:0; padding:0; line-height:25px; height:25px; overflow:hidden; }
+#boardInCategory dl ul li.selected { font-weight:bold; }
+#boardInCategory dl ul li a { margin:0; padding:0; padding-left:10px; display:block; height:25px; }
+
+/* 위치표시 부분. 롤오버는 layout.js 참고 */
+#favorite #contents .favorite, #category1 #contents .category1, #category2 #contents .category2, #category3 #contents .category3, #category4 #contents .category4, #category5 #contents .category5 { display:block; }
+
+#contents .contentWrap dl { display:block; } /* 본문 내의 dl은 숨기면 안 된다. */
+
+#contents h2 { font-size:1.17em; letter-spacing:-1px; display:inline; line-height:1.3; }
+#contents .boardDisp { font-size:0.9em; letter-spacing:-1px; display:inline; line-height:1.3; }
+
+#sideContents { color:#cccccc; text-align:left; float:left; width:160px; font-size:0.9em; }
+#sideContents dl { margin:0; padding:15px 10px 14px 20px; }
+#sideContents dt { margin:0; padding:0 0 10px 0; font-family:Helvetica,Arial,sans-serif; line-height:1.3; font-weight:bold; }
+#sideContents dd { margin:0; padding:0; letter-spacing:-1px; }
+#sideContents dd ul { margin:0; padding:0; list-style:none; list-style-image:none; line-height:20px; }
+#sideContents dd ul li { margin:0; padding:0; }
+#sideContents #myInfo { height:115px; }
+
+#sideContents span.sideRight { display:block; float:right; }
+#sideContents #myInfo span.sideRight { font-weight:bold; font-family:Helvetica,Arial,sans-serif; padding:0 5px; letter-spacing:normal; }
+#sideContents dt span.sideRight { font-weight:normal; font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; letter-spacing:-1px; }
+
+#sideContents #weather strong { font-family: Helvetica, Arial, sans-serif; font-size:1.5em; line-height:1.3; }
+#sideContents #weather .future { clear:both; padding-top:10px; }
+#sideContents #weather p { margin:0; }
+
+#footer { padding-left:180px; text-align:left; font-family:Helvetica,Arial,sans-serif; font-size:0.9em; line-height:1.3; padding-top:15px; }
+#footer .copy { margin-bottom:5px; }
+
+/* styles for the entire page */
+.contentWrap { padding:20px; }
+#upgradeBrowser { display:none; position:absolute; top:0; left:0; z-index:90; width:100%; height:30px; }
+
+.dropSelector { float:left; width:90px !important; height:25px; margin-right:5px; line-height:19px; }
+.dropSelector .dropBox a { display:block; }
+.dropSelector .dropBox>a { padding-left:4px; }
+.dropSelector .dropBox { position:absolute; z-index:50; width:90px; }
+.dropSelector .dropBox ul { display:none; list-style:none; list-style-image:none; margin:0; padding:0; }
+.dropSelector .dropBox ul li { margin:0; padding:0; }
+.dropSelector .dropBox ul li a { padding:3px 6px; }
+
+.boardList { margin:10px 0 0 0; width:100%; border:0; }
+.boardList thead tr th { height:30px; padding:0 0 0 5px; font-size:0.9em; letter-spacing:-1px; text-align:left; font-weight:normal; }
+.boardList tbody tr td { height:34px !important; padding:0 0 0 5px; line-height:34px; overflow:hidden; }
+.boardList td.indicator { width:15px; font-size:0.83em; font-weight:bold; }
+.boardList td.author { width:120px; }
+.boardList td.smallCat { width:85px; font-size:0.9em; letter-spacing:-1px; }
+.boardList td.recRead { width:75px; font-size:0.9em; letter-spacing:-1px; }
+.boardList td.date { width:70px; font-size:0.9em; letter-spacing:-1px; }
+.boardList td a { display:block; height:34px !important; overflow:hidden; }
+.boardList td a .repCount { font-size:0.9em; font-family:Helvetica,Arial,sans-serif; }
+
+.paging { margin:20px 0 0 0; padding:0; float:left; font-size:0.9em; font-family:Helvetica,Arial,sans-serif; }
+.paging a { line-height:25px; padding:2px 4px; }
+.paging a.selected { font-weight:bold; }
+
+.listBottom { margin:15px 0 0 0; padding:0; float:right; }
+
+#searchForm { float:left; }
+.searchBox { height:24px !important; width:304px !important; }
+.searchBox p { float:left; line-height:24px; font-size:0; margin:0; }
+.searchBox .selectObject { font-size:11px; letter-spacing:-1px; width:95px !important; margin:2px 0; height:20px; line-height:20px; padding-left:2px; }
+.searchBox .selectObject a { padding:3px 4px; }
+.searchBox .searchInput { height:24px; line-height:24px; vertical-align:top; }
+.searchBox #searchText { height:16px !important; border:0; width:169px !important; padding:4px; font-size:12px;  line-height:16px; vertical-align:top; }
+.searchBox .searchButton { vertical-align:top; width:24px; }
+
+.articleView { margin:10px 0 0 0; width:100%; }
+.articleView .articleTitle { padding:8px 0 7px 10px; }
+.articleView .articleTitle h3 { font-size:1.25em; float:left; letter-spacing:-1px; }
+.articleView .articleTitle .smallCat { font-size:0.9em; letter-spacing:-1px; float:left; margin:7px 0 0 10px; padding-left:5px; line-height:1.2; }
+.articleView .articleInfo { clear:both; padding-top:10px; }
+.articleView .articleInfo p { margin:0; padding:0; }
+.articleView .articleInfo .author { float:left; font-weight:bold; }
+.articleView .articleInfo .author .eng { font-weight:normal; font-size:0.9em; font-family:Helvetica,Arial,sans-serif; }
+.articleView .articleInfo .date { float:right; width:160px; font-size:0.9em; font-family:Helvetica,Arial,sans-serif; }
+.articleView .articleInfo .recCount { float:right; width:80px; font-size:0.9em; letter-spacing:-1px; }
+.articleView .articleInfo .readCount { float:right; width:70px; font-size:0.9em; letter-spacing:-1px; }
+.articleView .articleInfo .eng { letter-spacing:0; font-family:Helvetica,Arial,sans-serif; }
+
+.articleView .articleContents { padding:10px 0 10px 10px; }
+
+.articleView .attached { width:100%; margin-bottom:10px; }
+.articleView .attached th, .articleView .attached td { padding:7px 0 7px 7px; vertical-align:top; }
+.articleView .attached th { width:63px !important; text-align:left; }
+.articleView .attached td div { overflow:hidden; }
+.articleView .article { clear:both; max-width:630px; _width:630px; padding-top:10px; line-height:1.6; } /* _width : for IE6. */
+
+.articleView .articleButtons { margin:0; padding:0; }
+.darkButton, .lightButton { width:70px; height:30px; text-align:center; font-weight:bold; border:0; padding:0; cursor:pointer; margin-left:10px; font-size:1em; }
+.smallButton, .smallLightButton { width:75px; height:20px; border:0; text-align:left; padding-left:18px; font-size:0.9em; margin-right:5px; cursor:pointer; }
+
+.articleView .replyBox { margin:10px 0 0 0; padding:0 0 0 30px; list-style:none; list-style-image:none; }
+.articleView .replyBox li { margin:0; padding:0; }
+.articleView .replyTitle { margin-top:10px; line-height:1.3; }
+.articleView .replyTitle p { margin:0; }
+.articleView .replyTitle h4 { float:left; font-size:1em; }
+.articleView .replyTitle .author { float:left; font-weight:bold; margin-left:10px; border-left:2px #ccc solid; padding-left:7px; }
+.articleView .replyTitle .author .eng { font-weight:normal; font-size:0.9em; font-family:Helvetica,Arial,sans-serif; }
+.articleView .replyTitle .date { float:right; width:160px; font-size:0.9em; font-family:Helvetica,Arial,sans-serif; }
+.articleView .replyTitle .recCount { float:right; width:80px; font-size:0.9em; letter-spacing:-1px; }
+.articleView .replyTitle .readCount { float:right; width:70px; font-size:0.9em; letter-spacing:-1px; }
+.articleView .replyArticle { clear:both; padding-top:10px; }
+
+.articleView .addReply { margin-top:10px; }
+.articleView .addReply table { margin:0; padding:0; width:100%; }
+.articleView .addReply table th { width:60px; vertical-align:top; text-align:left; }
+.articleView .addReply table td { vertical-align:top; line-height:1.3em; padding-bottom:5px; }
+.articleView .addReply table td input { width:398px !important; height:18px !important; font-size:1em; }
+.articleView .addReply table td a { padding:5px; text-decoration:underline; }
+.articleView .addReply table td textarea { width:100%; height:100px; font-size:1em; }
+.articleView .addReply table td .signatureBox { height:50px; }
+.articleView .addReply table td .enableSig { width:auto !important; height:auto !important; }
+.articleView .addReply table td label { padding-left:5px; }
+.articleView .addReply table td .darkButtonReply { width:400px !important; height:30px !important; font-weight:bold; text-align:left; border:0; padding:0 0 0 10px; cursor:pointer; }
+
+.writeTable { border:0; padding:0; margin:0; margin-top:10px; width:100%; }
+.writeTable th { vertical-align:top; width:75px; padding-left:5px; }
+.writeTable td { padding-left:5px; }
+.writeTable td textarea { margin-top:5px; font-size:1em; line-height:1.6; padding:4px; overflow-y:scroll; }
+
+.writeTable .writeTitle input { width:442px; height:17px; margin:0; padding:3px; line-height:17px; font-size:1em; }
+.writeTable .writeContents textarea { height:350px; }
+.writeTable .writeSignature textarea { height:50px; width:542px; }
+.writeTable .writeSignature td { padding-top:7px; }
+.writeTable .writeSignature td .enableSig { width:auto !important; height:auto !important; }
+.writeTable .writeSignature td label { padding-left:5px; }
+.writeTable .writeAttach input { width:442px; height:17px; margin:0; padding:3px; line-height:17px; font-size:1em; }
+.writeTable .writeAttach a { padding:5px; text-decoration:underline; }
+
+.writeBottom { margin:0; padding:10px 0 0 85px; }
+.writeBottom .darkButton { width:450px; margin-left:0; text-align:left; padding-left:10px; }
+.writeBottom .lightButton { width:97px; margin-left:5px; text-align:left; padding-left:10px; }
+
+.mainBody .mainNotice { height:105px; padding:20px 20px 19px 15px; }
+.mainBody .mainItem { padding:20px 20px 19px 20px; }
+#contents .mainBody .mainNotice h2 { display:block; font-family:Helvetica,Arial,sans-serif; width:69px; padding:7px 0 0 5px; height:23px; }
+#contents .mainBody .mainItem h2 { display:block; font-family:Helvetica,Arial,sans-serif; width:70px; padding-top:7px; height:23px; }
+
+.mainBody .mainNotice .mainHeader { float:left; width:75px; height:105px; }
+.mainBody .mainNotice .desc { padding-top:10px; font-size:0.9em; line-height:1.3; }
+.mainBody .mainNotice .desc a { display:block; height:20px; padding-left:5px; line-height:20px; }
+.mainBody .mainNotice #KAISTNotice { display:none; }
+.mainBody .mainNotice .mainItemContents { float:left; height:105px; }
+
+.mainBody .mainNotice #mainBanner .banner { width:570px; height:105px; float:left; }
+.mainBody .mainNotice #mainBanner .bannerDesc { height:90px; float:left; font-size:0.9em; letter-spacing:-1px; line-height:1.3; padding:15px 0 0 15px; }
+.mainBody .mainNotice #mainBanner .bannerAuthor { margin-bottom:10px; }
+.mainBody .mainNotice #mainBanner .bannerDesc h3 { font-size:1em; margin-bottom:10px; }
+
+.mainBody .mainItem .mainHeader { float:left; }
+.mainBody .mainItem .mainItemContents { float:left; }
+.mainBody .mainItem .desc { padding-top:15px; font-size:0.9em; line-height:1.3; }
+.mainBody .mainItem #KsearchBox { height:30px; line-height:0; font-size:0; }
+.mainBody .mainItem #KsearchText { padding:3px; font-size:14px; line-height:0px; font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; font-weight:bold; height:20px; vertical-align:top; margin-right:5px; width:470px; }
+.mainBody .mainItem #KsearchButton { vertical-align:top; }
+
+.mainBody .mainItem .bestArticles { float:left; width:49.5%; letter-spacing:-1px; }
+.mainBody .mainItem .hotArticles { float:right; width:49.5%; letter-spacing:-1px; }
+.mainBody .mainItem .bestArticles td, .mainBody .mainItem .hotArticles td { height:30px; }
+.mainBody .mainItem .bestArticles th, .mainBody .mainItem .hotArticles th { padding-left:10px; font-family:Helvetica,Arial,sans-serif; font-size:1.17em; letter-spacing:-1px; font-weight:normal; text-align:left; font-style:oblique; }
+.mainBody .mainItem .bestArticles .top, .mainBody .mainItem .hotArticles .top { font-weight:bold; }
+.mainBody .mainItem .bestArticles .top th, .mainBody .mainItem .hotArticles .top th { font-weight:bold; font-style:normal; }
+.mainBody .mainItem .bestArticles .top .BAtitle, .mainBody .mainItem .hotArticles .top .BAtitle { font-size:1.17em; letter-spacing:-1px; }
+.mainBody .mainItem .BANumber { width:40px; }
+.mainBody .mainItem .BAtitle { font-weight:bold; }
+.mainBody .mainItem .BAauthor { width:110px; }
+.mainBody .mainItem .second td, .mainBody .mainItem .second th { padding-top:5px; }
+
+.cb { clear:both; height:1px; margin:0; padding:0; border:0; font-size:0; line-height:0; overflow:hidden; }
