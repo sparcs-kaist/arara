@@ -1,19 +1,14 @@
 {% extends "base.html" %}
 
-{% block style %}
-<link rel="stylesheet" type="text/css" href="/media/style/board_base.css"></link>
-{{block.super}}
-{% endblock style %}
-
 {% load arara_tags %}
 {% block board_name %}{{board_name}}{% endblock board_name %}
 {% block board_description %}{{board_desc}}{% endblock board_description %}
 
 {% block content %}
+{{block.super}}
 
 <div id="board_content">
     {% block board_content %}
     {% endblock board_content %}
 </div>
-
 {% endblock content %}
