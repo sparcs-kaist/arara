@@ -2,7 +2,6 @@
 
 {% block style %}
 {{block.super}}
-<link rel="stylesheet" type="text/css" href="/media/style/board_read.css"></link>
 <link type="text/css" href="/media/thirdparty/css/smoothness/jquery-ui-1.7.custom.css" rel="Stylesheet" /> 
 {% endblock style %}
 
@@ -30,192 +29,85 @@
     </form>
 </fieldset>
 {% endif %}
-{% for article in article_read_list %}
-<div class="article article_depth_{{article.depth}}">
-    {% for depth in article.depth_list %}
-    <img class="reply_title_img img_{{depth}}" src="/media/image/board/read_reply_hierarchy.jpg"></img>
-    {% endfor %}
-    <a name={{article.id}}></a>
-    {% ifequal article.id article.root_id %}
-    <h1 class="root_article_title"><a href="#">{{article.title}}</a></h1>
-    <div id="root_article_info" rel="{{article.id}}">
-        <span class="nickname user_nickname">{{article.author_nickname}}<span class="hidden username">{{article.author_username}}</span></span>
-        <span class="user_name">{{article.author_username}}</span>
-        <span class="article_date"><a href="#{{article.id}}">{{article.date|date:"Y/m/d H:i:s"}}</a></span>
-        <span class="vote">{% trans "vote: " %}<span class="positive_vote_num_{{article.id}}">{{article.positive_vote}}</span> / <span class="negative_vote_num_{{article.id}}">{{article.negative_vote}}</span> |</span>
-        <span class="hit">{% trans "hit: " %}{{article.hit}} |</span>
-        <div class="clear_float"></div>
+
+<div class="articleView">
+    <div class="articleTitle">
+        <h3><a href="#">{{article.title}}</a></h3>
+        <p class="smallCat"><a href="/board/{{board_name}}/?heading={{article.heading}}">{{article.heading}}</a></p>
+        <div class="articleInfo" rel="{{article.id}}">
+            <p class="author">{{article.author_nickname}} <span class="eng">{{article.author_username}}</span></p>
+            <p class="readCount">조회 <span class="eng">{{article.hit}}</span></p>
+            <p class="recCount">추천 <span class="eng">+<span id="positive_vote_num_{{article.id}}">{{article.positive_vote}}</span> / -<span id="negative_vote_num_{{article.id}}">{{article.negative_vote}}</span></span></p>
+            <p class="date">{% filter lower %}{{article.date|date:"Y/m/d g:i A"}}{% endfilter %}</p>
+            <div class="cb"></div>
+        </div>
     </div>
-    {% else %}
-    <div class="article_reply_title">
-        <h1><a href="#">{{article.title}}</a></h1>
-        <span class="article_info">
-            <span class="nickname user_nickname">{{article.author_nickname}}<span class="hidden username">{{article.author_username}}</span></span>
-            <span class="user_name">{{article.author_username}}</span> |
-            <span class="vote">{% trans "vote: " %}<span class="positive_vote_num_{{article.id}}">{{article.positive_vote}}</span> / <span class="negative_vote_num_{{article.id}}">{{article.negative_vote}}</span></span> |
-            <span class="article_date"><a href="#{{article.id}}">{{article.date|date:"Y/m/d H:i:s"}}</a></span>
-        </span>
-        <div class="clear_float"></div>
-    </div>
-    {% endifequal %}
-    <div class="article_content{%ifequal article.read_status "R" %} previously_read{% endifequal %}">
-        <div class="{%ifequal article.id article.root_id%}article_root_text{%else%}article_text{%endifequal%}">
-            {% if not article.blacklisted %}
-            {% for image in article.image %}
-            {{image|safe}}
-            {% endfor %}
-            {{article.content|safe|linebreaksbr}}
-            {% else %}
-            {% trans "BLACKLISTED" %}
-            {% endif %}
-        </div>
-        <div class="article_file">
-            {% if article.attach %}
-            {% trans "file(s) : " %}
-            {% endif %}
-            {% for file in article.attach %}
-            <a href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" target="_blank">{{file.filename}}</a>
-            {% endfor %}
-        </div>
-        <div class="article_read_buttons">
-            {% if not article.deleted %}
-            <a class="article_reply_show" href="#">{% trans "reply" %}</a>
-            {% if article.flag_modify %}
-            <a class="article_modify" href="/board/{{board_name}}/write?article_id={{article.id}}">{% trans "modify" %}</a>
-            <a class="article_delete" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/delete/">{% trans "delete" %}</a>
-            {% endif %}
-            <a class="article_vote" rel="{{article.id}}" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/vote/+" name="article_vote_up">{% trans "Vote" %}</a>
-            <a class="article_vote" rel="{{article.id}}" href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/vote/-" name="article_vote_down">{% trans "Dislike" %}</a>
-            {% endif %}
-        </div>
-        <div class="clear_float"></div>
-        <div class="article_reply">
-            <form class="article_reply_form" action="/board/{{board_name}}/{{article.id}}/reply/" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="root_id" value="{{article.root_id}}" />
-                <ul>
-                    <li><input type="text" name="title" class="write_reply_title" value="{{article.title}}" /></li>
-                    <li><textarea name="content"></textarea></li>
-                </ul>
-                <div id="article_signature">
-                    <div id="signature_check">
-                    <input type="checkbox" name="signature_check" value="signature_check" {% if not modify %}checked="checked"{% endif %}>{% trans "Use Signature" %}</input>
-                    </div>
-                    <textarea name="signature" readonly="readonly">{{ user_signature }}</textarea>
-                </div>
-                <br />
-                <input type="hidden" value="{{article_no}}" name="article_no"></input>
-                <div class="article_write_file">
-                    <div class="file_line">
-                        <span class="article_write_file_caption">{% trans "file 1" %}</span>
-                        <div class="file_upload_p">
-                            <div class="file_upload_t">
-                                <input type="file" name="file1" class="file_upload" size=5></input>
-                            </div>
-                            <div class="file_upload_f">
-                                <input name="file1_fi" class="file_input_f"></input> <!-- file1 fake input -->
-                                <div class="file_search_button">
-                                    {% trans "search" %}
-                                </div>
-                            </div>
-                            <input type="button" name="file_input_add" class="small_btn" value="+"></input>
+    <div class="articleContents">
+        {% if not article.blacklisted %}
+        <table class="attached" cellspacing="0">
+            <tbody>
+                {% for file in article.attach %}
+                <tr>
+                    <th>첨부{{forloop.counter}}</th>
+                    <td><a href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" target="_blank">{{file.filename}}</a>
+                        {% if file.file_id in article.image %}
+                        <div>
+                            <a href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" target="_blank"><img src="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" target="_blank" alt="{{file.file_id}}" /></a>
                         </div>
-                    </div>
-                </div>
-                <input type="button" class="cancel_reply small_btn" value="{% trans "cancel" %}"></input>
-                <input type="submit" class="write_reply small_btn" name="reply_submit" value="{% trans "write" %}" />
-                <div class="clear_float"></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="article">
+            {{article.content|safe|linebreaksbr}}
+        </div>
+        {% else %}
+        {% trans "BLACKLISTED" %}
+        {% endif %}
+
+        {% if not article.deleted %}
+        <p class="articleButtons">
+            <input type="submit" class="smallButton reply" value="답글달기" /><input type="submit" class="smallButton rec" value="추천하기" /><input type="submit" class="smallButton dis" value="반대하기" /><input type="submit" class="smallLightButton modify" value="수정하기" /><input type="submit" class="smallLightButton delete" value="삭제하기" />
+            <input type="hidden" id="board_name" value="{{board_name}}" /><input type="hidden" id="root_id" value="{{article.root_id}}" /><input type="hidden" id="article_id" value="{{article.id}}" />
+        </p>
+        {% endif %}
+        {% autoescape off %}
+        {{ rendered_reply }}
+        {% endautoescape %}
+        <div class="addReply">
+            <form name="targetId" method="post" action="">
+                <table cellspacing="0">
+                    <tbody>
+                        <tr class="arTitle">
+                            <th><label for="targetId_title">제목</label></th>
+                            <td><input type="text" name="targetId_title" id="targetId_title" /></td>
+                        </tr>
+                        <tr class="arContents">
+                            <th><label for="targetId_contents">내용</label></th>
+                            <td><textarea name="targetId_contents" id="targetId_contents"></textarea></td>
+                        </tr>
+                        <tr class="arSignature">
+                            <th><label for="targetId_signature">시그너쳐</label></th>
+                            <td>
+                                <input type="checkbox" name="targetId_enableSig" id="targetId_enableSig" class="enableSig" checked /><label for="targetId_enableSig">시그너쳐를 사용합니다.</label><br />
+                                <textarea name="targetId_signature" class="signatureBox"></textarea>
+                            </td>
+                        </tr>
+
+                        <tr class="arAttach">
+                            <th><label for="targetId_attach_1">첨부1</label></th>
+                            <td><input name="targetId_attach_1" id="targetId_attach_1" type="file" /> <a id="attach_more" href="#">더 첨부하기</a></td>
+                        </tr>
+                        <tr class="arSubmit">
+                            <th></th>
+                            <td><input type="submit" id="targetId" class="darkButtonReply" value="확인" /></td>
+                        </tr>
+                    </tbody>
+                </table>
             </form>
         </div>
     </div>
 </div>
-{% endfor %}
-
-
-<!-- 2010.05.15. "Reply to main article" 기능을 추가.  -->
-<!-- letyoursoulbefree 권하기를, reply to main 앞에 달리는 사각형을 좀 더 진하게 하는게 어떨까 하더라. -->
-<!-- combacsa 고민하기를, root_article 만 있는 경우에는 굳이 이하의 내용이 나올 필요가 있나 싶다. if 써서 이하의 div 는 아예 빼버리는 건 어떨지. -->
-<div class="article article_depth_{{root_article.depth}}">
-<div class="article_content">
-
-<div class="clear_float"></div>
-<div class="clear_float"></div>
-<div class="article_read_buttons">
-    <a class="article_reply_show_strong">
-    {% if not root_article.deleted %}
-    <a class="article_reply_show" href="#">{% trans "Reply to main" %}</a>
-    {% else %}
-    <a>{% trans "main article was deleted, can't reply" %}</a>
-    {% endif %}
-    </a>
-</div>
-
-<div class="article_reply">
-    <form class="article_reply_form" action="/board/{{board_name}}/{{root_article.id}}/reply/" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="root_id" value="{{root_article.root_id}}" />
-        <ul>
-            <li><input type="text" name="title" class="write_reply_title" value="{{root_article.title}}" /></li>
-            <li><textarea name="content"></textarea></li>
-        </ul>
-        <div id="article_signature">
-            <div id="signature_check">
-            <input type="checkbox" name="signature_check" value="signature_check" {% if not modify %}checked="checked"{% endif %}>{% trans "Use Signature" %}</input>
-            </div>
-            <textarea name="signature" readonly="readonly">{{ user_signature }}</textarea>
-        </div>
-        <br />
-        <input type="hidden" value="{{article_no}}" name="article_no"></input>
-        <div class="article_write_file">
-            <div class="file_line">
-                <span class="article_write_file_caption">{% trans "file 1" %}</span>
-                <div class="file_upload_p">
-                    <div class="file_upload_t">
-                        <input type="file" name="file1" class="file_upload" size=5></input>
-                    </div>
-                    <div class="file_upload_f">
-                        <input name="file1_fi" class="file_input_f"></input> <!-- file1 fake input -->
-                        <div class="file_search_button">
-                            {% trans "search" %}
-                        </div>
-                    </div>
-                    <input type="button" name="file_input_add" class="small_btn" value="+"></input>
-                </div>
-            </div>
-        </div>
-        <input type="button" class="cancel_reply small_btn" value="{% trans "cancel" %}"></input>
-        <input type="submit" class="write_reply small_btn" name="reply_submit" value="{% trans "write" %}" />
-        <div class="clear_float"></div>
-    </form>
-</div>
-
-<div class="clear_float"></div>
-</div>
-<div class="clear_float"></div>
-</div>
-
-
-<!-- 2010.05.15.     -->
-<!-- 그게 여기까지.  -->
-
-<div id="file_line_model">
-    <div class="file_line">
-        <span class="article_write_file_caption">{% trans "file 1" %}</span>
-        <div class="file_upload_p">
-            <div class="file_upload_t">
-                <input type="file" name="file1" class="file_upload" size=95></input>
-            </div>
-            <div class="file_upload_f">
-                <input name="file1_fi" class="file_input_f"></input> <!-- file1 fake input -->
-                <div class="file_search_button">
-                    {% trans "search" %}
-                </div>
-            </div>
-            <input type="button" name="file_input_delete" class="small_btn" value="-"></input>
-        </div>
-    </div>
-</div>
-<div id="article_nav_buttons">
-    <a class="btn" id="list_link" href="/board/{{board_name}}?page_no={{page_no}}">{% trans "list" %}</a>
-    <a class="btn" id="write_link" href="/board/{{board_name}}/write">{% trans "write" %}</a>
-</div>
-
-{% endblock article_content %}
+{% endblock %}

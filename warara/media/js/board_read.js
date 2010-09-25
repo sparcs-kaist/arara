@@ -4,22 +4,32 @@ $(document).ready(function(){
     //$(".article_reply .ui-wrapper").css('height', '');
     //$(".article_reply .ui-wrapper").css('width', '');
 
-    $(".article_reply textarea").autoResize({
+    $(".addReply textarea").autoResize({
         onResize : function() { },
         animateCallback : function() { },
         animateDuration : 50,
         extraSpace : 20
     });
 
-    $(".article_reply").hide();
-    $(".article_reply_show").click(function(event) {
-        $(this).parent().parent().children(".article_reply").toggle("fast");
+    $(".addReply").hide();
+    $(".articleButtons .reply").click(function(event) {
+        // 만약 다른 곳에 있던 답글 상자를 가져와야 하는 경우라면
+        if($(this).parent().parent().children(".addReply").length == 0){
+            p = $(".addReply").hide().detach().insertAfter($(this).parent());
+            p.toggle("fast");
+        }
+        // 그렇지 않을 경우 toggle만
+        else {
+            $(".addReply").toggle("fast");
+        }
         event.preventDefault();
     });
 
-    $root_article_id = parseInt($("#root_article_info").attr("rel"));
-    $row_count = $("#article_table tr").length;
-    $(document).keypress(function(event) {
+    $root_article_id = parseInt($(".articleInfo").eq(0).attr("rel"));
+    $row_count = $(".boardList tr").length;
+
+/* XXX(hodduc): 현재 새 디자인에는 LIST 버튼이 없으므로 일단 주석 처리함
+        $(document).keypress(function(event) {
         if($focus_input || event.altKey || event.ctrlKey){
         return;
         }
@@ -29,28 +39,31 @@ $(document).ready(function(){
                 location.href = list_link;
                 break;
         }
-    });
+    });*/ 
 
-    $(".article div.article_content.previously_read").hide();
+// XXX(hodduc): 동작하고 있지 않은 기능인 듯?
+//    $(".article div.article_content.previously_read").hide();
 
-    $(".article_reply_title h1 a").click(function(event) {
-        $(this).parent().parent().parent().children("div.article_content").toggle("fast");
+    $(".replyTitle h4 a").click(function(event) {
+        $(this).parent().parent().parent().children("div.replyContents").toggle("fast");
         event.preventDefault();
     });
-    $("h1.root_article_title a").click(function(event) {
-        $(this).parent().parent().children("div.article_content").toggle("fast");
+    $(".articleTitle h3 a").click(function(event) {
+        $(this).parent().parent().parent().children("div.articleContents").toggle("fast");
         event.preventDefault();
     });
 
     $file_no = 1;
 
-    $("input[name='file_input_add']").click(function(){
-		$file_no++;
-		$("#file_line_model span.article_write_file_caption").text("file " + $file_no);
-		$("#file_line_model .file_upload_t input[type='file']").remove();
-		var file_append = "<input type=\"file\" name=\"file" + $file_no + "\" class=\"file_upload\" size=\"95\"></input>";
-		$("#file_line_model .file_upload_t").append(file_append);
-		$("#article_write_file").append($("#file_line_model").contents().clone());
+// XXX(hodduc) File Attach는 다음 Revision에서 구현
+    $(".arAttach #attach_more").click(function(){
+        $file_no++;
+
+        $("#file_line_model span.article_write_file_caption").text("file " + $file_no);
+        $("#file_line_model .file_upload_t input[type='file']").remove();
+        var file_append = "<input type=\"file\" name=\"file" + $file_no + "\" class=\"file_upload\" size=\"95\"></input>";
+        $("#file_line_model .file_upload_t").append(file_append);
+        $("#article_write_file").append($("#file_line_model").contents().clone());
         $(this).parent().parent().parent().append($("#file_line_model").contents().clone());
 
         $("input[name='file_input_delete']").click(function(){
@@ -65,14 +78,19 @@ $(document).ready(function(){
     $("input.file_upload").change(function(){
         $(this).parent().parent().children("div.file_upload_f").children("input.file_input_f").val($(this).val());
         });
+// XXX 여기까지
 
+/* XXX(hodduc) Cancel Reply는 새 디자인에서 삭제된 기능임
     $("input.cancel_reply").click(function(){
             $(this).parent().parent().hide();
             $(this).parent().children("ul").children("li").children("input[name='title']").val("");
             $(this).parent().children("ul").children("li").children("textarea").val("");
             });
-    
-    $(".article_content img").load(function(){
+*/
+
+/* XXX(hodduc) Resizing은 작동하지 않음.
+ * 굳이 필요한지 의문.
+    $(".attached img").load(function(){
         var this_width = $(this).width()
         $(this).width(10);
         var parent_width = $(this).parent().width();
@@ -83,10 +101,11 @@ $(document).ready(function(){
             $(this).width(this_width);
         }
     });
+*/
 
     $move_article_read = function($article_pos){
         if($article_pos > 0 && $article_pos <= $row_count){
-            var article_link = $("#article_table tr").eq($article_pos).children(".title_col").children("a").attr("href");
+            var article_link = $(".boardList tr").eq($article_pos).children(".title").children("a").attr("href");
             location.href = article_link;
         }
         else if($article_pos == 0){
@@ -94,13 +113,34 @@ $(document).ready(function(){
         else if($article_pos > $row_count){
         }
     }
+    
+    $(".articleButtons .modify").click(function(event){
+            var board_name = $(this).parent().children("#board_name").val();
+            var article_id = $(this).parent().children("#article_id").val();
+            var modify_url = "/board/" + board_name + "/write?article_id=" + article_id;
+            location.href = modify_url;
+    });
+    $(".articleButtons .delete").click(function(event){
+            var board_name = $(this).parent().children("#board_name").val();
+            var root_id = $(this).parent().children("#root_id").val();
+            var article_id = $(this).parent().children("#article_id").val();
+            var delete_url = "/board/" + board_name + "/" + root_id + "/" + article_id + "/delete/";
+            location.href = delete_url;
+    });
+    $(".articleButtons .rec, .articleButtons .dis").click(function(event){
+            var board_name = $(this).parent().children("#board_name").val();
+            var root_id = $(this).parent().children("#root_id").val();
+            var article_id = $(this).parent().children("#article_id").val();
+            var vote_url = "/board/" + board_name + "/" + root_id + "/" + article_id + "/vote/";
 
-    $(".article_vote").click(function(event){
-            var vote_url = $(this).attr("href");
-            if ($(this).attr("name") == "article_vote_up")
-                $vote_num = $(".positive_vote_num_" + $(this).attr("rel"));
-            else
-                $vote_num = $(".negative_vote_num_" + $(this).attr("rel"));
+            if ($(this).hasClass("rec")){
+                vote_url = vote_url + '+';
+                $vote_num = $("#positive_vote_num_" + article_id);
+            }
+            else{
+                vote_url = vote_url + '-';
+                $vote_num = $("#negative_vote_num_" + article_id);
+            }
             $.get(vote_url, function(data){
                 if(data == "OK"){
                 alert("Successfully voted");
@@ -114,39 +154,39 @@ $(document).ready(function(){
                 }
                 });
             event.preventDefault();
-            });
+    });
 
     $focus_textarea_reply = 0;
-    $("textarea[name='content']").focus(function(){
+    $("textarea[name='targetId_contents']").focus(function(){
             $focus_textarea_reply = $(this);
             });
 
     $(document).keypress(function(event){
         if($focus_textarea_reply){
-        var enterwithshiftkey = event.shiftKey;
-        switch(event.which){
-            case 13:
-                if(!enterwithshiftkey){
-                    break;
-                }
-                if(confirm("send")){
-                    $focus_textarea_reply.parent().parent().parent().submit();
-                    break;
-                }
-                event.preventDefault();
-            }
-            }
-		if($focus_input || event.altKey || event.ctrlKey){
-		return;
-		}
+            var enterwithshiftkey = event.shiftKey;
             switch(event.which){
-                case 113:
-                    location.href = $("#list_link").attr("href");
-                    break;
+                case 13:
+                    if(!enterwithshiftkey){
+                        break;
                     }
-                    });
+                    if(confirm("send")){
+                        $focus_textarea_reply.parent().parent().parent().submit();
+                        break;
+                    }
+                    event.preventDefault();
+            }
+        }
+        if($focus_input || event.altKey || event.ctrlKey){
+            return;
+        }
+/*      switch(event.which){
+            case 113:
+                location.href = $("#list_link").attr("href");
+                break;
+        }*/
+    });
 
-    $(".write_reply.small_btn").click(function(event) {
+    $("#targetId").click(function(event) {
         $(this).parent().submit();
         $(this).attr("disabled", "disabled");
     });

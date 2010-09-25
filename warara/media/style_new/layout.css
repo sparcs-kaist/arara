@@ -142,7 +142,7 @@ input { font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; }
 
 .articleView .replyBox { margin:10px 0 0 0; padding:0 0 0 30px; list-style:none; list-style-image:none; }
 .articleView .replyBox li { margin:0; padding:0; }
-.articleView .replyTitle { margin-top:10px; line-height:1.3; }
+.articleView .replyTitle { margin-top:10px; line-height:1.3; min-height:1em;}
 .articleView .replyTitle p { margin:0; }
 .articleView .replyTitle h4 { float:left; font-size:1em; }
 .articleView .replyTitle .author { float:left; font-weight:bold; margin-left:10px; border-left:2px #ccc solid; padding-left:7px; }

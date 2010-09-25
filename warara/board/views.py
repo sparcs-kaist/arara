@@ -313,18 +313,19 @@ def _read(request, r, sess, board_name, article_id):
                 article.color = match.group(1)
 
         if article.__dict__.has_key('attach') and article.attach: #image view
-            insert_image_tag_list = []
+            image_attach_list = []
             for file in article.attach:
                 if file.filename.split('.')[-1].lower() in IMAGE_FILETYPE:
+                    image_attach_list.append(file.file_id)
                     insert_image_tag = "<p><img src=\"/board/%s/%d/%d/file/%d/\"></img></p>" % (board_name, article.root_id, article.id, file.file_id)
-                    insert_image_tag_list.append(insert_image_tag)
-            article.__dict__['image'] = insert_image_tag_list
+                    image_attach_list.append(file.file_id)
+            article.__dict__['image'] = image_attach_list
 
         #article['content'] = render_bbcode(article_list[i]['content'], 'UTF-8')
 
-        if article.depth > 12: #set depth 12 which has bigger depth than 12
-            article.depth = 12
-        article.depth_list = range(1, article.depth - 1)
+#        if article.depth > 12: #set depth 12 which has bigger depth than 12
+#            article.depth = 12
+#        article.depth_list = range(1, article.depth - 1)
 
         # Finally, render the content using content renderer
         article.content = render_content(article.content)
@@ -369,6 +370,11 @@ def read(request, board_name, article_id):
 
     # 화면 하단의 글목록의 정보를 r 에 저장
     get_article_list(request, r, 'read')
+
+    # 계층형 Reply 구조를 위해 reply를 미리 render
+    rendered_reply = render_reply(board_name, r['article_read_list'][1:])
+    r['rendered_reply'] = rendered_reply
+    r['article'] = r['article_read_list'][0]
 
     # XXX: Imgeffect
     if int(article_id) == RELAY_FICTION_ARTICLE_NO:
@@ -693,3 +699,24 @@ import re
 a_tag = re.compile(r'<a href="(.+?)">')
 def render_content(content):
     return a_tag.sub(r'<a href="\1" target="_blank">', html.urlize(html.escape(content)))
+
+def render_reply(board_name, article_list):
+    if article_list == []:
+        return ''
+
+    r_string = ''
+    target_depth = article_list[0].depth
+
+    for i in xrange(len(article_list)):
+        if article_list[i].depth == target_depth:
+            target_article = article_list[i]
+            target_children_list = []
+        else:
+            target_children_list.append(article_list[i])
+        
+        if i+1 == len(article_list) or article_list[i+1].depth == target_depth:
+            rendered_target_children = render_reply(board_name, target_children_list)
+            rendered_target_article = render_to_string('board/read_reply.html', {'article': target_article, 'rendered_reply': rendered_target_children, 'board_name': board_name})
+            r_string += rendered_target_article
+
+    return r_string
