@@ -58,7 +58,7 @@ a:hover { color:#333; text-decoration:underline; }
 
 #sideContents dt span.sideRight { color:#ccc; }
 #sideContents #myInfo span.sideRight { color:#fff; background:#ee496f; }
-
+#sideContents #loginBox input { width:125px; }
 #footer { color:#aaa; -moz-text-shadow: 1px 1px 0 #333; -webkit-text-shadow: 1px 1px 0 #333; text-shadow: 1px 1px 0 #333; }
 #footer a:link { color:#ccc; text-decoration:none; }
 #footer a:visited { color:#ccc; text-decoration:none; }

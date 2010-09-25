@@ -218,3 +218,6 @@ input { font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; }
 .mainBody .mainItem .second td, .mainBody .mainItem .second th { padding-top:5px; }
 
 .cb { clear:both; height:1px; margin:0; padding:0; border:0; font-size:0; line-height:0; overflow:hidden; }
+
+/* Hidden Class */
+.hidden { display:none; }

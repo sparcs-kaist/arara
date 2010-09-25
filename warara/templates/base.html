@@ -16,7 +16,9 @@
         <!--[if (gte IE 5.5)&(lte IE 8)]>
             <script type="text/javascript" src="/media/js/ie-css3.js"></script>
         <![endif]-->
-        {% block script %}{% endblock %}
+        {% block script %}
+        <script type="text/javascript" src="/media/js/base.js"></script>
+        {% endblock %}
     </head>
     
     <body id="category1" onload="setWidth();" onresize="setWidth();">
@@ -204,6 +206,7 @@
                 </div>
             </div>
             <div id="sideContents">
+                {% if logged_in %}
                 <dl id="myInfo">
                     <dt>MY INFO</dt>
                     <dd>
@@ -233,6 +236,22 @@
                         </p>
                     </dd>
                 </dl>
+                {% else %}
+                <dl id="loginBox">
+                    <dt>Log In</dt>
+                    <dd>
+                        <form action="/account/login/" method="post" name="login">
+                            <input type="hidden" name="current_page_url" value="/main/" />
+                            <ul>
+                                <li><label> Username </label> <input type="text" name="username" id="miniLoginID" /></li>
+                                <li><label> Password </label> <input type="password" name="password" id="miniLoginPassword" /></li>
+                                <li><a href="#">로그인</a> | <a href="/account/register/">회원가입</a></li>
+                                <li><input type="submit" id="miniLoginSubmit" class="hidden"/></li>
+                            </ul>
+                        </form>
+                    </dd>
+                </dl>
+                {% endif %}
             </div>
             <div class="cb"></div>
         </div>

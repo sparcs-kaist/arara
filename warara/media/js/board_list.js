@@ -1,28 +1,32 @@
 $(document).ready(function(){
     var cursor_pos = 1;
     var original_cursor_pos = -2; // -1 은 커서 없을 때, 이므로.
+
+    // Read mode의 동작을 보장하고 있지 않음
     if($("#root_article_info").length){ //if it is a read page
     $root_article_id = parseInt($("#root_article_info").attr("rel"));
     cursor_pos = parseInt($("td.id_col[rel='" + $root_article_id + "']").parent().attr("rel"));
     original_cursor_pos = cursor_pos; // XXX root_article_pos 를 쓸 필요가 있는가?
     $root_article_pos = cursor_pos; //naming
     }
-    var row_count = $("#article_table tr").length;
+    var row_count = $(".boardList tr").length;
 	if(!$logged_in){
 	cursor_pos = -1;
 	}
-
     update_table(cursor_pos);
     function update_table(cursor_pos) {
-        $("#article_table tr").removeClass("row_highlight");
-        $("#article_table tr").eq(cursor_pos).addClass("row_highlight");
+        if(cursor_pos >= 0){
+        $(".boardList tr").removeClass("selected");
+        $(".boardList tr").eq(cursor_pos).addClass("selected");
+        }
     }
     function read_article() {
         //$.history.load(cursor_pos);
-        var article_link = $("#article_table tr").eq(cursor_pos).children(".title_col").children("a").attr("href");
+        var article_link = $(".boardList tr").eq(cursor_pos).children(".title").children("a").attr("href");
         location.href = article_link;
     }
 
+    // Search mode의 동작을 보장하고 있지 않음
     var cursor_sm = 0; //cursor search method
     var length_sm = $("#board_buttons a[name='search_method_select']").length;
 
@@ -56,11 +60,12 @@ $(document).ready(function(){
 		}
         if(!$("#list_link").attr("href")){ //move to main page when user press q in article_list page
         switch(event.which){
-            case 113:
+            case 113: // 'q'
                 location.href = "/main";
                 break;
                 }
         }
+        // Search에 관한 부분
         if($("#board_buttons a.highlight").length){
             switch(event.which){
                 case 115:
@@ -101,7 +106,7 @@ $(document).ready(function(){
                     break;
             }
         }
-		if($("#article_table tr.row_highlight").length){
+        if($(".boardList tr.selected").length){
             switch (event.which) {
                 case 32:  // space
                     if (cursor_pos != original_cursor_pos){
@@ -135,11 +140,11 @@ $(document).ready(function(){
                     if(!($("#now_page").is(":first-child"))) location.href = $("#now_page").prev().attr("href");
                     break;
                 case 98:
-                    $show_user_popup($("#article_table tr .username").eq(cursor_pos-1));
+                    $show_user_popup($(".boardList tr .author").eq(cursor_pos-1));
                     $focus_user_popup();
                     break;
                 case 82:
-                    location.href = $("#board_write a").attr("href");
+                    location.href = $("#writeForm").attr("action");
                     break;
                 default:
                     //alert(event.which);
@@ -147,6 +152,7 @@ $(document).ready(function(){
 		}
     });
 
+    // search에 관한 부분임
     $(".heading_list").change(function() {
         if ($("#board_search_content").val() != "")
             $("#board_search_submit").click();
