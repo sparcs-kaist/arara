@@ -45,7 +45,8 @@ input { font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; }
 #boardInCategory dl { width:100%; height:138px; margin:0; padding:7px 0 0 0; display:none; letter-spacing:-1px; }
 #boardInCategory dl dt { float:left; width:70px; height:138px; margin:0; padding:0 0 0 20px; }
 #boardInCategory dl dd { margin:0; padding:0; }
-#boardInCategory dl ul { float:left; width:160px; margin:0; padding:2px 0 0 0; list-style:none; list-style-image:none; }
+#boardInCategory dl ul { float:left; width:154px; margin:0; padding:2px 0 0 0; list-style:none; list-style-image:none; }
+/* 카테고리 칼럼 개수 제한 5개. 넘어가면 글목록 위로 게시판 목록이 둥둥 떠다님. */
 #boardInCategory dl ul li { margin:0; padding:0; line-height:25px; height:25px; overflow:hidden; }
 #boardInCategory dl ul li.selected { font-weight:bold; }
 #boardInCategory dl ul li a { margin:0; padding:0; padding-left:10px; display:block; height:25px; }
@@ -205,16 +206,17 @@ input { font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; }
 .mainBody .mainItem #KsearchText { padding:3px; font-size:14px; line-height:0px; font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; font-weight:bold; height:20px; vertical-align:top; margin-right:5px; width:470px; }
 .mainBody .mainItem #KsearchButton { vertical-align:top; }
 
-.mainBody .mainItem .bestArticles { float:left; width:49.5%; letter-spacing:-1px; }
-.mainBody .mainItem .hotArticles { float:right; width:49.5%; letter-spacing:-1px; }
+.mainBody .mainItem .bestArticles { float:left; letter-spacing:-1px; }
+/* .mainBody .mainItem .hotArticles { float:right; width:49.5%; letter-spacing:-1px; } */
 .mainBody .mainItem .bestArticles td, .mainBody .mainItem .hotArticles td { height:30px; }
 .mainBody .mainItem .bestArticles th, .mainBody .mainItem .hotArticles th { padding-left:10px; font-family:Helvetica,Arial,sans-serif; font-size:1.17em; letter-spacing:-1px; font-weight:normal; text-align:left; font-style:oblique; }
 .mainBody .mainItem .bestArticles .top, .mainBody .mainItem .hotArticles .top { font-weight:bold; }
 .mainBody .mainItem .bestArticles .top th, .mainBody .mainItem .hotArticles .top th { font-weight:bold; font-style:normal; }
 .mainBody .mainItem .bestArticles .top .BAtitle, .mainBody .mainItem .hotArticles .top .BAtitle { font-size:1.17em; letter-spacing:-1px; }
 .mainBody .mainItem .BANumber { width:40px; }
-.mainBody .mainItem .BAtitle { font-weight:bold; }
-.mainBody .mainItem .BAauthor { width:110px; }
+.mainBody .mainItem .BAtitle { font-weight:bold; min-width:250px; }
+.mainBody .mainItem .BAauthor { width:70px; }
+.mainBody .mainItem .BAdateinfo {width:120px;}
 .mainBody .mainItem .second td, .mainBody .mainItem .second th { padding-top:5px; }
 
 .cb { clear:both; height:1px; margin:0; padding:0; border:0; font-size:0; line-height:0; overflow:hidden; }
