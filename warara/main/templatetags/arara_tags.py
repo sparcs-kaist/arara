@@ -24,6 +24,31 @@ class BoardListUpdateNode(template.Node):
             board_list = filter(lambda x: not x.hide, server.board_manager.get_board_list())
             cache.set('board_list', board_list, CACHETIME_BOARD_LIST)
         context["board_list"] = board_list
+
+        category1_list = []
+        category2_list = []
+        category3_list = []
+        category4_list = []
+        category5_list = []
+        for board in board_list:
+            if(board.category_id==1):
+                category1_list+=[board]
+            elif (board.category_id==2):
+                category2_list.append(board)
+            elif (board.category_id==3):
+                category3_list.append(board)
+            elif (board.category_id==4):
+                category4_list.append(board)
+            elif (board.category_id==5):
+                category5_list.append(board)
+            else:
+                print "no category\n"
+        context['category1_list'] = category1_list
+        context['category2_list'] = category2_list
+        context['category3_list'] = category3_list
+        context['category4_list'] = category4_list
+        context['category5_list'] = category5_list
+
         return ""
 
 @register.filter(name='get_board_description')
