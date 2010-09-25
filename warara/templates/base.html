@@ -51,7 +51,7 @@
                 <div id="boardInCategory">
                     <!-- 카테고리 내 메뉴. 롤오버를 위해 모두 표시 -->
                     <dl class="favorite">
-                        <dt><img src="/media/image/stealBlue/catMenu_category1.png" alt="카테고리1" /></dt>
+                        <dt><img src="/media/image/stealBlue/catMenu_category1.png" alt="모아보기" /></dt>
                         <dd>
                             {% get_board_list %}
                             <ul>
@@ -68,130 +68,75 @@
                     <dl class="category1">
                         <dt><img src="/media/image/stealBlue/catMenu_category1.png" alt="카테고리1" /></dt>
                         <dd>
+                            {% get_board_list %}
                             <ul>
-                                <li><a href="#">게시판 1</a></li>
-                                <li><a href="#">게시판 1</a></li>
-                                <li><a href="#">게시판 1</a></li>
-                                <li><a href="#">게시판 1</a></li>
-                                <li><a href="#">게시판 1</a></li>
+                                {% for board_info in board_list %}
+                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_name}}</a></li>
+                                {% if forloop.counter|divisibleby:"5" %}
                             </ul>
                             <ul>
-                                <li><a href="#">게시판 1</a></li>
-                                <li class="selected"><a href="#">게시판 1</a></li>
-                                <li><a href="#">게시판 1</a></li>
-                                <li><a href="#">게시판 1</a></li>
-                                <li><a href="#">게시판 1</a></li>
-                            </ul>
-                            <ul>
-                                <li><a href="#">게시판 1</a></li>
-                                <li><a href="#">게시판 1</a></li>
-                                <li><a href="#">게시판 1</a></li>
-                                <li><a href="#">게시판 1</a></li>
-                                <li><a href="#">게시판 1</a></li>
+                                {% endif %}
+                                {% endfor %}
                             </ul>
                         </dd>
                     </dl>
                     <dl class="category2">
                         <dt><img src="/media/image/stealBlue/catMenu_category1.png" alt="카테고리1" /></dt>
                         <dd>
+                            {% get_board_list %}
                             <ul>
-                                <li><a href="#">게시판 2</a></li>
-                                <li><a href="#">게시판 2</a></li>
-                                <li><a href="#">게시판 2</a></li>
-                                <li><a href="#">게시판 2</a></li>
-                                <li><a href="#">게시판 2</a></li>
+                                {% for board_info in board_list %}
+                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_name}}</a></li>
+                                {% if forloop.counter|divisibleby:"5" %}
                             </ul>
                             <ul>
-                                <li><a href="#">게시판 2</a></li>
-                                <li><a href="#">게시판 2</a></li>
-                                <li><a href="#">게시판 2</a></li>
-                                <li><a href="#">게시판 2</a></li>
-                                <li><a href="#">게시판 2</a></li>
-                            </ul>
-                            <ul>
-                                <li><a href="#">게시판 2</a></li>
-                                <li><a href="#">게시판 2</a></li>
-                                <li><a href="#">게시판 2</a></li>
-                                <li><a href="#">게시판 2</a></li>
-                                <li><a href="#">게시판 2</a></li>
+                                {% endif %}
+                                {% endfor %}
                             </ul>
                         </dd>
                     </dl>
                     <dl class="category3">
                         <dt><img src="/media/image/stealBlue/catMenu_category1.png" alt="카테고리1" /></dt>
                         <dd>
+                            {% get_board_list %}
                             <ul>
-                                <li><a href="#">게시판 3</a></li>
-                                <li><a href="#">게시판 3</a></li>
-                                <li><a href="#">게시판 3</a></li>
-                                <li><a href="#">게시판 3</a></li>
-                                <li><a href="#">게시판 3</a></li>
+                                {% for board_info in board_list %}
+                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_name}}</a></li>
+                                {% if forloop.counter|divisibleby:"5" %}
                             </ul>
                             <ul>
-                                <li><a href="#">게시판 3</a></li>
-                                <li><a href="#">게시판 3</a></li>
-                                <li><a href="#">게시판 3</a></li>
-                                <li><a href="#">게시판 3</a></li>
-                                <li><a href="#">게시판 3</a></li>
-                            </ul>
-                            <ul>
-                                <li><a href="#">게시판 3</a></li>
-                                <li><a href="#">게시판 3</a></li>
-                                <li><a href="#">게시판 3</a></li>
-                                <li><a href="#">게시판 3</a></li>
-                                <li><a href="#">게시판 3</a></li>
+                                {% endif %}
+                                {% endfor %}
                             </ul>
                         </dd>
                     </dl>
                     <dl class="category4">
                         <dt><img src="/media/image/stealBlue/catMenu_category1.png" alt="카테고리1" /></dt>
                         <dd>
+                            {% get_board_list %}
                             <ul>
-                                <li><a href="#">게시판 4</a></li>
-                                <li><a href="#">게시판 4</a></li>
-                                <li><a href="#">게시판 4</a></li>
-                                <li><a href="#">게시판 4</a></li>
-                                <li><a href="#">게시판 4</a></li>
+                                {% for board_info in board_list %}
+                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_name}}</a></li>
+                                {% if forloop.counter|divisibleby:"5" %}
                             </ul>
                             <ul>
-                                <li><a href="#">게시판 4</a></li>
-                                <li><a href="#">게시판 4</a></li>
-                                <li><a href="#">게시판 4</a></li>
-                                <li><a href="#">게시판 4</a></li>
-                                <li><a href="#">게시판 4</a></li>
-                            </ul>
-                            <ul>
-                                <li><a href="#">게시판 4</a></li>
-                                <li><a href="#">게시판 4</a></li>
-                                <li><a href="#">게시판 4</a></li>
-                                <li><a href="#">게시판 4</a></li>
-                                <li><a href="#">게시판 4</a></li>
+                                {% endif %}
+                                {% endfor %}
                             </ul>
                         </dd>
                     </dl>
                     <dl class="category5">
                         <dt><img src="/media/image/stealBlue/catMenu_category1.png" alt="카테고리1" /></dt>
                         <dd>
+                            {% get_board_list %}
                             <ul>
-                                <li><a href="#">게시판 5</a></li>
-                                <li><a href="#">게시판 5</a></li>
-                                <li><a href="#">게시판 5</a></li>
-                                <li><a href="#">게시판 5</a></li>
-                                <li><a href="#">게시판 5</a></li>
+                                {% for board_info in board_list %}
+                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_name}}</a></li>
+                                {% if forloop.counter|divisibleby:"5" %}
                             </ul>
                             <ul>
-                                <li><a href="#">게시판 5</a></li>
-                                <li><a href="#">게시판 5</a></li>
-                                <li><a href="#">게시판 5</a></li>
-                                <li><a href="#">게시판 5</a></li>
-                                <li><a href="#">게시판 5</a></li>
-                            </ul>
-                            <ul>
-                                <li><a href="#">게시판 5</a></li>
-                                <li><a href="#">게시판 5</a></li>
-                                <li><a href="#">게시판 5</a></li>
-                                <li><a href="#">게시판 5</a></li>
-                                <li><a href="#">게시판 5</a></li>
+                                {% endif %}
+                                {% endfor %}
                             </ul>
                         </dd>
                     </dl>
