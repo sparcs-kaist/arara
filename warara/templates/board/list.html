@@ -13,6 +13,7 @@
     <thead>
         <tr>
             <th class="indicator"></th>
+            <th class="articleid hidden"></th>
             <th class="author">작성자</th>
             <th class="smallCat">말머리</th>
             <th class="title">제목</th>
@@ -27,6 +28,7 @@
                 {% ifequal article.read_status 'U' %}<span class="update">U</span>{% endifequal %}
                 {% ifequal article.read_status 'N' %}<span class="new">N</span>{% endifequal %}
             </td>
+            <td class="articleid hidden" rel="{{ article.id }}">{{ article.id }}</td>
             <td class="author">
                 <a href="#">{{article.author_nickname|truncatechars:"8"}}</a>
             </td>

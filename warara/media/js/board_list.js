@@ -2,10 +2,9 @@ $(document).ready(function(){
     var cursor_pos = 1;
     var original_cursor_pos = -2; // -1 은 커서 없을 때, 이므로.
 
-    // Read mode의 동작을 보장하고 있지 않음
-    if($("#root_article_info").length){ //if it is a read page
-    $root_article_id = parseInt($("#root_article_info").attr("rel"));
-    cursor_pos = parseInt($("td.id_col[rel='" + $root_article_id + "']").parent().attr("rel"));
+    if($(".articleInfo").length){ //if it is a read page
+    $root_article_id = parseInt($(".articleInfo").attr("rel"));
+    cursor_pos = parseInt($("td.articleid[rel='" + $root_article_id + "']").parent().attr("rel"));
     original_cursor_pos = cursor_pos; // XXX root_article_pos 를 쓸 필요가 있는가?
     $root_article_pos = cursor_pos; //naming
     }
