@@ -15,8 +15,14 @@ $(document).ready(function(){
     $(".articleButtons .reply").click(function(event) {
         // 만약 다른 곳에 있던 답글 상자를 가져와야 하는 경우라면
         if($(this).parent().parent().children(".addReply").length == 0){
+            var board_name = $(this).parent().children("#board_name").val();
+            var article_id = $(this).parent().children("#article_id").val();
+            var reply_url = "/board/" + board_name + "/" + article_id + "/reply/";
+
             p = $(".addReply").hide().detach().insertAfter($(this).parent());
             p.toggle("fast");
+            p.children().children("input[name='article_no']").val(article_id);
+            p.children().attr('action', reply_url);
         }
         // 그렇지 않을 경우 toggle만
         else {
@@ -157,7 +163,7 @@ $(document).ready(function(){
     });
 
     $focus_textarea_reply = 0;
-    $("textarea[name='targetId_contents']").focus(function(){
+    $("#write_reply_content").focus(function(){
             $focus_textarea_reply = $(this);
             });
 
@@ -186,8 +192,8 @@ $(document).ready(function(){
         }*/
     });
 
-    $("#targetId").click(function(event) {
-        $(this).parent().submit();
+    $("#write_reply").click(function(event) {
+        $(this).parent().parent().parent().parent().parent().submit();
         $(this).attr("disabled", "disabled");
     });
 });

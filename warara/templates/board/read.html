@@ -77,22 +77,24 @@
         {{ rendered_reply }}
         {% endautoescape %}
         <div class="addReply">
-            <form name="targetId" method="post" action="">
+            <form name="write_reply_form" method="post" action="/board/{{board_name}}/{{article.id}}/reply/" enctype="multipart/form-data">
+                <input type="hidden" name="root_id" value="{{article.id}}" />
+                <input type="hidden" name="article_no" value="{{article.id}}" />
                 <table cellspacing="0">
                     <tbody>
                         <tr class="arTitle">
-                            <th><label for="targetId_title">제목</label></th>
-                            <td><input type="text" name="targetId_title" id="targetId_title" /></td>
+                            <th><label for="write_reply_title">제목</label></th>
+                            <td><input type="text" name="title" id="write_reply_title" value="{{article.title}}" /></td>
                         </tr>
                         <tr class="arContents">
-                            <th><label for="targetId_contents">내용</label></th>
-                            <td><textarea name="targetId_contents" id="targetId_contents"></textarea></td>
+                            <th><label for="write_reply_content">내용</label></th>
+                            <td><textarea name="content" id="write_reply_content"></textarea></td>
                         </tr>
                         <tr class="arSignature">
-                            <th><label for="targetId_signature">시그너쳐</label></th>
+                            <th><label for="write_reply_signature">시그너쳐</label></th>
                             <td>
-                                <input type="checkbox" name="targetId_enableSig" id="targetId_enableSig" class="enableSig" checked /><label for="targetId_enableSig">시그너쳐를 사용합니다.</label><br />
-                                <textarea name="targetId_signature" class="signatureBox"></textarea>
+                                <input type="checkbox" name="signature_check" id="write_reply_enableSig" class="enableSig" {% if not modify %}checked{% endif %} /><label for="write_reply_enableSig">시그너쳐를 사용합니다.</label><br />
+                                <textarea name="signature" id="write_reply_signature" class="signatureBox">{{ user_signature }}</textarea>
                             </td>
                         </tr>
 
@@ -102,7 +104,7 @@
                         </tr>
                         <tr class="arSubmit">
                             <th></th>
-                            <td><input type="submit" id="targetId" class="darkButtonReply" value="확인" /></td>
+                            <td><input type="submit" id="write_reply" class="darkButtonReply" value="확인" /></td>
                         </tr>
                     </tbody>
                 </table>
