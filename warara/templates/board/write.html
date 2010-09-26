@@ -5,108 +5,67 @@
 <script type="text/javascript" src="/media/js/board_write.js"></script>
 {% endblock script %}
 
-{% block style %}
-{{block.super}}
-<link rel="stylesheet" type="text/css" href="/media/style/board_write.css"></link>
-{% endblock style %}
-
 {% block board_content %}
 {% load i18n %}
-<div id="article_write_head">
-    <span class="main_head">
-        {% trans "write an article" %}
-    </span>
-    <span class="sub_head">
-        {% trans "write an article" %}
-    </span>
-</div>
-<form name="article_write" action="/board/{{board_name}}/write/" method="post" enctype="multipart/form-data" id="article_write">
-    <div id="article_write_author">
-        <caption>{% trans "author : " %}</caption>
-        {{username}}
-    </div>
-    <div id="article_write_title">
-        <caption>{% trans "title : " %}</caption>
-        <input type="text" value="{{default_title}}" name="title"></input>
-    </div>
-    {% if have_heading %}
-    <div id="article_write_heading">
-        <caption>{% trans "heading : " %}</caption>
-        <select name="heading">
-            <option value=""{% if default_heading and default_heading == '' %} selected="selected"{% endif %}>{% trans "No Heading" %}</option>
-            {% for heading in board_heading_list %}
-            <option value={{ heading }} {% if default_heading and default_heading == heading %} selected="selected"{% endif %}>{{ heading }}</option>
+<form name="writePost" method="post" action="/board/{{board_name}}/write/" enctype="multipart/form-data" id="writePost">
+    <table class="writeTable" cellspacing="0">
+        <tbody>
+            <tr class="writeTitle">
+                <th>글 제목</th>
+                <td>
+                    {% if have_heading %}
+                    <div class="dropSelector">
+                        <div class="dropBox">
+                            <a id="selected" href="#">말머리</a>
+                            <ul>
+                                <li><a href="#">말머리 없음</a></li>
+                                {% for heading in board_heading_list %}
+                                <li><a href="#">{{ heading }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <select name="heading" class="hidden">
+                        <option value="" {% if default_heading and default_heading == '' %} selected="selected"{% endif %}>말머리 없음</option>
+                        {% for heading in board_heading_list %}
+                        <option value="{{ heading }}" {% if default_heading and default_heading == heading %} selected="selected"{% endif %}>{{ heading }}</option>
+                        {% endfor %}
+                    </select>
+                    {% endif %}
+                    <input type="text" name="title" id="writePost_title" value="{{default_title}}" />
+                </td>
+            </tr>
+            <tr class="writeContents">
+                <td colspan="2"><textarea name="text" id="writePost_contents">{% if default_text %}{{ default_text }}{% endif %}</textarea></td>
+            </tr>
+            <tr class="writeSignature">
+                <th><label for="writePost_signature">시그너쳐</label></th>
+                <td>
+                    <input type="checkbox" name="signature_check" id="writePost_enableSig" class="enableSig" {% if not modify %}checked{% endif %} /><label for="writePost_enableSig">시그너쳐를 사용합니다.</label><br />
+                    <textarea name="signature" class="signatureBox">{{ user_signature }}</textarea>
+                </td>
+            </tr>
+            {% if article.attach %}
+            {% for file in article.attach %}
+            <tr class="deleteAttach">
+                <th>첨부{{ forloop.counter }}</th>
+                <td><a name="file_name" rel="{{file.file_id}}" href="/board/{{board_name}}/0/{{article.id}}/file/{{file_id}}" target="_blank">{{file.filename}}</a><a class="deleteAttachLink" href="#">삭제</a><input type="hidden" name="file_id" value="{{file.file_id}}" /></td>
+            </tr>
             {% endfor %}
-        </select>
-    </div>
-    {% endif %}
-    <div id="article_write_text">
-        <textarea name="text">{% if default_text %}{{ default_text }}{% endif %}</textarea>
-    </div>
-    <br />
-    <div id="article_signature">
-        <div id="signature_check">
-		<input type="checkbox" name="signature_check" value="signature_check" {% if not modify %}checked="checked"{% endif %}>{% trans "Use Signature" %}</input>
-        </div>
-        <textarea name="signature" readonly="readonly">{{ user_signature }}</textarea>
-    </div>
-    <br />
-    {% if article.attach %}
-    <div id="article_delete_file">
-        <caption>{% trans "file(s) : " %}</caption>
-        {% for file in article.attach %}
-        <span name="aritcle_file">
-            <a name="file_name" rel="{{file.file_id}}" href="/board/{{board_name}}/0/{{article.id}}/file/{{file.file_id}}" target="_blank">{{file.filename}}</a>
-            <a class="delete_file_button" href="#"><img src="/media/image/delete_button.png"></img></a>
-            <input type="hidden" name="file_id" value="{{file.file_id}}"></input>
-        </span>
-        {% endfor %}
-    </div>
-    {% endif %}
-    <div id="article_write_file">
-        <div class="file_line">
-            <span class="article_write_file_caption">{% trans "file" %}</span>
-            <div class="file_upload_p">
-                <div class="file_upload_t">
-                    <input type="file" name="file1" class="file_upload" size=95></input>
-                </div>
-                <div class="file_upload_f">
-                    <input name="file1_fi" class="file_input_f"></input> <!-- file1 fake input -->
-                    <div class="file_search_button">
-                        {% trans "search" %}
-                    </div>
-                </div>
-                <input type="button" name="file_input_add" class="small_btn" value="+"></input>
-            </div>
-        </div>
-    </div>
-    <div id="file_line_model">
-        <div class="file_line">
-            <span class="article_write_file_caption">{% trans "file" %}</span>
-            <div class="file_upload_p">
-                <div class="file_upload_t">
-                    <input type="file" name="file1" class="file_upload" size=95></input>
-                </div>
-                <div class="file_upload_f">
-                    <input name="file1_fi" class="file_input_f"></input> <!-- file1 fake input -->
-                    <div class="file_search_button">
-                        {% trans "search" %}
-                    </div>
-                </div>
-                <input type="button" name="file_input_delete" class="small_btn" value="-"></input>
-            </div>
-        </div>
-    </div>
-    <div id="article_write_buttons">
-        <input type="button" value="{% trans "preview" %}" class="small_btn"></input>
-        <input type="submit" value="{{t_write}}" name="article_write" class="big_btn" id="write_button"></input>
-        <input type="button" value="{% trans "cancel" %}" name="cancel" class="small_btn"></input>
-        <input type="hidden" value="{{t_write}}" name="write_type"></input>
-        {% if modify %} <input type="hidden" value="{{root_id}}" name="root_id"></input> {% endif %}
-        <input type="hidden" value="{{article_no}}" name="article_no"></input>
-        <input type="hidden" value="{{board_name}}" name="board_name"></input>
-        <input type="hidden" value="{{board_type}}" name="board_type" />
-        <input type="hidden" value="" name="delete_file"></input>
-    </div>
+            {% endif %}
+            <tr class="writeAttach">
+                <th><label for="writePost_attach_1">첨부1</label></th>
+                <td><input name="writePost_attach_1" id="writePost_attach_1" type="file" /> <a id="attach_more" href="#">더 첨부하기</a></td>
+            </tr>
+        </tbody>
+    </table>
+    <p class="writeBottom"><input type="submit" id="writePostSubmit" class="darkButton" value="확인" /><input type="button" id="writePostCancel" class="lightButton" value="목록으로" /></p>
+    
+    <input type="hidden" value="{{t_write}}" name="write_type" />
+    {% if modify %} <input type="hidden" value="{{root_id}}" name="root_id" /> {% endif %}
+    <input type="hidden" value="{{article_no}}" name="article_no" />
+    <input type="hidden" value="{{board_name}}" name="board_name" />
+    <input type="hidden" value="{{board_type}}" name="board_type" />
+    <input type="hidden" value="" name="delete_file" />
 </form>
-{% endblock board_content %}
+{% endblock %}

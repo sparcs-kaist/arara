@@ -1,40 +1,46 @@
 $(document).ready(function() {
-        // 이제는 사용자가 몇 개의 파일을 올릴 수 있는지 예측하는 변수가 되었다.
-        // 사용자는 file_no 이상의 파일을 올릴 리가 없다.
-		$file_no = 1;
+    $file_no = 1;
 
-	$("input[name='file_input_add']").click(function(){
-		$file_no++;
-		$("#file_line_model .file_upload_t input[type='file']").remove();
-		var file_append = "<input type=\"file\" name=\"file" + $file_no + "\" class=\"file_upload\" size=\"95\"></input>";
-		$("#file_line_model .file_upload_t").append(file_append);
-		$("#article_write_file").append($("#file_line_model").contents().clone());
+    function create_more_attach_form(this_select, event){
+        $file_no++;
 
-		$("input[name='file_input_delete']").click(function(){
-			$file_no--;
-			$(this).parent().parent().remove();
-			});
+        var new_attach = this_select.parent().parent().clone();
+        var new_attach_id = "writePost_attach_" + $file_no;
+        
+        new_attach.children("th").children("label").attr("for", new_attach_id).text("첨부" + $file_no);
+        new_attach.children("td").children("input").attr("name", new_attach_id).attr("id", new_attach_id);
+        new_attach.children("td").children("input").html(new_attach.children("td input").html()); //reset the input field
+        new_attach.children("td").children("a").click(function(event){
+            create_more_attach_form($(this), event);
+        });
 
-		$("input.file_upload").change(function(){
-			$(this).parent().parent().children("div.file_upload_f").children("input.file_input_f").val($(this).val());
-			});
-		});
+        this_select.parent().parent().after(new_attach);
+        this_select.after(
+            $('<a class="file_delete" href="#">삭제</a>').click(function(event){
+                $(this).parent().parent().remove();
+                event.preventDefault();
+            })
+        );
 
-	$("input[name='cancel']").click(function(){
+        this_select.remove();
+        event.preventDefault();
+    }
+       
+    $(".writeAttach #attach_more").click(function(event){
+        create_more_attach_form($(this), event);
+    });
+	$("#writePostCancel").click(function(){
 		history.go(-1);
 		});
 
-	$("input.file_upload").change(function(){
-		$(this).parent().parent().children("div.file_upload_f").children("input.file_input_f").val($(this).val());
-		});
-
-	$("a.delete_file_button").click(function(event){
+	$("a.deleteAttachLink").click(function(event){
 			$file_anchor = $(this).parent().children("a[name='file_name']");
 			$file_anchor.toggleClass("deleted_file");
+                        $(this).parent().parent().hide()
 			event.preventDefault();
 			});
 
-	$("input[name='article_write']").click(function(event){
+	$("#writePostSubmit").click(function(event){
 			$("a.deleted_file").each(function(){
 				$file_anchor = $(this);
 				$("input[name='delete_file']").val($("input[name='delete_file']").val() + "&" + $file_anchor.attr("rel"));
@@ -43,26 +49,26 @@ $(document).ready(function() {
 
     $focus_input_title = 0;
     $focus_textarea_text = 0;
-    $("#article_write_title input[name='title']").focus(function(){
+    $("#writePost_title").focus(function(){
             $focus_input_title = 1;
             });
-    $("#article_write_title input[name='title']").blur(function(){
+    $("#writePost_title").blur(function(){
             $focus_input_title = 0;
             });
-    $("#article_write_text textarea[name='text']").focus(function(){
+    $("#writePost_contents").focus(function(){
             $focus_textarea_text = 1;
             });
-    $("#article_write_text textarea[name='text']").blur(function(){
+    $("#writePost_contents").blur(function(){
             $focus_textarea_text = 0;
             });
-    $("#article_write_title input[name='title']").focus();
+    $("#writePost_title").focus();
     
     $(document).keypress(function(event){
         if((event.shiftKey && $focus_textarea_text) || $focus_input_title){
         switch(event.which){
             case 13:
                 if(confirm("send")){
-                    $("form[name='article_write']").submit();
+                    $("form[name='writePost']").submit();
                     break;
                 }
                 event.preventDefault();
@@ -78,7 +84,9 @@ $(document).ready(function() {
                 }
     });
 
-    $("#write_button").click(function(event) {
+    $("#writePostSubmit").click(function(event) {
+
+/* XXX(hodduc) : 현재 이 부분의 동작을 보장하고 있지 않음
         if ( $("input[name='board_type']").val() == 1 )
         {
             $file_uploaded = false;
@@ -107,8 +115,17 @@ $(document).ready(function() {
                 return false;
             }
         }
-        
-        $("#article_write").submit();
-        $("#write_button").attr("disabled", "disabled");
+*/
+        $("#writePost").submit();
+        $("#writePostSubmit").attr("disabled", "disabled");
+    });
+
+    // dropbox의 value를 초기화함. 처음에는 select box의 값이 default value이다
+    // 그 이후에는 dropbox에서 click event가 발생시 select box의 data를 연동해 같이 변경시키면 됨
+    var selected_idx = $("select[name='heading']").children().index( $("select[name='heading'] option:selected") );
+    $(".dropBox a.#selected").text($("select[name'heading'] option:selected").text());
+    $(".dropBox ul li").click(function(){
+        var idx = $(this).parent().children().index($(this));
+        $("select[name='heading'] option:eq("+idx+")").attr("selected", "selected");
     });
 });
