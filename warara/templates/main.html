@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/media/style/main.css" />
 {% endblock %}
 
-{% block content %}
+{% block main %}
 {% load i18n %}
 <div class="mainItem" id="Ksearch">
     <h2 class="mainHeader">K-Search</h2>
@@ -112,3 +112,8 @@
 {% endif %}
 -->
 {% endblock %}
+
+<!-- this block is needed to empty content block -->
+{% block content %}
+{% endblock %}
+
