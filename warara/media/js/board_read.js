@@ -61,30 +61,35 @@ $(document).ready(function(){
 
     $file_no = 1;
 
-    function create_more_attach_form(event){
+    function create_more_attach_form(this_select, event){
         $file_no++;
 
-        var new_attach = $(this).parent().parent().clone();
+        var new_attach = this_select.parent().parent().clone();
         var new_attach_id = "write_reply_attach_" + $file_no;
         
         new_attach.children("th").children("label").attr("for", new_attach_id).text("첨부" + $file_no);
         new_attach.children("td").children("input").attr("name", new_attach_id).attr("id", new_attach_id);
         new_attach.children("td").children("input").html(new_attach.children("td input").html()); //reset the input field
         new_attach.children("td").children("a").click(function(event){
-            create_more_attach_form(event);
+            create_more_attach_form($(this), event);
         });
 
-        $(this).parent().parent().after(new_attach);
+        this_select.parent().parent().after(new_attach);
+        this_select.after(
+            $('<a class="file_delete" href="#">삭제</a>').click(function(event){
+                $(this).parent().parent().remove();
+                event.preventDefault();
+            })
+        );
 
-        $(this).attr("id", "file_delete").text("삭제").click(function(){
-            $(this).parent().parent().remove();
-        });
+        this_select.remove();
         event.preventDefault();
     }
         
     $(".arAttach #attach_more").click(function(event){
-        create_more_attach_form(event);
+        create_more_attach_form($(this), event);
     });
+
 
 /* XXX(hodduc) Cancel Reply는 새 디자인에서 삭제된 기능임
     $("input.cancel_reply").click(function(){
