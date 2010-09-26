@@ -9,34 +9,34 @@
 <link rel="stylesheet" href="/media/style/main.css" />
 {% endblock %}
 
-{% block main %}
-{% load i18n %}
-<div class="mainItem" id="Ksearch">
-    <h2 class="mainHeader">K-Search</h2>
-    <form id="KsearchBox" method="get" action="http://ksearch.sparcs.org/search">
-        <div class="mainItemContents">
-            <input type="text" name="KsearchText" id="KsearchText" value="" />
-            <input type="image" id="KsearchButton" class="KsearchButton" src="/media/image/stealBlue/i_ksearch.png" />
-        </div>
-    </form>
-    <div class="cb"></div>
-</div>
-
-<div class="mainItem" id="todayBest">
-    <div class="mainHeader">
-        <h2>Today</h2>
-        <p class="desc">지금<br/>KAIST는<br/>무엇을<br/>이야기하나</p>
+    {% block main %}
+    {% load i18n %}
+    <div class="mainItem" id="Ksearch">
+        <h2 class="mainHeader">K-Search</h2>
+        <form id="KsearchBox" method="get" action="http://ksearch.sparcs.org/search">
+            <div class="mainItemContents">
+                <input type="text" name="KsearchText" id="KsearchText" value="" />
+                <input type="image" id="KsearchButton" class="KsearchButton" src="/media/image/stealBlue/i_ksearch.png" />
+            </div>
+        </form>
+        <div class="cb"></div>
     </div>
-    <div class="mainItemContents">
-        <table class="bestArticles" cellspacing="0">
-            {% for no, todays_best in todays_best_list %}
-            {% if forloop.first %}
-            <tr class="top">  <th class="BANumber">best</th>
-            {% else %}
-            <tr class="second"> <th class="BANumber">{{no}}</th>
-            {% endif %}
-                <td class="BAtitle">{% if logged_in %}<a href="/board/{{todays_best.board_name}}/{{todays_best.id}}/">{{todays_best.title|truncatechars:"45"}}</a> {% else %}{{todays_best.title|truncatechars:"45"}}{% endif %}</td>
-                <td class="BAauthor"><a href="#">{{todays_best.author_username}}</a></td>
+
+    <div class="mainItem" id="todayBest">
+        <div class="mainHeader">
+            <h2>Today</h2>
+            <p class="desc">지금<br/>KAIST는<br/>무엇을<br/>이야기하나</p>
+        </div>
+        <div class="mainItemContents">
+            <table class="bestArticles" cellspacing="0">
+                {% for no, todays_best in todays_best_list %}
+                {% if forloop.first %}
+                <tr class="top">  <th class="BANumber">best</th>
+                {% else %}
+                <tr class="second"> <th class="BANumber">{{no}}</th>
+                {% endif %}
+                    <td class="BAtitle">{% if logged_in %}<a href="/board/{{todays_best.board_name}}/{{todays_best.id}}/">{{todays_best.title|truncatechars:"45"}}</a> {% else %}{{todays_best.title|truncatechars:"45"}}{% endif %}</td>
+                    <td class="BAauthor"><a href="#">{{todays_best.author_username}}</a></td>
                 <td class="BAdateinfo">{% trans "vote" %} {{todays_best.positive_vote}} | {{todays_best.date|date:"m.d H:i"}} </td>
             </tr>
             {% endfor %}
@@ -116,4 +116,3 @@
 <!-- this block is needed to empty content block -->
 {% block content %}
 {% endblock %}
-

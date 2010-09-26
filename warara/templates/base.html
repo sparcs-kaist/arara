@@ -168,23 +168,25 @@
                         </ul>
                     </dd>
                 </dl>
+                {% if has_weather %}
                 <dl id="weather">
-                    <dt>WEATHER<span class="sideRight"> 대전</span></dt>
+                    <dt>WEATHER<span class="sideRight"> {{weather_info.city}}</span></dt>
                     <dd>
                         <p class="today">
-                            지금 - 비<span class="sideRight"><img src="/media/image/weather/11.png" alt="비" /></span><br />
-                            <strong>24</strong> ℃
+                        지금 - {{weather_info.current_condition|wordwrap:6}}<span class="sideRight"><img src="{{weather_info.current_icon_url}}" alt="{{weather_info.current_condition}}" /></span><br />
+                        <strong>{{weather_info.current_temperature}}</strong> ℃
                         </p>
                         <p class="future">
-                            내일 <span class="sideRight"><img src="/media/image/weather/11.png" alt="비" /></span><br />
-                            23~29 ℃
+                        내일 <span class="sideRight"><img src="{{weather_info.tomorrow_icon_url}}" alt="내일의 날씨" /></span><br />
+                            {{weather_info.tomorrow_temperature_low}}~{{weather_info.tomorrow_temperature_high}} ℃
                         </p>
                         <p class="future">
-                            모레 <span class="sideRight"><img src="/media/image/weather/11.png" alt="비" /></span><br />
-                            24~29 ℃
+                        모레 <span class="sideRight"><img src="{{weather_info.day_after_tomorrow_icon_url}}" alt="모레의 날씨" /></span><br />
+                        {{weather_info.day_after_tomorrow_temperature_low}}~{{weather_info.day_after_tomorrow_temperature_high}} ℃
                         </p>
                     </dd>
                 </dl>
+                {% endif %}
                 {% else %}
                 <dl id="loginBox">
                     <dt>Log In</dt>

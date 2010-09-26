@@ -61,30 +61,30 @@ $(document).ready(function(){
 
     $file_no = 1;
 
-// XXX(hodduc) File Attach는 다음 Revision에서 구현
-    $(".arAttach #attach_more").click(function(){
+    function create_more_attach_form(event){
         $file_no++;
 
-        $("#file_line_model span.article_write_file_caption").text("file " + $file_no);
-        $("#file_line_model .file_upload_t input[type='file']").remove();
-        var file_append = "<input type=\"file\" name=\"file" + $file_no + "\" class=\"file_upload\" size=\"95\"></input>";
-        $("#file_line_model .file_upload_t").append(file_append);
-        $("#article_write_file").append($("#file_line_model").contents().clone());
-        $(this).parent().parent().parent().append($("#file_line_model").contents().clone());
+        var new_attach = $(this).parent().parent().clone();
+        var new_attach_id = "write_reply_attach_" + $file_no;
+        
+        new_attach.children("th").children("label").attr("for", new_attach_id).text("첨부" + $file_no);
+        new_attach.children("td").children("input").attr("name", new_attach_id).attr("id", new_attach_id);
+        new_attach.children("td").children("input").html(new_attach.children("td input").html()); //reset the input field
+        new_attach.children("td").children("a").click(function(event){
+            create_more_attach_form(event);
+        });
 
-        $("input[name='file_input_delete']").click(function(){
+        $(this).parent().parent().after(new_attach);
+
+        $(this).attr("id", "file_delete").text("삭제").click(function(){
             $(this).parent().parent().remove();
-            });
-
-        $("input.file_upload").change(function(){
-            $(this).parent().parent().children("div.file_upload_f").children("input.file_input_f").val($(this).val());
-            });
         });
-
-    $("input.file_upload").change(function(){
-        $(this).parent().parent().children("div.file_upload_f").children("input.file_input_f").val($(this).val());
-        });
-// XXX 여기까지
+        event.preventDefault();
+    }
+        
+    $(".arAttach #attach_more").click(function(event){
+        create_more_attach_form(event);
+    });
 
 /* XXX(hodduc) Cancel Reply는 새 디자인에서 삭제된 기능임
     $("input.cancel_reply").click(function(){
