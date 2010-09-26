@@ -73,9 +73,6 @@
             <input type="hidden" id="board_name" value="{{board_name}}" /><input type="hidden" id="root_id" value="{{article.root_id}}" /><input type="hidden" id="article_id" value="{{article.id}}" />
         </p>
         {% endif %}
-        {% autoescape off %}
-        {{ rendered_reply }}
-        {% endautoescape %}
         <div class="addReply">
             <form name="write_reply_form" method="post" action="/board/{{board_name}}/{{article.id}}/reply/" enctype="multipart/form-data">
                 <input type="hidden" name="root_id" value="{{article.id}}" />
@@ -110,6 +107,9 @@
                 </table>
             </form>
         </div>
+        {% autoescape off %}
+        {{ rendered_reply }}
+        {% endautoescape %}
     </div>
 </div>
 {% endblock %}
