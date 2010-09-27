@@ -25,10 +25,10 @@ a:hover { color:#333; text-decoration:underline; }
 #navigation h1 a { background:url(/media/image/stealBlue/i_bi.png) no-repeat top left; }
 #navigation ul.menu a.favorite { background:url(/media/image/stealBlue/menu_1.png) no-repeat top left; }
 #navigation ul.menu a.category1 { background:url(/media/image/stealBlue/menu_2.png) no-repeat top left; }
-#navigation ul.menu a.category2 { background:url(/media/image/stealBlue/menu_2.png) no-repeat top left; }
-#navigation ul.menu a.category3 { background:url(/media/image/stealBlue/menu_2.png) no-repeat top left; }
-#navigation ul.menu a.category4 { background:url(/media/image/stealBlue/menu_2.png) no-repeat; }
-#navigation ul.menu a.category5 { background:url(/media/image/stealBlue/menu_2.png) no-repeat; }
+#navigation ul.menu a.category2 { background:url(/media/image/stealBlue/menu_3.png) no-repeat top left; }
+#navigation ul.menu a.category3 { background:url(/media/image/stealBlue/menu_4.png) no-repeat top left; }
+#navigation ul.menu a.category4 { background:url(/media/image/stealBlue/menu_5.png) no-repeat; }
+#navigation ul.menu a.category5 { background:url(/media/image/stealBlue/menu_6.png) no-repeat; }
 
 #navigation ul.menu a:hover { background-position:0 -60px; !important; }
 #category1 #navigation a.category1 { background-position:0 -120px; !important; }
