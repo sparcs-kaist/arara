@@ -16,8 +16,9 @@
         <!--[if (gte IE 5.5)&(lte IE 8)]>
             <script type="text/javascript" src="/media/js/ie-css3.js"></script>
         <![endif]-->
-        {% block script %}
+        
         <script type="text/javascript" src="/media/js/base.js"></script>
+        {% block script %}
         {% endblock %}
     </head>
     
@@ -162,7 +163,7 @@
                         <ul>
                             <li><a href="/account/">내 정보</a></li>
                             <li><a href="/account/password_modify/">비밀번호 수정</a></li>
-                            <li><a href="/message/inbox/">쪽지함</a><span class="sideRight">0</span></li>
+                            <li><a href="/message/inbox/">쪽지함</a><span class="sideRight" id="countNewMessage">0</span></li>
                             <li><a href="/blacklist/">블랙리스트</a></li>
                             <li><strong><a href="/account/logout/">로그아웃</a></strong></li>
                         </ul>

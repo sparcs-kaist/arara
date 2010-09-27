@@ -9,4 +9,5 @@ urlpatterns = patterns('',
     (r'^send/$', 'warara.message.views.send'),
     (r'^delete/$', 'warara.message.views.delete'),
     (r'^reply/(\d+)/$', 'warara.message.views.send'),
+    (r'^count_new/$', 'warara.message.views.count_new_message'),
 )
