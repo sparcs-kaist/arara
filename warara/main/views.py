@@ -11,7 +11,6 @@ from libs import timestamp2datetime
 from warara import warara_middleware
 
 from arara_thrift.ttypes import InvalidOperation
-from etc.warara_settings import USE_WEATHER_FORECAST, WEATHER_ICON_PATH, WEATHER_ICON_SET
 from arara_thrift.ttypes import *
 
 @warara.wrap_error
@@ -74,24 +73,6 @@ def main(request):
     except InvalidOperation:
         ctx['has_banner'] = False
 
-    # Get Weather info
-    if USE_WEATHER_FORECAST:
-        ctx['weather_info'] = server.bot_manager.get_weather_info(sess)
-        if ctx['weather_info'].city == None:
-            ctx['has_weather'] = False
-        else:
-            if ctx['weather_info'].city.lower() == 'daejeon':
-                ctx['weather_info'].city = u'대전'
-            elif ctx['weather_info'].city.lower == 'seoul':
-                ctx['weather_info'].city = u'서울'
-
-            ctx['weather_info'].current_icon_url = weather_icon_replace(ctx['weather_info'].current_icon_url)
-            ctx['weather_info'].tomorrow_icon_url = weather_icon_replace(ctx['weather_info'].tomorrow_icon_url)
-            ctx['weather_info'].day_after_tomorrow_icon_url = weather_icon_replace(ctx['weather_info'].day_after_tomorrow_icon_url)
-            ctx['has_weather'] = True
-    else:
-        ctx['has_weather'] = False
-    
     rendered = render_to_string('main.html', ctx)
     return HttpResponse(rendered)
 
@@ -116,11 +97,3 @@ def get_user_info(request):
     else:
         return HttpResponse("Linear Algebra")
     assert ret, information
-
-def weather_icon_replace(orig_url):
-    # google의 icon을 아라 디자인에 맞는 weather icon으로 converting 하는 함수
-    for source, dest in WEATHER_ICON_SET:
-        if orig_url.endswith(source):
-            return WEATHER_ICON_PATH + dest
-    # 만약 아라에 적절한 아이콘이 없을 경우 앞에 http://www.google.com을 붙여 줌(기본 아이콘 사용)
-    return "http://www.google.com" + orig_url

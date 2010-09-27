@@ -2,6 +2,7 @@
 from warara import warara_middleware
 from django import template
 from django.core.cache import cache
+from etc.warara_settings import USE_WEATHER_FORECAST, WEATHER_ICON_PATH, WEATHER_ICON_SET
 register = template.Library()
 
 #CACHETIME_BOARD_LIST = 600
@@ -50,6 +51,47 @@ class BoardListUpdateNode(template.Node):
         context['category5_list'] = category5_list
 
         return ""
+
+@register.tag(name="get_weather_info")
+def do_get_weather_info(parser, token):
+    return WeatherInfoNode()
+
+class WeatherInfoNode(template.Node):
+    def render(self, ctx):
+        server = warara_middleware.get_server()
+        # XXX(hodduc) : wairara.check_logged_in을 거쳤음에도 불구하고 Context를 따로 만들어서 쓰는 view가 너무 많다.
+        # 하나로 통일하는 것이 깔끔해 보인다
+        if not ctx.has_key('arara_session'):
+            return ''
+        sess = ctx['arara_session']
+        # Get Weather info
+        if USE_WEATHER_FORECAST:
+            ctx['weather_info'] = server.bot_manager.get_weather_info(sess)
+            if ctx['weather_info'].city == None:
+                ctx['has_weather'] = False
+            else:
+                if ctx['weather_info'].city.lower() == 'daejeon':
+                    ctx['weather_info'].city = u'대전'
+                elif ctx['weather_info'].city.lower == 'seoul':
+                    ctx['weather_info'].city = u'서울'
+
+                ctx['weather_info'].current_icon_url = weather_icon_replace(ctx['weather_info'].current_icon_url)
+                ctx['weather_info'].tomorrow_icon_url = weather_icon_replace(ctx['weather_info'].tomorrow_icon_url)
+                ctx['weather_info'].day_after_tomorrow_icon_url = weather_icon_replace(ctx['weather_info'].day_after_tomorrow_icon_url)
+                ctx['has_weather'] = True
+        else:
+            ctx['has_weather'] = False
+
+        return ""
+
+def weather_icon_replace(orig_url):
+    # google의 icon을 아라 디자인에 맞는 weather icon으로 converting 하는 함수
+    for source, dest in WEATHER_ICON_SET:
+        if orig_url.endswith(source):
+            return WEATHER_ICON_PATH + dest
+    # 만약 아라에 적절한 아이콘이 없을 경우 앞에 http://www.google.com을 붙여 줌(기본 아이콘 사용)
+    return "http://www.google.com" + orig_url
+
 
 @register.filter(name='get_board_description')
 def do_get_board_description(value, arg):

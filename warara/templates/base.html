@@ -168,6 +168,7 @@
                         </ul>
                     </dd>
                 </dl>
+                {% get_weather_info %}
                 {% if has_weather %}
                 <dl id="weather">
                     <dt>WEATHER<span class="sideRight"> {{weather_info.city}}</span></dt>
