@@ -1,4 +1,11 @@
 $(document).ready(function(){
+    $("#miniLoginID,#miniLoginPassword").keypress( function(event) {
+        if(event.keyCode == '13'){
+            $("form[name='login']").submit();
+            $("#miniLoginId,#miniLoginPassword").unbind();
+            event.preventDefault();
+        }
+    });
     $("#loginBox a").eq(0).click(function(event) {
         $("#miniLoginSubmit").click();
     });
