@@ -108,9 +108,9 @@ input { font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; }
 .listBottom { margin:15px 0 0 0; padding:0; float:right; }
 
 #searchForm { float:left; }
-.searchBox { height:24px !important; width:304px !important; }
+.searchBox { height:24px !important; width:326px !important; }
 .searchBox p { float:left; line-height:24px; font-size:0; margin:0; }
-.searchBox .selectObject { font-size:11px; letter-spacing:-1px; width:95px !important; margin:2px 0; height:20px; line-height:20px; padding-left:2px; }
+.searchBox .selectObject { font-size:11px; letter-spacing:-1px; width:117px !important; margin:2px 0; height:20px; line-height:20px; padding-left:2px; }
 .searchBox .selectObject a { padding:3px 4px; }
 .searchBox .searchInput { height:24px; line-height:24px; vertical-align:top; }
 .searchBox #searchText { height:16px !important; border:0; width:169px !important; padding:4px; font-size:12px;  line-height:16px; vertical-align:top; }
@@ -239,3 +239,5 @@ input { font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; }
 
 /* Hidden Class */
 .hidden { display:none; }
+/* Highlight Class */
+.highlight { font-weight:bold; }

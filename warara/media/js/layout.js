@@ -49,8 +49,8 @@ $(document).ready(function(){
 		.bind("mouseover",function() { isMouseovered=1; })
 		.bind("mouseout", callHideCat);
 		
-	$(".selectObject a")
-		.bind("click", function() { $(this).toggleClass("selected"); });
+//	$(".selectObject a")
+//		.bind("click", function() { $(this).toggleClass("selected"); });
 		
 	$(".dropBox a")
 		.bind("click", function(){

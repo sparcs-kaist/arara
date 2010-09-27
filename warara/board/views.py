@@ -57,8 +57,8 @@ def get_article_list(request, r, mode):
 
     if not r.get('selected_method_list', 0):
         r['selected_method_list'] = ['title', 'content', 'author_nickname', 'author_username']
-        r['search_method_list'] = [{'val':'title', 'text':'title'}, {'val':'content', 'text':'content'},
-                {'val':'author_nickname', 'text':'nickname'}, {'val':'author_username', 'text':'id'}]
+        r['search_method_list'] = [{'val':'title', 'text':'제목'}, {'val':'content', 'text':'본문'},
+                {'val':'author_nickname', 'text':'글쓴이'}, {'val':'author_username', 'text':'ID'}]
         
     # XXX 2010.05.18. page_length 변수를 사용하지 않던 걸 사용하도록 고치다.
     #                 이 값은 Backend 에서 가져오는 페이지당 글의 갯수이다.
@@ -628,8 +628,8 @@ def _search(request, r, sess, board_name):
         r['board_name'] = u'All Articles'
 
     r['selected_method_list'] = ['title', 'content', 'author_nickname', 'author_username']
-    r['search_method_list'] = [{'val':'title', 'text':'title'}, {'val':'content', 'text':'content'},
-            {'val':'author_nickname', 'text':'nickname'}, {'val':'author_username', 'text':'id'}]
+    r['search_method_list'] = [{'val':'title', 'text':'제목'}, {'val':'content', 'text':'본문'},
+            {'val':'author_nickname', 'text':'글쓴이'}, {'val':'author_username', 'text':'ID'}]
     search_word = request.GET.get('search_word', '')
     r['search_word'] = search_word
     r['selected_method_list'] = []

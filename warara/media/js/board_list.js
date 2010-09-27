@@ -25,16 +25,15 @@ $(document).ready(function(){
         location.href = article_link;
     }
 
-    // Search mode의 동작을 보장하고 있지 않음
     var cursor_sm = 0; //cursor search method
-    var length_sm = $("#board_buttons a[name='search_method_select']").length;
+    var length_sm = $(".searchBox a").length;
 
     function update_search_method(cursor){
-        $("#board_buttons a[name='search_method_select']").removeClass("highlight");
-        $("#board_buttons a[name='search_method_select']").eq(cursor).addClass("highlight");
+        $(".searchBox a").removeClass("highlight");
+        $(".searchBox a").eq(cursor).addClass("highlight");
     }
 
-    $("#board_buttons a[name='search_method_select']").click(function(event){
+    $(".searchBox a").click(function(event){
             toggle_search_method($(this));
             event.preventDefault();
             });
@@ -42,22 +41,22 @@ $(document).ready(function(){
     function toggle_search_method($sm){
             $sm.toggleClass("selected");
             if($sm.hasClass("selected")){
-            $sm.parent().children("input").attr("name", $sm.attr("rel"));
+            $sm.next().attr("name", $sm.attr("rel"));
             }
             else{
-            $sm.parent().children("input").removeAttr("name");
+            $sm.next().removeAttr("name");
             }
-            if(!$(".selected").length){
+/*            if(!$(".selected").length){
             $("#board_buttons span a[name='search_method_select']").eq(((cursor_pos-1) % 4)).addClass("selected");
             $("#board_buttons span.search_method input").eq(((cursor_pos-1) % 4)).attr("name", $("#board_buttons span a[name='search_method_select']").eq(((cursor_pos-1) % 4)).attr("rel"));
-            }
+            }*/
     }
 
     $(document).keypress(function(event) {
 		if($focus_input || event.altKey || event.ctrlKey){
 		return;
 		}
-        if(!$("#list_link").attr("href")){ //move to main page when user press q in article_list page
+        if(!$(".articleView").length){ //move to main page when user press q in article_list page
         switch(event.which){
             case 113: // 'q'
                 location.href = "/main";
@@ -65,22 +64,22 @@ $(document).ready(function(){
                 }
         }
         // Search에 관한 부분
-        if($("#board_buttons a.highlight").length){
+        if($(".searchBox a.highlight").length){
             switch(event.which){
-                case 115:
-                    $("#board_buttons a.highlight").removeClass("highlight");
-                    $(".hidden_highlight").removeClass("hidden_highlight").addClass("row_highlight");
-                    $("#board_buttons input[name='search_word']").focus();
+                case 115: // 's'
+                    $(".searchBox a.highlight").removeClass("highlight");
+                    $(".boardList .hidden_selected").removeClass("hidden_selected").addClass("selected");
+                    $(".searchBox input[name='searchText']").focus();
                     cursor_sm = 0;
                     break;
-                case 106:
+                case 106: // 'j'
                     cursor_sm -= 1;
                     if (cursor_sm < 0){
                     cursor_sm = 0;
                     }
                     update_search_method(cursor_sm);
                     break;
-                case 107:
+                case 107: 'k'
                     cursor_sm += 1;
                     if (cursor_sm >= length_sm){
                     cursor_sm = length_sm - 1;
@@ -89,7 +88,7 @@ $(document).ready(function(){
                     break;
                 case 32:
                 case 39:
-                    $sm = $("#board_buttons a[name='search_method_select']").eq(cursor_sm);
+                    $sm = $(".searchBox a").eq(cursor_sm);
                     toggle_search_method($sm);
                     event.preventDefault();
                     break;
@@ -99,8 +98,8 @@ $(document).ready(function(){
             switch(event.which){
                 case 115:
                     $(".highlight").removeClass("highlight");
-                    $(".row_highlight").removeClass("row_highlight").addClass("hidden_highlight");
-                    $("#board_buttons a[name='search_method_select']").eq(cursor_sm).addClass("highlight");
+                    $(".boardList .selected").removeClass("selected").addClass("hidden_selected");
+                    $(".searchBox a").eq(cursor_sm).addClass("highlight");
                     location.href = "#search_method_select";
                     break;
             }

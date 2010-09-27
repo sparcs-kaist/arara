@@ -34,18 +34,17 @@ $(document).ready(function(){
     $root_article_id = parseInt($(".articleInfo").eq(0).attr("rel"));
     $row_count = $(".boardList tr").length;
 
-/* XXX(hodduc): 현재 새 디자인에는 LIST 버튼이 없으므로 일단 주석 처리함
         $(document).keypress(function(event) {
         if($focus_input || event.altKey || event.ctrlKey){
         return;
         }
         switch (event.which) {
             case 108:  // list
-                var list_link = $("#list_link").attr("href");
-                location.href = list_link;
+                var backref = $("#backref").val();
+                location.href = backref;
                 break;
         }
-    });*/ 
+    });
 
 // XXX(hodduc): 동작하고 있지 않은 기능인 듯?
 //    $(".article div.article_content.previously_read").hide();
@@ -190,11 +189,11 @@ $(document).ready(function(){
         if($focus_input || event.altKey || event.ctrlKey){
             return;
         }
-/*      switch(event.which){
+        switch(event.which){
             case 113:
-                location.href = $("#list_link").attr("href");
+                location.href = $("#backref").val();
                 break;
-        }*/
+        }
     });
 
     $("#write_reply").click(function(event) {
