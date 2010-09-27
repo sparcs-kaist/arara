@@ -22,7 +22,7 @@ def index(request):
         bbs_managers_list.append({'board': board, 'managers': bbs_managers})
     r['bbs_managers_list'] = bbs_managers_list
 
-
+    r['category_list'] = server.board_manager.get_category_list() + [{'category_name':'None'}]
 
     # TODO: 배너를 단순히 나열하기보다는 배너의 날짜 등을 함께 표시하는 것이 어떨까?
     banner_list = server.notice_manager.list_banner(sess)
@@ -44,7 +44,9 @@ def add_board(request):
         #TODO: 공백 말머리는 허용하지 말 것
         board_headings = [x.strip() for x in headings_string.split(",")]
 
-    server.board_manager.add_board(sess, request.POST['add_board_name'], request.POST['add_board_description'], board_headings, None, int(request.POST['add_board_type']), int(request.POST['to_read_level']), int(request.POST['to_write_level']))
+    category_name = request.POST.get('add_board_category', None)
+    if category_name == "None": category_name = None
+    server.board_manager.add_board(sess, request.POST['add_board_name'], request.POST['add_board_description'], board_headings, category_name, int(request.POST['add_board_type']), int(request.POST['to_read_level']), int(request.POST['to_write_level']))
     return HttpResponseRedirect('/sysop/')
 
 def _ajax_calling(response):
@@ -214,6 +216,21 @@ def return_hide_board(request):
         if request.POST.get(board.board_name, None):
             msg = server.board_manager.hide_board(sess, board.board_name)
     return HttpResponseRedirect('/sysop/')
+
+@warara.wrap_error
+def add_category(request):
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+
+    new_category_name = request.POST.get('add_board_name', None)
+    if not new_category_name:
+        return HttpResponseRedirect('/sysop')
+
+    try:
+        server.board_manager.add_category(sess, new_category_name)
+    except:
+        raise
+    return HttpResponseRedirect('/sysop')
 
 @warara.wrap_error
 def refresh_weather(request):

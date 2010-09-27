@@ -77,6 +77,13 @@
     <legend>보드 추가</legend>
     <form method="post" action="/sysop/add_board/">
         <label for="add_board_name">보드 이름</label><input type="text" class="textfield" name="add_board_name" id="add_board_name"><br />
+        <label for="add_board_category">카테고리</label>
+        <select name="add_board_category" id="add_board_category">
+            {% for category in category_list %}
+            <option value="{{ category.category_name }}">{{ category.category_name }}</option>
+            {% endfor %}
+        </select>
+        <br />
         <label for="add_board_type">보드 형식</label>
         <select name="add_board_type" id="add_board_type">
             <option value=0>일반 보드</option>
@@ -98,6 +105,15 @@
         <br />
         <label for="add_board_headings">말머리 목록</label><input type="text" class="textfield" name="add_board_headings" id="add_board_headings"><br />
         <p>말머리를 여러개 등록할 때에는 말머리를 쉼표로 구분합니다. (예 : 삽니다,팝니다)</p>
+        <input type="submit" class="button" value="추가">
+    </form>
+</fieldset>
+
+<fieldset id="add_category">
+    <legend>카테고리 추가</legend>
+    <form method="post" action="/sysop/add_category/">
+        <label for="add_category_name">카테고리 이름</label><input type="text" class="textfield" name="add_board_name" id="add_board_name"><br />
+        <br />
         <input type="submit" class="button" value="추가">
     </form>
 </fieldset>

@@ -388,6 +388,8 @@ service ARAraThriftInterface {
                    3:string board_description, 4:list<string> heading_list, 5:string category_name, 6:i32 board_type, 7:i32 to_read_level, 8:i32 to_write_level)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void add_category(1:string session_key, 2:string category_name)
+        throws (1:InvalidOperation invalid)
     Board get_board(1: string board_name)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
@@ -397,6 +399,9 @@ service ARAraThriftInterface {
     list<string> get_board_heading_list(1: string board_name)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch),
+    list<Category> get_category_list()
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     list<Board> get_board_list()
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
