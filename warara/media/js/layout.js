@@ -87,7 +87,11 @@ function setWidth () {
 	
 	$(".writeTable .writeContents textarea").css("width",contentsWidth-60);
 	$(".articleView .attached td div").css("width",contentsWidth-107);
-}
+
+	$(".replyBox .attached td div").each(function(){
+            var depth = $(this).parents(".replyBox").length;
+            $(this).css("width",contentsWidth-(107+35*depth));
+        });}
 
 /* 메뉴 롤오버에 쓰이는 js */
 function showCat (event) {
