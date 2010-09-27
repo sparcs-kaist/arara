@@ -72,7 +72,7 @@ class WeatherInfoNode(template.Node):
             else:
                 if ctx['weather_info'].city.lower() == 'daejeon':
                     ctx['weather_info'].city = u'대전'
-                elif ctx['weather_info'].city.lower == 'seoul':
+                elif ctx['weather_info'].city.lower() == 'seoul':
                     ctx['weather_info'].city = u'서울'
 
                 ctx['weather_info'].current_icon_url = weather_icon_replace(ctx['weather_info'].current_icon_url)
