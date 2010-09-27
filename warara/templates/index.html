@@ -1,63 +1,99 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 {% load i18n %}
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
     <head>
+        <title>아라 - 로그인</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="description" content="KAIST 학내 커뮤니티, 아라">
+        <link rel="stylesheet" href="/media/style_new/layout.css" type="text/css" media="screen" />
+        <link rel="stylesheet" href="/media/style_new/stealBlue.css" type="text/css" media="screen" />
+        <link rel="shortcut icon" href="/media/image/favicon.ico" type="image/x-icon" />
+        <!--<link rel="stylesheet" href="/media/style_new/print.css" type="text/css" media="print" />-->
         <script type="text/javascript" src="/media/thirdparty/jquery-latest.min.js"></script>
-        <script type="text/javascript" src="/media/thirdparty/jquery.history.js"></script>
-        <script type="text/javascript" src="/media/js/index.js"></script>
-        <link rel="stylesheet" href="/media/style/index.css"></link>
-        <title>아라</title>
+        <script type="text/javascript" src="/media/js/layout.js"></script>
+        <!--[if (gte IE 5.5)&(lte IE 8)]>
+            <script type="text/javascript" src="/media/js/ie-css3.js"></script>
+        <![endif]-->
     </head>
-    <body>
-        <div id="wrapper">
-            <div id="content_wrapper">
-                <div id="content_img">
-                    <p id="postcard"><img src="/media/image/postcard.jpg" alt="아라 POSTCARD" /></p>
-                    <p id="index_beta_png"><img src="/media/image/beta.png" alt="beta" class="iepngfix" /></p>
-                    <p id="logo"><img src="/media/image/base/header/raw_ara_w_main_header_webara_title.png" alt="아라 LOGO" class="iepngfix" /></p>
-                    </div>
-                <div id="login">
-                    <form action="/account/login/" method="post">
-                        <input type="image" src="/media/image/login.png" alt="LOGIN" id="login_img" />
-                        <div id="input_wrapper">
-                            <div id="username">
-                                <label for="username">{% trans "ID" %}</label>
-                                <input type="text" id="username_text" name="username" />
-                            </div>
-                            <div id="password">
-                                <label for="password">{% trans "PASSWORD" %}</label>
-                                <input type="password" id="password_text" name="password" />
-                            </div>
+    
+    <body id="noMenu" onload="setWidth();" onresize="setWidth();">
+        <ul id="topLinks">
+            <li class="kaist"><a href="http://www.kaist.ac.kr"><strong>KAIST</strong></a></li>
+            <li><a href="http://ara.kaist.ac.kr" title="웹아라">WebARA</a></li>
+            <li><a href="http://lkin.kaist.ac.kr" title="수강지식인">LKIN</a></li>
+            <li><a href="http://otl.kaist.ac.kr" title="온라인 타임테이블 OTL">OTL</a></li>
+            <li><a href="http://ftp.kaist.ac.kr" title="오픈소스 미러링 서비스 FTPKAIST 입니다.">FTPKAIST</a></li>
+            <li><a href="#" id="moreLinks">more...</a></li>
+        </ul>
+        <div id="signInModal">
+            <div class="modalMargin"></div>
+            <div class="modalWindow">
+                <div class="aboutAra">
+                    <h1><img src="/media/image/stealBlue/i_signin_bi.png" alt="아라" /></h1>
+                    <p class="desc">
+                        웹아라는 KAIST 학내 커뮤니티입니다.<br />
+                        웹아라의 모든 정보를 이용하시려면<br />
+                        이 페이지에서 본인의 계정으로 로그인하셔야 합니다.<br />
+                        아직 본인의 계정이 없으신 경우,<br />
+                        회원가입 및 KAIST 구성원 인증 절차를 거쳐<br />
+                        웹아라의 모든 서비스를 이용하실 수 있습니다.
+                    </p>
+                </div>
+                <div class="signInInput">
+                    <h2><img src="/media/image/stealBlue/i_signin_title.png" alt="로그인 sign in" /></h2>
+                    <form id="signIn" method="post" action="/account/login/">
+                        <div class="idPw">
+                            <p class="id"><label for="araId">ID</label><input type="text" class="signInInput" id="araId" name="username" tabindex="1" /></p>
+                            <p class="pw"><label for="araId">Password</label><input type="password" class="signInInput" id="araPw" name="password" tabindex="2" /></p>
+                            <p class="etc">
+                                <a href="/account/register/agreement/" tabindex="4">회원가입</a><br />
+                                <a href="/main/" tabindex="5">게스트로 입장</a>
+                            </p>                            
                         </div>
-                        <input type="hidden" name="current_page_url" value="/main/"></input>
-                   </form>
-                </div>
-                <div id="navigation">
-                    <p id="register"><a href="/account/register/agreement/">{% trans "REGISTER" %}</a></p>
-                    <p id="guest"><a href="/main/">{% trans "GUEST" %}</a></p>
-                </div>
-            </div>
-            <div id="footer_wrapper">
-                <div id="footer_content">
-                    <div id="footer">
-                        {% trans "All copyrights reserved by SPARCS" %}
-                    </div>
-                    <div id="counter">
-                        <p>{% trans "TODAY" %} : <span>{{today_visitor_count}}</span></p>
-                        <p>{% trans "TOTAL" %} : <span>{{total_visitor_count}}</span></p>
-                    </div>
+                        <div class="submitButton">
+                            <input type="submit" class="signInButton" id="signinSubmit" tabindex="3" value="Sign in" />
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-        <script type="text/javascript">
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-        </script>
-        <script type="text/javascript">
-        try {
-        var pageTracker = _gat._getTracker("UA-7828380-1");
-        pageTracker._trackPageview();
-        } catch(err) {}</script>
+        <div id="linksModalBG"></div>
+        <div id="linksModal">
+            <div class="modalMargin"></div>
+            <div class="modalWindow">
+                <p class="modalTitle">KAIST 주요 사이트</p>
+                <p class="quitModal"><a href="#"><img src="/media/image/stealBlue/i_quitModal.png" alt="(quit modal)" /></a></p>
+                <div class="modalContents">
+                    <ul>
+                        <li class="kaist"><a href="http://www.kaist.ac.kr">KAIST 홈페이지</a></li>
+                        <li><a href="http://lkin.kaist.ac.kr" title="수강지식인">LKIN</a></li>
+                        <li><a href="http://ftp.kaist.ac.kr" title="오픈소스 미러링 서비스 FTPKAIST 입니다.">FTPKAIST</a></li>
+                        <li><a href="telnet://bar.kaist.ac.kr" title="Bar Telnet BBS served by KaLi">Bar Telnet</a></li>
+                        <li><a href="http://bar.kaist.ac.kr" title="Bar Web BBS served by KaLi">Bar Web</a></li>
+                        <li><a href="http://kftp.kaist.ac.kr" title="한국과학기술원 FTP SITE: 한컴오피스, MS등의 필수 유틸리티가 공식적으로 배포되는곳.">KFtp</a></li>
+                        <li><a href="http://voki.kaist.ac.kr" title="한국과학기술원 교육방속국 V.O.K.(Voice Of KAIST)">VOK</a></li>
+                        <li><a href="https://portal.kaist.ac.kr" title="포탈시스템">포탈</a></li>
+                        <li><a href="http://webmail.kaist.ac.kr" title="KAIST Webmail System">웹메일</a></li>
+                        <li><a href="http://kaipa.kaist.ac.kr" title="수강신청시스템">Kaipa</a></li>
+                        <li><a href="http://ict.kaist.ac.kr" title="정보통신팀">ICT</a></li>
+                        <li><a href="http://kds.kaist.ac.kr" title="KAIST Dormitory System">KDS</a></li>
+                    </ul>
+                    <ul>
+                        <li><a href="http://ara.kaist.ac.kr" title="웹아라">아라</a></li>
+                        <li><a href="http://otl.kaist.ac.kr" title="온라인 타임테이블 OTL">OTL</a></li>
+                        <li><a href="http://student.kaist.ac.kr" title="학부총학생회">학부 총학생회</a></li>
+                        <li><a href="http://welfare.kaist.ac.kr" title="학생복지위원회">학생복지위원회</a></li>
+                        <li><a href="http://club.cyworld.com/2008KAISTJY" title="동아리연합회">동아리연합회</a></li>
+                        <li><a href="http://dormi.kaist.ac.kr" title="생활관자치회">생활관자치회</a></li>
+                        <li><a href="http://gsa.kaist.ac.kr" title="대학원총학생회">대학원 총학생회</a></li>
+                        <li><a href="http://elka.kaist.ac.kr" title="KAIST 공식 응원단 E.L.K.A.">ELKA</a></li>
+                        <li><a href="http://kisa.kaist.ac.kr" title="KAIST International Student Association, KISA">KISA</a></li>
+                        <li><a href="http://kaistwhatson.blogspot.com" title="KAIST Whats' on!">What's on</a></li>
+                        <li><a href="http://www.ilovekaist.net" title="KAIST 동창회">동창회</a></li>
+                        <li><a href="http://club.cyworld.com/rmskaist" title="식당모니터링위원회">식당모니터링위원회</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

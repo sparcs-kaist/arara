@@ -219,6 +219,22 @@ input { font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; }
 .mainBody .mainItem .BAdateinfo {width:120px;}
 .mainBody .mainItem .second td, .mainBody .mainItem .second th { padding-top:5px; }
 
+#signInModal { position:absolute; top:0; left:0; width:100%; height:100%; }
+#signInModal .modalMargin { width:100%; height:50%; margin-bottom:-140px; }
+#signInModal .modalWindow { margin:0 auto; width:860px; height:280px; text-align:left; }
+#signInModal .modalWindow>.aboutAra { float:left; padding:30px 0 0 40px; width:480px; height:230px; }
+#signInModal .modalWindow>.aboutAra .desc { padding:20px 0 0 80px; }
+#signInModal .modalWindow>.signInInput { float:right; padding:30px 0 0 0; width:340px; }
+#signInModal .modalWindow>.signInInput #signIn .idPw { width:235px; float:left; }
+#signInModal .modalWindow>.signInInput #signIn .id { height:25px; margin-bottom:2px; }
+#signInModal .modalWindow>.signInInput #signIn .pw { height:25px; margin-bottom:5px; }
+#signInModal .modalWindow>.signInInput #signIn .etc { padding-left:80px; line-height:25px; }
+#signInModal .modalWindow>.signInInput #signIn { padding-top:20px; }
+#signInModal .modalWindow>.signInInput #signIn label { display:block; float:left; width:80px; height:25px; line-height:25px; font-size:0.9em; letter-spacing:-1px; font-family:Helvetica,Arial,sans-serif; font-weight:bold; }
+#signInModal .modalWindow>.signInInput #signIn .signInInput { width:147px; margin:0; padding:3px; font-size:1em; height:17px; line-height:17px; }
+#signInModal .modalWindow>.signInInput #signIn .submitButton { float:right; width:75px; padding-right:25px; }
+#signInModal .modalWindow>.signInInput #signIn .submitButton input { width:75px; height:52px; font-size:12px; font-family:Helvetica,Arial,sans-serif; font-weight:bold; }
+
 .cb { clear:both; height:1px; margin:0; padding:0; border:0; font-size:0; line-height:0; overflow:hidden; }
 
 /* Hidden Class */

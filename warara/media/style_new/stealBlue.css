@@ -151,6 +151,13 @@ a:hover { color:#333; text-decoration:underline; }
 .mainBody .bestArticles .top .BAtitle a, .mainBody .hotArticles .top .BAtitle a { color:#fff; }
 .mainBody .bestArticles .top a, .mainBody .hotArticles .top a { color:#fff; }
 
+#signInModal { background:url(../images/stealBlue/b_signin.png) bottom right no-repeat; }
+#signInModal .modalWindow { background:#fff; -moz-box-shadow: 0 10px 20px #444; -webkit-box-shadow: 0 10px 20px #444; box-shadow: 0 10px 20px #444; }
+#signInModal .modalWindow>.aboutAra .desc { color:#666; }
+#signInModal .modalWindow>.signInInput #signIn .etc a { color:#333; text-decoration:underline; }
+#signInModal .modalWindow>.signInInput #signIn .signInInput { border:1px #dadada solid; }
+#signInModal .modalWindow>.signInInput #signIn .submitButton input { border:0; background:#666; color:#fff; }
+
 /* buttons */
 .darkButton { background:#333; color:#fff; }
 .lightButton { background:#8e8e8e; color:#fff; }
