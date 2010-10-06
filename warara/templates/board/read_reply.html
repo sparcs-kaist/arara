@@ -3,7 +3,6 @@
         <div class="replyTitle">
             <h4><a href="#">{{article.title}}</a></h4>
             <p class="author">{{article.author_nickname}} <span class="eng">{{article.author_username}}</span></p>
-            <p class="readCount">조회 <span class="eng">32767</span></p>
             <p class="recCount">추천 <span class="eng">+<span id="positive_vote_num_{{article.id}}">{{article.positive_vote}}</span> / -<span id="negative_vote_num_{{article.id}}">{{article.negative_vote}}</span></span></p>
             <p class="date">{% filter lower %}{{article.date|date:"Y/m/d g:i A"}}{% endfilter %}</p>
         </div>
