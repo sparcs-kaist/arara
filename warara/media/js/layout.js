@@ -79,6 +79,7 @@ function setWidth () {
 	
 	$("#mainWrap").css("width",contentsWidth+160); // IE6은 min-width가 안먹어요 ㅠㅠ
 	$("#navigation").css("width",contentsWidth+160); // IE6은 min-width가 안먹어요 ㅠㅠ
+	$("#topLinks").css("width",contentsWidth+140);
 	$("#contents").css("width",contentsWidth);
 	$("#noMenu #boardInCategory").css("width",contentsWidth);
 	$(".mainBody .mainNotice .mainItemContents").css("width",contentsWidth-111);
