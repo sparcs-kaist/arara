@@ -22,7 +22,7 @@
         {% endblock %}
     </head>
     
-    <body id="category1" onload="setWidth();" onresize="setWidth();">
+    <body onload="setWidth();" onresize="setWidth();">
         <ul id="topLinks">
             <li class="kaist"><a href="http://www.kaist.ac.kr"><strong>KAIST</strong></a></li>
             <li><a href="http://ara.kaist.ac.kr" title="웹아라">WebARA</a></li>
@@ -34,12 +34,12 @@
         <div id="navigation">
             <h1><a href="/main/">아라</a></h1>
             <ul class="menu">
-                <li><a href="#" class="favorite">모아보기</a></li>
-                <li><a href="#" class="category1">카테고리명</a></li>
-                <li><a href="#" class="category2">카테고리명</a></li>
-                <li><a href="#" class="category3">카테고리명</a></li>
-                <li><a href="#" class="category4">카테고리명</a></li>
-                <li><a href="#" class="category5">카테고리명</a></li>
+                <li><a href="#" class="category" id="menuFavorite" rel="Favorite">모아보기</a></li>
+                <li><a href="#" class="category" id="menuCategory1" rel="Category1">카테고리명</a></li>
+                <li><a href="#" class="category" id="menuCategory2" rel="Category2">카테고리명</a></li>
+                <li><a href="#" class="category" id="menuCategory3" rel="Category3">카테고리명</a></li>
+                <li><a href="#" class="category" id="menuCategory4" rel="Category4">카테고리명</a></li>
+                <li><a href="#" class="category" id="menuCategory5" rel="Category5">카테고리명</a></li>
             </ul>
             <ul class="menuRight">
                 <li class="fr"><a href="#" class="help">도움말</a></li>
@@ -51,7 +51,7 @@
                 <!-- 카테고리 내 메뉴. 롤오버를 위해 모두 표시 -->
                 <div id="boardInCategory">
                     <!-- 카테고리 내 메뉴. 롤오버를 위해 모두 표시 -->
-                    <dl class="favorite">
+                    <dl class="boardList" id="boardInFavorite">
                         <dt><img src="/media/image/stealBlue/catMenu_category1.png" alt="모아보기" /></dt>
                         <dd>
                             {% get_board_list %}
@@ -66,7 +66,7 @@
                             </ul>
                         </dd>
                     </dl>
-                    <dl class="category1">
+                    <dl class="boardList" id="boardInCategory1">
                         <dt><img src="/media/image/stealBlue/catMenu_category2.png" alt="카테고리1" /></dt>
                         <dd>
                             {% get_board_list %}
@@ -81,8 +81,8 @@
                             </ul>
                         </dd>
                     </dl>
-                    <dl class="category2">
-                        <dt><img src="/media/image/stealBlue/catMenu_category3.png" alt="카테고리1" /></dt>
+                    <dl class="boardList" id="boardInCategory2">
+                        <dt><img src="/media/image/stealBlue/catMenu_category3.png" alt="카테고리2" /></dt>
                         <dd>
                             {% get_board_list %}
                             <ul>
@@ -96,8 +96,8 @@
                             </ul>
                         </dd>
                     </dl>
-                    <dl class="category3">
-                        <dt><img src="/media/image/stealBlue/catMenu_category4.png" alt="카테고리1" /></dt>
+                    <dl class="boardList" id="boardInCategory3">
+                        <dt><img src="/media/image/stealBlue/catMenu_category4.png" alt="카테고리3" /></dt>
                         <dd>
                             {% get_board_list %}
                             <ul>
@@ -111,8 +111,8 @@
                             </ul>
                         </dd>
                     </dl>
-                    <dl class="category4">
-                        <dt><img src="/media/image/stealBlue/catMenu_category5.png" alt="카테고리1" /></dt>
+                    <dl class="boardList" id="boardInCategory4">
+                        <dt><img src="/media/image/stealBlue/catMenu_category5.png" alt="카테고리4" /></dt>
                         <dd>
                             {% get_board_list %}
                             <ul>
@@ -126,8 +126,8 @@
                             </ul>
                         </dd>
                     </dl>
-                    <dl class="category5">
-                        <dt><img src="/media/image/stealBlue/catMenu_category6.png" alt="카테고리1" /></dt>
+                    <dl class="boardList" id="boardInCategory5">
+                        <dt><img src="/media/image/stealBlue/catMenu_category6.png" alt="카테고리5" /></dt>
                         <dd>
                             {% get_board_list %}
                             <ul>

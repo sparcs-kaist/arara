@@ -18,36 +18,17 @@ $(document).ready(function(){
 		$("#linksModal").fadeOut("fast");
 		$("#linksModalBG").fadeOut("fast");
 	});
+
+    // 화면 크기 변경시 화면 재구성
+    $(document).resize(setWidth);
 	
 	/* 메뉴 롤오버 js */
-	$("#navigation .favorite")
-		.bind("click", {catName:".favorite"}, showCat)
-		.bind("mouseover", {catName:".favorite"}, showCat)
-		.bind("mouseout", callHideCat);
-	$("#navigation .category1")
-		.bind("click", {catName:".category1"}, showCat)
-		.bind("mouseover", {catName:".category1"}, showCat)
-		.bind("mouseout", callHideCat);
-	$("#navigation .category2")
-		.bind("click", {catName:".category2"}, showCat)
-		.bind("mouseover", {catName:".category2"}, showCat)
-		.bind("mouseout", callHideCat);
-	$("#navigation .category3")
-		.bind("click", {catName:".category3"}, showCat)
-		.bind("mouseover", {catName:".category3"}, showCat)
-		.bind("mouseout", callHideCat);
-	$("#navigation .category4")
-		.bind("click", {catName:".category4"}, showCat)
-		.bind("mouseover", {catName:".category4"}, showCat)
-		.bind("mouseout", callHideCat);
-	$("#navigation .category5")
-		.bind("click", {catName:".category5"}, showCat)
-		.bind("mouseover", {catName:".category5"}, showCat)
-		.bind("mouseout", callHideCat);
-		
-	$("#boardInCategory dl")
-		.bind("mouseover",function() { isMouseovered=1; })
-		.bind("mouseout", callHideCat);
+    $(".category").click( function(event){
+        if($(this).is(".selected")) $(this).removeClass("selected");
+        else { $(".category").removeClass("selected"); $(this).addClass("selected"); }
+        toggleCat($(this).attr("rel"));
+        event.preventDefault();
+    });
 		
 //	$(".selectObject a")
 //		.bind("click", function() { $(this).toggleClass("selected"); });
@@ -81,7 +62,6 @@ function setWidth () {
 	$("#navigation").css("width",contentsWidth+160); // IE6은 min-width가 안먹어요 ㅠㅠ
 	$("#topLinks").css("width",contentsWidth+140);
 	$("#contents").css("width",contentsWidth);
-	$("#noMenu #boardInCategory").css("width",contentsWidth);
 	$(".mainBody .mainNotice .mainItemContents").css("width",contentsWidth-111);
 	$(".mainBody .mainNotice .mainItemContents #mainBanner .bannerDesc").css("width",contentsWidth-696);
 	$(".mainBody .mainItem .mainItemContents").css("width",contentsWidth-110);
@@ -95,39 +75,30 @@ function setWidth () {
         });}
 
 /* 메뉴 롤오버에 쓰이는 js */
-function showCat (event) {
-	$("#noMenu #boardInCategory").show();
-	isMouseovered=1;
-	var entireHandler = "#boardInCategory dl" + event.data.catName;
-	$("#boardInCategory dl.favorite").hide();
-	$("#boardInCategory dl.category1").hide();
-	$("#boardInCategory dl.category2").hide();
-	$("#boardInCategory dl.category3").hide();
-	$("#boardInCategory dl.category4").hide();
-	$("#boardInCategory dl.category5").hide();
-	$(entireHandler).show();
+function toggleCat (catName) {
+	var entireHandler = "#boardIn" + catName;
+    if(isMouseovered){
+        if($(entireHandler).is(":hidden")){
+            $("#boardInCategory dl.boardList").hide();
+            $(entireHandler).show();
+        } else {
+            callHideCat();
+        }
+    } else {
+        $(entireHandler).slideDown();
+        isMouseovered=1;
+    }
 }
 
 function callHideCat () {
 	isMouseovered=0;
-	setTimeout("hideCat()",1000);
+	setTimeout("hideCat()",200);
 }
 
 function hideCat () {	
 	if(!isMouseovered) {
-		$("#noMenu #boardInCategory").hide();
-		$("#boardInCategory dl.favorite").hide();
-		$("#boardInCategory dl.category1").hide();
-		$("#boardInCategory dl.category2").hide();
-		$("#boardInCategory dl.category3").hide();
-		$("#boardInCategory dl.category4").hide();
-		$("#boardInCategory dl.category5").hide();
-		$("#favorite #contents .favorite").show();
-		$("#category1 #contents .category1").show();
-		$("#category2 #contents .category2").show();
-		$("#category3 #contents .category3").show();
-		$("#category4 #contents .category4").show();
-		$("#category5 #contents .category5").show();
+		$("#noMenu #boardInCategory").slideUp();
+		$("#boardInCategory dl.boardList").slideUp();
 	}
 }
 

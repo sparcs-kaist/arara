@@ -23,15 +23,15 @@ a:hover { color:#333; text-decoration:underline; }
 
 #navigation { background:url(/media/image/stealBlue/b_top.png) repeat-x; }
 #navigation h1 a { background:url(/media/image/stealBlue/i_bi.png) no-repeat top left; }
-#navigation ul.menu a.favorite { background:url(/media/image/stealBlue/menu_1.png) no-repeat top left; }
-#navigation ul.menu a.category1 { background:url(/media/image/stealBlue/menu_2.png) no-repeat top left; }
-#navigation ul.menu a.category2 { background:url(/media/image/stealBlue/menu_3.png) no-repeat top left; }
-#navigation ul.menu a.category3 { background:url(/media/image/stealBlue/menu_4.png) no-repeat top left; }
-#navigation ul.menu a.category4 { background:url(/media/image/stealBlue/menu_5.png) no-repeat; }
-#navigation ul.menu a.category5 { background:url(/media/image/stealBlue/menu_6.png) no-repeat; }
+#navigation ul.menu #menuFavorite { background:url(/media/image/stealBlue/menu_1.png) no-repeat top left; }
+#navigation ul.menu #menuCategory1 { background:url(/media/image/stealBlue/menu_2.png) no-repeat top left; }
+#navigation ul.menu #menuCategory2 { background:url(/media/image/stealBlue/menu_3.png) no-repeat top left; }
+#navigation ul.menu #menuCategory3 { background:url(/media/image/stealBlue/menu_4.png) no-repeat top left; }
+#navigation ul.menu #menuCategory4 { background:url(/media/image/stealBlue/menu_5.png) no-repeat; }
+#navigation ul.menu #menuCategory5 { background:url(/media/image/stealBlue/menu_6.png) no-repeat; }
 
-#navigation ul.menu a:hover { background-position:0 -60px; !important; }
-#category1 #navigation a.category1 { background-position:0 -120px; !important; }
+#navigation ul.menu li a:hover { background-position:0 -60px !important; }
+#navigation ul.menu li a.selected { background-position:0 -120px !important; }
 
 #navigation ul.menuRight a.help { background:url(/media/image/stealBlue/menu_help.png) no-repeat; }
 #navigation ul.menuRight a.local { background:url(/media/image/stealBlue/menu_local.png) no-repeat; }
@@ -74,24 +74,24 @@ a:hover { color:#333; text-decoration:underline; }
 .dropBox ul li a:hover { background:#f0f0f0; }
 .dropBox a:hover { text-decoration:none; }
 
-/* .boardList */
-.boardList thead tr th { background:#444; color:#fff; }
-.boardList tbody tr td { color:#666; border-bottom:1px #dadada solid; border-left:1px #eaeaea; }
-.boardList tbody td.indicator { font-family:Helvetica,Arial,sans-serif; }
-.boardList tbody td.indicator .new { color:#ed1556; text-decoration:underline; }
-.boardList tbody td.indicator .update { color:#0173b7; text-decoration:underline; }
-.boardList tbody td.recRead, .boardList tbody td.date { font-family:Helvetica,Arial,sans-serif; }
+/* .articleList */
+.articleList thead tr th { background:#444; color:#fff; }
+.articleList tbody tr td { color:#666; border-bottom:1px #dadada solid; border-left:1px #eaeaea; }
+.articleList tbody td.indicator { font-family:Helvetica,Arial,sans-serif; }
+.articleList tbody td.indicator .new { color:#ed1556; text-decoration:underline; }
+.articleList tbody td.indicator .update { color:#0173b7; text-decoration:underline; }
+.articleList tbody td.recRead, .articleList tbody td.date { font-family:Helvetica,Arial,sans-serif; }
 
-.boardList tbody tr.selected td { background:#f0f0f0; }
+.articleList tbody tr.selected td { background:#f0f0f0; }
 
-.boardList a:link { color:#333; text-decoration:none; }
-.boardList a:visited { color:#333; text-decoration:none; }
-.boardList a:hover { color:#666; text-decoration:underline; }
-.boardList tbody td.smallCat a:link { color:#8e8e8e; text-decoration:none; }
-.boardList tbody td.smallCat a:visited { color:#8e8e8e; text-decoration:none; }
-.boardList tbody td.smallCat a:hover { color:#666; text-decoration:underline; }
+.articleList a:link { color:#333; text-decoration:none; }
+.articleList a:visited { color:#333; text-decoration:none; }
+.articleList a:hover { color:#666; text-decoration:underline; }
+.articleList tbody td.smallCat a:link { color:#8e8e8e; text-decoration:none; }
+.articleList tbody td.smallCat a:visited { color:#8e8e8e; text-decoration:none; }
+.articleList tbody td.smallCat a:hover { color:#666; text-decoration:underline; }
 
-.boardList td a .repCount { color:#8e8e8e; }
+.articleList td a .repCount { color:#8e8e8e; }
 
 .searchBox { border:3px #666 solid; }
 .searchBox .selectObject { border-right:1px #999 solid; }

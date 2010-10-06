@@ -52,7 +52,9 @@ input { font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; }
 #boardInCategory dl ul li a { margin:0; padding:0; padding-left:10px; display:block; height:25px; }
 
 /* 위치표시 부분. 롤오버는 layout.js 참고 */
-#favorite #contents .favorite, #category1 #contents .category1, #category2 #contents .category2, #category3 #contents .category3, #category4 #contents .category4, #category5 #contents .category5 { display:block; }
+.category { display:block; }
+.boardList { display:block; }
+#contents { display:block; }
 
 #contents .contentWrap dl { display:block; } /* 본문 내의 dl은 숨기면 안 된다. */
 
@@ -90,16 +92,16 @@ input { font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; }
 .dropSelector .dropBox ul li { margin:0; padding:0; }
 .dropSelector .dropBox ul li a { padding:3px 6px; }
 
-.boardList { margin:10px 0 0 0; width:100%; border:0; }
-.boardList thead tr th { height:30px; padding:0 0 0 5px; font-size:0.9em; letter-spacing:-1px; text-align:left; font-weight:normal; }
-.boardList tbody tr td { height:34px !important; padding:0 0 0 5px; line-height:34px; overflow:hidden; }
-.boardList td.indicator { width:15px; font-size:0.83em; font-weight:bold; }
-.boardList td.author { width:120px; }
-.boardList td.smallCat { width:85px; font-size:0.9em; letter-spacing:-1px; }
-.boardList td.recRead { width:75px; font-size:0.9em; letter-spacing:-1px; }
-.boardList td.date { width:70px; font-size:0.9em; letter-spacing:-1px; }
-.boardList td a { display:block; height:34px !important; overflow:hidden; }
-.boardList td a .repCount { font-size:0.9em; font-family:Helvetica,Arial,sans-serif; }
+.articleList { margin:10px 0 0 0; width:100%; border:0; }
+.articleList thead tr th { height:30px; padding:0 0 0 5px; font-size:0.9em; letter-spacing:-1px; text-align:left; font-weight:normal; }
+.articleList tbody tr td { height:34px !important; padding:0 0 0 5px; line-height:34px; overflow:hidden; }
+.articleList td.indicator { width:15px; font-size:0.83em; font-weight:bold; }
+.articleList td.author { width:120px; }
+.articleList td.smallCat { width:85px; font-size:0.9em; letter-spacing:-1px; }
+.articleList td.recRead { width:75px; font-size:0.9em; letter-spacing:-1px; }
+.articleList td.date { width:70px; font-size:0.9em; letter-spacing:-1px; }
+.articleList td a { display:block; height:34px !important; overflow:hidden; }
+.articleList td a .repCount { font-size:0.9em; font-family:Helvetica,Arial,sans-serif; }
 
 .paging { margin:20px 0 0 0; padding:0; float:left; font-size:0.9em; font-family:Helvetica,Arial,sans-serif; }
 .paging a { line-height:25px; padding:2px 4px; }
