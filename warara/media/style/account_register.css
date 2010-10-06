@@ -12,6 +12,7 @@
     float: left;
     display: inline-block;
     _width: 98%;
+    clear: both;
 }
 
 #confirm_key_information {

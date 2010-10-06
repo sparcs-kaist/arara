@@ -6,6 +6,7 @@
 #message_content {
     float: left;
     width: 40em;
+    clear: both;
 }
 
 .message_content A:visited, .message_content A:link {
