@@ -88,7 +88,10 @@
             <p class="selectObject">
             {% for smi in search_method_list %}<a href="#searchForm" rel="{{smi.val}}" {% if smi.selected %}class="selected"{% endif %}>{{smi.text}}</a><input type="hidden" value="{{smi.val}}" {% if smi.selected %}name="{{smi.val}}"{% endif %} />{% endfor %}
             </p>
-            <p class="searchInput"><input type="text" name="search_word" id="searchText" value="{{ search_word }}" /><input type="image" id="searchButton" class="searchButton" src="/media/image/stealBlue/i_searchButton.png" /></p
+            <p class="searchInput">
+                <input type="text" name="search_word" id="searchText" value="{{ search_word }}" />
+                <input type="image" id="searchButton" class="searchButton" src="/media/image/stealBlue/i_searchButton.png" />
+            </p>
         </div>
     </form>
     <form id="writeForm" name="writePostForm" method="GET" action="/board/{{board_name}}/write/" {% if board_dict.read_only %}class="hidden"{% endif %} style="display:inline-block;">
