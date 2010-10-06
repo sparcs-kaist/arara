@@ -33,8 +33,17 @@
 
             {% if not article.deleted %}
             <p class="articleButtons">
-                <input type="submit" class="smallButton reply" value="답글달기" /><input type="submit" class="smallButton rec" value="추천하기" /><input type="submit" class="smallButton dis" value="반대하기" /><input type="submit" class="smallLightButton modify" value="수정하기" /><input type="submit" class="smallLightButton delete" value="삭제하기" />
-                <input type="hidden" id="board_name" value="{{board_name}}" /><input type="hidden" id="root_id" value="{{article.root_id}}" /><input type="hidden" id="article_id" value="{{article.id}}" />
+                <input type="submit" class="smallButton reply" value="답글달기" />
+                <input type="submit" class="smallButton rec" value="추천하기" />
+                <input type="submit" class="smallButton dis" value="반대하기" />
+                {% if article.flag_modify %}
+                <input type="submit" class="smallLightButton modify" value="수정하기" />
+                <input type="submit" class="smallLightButton delete" value="삭제하기" />
+                {% endif %}
+                <input type="hidden" id="backref" value="/board/{{board_name}}?page_no={{page_no}}" />
+                <input type="hidden" id="board_name" value="{{board_name}}" />
+                <input type="hidden" id="root_id" value="{{article.root_id}}" />
+                <input type="hidden" id="article_id" value="{{article.id}}" />
             </p>
             {% endif %}
             {% autoescape off %}
