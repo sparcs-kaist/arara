@@ -505,7 +505,43 @@ class BoardManager(object):
             session.rollback()
             session.close()
             raise InternalError("unknown error")
+            
+    @require_login
+    @log_method_call_important
+    def delete_board_heading(self, session_key, board_name, heading_name, new_heading_name = ''):
+        '''
+        주어진 게시판의 주어진 말머리에 속해 있던 글은 모두 새로운 말머리로 이동시키고 해당 말머리를 삭제한다.  
+        
+        @type  session_key: string
+        @param session_key: 사용자 Login Sesson (SYSOP)
+        @type  board_name: string
+        @param board_name: 삭제될 말머리가 속한 게시판의 이름
+        @type  heading_name: string
+        @param heading_name: 삭제될 말머리 이름
+        @rtype: None
+        @return: 1. 성공- None
+                 2. 실패
+                    1. 로그인되지 않은 유저 : NotLoggedIn()
+                    2. 시삽이 아닌 경우 : InvalidOperation('no permission')
+                    3. 존재하지 않는 게시판 : InvalidOperation('board does not exist')
+                    4. 존재하지 않는 말머리 : InvalidOperation('heading not exist')
+        '''
+        self._is_sysop(session_key)
 
+        self.engine.article_manager.change_article_heading(session_key, board_name, heading_name, new_heading_name)
+
+        session = model.Session()
+        board = self._get_board_from_session(session, board_name)
+        heading = self._get_heading(session, board, heading_name)
+        try:
+            session.delete(heading)
+            session.commit()
+            session.close()
+        except:
+            session.rollback()
+            session.close()
+            raise
+        
     @log_method_call
     def get_board_heading_list_fromid(self, board_id):
         '''

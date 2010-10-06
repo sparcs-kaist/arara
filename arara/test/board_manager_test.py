@@ -36,6 +36,10 @@ class BoardManagerTest(unittest.TestCase):
         self.session_key_sysop = self.engine.login_manager.login(u'SYSOP', u'SYSOP', '143.234.234.234')
         self.assertEqual(0, len(self.engine.board_manager.get_board_list())) # XXX combacsa: is it allowed?
 
+    def _dummy_article_write(self, session_key, title_append = u"", board_name=u'board', heading=u''):
+        article_dic = {'title': u'TITLE' + title_append, 'content': u'CONTENT', 'heading': heading}
+        return self.engine.article_manager.write_article(session_key, board_name, Article(**article_dic))
+
     def _to_dict(self, board_object):
         # ArticleManagerTest._to_dict 를 참고하여 구현하였다.
 
@@ -322,6 +326,31 @@ class BoardManagerTest(unittest.TestCase):
             self.fail('Must not be able to add an heading to a not-exiting board')
         except InvalidOperation:
             pass
+
+    def test_delete_board_heading(self):
+        # 말머리를 가진 board 를 추가한다
+        self.engine.board_manager.add_board(self.session_key_sysop, u'BuySell', u'market', [u'buy', u'sell', u'qna'])
+        # 글을 작성한다. 
+        self._dummy_article_write(self.session_key, title_append = '1', board_name = 'BuySell', heading = 'buy')
+        self._dummy_article_write(self.session_key_sysop, title_append = '2', board_name = 'BuySell', heading = 'buy')
+        self._dummy_article_write(self.session_key, title_append = '3', board_name = 'BuySell', heading = 'sell')
+        self._dummy_article_write(self.session_key_sysop, title_append = '4', board_name = 'BuySell', heading = 'sell')
+
+        # 말머리를 삭제한다. 
+        self.engine.board_manager.delete_board_heading(self.session_key_sysop, 'BuySell', 'buy')
+        # 잘 삭제되었나 검사한다. 
+        self.assertEqual(['sell', 'qna'], self.engine.board_manager.get_board_heading_list('BuySell'))
+        # 게시물이 잘 이동되었나 검사한다.
+        self.assertEqual('TITLE2', self.engine.article_manager.article_list(self.session_key_sysop, 'BuySell', '', include_all_headings = False).hit[0].title)
+        self.assertEqual('TITLE1', self.engine.article_manager.article_list(self.session_key_sysop, 'BuySell', '', include_all_headings = False).hit[1].title)
+
+        # 이번엔 sell을 삭제하며 qna로 게시물이 옮겨지는지 확인한다. 
+        self.engine.board_manager.delete_board_heading(self.session_key_sysop, 'BuySell', 'sell', 'qna')
+        # 잘 삭제되었나 검사한다. 
+        self.assertEqual(['qna'], self.engine.board_manager.get_board_heading_list('BuySell'))
+        # 게시물이 잘 이동되었나 검사한다.
+        self.assertEqual('TITLE4', self.engine.article_manager.article_list(self.session_key_sysop, 'BuySell', 'qna', include_all_headings = False).hit[0].title)
+        self.assertEqual('TITLE3', self.engine.article_manager.article_list(self.session_key_sysop, 'BuySell', 'qna', include_all_headings = False).hit[1].title)
 
     def testBoardType(self):
         # 게시판 형식 테스트.
