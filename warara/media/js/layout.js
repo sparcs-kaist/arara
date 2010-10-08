@@ -51,6 +51,7 @@ $(document).ready(function(){
 		setTimeout("upgradeBrowser()",1000);
 		$(window).bind("scroll",browserOnTop);
 	}
+	if ($("#araId").length) $("#araId").focus();
 });
 
 function setWidth () {
