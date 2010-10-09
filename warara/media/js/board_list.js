@@ -8,20 +8,20 @@ $(document).ready(function(){
     original_cursor_pos = cursor_pos; // XXX root_article_pos 를 쓸 필요가 있는가?
     $root_article_pos = cursor_pos; //naming
     }
-    var row_count = $(".boardList tr").length;
+    var row_count = $(".articleList tr").length;
 	if(!$logged_in){
 	cursor_pos = -1;
 	}
     update_table(cursor_pos);
     function update_table(cursor_pos) {
         if(cursor_pos >= 0){
-        $(".boardList tr").removeClass("selected");
-        $(".boardList tr").eq(cursor_pos).addClass("selected");
+        $(".articleList tr").removeClass("selected");
+        $(".articleList tr").eq(cursor_pos).addClass("selected");
         }
     }
     function read_article() {
         //$.history.load(cursor_pos);
-        var article_link = $(".boardList tr").eq(cursor_pos).children(".title").children("a").attr("href");
+        var article_link = $(".articleList tr").eq(cursor_pos).children(".title").children("a").attr("href");
         location.href = article_link;
     }
 
@@ -68,8 +68,8 @@ $(document).ready(function(){
             switch(event.which){
                 case 115: // 's'
                     $(".searchBox a.highlight").removeClass("highlight");
-                    $(".boardList .hidden_selected").removeClass("hidden_selected").addClass("selected");
-                    $(".searchBox input[name='searchText']").focus();
+                    $(".articleList .hidden_selected").removeClass("hidden_selected").addClass("selected");
+                    $("#searchText").focus();
                     cursor_sm = 0;
                     break;
                 case 106: // 'j'
@@ -98,13 +98,13 @@ $(document).ready(function(){
             switch(event.which){
                 case 115:
                     $(".highlight").removeClass("highlight");
-                    $(".boardList .selected").removeClass("selected").addClass("hidden_selected");
+                    $(".articleList .selected").removeClass("selected").addClass("hidden_selected");
                     $(".searchBox a").eq(cursor_sm).addClass("highlight");
                     location.href = "#search_method_select";
                     break;
             }
         }
-        if($(".boardList tr.selected").length){
+        if($(".articleList tr.selected").length){
             switch (event.which) {
                 case 32:  // space
                     if (cursor_pos != original_cursor_pos){
@@ -138,7 +138,7 @@ $(document).ready(function(){
                     if(!($("#now_page").is(":first-child"))) location.href = $("#now_page").prev().attr("href");
                     break;
                 case 98:
-                    $show_user_popup($(".boardList tr .author").eq(cursor_pos-1));
+                    $show_user_popup($(".articleList tr .author").eq(cursor_pos-1));
                     $focus_user_popup();
                     break;
                 case 82:

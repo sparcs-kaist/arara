@@ -32,7 +32,7 @@ $(document).ready(function(){
     });
 
     $root_article_id = parseInt($(".articleInfo").eq(0).attr("rel"));
-    $row_count = $(".boardList tr").length;
+    $row_count = $(".articleList tr").length;
 
         $(document).keypress(function(event) {
         if($focus_input || event.altKey || event.ctrlKey){
@@ -115,7 +115,7 @@ $(document).ready(function(){
 
     $move_article_read = function($article_pos){
         if($article_pos > 0 && $article_pos <= $row_count){
-            var article_link = $(".boardList tr").eq($article_pos).children(".title").children("a").attr("href");
+            var article_link = $(".articleList tr").eq($article_pos).children(".title").children("a").attr("href");
             location.href = article_link;
         }
         else if($article_pos == 0){
