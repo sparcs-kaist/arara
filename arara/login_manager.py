@@ -379,4 +379,13 @@ class LoginManager(object):
         else:
             return False
 
+    def terminate_all_sessions(self):
+        '''
+        강제로 모든 Session 을 꺼버린다.
+        '''
+        self.engine_online = False
+        length = len(self.session_dic.keys())
+        for idx, session_key in enumerate(self.session_dic.keys()):
+            self._logout(session_key)
+
 # vim: set et ts=8 sw=4 sts=4
