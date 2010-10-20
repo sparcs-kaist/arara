@@ -27,7 +27,6 @@ class LoginManager(object):
         '''
         @type  engine: ARAraEngine
         '''
-        self.lock_session_dic = thread.allocate_lock()
         self.engine = engine
         self.session_dic = {}
         self.logger = logging.getLogger('login_manager')
@@ -151,19 +150,16 @@ class LoginManager(object):
             self.logger.warning("Internal Error occur on MemberManager.authenticate(): %s" % repr(e))
             raise InternalError("Ask SYSOP")
 
-        with self.lock_session_dic:
-            hash = hashlib.md5(username+password+datetime.datetime.today().__str__()).hexdigest()
-            self.session_dic[hash] = {'id': msg.id, 'username': username, 'ip': user_ip,
+        hash = hashlib.md5(username+password+datetime.datetime.today().__str__()).hexdigest()
+        self.session_dic[hash] = {'id': msg.id, 'username': username, 'ip': user_ip,
                     'nickname': msg.nickname, 'logintime': msg.last_login_time,
                     'current_action': 'login_manager.login()',
                     'last_action_time': time.time()}
-            self.logger.info("User '%s' has LOGGED IN from '%s' as '%s'", username, user_ip, hash)
+        self.logger.info("User '%s' has LOGGED IN from '%s' as '%s'", username, user_ip, hash)
         return hash
 
     def _logout(self, session_key):
         '''
-        Thread-Safety 가 없는, 로그아웃 처리 담당 함수.
-
         @type  session_key: string
         @param session_key: 사용자 Login Session
         '''
@@ -178,13 +174,12 @@ class LoginManager(object):
     def logout(self, session_key):
         '''
         로그아웃 처리를 담당하는 함수.
-        사실상 Thread-safety Wrapper for _logout 이다.
+        Thread-Safety 관련 처리를 했었으나 성능상의 문제로 제거.
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
         '''
-        with self.lock_session_dic:
-            self._logout(session_key)
+        self._logout(session_key)
 
     def _update_monitor_status(self, session_key, action):
         '''
@@ -220,16 +215,18 @@ class LoginManager(object):
             # 이미 로그아웃한 사용자라면 이하의 절차가 필요없다.
             return
 
-        with self.lock_session_dic:
+        try:
             current_time = time.time()
             session_time = self.session_dic[session_key]['last_action_time']
             diff_time = current_time - session_time
             if diff_time > SESSION_EXPIRE_TIME:
                 # Session Cleaning 이 필요하므로 로그아웃 처리!
                 self._logout(session_key)
-        # Lock 을 해제한 뒤 다른 작업을 하도록 숨통을 트여주자
-        if diff_time > SESSION_EXPIRE_TIME:
-            time.sleep(2)
+        # Session Cleaner 작동 중 Logout 할수도 있다
+        except NotLoggedIn:
+            pass
+        except KeyError:
+            pass
 
     def _check_session_status(self):
         '''
@@ -357,14 +354,13 @@ class LoginManager(object):
         # TODO: check_logged_in 같은 것으로 감싸면 구현이 좀 더 깔끔하지 않을까
 
         ret = []
-        with self.lock_session_dic:
-            if self.session_dic.has_key(session_key):
-                for user_info in self.session_dic.values():
-                    del user_info["last_action_time"]
-                    ret.append(Session(**user_info))
-                return ret
-            else:
-                raise NotLoggedIn()
+        if self.session_dic.has_key(session_key):
+            for user_info in self.session_dic.values():
+                del user_info["last_action_time"]
+                ret.append(Session(**user_info))
+            return ret
+        else:
+            raise NotLoggedIn()
 
     @log_method_call
     def is_logged_in(self, session_key):
