@@ -791,9 +791,7 @@ class ArticleManager(object):
 
         session.close()
         # 이로부터 합당한 쪽번호를 계산한다
-        page_position = remaining_article_count / page_length
-        if remaining_article_count % page_length != 0:
-            page_position += 1
+        page_position = (remaining_article_count / page_length) + 1
 
         # 이상을 바탕으로 _article_list 함수를 호출한다
         return self._article_list(session_key, board_name, heading_name, page_position, page_length, include_all_headings, order_by)

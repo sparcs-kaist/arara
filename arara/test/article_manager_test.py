@@ -699,6 +699,12 @@ class ArticleManagerTest(unittest.TestCase):
         l = self.engine.article_manager.article_list_below(self.session_key_mikkang, u'board', u'', 95, 10)
         self.assertEqual(l.hit[0].id, 100)
 
+        # 경계값 테스트
+        l = self.engine.article_manager.article_list_below(self.session_key_mikkang, u'board', u'', 71, 10)
+        self.assertEqual(l.hit[0].id, 80)
+        l = self.engine.article_manager.article_list_below(self.session_key_mikkang, u'board', u'', 70, 10)
+        self.assertEqual(l.hit[0].id, 70)
+
     def test_article_list_for_all_board(self):
         # 테스트용 게시판을 두 개 만들자.
         self.engine.board_manager.add_board(self.session_key_sysop, u'total1', u'Test Board', [])
