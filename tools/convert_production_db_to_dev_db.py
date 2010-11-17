@@ -13,6 +13,7 @@ sys.path.append(THRIFT_PATH)
 sys.path.append(ARARA_PATH)
 
 from arara import model
+from arara.util import smart_unicode
 
 def inttostr(n):
     s = "%d" % n
@@ -23,23 +24,26 @@ def inttostr(n):
 def main():
     model.init_database()
     s = model.Session()
-    print "loading queries"
-    query = s.query(model.User).all()
-    print "loading done"
+    print "loading user query"
+    query = s.query(model.User)
 
     for idx, user in enumerate(query):
-        user.username = u"uu" + inttostr(user.id)
-        user.nickname = u"uu" + inttostr(user.id)
-        user.email = inttostr(user.id) + "@example.com"
+        user.nickname = user.username
+        user.email = smart_unicode(inttostr(user.id) + "@example.com")
         user.signature = u"x" * len(user.signature)
         user.self_introduction = u"x" * len(user.self_introduction)
         user.last_login_ip = u"127.0.0.1"
-        user.set_password(u"uu" + inttostr(user.id))
+        try:
+            user.set_password(user.username)
+        except UnicodeEncodeError:
+            user.set_password("1234")
         print idx, " th user done."
 
-    print "loading queries"
-    query = s.query(model.Message).all()
-    print "loading done"
+    s = model.Session()
+
+    print "loading message query"
+    query = s.query(model.Message)
+
     for idx, message in enumerate(query):
         message.message = u"x" * len(message.message)
         print idx, " th message done."
@@ -47,7 +51,6 @@ def main():
     print "commit begin"
     s.commit()
     print "commit done"
-
     print "Job Done."
 
 if __name__ == "__main__":
