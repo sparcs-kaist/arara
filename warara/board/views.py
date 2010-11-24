@@ -193,7 +193,7 @@ def write(request, board_name):
         article_list = server.article_manager.read_article(sess, board_name, int(article_id))
         really_root_id = article_list[0].root_id
         if really_root_id == RELAY_FICTION_ARTICLE_NO:
-            return HttpResponseRedirect('/board/%s/%s' % (board_name, really_root_id))
+            return HttpResponseRedirect('/board/%s/%s/' % (board_name, really_root_id))
         # XXX 여기까지.
 
         sess = request.session["arara_session_key"]
@@ -268,9 +268,9 @@ def write_(request, board_name):
             fp.write(file_ob.read())
 
     if request.POST.get('write_type', 0) == 'modify':
-        return HttpResponseRedirect('/board/%s/%s' % (board_name, request.POST.get('root_id', article_id)))
+        return HttpResponseRedirect('/board/%s/%s/' % (board_name, request.POST.get('root_id', article_id)))
     else:
-        return HttpResponseRedirect('/board/%s/%s' % (board_name, str(article_id)))
+        return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(article_id)))
 
 def _read(request, r, sess, board_name, article_id):
     '''
@@ -548,7 +548,7 @@ def move_article(request):
         article_no = request.POST['article_no']
         board_to_move = request.POST['board_to_move']
         server.article_manager.move_article(sess, board_name, int(article_no), board_to_move)
-        return HttpResponseRedirect('/board/%s' % board_name)
+        return HttpResponseRedirect('/board/%s/' % board_name)
 
 @warara.wrap_error
 def _delete(request, board_name, root_id, article_no):
@@ -573,7 +573,7 @@ def _delete(request, board_name, root_id, article_no):
     article_list = server.article_manager.read_article(sess, board_name, int(article_no))
     really_root_id = article_list[0].root_id
     if really_root_id == RELAY_FICTION_ARTICLE_NO:
-        return HttpResponseRedirect('/board/%s/%s' % (board_name, root_id))
+        return HttpResponseRedirect('/board/%s/%s/' % (board_name, root_id))
     # XXX 여기까지.
 
     server.article_manager.delete_article(sess, board_name, int(article_no))
@@ -597,7 +597,7 @@ def delete(request, board_name, root_id, article_no):
     '''
     _delete(request, board_name, root_id, article_no)
 
-    return HttpResponseRedirect('/board/%s/%s' % (board_name, root_id))
+    return HttpResponseRedirect('/board/%s/%s/' % (board_name, root_id))
 
 def destroy(request, board_name, root_id, article_no):
     server = warara_middleware.get_server()
@@ -607,7 +607,7 @@ def destroy(request, board_name, root_id, article_no):
     # 글을 destroy하였으므로 해당 보드로 돌아간다.
     # 추후에는 pageno 정보를 이용하도록 수정하는 게 좋겠다.
     # 어차피 지금은 SYSOP 이 아니면 이 작업을 할 수 없지만.
-    return HttpResponseRedirect('/board/%s' % board_name)
+    return HttpResponseRedirect('/board/%s/' % board_name)
     # XXX 여기까지.
 
 def _search(request, r, sess, board_name):
