@@ -87,6 +87,7 @@ function set_item_action(){
         var board_read_level = $(this).children(":nth-child(4)").html();
         var board_write_level = $(this).children(":nth-child(5)").html();
         var board_category = $(this).children(":nth-child(7)").html();
+        if(board_category == '') board_category = 'None';
         $("#board_actions li:nth-child(1) a").html(is_hidden?"보이기":"숨기기");
         // 현재 보드 설정값 가져와 셋팅하기
         $("#board_name").val(board_name);
