@@ -29,6 +29,7 @@ a:hover { color:#333; text-decoration:underline; }
 #navigation ul.menu #menuCategory3 { background:url(/media/image/stealBlue/menu_4.png) no-repeat top left; }
 #navigation ul.menu #menuCategory4 { background:url(/media/image/stealBlue/menu_5.png) no-repeat; }
 #navigation ul.menu #menuCategory5 { background:url(/media/image/stealBlue/menu_6.png) no-repeat; }
+#navigation ul.menu #menuCategory6 { background:url(/media/image/stealBlue/menu_7.png) no-repeat; }
 
 #navigation ul.menu li a:hover { background-position:0 -60px !important; }
 #navigation ul.menu li a.selected { background-position:0 -120px !important; }

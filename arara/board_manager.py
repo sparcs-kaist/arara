@@ -1051,6 +1051,30 @@ class BoardManager(object):
         # 보드에 변경이 생겼으므로 캐시 초기화
         self.cache_board_list()
 
+    @require_login
+    @log_method_call_important
+    def change_board_category(self, session_key, board_name, new_category_name):
+        '''
+        보드의 Category 를 변경한다.
+        사실은 edit_board 에 대한 Wrapper 이다.
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session (SYSOP)
+        @type  board_name: string
+        @param board_name: Category를 변경하고자 하는 Board Name
+        @type  new_category_name: string
+        @param new_category_name: 보드에게 할당할 새 카테고리
+        @rtype: void
+        @return:
+            1. 성공: 아무것도 리턴하지 않음
+            2. 실패:
+                1. 로그인되지 않은 유저: 'NOT_LOGGEDIN'
+                2. 시샵이 아닌 경우: 'no permission'
+                3. 존재하지 않는 게시판: 'board does not exist'
+                4. 기타 오류 : 주석 추가해 주세요
+        '''
+        self.edit_board(session_key, board_name, u"", u"", new_category_name)
+
     def _hide_board(self, board_name):
         '''
         보드를 숨겨주는 진짜 함수. 내부 사용 전용.

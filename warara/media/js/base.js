@@ -300,11 +300,11 @@ $(document).ready(function(){
     function update_highlight(div, cursor){
         $(div + ".highlight").removeClass("highlight");
         $(div + ":visible").eq(cursor-1).addClass("highlight");
-    }
+    }*/
     $focus_content = function(){
         $(".highlight").removeClass("highlight");
-        $(".hidden_highlight").removeClass("hidden_highlight").addClass("row_highlight");
-    }
+        $(".hidden_selected").removeClass("hidden_selected").addClass("selected");
+    }/*
     function popup_function(event){
         $fn = $("#user_popup li.user_popup_function a").eq(cursor_up-1).attr("id");
         cursor_up = 0;
@@ -422,7 +422,7 @@ $(document).ready(function(){
             break;
             }
     });
-
+*/
     $(document).keypress(function(event){
             if(event.ctrlKey || event.altKey){
             return;
@@ -438,27 +438,30 @@ $(document).ready(function(){
             }
 
             switch(event.which){
-            case 116: //t
-            focus_board_list();
-            break;
-            case 121: //y
-            focus_topmenu();
-            break;
-            case 120: //x
+//            case 116: //t
+//            focus_board_list();
+//            break;
+//            기존 아라에서 좌측 Board list로 포커스를 옮기던 단축키. 현재 일시적으로 지원되지 않음
+//            case 121: //y
+//            focus_topmenu();
+//            break;
+//            기존 아라에서 상단 메뉴(Help Account Blacklist 등)으로 포커스를 옮기던 단축키. 현재 일시적으로 지원되지 않음
+            case 120: //x, 다른 곳에 포커스가 있을 때 글 목록으로 포커스를 되돌려주는 단축키
             $focus_content();
             break;
-            case 46:
+            case 46: // '.' , 전체 페이지를 위로 스크롤
             $(document).scrollTop($(document).scrollTop() - 50);
             break;
-            case 44:
+            case 44: // ',' , 전체 페이지를 아래로 스크롤
             $(document).scrollTop($(document).scrollTop() + 50);
             break;
-            case 101:
-            $("#header input[name='ksearch']").focus();
-            break;
+//            case 101:
+//            $("#header input[name='ksearch']").focus();
+//            break;
+//            기존 아라에서 KSearch 창으로 포커스를 옮기던 단축키. 새 디자인에서 KSearch가 항상 떠 있지 않으므로 이 단축키는 사용하지 않음 
             }
             });
-
+/*
     $(document).keypress(function(event){
         if($("#user_information_popup:visible").length){
             switch(event.which){

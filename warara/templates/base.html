@@ -40,9 +40,10 @@
                 <li><a href="#" class="category" id="menuCategory3" rel="Category3">카테고리명</a></li>
                 <li><a href="#" class="category" id="menuCategory4" rel="Category4">카테고리명</a></li>
                 <li><a href="#" class="category" id="menuCategory5" rel="Category5">카테고리명</a></li>
+                <li><a href="#" class="category" id="menuCategory6" rel="Category6">카테고리명</a></li>
             </ul>
             <ul class="menuRight">
-                <li class="fr"><a href="#" class="help">도움말</a></li>
+                <li class="fr"><a href="/main/help" class="help">도움말</a></li>
                 <li class="fr"><a href="#" class="local">English</a></li>
             </ul>
         </div>
@@ -133,6 +134,21 @@
                             <ul>
                                 {% for board_info in category5_list %}
                                 <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.alias}}</a></li>
+                                {% if forloop.counter|divisibleby:"5" %}
+                            </ul>
+                            <ul>
+                                {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </dd>
+                    </dl>
+                    <dl class="boardList" id="boardInCategory6">
+                        <dt><img src="/media/image/stealBlue/catMenu_category7.png" alt="카테고리6" /></dt>
+                        <dd>
+                            {% get_board_list %}
+                            <ul>
+                                {% for board_info in category6_list %}
+                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_name}}</a></li>
                                 {% if forloop.counter|divisibleby:"5" %}
                             </ul>
                             <ul>

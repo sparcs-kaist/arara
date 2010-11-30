@@ -5,6 +5,8 @@ log/*
 run/*
 *.pyc
 *.swp
+*.db
+*.log
 arara/settings.py
 warara/settings.py
 etc/arara_settings.py
