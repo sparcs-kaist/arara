@@ -729,7 +729,7 @@ class ArticleManager(object):
         @type  order_by: int - LIST_ORDER
         @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
         @rtype: int
-        @return: 해당 게시판의 해당되는 말머리에서 no 번 이후 글의 개수 
+        @return: 해당 게시판의 해당되는 말머리에서 no 번 이후 게시된 글의 개수 
         '''
         query = session.query(model.Article)
 
@@ -737,7 +737,7 @@ class ArticleManager(object):
             query = query.filter(and_(
                     model.articles_table.c.root_id==None,
                     model.articles_table.c.destroyed==False,
-                    model.articles_table.c.id < no,
+                    model.articles_table.c.id > no,
                     model.Article.board.has(model.Board.hide==False),
                     model.Article.board.has(model.Board.deleted==False)))
         else:
@@ -745,7 +745,7 @@ class ArticleManager(object):
                     model.articles_table.c.board_id==board_id,
                     model.articles_table.c.root_id==None,
                     model.articles_table.c.destroyed==False,
-                    model.articles_table.c.id < no))
+                    model.articles_table.c.id > no))
             if not include_all_headings:
                 query = query.filter_by(heading_id=heading_id)
 
@@ -786,18 +786,12 @@ class ArticleManager(object):
         if not include_all_headings and heading_name != u"":
             heading_id = self.engine.board_manager._get_heading_by_boardid(session, board_id, heading_name).id
 
-        # 게시판의 모든 글의 갯수를 확보한다.
-        total_article_count = self._get_total_article_count(session, board_id, heading_id, include_all_headings)
-
-        # 게시판에 선택된 글 이후의 글의 갯수를 센다
+        # 게시판에 선택된 글 이후 게시된 글의 갯수를 센다
         remaining_article_count = self._get_remaining_article_count(session, board_id, heading_id, no, include_all_headings, order_by)
 
         session.close()
         # 이로부터 합당한 쪽번호를 계산한다
-        position_no = total_article_count - remaining_article_count
-        page_position = position_no / page_length
-        if position_no % page_length != 0:
-            page_position += 1
+        page_position = (remaining_article_count / page_length) + 1
 
         # 이상을 바탕으로 _article_list 함수를 호출한다
         return self._article_list(session_key, board_name, heading_name, page_position, page_length, include_all_headings, order_by)

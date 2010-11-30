@@ -268,6 +268,8 @@ struct WeatherInfo {
 
 service ARAraThriftInterface {
 /// LoginManager Part Begin
+    void terminate_all_sessions()
+        throws (1:InternalError ouch),
     string guest_login(1:string guest_ip)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),

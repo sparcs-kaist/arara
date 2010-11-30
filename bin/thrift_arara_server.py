@@ -31,7 +31,7 @@ from etc import arara_settings
 from arara.arara_engine import ARAraEngine
 from middleware.thrift_middleware import ARAraThriftInterface, connect_thrift_server
 
-handler_for_info = logging.handlers.RotatingFileHandler('arara_server.log', 'a', 2**20*50, 10)
+handler_for_info = logging.handlers.RotatingFileHandler(arara_settings.ARARA_LOG_PATH, 'a', 2**20*50, 10)
 formatter = logging.Formatter('%(asctime)s [%(process)d:%(thread)X] <%(name)s> ** %(levelname)s ** %(message)s')
 handler_for_info.setFormatter(formatter)
 handler_for_info.setLevel(logging.INFO)
@@ -40,7 +40,7 @@ logging.getLogger('').setLevel(logging.NOTSET)
 logging.getLogger('').addHandler(handler_for_info)
 
 if arara_settings.ARARA_DEBUG_HANDLER_ON:
-    handler_for_debug = logging.handlers.RotatingFileHandler('arara_server_debug.log', 'a', 2**20*50, 10)
+    handler_for_debug = logging.handlers.RotatingFileHandler(arara_settings.ARARA_DEBUG_LOG_PATH, 'a', 2**20*50, 10)
     handler_for_debug.setFormatter(formatter)
     handler_for_debug.setLevel(logging.DEBUG)
 
@@ -61,7 +61,7 @@ def open_thrift_server(processor, handler, port):
     # 3. TThreadPoolServer : Preloaded Thread with Pool
 
     server = TServer.TThreadPoolServer(processor_, transport, tfactory, pfactory)
-    server.setNumThreads(30)
+    server.setNumThreads(arara_settings.ARARA_NUM_THREADS)
     return server, handler_instance
 
 def open_server(base_port):
