@@ -36,7 +36,7 @@ class ModelTest(unittest.TestCase):
         time.time = stub_time
         # Create default board (garbages)
         session_key_sysop = self.engine.login_manager.login(u'SYSOP', u'SYSOP', '123.123.123.123')
-        self.engine.board_manager.add_board(session_key_sysop, u'garbages', u'Garbage Board')
+        self.engine.board_manager.add_board(session_key_sysop, u'garbages', u'쓰레기가 모이는 곳', u'Garbage Board')
         # Register one user, serialx
         user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx@example.com', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'english', 'campus':u'' }
         register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))

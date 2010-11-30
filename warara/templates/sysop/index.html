@@ -77,6 +77,7 @@
     <legend>보드 추가</legend>
     <form method="post" action="/sysop/add_board/">
         <label for="add_board_name">보드 이름</label><input type="text" class="textfield" name="add_board_name" id="add_board_name"><br />
+        <label for="add_board_alias">별명</label><input type="text" class="textfield" name="add_board_alias" id="add_board_alias"><br />
         <label for="add_board_category">카테고리</label>
         <select name="add_board_category" id="add_board_category">
             {% for category in category_list %}

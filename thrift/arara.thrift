@@ -126,15 +126,16 @@ struct Category {
 struct Board {
     1: bool read_only,
     2: string board_name,
-    3: string board_description,
-    4: i32 id,
-    5: bool hide,
-    6: list<string> headings,
-    7: i32 order,
-    8: i32 category_id,
-    9: i32 type,
-    10: i32 to_read_level,
-    11: i32 to_write_level
+    3: string alias,
+    4: string board_description,
+    5: i32 id,
+    6: bool hide,
+    7: list<string> headings,
+    8: i32 order,
+    9: i32 category_id,
+    10: i32 type,
+    11: i32 to_read_level,
+    12: i32 to_write_level
 }
 
 struct WrittenArticle {
@@ -268,6 +269,8 @@ struct WeatherInfo {
 
 service ARAraThriftInterface {
 /// LoginManager Part Begin
+    void terminate_all_sessions()
+        throws (1:InternalError ouch),
     string guest_login(1:string guest_ip)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
@@ -384,8 +387,8 @@ service ARAraThriftInterface {
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// BlacklistManager Part End
 /// BoardManager Part Begin
-    void add_board(1:string session_key, 2:string board_name,
-                   3:string board_description, 4:list<string> heading_list, 5:string category_name, 6:i32 board_type, 7:i32 to_read_level, 8:i32 to_write_level)
+    void add_board(1:string session_key, 2:string board_name, 3:string alias,
+                   4:string board_description, 5:list<string> heading_list, 6:string category_name, 7:i32 board_type, 8:i32 to_read_level, 9:i32 to_write_level)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void add_category(1:string session_key, 2:string category_name)
@@ -425,6 +428,10 @@ service ARAraThriftInterface {
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void edit_board(1:string session_key, 2:string board_name,
                     3:string new_name, 4:string new_description)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void change_board_category(1:string session_key, 2:string board_name,
+                    3:string new_category)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void change_auth(1:string session_key, 2:string board_name,
