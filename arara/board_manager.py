@@ -28,16 +28,16 @@ class BoardManager(object):
         @type  engine: ARAraEngine
         '''
         self.engine = engine
+        #added category list and dict, cache function
+        self.all_category_list = None
+        self.all_category_dict = None
+        self.cache_category_list()
         # Internal Cache!
         self.all_board_list = None
         self.all_board_dict = None
         self.all_board_and_heading_list = None
         self.all_board_and_heading_dict = None
         self.cache_board_list()
-        #added category list and dict, cache function
-        self.all_category_list = None
-        self.all_category_dict = None
-        self.cache_category_list()
         # Integrated category & board list
         self.all_category_and_board_list = None
         self.all_category_and_board_dict = None
@@ -1027,6 +1027,7 @@ class BoardManager(object):
         new_name = smart_unicode(new_name)
         new_alias = smart_unicode(new_alias)
         new_description = smart_unicode(new_description)
+        new_category_name = smart_unicode(new_category_name)
 
         # 변경이 필요한 항목에 대해서만 변경을 진행한다.
         session = model.Session()

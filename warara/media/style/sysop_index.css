@@ -127,6 +127,10 @@ select {
     float:left;
 }
 
+#board_category {
+    float:left;
+}
+
 #change_auth {
     clear:both;
 }
