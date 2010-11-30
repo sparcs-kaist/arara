@@ -386,7 +386,7 @@ class BoardManagerTest(unittest.TestCase):
         # 테스트에 사용할 보드 추가.
         self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'쓰레기가 모이는 곳', u'Garbage Board')
         # TEST 1. 보드의 이름, 설명 동시에 바꾸기
-        self.engine.board_manager.edit_board(self.session_key_sysop, u'garbages', u'recycle', u'Recycle Board')
+        self.engine.board_manager.edit_board(self.session_key_sysop, u'garbages', u'recycle', u'쓰레기가 모였던 곳', u'Recycle Board')
         board_list = self.engine.board_manager.get_board_list()
         self.assertEqual(1, len(board_list))
         expected_board = {'read_only': False, 'board_name': u'recycle', 'board_description': u'Recycle Board', 'hide': False, 'id': 1, 'headings': [], 'order':1, 'type':0}
@@ -398,7 +398,7 @@ class BoardManagerTest(unittest.TestCase):
         except InvalidOperation:
             pass
         # TEST 2. 보드의 이름만 바꾸기
-        self.engine.board_manager.edit_board(self.session_key_sysop, u'recycle', u'garbages', u'')
+        self.engine.board_manager.edit_board(self.session_key_sysop, u'recycle', u'garbages', u'테스트 alias', u'')
         board_list = self.engine.board_manager.get_board_list()
         self.assertEqual(1, len(board_list))
         expected_board['board_name'] = u'garbages'
@@ -410,26 +410,26 @@ class BoardManagerTest(unittest.TestCase):
         except InvalidOperation:
             pass
         # TEST 3. 보드의 설명만 바꾸기
-        self.engine.board_manager.edit_board(self.session_key_sysop, u'garbages', u'', u'Garbage Board')
+        self.engine.board_manager.edit_board(self.session_key_sysop, u'garbages', u'', u'', u'Garbage Board')
         board_list = self.engine.board_manager.get_board_list()
         self.assertEqual(1, len(board_list))
         expected_board['board_description'] = u'Garbage Board'
         self.assertEqual(expected_board, self._to_dict(board_list[0]))
         # TEST 4. 예외적인 상황에 대하여
         try:
-            self.engine.board_manager.edit_board(self.session_key_sysop, u'test', u'test2', u'haha')
+            self.engine.board_manager.edit_board(self.session_key_sysop, u'test', u'test2', u'', u'haha')
             self.fail("Since board 'test' not exist, it must fail to rename that board.")
         except InvalidOperation:
             pass
         self.engine.board_manager.add_board(self.session_key_sysop, u'recycle', u'쓰레기통', u'Recycle Board')
         try:
-            self.engine.board_manager.edit_board(self.session_key_sysop, u'garbages', u'recycle', u'Recycle Board')
+            self.engine.board_manager.edit_board(self.session_key_sysop, u'garbages', u'recycle', u'', u'Recycle Board')
             self.fail("Since board 'recycle'exist, it must fail to rename board 'garbages to 'recycle'.")
         except InvalidOperation:
             pass
         # TEST 5. 카테고리 변경
         self.engine.board_manager.add_category(self.session_key_sysop, u'cat')
-        self.engine.board_manager.edit_board(self.session_key_sysop, u'garbages', u'', u'', u'cat')
+        self.engine.board_manager.edit_board(self.session_key_sysop, u'garbages', u'', u'', u'', u'cat')
         board_list = self.engine.board_manager.get_board_list()
         self.assertEqual(1, self.engine.board_manager.get_board_list()[0].category_id)
 
@@ -544,8 +544,8 @@ class BoardManagerTest(unittest.TestCase):
 
         # TODO: category 가 제대로 반영이 되고 있는 건가 ??
         # Cache 가 제대로 되었는지 확인한다
-        expect_dict = {None: [Board(read_only=False, hide=True, board_description=u'Testing Board', order=2, board_name=u'test2', headings=None, category_id=None, id=2, type=0, to_read_level=3, to_write_level=3)], u'test_category': [Board(read_only=False, hide=False, board_description=u'Testing Board', order=1, board_name=u'test', headings=None, category_id=1, id=1, type=0, to_read_level=3, to_write_level=3)]}
-        expect_list = [[Board(read_only=False, hide=False, board_description=u'Testing Board', order=1, board_name=u'test', headings=None, category_id=1, id=1, type=0, to_read_level=3, to_write_level=3)], [Board(read_only=False, hide=True, board_description=u'Testing Board', order=2, board_name=u'test2', headings=None, category_id=None, id=2, type=0, to_read_level=3, to_write_level=3)]]
+        expect_dict = {None: [Board(read_only=False, hide=True, board_description=u'Testing Board', order=2, board_name=u'test2', alias=u'test2', headings=None, category_id=None, id=2, type=0, to_read_level=3, to_write_level=3)], u'test_category': [Board(read_only=False, hide=False, board_description=u'Testing Board', order=1, board_name=u'test', alias=u'테스트보드', headings=None, category_id=1, id=1, type=0, to_read_level=3, to_write_level=3)]}
+        expect_list = [[Board(read_only=False, hide=False, board_description=u'Testing Board', order=1, board_name=u'test', alias=u'테스트보드', headings=None, category_id=1, id=1, type=0, to_read_level=3, to_write_level=3)], [Board(read_only=False, hide=True, board_description=u'Testing Board', order=2, board_name=u'test2', alias=u'test2', headings=None, category_id=None, id=2, type=0, to_read_level=3, to_write_level=3)]]
         self.assertEqual(expect_dict, self.engine.board_manager.all_category_and_board_dict)
         self.assertEqual(expect_list, self.engine.board_manager.all_category_and_board_list)
 
