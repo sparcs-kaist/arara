@@ -52,6 +52,12 @@ $(document).ready(function(){
 		$(window).bind("scroll",browserOnTop);
 	}
 	if ($("#araId").length) $("#araId").focus();
+
+
+        // English 클릭시 팝업
+        $(".menuRight .fr").eq(1).children().click( function(event){
+                alert('준비중입니다');
+                });
 });
 
 function setWidth () {
