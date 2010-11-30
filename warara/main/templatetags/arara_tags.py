@@ -42,8 +42,6 @@ class BoardListUpdateNode(template.Node):
                 category4_list.append(board)
             elif (board.category_id==5):
                 category5_list.append(board)
-            else:
-                print "no category\n"
         context['category1_list'] = category1_list
         context['category2_list'] = category2_list
         context['category3_list'] = category3_list
