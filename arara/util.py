@@ -33,6 +33,7 @@ from libs import timestamp2datetime, datetime2timestamp
 def log_method_call_with_source_important(source):
     '''
     지정된 source 에 Logging 하는 decorator 를 내놓는다.
+    이때 여기서 만들어지는 decorator 는 session_key 를 받아야 한다.
 
     @type  source: string
     @param source: Manager 의 명칭
@@ -40,7 +41,8 @@ def log_method_call_with_source_important(source):
 
     def log_method_call(function):
         '''
-        인위적으로 발생시킨 Exception 이 아닌 Exception 이 발생하면 기록을 남기게 한다.
+        인위적으로 발생시킨 Exception 이 아닌 Exception 이 발생하면 기록을 남기는 decorator.
+        단, 함수는 session_key 를 첫번째 파라메터로 받아야 한다.
 
         @type  function: function
         @param function: 로그를 남기게 하고 싶은 function
@@ -55,7 +57,9 @@ def log_method_call_with_source_important(source):
                 if arara_settings.ARARA_POOL_DEBUG_MODE:
                     logger.info(model.pool.status())
             try:
+                start_time = time.time()
                 ret = function(self, session_key, *args, **kwargs)
+                duration = time.time() - start_time
             except InvalidOperation:
                 raise
             except InternalError:
@@ -66,6 +70,7 @@ def log_method_call_with_source_important(source):
                 logger.error("EXCEPTION(by %s) %s.%s%s:\n%s", session_key, source,
                         function.func_name, repr(args), traceback.format_exc())
                 raise InternalError()
+            logger.info("DONE(by %s) %s.%s%s, duration: %f", session_key, source, function.func_name, repr(args), duration)
             logger.debug("RETURN(by %s) %s.%s%s=%s", session_key, source,
                     function.func_name, repr(args), repr(ret))
 
@@ -79,8 +84,21 @@ def log_method_call_with_source_important(source):
 
 
 def log_method_call_with_source(source):
+    '''
+    지정된 source 에 Logging 하는 decorator 를 내놓는다.
+
+    @type  source: string
+    @param source: Manager 의 명칭
+    '''
 
     def log_method_call(function):
+        '''
+        인위적으로 발생시킨 Exception 이 아닌 Exception 이 발생하면 기록을 남기는 decorator.
+
+        @type  function: function
+        @param function: 로그를 남기게 하고 싶은 function
+        '''
+
         def wrapper(self, *args, **kwargs):
             logger = logging.getLogger(source)
             logger.debug("CALL %s.%s%s", source, function.func_name, repr(args))
@@ -89,7 +107,9 @@ def log_method_call_with_source(source):
                 if arara_settings.ARARA_POOL_DEBUG_MODE:
                     logger.info(model.pool.status())
             try:
+                start_time = time.time()
                 ret = function(self, *args, **kwargs)
+                duration = time.time() - start_time
             except InvalidOperation:
                 raise
             except InternalError:
@@ -100,7 +120,7 @@ def log_method_call_with_source(source):
                 logger.error("EXCEPTION %s.%s%s:\n%s", source, function.func_name,
                         repr(args), traceback.format_exc())
                 raise InternalError()
-            logger.debug("RETURN %s.%s%s=%s", source, function.func_name, repr(args), repr(ret))
+            logger.debug("RETURN %s.%s%s=%s, duration: %f", source, function.func_name, repr(args), repr(ret), duration)
 
             return ret
 

@@ -67,7 +67,7 @@ def reply(request, article_id):
     '''
     root_id = warara.board.views._reply(request, u'', article_id)
 
-    return HttpResponseRedirect('/all/%s' % str(root_id))
+    return HttpResponseRedirect('/all/%s/' % str(root_id))
 
 @warara.wrap_error
 def vote(request, root_id, article_no):
@@ -90,7 +90,7 @@ def delete(request, root_id, article_no):
     '''
     warara.board.views._delete(request, u'', root_id, article_no)
 
-    return HttpResponseRedirect('/all/%s' % root_id)
+    return HttpResponseRedirect('/all/%s/' % root_id)
 
 @warara.wrap_error
 def search(request):

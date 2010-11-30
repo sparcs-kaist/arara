@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% load arara_tags %}
+{% block board_name %}Help{% endblock %}
+{% block board_description %}도움말{% endblock %}
+
+{% block content %}
+{{block.super}}
+<div id="help_content">
+    도움말은 준비중입니다
+</div>
+{% endblock content %}
+
+

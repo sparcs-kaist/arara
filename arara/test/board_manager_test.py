@@ -433,6 +433,14 @@ class BoardManagerTest(unittest.TestCase):
         board_list = self.engine.board_manager.get_board_list()
         self.assertEqual(1, self.engine.board_manager.get_board_list()[0].category_id)
 
+    def test_change_board_category(self):
+        self.engine.board_manager.add_category(self.session_key_sysop, u'cate')
+        self.engine.board_manager.add_category(self.session_key_sysop, u'gory')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'Garbage Board', u'cate')
+        self.engine.board_manager.change_board_category(self.session_key_sysop, u'garbages', u'gory')
+        board_list = self.engine.board_manager.get_board_list()
+        self.assertEqual(2, self.engine.board_manager.get_board_list()[0].category_id)
+
     def test_change_board_order(self):
         #테스트에 사용할 보드 추가(1,2,3,4,5,6,7,8,9)
         for i in range(1,10):

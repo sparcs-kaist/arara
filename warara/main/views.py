@@ -81,7 +81,7 @@ def help(request):
     server = warara_middleware.get_server() 
     sess, ctx = warara.check_logged_in(request)
     
-    rendered = render_to_string('help.html', ctx)
+    rendered = render_to_string('help_new.html', ctx)
     return HttpResponse(rendered)
 
 @warara.wrap_error

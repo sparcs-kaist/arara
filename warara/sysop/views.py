@@ -233,13 +233,13 @@ def add_category(request):
 
     new_category_name = request.POST.get('add_board_name', None)
     if not new_category_name:
-        return HttpResponseRedirect('/sysop')
+        return HttpResponseRedirect('/sysop/')
 
     try:
         server.board_manager.add_category(sess, new_category_name)
     except:
         raise
-    return HttpResponseRedirect('/sysop')
+    return HttpResponseRedirect('/sysop/')
 
 @warara.wrap_error
 def refresh_weather(request):

@@ -269,6 +269,8 @@ struct WeatherInfo {
 
 service ARAraThriftInterface {
 /// LoginManager Part Begin
+    void terminate_all_sessions()
+        throws (1:InternalError ouch),
     string guest_login(1:string guest_ip)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
@@ -426,6 +428,10 @@ service ARAraThriftInterface {
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void edit_board(1:string session_key, 2:string board_name, 3:string new_name,
                     4:string alias, 5:string new_description, 6:string new_category_name)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void change_board_category(1:string session_key, 2:string board_name,
+                    3:string new_category)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void change_auth(1:string session_key, 2:string board_name,

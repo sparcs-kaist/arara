@@ -150,7 +150,7 @@ def login(request):
 
     request.session.set_expiry(3600)
     if current_page.find('register')+1:
-        return HttpResponseRedirect('/main')
+        return HttpResponseRedirect('/main/')
     return HttpResponseRedirect(current_page)
 
 @warara.wrap_error

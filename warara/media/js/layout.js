@@ -52,6 +52,12 @@ $(document).ready(function(){
 		$(window).bind("scroll",browserOnTop);
 	}
 	if ($("#araId").length) $("#araId").focus();
+
+
+        // English 클릭시 팝업
+        $(".menuRight .fr").eq(1).children().click( function(event){
+                alert('준비중입니다');
+                });
 });
 
 function setWidth () {
@@ -63,6 +69,7 @@ function setWidth () {
 	$("#navigation").css("width",contentsWidth+160); // IE6은 min-width가 안먹어요 ㅠㅠ
 	$("#topLinks").css("width",contentsWidth+140);
 	$("#contents").css("width",contentsWidth);
+	setCategoryListWidth("#boardInCategory dl:visible ul");
 	$(".mainBody .mainNotice .mainItemContents").css("width",contentsWidth-111);
 	$(".mainBody .mainNotice .mainItemContents #mainBanner .bannerDesc").css("width",contentsWidth-696);
 	$(".mainBody .mainItem .mainItemContents").css("width",contentsWidth-110);
@@ -89,6 +96,7 @@ function toggleCat (catName) {
         $(entireHandler).slideDown();
         isMouseovered=1;
     }
+    setCategoryListWidth("#boardInCategory dl:visible ul");
 }
 
 function callHideCat () {
@@ -109,4 +117,11 @@ function upgradeBrowser () {
 
 function browserOnTop() {
 	$("#upgradeBrowser").css("top",$(window).scrollTop());
+}
+
+function setCategoryListWidth(handler) {
+	var categoryWidth = $(window).width() - 160;
+	var categoryNum = $(handler).length;
+	if (categoryWidth < (categoryNum * 154 + 90)) categoryWidth = categoryNum * 154 + 90;
+	$("#boardInCategory").css("width", categoryWidth); // boardInCategory의 min-width를 지정
 }
