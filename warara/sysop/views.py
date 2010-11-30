@@ -46,7 +46,7 @@ def add_board(request):
 
     category_name = request.POST.get('add_board_category', None)
     if category_name == "None": category_name = None
-    server.board_manager.add_board(sess, request.POST['add_board_name'], request.POST['add_board_description'], board_headings, category_name, int(request.POST['add_board_type']), int(request.POST['to_read_level']), int(request.POST['to_write_level']))
+    server.board_manager.add_board(sess, request.POST['add_board_name'], request.POST['add_board_alias'], request.POST['add_board_description'], board_headings, category_name, int(request.POST['add_board_type']), int(request.POST['to_read_level']), int(request.POST['to_write_level']))
     return HttpResponseRedirect('/sysop/')
 
 def _ajax_calling(response):
