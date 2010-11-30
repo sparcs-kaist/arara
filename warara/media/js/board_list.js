@@ -100,7 +100,7 @@ $(document).ready(function(){
                     $(".highlight").removeClass("highlight");
                     $(".articleList .selected").removeClass("selected").addClass("hidden_selected");
                     $(".searchBox a").eq(cursor_sm).addClass("highlight");
-                    location.href = "#search_method_select";
+                    location.href = "#searchForm";
                     break;
             }
         }
