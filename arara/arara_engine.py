@@ -82,6 +82,7 @@ class ARAraEngine(object):
             'return_hide_board': self.board_manager.return_hide_board,
             'delete_board': self.board_manager.delete_board,
             'edit_board': self.board_manager.edit_board,
+            'change_board_category': self.board_manager.change_board_category,
             'change_auth': self.board_manager.change_auth,
             'add_category': self.board_manager.add_category,
             'edit_category': self.board_manager.edit_category,
