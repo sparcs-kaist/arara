@@ -58,7 +58,7 @@
                             {% get_board_list %}
                             <ul>
                                 {% for board_info in board_list %}
-                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_name}}</a></li>
+                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.alias}}</a></li>
                                 {% if forloop.counter|divisibleby:"5" %}
                             </ul>
                             <ul>
@@ -73,7 +73,7 @@
                             {% get_board_list %}
                             <ul>
                                 {% for board_info in category1_list %}
-                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_name}}</a></li>
+                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.alias}}</a></li>
                                 {% if forloop.counter|divisibleby:"5" %}
                             </ul>
                             <ul>
@@ -88,7 +88,7 @@
                             {% get_board_list %}
                             <ul>
                                 {% for board_info in category2_list %}
-                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_name}}</a></li>
+                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.alias}}</a></li>
                                 {% if forloop.counter|divisibleby:"5" %}
                             </ul>
                             <ul>
@@ -103,7 +103,7 @@
                             {% get_board_list %}
                             <ul>
                                 {% for board_info in category3_list %}
-                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_name}}</a></li>
+                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.alias}}</a></li>
                                 {% if forloop.counter|divisibleby:"5" %}
                             </ul>
                             <ul>
@@ -118,7 +118,7 @@
                             {% get_board_list %}
                             <ul>
                                 {% for board_info in category4_list %}
-                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_name}}</a></li>
+                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.alias}}</a></li>
                                 {% if forloop.counter|divisibleby:"5" %}
                             </ul>
                             <ul>
@@ -133,7 +133,7 @@
                             {% get_board_list %}
                             <ul>
                                 {% for board_info in category5_list %}
-                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_name}}</a></li>
+                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.alias}}</a></li>
                                 {% if forloop.counter|divisibleby:"5" %}
                             </ul>
                             <ul>

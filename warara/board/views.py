@@ -15,7 +15,6 @@ import warara
 from warara import warara_middleware
 
 from etc.warara_settings import FILE_DIR, FILE_MAXIMUM_SIZE
-from etc.warara_settings import RELAY_FICTION_ARTICLE_NO
 
 IMAGE_FILETYPE = ['jpg', 'jpeg', 'gif', 'png']
 
@@ -188,14 +187,6 @@ def write(request, board_name):
     user_info = server.member_manager.get_info(sess)
 
     if article_id:
-        # XXX Imgeffect
-        from etc.warara_settings import RELAY_FICTION_ARTICLE_NO
-        article_list = server.article_manager.read_article(sess, board_name, int(article_id))
-        really_root_id = article_list[0].root_id
-        if really_root_id == RELAY_FICTION_ARTICLE_NO:
-            return HttpResponseRedirect('/board/%s/%s/' % (board_name, really_root_id))
-        # XXX 여기까지.
-
         sess = request.session["arara_session_key"]
         article_list = server.article_manager.read_article(sess, board_name, int(article_id))
         r['default_title'] = article_list[0].title
@@ -268,9 +259,9 @@ def write_(request, board_name):
             fp.write(file_ob.read())
 
     if request.POST.get('write_type', 0) == 'modify':
-        return HttpResponseRedirect('/board/%s/%s/' % (board_name, request.POST.get('root_id', article_id)))
+        return HttpResponseRedirect('/board/%s/%s' % (board_name, request.POST.get('root_id', article_id)))
     else:
-        return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(article_id)))
+        return HttpResponseRedirect('/board/%s/%s' % (board_name, str(article_id)))
 
 def _read(request, r, sess, board_name, article_id):
     '''
@@ -303,14 +294,6 @@ def _read(request, r, sess, board_name, article_id):
             article.attach = None
             article.image = None
             continue
-
-        #XXX imgeffect
-        if int(article_id) == RELAY_FICTION_ARTICLE_NO:
-            pattern = re.compile("<font color=\"(#[0-9a-zA-Z]{6})\">(.*)</font>")
-            match = pattern.search(article.content)
-            if match:
-                article.content = match.group(2)
-                article.color = match.group(1)
 
         if article.__dict__.has_key('attach') and article.attach: #image view
             image_attach_list = []
@@ -376,12 +359,7 @@ def read(request, board_name, article_id):
     r['rendered_reply'] = rendered_reply
     r['article'] = r['article_read_list'][0]
 
-    # XXX: Imgeffect
-    if int(article_id) == RELAY_FICTION_ARTICLE_NO:
-        rendered = render_to_string('board/relay_fiction.html', r)
-    else:
-        rendered = render_to_string('board/read.html', r)
-    # XXX: 여기까지
+    rendered = render_to_string('board/read.html', r)
 
     return HttpResponse(rendered)
 
@@ -409,13 +387,7 @@ def read_root(request, board_name, article_id):
     # 화면 하단의 글목록의 정보를 r 에 저장
     get_article_list(request, r, 'read')
 
-    # XXX: Imgeffect
-    from etc.warara_settings import RELAY_FICTION_ARTICLE_NO
-    if (article_id) == RELAY_FICTION_ARTICLE_NO:
-        rendered = render_to_string('board/relay_fiction.html', r)
-    else:
-        rendered = render_to_string('board/read.html', r)
-    # XXX: 여기까지
+    rendered = render_to_string('board/read.html', r)
     return HttpResponse(rendered)
 
 @warara.wrap_error
@@ -504,10 +476,7 @@ def reply(request, board_name, article_id):
     @return: 답글이 달린 원글을 읽는 페이지로 재전송
 
     '''
-    if int(article_id) == RELAY_FICTION_ARTICLE_NO:
-        root_id = _relay_fiction_reply(request, board_name, article_id)
-    else:
-        root_id = _reply(request, board_name, article_id)
+    root_id = _reply(request, board_name, article_id)
 
     return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(root_id)))
 
@@ -568,14 +537,6 @@ def _delete(request, board_name, root_id, article_no):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
     
-    # XXX Imgeffect
-    from etc.warara_settings import RELAY_FICTION_ARTICLE_NO
-    article_list = server.article_manager.read_article(sess, board_name, int(article_no))
-    really_root_id = article_list[0].root_id
-    if really_root_id == RELAY_FICTION_ARTICLE_NO:
-        return HttpResponseRedirect('/board/%s/%s/' % (board_name, root_id))
-    # XXX 여기까지.
-
     server.article_manager.delete_article(sess, board_name, int(article_no))
 
 @warara.wrap_error

@@ -38,7 +38,7 @@ class FileManagerTest(unittest.TestCase):
         session_key_sysop = self.engine.login_manager.login(
                 u'SYSOP', u'SYSOP', u'123.123.123.123')
         self.engine.board_manager.add_board(
-                unicode(session_key_sysop), u'garbages', u'Garbage Board')
+                unicode(session_key_sysop), u'garbages', u'쓰레기가 모이는 곳', u'Garbage Board')
 
         # Register mikkang for test
         user_reg_dict = {'username':u'mikkang', 'password':u'mikkang', 

@@ -11,7 +11,7 @@ from arara_thrift.ttypes import *
 log_method_call = log_method_call_with_source('board_manager')
 log_method_call_important = log_method_call_with_source_important('board_manager')
 
-BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only', 'hide', 'id', 'headings', 'order', 'category_id', 'type', 'to_read_level', 'to_write_level')
+BOARD_MANAGER_WHITELIST = ('board_name', 'alias', 'board_description', 'read_only', 'hide', 'id', 'headings', 'order', 'category_id', 'type', 'to_read_level', 'to_write_level')
 
 CATEGORY_WHITELIST = ('category_name', 'id', 'order')
 
@@ -204,7 +204,7 @@ class BoardManager(object):
                 board_count = self.all_category_and_board_dict[category_name][-1].order
                 return board_count
 
-    def _add_board(self, board_name, board_description, heading_list, category_name, board_type, to_read_level, to_write_level):
+    def _add_board(self, board_name, alias, board_description, heading_list, category_name, board_type, to_read_level, to_write_level):
 
         '''
         보드를 신설한다. 내부 사용 전용.
@@ -248,7 +248,7 @@ class BoardManager(object):
         category = None
         if category_name != None:
             category = self._get_category_from_session(session, category_name)
-        board_to_add = model.Board(smart_unicode(board_name), board_description, board_order, category, board_type, to_read_level, to_write_level)
+        board_to_add = model.Board(smart_unicode(board_name), alias, board_description, board_order, category, board_type, to_read_level, to_write_level)
         try:
             session.add(board_to_add)
             # Board Heading 들도 추가한다.
@@ -267,7 +267,7 @@ class BoardManager(object):
 
     @require_login
     @log_method_call_important
-    def add_board(self, session_key, board_name, board_description, heading_list = [], category_name = None, board_type = BOARD_TYPE_NORMAL, to_read_level = 3, to_write_level = 3):
+    def add_board(self, session_key, board_name, alias, board_description, heading_list = [], category_name = None, board_type = BOARD_TYPE_NORMAL, to_read_level = 3, to_write_level = 3):
 
         '''
         보드를 신설한다.
@@ -300,7 +300,7 @@ class BoardManager(object):
         '''
         # TODO: 위의 "실패" 주석 제대로 정리하기
         self._is_sysop(session_key)
-        self._add_board(board_name, board_description, heading_list, category_name, board_type, to_read_level, to_write_level)
+        self._add_board(board_name, alias, board_description, heading_list, category_name, board_type, to_read_level, to_write_level)
 
     def _add_bot_board(self, board_name, board_description = '', heading_list = [], hide = True, category_name = None, board_type = BOARD_TYPE_NORMAL, to_read_level = 3, to_write_level = 3):
         '''
@@ -331,7 +331,7 @@ class BoardManager(object):
                 2. 데이터베이스 오류: 'DATABASE_ERROR'
         '''
         # TODO: 위의 "실패" 주석 제대로 정리
-        self._add_board(board_name, board_description, heading_list, category_name, board_type, to_read_level, to_write_level)
+        self._add_board(board_name, board_name, board_description, heading_list, category_name, board_type, to_read_level, to_write_level)
         if hide:
             self._hide_board(board_name)
             # 보드에 변경이 발생하므로 캐시 초기화
@@ -1047,6 +1047,30 @@ class BoardManager(object):
             raise InternalError()
         # 보드에 변경이 생겼으므로 캐시 초기화
         self.cache_board_list()
+
+    @require_login
+    @log_method_call_important
+    def change_board_category(self, session_key, board_name, new_category_name):
+        '''
+        보드의 Category 를 변경한다.
+        사실은 edit_board 에 대한 Wrapper 이다.
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session (SYSOP)
+        @type  board_name: string
+        @param board_name: Category를 변경하고자 하는 Board Name
+        @type  new_category_name: string
+        @param new_category_name: 보드에게 할당할 새 카테고리
+        @rtype: void
+        @return:
+            1. 성공: 아무것도 리턴하지 않음
+            2. 실패:
+                1. 로그인되지 않은 유저: 'NOT_LOGGEDIN'
+                2. 시샵이 아닌 경우: 'no permission'
+                3. 존재하지 않는 게시판: 'board does not exist'
+                4. 기타 오류 : 주석 추가해 주세요
+        '''
+        self.edit_board(session_key, board_name, u"", u"", new_category_name)
 
     def _hide_board(self, board_name):
         '''
