@@ -11,7 +11,7 @@ from arara_thrift.ttypes import *
 log_method_call = log_method_call_with_source('board_manager')
 log_method_call_important = log_method_call_with_source_important('board_manager')
 
-BOARD_MANAGER_WHITELIST = ('board_name', 'board_description', 'read_only', 'hide', 'id', 'headings', 'order', 'category_id', 'type', 'to_read_level', 'to_write_level')
+BOARD_MANAGER_WHITELIST = ('board_name', 'alias', 'board_description', 'read_only', 'hide', 'id', 'headings', 'order', 'category_id', 'type', 'to_read_level', 'to_write_level')
 
 CATEGORY_WHITELIST = ('category_name', 'id', 'order')
 
