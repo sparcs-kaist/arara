@@ -18,6 +18,7 @@
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Alias</th>
                 <th>Desc</th>
                 <th>R_lv</th>
                 <th>W_lv</th>
@@ -29,6 +30,7 @@
             {% for manager_info in  bbs_managers_list %}
             <tr class="{% if manager_info.board.hide %}hidden_board{% else %}showing_board{% endif %}">
                 <td>{{manager_info.board.board_name}}</td>
+                <td>{{manager_info.board.alias}}</td>
                 <td>{{manager_info.board.board_description}}</td>
                 <td>{{manager_info.board.to_read_level}}</td>
                 <td>{{manager_info.board.to_write_level}}</td>
@@ -47,6 +49,8 @@
     <div id="edit_board">
         <label for="board_name">보드 이름</label>
         <input type="text" class="textfield" id="board_name" name="board_name" />
+        <label for="alias">별명</label>
+        <input type="text" class="textfield" id="alias" name="alias" />
         <label for="board_description">보드 설명</label>
         <input type="text" class="textfield" id="board_description" name="board_description" /><br />
         <input type="button" class="button" id="apply_changes" value="적용" />

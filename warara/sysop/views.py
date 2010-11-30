@@ -58,7 +58,7 @@ def _ajax_calling(response):
     for board in board_list:
         bbs_managers = server.board_manager.get_bbs_managers(board.board_name)
         managers_string = "".join(("*"+manager.username+" " for manager in bbs_managers))
-        response += "\n" + board.board_name + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\t" + str(board.to_read_level) + "\t" + str(board.to_write_level) + "\t" + managers_string
+        response += "\n" + board.board_name + "\t" + board.alias + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\t" + str(board.to_read_level) + "\t" + str(board.to_write_level) + "\t" + managers_string
     return response
 
 
@@ -121,8 +121,9 @@ def edit_board(request):
 
     original_board_name = request.POST['orig_board_name']
     new_board_name = request.POST['new_board_name']
+    new_alias = request.POST['new_alias']
     new_board_description = request.POST['new_board_description']
-    server.board_manager.edit_board(sess, original_board_name, new_board_name, new_board_description)
+    server.board_manager.edit_board(sess, original_board_name, new_board_name, new_alias, new_board_description)
 
     if request.is_ajax():
         response = "SUCCESS\tedit\t" + new_board_name
