@@ -13,16 +13,23 @@ def index(request):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
 
+    category_list = server.board_manager.get_category_list()
+    r['category_list'] = category_list + [{'category_name':'None'}]
+
     board_list = server.board_manager.get_board_list()
-    r['board_list'] = board_list
+
+    for board in board_list:
+        for category in category_list:
+            if board.category_id == category.id:
+                board.category_name = category.category_name
     
+    r['board_list'] = board_list
+
     bbs_managers_list = []
     for board in board_list:
         bbs_managers = server.board_manager.get_bbs_managers(board.board_name)
         bbs_managers_list.append({'board': board, 'managers': bbs_managers})
     r['bbs_managers_list'] = bbs_managers_list
-
-    r['category_list'] = server.board_manager.get_category_list() + [{'category_name':'None'}]
 
     # TODO: 배너를 단순히 나열하기보다는 배너의 날짜 등을 함께 표시하는 것이 어떨까?
     banner_list = server.notice_manager.list_banner(sess)
@@ -58,7 +65,7 @@ def _ajax_calling(response):
     for board in board_list:
         bbs_managers = server.board_manager.get_bbs_managers(board.board_name)
         managers_string = "".join(("*"+manager.username+" " for manager in bbs_managers))
-        response += "\n" + board.board_name + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\t" + str(board.to_read_level) + "\t" + str(board.to_write_level) + "\t" + managers_string
+        response += "\n" + board.board_name + "\t" + board.alias + "\t" + board.board_description + "\t" + ("hidden_board" if board.hide else "showing_board") + "\t" + str(board.to_read_level) + "\t" + str(board.to_write_level) + "\t" + managers_string + '\t '
     return response
 
 
@@ -121,8 +128,10 @@ def edit_board(request):
 
     original_board_name = request.POST['orig_board_name']
     new_board_name = request.POST['new_board_name']
+    new_alias = request.POST['new_alias']
     new_board_description = request.POST['new_board_description']
-    server.board_manager.edit_board(sess, original_board_name, new_board_name, new_board_description)
+    new_category_name = request.POST['new_category_name']
+    server.board_manager.edit_board(sess, original_board_name, new_board_name, new_alias, new_board_description, new_category_name)
 
     if request.is_ajax():
         response = "SUCCESS\tedit\t" + new_board_name

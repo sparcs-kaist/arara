@@ -28,16 +28,16 @@ class BoardManager(object):
         @type  engine: ARAraEngine
         '''
         self.engine = engine
+        #added category list and dict, cache function
+        self.all_category_list = None
+        self.all_category_dict = None
+        self.cache_category_list()
         # Internal Cache!
         self.all_board_list = None
         self.all_board_dict = None
         self.all_board_and_heading_list = None
         self.all_board_and_heading_dict = None
         self.cache_board_list()
-        #added category list and dict, cache function
-        self.all_category_list = None
-        self.all_category_dict = None
-        self.cache_category_list()
         # Integrated category & board list
         self.all_category_and_board_list = None
         self.all_category_and_board_dict = None
@@ -998,7 +998,7 @@ class BoardManager(object):
 
     @require_login
     @log_method_call_important
-    def edit_board(self, session_key, board_name, new_name, new_description, new_category_name=None):
+    def edit_board(self, session_key, board_name, new_name, new_alias, new_description, new_category_name=None):
         '''
         보드의 이름과 설명을 변경한다. 이름이나 설명을 바꾸고 싶지 않으면 파라메터로 길이가 0 인 문자열을 주면 된다.
 
@@ -1025,13 +1025,17 @@ class BoardManager(object):
 
         board_name = smart_unicode(board_name)
         new_name = smart_unicode(new_name)
+        new_alias = smart_unicode(new_alias)
         new_description = smart_unicode(new_description)
+        new_category_name = smart_unicode(new_category_name)
 
         # 변경이 필요한 항목에 대해서만 변경을 진행한다.
         session = model.Session()
         board = self._get_board_from_session(session, board_name)
         if new_name != u'':
             board.board_name = new_name
+        if new_alias != u'':
+            board.alias = new_alias
         if new_description != u'':
             board.board_description = new_description
         if new_category_name != None :

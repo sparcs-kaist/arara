@@ -18,10 +18,12 @@
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Alias</th>
                 <th>Desc</th>
                 <th>R_lv</th>
                 <th>W_lv</th>
                 <th>Managers</th>
+                <th>Category</th>
                 <th>Preview</th>
             </tr>
         </thead>
@@ -29,10 +31,12 @@
             {% for manager_info in  bbs_managers_list %}
             <tr class="{% if manager_info.board.hide %}hidden_board{% else %}showing_board{% endif %}">
                 <td>{{manager_info.board.board_name}}</td>
+                <td>{{manager_info.board.alias}}</td>
                 <td>{{manager_info.board.board_description}}</td>
                 <td>{{manager_info.board.to_read_level}}</td>
                 <td>{{manager_info.board.to_write_level}}</td>
                 <td>{% for manager in manager_info.managers %} *{{manager.username}} {% endfor %}</td>
+                <td>{{manager_info.board.category_name}}</td>
                 <td><a href="/board/{{board.board_name}}" target="_blank">Link</a></td>
             </tr>
             {% endfor %}
@@ -47,8 +51,16 @@
     <div id="edit_board">
         <label for="board_name">보드 이름</label>
         <input type="text" class="textfield" id="board_name" name="board_name" />
+        <label for="alias">별명</label>
+        <input type="text" class="textfield" id="alias" name="alias" />
         <label for="board_description">보드 설명</label>
         <input type="text" class="textfield" id="board_description" name="board_description" /><br />
+        <label for="board_category">카테고리</label>
+        <select name="board_category" id="board_category">
+            {% for category in category_list %}
+            <option value="{{ category.category_name }}">{{ category.category_name }}</option>
+            {% endfor %}
+        </select>
         <input type="button" class="button" id="apply_changes" value="적용" />
     </div>
     <div id="change_auth">

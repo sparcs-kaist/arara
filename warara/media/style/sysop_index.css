@@ -117,8 +117,17 @@ select {
     float:left;
 }
 
+#alias {
+    width:200px;
+    float:left;
+}
+
 #board_description {
     width:300px;
+    float:left;
+}
+
+#board_category {
     float:left;
 }
 
