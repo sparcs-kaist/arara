@@ -150,12 +150,12 @@ class BoardManagerTest(unittest.TestCase):
 
     def testNormalAddAndRemoveOneBoard(self):
         # Add one board 'garbages'
-        self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'Garbages Board')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'쓰레기가 모이는 곳', u'Garbages Board')
         board_list = self.engine.board_manager.get_board_list()
         self.assertEqual(1, len(board_list))
         self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': False, 'id':1, 'headings': [], 'order':1, 'type':0}, self._to_dict(board_list[0]))
         # Add another board 'ToSysop'
-        self.engine.board_manager.add_board(self.session_key_sysop, u'ToSysop', u'The comments to SYSOP')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'ToSysop', u'시삽에게', u'The comments to SYSOP')
         board_list = self.engine.board_manager.get_board_list()
         self.assertEqual(2, len(board_list))
         self.assertEqual({'read_only': False, 'board_name': u'garbages', 'board_description': u'Garbages Board', 'hide': False, 'id': 1, 'headings': [], 'order':1, 'type':0}, self._to_dict(board_list[0]))
@@ -174,9 +174,9 @@ class BoardManagerTest(unittest.TestCase):
 
     def testAbNormalAddAndRemoveOneBoard(self):
         # Add Existing Board
-        self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'Garbages Board')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'쓰레기가 모이는 곳', u'Garbages Board')
         try:
-            self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'Garbages Board')
+            self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'쓰레기가 모이는 곳', u'Garbages Board')
             fail()
         except InvalidOperation:
             pass
@@ -214,7 +214,7 @@ class BoardManagerTest(unittest.TestCase):
             pass
         # Try to add new board with normal user session
         try:
-            self.engine.board_manager.add_board(self.session_key, u'I WANT THIS BOARD', u'MY BOARD')
+            self.engine.board_manager.add_board(self.session_key, u'I WANT THIS BOARD', u'내보드', u'MY BOARD')
             self.fail()
         except InvalidOperation:
             pass
@@ -243,7 +243,7 @@ class BoardManagerTest(unittest.TestCase):
             pass
 
     def testReadOnlyBoard(self):
-        self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'GARBAGES')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'쓰레기가 모이는 곳', u'GARBAGES')
         self.engine.board_manager.add_read_only_board(self.session_key_sysop, u'garbages')
         try:
             self.engine.board_manager.add_read_only_board(self.session_key, u'garbages')
@@ -264,7 +264,7 @@ class BoardManagerTest(unittest.TestCase):
 
     def testHideAndReturnHideBoard(self):
         # Adding new board
-        self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'Garbages Board')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'쓰레기가 모이는 곳', u'Garbages Board')
         # Test 1. hide_board success?
         self.engine.board_manager.hide_board(self.session_key_sysop, u'garbages')
         board_list = self.engine.board_manager.get_board_list()
@@ -307,7 +307,7 @@ class BoardManagerTest(unittest.TestCase):
 
     def test_add_board_heading(self):
         # 말머리를 가진 board 를 추가한다
-        self.engine.board_manager.add_board(self.session_key_sysop, u'BuySell', u'market', [u'buy'])
+        self.engine.board_manager.add_board(self.session_key_sysop, u'BuySell', u'중고장터', u'market', [u'buy'])
         # 새로운 말머리를 추가한다. 
         self.engine.board_manager.add_board_heading(self.session_key_sysop, u'BuySell', u'sell')
         # 잘 추가되었나 검사한다. 
@@ -329,7 +329,7 @@ class BoardManagerTest(unittest.TestCase):
 
     def test_delete_board_heading(self):
         # 말머리를 가진 board 를 추가한다
-        self.engine.board_manager.add_board(self.session_key_sysop, u'BuySell', u'market', [u'buy', u'sell', u'qna'])
+        self.engine.board_manager.add_board(self.session_key_sysop, u'BuySell', u'중고장터', u'market', [u'buy', u'sell', u'qna'])
         # 글을 작성한다. 
         self._dummy_article_write(self.session_key, title_append = '1', board_name = 'BuySell', heading = 'buy')
         self._dummy_article_write(self.session_key_sysop, title_append = '2', board_name = 'BuySell', heading = 'buy')
@@ -354,18 +354,18 @@ class BoardManagerTest(unittest.TestCase):
 
     def testBoardType(self):
         # 게시판 형식 테스트.
-        self.engine.board_manager.add_board(self.session_key_sysop, u'Gallery', u'All pictures', [], None, BOARD_TYPE_PICTURE)
+        self.engine.board_manager.add_board(self.session_key_sysop, u'Gallery', u'사진첩', u'All pictures', [], None, BOARD_TYPE_PICTURE)
         gallery = self.engine.board_manager.get_board(u'Gallery')
         self.assertEqual({'read_only': False, 'hide': False, 'board_description': u'All pictures', 'order': 1, 'board_name': u'Gallery', 'headings': [], 'type': 1, 'id': 1}, self._to_dict(gallery))
         self.assertEqual(1, self.engine.board_manager.get_board_type(u'Gallery'))
 
     def test_get_board_heading_list(self):
         # 말머리가 없는 board 에서 아무 말머리도 안 등록되어있는지 확인한다.
-        self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'Garbages Board')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'쓰레기가 모이는 곳', u'Garbages Board')
         self.assertEqual([], self.engine.board_manager.get_board_heading_list(u'garbages'))
 
         # 말머리를 가진 board 를 추가한다
-        self.engine.board_manager.add_board(self.session_key_sysop, u'BuySell', u'market', [u'buy', u'sell'])
+        self.engine.board_manager.add_board(self.session_key_sysop, u'BuySell', u'중고장터', u'market', [u'buy', u'sell'])
         # 추가된 말머리들이 잘 읽히는지 확인한다
         self.assertEqual([u'buy', u'sell'], self.engine.board_manager.get_board_heading_list(u'BuySell'))
 
@@ -378,13 +378,13 @@ class BoardManagerTest(unittest.TestCase):
 
     def test_get_board_heading_list_fromid(self):
         # 말머리가 있는 보드를 추가하자
-        self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'Garbages Board', [u'gar', u'bage'])
+        self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'쓰레기가 모이는 곳', u'Garbages Board', [u'gar', u'bage'])
 
         self.assertEqual([u'gar', u'bage'], self.engine.board_manager.get_board_heading_list_fromid(1))
 
     def test_edit_board(self):
         # 테스트에 사용할 보드 추가.
-        self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'Garbage Board')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'garbages', u'쓰레기가 모이는 곳', u'Garbage Board')
         # TEST 1. 보드의 이름, 설명 동시에 바꾸기
         self.engine.board_manager.edit_board(self.session_key_sysop, u'garbages', u'recycle', u'Recycle Board')
         board_list = self.engine.board_manager.get_board_list()
@@ -421,7 +421,7 @@ class BoardManagerTest(unittest.TestCase):
             self.fail("Since board 'test' not exist, it must fail to rename that board.")
         except InvalidOperation:
             pass
-        self.engine.board_manager.add_board(self.session_key_sysop, u'recycle', u'Recycle Board')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'recycle', u'쓰레기통', u'Recycle Board')
         try:
             self.engine.board_manager.edit_board(self.session_key_sysop, u'garbages', u'recycle', u'Recycle Board')
             self.fail("Since board 'recycle'exist, it must fail to rename board 'garbages to 'recycle'.")
@@ -436,7 +436,7 @@ class BoardManagerTest(unittest.TestCase):
     def test_change_board_order(self):
         #테스트에 사용할 보드 추가(1,2,3,4,5,6,7,8,9)
         for i in range(1,10):
-            self.engine.board_manager.add_board(self.session_key_sysop, u'board'+unicode(i), u'board')
+            self.engine.board_manager.add_board(self.session_key_sysop, u'board'+unicode(i), unicode(i), u'board')
         # 뒤에 있는 보드를 앞으로 옮기기 테스트 : board9를 첫 번째로 옮깁니다.(9,1,2,3,4,5,6,7,8)
         self.engine.board_manager.change_board_order(self.session_key_sysop, u'board9', 1)
         self.assertEqual(1, self.engine.board_manager.get_board(u'board9').order)
@@ -473,7 +473,7 @@ class BoardManagerTest(unittest.TestCase):
 
     def testChangeAuth(self):
         # 게시판의 읽기/쓰기 권한설정 바꾸기를 테스트, by SYSOP
-        self.engine.board_manager.add_board(self.session_key_sysop, u'test', u'Testing Board')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'test', u'테스트보드', u'Testing Board')
         # 읽기/쓰기 권한의 기본값은 3 포탈인증
         self.assertEqual(3, self.engine.board_manager.get_board(u'test').to_read_level)
         self.assertEqual(3, self.engine.board_manager.get_board(u'test').to_write_level)
@@ -484,7 +484,7 @@ class BoardManagerTest(unittest.TestCase):
 
     def testAssignBBSManager(self):
         # 보드마다 관리자 임명 테스트, add BBS Manager by SYSOP
-        self.engine.board_manager.add_board(self.session_key_sysop, u'test', u'Testing Board')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'test', u'테스트보드', u'Testing Board')
         self.assertEqual(False, self.engine.board_manager.has_bbs_manager(u'test'))
         self.engine.board_manager.add_bbs_manager(self.session_key_sysop, u'test', u'mikkang')
         self.assertEqual(True, self.engine.board_manager.has_bbs_manager(u'test'))
@@ -520,7 +520,7 @@ class BoardManagerTest(unittest.TestCase):
 
     def testRemoveBBSManager(self):
         # 게시판 관리자 권한 지우기 테스트. by SYSOP
-        self.engine.board_manager.add_board(self.session_key_sysop, u'test', u'Testing Board')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'test', u'테스트보드', u'Testing Board')
         self.engine.board_manager.add_bbs_manager(self.session_key_sysop, u'test', u'mikkang')
         self.assertEqual(True, self.engine.board_manager.has_bbs_manager(u'test'))
         self.engine.board_manager.remove_bbs_manager(self.session_key_sysop, u'test', u'mikkang')
@@ -529,7 +529,7 @@ class BoardManagerTest(unittest.TestCase):
     def testBoardWithCategory(self):
         # 보드를 추가하는 순간부터 특정 카테고리로 집어넣는다
         self.engine.board_manager.add_category(self.session_key_sysop, u'test_category')
-        self.engine.board_manager.add_board(self.session_key_sysop, u'test', u'Testing Board', [], u'test_category')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'test', u'테스트보드', u'Testing Board', [], u'test_category')
         result = self.engine.board_manager.get_board_list()
         board1 = {'id': 1, 'read_only': False, 'board_name': 'test', 'hide': False, 'headings': [], 'order': 1, 'board_description': u'Testing Board', 'type': 0}
         self.assertEqual(1, len(result))
@@ -552,10 +552,10 @@ class BoardManagerTest(unittest.TestCase):
     def test_get_last_board_order_until_category(self):
         self.engine.board_manager.add_category(self.session_key_sysop, u'cate1')
         self.engine.board_manager.add_category(self.session_key_sysop, u'cate2')
-        self.engine.board_manager.add_board(self.session_key_sysop, u'board1', '', [], u'cate1')
-        self.engine.board_manager.add_board(self.session_key_sysop, u'board2', '', [], u'cate1')
-        self.engine.board_manager.add_board(self.session_key_sysop, u'board3', '', [], u'cate2')
-        self.engine.board_manager.add_board(self.session_key_sysop, u'board4', '', [], None)
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board1', u'1', '', [], u'cate1')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board2', u'2', '', [], u'cate1')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board3', u'3', '', [], u'cate2')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board4', u'4', '', [], None)
         self.assertEqual(2, self.engine.board_manager._get_last_board_order_until_category(u'cate1'))
         self.assertEqual(3, self.engine.board_manager._get_last_board_order_until_category(u'cate2'))
         self.assertEqual(4, self.engine.board_manager._get_last_board_order_until_category(None))
@@ -567,15 +567,15 @@ class BoardManagerTest(unittest.TestCase):
         for i in range(1,4):
             self.engine.board_manager.add_category(self.session_key_sysop, u'category'+unicode(i))
 
-        self.engine.board_manager.add_board(self.session_key_sysop, u'board13', u'test')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board13', u'13', u'test')
         for i in range(1,4):
-            self.engine.board_manager.add_board(self.session_key_sysop, u'board'+unicode(i), u'test',[] , u'category1')
+            self.engine.board_manager.add_board(self.session_key_sysop, u'board'+unicode(i), unicode(i), u'test',[] , u'category1')
         for i in range(4,8):
-            self.engine.board_manager.add_board(self.session_key_sysop, u'board'+unicode(i), u'test', [], u'category2')
-        self.engine.board_manager.add_board(self.session_key_sysop, u'board14', u'test')
+            self.engine.board_manager.add_board(self.session_key_sysop, u'board'+unicode(i), unicode(i), u'test', [], u'category2')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board14', u'14', u'test')
         for i in range(8,13):
-            self.engine.board_manager.add_board(self.session_key_sysop, u'board'+unicode(i), u'test', [], u'category3')
-        self.engine.board_manager.add_board(self.session_key_sysop, u'board15', u'test')
+            self.engine.board_manager.add_board(self.session_key_sysop, u'board'+unicode(i), unicode(i), u'test', [], u'category3')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board15', u'15', u'test')
 
         self.assertEqual(1, self.engine.board_manager.get_category(u'category1').order)
         self.assertEqual(2, self.engine.board_manager.get_category(u'category2').order)

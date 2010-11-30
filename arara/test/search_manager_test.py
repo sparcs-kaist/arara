@@ -54,8 +54,8 @@ class Test(unittest.TestCase):
         self.session_key_mikkang = self.engine.login_manager.login(u"mikkang", u"mikkang", u"123.123.123.123")
 
         # Add two board
-        self.engine.board_manager.add_board(self.session_key_sysop, u"search1", u"search1")
-        self.engine.board_manager.add_board(self.session_key_sysop, u"search2", u"search2", [u'head1', u'head2'])
+        self.engine.board_manager.add_board(self.session_key_sysop, u"search1", u'보드1', u"search1")
+        self.engine.board_manager.add_board(self.session_key_sysop, u"search2", u'보드2', u"search2", [u'head1', u'head2'])
 
     def tearDown(self):
         self.engine.shutdown()

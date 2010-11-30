@@ -62,11 +62,11 @@ class ArticleManagerTest(unittest.TestCase):
         self.session_key_wiki = self._register_user(u'wiki')
 
         # Create default board
-        self.engine.board_manager.add_board(self.session_key_sysop, u'board', u'Test Board', [])
-        self.engine.board_manager.add_board(self.session_key_sysop, u'board_h', u'Test Board with heading', [u'head1', u'head2'])
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board', u'테스트보드', u'Test Board', [])
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board_h', u'글머리가 있는 보드', u'Test Board with heading', [u'head1', u'head2'])
 
-        self.engine.board_manager.add_board(self.session_key_sysop, u'board_del', u'Test Board for deleting board test', [])
-        self.engine.board_manager.add_board(self.session_key_sysop, u'board_hide', u'Test Board for hiding board test', [])
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board_del', u'지워질 보드', u'Test Board for deleting board test', [])
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board_hide', u'숨겨질 보드', u'Test Board for hiding board test', [])
 
     def tearDown(self):
         self.engine.shutdown()
@@ -701,8 +701,8 @@ class ArticleManagerTest(unittest.TestCase):
 
     def test_article_list_for_all_board(self):
         # 테스트용 게시판을 두 개 만들자.
-        self.engine.board_manager.add_board(self.session_key_sysop, u'total1', u'Test Board', [])
-        self.engine.board_manager.add_board(self.session_key_sysop, u'total2', u'Test Board', [])
+        self.engine.board_manager.add_board(self.session_key_sysop, u'total1', u'total1', u'Test Board', [])
+        self.engine.board_manager.add_board(self.session_key_sysop, u'total2', u'total2', u'Test Board', [])
 
         # 게시판 2개에 섞어서 글을 쓰자.
         for i in range(55):
@@ -830,7 +830,7 @@ class ArticleManagerTest(unittest.TestCase):
         reply_no2 = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board', 1, reply_dic)
         STUB_TIME_CURRENT += 1.0
         reply_no3 = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board', 2, reply_dic)
-        self.engine.board_manager.add_board(self.session_key_sysop, u'board2', u'Test Board2', [])
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board2', u'board2', u'Test Board2', [])
         # Vote for article
         self.engine.article_manager.vote_article(self.session_key_mikkang, u'board', article_no1, True)
         # Move articles from board to board2
@@ -847,7 +847,7 @@ class ArticleManagerTest(unittest.TestCase):
 
     def test_change_article_heading(self):
         # 테스트를 위해 말머리가 2개 있는 보드를 생성한다.
-        self.engine.board_manager.add_board(self.session_key_sysop, u'testboard', u'Test Board with heading', [u'heading1', u'heading2'])
+        self.engine.board_manager.add_board(self.session_key_sysop, u'testboard', u'글머리가 있는 테스트보드', u'Test Board with heading', [u'heading1', u'heading2'])
 
         # 글을 2개의 말머리를 섞어서 작성한다.
         article1 = self._dummy_article_write(self.session_key_sysop, board_name = 'testboard', heading = 'heading1')

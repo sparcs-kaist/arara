@@ -143,7 +143,7 @@ BOARD_TYPE_NORMAL = 0
 BOARD_TYPE_PICTURE = 1
 
 class Board(object):
-    def __init__(self, board_name, board_description, order, category, type = None, to_read_level = 3, to_write_level = 3):
+    def __init__(self, board_name, alias, board_description, order, category, type = None, to_read_level = 3, to_write_level = 3):
         '''
         @type board_name: string
         @type board_description: string
@@ -154,6 +154,7 @@ class Board(object):
         @type to_write_level: int (0: 비인증, 1: 메일인증(non-@kaist), 2: 메일인증(@kaist), 3: 포탈인증)
         '''
         self.board_name = smart_unicode(board_name)
+        self.alias = smart_unicode(alias)
         self.board_description = smart_unicode(board_description)
         self.deleted = False
         self.read_only = False
@@ -168,7 +169,7 @@ class Board(object):
         self.to_write_level = to_write_level
 
     def __repr__(self):
-        return "<Board('%s', '%s')>" % (self.board_name, self.board_description)
+        return "<Board('%s', '%s', '%s')>" % (self.board_name, self.alias, self.board_description)
 
 class Link(object):
     def __init__(self, link_name, link_description, link_url, order):
@@ -406,6 +407,7 @@ board_table = Table('boards', metadata,
     Column('id', Integer, primary_key=True),
     Column('category_id', Integer, ForeignKey('categories.id')),
     Column('board_name', Unicode(30), unique=True, index=True),
+    Column('alias', Unicode(30), unique=True),
     Column('board_description', Unicode(300)),
     Column('deleted', Boolean),
     Column('read_only', Boolean),
