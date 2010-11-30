@@ -36,7 +36,7 @@
                 {% else %}
                 <tr class="second"> <th class="BANumber">{{no|add:"1"}}</th>
                 {% endif %}
-                    <td class="BAtitle">{% if logged_in %}<a href="/board/{{todays_best.board_name}}/{{todays_best.id}}/">{{todays_best.title|truncatechars:"45"}}</a> {% else %}{{todays_best.title|truncatechars:"45"}}{% endif %}</td>
+                    <td class="BAtitle">{% if logged_in %}<a href="/board/{{todays_best.board_name}}/{{todays_best.root_id}}/#{{todays_best.id}}">{{todays_best.title|truncatechars:"45"}}</a> {% else %}{{todays_best.title|truncatechars:"45"}}{% endif %}</td>
                     <td class="BAauthor"><a href="#">{{todays_best.author_nickname}}</a></td>
                 <td class="BAdateinfo">{% trans "vote" %} {{todays_best.positive_vote}} | {{todays_best.date|date:"m.d H:i"}} </td>
             </tr>
@@ -57,7 +57,7 @@
             {% else %}
             <tr class="second"> <th class="BANumber">{{no|add:"1"}}</th>
             {% endif %}
-                <td class="BAtitle">{% if logged_in %}<a href="/board/{{weekly_best.board_name}}/{{weekly_best.id}}/">{{weekly_best.title|truncatechars:"45"}}</a> {% else %}{{weekly_best.title|truncatechars:"45"}}{% endif %}</td>
+                <td class="BAtitle">{% if logged_in %}<a href="/board/{{weekly_best.board_name}}/{{weekly_best.root_id}}/#{{weekly_best.id}}">{{weekly_best.title|truncatechars:"45"}}</a> {% else %}{{weekly_best.title|truncatechars:"45"}}{% endif %}</td>
                 <td class="BAauthor"><a href="#">{{weekly_best.author_nickname}}</a></td>
                 <td class="BAdateinfo">{% trans "vote" %} {{weekly_best.positive_vote}} | {{weekly_best.date|date:"m.d H:i"}} </td>
             </tr>

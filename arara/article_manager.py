@@ -28,7 +28,7 @@ LIST_ARTICLE_WHITELIST = ('id', 'title', 'heading', 'date', 'last_modified_date'
 SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'heading', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'author_nickname', 'author_id', 'vote', 'hit', 'content')
 BEST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
-                    'deleted', 'author_username', 'author_nickname', 'author_id', 'positive_vote', 'negative_vote', 'hit', 'last_page', 'board_name')
+                    'deleted', 'author_username', 'author_nickname', 'author_id', 'positive_vote', 'negative_vote', 'hit', 'last_page', 'board_name', 'root_id')
 
 LIST_ORDER_ROOT_ID         = 0
 LIST_ORDER_LAST_REPLY_DATE = 1
@@ -107,7 +107,8 @@ class ArticleManager(object):
         '''
         #TODO: Query 의 코드 중복 제거하기 (성능 분석 포함)
         #TODO: Query 부분과 글목록화 부분 분리하기
-        #TODO: root 글이 아닌 글도 포함될 수 있도록 하기
+        #XXX(hodduc): root 글이 아닌 글도 포함하려면, 다음 쿼리에서 model.articles_table.c.root_id==None 부분만 지우면 된다.
+
         session = model.Session()
         time_to_filter = datetime.datetime.fromtimestamp(time.time()-time_to_filter)
         if board_id:
