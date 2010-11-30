@@ -31,6 +31,7 @@ class BoardListUpdateNode(template.Node):
         category3_list = []
         category4_list = []
         category5_list = []
+        category6_list = []
         for board in board_list:
             if(board.category_id==1):
                 category1_list+=[board]
@@ -42,6 +43,8 @@ class BoardListUpdateNode(template.Node):
                 category4_list.append(board)
             elif (board.category_id==5):
                 category5_list.append(board)
+            elif (board.category_id==6):
+                category6_list.append(board)
             else:
                 print "no category\n"
         context['category1_list'] = category1_list
@@ -49,6 +52,7 @@ class BoardListUpdateNode(template.Node):
         context['category3_list'] = category3_list
         context['category4_list'] = category4_list
         context['category5_list'] = category5_list
+        context['category6_list'] = category6_list
 
         return ""
 
