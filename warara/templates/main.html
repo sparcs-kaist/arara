@@ -12,6 +12,7 @@
 
     {% block main %}
     {% load i18n %}
+    {% if KSEARCH_ENABLED %}
     <div class="mainItem" id="Ksearch">
         <h2 class="mainHeader">K-Search</h2>
         <form id="KsearchBox" method="get" action="http://ksearch.sparcs.org/search">
@@ -22,6 +23,7 @@
         </form>
         <div class="cb"></div>
     </div>
+    {% endif %}
 
     <div class="mainItem" id="todayBest">
         <div class="mainHeader">

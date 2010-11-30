@@ -244,7 +244,11 @@ WEATHER_ICON_SET = [
     ('haze.gif', '21.png'),
     ('dust.gif', '19.png'),
     ('icy.gif', '25.png'),
-]" > etc/warara_settings.py
+]
+
+# Indicates whether KSearch is available
+KSEARCH_ENABLED = False
+" > etc/warara_settings.py
 
 echo "import sys
 reload(sys)
