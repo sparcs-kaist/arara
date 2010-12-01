@@ -125,11 +125,11 @@ $(document).ready(function(){
     function add_blacklist(){
         $.post("/blacklist/add/", {blacklist_id: username, ajax:1},
             function(data, textStatus) {
-                if(data == "ALREADY_ADDED"){
-                alert("already added");
+                if(data == "already added"){
+                alert("Already added.");
                 }
-                else if(data == "CANNOT_ADD_YOURSELF"){
-                alert("cannot add yourself");
+                else if(data == "cannot add yourself"){
+                alert("Cannot add yourself.");
                 }
                 else if(data == 1){
                 alert("Added " + username + " to blacklist.");

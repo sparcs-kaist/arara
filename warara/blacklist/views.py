@@ -23,9 +23,13 @@ def add(request):
             # XXX combacsa's DdamBbang.
             raise InvalidOperation("ID not exist!")
         converted_id =  id_converting[0].username
-        server.blacklist_manager.add_blacklist(sess, converted_id, True, True) 
+        try:
+            server.blacklist_manager.add_blacklist(sess, converted_id, True, True) 
+            message = '1'
+        except InvalidOperation as e:
+            message = e.why
         if request.POST.get('ajax', 0):
-            return HttpResponse(1)
+            return HttpResponse(message)
         return HttpResponseRedirect("/blacklist/")
     else:
         return HttpResponse('Must use POST')
