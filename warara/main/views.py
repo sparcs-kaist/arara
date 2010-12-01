@@ -27,7 +27,8 @@ def index(request):
     if request.session.get('django_language', 0):
         request.session["django_language"] = "en"
     r = server.login_manager.total_visitor()
-    rendered = render_to_string('index.html', r.__dict__ + {'KSEARCH_ENABLED':KSEARCH_ENABLED})
+    r.__dict__['KSEARCH_ENABLED'] = KSEARCH_ENABLED
+    rendered = render_to_string('index.html', r.__dict__)
     return HttpResponse(rendered)
 
 @warara.wrap_error
