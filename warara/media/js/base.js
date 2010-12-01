@@ -12,11 +12,11 @@ $(document).ready(function(){
 
     $("input[name='current_page_url']").val(location.pathname);
     
-/*    
+
+
+    // 이하 유저 정보 팝업에 대한 내용이다
     var user_popup = $("#user_popup");
-    user_popup.addClass("absolute");
     var message_popup = $("#message_popup");
-    message_popup.addClass("absolute");
 
     $("#user_popup li").hover(
     function(event) {
@@ -40,14 +40,15 @@ $(document).ready(function(){
     var username;
     $(".nickname").click(function(event) {
         $show_user_popup($(this));
-        event.stopPropagation(); 
+        event.stopPropagation();
+        event.preventDefault();
     });
 
     $show_user_popup = function($tu){
         if(!$tu.hasClass("nickname")){
         return;
         }
-        username = $tu.children("span").text();
+        username = $tu.text();
         $("#user_popup #user_popup_username").text("User: " + username);
 
         $("#user_popup").css("top", $tu.offset()["top"] + $tu.height());
@@ -57,7 +58,6 @@ $(document).ready(function(){
         $popup_x_coor = $tu.offset()["left"];
 
         $("#user_popup").show("fast");
-
         $(document).keyup(function(event){
                 switch(event.which){
                 case 27: //esc
@@ -117,8 +117,8 @@ $(document).ready(function(){
         $("#u_info_send_message").click(function(event) {
             tb_remove(); 
             $("#user_information_popup").hide("fast");
-            $("#message_popup").show("fast");
             event.preventDefault();
+            message_popup.show();
             $("#message_receiver_field").val(username);
         });
     }
@@ -183,7 +183,13 @@ $(document).ready(function(){
             });
         event.preventDefault();
     });
-*/
+    
+    //message_thickbox
+    $("#message_popup input[name='cancel']").click(function(event){
+            tb_remove();
+            $("#message_popup").hide();
+            });
+
 
 
 //인풋에 포커스 있을때 단축키 작동안함
@@ -220,13 +226,8 @@ $(document).ready(function(){
     else{
         $logged_in = 1
     }
-/*
-    //message_thickbox
-    $("#message_popup input[name='cancel']").click(function(event){
-            tb_remove();
-            $("#message_popup").hide();
-            });
-*/
+
+
 
 //단축키 작동
 /*
@@ -304,7 +305,7 @@ $(document).ready(function(){
     $focus_content = function(){
         $(".highlight").removeClass("highlight");
         $(".hidden_selected").removeClass("hidden_selected").addClass("selected");
-    }/*
+    }
     function popup_function(event){
         $fn = $("#user_popup li.user_popup_function a").eq(cursor_up-1).attr("id");
         cursor_up = 0;
@@ -322,7 +323,7 @@ $(document).ready(function(){
             add_blacklist();
         }
     }
-
+/*
     $(document).keypress(function(event){
             if(!$("#menu a[class='highlight']").length){
             cursor_bl=0;

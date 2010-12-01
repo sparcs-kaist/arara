@@ -8,11 +8,14 @@
         <meta name="description" content="KAIST 학내 커뮤니티, 아라">
         <link rel="stylesheet" href="/media/style_new/layout.css" type="text/css" media="screen" />
         <link rel="stylesheet" href="/media/style_new/stealBlue.css" type="text/css" media="screen" />
+        <link rel="stylesheet" href="/media/style_new/popup.css" type="text/css" media="screen" />
+        <link rel="stylesheet" href="/media/thirdparty/thickbox/thickbox.css">
         {% block style %}{% endblock %}
         <link rel="shortcut icon" href="/media/image/favicon.ico" type="image/x-icon" />
         <!--<link rel="stylesheet" href="/media/style_new/print.css" type="text/css" media="print" />-->
         <script type="text/javascript" src="/media/thirdparty/jquery-latest.min.js"></script>
         <script type="text/javascript" src="/media/js/layout.js"></script>
+        <script type="text/javascript" src="/media/thirdparty/thickbox/thickbox.js"></script>
         <!--[if (gte IE 5.5)&(lte IE 8)]>
             <script type="text/javascript" src="/media/js/ie-css3.js"></script>
         <![endif]-->
@@ -275,5 +278,56 @@
         var pageTracker = _gat._getTracker("UA-7828380-1");
         pageTracker._trackPageview();
         } catch(err) {}</script>
+
+        <div id="user_popup">
+            <ul>
+                <li id="user_popup_username"></li>
+                    <li class="user_popup_function{% if not logged_in %} hidden{% endif %}"><a id="user_popup_send_message" class="thickbox" href="#TB_inline?&amp;width=490&amp;height=565&amp;inlineId=message_popup&amp;modal=true">{% trans "Send Message" %}</a></li>
+                    <li class="user_popup_function"><a id="user_popup_user_information" class="thickbox" href="#TB_inline?height=size&amp;width=size&amp;inlineId=user_information_popup&amp;modal=true">{% trans "User Information" %}</a></li>
+                <li class="user_popup_function{% if not logged_in %} hidden{% endif %}"><a id="user_popup_add_blacklist" href="#">{% trans "Add Blacklist" %}</a></li>
+            </ul>
+        </div>
+
+        <div id="user_information_popup">
+            <div id="u_info_pop_head">{% trans "Member Information" %}</div>
+            <div id="user_information_popup_content"></div>
+            <!--
+            <input type="button" id="u_info_send_message" value="{% trans "send message" %}" />
+            <input type="button" id="u_info_add_blacklist" value="{% trans "add blacklist" %}" />
+            -->
+            <input type="button" id="user_information_close" value="{% trans "close" %}" />
+        </div>
+
+        <div id="message_popup">
+            <div id="message_popup_head">
+                <span class="main_head">
+                    {% trans "send a message" %}
+                </span>
+                <span class="sub_head">
+                    {% trans "send a message" %}
+                </span>
+            </div>
+            <div id="message_popup_content" class="message_content">
+                <form action="/message/send/" method="post">
+                    <div id="message_send_receiver">
+                        <div class="sendto">{% trans "send to : " %}</div>
+                        <div class="doublemarginshet">
+                            <input type="text" id="message_receiver_field" name="receiver" value="{{default_receiver}}"></input>
+                        </div>
+                    </div>
+                    <div id="message_send_text">
+                        <textarea id="message_text_field" name="text">{{default_text}}</textarea>
+                    </div>
+                    <div id="message_send_buttons">
+                        <span class="message_send_submit">
+                            <input type="submit" name="submit" class="message_send_submit big_btn" value="{% trans "send" %}" ></input>
+                        </span>
+                        <span class="message_send_cancel">
+                            <input type="button" name="cancel" value="{% trans "cancel" %}" class="small_btn"></input>
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </div>
     </body>
 </html>
