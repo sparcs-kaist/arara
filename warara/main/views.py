@@ -13,6 +13,8 @@ from warara import warara_middleware
 from arara_thrift.ttypes import InvalidOperation
 from arara_thrift.ttypes import *
 
+from etc.warara_settings import KSEARCH_ENABLED
+
 @warara.wrap_error
 def index(request):
     server = warara_middleware.get_server()
@@ -25,7 +27,7 @@ def index(request):
     if request.session.get('django_language', 0):
         request.session["django_language"] = "en"
     r = server.login_manager.total_visitor()
-    rendered = render_to_string('index.html', r.__dict__)
+    rendered = render_to_string('index.html', r.__dict__ + {'KSEARCH_ENABLED':KSEARCH_ENABLED})
     return HttpResponse(rendered)
 
 @warara.wrap_error
@@ -72,6 +74,9 @@ def main(request):
         ctx['has_banner'] = True
     except InvalidOperation:
         ctx['has_banner'] = False
+
+    # Ksearch
+    ctx['KSEARCH_ENABLED'] = KSEARCH_ENABLED
 
     rendered = render_to_string('main.html', ctx)
     return HttpResponse(rendered)

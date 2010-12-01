@@ -41,3 +41,6 @@ WEATHER_ICON_SET = [
 # XXX: This is temporary. Remove this after festival
 # XXX: This line is not added in bin/devel_setup_script.sh
 RELAY_FICTION_ARTICLE_NO = 2
+
+# Indicates whether KSearch is available
+KSEARCH_ENABLED = False
