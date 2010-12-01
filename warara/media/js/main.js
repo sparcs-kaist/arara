@@ -18,27 +18,22 @@ $(document).ready(function(){
     );
 
     function logout(){
-			$.get("/account/logout", function(data){
-                $("#top_menu a.hidden").removeClass("hidden");
-				$("a[name='logout']").hide();
-				$("a[name='login']").show();
-				$("a[name='account']").hide();
-				$("a[name='register']").show();
-				$("a[name='top_menu_message']").hide();
-				$("a[name='blacklist']").hide();
-				});
+        $.get("/account/logout", function(data){
+            alert('로그아웃 되었습니다');
+            location.reload();
+        });
     }
 
-	$(document).keypress(function(event){
-		if(!$logged_in || $focus_input || event.altKey || event.ctrlKey){
-		return;
-		}
-		switch(event.which){
-		case 113: //q
-        $(".highlight").removeClass("highlight");
-        cursor_tm = 0;
-        logout();
-		break;
-		}
-		});
+    $(document).keypress(function(event){
+        if(!$logged_in || $focus_input || event.altKey || event.ctrlKey){
+            return;
+        }
+        switch(event.which){
+            case 113: //q
+                $(".highlight").removeClass("highlight");
+                cursor_tm = 0;
+                logout();
+            break;
+        }
+    });
 });
