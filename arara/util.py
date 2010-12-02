@@ -84,6 +84,41 @@ def log_method_call_with_source_important(source):
 
     return log_method_call
 
+def log_method_call_with_source_duration(source):
+    '''
+    지정된 source 에 Logging 하는 decorator 를 내놓는다.
+
+    @type  source: string
+    @param source: Manager 의 명칭
+    '''
+
+    def log_method_call(function):
+        '''
+        인위적으로 발생시킨 Exception 이 아닌 Exception 이 발생하면 기록을 남기는 decorator.
+
+        @type  function: function
+        @param function: 로그를 남기게 하고 싶은 function
+        '''
+
+        def wrapper(self, *args, **kwargs):
+            logger = logging.getLogger(source)
+            # XXX: (pipoket) This line shows the status of the pool, remove this later
+            if model.pool:
+                if arara_settings.ARARA_POOL_DEBUG_MODE:
+                    logger.info(model.pool.status())
+            start_time = time.time()
+            ret = function(self, *args, **kwargs)
+            duration = time.time() - start_time
+
+            logger.info("DURATION %s.%s%s: %f", source, function.func_name, repr(args), duration)
+
+            return ret
+
+        wrapper.__name__ = function.__name__
+        wrapper.__doc__ = function.__doc__
+        return wrapper
+
+    return log_method_call
 
 def log_method_call_with_source(source):
     '''

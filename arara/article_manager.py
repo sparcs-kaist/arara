@@ -10,13 +10,14 @@ from sqlalchemy.orm import eagerload
 from sqlalchemy.sql import func, select
 from arara import model
 from arara.util import require_login, filter_dict
-from arara.util import log_method_call_with_source, log_method_call_with_source_important
+from arara.util import log_method_call_with_source, log_method_call_with_source_duration, log_method_call_with_source_important
 from arara.util import datetime2timestamp
 from arara.util import smart_unicode
 
 from arara_thrift.ttypes import *
 
 log_method_call = log_method_call_with_source('article_manager')
+log_method_call_duration = log_method_call_with_source_duration('article_manager')
 log_method_call_important = log_method_call_with_source_important('article_manager')
 
 # TODO: WRITE_ARTICLE_DICT 는 사실 쓰이지 않는다... SPEC 표시 용도일까?
@@ -90,6 +91,7 @@ class ArticleManager(object):
         self.engine.read_status_manager.mark_as_read_list(session_key, article_id_list)
         return ret
 
+    @log_method_call_duration
     def _get_best_article(self, session_key, board_id, count, time_to_filter, best_type):
         '''
         @type  sessino_key: string
@@ -596,6 +598,22 @@ class ArticleManager(object):
         '''
         return self._article_list(session_key, board_name, heading_name, page, page_length, include_all_headings, LIST_ORDER_ROOT_ID)
 
+    @log_method_call_duration
+    def _read_article(self, session, no):
+        '''
+        Internal Use Only.
+        DB 로부터 "정말로" 게시글 하나를 읽어옴
+
+        @type  session: model.Session
+        @param session: SQLAlchemy Session
+        @type  no: int
+        @param no: 읽어올 글의 번호
+        @rtype: model.Article
+        @return:
+            Eager Loading 이 적용된 Article 객체
+        '''
+        return session.query(model.Article).options(eagerload('children')).filter_by(id=no).one()
+
     @require_login
     @log_method_call_important
     def read_article(self, session_key, board_name, no):
@@ -625,7 +643,7 @@ class ArticleManager(object):
         blacklisted_userid = self._get_blacklist_userid(session_key)
 
         try:
-            article = session.query(model.Article).options(eagerload('children')).filter_by(id=no).one()
+            article = self._read_article(session, no)
             msg = self.engine.read_status_manager._check_stat(user_id, no)
             if msg == 'N':
                 article.hit += 1
@@ -711,7 +729,7 @@ class ArticleManager(object):
 
         return query.count()
 
-
+    @log_method_call_duration
     def _get_remaining_article_count(self, session, board_id, heading_id, no, include_all_headings = True, order_by = LIST_ORDER_ROOT_ID):
         '''
         Internal.

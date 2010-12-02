@@ -6,12 +6,13 @@ from sqlalchemy.sql import func, select
 from arara.util import require_login
 from arara import model
 from arara.util import require_login
-from arara.util import log_method_call_with_source, log_method_call_with_source_important
+from arara.util import log_method_call_with_source, log_method_call_with_source_duration, log_method_call_with_source_important
 from arara.util import smart_unicode
 
 from arara_thrift.ttypes import *
 
 log_method_call = log_method_call_with_source('read_status_manager')
+log_method_call_duration = log_method_call_with_source_duration('read_status_manager')
 log_method_call_important = log_method_call_with_source_important('read_status_manager')
 
 class ReadStatus(object):
@@ -307,6 +308,7 @@ class ReadStatusManager(object):
         status = self.read_status[user_id].set(no, 'V')
 
     @log_method_call
+    @log_method_call_duration
     def save_to_database(self, username):
         import traceback
         session = model.Session()
