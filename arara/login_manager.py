@@ -13,6 +13,7 @@ from arara_thrift.ttypes import *
 from arara import model
 from util import log_method_call_with_source
 from util import smart_unicode
+from util import run_job_in_parallel
 
 from etc.arara_settings import SESSION_EXPIRE_TIME
 
@@ -37,6 +38,8 @@ class LoginManager(object):
         self.engine_online = True
         # Thread 가동 시작
         self.session_checker = thread.start_new_thread(self._check_session_status, tuple())
+        # Terminate Session 을 위하여
+        self.terminated_done = None
 
     def shutdown(self):
         '''
@@ -393,9 +396,10 @@ class LoginManager(object):
         '''
         강제로 모든 Session 을 꺼버린다.
         '''
+        self.logger.info("=================== SESSION TERMINATION STARTED") 
         self.engine_online = False
-        length = len(self.session_dic.keys())
-        for idx, session_key in enumerate(self.session_dic.keys()):
-            self._logout(session_key)
+        sessions = self.session_dic.keys()
+        run_job_in_parallel(self._logout, sessions)
+        self.logger.info("=================== SESSION TERMINATION FINISHED") 
 
 # vim: set et ts=8 sw=4 sts=4

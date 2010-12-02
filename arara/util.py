@@ -10,6 +10,8 @@ from arara import model
 from etc import arara_settings
 from arara_thrift.ttypes import *
 
+import thread
+
 
 def smart_unicode(string):
     '''
@@ -166,3 +168,30 @@ def intlist_to_string(int_list):
 def string_to_intlist(string_):
     length = struct.unpack("i", string_[:4])[0]
     return list(struct.unpack("i" * length, string_[4:]))
+
+def run_job_in_parallel(function, item_list, threads = 4):
+    '''
+    주어진 item_list 의 원소를 function 에 하나씩 집어넣는다.
+    동시에 threads 갯수만큼의 thread 를 돌린다.
+    '''
+    #TODO: 동작이 잘 되는지 TEST 코드 작성
+
+    available_list = [True] * threads
+    index = 0
+
+    def premade_function(function, idx):
+        def funct(item):
+            function(item)
+            available_list[idx] = True
+        return funct
+
+    for item in item_list:
+        while available_list[index] == False:
+            index = (index + 1) % threads
+
+        available_list[index] = False
+        thread.start_new_thread(premade_function(function, index), (item,))
+
+    for idx in xrange(len(available_list)):
+        while available_list[idx] == False:
+            pass
