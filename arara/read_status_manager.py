@@ -313,35 +313,37 @@ class ReadStatusManager(object):
         import traceback
         session = model.Session()
         user = self.engine.member_manager._get_user(session, username)
-        try:
-            read_stat = session.query(model.ReadStatus).filter_by(user_id=user.id).one()
-            read_stat.read_status_data = self.read_status[user.id]
-            session.commit()
-            id = user.id
-            session.close()
-            del self.read_status[id]
-        except KeyError:
-            session.close()
-        except InvalidRequestError:
+        if self.read_status.has_key(user.id):
+            # Memory 에 확실히 있음
             try:
-                new_read_stat = model.ReadStatus(user, self.read_status[user.id])
-                session.add(new_read_stat)
+                read_stat = session.query(model.ReadStatus).filter_by(user_id=user.id).one()
+                read_stat.read_status_data = self.read_status[user.id]
                 session.commit()
                 id = user.id
-                session.close()
                 del self.read_status[id]
             except KeyError:
-                self.read_status[user.id] = ReadStatus()
-                new_read_stat = model.ReadStatus(user, self.read_status[user.id])
-                session.add(new_read_stat)
-                session.commit()
-                id = user.id
-                session.close()
-                del self.read_status[id]
-        except InvalidOperation:
-            session.close()
-        except Exception:
-            session.close()
-            logging.error(traceback.format_exc())
+                # 메모리에서 중간에 날아갔거나 한 경우
+                # 별 문제는 없다
+                pass
+            except InvalidRequestError:
+                # DB 에 확실히 없는 경우
+                # 이 때는 새롭게 생성해 줘야 한다
+                try:
+                    new_read_stat = model.ReadStatus(user, self.read_status[user.id])
+                    session.add(new_read_stat)
+                    session.commit()
+                    id = user.id
+                    del self.read_status[id]
+                except KeyError:
+                    # 아마도 이 경우에는 초고속으로 동일사용자를 2회 로그아웃해서
+                    # del self.read_status[id] 가 들어가는 동안 같은 곳에 위치했는지도.
+                    pass
+            except Exception:
+                # ReadStatus 관련 에러 발생
+                logging.error(traceback.format_exc())
+        # Memory 에 없는 경우는 그냥 잊어버린다.
+
+        # 어쨌뜬 세션을 닫는다.
+        session.close()
 
 # vim: set et ts=8 sw=4 sts=4
