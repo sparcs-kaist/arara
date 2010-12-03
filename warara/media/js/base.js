@@ -48,7 +48,7 @@ $(document).ready(function(){
         if(!$tu.hasClass("nickname")){
         return;
         }
-        username = $tu.text();
+        username = $tu.next().text();
         $("#user_popup #user_popup_username").text("User: " + username);
 
         $("#user_popup").css("top", $tu.offset()["top"] + $tu.height());
