@@ -27,6 +27,7 @@
             <td class="indicator">
                 {% ifequal article.read_status 'U' %}<span class="update">U</span>{% endifequal %}
                 {% ifequal article.read_status 'N' %}<span class="new">N</span>{% endifequal %}
+                {% ifequal article.read_status 'R' %}&nbsp;{% endifequal %}
             </td>
             <td class="articleid hidden" rel="{{ article.id }}">{{ article.id }}</td>
             <td class="author">
@@ -37,6 +38,7 @@
                 {% ifequal method 'search' %}<a href="{{path}}&search_heading={{article.heading}}">{{article.heading}}</a>
                 {% else %} <a href="/board/{{board_name}}/?heading={{article.heading}}">{{article.heading}}</a>
                 {% endifequal %}{% endif %}
+                &nbsp;
             </td>
             <td class="title {% if article.deleted %} deleted{% endif %}">
                 {% if logged_in %}
