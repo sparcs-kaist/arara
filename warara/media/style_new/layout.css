@@ -217,7 +217,7 @@ input { font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; }
 .mainBody .mainItem .bestArticles .top th, .mainBody .mainItem .hotArticles .top th { font-weight:bold; font-style:normal; }
 .mainBody .mainItem .bestArticles .top .BAtitle, .mainBody .mainItem .hotArticles .top .BAtitle { font-size:1.17em; letter-spacing:-1px; }
 .mainBody .mainItem .BANumber { width:40px; }
-.mainBody .mainItem .BAtitle { font-weight:bold; min-width:250px; }
+.mainBody .mainItem .BAtitle { font-weight:bold; width:250px; min-width:250px; }
 .mainBody .mainItem .BAauthor { width:70px; }
 .mainBody .mainItem .BAdateinfo {width:120px;}
 .mainBody .mainItem .second td, .mainBody .mainItem .second th { padding-top:5px; }
