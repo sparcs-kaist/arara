@@ -259,7 +259,7 @@ def write_(request, board_name):
             fp.write(file_ob.read())
 
     if request.POST.get('write_type', 0) == 'modify':
-        return HttpResponseRedirect('/board/%s/%s' % (board_name, request.POST.get('root_id', article_id)))
+        return HttpResponseRedirect('/board/%s/%s#%s' % (board_name, request.POST.get('root_id', article_id), article_id))
     else:
         return HttpResponseRedirect('/board/%s/%s' % (board_name, str(article_id)))
 
