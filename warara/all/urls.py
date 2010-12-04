@@ -8,6 +8,6 @@ urlpatterns = patterns('',
     (r'^([\d]+)/(\d+)/vote/$', 'warara.all.views.vote'),
     (r'^([\d]+)/(\d+)/delete/$', 'warara.all.views.delete'),
     (r'^search/$', 'warara.all.views.search'),
-    (r'^delete_file/$', 'warara.all.views.file_delete'),
+#    (r'^delete_file/$', 'warara.all.views.file_delete'),
     (r'^([\d]+)/(\d+)/file/(\d+)/$', 'warara.all.views.file_download'),
 )
