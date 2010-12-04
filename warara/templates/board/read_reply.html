@@ -13,12 +13,10 @@
                     {% for file in article.attach %}
                     <tr>
                         <th>첨부{{forloop.counter}}</th>
-                        <td><a href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" target="_blank">{{file.filename}}</a>
+                        <td><a href="{{ base_url }}{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" target="_blank">{{file.filename}}</a>
                             {% if file.file_id in article.image %}
                             <div>
-                                <a href="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/file/{{file.file_id}}"
-        target="_blank"><img src="/board/{{board_name}}/{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" target="_
-        blank" alt="{{file.file_id}}" /></a>
+                                <a href="{{ base_url }}{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" target="_blank"><img src="{{ base_url }}{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" alt="{{file.file_id}}" /></a>
                             </div>
                             {% endif %}
                         </td>
@@ -40,7 +38,7 @@
                 <input type="submit" class="smallLightButton modify" value="수정하기" />
                 <input type="submit" class="smallLightButton delete" value="삭제하기" />
                 {% endif %}
-                <input type="hidden" id="backref" value="/board/{{board_name}}?page_no={{page_no}}" />
+                <input type="hidden" id="backref" value="{{ base_url }}?page_no={{page_no}}" />
                 <input type="hidden" id="board_name" value="{{board_name}}" />
                 <input type="hidden" id="root_id" value="{{article.root_id}}" />
                 <input type="hidden" id="article_id" value="{{article.id}}" />
