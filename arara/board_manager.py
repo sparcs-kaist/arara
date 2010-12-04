@@ -1021,13 +1021,17 @@ class BoardManager(object):
                 3. 존재하지 않는 게시판: 'board does not exist'
                 4. 기타 오류 : 주석 추가해 주세요
         '''
+        # XXX (2010.12.05)
+        # Category 가 할당되어 있던 보드에 Category 를 지우려면 어째야 할까.
+        # XXX end
         self._is_sysop(session_key)
 
         board_name = smart_unicode(board_name)
         new_name = smart_unicode(new_name)
         new_alias = smart_unicode(new_alias)
         new_description = smart_unicode(new_description)
-        new_category_name = smart_unicode(new_category_name)
+        if new_category_name != None: # 파라메터로 주어지지 않았을 때
+            new_category_name = smart_unicode(new_category_name)
 
         # 변경이 필요한 항목에 대해서만 변경을 진행한다.
         session = model.Session()
@@ -1038,7 +1042,7 @@ class BoardManager(object):
             board.alias = new_alias
         if new_description != u'':
             board.board_description = new_description
-        if new_category_name != None :
+        if new_category_name != None:
             board.category = self._get_category_from_session(session, new_category_name)
 
         try:
@@ -1074,7 +1078,7 @@ class BoardManager(object):
                 3. 존재하지 않는 게시판: 'board does not exist'
                 4. 기타 오류 : 주석 추가해 주세요
         '''
-        self.edit_board(session_key, board_name, u"", u"", new_category_name)
+        self.edit_board(session_key, board_name, u"", u"", u"", new_category_name)
 
     def _hide_board(self, board_name):
         '''
