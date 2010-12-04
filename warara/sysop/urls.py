@@ -13,5 +13,5 @@ urlpatterns = patterns('',
     (r'^refresh_weather/$', 'warara.sysop.views.refresh_weather'),
     (r'^add_banner/$', 'warara.sysop.views.add_banner'),
     (r'^select_banner/$', 'warara.sysop.views.select_banner'),
-    (r'^remove_banner/$', 'warara.sysop.views.remove_banner'),
+#    (r'^remove_banner/$', 'warara.sysop.views.remove_banner'),
 )

@@ -15,7 +15,7 @@
             <th class="indicator"></th>
             <th class="articleid hidden"></th>
             <th class="author">작성자</th>
-            <th class="smallCat">말머리</th>
+            <th class="smallCat">{% ifequal mode 'all' %}게시판{% else %}말머리{% endifequal %}</th>
             <th class="title">제목</th>
             <th class="recRead">추천/조회</th>
             <th class="date">글쓴날짜</th>
@@ -34,15 +34,19 @@
                 <a href="#" class="nickname">{{article.author_nickname|truncatechars:"8"}}</a><span class="username hidden">{{article.author_username}}</span>
             </td>
             <td class="smallCat">
+                {% ifequal mode 'all' %}
+                <a href="/board/{{article.board_name}}">{{article.board_name}}</a>
+                {% else %}
                 {% if have_heading %}
-                {% ifequal method 'search' %}<a href="{{path}}&search_heading={{article.heading}}">{{article.heading}}</a>
-                {% else %} <a href="/board/{{board_name}}/?heading={{article.heading}}">{{article.heading}}</a>
-                {% endifequal %}{% endif %}
-                &nbsp;
+                    {% ifequal method 'search' %}<a href="{{path}}&search_heading={{article.heading}}">{{article.heading}}</a>
+                    {% else %}<a href="{{ base_url }}?heading={{article.heading}}">{{article.heading}}</a>
+                    {% endifequal %}
+                {% endif %}
+                {% endifequal %}
             </td>
             <td class="title {% if article.deleted %} deleted{% endif %}">
                 {% if logged_in %}
-                    <a href="/board/{{article.board_name}}/{{article.id}}/?page_no={{page_no}}">
+                    <a href="{{ base_url }}{{article.id}}/?page_no={{page_no}}">
                         {% if article.blacklisted %}
                             {% trans "BLACKLISTED" %}
                         {% else %}
@@ -75,17 +79,17 @@
     <a href="{{path}}&page_no={{next_page_group.no}}">{{next_page_group.mark}}</a>
     <a href="{{path}}&page_no={{last_page.no}}">{{last_page.mark}}</a>
     {% else %}
-    {% if first_page.no %}<a href="/board/{{board_name}}/?page_no={{first_page.no}}">{{first_page.mark}}</a> {% endif %}
-    {% if prev_page_group.no %}<a href="/board/{{board_name}}/?page_no={{prev_page_group.no}}">{{prev_page_group.mark}}</a> {% endif %}
+    {% if first_page.no %}<a href="{{ base_url }}?page_no={{first_page.no}}">{{first_page.mark}}</a> {% endif %}
+    {% if prev_page_group.no %}<a href="{{ base_url }}?page_no={{prev_page_group.no}}">{{prev_page_group.mark}}</a> {% endif %}
     {% for page in page_list %}
-    <a href="/board/{{board_name}}/?page_no={{page}}"{%ifequal page page_no%} class="selected" id="now_page" {%endifequal%}>{{page}}</a>
+    <a href="{{ base_url }}?page_no={{page}}"{%ifequal page page_no%} class="selected" id="now_page" {%endifequal%}>{{page}}</a>
     {% endfor %}
-    {% if next_page_group.no %}<a href="/board/{{board_name}}/?page_no={{next_page_group.no}}">{{next_page_group.mark}}</a> {% endif %}
-    {% if last_page.no %}<a href="/board/{{board_name}}/?page_no={{last_page.no}}">{{last_page.mark}}</a> {% endif %}
+    {% if next_page_group.no %}<a href="{{ base_url }}?page_no={{next_page_group.no}}">{{next_page_group.mark}}</a> {% endif %}
+    {% if last_page.no %}<a href="{{ base_url }}?page_no={{last_page.no}}">{{last_page.mark}}</a> {% endif %}
     {% endifequal %}
 </p>
 <div class="listBottom">
-    <form id="searchForm" name="searchPost" method="GET" action="/board/{{board_name}}/search">
+    <form id="searchForm" name="searchPost" method="GET" action="{{ base_url }}search">
         <div class="searchBox">
             <p class="selectObject">
             {% for smi in search_method_list %}<a href="#searchForm" rel="{{smi.val}}" {% if smi.selected %}class="selected"{% endif %}>{{smi.text}}</a><input type="hidden" value="{{smi.val}}" {% if smi.selected %}name="{{smi.val}}"{% endif %} />{% endfor %}
@@ -96,9 +100,11 @@
             </p>
         </div>
     </form>
-    <form id="writeForm" name="writePostForm" method="GET" action="/board/{{board_name}}/write/" {% if board_dict.read_only %}class="hidden"{% endif %} style="display:inline-block;">
+    {% ifequal mode 'board' %}
+    <form id="writeForm" name="writePostForm" method="GET" action="{{ base_url }}write/" {% if board_dict.read_only %}class="hidden"{% endif %} style="display:inline-block;">
         <input type="submit" id="writePost" class="darkButton" value="글쓰기" />
     </form>
+    {% endifequal %}
 </div>
 <div class="cb"></div>
 

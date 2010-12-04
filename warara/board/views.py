@@ -160,6 +160,7 @@ def get_article_list(request, r, mode):
 def list(request, board_name):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
+    r['mode'] = 'board'
     r['board_name'] = board_name
     get_article_list(request, r, 'list')
 
@@ -259,7 +260,7 @@ def write_(request, board_name):
             fp.write(file_ob.read())
 
     if request.POST.get('write_type', 0) == 'modify':
-        return HttpResponseRedirect('/board/%s/%s' % (board_name, request.POST.get('root_id', article_id)))
+        return HttpResponseRedirect('/board/%s/%s#%s' % (board_name, request.POST.get('root_id', article_id), article_id))
     else:
         return HttpResponseRedirect('/board/%s/%s' % (board_name, str(article_id)))
 
@@ -348,6 +349,7 @@ def read(request, board_name, article_id):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
 
+    r['mode'] = 'board'
     # 글의 정보를 r 에 저장
     _read(request, r, sess, board_name, article_id)
 
@@ -355,7 +357,7 @@ def read(request, board_name, article_id):
     get_article_list(request, r, 'read')
 
     # 계층형 Reply 구조를 위해 reply를 미리 render
-    rendered_reply = render_reply(board_name, r['article_read_list'][1:])
+    rendered_reply = render_reply(board_name, r['article_read_list'][1:], '/board/%s/' % board_name)
     r['rendered_reply'] = rendered_reply
     r['article'] = r['article_read_list'][0]
 
@@ -378,6 +380,7 @@ def read_root(request, board_name, article_id):
     server = warara_middleware.get_server() #
     sess, r = warara.check_logged_in(request) #
 
+    r['mode'] = 'board'
     article_list = server.article_manager.read_article(sess, board_name, int(article_id))
 
     root_article_id = article_list[0].root_id
@@ -633,6 +636,7 @@ def search(request, board_name):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request);
 
+    r['mode'] = 'board'
     _search(request, r, sess, board_name)
 
     rendered = render_to_string('board/list.html', r)
@@ -663,7 +667,7 @@ a_tag = re.compile(r'<a href="(.+?)">')
 def render_content(content):
     return a_tag.sub(r'<a href="\1" target="_blank">', html.urlize(html.escape(content)))
 
-def render_reply(board_name, article_list):
+def render_reply(board_name, article_list, base_url):
     if article_list == []:
         return ''
 
@@ -678,8 +682,8 @@ def render_reply(board_name, article_list):
             target_children_list.append(article_list[i])
         
         if i+1 == len(article_list) or article_list[i+1].depth == target_depth:
-            rendered_target_children = render_reply(board_name, target_children_list)
-            rendered_target_article = render_to_string('board/read_reply.html', {'article': target_article, 'rendered_reply': rendered_target_children, 'board_name': board_name})
+            rendered_target_children = render_reply(board_name, target_children_list, base_url)
+            rendered_target_article = render_to_string('board/read_reply.html', {'article': target_article, 'rendered_reply': rendered_target_children, 'board_name': board_name, 'base_url': base_url})
             r_string += rendered_target_article
 
     return r_string
