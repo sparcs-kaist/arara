@@ -39,7 +39,7 @@
                 <input type="submit" class="smallLightButton delete" value="삭제하기" />
                 {% endif %}
                 <input type="hidden" id="backref" value="{{ base_url }}?page_no={{page_no}}" />
-                <input type="hidden" id="board_name" value="{{board_name}}" />
+                <input type="hidden" id="board_name" value="{{article.board_name}}" />
                 <input type="hidden" id="root_id" value="{{article.root_id}}" />
                 <input type="hidden" id="article_id" value="{{article.id}}" />
             </p>

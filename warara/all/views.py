@@ -25,9 +25,10 @@ def list(request):
     sess, r = warara.check_logged_in(request)
     # board_name 이 없기 때문에 사용한 Hack.
     r['board_name'] = u'All Articles'
+    r['mode'] = 'all'
     warara.board.views.get_article_list(request, r, 'total_list')
 
-    rendered = render_to_string('all/list.html', r)
+    rendered = render_to_string('board/list.html', r)
     return HttpResponse(rendered)
 
 @warara.wrap_error
@@ -42,14 +43,23 @@ def read(request, article_id):
     '''
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
-
+    
     # 글의 정보를 r 에 저장
     warara.board.views._read(request, r, sess, u'', article_id)
 
     # 화면 하단의 글목록의 정보를 r 에 저장
     warara.board.views.get_article_list(request, r, 'total_read')
 
-    rendered = render_to_string('all/read.html', r)
+    # board_name 이 없기 때문에 사용한 Hack.
+    r['board_name'] = u'All Articles'
+    r['mode'] = 'all'
+
+    # 계층형 Reply 구조를 위해 reply를 미리 render
+    rendered_reply = warara.board.views.render_reply(u'All Articles', r['article_read_list'][1:], '/all/')
+    r['rendered_reply'] = rendered_reply
+    r['article'] = r['article_read_list'][0]
+
+    rendered = render_to_string('board/read.html', r)
     return HttpResponse(rendered)
 
 @warara.wrap_error
@@ -102,10 +112,11 @@ def search(request):
     '''
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request);
+    r['mode'] = 'all'
 
     warara.board.views._search(request, r, sess, u'')
 
-    rendered = render_to_string('all/list.html', r)
+    rendered = render_to_string('board/list.html', r)
     return HttpResponse(rendered)
 
 @warara.wrap_error
