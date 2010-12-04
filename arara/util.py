@@ -204,6 +204,34 @@ def string_to_intlist(string_):
     length = struct.unpack("i", string_[:4])[0]
     return list(struct.unpack("i" * length, string_[4:]))
 
+def split_list(list, slices):
+    '''
+    주어진 list 를 slices 갯수만큼의 리스트로 쪼갠다.
+    예 : [1, 2, 3, 4, 5, 6, 7] -> [[1, 2], [3, 4], [5,  6], [7]]
+
+    만일 slices 가 len(list) 보다 크면 나머지는 빈 리스트로 채운다.
+    예 : [1, 2, 3] -> [[1], [2], [3], [], [], []]
+
+    @type  list: list
+    @param list: 쪼갤 list
+    @type  slices: int
+    @param slices: list 를 쪼갤 갯수
+    @rtype: list<list>
+    @return: list 를 slices 갯수만큼 쪼갠 list
+    '''
+    #TODO: 나중에 좀 더 멋있게 하려면 주어진 list 를 slices 갯수만큼의 generator 로 쪼갤수도 있겠다.
+    if len(list) < slices:
+        return [[x] for x in list] + ([[]] * (slices - len(list)))
+    else:
+        per = len(list) / slices
+        if len(list) % slices > 0:
+            per += 1
+        result = [None] * slices
+        for idx in xrange(slices - 1):
+            result[idx] = list[idx * per : (idx + 1) * per]
+        result[-1] = list[(slices - 1) * per:]
+        return result
+
 def run_job_in_parallel(function, item_list, threads = 4):
     '''
     주어진 item_list 의 원소를 function 에 하나씩 집어넣는다.
