@@ -39,6 +39,11 @@ def main():
             user.set_password("1234")
         print idx, " th user done."
 
+    print "commit begin"
+    s.commit()
+    s.close()
+    print "commit done"
+
     s = model.Session()
 
     print "loading message query"
