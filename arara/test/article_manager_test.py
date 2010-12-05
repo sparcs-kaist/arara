@@ -914,6 +914,26 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual(0, self.engine.article_manager._get_remaining_article_count(session, None, None, 6, True, 1))
         session.close()
 
+    def test_article_listing_order_concurrency(self):
+        article1 = self._dummy_article_write(self.session_key_sysop, board_name = 'board')
+        article2 = self._dummy_article_write(self.session_key_sysop, board_name = 'board')
+        article3 = self._dummy_article_write(self.session_key_sysop, board_name = 'board')
+        reply_dic = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
+        article4 = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board', 1, reply_dic)
+
+        # 이러한 상황에서 article_list 와 article_list_below 는 3, 2, 1 순으로 글을 보여준다.
+        list1 = self.engine.article_manager.article_list(self.session_key_mikkang, u'board', u'', 1, 10).hit
+        list2 = self.engine.article_manager.article_list_below(self.session_key_mikkang, u'board', u'', 1, 10).hit
+        self.assertEqual(list1, list2)
+
+        # mikkang 의 글 목록 방식을 바꾼다.
+        self.engine.member_manager.change_listing_mode(self.session_key_mikkang, 1)
+
+        # 그래도 여전히 article_list 와 article_list_below 는 같다.
+        list1 = self.engine.article_manager.article_list(self.session_key_mikkang, u'board', u'', 1, 10).hit
+        list2 = self.engine.article_manager.article_list_below(self.session_key_mikkang, u'board', u'', 1, 10).hit
+        self.assertEqual(list1, list2)
+ 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(ArticleManagerTest)
 

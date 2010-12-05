@@ -596,7 +596,8 @@ class ArticleManager(object):
                 2. 페이지 번호 오류: InvalidOperation Exception
                 3. 데이터베이스 오류: InternalError Exception 
         '''
-        return self._article_list(session_key, board_name, heading_name, page, page_length, include_all_headings, LIST_ORDER_ROOT_ID)
+        listing_mode = self.engine.member_manager.get_listing_mode(session_key)
+        return self._article_list(session_key, board_name, heading_name, page, page_length, include_all_headings, listing_mode)
 
     @log_method_call_duration
     def _read_article(self, session, no):
@@ -842,7 +843,8 @@ class ArticleManager(object):
                 1. 존재하지 않는 게시판: InvalidOperation Exception
                 2. 데이터베이스 오류: InternalError Exception
         '''
-        return self._article_list_below(session_key, board_name, heading_name, no, page_length, include_all_headings, LIST_ORDER_ROOT_ID)
+        listing_mode = self.engine.member_manager.get_listing_mode(session_key)
+        return self._article_list_below(session_key, board_name, heading_name, no, page_length, include_all_headings, listing_mode)
 
     @require_login
     @log_method_call_important
