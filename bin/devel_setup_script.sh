@@ -176,8 +176,12 @@ ARARA_DEBUG_HANDLER_ON = False
 WARARA_SERVER_ADDRESS = '143.248.234.153:$((base_port+12))'
 MAIL_HOST = 'localhost'
 MAIL_SENDER = 'ara@ara.kaist.ac.kr'
-MAIL_CONTENT = 'You have been successfully registered as the ARA member.<br />To use your account, you have to activate it.<br />Please click the link below on any web browser to activate your account.<br /><br />'
-MAIL_TITLE = \"[ARA] Please activate your account 아라 계정 활성화\"
+MAIL_CONTENT = {
+        'activation': 'You have been successfully registered as the ARA member.<br />To use your account, you have to activate it.<br />Please click the link below on any web browser to activate your account.<br /><br />',
+}
+MAIL_TITLE = {
+        'activation': '[ARA] Please activate your account 아라 계정 활성화',
+}
 
 # Part 4. BOT Setting
 BOT_ENABLED = True
