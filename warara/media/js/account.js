@@ -143,6 +143,12 @@ $(document).ready(function(){
             }
         }
     });
+    // Account modifaction -> Cancel E-mail confirmation 에서 확인 대화상자 표시
+    $("#cancel_confirm a").click(function(event){
+        if(!confirm("정말 해제하시겠습니까?\nAre you really want to cancel the confirmation?")){
+            event.preventDefault();
+        }
+    });
 
 
     //shortcut
