@@ -18,4 +18,5 @@ urlpatterns = patterns('',
     (r'^register/resendemail/$','warara.account.views.mail_resend'),
     (r'^register/confirm_passive/$','warara.account.views.confirm_passive'),
     (r'^register/confirm_passive_url/$','warara.account.views.confirm_passive_url'),
+    (r'^id_recovery/$','warara.account.views.id_recovery'),
 )

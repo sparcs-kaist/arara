@@ -310,3 +310,20 @@ def mail_resend(request):
         new_email = request.POST['email']
         message = server.member_manager.modify_authentication_email(username, new_email)
         return HttpResponseRedirect("/main/")
+
+def id_recovery(request):
+    if request.method == 'POST':
+        server = warara_middleware.get_server()
+        email = request.POST.get('email_field', '')
+
+        if email == '':
+            error_msg = 'Fill the e-mail field!'
+        elif server.member_manager.send_id_recovery_email(email):
+            error_msg = 'We sent a mail. Check your mailbox.'
+        else:
+            error_msg = 'That user doesn`t exist.'
+        return HttpResponse('<script>alert("%s"); history.back(); </script>' % error_msg)
+    else:
+        rendered = render_to_string('account/id_recovery.html')
+        return HttpResponse(rendered)
+
