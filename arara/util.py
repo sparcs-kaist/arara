@@ -5,6 +5,8 @@ import logging
 import datetime
 import time
 import struct
+import smtplib
+from email.MIMEText import MIMEText
 
 from arara import model
 from etc import arara_settings
@@ -258,3 +260,34 @@ def run_job_in_parallel(function, item_list, threads = 4):
     for idx in xrange(len(available_list)):
         while available_list[idx] == False:
             pass
+
+def send_mail(subject, mailto, content, subtype='html', charset='euc_kr'):
+    '''
+    ARA 서버에서 E-Mail을 전송하는 함수
+
+    @type  subject: string
+    @param subject: 제목
+    @type  mailto: string
+    @param mailto: 받는 사람
+    @type  content: string
+    @param content: 메일 내용
+    @type  subtype: string
+    @param subtype: Content-Type minor type
+    @type  charset: string
+    @param charset: Character Set
+    '''
+    from etc.arara_settings import MAIL_SENDER, MAIL_HOST
+
+    try:
+        msg = MIMEText(content, _subtype=subtype, _charset=charset)
+        msg['Subject'] = subject
+        msg['From'] = MAIL_SENDER
+        msg['To'] = mailto
+
+        s = smtplib.SMTP()
+        s.connect(MAIL_HOST)
+        s.sendmail(MAIL_SENDER, [mailto], msg.as_string())
+        s.quit()
+    except Exception:
+        raise
+

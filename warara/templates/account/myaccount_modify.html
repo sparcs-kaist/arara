@@ -38,6 +38,14 @@
                         <option value="Seoul" {% ifequal campus "Seoul" %}selected{% endifequal %}>Seoul</option>
                     </select>
                 </div>
+                <div>
+                    <label for="cancelconfirm">{% trans "Cancel E-mail Confirmation" %}</label>
+                    <span id="cancel_confirm">
+                        <a href="/account/cancel_confirm/{{username}}/">{% trans "이메일 인증을 해제하려면 여기를 클릭하세요(To cancel your email confirmation, click this.)" %}</a> <br />
+                        이 계정의 이메일 인증을 해제하면 다른 계정에서 이 이메일 계정으로 인증하거나, <br />
+                        이 계정에서 다른 이메일 계정으로 인증할 수 있습니다.
+                    </span>
+                </div>
             </div>
             <div id="mysetting_modify">
                 <div class="acc_subtitle"><div class="acc_subtitle_name">{% trans "My ARA setting" %}</div></div>
