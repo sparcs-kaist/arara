@@ -180,7 +180,7 @@ $(document).ready(function(){
                         break;
                     }
                     if(confirm("send")){
-                        $focus_textarea_reply.parent().parent().parent().submit();
+                        $focus_textarea_reply.parent().parent().parent().parent().parent().submit();
                         break;
                     }
                     event.preventDefault();
