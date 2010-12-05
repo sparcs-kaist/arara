@@ -11,13 +11,14 @@ from sqlalchemy.exceptions import InvalidRequestError, ConcurrentModificationErr
 from arara_thrift.ttypes import *
 
 from arara import model
-from util import log_method_call_with_source
+from util import log_method_call_with_source, log_method_call_with_source_duration
 from util import smart_unicode
 from util import run_job_in_parallel
 
 from etc.arara_settings import SESSION_EXPIRE_TIME
 
 log_method_call = log_method_call_with_source('login_manager')
+log_method_call_duration = log_method_call_with_source_duration('login_manager')
 
 class LoginManager(object):
     '''
@@ -392,14 +393,16 @@ class LoginManager(object):
         else:
             return False
 
+    @log_method_call_duration
     def terminate_all_sessions(self):
         '''
         강제로 모든 Session 을 꺼버린다.
         '''
         self.logger.info("=================== SESSION TERMINATION STARTED") 
         self.engine_online = False
-        sessions = self.session_dic.keys()
-        run_job_in_parallel(self._logout, sessions)
+        ids = [x['id'] for x in self.session_dic.values()]
+        self.engine.member_manager._update_last_logout_time(ids)
+        self.engine.read_status_manager._save_all_users_to_database()
         self.logger.info("=================== SESSION TERMINATION FINISHED") 
 
 # vim: set et ts=8 sw=4 sts=4

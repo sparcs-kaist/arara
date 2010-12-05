@@ -13,11 +13,12 @@ from sqlalchemy import or_, not_, and_
 from arara_thrift.ttypes import *
 from arara import model
 from arara.util import require_login, filter_dict, is_keys_in_dict
-from arara.util import log_method_call_with_source, log_method_call_with_source_important
+from arara.util import log_method_call_with_source, log_method_call_with_source_important, log_method_call_with_source_duration
 from arara.util import smart_unicode, datetime2timestamp
 from etc.arara_settings import *
 
 log_method_call = log_method_call_with_source('member_manager')
+log_method_call_duration = log_method_call_with_source_duration('member_manager')
 log_method_call_important = log_method_call_with_source_important('member_manager')
 
 import re
@@ -165,6 +166,26 @@ class MemberManager(object):
             session.close()
             raise InvalidOperation('DATABASE_ERROR')
 
+    @log_method_call_duration
+    def _update_last_logout_time(self, ids):
+        '''
+        주어진 사용자들의 로그아웃 타임을 현재 시각으로 갱신한다.
+
+        @type  ids: list<int>
+        @param ids: 로그아웃 타임을 갱신하고자 하는 사용자의 id 목록
+        '''
+        # TODO: 사용자 정보 가져오는 쿼리문을 다른 함수로 빼기
+        # TODO: 여기서 익셉션이 나면 어떻게 로깅을 할 지 고민해보자
+        session = model.Session()
+        try:
+            cond = or_(*[model.users_table.c.id == id for id in ids])
+            session.execute(model.users_table.update().values(last_logout_time=datetime.datetime.fromtimestamp(time.time())).where(cond))
+            session.commit()
+            session.close()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('Database Error?')
+
     def _get_user(self, session, username, errmsg = 'user does not exist'):
         '''
         해당 username 의 사용자에 대한 SQLAlchemy 객체를 리턴한다.
@@ -188,7 +209,7 @@ class MemberManager(object):
             session.close()
             raise InvalidOperation(errmsg)
 
-    def _get_user_by_id(self, session, user_id):
+    def _get_user_by_id(self, session, user_id, close_session = True):
         '''
         해당 user_id 사용자에 대한 SQLAlchemy 객체를 리턴한다.
 
@@ -196,6 +217,8 @@ class MemberManager(object):
         @param session: SQLAlchemy Session
         @type  user_id: int
         @param user_id: 사용자 내부 id
+        @type  close_session: bool
+        @param close_session: Exception 발생시 session 을 닫을지의 여부
         @rtype: model.User
         @return:
             1. 사용자가 존재할 경우: 해당 사용자에 대한 객체
@@ -205,7 +228,8 @@ class MemberManager(object):
             user = session.query(model.User).filter_by(id=user_id).one()
             return user
         except InvalidRequestError:
-            session.close()
+            if close_session:
+                session.close()
             raise InvalidOperation('user does not exist')
 
     def _get_user_by_session(self, session, session_key, close_session = True):
