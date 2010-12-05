@@ -161,6 +161,64 @@ class SearchManager(object):
             session.close()
             raise InvalidOperation('heading not exist')
 
+
+    def _filter_query_dict(self, all_flag, query_dict):
+        '''
+        게시물 검색을 위해 all_flag 와 query_dict 파라메터를 바탕으로
+        올바른 query_dict 를 만들어낸다.
+
+        @type  all_flag: bool
+        @param all_flag: <주석 필요>
+        @type  query_dict: ttypes.SearchQuery
+        @param query_dict: <주석 필요>
+        @rtype: dict
+        @return: <주석 필요>
+        '''
+        query_dict = query_dict.__dict__
+        if len(query_dict) < 1:
+            raise InvalidOperation('wrong dictionary')
+
+        if all_flag:
+            if not query_dict.has_key('query') or not query_dict['query']:
+                raise InvalidOperation('wrong dictionary')
+            return {'query': query_dict['query']}
+        else:
+            result = {}
+            for key in query_dict.keys():
+                if not query_dict[key]:
+                    del query_dict[key]
+                elif not key in SEARCH_DICT:
+                    raise InvalidOperation('wrong dictionary')
+                else:
+                    result[key] = query_dict[key]
+            return result
+
+    def _get_basic_search_query(self, session, board_name, heading_name, include_all_headings):
+        '''
+        Search 에서 사용될 Basic Query 를 돌려준다.
+
+        @type  session: model.Session
+        @param session: SQLAlchemy Session
+        @type  board_name: string
+        @param board_name: 검색할 게시판
+        @type  heading_name: string
+        @param heading_name: 검색할 말머리
+        @type  include_all_headings: bool
+        @param include_all_headings: 모든 말머리를 포함할 것인가?
+        '''
+        # TODO: ArticleManager 에도 get_basic_query 가 있는데 그걸 응용하면 어떨까
+        # TODO: Board 객체가 필요한가?
+        query = session.query(model.Article).filter_by(is_searchable=True)
+        if board_name != u'':
+            board = self._get_board(session, board_name)
+            query = query.filter_by(board_id=board.id)
+            # 말머리 한정은 board 가 정해져 있어야만 가능하다
+            if not include_all_headings:
+                heading_id = self._get_heading_id(session, board, heading_name)
+                query = query.filter_by(heading_id= heading_id)
+
+        return query
+
     @require_login
     @log_method_call_important
     def search(self, session_key, all_flag, board_name, heading_name, query_dict, page=1, page_length=20, include_all_headings = True):
@@ -225,43 +283,17 @@ class SearchManager(object):
                 5. 로그인되지 않은 유저: NotLoggedIn Exception
                 6. 데이터베이스 오류: InternalError Exception
         '''
-        query_dict = query_dict.__dict__
-
-        if not len(query_dict) > 0:
-            raise InvalidOperation('wrong dictionary')
-
-        if all_flag:
-            if (not 'query' in query_dict) or (not query_dict['query']):
-                raise InvalidOperation('wrong dictionary')
-            tmp_query = query_dict['query']
-            query_dict = {'query': tmp_query}
-        else:
-            del query_dict['query']
-            for key in query_dict.keys():
-                if not query_dict[key]:
-                    del query_dict[key]
-                if not key in SEARCH_DICT:
-                    raise InvalidOperation('wrong dictionary')
+        # QueryDict 를 정돈한다.
+        query_dict = self._filter_query_dict(all_flag, query_dict)
 
         session = model.Session()
         ret_dict = {}
 
         start_time = time.time()
-        if board_name != u'':
-            board = self._get_board(session, board_name)
-        else:
-            board = None
-                
-        query = session.query(model.Article).filter_by(is_searchable=True)
 
-        if board:
-            query = query.filter_by(board_id=board.id)
+        # Board Name, Heading Name 등의 정보로부터 기본 query 를 얻는다
+        query = self._get_basic_search_query(session, board_name, heading_name, include_all_headings)
 
-            # 말머리 한정은 board 가 정해져 있어야만 가능하다
-            if not include_all_headings:
-                heading_id = self._get_heading_id(session, board, heading_name)
-                query = query.filter_by(heading_id= heading_id)
-       
         if all_flag:
             query_text = query_dict['query']
             ret, result = self._search_via_ksearch(query, page, page_length)
@@ -318,7 +350,6 @@ class SearchManager(object):
         root_num = root_num[offset:last]
 
         # Now we have all the root id we need. Query them!
-        query = session.query(model.Article)
         condition = None
         if root_num: # If there is any element in the root_num set make condition
             for one_id in root_num:
@@ -331,9 +362,6 @@ class SearchManager(object):
             # Without this process, the condition would have None value so filter will be ignored
             # That was the reason of showing all the articles if there is no articles matches with query.
             condition = (model.Article.id == -1)
-
-        # I think previous query is not necessary. Why don't we reset "query"?
-        query = None
 
         # Okay, I think everthing is prepared. Let's query the final result!
         # article_count, offset, last are moved up to the root_num set filtering part above
