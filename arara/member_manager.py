@@ -4,8 +4,6 @@ import hashlib
 import datetime
 import time
 import logging
-import smtplib
-from email.MIMEText import MIMEText
 
 from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
 from sqlalchemy import or_, not_, and_
@@ -14,7 +12,7 @@ from arara_thrift.ttypes import *
 from arara import model
 from arara.util import require_login, filter_dict, is_keys_in_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
-from arara.util import smart_unicode, datetime2timestamp
+from arara.util import smart_unicode, datetime2timestamp, send_mail
 from etc.arara_settings import *
 
 log_method_call = log_method_call_with_source('member_manager')
@@ -355,7 +353,7 @@ class MemberManager(object):
             raise InternalError('database error')
 
         # If everything is clear, send validation mail to user.
-        self._send_mail(user.email, user.username, user_activation.activation_code)
+        self._send_activation_code(user.email, user.username, user_activation.activation_code)
         # pipoket: SECURITY ISSUE! PASSWORD SHOULD NOT BE LOGGED!
         #           This logging function will log necessary information but NOT PASSWORD.
         self.logger.info(u"USER REGISTRATION:(username=%s, nickname=%s, email=%s)" %
@@ -363,8 +361,7 @@ class MemberManager(object):
         session.close()
         return activation_code
 
-    
-    def _send_mail(self, email, username, activation_code):
+    def _send_activation_code(self, email, username, activation_code):
         '''
         회원 가입하는 사용자 email로  activation_code를 보내는 함수 
 
@@ -374,33 +371,19 @@ class MemberManager(object):
         @param username: 사용자의 User ID
         @type  activation_code: string
         @param activation_code: Confirm Key
-        @rtype: string
+        @rtype: none
         @return: None
         '''
         # TODO: exception 적절하게 handling 하기
         # TODO: _charset 이 왜 euc_kr 로 되어있는 걸까?
-        from etc.arara_settings import WARARA_SERVER_ADDRESS, MAIL_HOST, MAIL_SENDER
 
-        SERVER_ADDRESS = WARARA_SERVER_ADDRESS
+        title = MAIL_TITLE['activation']
+        content = MAIL_CONTENT['activation']
+        confirm_url = 'http://' + WARARA_SERVER_ADDRESS + '/account/confirm/%s/%s' % (username.strip(), activation_code)
+        confirm_link = '<a href=\'%s\'>%s</a>' % (confirm_url, confirm_url)
+        confirm_key = '<br />Confirm Key : %s' % activation_code
 
-        try:
-            HOST = MAIL_HOST
-            sender = MAIL_SENDER
-            content = MAIL_CONTENT
-            confirm_url = 'http://' + SERVER_ADDRESS + '/account/confirm/%s/%s' % (username.strip(), activation_code)
-            confirm_link = '<a href=\'%s\'>%s</a>' % (confirm_url, confirm_url)
-            confirm_key = '<br />Confirm Key : %s' % activation_code
-            title = MAIL_TITLE
-            msg = MIMEText(content+confirm_link+confirm_key, _subtype="html", _charset='euc_kr')
-            msg['Subject'] = title
-            msg['From'] = sender
-            msg['To'] = email
-            s = smtplib.SMTP()
-            s.connect(HOST)
-            s.sendmail(sender, [email], msg.as_string())
-            s.quit()
-        except Exception:
-            raise
+        send_mail(title, email, content + confirm_link + confirm_key)
 
     @require_login
     @log_method_call_important
@@ -767,7 +750,7 @@ class MemberManager(object):
                 if user.email != new_email:
                     user.email = new_email
                     session.commit()
-                self._send_mail(user.email, user.username, activation_code)
+                self._send_activation_code(user.email, user.username, activation_code)
                 session.close()
             except Exception:
                 import traceback
