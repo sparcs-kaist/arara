@@ -284,6 +284,26 @@ class MemberManagerTest(unittest.TestCase):
             pass
         # TODO: query_by_username 이외에 다른 함수들에 대해서도 테스트 코드 작성
 
+    def test_change_listing_mode(self):
+        session_key = self.engine.login_manager.login(u"combacsa", u"combacsa", "127.0.0.1")
+        # 기본값은 0
+        session = arara.model.Session()
+        sa_object = self.engine.member_manager._get_user_by_session(session, session_key)
+        self.assertEqual(0, sa_object.listing_mode)
+        session.close()
+        # 변화 후 값 변화 학인
+        self.engine.member_manager.change_listing_mode(session_key, 1)
+        session = arara.model.Session()
+        sa_object = self.engine.member_manager._get_user_by_session(session, session_key)
+        self.assertEqual(1, sa_object.listing_mode)
+        session.close()
+        # 이상한 값으로 변화 금지
+        try:
+            self.engine.member_manager.change_listing_mode(session_key, 3)
+            self.fail("successfully changed listing mode into wrong number")
+        except InvalidOperation:
+            pass
+
     def tearDown(self):
         self.engine.shutdown()
         arara.model.clear_test_database()

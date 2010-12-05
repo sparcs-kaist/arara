@@ -983,4 +983,30 @@ class MemberManager(object):
         session = model.Session()
         user = self._get_user_by_session(session, session_key)
         return user.authentication_mode
+
+    def change_listing_mode(self, session_key, listing_mode):
+        '''
+        로그인한 user의 listing mode (글 목록 정렬 방식) 를 변경한다.
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session (must be SYSOP)
+        @type  listing_mode: int
+        @param listing_mode: 글 목록 정렬 방식 (ArticleManager 참고)
+        @return:
+            1. 성공했을 경우: void
+            2. 실패했을 경우 : Invalid Operation
+        '''
+        if listing_mode < 0 or 1 < listing_mode:
+            raise InvalidOperation('wrong listing mode')
+
+        session = model.Session()
+        user = self._get_user_by_session(session, session_key)
+        try:
+            user.listing_mode = listing_mode
+            session.commit()
+            session.close()
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('database error')
+
 # vim: set et ts=8 sw=4 sts=4
