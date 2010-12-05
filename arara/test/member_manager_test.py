@@ -284,6 +284,60 @@ class MemberManagerTest(unittest.TestCase):
             pass
         # TODO: query_by_username 이외에 다른 함수들에 대해서도 테스트 코드 작성
 
+    def test_cancel_confirm(self):
+        # 이미 Confirm된 유저의 이메일 인증을 해제하는 기능을 테스트
+
+        # 0. 없는 유저에 대해 cancel_confirm 시도. Exception이 발생해야 정상
+        try:
+            self.engine.member_manager.cancel_confirm(u'ghost_member')
+            self.fail('Not exist user cannot be canceled')
+        except:
+            pass
+
+        # 1. 유저 hodduc을 추가
+        user_reg_dic = {'username':u'hodduc', 'password':u'hodduc',
+                'nickname':u'hodduc', 'email':u'hodduc@example.com',
+                'signature':u'hodduc', 'self_introduction':u'hodduc',
+                'default_language':u'english', 'campus':u'Daejeon' }
+        register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
+
+        # 2. 아직 confirm되지 않은 상태로 cancel_confirm 시도. Exception이 발생해야 정상
+        try:
+            self.engine.member_manager.cancel_confirm(u'hodduc')
+            self.fail('Not confirmed user shouldn`t be canceled')
+        except:
+            pass
+
+        # 3. Confirm 후 로그인/로그아웃
+        self.engine.member_manager.confirm(u'hodduc', unicode(register_key))
+        session_key = self.engine.login_manager.login(u'hodduc', u'hodduc', u'143.248.234.140')
+        self.engine.login_manager.logout(session_key)
+
+        # 4. Confirm Cancel 후 로그인. Exception이 발생해야 정상
+        self.engine.member_manager.cancel_confirm(u'hodduc')
+        try:
+            session_key = self.engine.login_manager.login(u'hodduc', u'hodduc', u'143.248.234.140')
+            self.fail('This user must not login because he canceled his confirm')
+        except:
+            pass
+
+        # 5. 옛날 register_key로 confirm이 되는지 확인. 안 되어야 정상
+        try:
+            self.engine.member_manager.confirm(u'hodduc', unicode(register_key))
+            self.fail('This activation key is invalid')
+        except:
+            pass
+
+        # 6. 다른 사용자가 정상적으로 hodduc@example.com으로 가입, 인증, 로그인 할 수 있는지 확인
+        user_reg_dic = {'username':u'fake_hodduc', 'password':u'fake_hodduc',
+                'nickname':u'fake_hodduc', 'email':u'hodduc@example.com',
+                'signature':u'fake_hodduc', 'self_introduction':u'fake_hodduc',
+                'default_language':u'english', 'campus':u'Daejeon' }
+        register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
+        self.engine.member_manager.confirm(u'fake_hodduc', unicode(register_key))
+        session_key = self.engine.login_manager.login(u'fake_hodduc', u'fake_hodduc', u'143.248.234.140')
+        self.engine.login_manager.logout(session_key)
+
     def tearDown(self):
         self.engine.shutdown()
         arara.model.clear_test_database()

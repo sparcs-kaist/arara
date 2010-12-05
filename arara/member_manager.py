@@ -478,7 +478,41 @@ class MemberManager(object):
         else:
             session.close()
             raise InvalidOperation('wrong confirm key')
-        
+
+    def cancel_confirm(self, username):
+        '''
+        사용자의 이메일 인증을 해제하고 다른 사용자가 해당 이메일을 사용할 수 있도록 함
+
+        @type  username: string
+        @param username: 사용자의 User ID
+        @rtype: None
+        @return: None
+        '''
+
+        username_ = smart_unicode(username)
+
+        session = model.Session()
+        user = self._get_user(session, username, 'user does not exist')
+
+        if not user.activated:
+            raise InvalidOperation('Not confirmed')
+
+        key = (user.username + user.nickname + str(time.time()))
+        activation_code = hashlib.md5(key).hexdigest()
+
+        try:
+            user_activation = model.UserActivation(user, activation_code)
+            session.add(user_activation)
+
+            user.activated = False
+            user.email = u''
+            session.commit()
+        except IntegrityError:
+            session.rollback()
+            session.close()
+            raise InvalidOperation('already canceled')
+        except:
+            raise InternalError('database error')
 
     @log_method_call
     def is_registered(self, username):
