@@ -178,9 +178,11 @@ MAIL_HOST = 'localhost'
 MAIL_SENDER = 'ara@ara.kaist.ac.kr'
 MAIL_CONTENT = {
         'activation': 'You have been successfully registered as the ARA member.<br />To use your account, you have to activate it.<br />Please click the link below on any web browser to activate your account.<br /><br />',
+        'id_recovery': '',
 }
 MAIL_TITLE = {
         'activation': '[ARA] Please activate your account 아라 계정 활성화',
+        'id_recovery': '[ARA] ARA Username Assistance 아라 아이디 찾기',
 }
 
 # Part 4. BOT Setting

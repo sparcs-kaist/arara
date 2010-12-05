@@ -6,6 +6,7 @@ import time
 import logging
 
 from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import or_, not_, and_
 
 from arara_thrift.ttypes import *
@@ -910,6 +911,38 @@ class MemberManager(object):
         except AssertionError:
             session.close()
             raise InvalidOperation('invalid key')
+
+    @log_method_call
+    def send_id_recovery_email(self, email):
+        '''
+        ID를 잃어버렸을 때, e-mail 기반으로 id를 찾아서 그 이메일로 id를 전송해주는 함수.
+        성공할 경우 True, 실패할 경우 False를 반환한다.
+
+        @type  email: string
+        @param email: 이메일 주소
+        @rtype: bool
+        @return:
+            1. 성공 시 : True
+            2. 실패 시 : False
+        '''
+        session = model.Session()
+        query = session.query(model.User).filter_by(email=email)
+        try:
+            user = query.one()
+            session.close()
+        except NoResultFound:
+            session.close()
+            return False
+
+        title = MAIL_TITLE['id_recovery']
+        content = MAIL_CONTENT['id_recovery']
+        content += ' Here is your ARA account username which is associated with %s <br /><br /> ' % email
+        content += '    Your ID  :  %s   <br /><br />' % user.username
+        content += ' Please visit http://' + WARARA_SERVER_ADDRESS + '<br /><br />'
+        content += ' This is post-only mailing. <br /> Thanks. '
+        send_mail(title, email, content)
+
+        return True
 
     @require_login
     @log_method_call_important

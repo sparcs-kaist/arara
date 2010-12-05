@@ -63,6 +63,7 @@ class ARAraEngine(object):
             'query_by_nick': self.member_manager.query_by_nick,
             'remove_user': self.member_manager.remove_user,
             'search_user': self.member_manager.search_user,
+            'send_id_recovery_email': self.member_manager.send_id_recovery_email,
             'is_sysop': self.member_manager.is_sysop,
             '_logout_process': self.member_manager._logout_process,
             'add_blacklist': self.blacklist_manager.add_blacklist,
