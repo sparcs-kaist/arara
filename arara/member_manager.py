@@ -64,6 +64,9 @@ class MemberManager(object):
         if BOT_ENABLED:
             self._register_bot()
 
+        # Listing mode 를 빠르게 로드하기 위하여
+        self._listing_mode = {}
+
     def _register_without_confirm(self, user_reg_dic, is_sysop):
         '''
         confirm 과정 없이 사용자를 활성화된 상태로 등록하는 함수
@@ -722,6 +725,9 @@ class MemberManager(object):
         session.commit()
         session.close()
 
+        # Member Manager Cache
+        self._listing_mode[session_info.id] = user_modification.listing_mode
+
     # @require_login
     @log_method_call_important
     def modify_authentication_email(self, username, new_email):
@@ -1001,6 +1007,7 @@ class MemberManager(object):
 
         session = model.Session()
         user = self._get_user_by_session(session, session_key)
+        user_id = user.id
         try:
             user.listing_mode = listing_mode
             session.commit()
@@ -1008,6 +1015,9 @@ class MemberManager(object):
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('database error')
+
+        # Cache update
+        self._listing_mode[user_id] = listing_mode
 
     def get_listing_mode(self, session_key):
         '''
@@ -1017,15 +1027,20 @@ class MemberManager(object):
         if session_key == '':
             return 0
 
-        session = model.Session()
-        try:
-            user = self._get_user_by_session(session, session_key)
-            result = user.listing_mode
-            session.close()
-            return result
-        except NotLoggedIn:
-            # 프론트엔드에서는 로그인되어있다고 생각하는데
-            # 실제로는 로그인되어있지 않은 사용자가 이 경우에 해당된다
-            return 0
+        user_id = self.engine.login_manager.get_user_id(session_key)
+        if self._listing_mode.has_key(user_id):
+            return self._listing_mode[user_id]
+        else:
+            session = model.Session()
+            try:
+                user = self._get_user_by_id(session, user_id)
+                result = user.listing_mode
+                session.close()
+                self._listing_mode[user_id] = result
+                return result
+            except NotLoggedIn:
+                # 프론트엔드에서는 로그인되어있다고 생각하는데
+                # 실제로는 로그인되어있지 않은 사용자가 이 경우에 해당된다
+                return 0
 
 # vim: set et ts=8 sw=4 sts=4
