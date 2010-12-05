@@ -126,7 +126,7 @@ class MemberManagerTest(unittest.TestCase):
 
     def testModifyInfo(self):
         session_key = self.engine.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.145')
-        modify_user_reg_dic = { 'nickname':u'combacsa is sysop', 'signature':u'KAIST07 && HSHS07 && SPARCS07', 'self_introduction':u'i am Kyuhong', 'default_language':u'korean', 'campus':u'Seoul', 'widget':1, 'layout':u'aaa' }
+        modify_user_reg_dic = { 'nickname':u'combacsa is sysop', 'signature':u'KAIST07 && HSHS07 && SPARCS07', 'self_introduction':u'i am Kyuhong', 'default_language':u'korean', 'campus':u'Seoul', 'widget':1, 'layout':u'aaa' , 'listing_mode': 0}
         self.engine.member_manager.modify_user(session_key, UserModification(**modify_user_reg_dic))
         member = self.engine.member_manager.get_info(unicode(session_key))
         self.assertEqual(1, member.widget)
@@ -136,7 +136,9 @@ class MemberManagerTest(unittest.TestCase):
         self.assertEqual(u"i am Kyuhong", member.self_introduction)
         self.assertEqual(u"korean", member.default_language)
         self.assertEqual(u"Seoul", member.campus)
+        self.assertEqual(0, member.listing_mode)
 
+        # TODO: 이 아래 3줄 왜 필요하지?
         # Restore change (at least nickname)
         modify_user_reg_dic = { 'nickname':u'combacsa', 'signature':u'KAIST07 && HSHS07 && SPARCS07', 'self_introduction':u'i am Kyuhong', 'default_language':u'korean', 'campus':u'Seoul', 'widget':1, 'layout':u'aaa' }
         self.engine.member_manager.modify_user(session_key, UserModification(**modify_user_reg_dic))
@@ -303,6 +305,13 @@ class MemberManagerTest(unittest.TestCase):
             self.fail("successfully changed listing mode into wrong number")
         except InvalidOperation:
             pass
+
+    def test_get_listing_mode(self):
+        session_key = self.engine.login_manager.login(u"combacsa", u"combacsa", "127.0.0.1")
+        self.assertEqual(0, self.engine.member_manager.get_listing_mode(session_key))
+        # change 후에도 반영되는가
+        self.engine.member_manager.change_listing_mode(session_key, 1)
+        self.assertEqual(1, self.engine.member_manager.get_listing_mode(session_key))
 
     def tearDown(self):
         self.engine.shutdown()

@@ -1009,4 +1009,23 @@ class MemberManager(object):
             session.close()
             raise InvalidOperation('database error')
 
+    def get_listing_mode(self, session_key):
+        '''
+        로그인한 사용자의 listing_mode (글 목록 정렬 방식) 을 돌려준다.
+        만일 로그인하지 않은 사용자라면 그냥 0 (default) 을 돌려준다.
+        '''
+        if session_key == '':
+            return 0
+
+        session = model.Session()
+        try:
+            user = self._get_user_by_session(session, session_key)
+            result = user.listing_mode
+            session.close()
+            return result
+        except NotLoggedIn:
+            # 프론트엔드에서는 로그인되어있다고 생각하는데
+            # 실제로는 로그인되어있지 않은 사용자가 이 경우에 해당된다
+            return 0
+
 # vim: set et ts=8 sw=4 sts=4
