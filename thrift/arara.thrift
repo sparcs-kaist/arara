@@ -67,6 +67,7 @@ struct UserInformation {
     11: i32 widget,
     12: i32 layout,
     13: i32 id,
+    14: i32 listing_mode,
 }
 
 struct UserPasswordInfo {
@@ -83,6 +84,7 @@ struct UserModification {
     5: string campus,
     6: i32 widget,
     7: i32 layout,
+    8: i32 listing_mode,
 }
 
 struct PublicUserInformation {
@@ -365,6 +367,10 @@ service ARAraThriftInterface {
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void _logout_process(1:string username)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void change_listing_mode(1:string session_key,
+                             2:i32 listing_mode)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// MemberManager Part End

@@ -39,10 +39,10 @@ USER_QUERY_WHITELIST = ('username', 'nickname', 'email',
 # User Public Whitelist : 사용자에 대한 정보를 받을 Dict의 형식을 결정. USER_QUERY_WHITELIST와 달리 현재 로그인 된 회원의 정보를 반환하는 용도로 사용함. (arara.thrift에서는 UserInformation)
 USER_PUBLIC_WHITELIST= ('username', 'nickname', 'email', 'last_login_ip',
         'last_logout_time', 'signature', 'self_introduction',
-        'default_language', 'campus', 'activated', 'widget', 'layout', 'id')
+        'default_language', 'campus', 'activated', 'widget', 'layout', 'id', 'listing_mode')
 # User Public Modifiable Whitelist : 사용자에 대한 정보 중 수정 가능한 것들의 Dict의 형식을 결정. (arara.thrift에서는 UserModification)
 USER_PUBLIC_MODIFIABLE_WHITELIST= ('nickname', 'signature',
-        'self_introduction', 'default_language', 'campus', 'widget', 'layout')
+        'self_introduction', 'default_language', 'campus', 'widget', 'layout', 'listing_mode')
 # User Search Whitelist : 사용자에 대한 검색 결과를 받을 Dict의 형식을 결정. (arara.thrift에서는 SearchUserResult)
 USER_SEARCH_WHITELIST = ('username', 'nickname')
 

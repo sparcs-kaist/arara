@@ -56,6 +56,13 @@
                         <option value="kor" {% ifequal default_language "kor" %}selected{% endifequal %}>한국어</option>
                     </select>
                 </div>
+                <div>
+                    <label for="mylistingmode">{% trans "Listing Mode" %}</label>
+                    <select name="mylistingmode" id="mylistingmode" />
+                        <option value="0" {% ifequal listing_mode 0 %}selected{% endifequal %}>Default</option>
+                        <option value="1" {% ifequal listing_mode 1 %}selected{% endifequal %}>Forum</option>
+                    </select>
+                </div>
             </div>
         </span>
         <div id="register_buttons">
