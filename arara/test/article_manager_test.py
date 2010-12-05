@@ -876,6 +876,43 @@ class ArticleManagerTest(unittest.TestCase):
         articleListOfNoHeading = self.engine.article_manager.article_list(self.session_key_sysop, 'testboard', '', include_all_headings = False).hit 
         self.assertEqual(5, len(articleListOfNoHeading))
 
+    def test_remaining_article_count(self):
+        # 글 10개를 쓰고 테스트해보자.
+        for idx in xrange(10):
+            self._dummy_article_write(self.session_key_sysop)
+        session = arara.model.Session()
+        self.assertEqual(9, self.engine.article_manager._get_remaining_article_count(session, None, None, 1, True, 0))
+        self.assertEqual(8, self.engine.article_manager._get_remaining_article_count(session, None, None, 2, True, 0))
+        self.assertEqual(7, self.engine.article_manager._get_remaining_article_count(session, None, None, 3, True, 0))
+        self.assertEqual(6, self.engine.article_manager._get_remaining_article_count(session, None, None, 4, True, 0))
+        self.assertEqual(5, self.engine.article_manager._get_remaining_article_count(session, None, None, 5, True, 0))
+        self.assertEqual(4, self.engine.article_manager._get_remaining_article_count(session, None, None, 6, True, 0))
+        self.assertEqual(3, self.engine.article_manager._get_remaining_article_count(session, None, None, 7, True, 0))
+        self.assertEqual(2, self.engine.article_manager._get_remaining_article_count(session, None, None, 8, True, 0))
+        self.assertEqual(1, self.engine.article_manager._get_remaining_article_count(session, None, None, 9, True, 0))
+        self.assertEqual(0, self.engine.article_manager._get_remaining_article_count(session, None, None, 10, True, 0))
+
+        # 답글을 달고 Listing Method 를 바꿔 보자.
+        reply_dic = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
+        global STUB_TIME_CURRENT
+        STUB_TIME_CURRENT += 1.0
+        reply_id   = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board', 1, reply_dic)
+        STUB_TIME_CURRENT += 1.0
+        reply_id   = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board', 3, reply_dic)
+        STUB_TIME_CURRENT += 1.0
+        reply_id   = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board', 6, reply_dic)
+
+        self.assertEqual(9, self.engine.article_manager._get_remaining_article_count(session, None, None, 2, True, 1))
+        self.assertEqual(8, self.engine.article_manager._get_remaining_article_count(session, None, None, 4, True, 1))
+        self.assertEqual(7, self.engine.article_manager._get_remaining_article_count(session, None, None, 5, True, 1))
+        self.assertEqual(6, self.engine.article_manager._get_remaining_article_count(session, None, None, 7, True, 1))
+        self.assertEqual(5, self.engine.article_manager._get_remaining_article_count(session, None, None, 8, True, 1))
+        self.assertEqual(4, self.engine.article_manager._get_remaining_article_count(session, None, None, 9, True, 1))
+        self.assertEqual(3, self.engine.article_manager._get_remaining_article_count(session, None, None, 10, True, 1))
+        self.assertEqual(2, self.engine.article_manager._get_remaining_article_count(session, None, None, 1, True, 1))
+        self.assertEqual(1, self.engine.article_manager._get_remaining_article_count(session, None, None, 3, True, 1))
+        self.assertEqual(0, self.engine.article_manager._get_remaining_article_count(session, None, None, 6, True, 1))
+        session.close()
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(ArticleManagerTest)

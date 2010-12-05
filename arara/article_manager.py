@@ -751,23 +751,25 @@ class ArticleManager(object):
         @return: 해당 게시판의 해당되는 말머리에서 no 번 이후 게시된 글의 개수 
         '''
         query = session.query(model.Article)
-
+        # query 조립 개시
+        query = query.filter(model.articles_table.c.root_id==None)
+        query = query.filter(model.articles_table.c.destroyed==False)
         if board_id == None:
-            query = query.filter(and_(
-                    model.articles_table.c.root_id==None,
-                    model.articles_table.c.destroyed==False,
-                    model.articles_table.c.id > no,
-                    model.Article.board.has(model.Board.hide==False),
-                    model.Article.board.has(model.Board.deleted==False)))
+            query = query.filter(model.Article.board.has(model.Board.hide==False))
+            query = query.filter(model.Article.board.has(model.Board.deleted==False))
         else:
-            query = query.filter(and_(
-                    model.articles_table.c.board_id==board_id,
-                    model.articles_table.c.root_id==None,
-                    model.articles_table.c.destroyed==False,
-                    model.articles_table.c.id > no))
+            query = query.filter(model.articles_table.c.board_id==board_id)
             if not include_all_headings:
                 query = query.filter_by(heading_id=heading_id)
-
+        # Listing 방식에 따른 정렬순서
+        if order_by == LIST_ORDER_ROOT_ID:
+            query = query.filter(model.articles_table.c.id > no)
+        elif order_by == LIST_ORDER_LAST_REPLY_DATE:
+            last_reply_date = self._get_article(session, board_id, no).last_reply_date
+            query = query.filter(model.articles_table.c.last_reply_date > last_reply_date)
+        else:
+            raise InvalidOperation("wrong ordering mode")
+        # query 조립 완료
         return query.count()
 
     def _article_list_below(self, session_key, board_name, heading_name, no, page_length, include_all_headings = True, order_by = LIST_ORDER_ROOT_ID):
