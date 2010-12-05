@@ -353,6 +353,15 @@
     margin-bottom: 1.3em;
 }
 
+#cancel_confirm {
+    display: block;
+    float: left;
+    padding: 1em 0 0 0.5em;
+}
+
+#cancel_confirm a{
+    color: blue;
+}
 /* Account remove */
 #acc_rm_submit {
     width: 65.4em;

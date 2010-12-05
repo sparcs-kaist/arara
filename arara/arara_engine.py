@@ -50,6 +50,7 @@ class ARAraEngine(object):
             'register_': self.member_manager.register_,
             'backdoor_confirm': self.member_manager.backdoor_confirm,
             'confirm': self.member_manager.confirm,
+            'cancel_confirm': self.member_manager.cancel_confirm,
             'is_registered': self.member_manager.is_registered,
             'is_registered_nickname': self.member_manager.is_registered_nickname,
             'is_registered_email': self.member_manager.is_registered_email,

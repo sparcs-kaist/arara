@@ -67,6 +67,19 @@ def confirm_user(request, username, confirm_key):
         return HttpResponse('<script>alert("Confirm failed! \\n\\nPlease contact ARA SYSOP.");</script>')
 
 @warara.wrap_error
+def cancel_confirm(request, username):
+    server = warara_middleware.get_server()
+
+    try:
+        server.member_manager.cancel_confirm(username)
+    except InvalidOperation:
+        return HttpResponse('<script>alert("Failed! \\n\\n  -Already canceled?\\n  -Not confirmed? \\n  -Wrong username?");</script>')
+    except InternalError:
+        return HttpResponse('<script>alert("Failed! \\n\\nPlease contact ARA SYSOP.");</script>')
+
+    return logout(request)
+
+@warara.wrap_error
 def reconfirm_user(request, username):
     rendered = render_to_string('account/mail_confirm.html',
             {'username': username})
