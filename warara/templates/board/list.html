@@ -71,21 +71,21 @@
 </table>
 <p class="paging">
     {% ifequal method 'search' %}
-    <a href="{{path}}&page_no={{first_page.no}}">{{first_page.mark}}</a>
-    <a href="{{path}}%page_no={{prev_page_group.no}}">{{prev_page_group.mark}}</a>
-    {% for page in page_list %}
-    <a href="{{path}}&page_no={{page}}">{{page}}</a>
-    {% endfor %}
-    <a href="{{path}}&page_no={{next_page_group.no}}">{{next_page_group.mark}}</a>
-    <a href="{{path}}&page_no={{last_page.no}}">{{last_page.mark}}</a>
+        {% if first_page.no %}<a href="{{ path }}&page_no={{first_page.no}}">{{first_page.mark}}</a> {% endif %}
+        {% if prev_page_group.no %}<a href="{{ path }}&page_no={{prev_page_group.no}}">{{prev_page_group.mark}}</a> {% endif %}
+        {% for page in page_list %}
+        <a href="{{ path }}&page_no={{page}}"{%ifequal page page_no%} class="selected" id="now_page" {%endifequal%}>{{page}}</a>
+        {% endfor %}
+        {% if next_page_group.no %}<a href="{{ path }}&page_no={{next_page_group.no}}">{{next_page_group.mark}}</a> {% endif %}
+        {% if last_page.no %}<a href="{{ path }}&page_no={{last_page.no}}">{{last_page.mark}}</a> {% endif %}
     {% else %}
-    {% if first_page.no %}<a href="{{ base_url }}?page_no={{first_page.no}}">{{first_page.mark}}</a> {% endif %}
-    {% if prev_page_group.no %}<a href="{{ base_url }}?page_no={{prev_page_group.no}}">{{prev_page_group.mark}}</a> {% endif %}
-    {% for page in page_list %}
-    <a href="{{ base_url }}?page_no={{page}}"{%ifequal page page_no%} class="selected" id="now_page" {%endifequal%}>{{page}}</a>
-    {% endfor %}
-    {% if next_page_group.no %}<a href="{{ base_url }}?page_no={{next_page_group.no}}">{{next_page_group.mark}}</a> {% endif %}
-    {% if last_page.no %}<a href="{{ base_url }}?page_no={{last_page.no}}">{{last_page.mark}}</a> {% endif %}
+        {% if first_page.no %}<a href="{{ base_url }}?page_no={{first_page.no}}">{{first_page.mark}}</a> {% endif %}
+        {% if prev_page_group.no %}<a href="{{ base_url }}?page_no={{prev_page_group.no}}">{{prev_page_group.mark}}</a> {% endif %}
+        {% for page in page_list %}
+        <a href="{{ base_url }}?page_no={{page}}"{%ifequal page page_no%} class="selected" id="now_page" {%endifequal%}>{{page}}</a>
+        {% endfor %}
+        {% if next_page_group.no %}<a href="{{ base_url }}?page_no={{next_page_group.no}}">{{next_page_group.mark}}</a> {% endif %}
+        {% if last_page.no %}<a href="{{ base_url }}?page_no={{last_page.no}}">{{last_page.mark}}</a> {% endif %}
     {% endifequal %}
 </p>
 <div class="listBottom">
