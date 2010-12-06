@@ -279,6 +279,58 @@ class SearchManager(object):
                     root_num.add(one_article.id)
         return root_num
 
+    def _get_page_offset(self, session, article_count, page, page_length):
+        '''
+        @type  session: model.Session
+        @param session: SQLAlchemy Session
+        @type  article_count: int
+        @param article_count: 전체 글의 수
+        @type  page: int
+        @param page: 쪽번호
+        @type  page_length: int
+        @param page_length: 쪽마다 있는 글의 수
+        @rtype: int, int, int
+        @return:
+            offset, last, last_page
+        '''
+
+        offset = page_length * (page - 1)
+        last = offset + page_length
+        last_page = int(article_count / page_length)
+        if article_count % page_length != 0:
+            last_page += 1
+        elif article_count == 0:
+            last_page += 1
+        if page > last_page:
+            session.close()
+            raise InvalidOperation('wrong pagenum')
+
+        return offset, last, last_page
+
+    def _get_condition(self, root_num):
+        '''
+        root_num 에 주어진 글만 가져오는 condition 을 만든다.
+
+        @type  root_num: list<int>
+        @param root_num: 가져올 글의 목록
+        @rtype: SQLAlchemy Condition
+        @return: 그 글만 가져오는 condition
+        '''
+        condition = None
+        if root_num: # If there is any element in the root_num set make condition
+            for one_id in root_num:
+                if condition:
+                    condition = or_(condition, model.Article.id == one_id)
+                else:
+                    condition = (model.Article.id == one_id)
+        else: 
+            # If there is no element in the root_num set, make condition that doesn't exist
+            # Without this process, the condition would have None value so filter will be ignored
+            # That was the reason of showing all the articles if there is no articles matches with query.
+            condition = (model.Article.id == -1)
+
+        return condition
+
     @require_login
     @log_method_call_important
     def search(self, session_key, all_flag, board_name, heading_name, query_dict, page=1, page_length=20, include_all_headings = True):
@@ -360,6 +412,7 @@ class SearchManager(object):
         query = self._get_like_attached_query(query, all_flag, query_dict)
 
         # 마무리로 쿼리에 글 번호 순서로의 정렬을 덧씌우고 Fetch.
+        # TODO: 어차피 뒤에서 root_num 으로 sort 하는데 여기 글번호 순서 정렬이 필요한가?
         result = query.order_by(model.Article.id.desc()).all()
 
         # 검색 결과에는 많은 글이 있을 것이나, Root 글 외에는 표시되어서는 안 된다.
@@ -367,41 +420,24 @@ class SearchManager(object):
         # 뽑아내어 중복 없게 하여야 한다.
         root_num = self._extract_root_article_numbers(result)
 
+        # Page 번호 계산하기
+        article_count = len(root_num)
+        # TODO: 이 부분은 Article Manager 와 거의 완전히 겹치는 듯 싶다.
+        offset, last, last_page = self._get_page_offset(session, article_count, page, page_length)
+
         # (pipoket): Solution for maximum recursion depth exceeded exception
         # Filter out the unnecessary article numbers from the root_num set
-        offset = page_length * (page - 1)
-        last = offset + page_length
-        article_count = len(root_num)
         root_num = list(root_num)
         root_num.sort()
         root_num.reverse()
         root_num = root_num[offset:last]
 
         # Now we have all the root id we need. Query them!
-        condition = None
-        if root_num: # If there is any element in the root_num set make condition
-            for one_id in root_num:
-                if condition:
-                    condition = or_(condition, model.Article.id == one_id)
-                else:
-                    condition = (model.Article.id == one_id)
-        else: 
-            # If there is no element in the root_num set, make condition that doesn't exist
-            # Without this process, the condition would have None value so filter will be ignored
-            # That was the reason of showing all the articles if there is no articles matches with query.
-            condition = (model.Article.id == -1)
+        condition = self._get_condition(root_num)
 
         # Okay, I think everthing is prepared. Let's query the final result!
         # article_count, offset, last are moved up to the root_num set filtering part above
         query = session.query(model.Article).filter(condition)
-        last_page = int(article_count / page_length)
-        if article_count % page_length != 0:
-            last_page += 1
-        elif article_count == 0:
-            last_page += 1
-        if page > last_page:
-            session.close()
-            raise InvalidOperation('wrong pagenum')
         result = query.order_by(model.Article.id.desc()).all()
 
         end_time = time.time()
