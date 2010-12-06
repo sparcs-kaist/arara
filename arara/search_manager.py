@@ -219,6 +219,66 @@ class SearchManager(object):
 
         return query
 
+    def _get_like_attached_query(self, query, all_flag, query_dict):
+        '''
+        주어진 Query 에 검색 관련 쿼리를 추가한다. Like statement 등을 의미한다.
+
+        @type  query: SQLAlchemy Query
+        @param query: SQLAlchemy Query
+        @type  all_flag: bool
+        @param all_flag: 모든 조건을 포함할 것인지의 여부
+        @type  query_dict: dict
+        @param query_dict: 검색 조건들
+
+        '''
+        if all_flag:
+            query_text = query_dict['query']
+            query_text = self._get_query_text(query_dict, 'query')
+            query = query.join('author').filter(or_(
+                    model.articles_table.c.title.like(query_text),
+                    model.articles_table.c.content.like(query_text),
+                    model.User.username.like(query_text),
+                    model.User.nickname.like(query_text)))
+        else:
+            condition = None
+            refer_dict = {'title': model.articles_table.c.title.like,
+                    'content': model.articles_table.c.content.like,
+                    'author_nickname': model.User.nickname.like,
+                    'author_username': model.User.username.like,
+                    'date': model.articles_table.c.date}
+            for key in query_dict.keys():
+                if key.upper() == "DATE":
+                    continue #TODO: DATE SEARCH DISABLED!
+
+                query_text = self._get_query_text(query_dict, key)
+                if condition:
+                    condition = or_(condition, refer_dict[key](query_text))
+                else:
+                    condition = refer_dict[key](query_text)
+
+            query = query.join('author').filter(condition)
+
+        return query
+
+    def _extract_root_article_numbers(self, result):
+        '''
+        글의 목록으로부터 중복 없이 Root 글 번호의 목록을 뽑아낸다.
+
+        @type  result: list<model.Article>
+        @param result: 글의 목록
+        @rtype: set
+        @return: Root 글 번호 목록
+        '''
+        root_num = set()
+        for one_article in result[::-1]:
+            if one_article.root:
+                if not set([one_article.root.id]).issubset(root_num): # If root_num not exist
+                    root_num.add(one_article.root.id)
+            else:
+                if not set([one_article.id]).issubset(root_num):
+                    root_num.add(one_article.id)
+        return root_num
+
     @require_login
     @log_method_call_important
     def search(self, session_key, all_flag, board_name, heading_name, query_dict, page=1, page_length=20, include_all_headings = True):
@@ -243,6 +303,8 @@ class SearchManager(object):
 
         기본적으로 전체검색은 K-Search를 사용하지만,
         K-Search가 비정상적으로 작동할경우 자체 쿼리 검색을 사용한다.
+        (2010/12/06 combacsa: K-Search 관련 검색 코드를 제거.
+         나중에 K-Search 와의 연동을 별도로 테스트 후 부활시키자.)
 
         all_flag 'TRUE'  ==> query_dict {'query': 'QUERY TEXT'}
         all_flag 'FALSE' ==> query_dict {'title': '...', 'content': '...',
@@ -294,50 +356,16 @@ class SearchManager(object):
         # Board Name, Heading Name 등의 정보로부터 기본 query 를 얻는다
         query = self._get_basic_search_query(session, board_name, heading_name, include_all_headings)
 
-        if all_flag:
-            query_text = query_dict['query']
-            ret, result = self._search_via_ksearch(query, page, page_length)
-            if ret:
-                #XXX Should be re-implemented
-                return ret, result
-            else:
-                # I think K-Search is dead, so let's search it by query.
-                query_text = self._get_query_text(query_dict, 'query')
-                query = query.join('author').filter(or_(
-                        model.articles_table.c.title.like(query_text),
-                        model.articles_table.c.content.like(query_text),
-                        model.User.username.like(query_text),
-                        model.User.nickname.like(query_text)))
-        else:
-            condition = None
-            refer_dict = {'title': model.articles_table.c.title.like,
-                    'content': model.articles_table.c.content.like,
-                    'author_nickname': model.User.nickname.like,
-                    'author_username': model.User.username.like,
-                    'date': model.articles_table.c.date}
-            for key in query_dict.keys():
-                if key.upper() == "DATE":
-                    continue #TODO: DATE SEARCH DISABLED!
+        # 검색 기능 (스트링 검색) 이 포함된 Query 로 발전시킨다
+        query = self._get_like_attached_query(query, all_flag, query_dict)
 
-                query_text = self._get_query_text(query_dict, key)
-                if condition:
-                    condition = or_(condition, refer_dict[key](query_text))
-                else:
-                    condition = refer_dict[key](query_text)
-
-            query = query.join('author').filter(condition)
-
+        # 마무리로 쿼리에 글 번호 순서로의 정렬을 덧씌우고 Fetch.
         result = query.order_by(model.Article.id.desc()).all()
 
-        # Extract root article number from total result
-        root_num = set()
-        for one_article in result[::-1]:
-            if one_article.root:
-                if not set([one_article.root.id]).issubset(root_num): # If root_num not exist
-                    root_num.add(one_article.root.id)
-            else:
-                if not set([one_article.id]).issubset(root_num):
-                    root_num.add(one_article.id)
+        # 검색 결과에는 많은 글이 있을 것이나, Root 글 외에는 표시되어서는 안 된다.
+        # 따라서 글 목록에 Root 만 표시되도록 하려면, 검색 결과로부터 Root 정보만
+        # 뽑아내어 중복 없게 하여야 한다.
+        root_num = self._extract_root_article_numbers(result)
 
         # (pipoket): Solution for maximum recursion depth exceeded exception
         # Filter out the unnecessary article numbers from the root_num set
