@@ -1,4 +1,5 @@
 var isMouseovered;
+var inAnimation;
 
 $(document).ready(function(){
 	setWidth();
@@ -23,7 +24,9 @@ $(document).ready(function(){
     $(document).resize(setWidth);
 	
 	/* 메뉴 롤오버 js */
+    inAnimation = false;
     $(".category").click( function(event){
+        if(inAnimation) return;
         if($(this).is(".selected")) $(this).removeClass("selected");
         else { $(".category").removeClass("selected"); $(this).addClass("selected"); }
         toggleCat($(this).attr("rel"));
@@ -93,21 +96,23 @@ function toggleCat (catName) {
             callHideCat();
         }
     } else {
-        $(entireHandler).slideDown();
         isMouseovered=1;
+        inAnimation = true;
+        $(entireHandler).slideDown('fast', function() { inAnimation = false; });
     }
     setCategoryListWidth("#boardInCategory dl:visible ul");
 }
 
 function callHideCat () {
 	isMouseovered=0;
+    inAnimation = true;
 	setTimeout("hideCat()",200);
 }
 
 function hideCat () {	
 	if(!isMouseovered) {
-		$("#noMenu #boardInCategory").slideUp();
-		$("#boardInCategory dl.boardList").slideUp();
+		$("#noMenu #boardInCategory").slideUp('fast', function() { inAnimation = false; });
+		$("#boardInCategory dl.boardList").slideUp('fast', function() { inAnimation = false; });
 	}
 }
 
