@@ -1074,14 +1074,19 @@ class MemberManager(object):
         '''
         로그인한 사용자의 listing_mode (글 목록 정렬 방식) 을 돌려준다.
         만일 로그인하지 않은 사용자라면 그냥 0 (default) 을 돌려준다.
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        @rtype: int
+        @return: 해당 사용자의 글 목록 정렬 방식
         '''
-        if session_key == '':
+        if session_key == '': # 로그인되지 않을 경우
             return 0
 
         user_id = self.engine.login_manager.get_user_id(session_key)
-        if self._listing_mode.has_key(user_id):
+        if self._listing_mode.has_key(user_id): # 캐시에 있는 경우
             return self._listing_mode[user_id]
-        else:
+        else: # 캐시에 없는 경우
             session = model.Session()
             try:
                 user = self._get_user_by_id(session, user_id)
