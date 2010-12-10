@@ -640,7 +640,7 @@ class ArticleManager(object):
             session.close()
             raise InvalidOperation('ARTICLE_NOT_EXIST')
         article_dict_list = self._article_thread_to_list(article, blacklisted_userid)
-        self.engine.read_status_manager.mark_as_read_list(session_key, [x.id for x in article_dict_list])
+        self.engine.read_status_manager._mark_as_read_list(user_id, [x.id for x in article_dict_list])
         session.close()
         return article_dict_list
 
@@ -684,7 +684,7 @@ class ArticleManager(object):
             raise InvalidOperation('ARTICLE_NOT_EXIST')
 
         article_dict_list = self._article_thread_to_list(article, blacklisted_userid)
-        self.engine.read_status_manager.mark_as_read_list(session_key, [x.id for x in article_dict_list])
+        self.engine.read_status_manager._mark_as_read_list(user_id, [x.id for x in article_dict_list])
         session.close()
         return article_dict_list
 

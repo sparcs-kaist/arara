@@ -232,31 +232,65 @@ class ReadStatusManager(object):
         status = self.read_status[user_id].get_range(no_list)
         return status
 
+    @log_method_call_duration
+    def _mark_as_read_list(self, user_id, no_list):
+        '''
+        복수개의 글을 읽은 글로 등록하기
+
+        @type  user_id: int
+        @param user_id: 사용자 고유 id
+        @type  no_list: list<int>
+        @param no_list: 글번호 목록
+        @rtype: void
+        @return:
+            1. 등록 성공: void
+            2. 등록 실패:
+                1. 존재하지 않는 글: InvalidOperation('ARTICLE_NOT_EXIST')
+                2. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR')
+        '''
+        ret, _ = self._initialize_data(user_id)
+        self._check_article_exist(no_list)
+        status = self.read_status[user_id].set_range(no_list, 'R')
+
     @require_login
     @log_method_call
     def mark_as_read_list(self, session_key, no_list):
         '''
-        읽은 글로 복수개의 글을 등록하기
-
-        >>> readstat.mark_as_read(session_key, 'garbages', 34)
-        True, 'OK'
+        복수개의 글을 읽은 글로 등록하기
 
         @type  session_key: string
-        @param session_key: User Key
-        @type  no : integer
-        @param no : Article Number
-        @rtype: string
+        @param session_key: 사용자 Login Session
+        @type  no_list : list<int>
+        @param no_list : 글번호 목록
+        @rtype: void
         @return:
-            1. 등록 성공: True, 'OK'
+            1. 등록 성공: void
             2. 등록 실패:
-                1. 존재하지 않는 글: False, 'ARTICLE_NOT_EXIST'
-                2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 존재하지 않는 글: InvalidOperation('ARTICLE_NOT_EXIST')
+                2. 로그인되지 않은 유저: NotLoggedIn
+                3. 데이터베이스 오류: InternalError('DATABASE_ERROR')
         '''
         user_id = self.engine.login_manager.get_user_id(session_key)
+        self._mark_as_read_list(user_id, no_list)
+
+    @log_method_call_duration
+    def _mark_as_read(self, user_id, no):
+        '''
+        읽은 글로 등록하기
+
+        @type  user_id: int
+        @param user_id: 사용자 고유 id
+        @type  no : integer
+        @param no : Article Number
+        @return:
+            1. 등록 성공: void
+            2. 등록 실패:
+                1. 존재하지 않는 글: InvalidOperation('ARTICLE_NOT_EXIST')
+                2. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR')
+        '''
         ret, _ = self._initialize_data(user_id)
-        self._check_article_exist(no_list)
-        status = self.read_status[user_id].set_range(no_list, 'R')
+        self._check_article_exist(no)
+        status = self.read_status[user_id].set(no, 'R')
 
     @require_login
     @log_method_call
@@ -264,25 +298,20 @@ class ReadStatusManager(object):
         '''
         읽은 글로 등록하기
 
-        >>> readstat.mark_as_read(session_key, 'garbages', 34)
-        True, 'OK'
-
         @type  session_key: string
-        @param session_key: User Key
-        @type  no : integer
-        @param no : Article Number
-        @rtype: string
+        @param session_key: 사용자 Login Session
+        @type  no: int
+        @param no: Article Number
+        @rtype: void
         @return:
-            1. 등록 성공: True, 'OK'
+            1. 등록 성공: void
             2. 등록 실패:
-                1. 존재하지 않는 글: False, 'ARTICLE_NOT_EXIST'
-                2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 존재하지 않는 글: InvalidOperation('ARTICLE_NOT_EXIST')
+                2. 로그인되지 않은 유저: NotLoggedIn
+                3. 데이터베이스 오류: InternalError('DATABASE_ERROR')
         '''
         user_id = self.engine.login_manager.get_user_id(session_key)
-        ret, _ = self._initialize_data(user_id)
-        self._check_article_exist(no)
-        status = self.read_status[user_id].set(no, 'R')
+        self._mark_as_read(user_id, no)
 
     @require_login
     @log_method_call
