@@ -320,22 +320,14 @@ class ArticleManager(object):
         board_id = self.engine.board_manager.get_board_id(board_name)
         return self._get_best_article(None, board_id, count, 604800, 'weekly')
 
-    def _get_blacklist_userid(self, session_key):
+    def _get_blacklist_userid(self, user_id):
         '''
-        @type  session_key: string
-        @param session_key: 사용자 Login Session
-        '''
-        try:
-            blacklist_list = self.engine.blacklist_manager.get_article_blacklisted_userid_list(session_key)
-        except NotLoggedIn:
-            blacklist_list = []
-            pass
-        return set(blacklist_list)
+        주어진 사용자의 blacklist 목록을 가져온다.
 
-    def _get_blacklist_userid_by_userid(self, user_id):
-        '''
         @type  user_id: int
         @param user_id: 사용자 고유 id
+        @rtype: set<int>
+        @return: 해당 사용자가 blacklist 등록한 사용자들의 id (-1 이 들어오면 빈 셋)
         '''
         if user_id == -1:
             return set()
@@ -517,7 +509,7 @@ class ArticleManager(object):
 
         # Phase 0. 사용자 고유 id 를 미리 빼낸다. 이를 통해 이후에는 session_key 와 무관하게 됨.
         user_id = self.engine.login_manager.get_user_id_wo_error(session_key)
-        blacklisted_users = self._get_blacklist_userid_by_userid(user_id)
+        blacklisted_users = self._get_blacklist_userid(user_id)
 
         # Phase 1. SQLAlchemy Article List -> Article Dictionary (ReadStatus Marked)
         article_dict_list_generator = self._get_read_status_generator(user_id, article_list, whitelist)
@@ -635,7 +627,7 @@ class ArticleManager(object):
         # TODO: 주어진 board_name 에 맞는지 check
         # TODO: require_login 거치는 횟수 줄이기
         user_id = self.engine.login_manager.get_user_id(session_key)
-        blacklisted_userid = self._get_blacklist_userid(session_key)
+        blacklisted_userid = self._get_blacklist_userid(user_id)
 
         try:
             article = self._read_article(session, no)
@@ -675,7 +667,8 @@ class ArticleManager(object):
         
         board_id = self.engine.board_manager.get_board_id(board_name)
         session = model.Session()
-        blacklisted_userid = self._get_blacklist_userid(session_key)
+        user_id = self.engine.login_manager.get_user_id_wo_error(session_key)
+        blacklisted_userid = self._get_blacklist_userid(user_id)
 
         try:
             article = session.query(model.Article).options(eagerload('children')).filter_by(board_id=board_id).order_by(model.Article.id.desc()).first()
