@@ -54,22 +54,18 @@ class ArticleManager(object):
         self.maximum_article_id = 0
         self._update_maximum_article_id()
 
-    def _article_thread_to_list(self, article_thread, session_key, blacklisted_userid):
+    def _article_thread_to_list(self, article_thread, blacklisted_userid):
         '''
         @type  article_thread: model.Article (children eager loaded)
         @param article_thread: list화 할 루트 글 객체
-        @type  sessino_key: string
-        @param session_key: 사용자 Login Session
         @type  blacklisted_userid: set<int>
-        @param blacklisted_userid: session_key 로 주어진 사용자의 blacklist 목록
+        @param blacklisted_userid: 주어진 사용자의 blacklist 목록
         @rtype: list<dict(READ_ARTICLE_WHITELIST applied)>
         @return: article_thread 로 주어진 루트 글과 여기에 속한 모든 답글들을 일렬로 세운 list
         '''
         # TODO: destroy 된 글을 중간에 보이지 않게 하기
-        # TODO: mark_as_read_list 별도로 분리하기
         stack = []
         ret = []
-        article_id_list = []
         stack.append((article_thread, 1))
         while stack:
             art, dep = stack.pop()
@@ -83,12 +79,10 @@ class ArticleManager(object):
             else:
                 dic['blacklisted'] = False
 
-            article_id_list.append(dic['id'])
             dic['date'] = datetime2timestamp(dic['date'])
             dic['last_modified_date'] = datetime2timestamp(dic['last_modified_date'])
             ret.append(Article(**dic))
 
-        self.engine.read_status_manager.mark_as_read_list(session_key, article_id_list)
         return ret
 
     @log_method_call_duration
@@ -653,7 +647,8 @@ class ArticleManager(object):
             session.rollback()
             session.close()
             raise InvalidOperation('ARTICLE_NOT_EXIST')
-        article_dict_list = self._article_thread_to_list(article, session_key, blacklisted_userid)
+        article_dict_list = self._article_thread_to_list(article, blacklisted_userid)
+        self.engine.read_status_manager.mark_as_read_list(session_key, [x.id for x in article_dict_list])
         session.close()
         return article_dict_list
 
@@ -695,7 +690,8 @@ class ArticleManager(object):
             session.close()
             raise InvalidOperation('ARTICLE_NOT_EXIST')
 
-        article_dict_list = self._article_thread_to_list(article, session_key, blacklisted_userid)
+        article_dict_list = self._article_thread_to_list(article, blacklisted_userid)
+        self.engine.read_status_manager.mark_as_read_list(session_key, [x.id for x in article_dict_list])
         session.close()
         return article_dict_list
 
