@@ -1099,4 +1099,29 @@ class MemberManager(object):
                 # 실제로는 로그인되어있지 않은 사용자가 이 경우에 해당된다
                 return 0
 
+    def get_activated_users(self, session_key):
+        '''
+        전체 사용자들 중 사용자 인증이 된 사용자들의 목록을 돌려준다.
+        SYSOP 만 사용 가능.
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        @rtype: list<arara_thrift.SearchUserResult>
+        @return: 사용자 인증이 된 사용자들의 목록
+        '''
+        if not self.is_sysop(session_key):
+            raise InvalidOperation('not sysop')
+
+        session = model.Session()
+        query = session.query(model.User).filter_by(activated=True)
+        users = query.all()
+        result = [None] * len(users)
+
+        for idx, user in enumerate(users):
+            result[idx] = SearchUserResult(**self._get_dict(user, USER_SEARCH_WHITELIST))
+
+        session.close()
+
+        return result
+
 # vim: set et ts=8 sw=4 sts=4

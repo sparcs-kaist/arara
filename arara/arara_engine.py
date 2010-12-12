@@ -66,6 +66,7 @@ class ARAraEngine(object):
             'send_id_recovery_email': self.member_manager.send_id_recovery_email,
             'is_sysop': self.member_manager.is_sysop,
             '_logout_process': self.member_manager._logout_process,
+            'get_activated_users': self.member_manager.get_activated_users,
             'add_blacklist': self.blacklist_manager.add_blacklist,
             'delete_blacklist': self.blacklist_manager.delete_blacklist,
             'modify_blacklist': self.blacklist_manager.modify_blacklist,

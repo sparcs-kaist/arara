@@ -379,6 +379,9 @@ service ARAraThriftInterface {
                              2:i32 listing_mode)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<SearchUserResult> get_activated_users(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// MemberManager Part End
 /// BlacklistManager Part Begin
     void add_blacklist(1:string session_key, 2:string username,
