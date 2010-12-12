@@ -7,7 +7,7 @@ from arara.util import require_login
 from arara import model
 from arara.util import require_login
 from arara.util import log_method_call_with_source, log_method_call_with_source_duration, log_method_call_with_source_important
-from arara.util import smart_unicode
+from arara.util import smart_unicode, intlist_to_string, string_to_intlist
 
 from arara_thrift.ttypes import *
 
@@ -19,6 +19,31 @@ class ReadStatus(object):
     def __init__(self, default='N'):
         self.default = default
         self.data = [(0, default)]
+
+    def to_string(self):
+        '''
+        ReadStatus 객체로부터 2개의 문자열을 뽑아낸다.
+        '''
+        number_list = intlist_to_string([x[0] for x in self.data])
+        marker_list = "".join((x[1] for x in self.data))
+        return number_list, marker_list
+
+    @classmethod
+    def from_string(cl, number_string, marker_string):
+        '''
+        2개의 문자열로부터 ReadStatus 객체를 만들어낸다.
+
+        @type  number_string: string
+        @param number_string: util.intlist_to_string 으로 문자열화한 list<int>
+        @type  marker_string: string
+        @param marker_string: len(number_string == len(marker_string) 인 문자열
+        @rtype: ReadStatus
+        @return: 주어진 문자열을 통해 만든 ReadStatus 객체
+        '''
+        result = cl()
+        number_list = string_to_intlist(number_string)
+        result.data = [(x, marker_string[idx]) for idx, x in enumerate(number_list)]
+        return result
 
     def _find(self, n):
         '''적당한 터플을 찾는다'''
@@ -147,7 +172,10 @@ class ReadStatusManager(object):
             try:
                 session = model.Session()
                 read_status = session.query(model.ReadStatus).filter_by(user_id=user_id).one()
-                self.read_status[user_id] = read_status.read_status_data
+                if read_status.read_status_numbers == None:
+                    self.read_status[user_id] = read_status.read_status_data
+                else:
+                    self.read_status[user_id] = ReadStatus.from_string(read_status.read_status_numbers, read_status.read_status_markers)
                 session.close()
                 return True, 'OK'
             except InvalidRequestError:
@@ -346,7 +374,12 @@ class ReadStatusManager(object):
             # Memory 에 확실히 있음
             try:
                 read_stat = session.query(model.ReadStatus).filter_by(user_id=user.id).one()
-                read_stat.read_status_data = self.read_status[user.id]
+
+                read_stat.read_status_data = None
+                numbers, markers = self.read_status[user.id].to_string()
+                read_stat.read_status_numbers = numbers
+                read_stat.read_status_markers = markers
+
                 session.commit()
                 id = user.id
                 del self.read_status[id]
@@ -359,6 +392,12 @@ class ReadStatusManager(object):
                 # 이 때는 새롭게 생성해 줘야 한다
                 try:
                     new_read_stat = model.ReadStatus(user, self.read_status[user.id])
+
+                    new_read_stat.read_status_data = None
+                    numbers, markers = self.read_status[user.id].to_string()
+                    new_read_stat.read_status_numbers = numbers
+                    new_read_stat.read_status_markers = markers
+
                     session.add(new_read_stat)
                     session.commit()
                     id = user.id
@@ -387,7 +426,12 @@ class ReadStatusManager(object):
             # Memory 에 확실히 있음
             try:
                 read_stat = session.query(model.ReadStatus).filter_by(user_id=user_id).one()
-                read_stat.read_status_data = self.read_status[user_id]
+
+                read_stat.read_status_data = None
+                numbers, markers = self.read_status[user_id].to_string()
+                read_stat.read_status_numbers = numbers
+                read_stat.read_status_markers = markers
+
                 del self.read_status[user_id]
                 self.logger.info("User id %d's ReadStatus is successfully saved.", user_id)
             except KeyError:
@@ -400,6 +444,10 @@ class ReadStatusManager(object):
                 try:
                     user = self.engine.member_manager._get_user_by_id(session, user_id)
                     new_read_stat = model.ReadStatus(user, self.read_status[user_id])
+                    new_read_stat.read_status_data = None
+                    numbers, markers = self.read_status[user_id].to_string()
+                    new_read_stat.read_status_numbers = numbers
+                    new_read_stat.read_status_markers = markers
                     session.add(new_read_stat)
                     del self.read_status[user_id]
                     self.logger.info("User id %d's ReadStatus is successfully created.", user_id)

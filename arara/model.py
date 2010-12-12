@@ -260,7 +260,9 @@ class ReadStatus(object):
         @type read_status_data: read_status_manager.ReadStatus
         '''
         self.user = user
-        self.read_status_data = read_status_data
+        self.read_status_data = None
+        self.read_status_numbers = ''
+        self.read_status_markers = ''
 
     def __repr__(self):
         return "<ReadStatus('%s', '%s')>" % (self.user.username, self.read_status_data)
@@ -496,6 +498,8 @@ read_status_table = Table('read_status', metadata,
     Column('id', Integer, primary_key=True),
     Column('user_id', Integer, ForeignKey('users.id'), index=True),
     Column('read_status_data', MyPickleType),
+    Column('read_status_numbers', Binary(length=2**30)),
+    Column('read_status_markers', Binary(length=2**30)),
     mysql_engine='InnoDB'
 )
 
