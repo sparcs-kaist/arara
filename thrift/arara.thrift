@@ -379,7 +379,8 @@ service ARAraThriftInterface {
                              2:i32 listing_mode)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    list<SearchUserResult> get_activated_users(1:string session_key)
+    list<SearchUserResult> get_activated_users(1:string session_key,
+                                        2:i32 limit=-1)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// MemberManager Part End

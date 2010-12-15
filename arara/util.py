@@ -241,24 +241,20 @@ def run_job_in_parallel(function, item_list, threads = 4):
     '''
     #TODO: 동작이 잘 되는지 TEST 코드 작성
 
-    available_list = [True] * threads
-    index = 0
+    job_done_list = [False] * threads
+    slices = split_list(item_list, threads)
+    print slices
 
-    def premade_function(function, idx):
-        def funct(item):
+    def premade_function(function, items, job_done_list, idx):
+        for item in items:
             function(item)
-            available_list[idx] = True
-        return funct
+        job_done_list[idx] = True
 
-    for item in item_list:
-        while available_list[index] == False:
-            index = (index + 1) % threads
+    for idx, list in enumerate(slices):
+        thread.start_new_thread(premade_function, (function, list, job_done_list, idx))
 
-        available_list[index] = False
-        thread.start_new_thread(premade_function(function, index), (item,))
-
-    for idx in xrange(len(available_list)):
-        while available_list[idx] == False:
+    for idx in xrange(len(job_done_list)):
+        while job_done_list[idx] == False:
             pass
 
 def send_mail(subject, mailto, content, subtype='html', charset='euc_kr'):

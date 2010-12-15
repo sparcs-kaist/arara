@@ -168,7 +168,6 @@ class MemberManager(object):
             session.close()
             raise InvalidOperation('DATABASE_ERROR')
 
-    @log_method_call_duration
     def _update_last_logout_time(self, ids):
         '''
         주어진 사용자들의 로그아웃 타임을 현재 시각으로 갱신한다.
@@ -188,6 +187,7 @@ class MemberManager(object):
             session.close()
             raise InvalidOperation('Database Error?')
 
+    @log_method_call_duration
     def _get_user(self, session, username, errmsg = 'user does not exist'):
         '''
         해당 username 의 사용자에 대한 SQLAlchemy 객체를 리턴한다.
@@ -1099,13 +1099,15 @@ class MemberManager(object):
                 # 실제로는 로그인되어있지 않은 사용자가 이 경우에 해당된다
                 return 0
 
-    def get_activated_users(self, session_key):
+    def get_activated_users(self, session_key, limit = -1):
         '''
         전체 사용자들 중 사용자 인증이 된 사용자들의 목록을 돌려준다.
         SYSOP 만 사용 가능.
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
+        @type  limit: int
+        @param limit: 최대 몇 명의 사용자를 돌려줄 것인가. -1 일 때는 모든 사용자
         @rtype: list<arara_thrift.SearchUserResult>
         @return: 사용자 인증이 된 사용자들의 목록
         '''
@@ -1115,9 +1117,15 @@ class MemberManager(object):
         session = model.Session()
         query = session.query(model.User).filter_by(activated=True)
         users = query.all()
-        result = [None] * len(users)
+        # 갯수 제한 설정
+        if limit > len(users):
+            limit = len(users)
+
+        result = [None] * limit
 
         for idx, user in enumerate(users):
+            if limit == idx: # limit == -1 이면 절대 여기 걸리지 않는다
+                break        # 한편 그 외의 경우엔 limit 갯수만큼만 통과
             result[idx] = SearchUserResult(**self._get_dict(user, USER_SEARCH_WHITELIST))
 
         session.close()
