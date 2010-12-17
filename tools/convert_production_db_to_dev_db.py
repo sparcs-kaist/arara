@@ -33,10 +33,7 @@ def main():
         user.signature = u"x" * len(user.signature)
         user.self_introduction = u"x" * len(user.self_introduction)
         user.last_login_ip = u"127.0.0.1"
-        try:
-            user.set_password(user.username)
-        except UnicodeEncodeError:
-            user.set_password("1234")
+        user.set_password("1234")
         print idx, " th user done."
 
     print "commit begin"
