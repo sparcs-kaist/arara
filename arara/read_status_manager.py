@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+import traceback
 
 from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy.sql import func, select
@@ -364,66 +365,21 @@ class ReadStatusManager(object):
         self._check_article_exist(no)
         status = self.read_status[user_id].set(no, 'V')
 
-    @log_method_call
     @log_method_call_duration
-    def save_to_database(self, username):
-        import traceback
-        session = model.Session()
-        user = self.engine.member_manager._get_user(session, username)
-        if self.read_status.has_key(user.id):
-            # Memory 에 확실히 있음
-            try:
-                read_stat = session.query(model.ReadStatus).filter_by(user_id=user.id).one()
-
-                read_stat.read_status_data = None
-                numbers, markers = self.read_status[user.id].to_string()
-                read_stat.read_status_numbers = numbers
-                read_stat.read_status_markers = markers
-
-                session.commit()
-                id = user.id
-                del self.read_status[id]
-            except KeyError:
-                # 메모리에서 중간에 날아갔거나 한 경우
-                # 별 문제는 없다
-                pass
-            except InvalidRequestError:
-                # DB 에 확실히 없는 경우
-                # 이 때는 새롭게 생성해 줘야 한다
-                try:
-                    new_read_stat = model.ReadStatus(user, self.read_status[user.id])
-
-                    new_read_stat.read_status_data = None
-                    numbers, markers = self.read_status[user.id].to_string()
-                    new_read_stat.read_status_numbers = numbers
-                    new_read_stat.read_status_markers = markers
-
-                    session.add(new_read_stat)
-                    session.commit()
-                    id = user.id
-                    del self.read_status[id]
-                except KeyError:
-                    # 아마도 이 경우에는 초고속으로 동일사용자를 2회 로그아웃해서
-                    # del self.read_status[id] 가 들어가는 동안 같은 곳에 위치했는지도.
-                    pass
-            except Exception:
-                # ReadStatus 관련 에러 발생
-                logging.error(traceback.format_exc())
-        # Memory 에 없는 경우는 그냥 잊어버린다.
-
-        # 어쨌뜬 세션을 닫는다.
-        session.close()
-
-    @log_method_call
-    @log_method_call_duration
-    def _save_all_users_to_database(self):
+    def _save_to_database(self, session, user_id):
         '''
-        메모리에 존재하는 모든 사용자의 ReadStatus 를 DB 에 기록하고 메모리에서 지운다.
+        사용자의 ReadStatus 정보를 주어진 SQLAlchemy Session 에 기록한다.
+        익셉션이 발생할 경우 Exception 은 raise 하나 session 은 닫지 않는다.
+        session 처리는 전적으로 caller 의 몫이다.
+
+        @type  session: model.Session
+        @param session: SQLAlchemy Session
+        @type  user_id: int
+        @param user_id: 사용자 고유 id
         '''
-        import traceback
-        session = model.Session()
-        for user_id in self.read_status.keys():
-            # Memory 에 확실히 있음
+        read_stat = None
+        if self.read_status.has_key(user_id):
+            # Memory 에 있는 경우
             try:
                 read_stat = session.query(model.ReadStatus).filter_by(user_id=user_id).one()
 
@@ -432,34 +388,61 @@ class ReadStatusManager(object):
                 read_stat.read_status_numbers = numbers
                 read_stat.read_status_markers = markers
 
-                del self.read_status[user_id]
                 self.logger.info("User id %d's ReadStatus is successfully saved.", user_id)
+
+                del self.read_status[user_id]
             except KeyError:
-                # 메모리에서 중간에 날아갔거나 한 경우
-                # 별 문제는 없다
-                self.logger.info("User id %d's ReadStatus does not need to be saved.", user_id)
+                # 메모리에 key 가 없다면 별 문제는 없다.
+                pass
             except InvalidRequestError:
-                # DB 에 확실히 없는 경우
-                # 이 때는 새롭게 생성해 줘야 한다
+                # DB 에 기록된 적이 없으므로 생성해야 한다.
                 try:
-                    user = self.engine.member_manager._get_user_by_id(session, user_id)
+                    user = self.engine.member_manager._get_user_by_id(session, user_id, False)
                     new_read_stat = model.ReadStatus(user, self.read_status[user_id])
+
                     new_read_stat.read_status_data = None
                     numbers, markers = self.read_status[user_id].to_string()
                     new_read_stat.read_status_numbers = numbers
                     new_read_stat.read_status_markers = markers
                     session.add(new_read_stat)
-                    del self.read_status[user_id]
                     self.logger.info("User id %d's ReadStatus is successfully created.", user_id)
+
+                    del self.read_status[user_id]
                 except KeyError:
                     # 아마도 이 경우에는 초고속으로 동일사용자를 2회 로그아웃해서
                     # del self.read_status[id] 가 들어가는 동안 같은 곳에 위치했는지도.
-                    self.logger.info("User id %d's ReadStatus is in unknown status.", user_id)
                     pass
+        # Proxy Object 를 유지시켜서 일으킨 변화가 반영되는지 보자
+        return read_stat
+
+
+
+    def save_to_database(self, username):
+        session = model.Session()
+        user = self.engine.member_manager._get_user(session, username)
+        user_id = user.id
+        try:
+            result = self._save_to_database(session, user_id)
+            session.commit()
+            session.close()
+        except Exception:
+            logging.error(traceback.format_exc())
+            session.close()
+
+    @log_method_call_duration
+    def _save_all_users_to_database(self):
+        '''
+        메모리에 존재하는 모든 사용자의 ReadStatus 를 DB 에 기록하고 메모리에서 지운다.
+        '''
+        session = model.Session()
+        list_of_user_id = self.read_status.keys()
+        list_of_proxies = [None] * len(list_of_user_id)
+
+        for idx, user_id in enumerate(list_of_user_id):
+            try:
+                list_of_proxies[idx] = self._save_to_database(session, user_id)
             except Exception:
-                # ReadStatus 관련 에러 발생
                 logging.error(traceback.format_exc())
-        # Memory 에 없는 경우는 그냥 잊어버린다.
 
         # 어쨌뜬 세션을 닫는다.
         session.commit()
