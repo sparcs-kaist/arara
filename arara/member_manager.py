@@ -279,10 +279,10 @@ class MemberManager(object):
         try:
             if user.compare_password(password):
                 if user.activated:
-                    user.last_login_time = datetime.datetime.fromtimestamp(time.time())
+                    current_time = time.time()
+                    user.last_login_time = datetime.datetime.fromtimestamp(current_time)
                     user.last_login_ip = unicode(user_ip)
-                    ret = {'last_login_time': datetime2timestamp(
-                        user.last_login_time),
+                    ret = {'last_login_time': current_time,
                            'nickname': user.nickname,
                            'id': user.id}
                     session.commit()
