@@ -271,12 +271,11 @@ class SearchManager(object):
         '''
         root_num = set()
         for one_article in result[::-1]:
+            target_id = one_article.id
             if one_article.root:
-                if not set([one_article.root.id]).issubset(root_num): # If root_num not exist
-                    root_num.add(one_article.root.id)
-            else:
-                if not set([one_article.id]).issubset(root_num):
-                    root_num.add(one_article.id)
+                target_id = one_article.root.id
+            if not target_id in root_num: # If root_num not exist
+                root_num.add(target_id)
         return root_num
 
     def _get_page_offset(self, session, article_count, page, page_length):
