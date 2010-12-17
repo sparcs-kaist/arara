@@ -7,7 +7,6 @@ import random
 
 from sqlalchemy import *
 from sqlalchemy.orm import *
-from sqlalchemy.databases.mysql import MSLongBlob
 
 def smart_unicode(string):
     # TODO: util.py 나 적당한 곳으로 옮긴다. util.py 에 있지 않나?
@@ -492,14 +491,14 @@ article_vote_table = Table('article_vote_status', metadata,
 Index('votes_user_and_board_and_article', article_vote_table.c.board_id, article_vote_table.c.article_id, article_vote_table.c.user_id)
 
 class MyPickleType(PickleType):
-    impl = MSLongBlob
+    impl = LargeBinary(length=2**30)
 
 read_status_table = Table('read_status', metadata,
     Column('id', Integer, primary_key=True),
     Column('user_id', Integer, ForeignKey('users.id'), index=True),
     Column('read_status_data', MyPickleType),
-    Column('read_status_numbers', Binary(length=2**30)),
-    Column('read_status_markers', Binary(length=2**30)),
+    Column('read_status_numbers', LargeBinary(length=2**30)),
+    Column('read_status_markers', LargeBinary(length=2**30)),
     mysql_engine='InnoDB'
 )
 

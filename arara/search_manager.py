@@ -317,11 +317,10 @@ class SearchManager(object):
         '''
         condition = None
         if root_num: # If there is any element in the root_num set make condition
-            for one_id in root_num:
-                if condition:
-                    condition = or_(condition, model.Article.id == one_id)
-                else:
-                    condition = (model.Article.id == one_id)
+            condition = (model.Article.id == root_num[0])
+            for one_id in root_num[1:]:
+                current_condition = (model.Article.id == one_id)
+                condition = or_(condition, current_condition)
         else: 
             # If there is no element in the root_num set, make condition that doesn't exist
             # Without this process, the condition would have None value so filter will be ignored
