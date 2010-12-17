@@ -251,10 +251,10 @@ class SearchManager(object):
                     continue #TODO: DATE SEARCH DISABLED!
 
                 query_text = self._get_query_text(query_dict, key)
-                if condition:
-                    condition = or_(condition, refer_dict[key](query_text))
-                else:
+                if condition is None:
                     condition = refer_dict[key](query_text)
+                else:
+                    condition = or_(condition, refer_dict[key](query_text))
 
             query = query.join('author').filter(condition)
 

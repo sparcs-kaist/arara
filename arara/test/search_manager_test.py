@@ -90,6 +90,18 @@ class Test(unittest.TestCase):
         c = [x.id for x in self.engine.search_manager.search(self.session_key_mikkang, True, u'search2', u'', SearchQuery(**{'query': u'pipoket'}), 1, 20, True).hit]
         self.assertEqual([], c)
 
+    def test_multiple_columns(self):
+        self._dummy_article_write(self.session_key_pipoket, u"search1", u"mikkang")
+        self._dummy_article_write(self.session_key_mikkang, u"search1", u"pipoket")
+        self._dummy_article_write(self.session_key_pipoket, u"search1", u"search1")
+        self._dummy_article_write(self.session_key_pipoket, u"search1", u"mikkang")
+        self._dummy_article_write(self.session_key_mikkang, u"search1", u"search1")
+        self._dummy_article_write(self.session_key_pipoket, u"search1", u"search1")
+        self._dummy_article_write(self.session_key_mikkang, u"search1", u"search1")
+
+        a = [x.id for x in self.engine.search_manager.search(self.session_key_mikkang, False, u'search1', u'', SearchQuery(**{'title': u'mikkang', 'author_username': u'mikkang'}), 1, 20, True).hit]
+        self.assertEqual([7, 5, 4, 2, 1], a)
+
     def test_search_with_read_status(self):
         # TEST 1. Nothing changed
         article_1_id = self._dummy_article_write(self.session_key_mikkang, u'search1')
