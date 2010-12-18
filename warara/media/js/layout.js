@@ -56,7 +56,7 @@ $(document).ready(function(){
 
         // English 클릭시 팝업
         $(".menuRight .fr").eq(1).children().click( function(event){
-                alert('준비중입니다');
+                alert("We're sorry. Under construction ...");
                 });
 });
 
