@@ -174,8 +174,9 @@ class LoginManager(object):
         @param session_key: 사용자 Login Session
         '''
         try:
+            user_id  = self.session_dic[session_key]['id']
             username = self.session_dic[session_key]['username']
-            self.engine.member_manager._logout_process(username)
+            self.engine.member_manager._logout_process(user_id)
             del self.session_dic[session_key]
             self.logger.info("User '%s' has LOGGED OUT" % username)
         except KeyError:

@@ -415,12 +415,14 @@ class ReadStatusManager(object):
         # Proxy Object 를 유지시켜서 일으킨 변화가 반영되는지 보자
         return read_stat
 
+    def save_to_database(self, user_id):
+        '''
+        메모리에 존재하는 특정 사용자의 ReadStatus 를 DB 에 기록하고 메모리에서 지운다.
 
-
-    def save_to_database(self, username):
+        @type  user_id: int
+        @param user_id: 사용자 고유 id
+        '''
         session = model.Session()
-        user = self.engine.member_manager._get_user(session, username)
-        user_id = user.id
         try:
             result = self._save_to_database(session, user_id)
             session.commit()

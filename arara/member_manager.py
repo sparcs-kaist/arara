@@ -147,20 +147,20 @@ class MemberManager(object):
         self._register_without_confirm(BOT_ACCOUNT_DIC, False)
 
     @log_method_call
-    def _logout_process(self, username):
+    def _logout_process(self, user_id):
         '''
         사용자의 실질적인 로그아웃을 담당한다.
 
-        @type  username: string
-        @param username: 로그아웃하고자 하는 사용자
+        @type  user_id: int
+        @param user_id: 로그아웃하고자 하는 사용자의 고유 id
         '''
         # TODO: 사용자 정보 가져오는 쿼리문을 다른 함수로 빼기
         # TODO: 발생 가능한 여러 Exception (ReadStatus) 처리
         try:
             session = model.Session()
-            user = session.query(model.User).filter_by(username=smart_unicode(username)).one()
+            user = session.query(model.User).filter_by(id=user_id).one()
             user.last_logout_time = datetime.datetime.fromtimestamp(time.time())
-            self.engine.read_status_manager.save_to_database(username)
+            self.engine.read_status_manager.save_to_database(user_id)
             session.commit()
             session.close()
             return
