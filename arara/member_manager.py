@@ -188,7 +188,6 @@ class MemberManager(object):
             session.close()
             raise InvalidOperation('Database Error?')
 
-    @log_method_call_duration
     def _get_user(self, session, username, errmsg = 'user does not exist'):
         '''
         해당 username 의 사용자에 대한 SQLAlchemy 객체를 리턴한다.
@@ -782,6 +781,16 @@ class MemberManager(object):
                     raise InvalidOperation(u'Other user(username:%s) already uses %s!' % (user_with_email.username, new_email))
             try:
                 user = self._get_user(session, username, 'wrong username')
+                try:
+                    user_activation = session.query(model.UserActivation).filter_by(user=user).one()
+                except NoResultFound: # TODO: Test is needed
+                    key = user.username + user.password + user.nickname
+                    activation_code = hashlib.md5(key).hexdigest()
+                    # Register activate code to db
+                    user_activation = model.UserActivation(user, activation_code)
+                    session.add(user_activation)
+                    session.commit()
+
                 user_activation = session.query(model.UserActivation).filter_by(user=user).one()
                 activation_code = user_activation.activation_code
                 if user.email != new_email:
