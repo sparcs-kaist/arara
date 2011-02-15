@@ -261,7 +261,7 @@ class ReadStatusManager(object):
         status = self.read_status[user_id].get_range(no_list)
         return status
 
-    @log_method_call_duration
+    @log_method_call
     def _mark_as_read_list(self, user_id, no_list):
         '''
         복수개의 글을 읽은 글로 등록하기
