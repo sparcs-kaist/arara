@@ -48,6 +48,7 @@ class User(object):
         self.is_sysop = False
         self.authentication_mode = 0
         self.listing_mode = 0
+        self.activated_backup = False
 
     @classmethod
     def encrypt_password(cl, raw_password, salt):
@@ -389,6 +390,7 @@ users_table = Table('users', metadata,
     Column('is_sysop', Boolean),
     Column('authentication_mode', Integer), # 0 : 비회원 , 1 : 메일인증(non @kaist), 2 : 메일인증(@kaist), 3 : 포탈인증
     Column('listing_mode', Integer), # 0 : LIST_ORDER_ROOT_ID , 1 : LIST_ORDER_LAST_REPLY_DATE
+    Column('activated_backup', Boolean),
     mysql_engine='InnoDB'
 )
 

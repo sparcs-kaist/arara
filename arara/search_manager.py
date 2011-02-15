@@ -208,7 +208,7 @@ class SearchManager(object):
         '''
         # TODO: ArticleManager 에도 get_basic_query 가 있는데 그걸 응용하면 어떨까
         # TODO: Board 객체가 필요한가?
-        query = session.query(model.Article).filter_by(is_searchable=True)
+        query = session.query(model.Article).filter_by(is_searchable=True).filter_by(destroyed=False) # TODO: Test is needed
         if board_name != u'':
             board = self._get_board(session, board_name)
             query = query.filter_by(board_id=board.id)
