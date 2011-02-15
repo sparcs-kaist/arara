@@ -42,7 +42,7 @@ class FileManagerTest(unittest.TestCase):
 
         # Register mikkang for test
         user_reg_dict = {'username':u'mikkang', 'password':u'mikkang', 
-                        'nickname':u'mikkang', 'email':u'mikkang@example.com',
+                        'nickname':u'mikkang', 'email':u'mikkang@kaist.ac.kr',
                         'signature':u'mikkang', 'self_introduction':u'mikkang',
                         'default_language':u'english', 'campus':u'Seoul' }
         register_key = self.engine.member_manager.register_(

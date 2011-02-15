@@ -36,7 +36,7 @@ class MessagingManagerTest(unittest.TestCase):
 
         # Register mikkang for test
         user_reg_dict = {'username':u'mikkang', 'password':u'mikkang', 
-                        'nickname':u'mikkang', 'email':u'mikkang@example.com',
+                        'nickname':u'mikkang', 'email':u'mikkang@kaist.ac.kr',
                         'signature':u'mikkang', 'self_introduction':u'mikkang',
                         'default_language':u'english', 'campus':u'Daejeon' }
         register_key = self.engine.member_manager.register_(
@@ -47,7 +47,7 @@ class MessagingManagerTest(unittest.TestCase):
                 
         # Register combacsa for test
         user_reg_dic = {'username':u'combacsa', 'password':u'combacsa',
-                        'nickname':u'combacsa', 'email':u'combacsa@example.com',
+                        'nickname':u'combacsa', 'email':u'combacsa@kaist.ac.kr',
                         'signature':u'combacsa', 'self_introduction':u'combacsa', 
                         'default_language':u'english', 'campus':u'Seoul' }
         register_key = self.engine.member_manager.register_(
@@ -58,7 +58,7 @@ class MessagingManagerTest(unittest.TestCase):
 
         # Register serialx for test
         user_reg_dic = {'username':u'serialx', 'password':u'serialx',
-                'nickname':u'serialx', 'email':u'serialx@example.com', 
+                'nickname':u'serialx', 'email':u'serialx@kaist.ac.kr', 
                 'signature':u'serialx', 'self_introduction':u'serialx', 
                 'default_language':u'english', 'campus':u'' }
         register_key = self.engine.member_manager.register_(
@@ -69,7 +69,7 @@ class MessagingManagerTest(unittest.TestCase):
         
         # Register dodo for test
         user_reg_dic = {'username':u'zzongaly', 'password':u'zzongaly', 
-                'nickname':u'dodo', 'email':u'zzongaly@example.com', 
+                'nickname':u'dodo', 'email':u'zzongaly@kaist.ac.kr', 
                 'signature':u'mikkang friend', 'self_introduction':u'i am dodo', 
                 'default_language':u'english', 'campus':u'' }
         register_key = self.engine.member_manager.register_(

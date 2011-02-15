@@ -22,6 +22,7 @@ log_method_call_important = log_method_call_with_source_important('member_manage
 
 import re
 PROPER_USERNAME_REGEX = re.compile(r'^[a-zA-Z0-9_\-\.]+$')
+PROPER_EMAIL_REGEX = re.compile(r'^.+kaist.ac.kr$')
 
 class NoPermission(Exception):
     pass
@@ -357,6 +358,8 @@ class MemberManager(object):
             raise InvalidOperation('permission denied')
         if not PROPER_USERNAME_REGEX.match(user_reg_info.username):
             raise InvalidOperation('username not permitted')
+        if not PROPER_EMAIL_REGEX.match(user_reg_info.email):
+            raise InvalidOperation('emai other than @KAIST not permitted')
 
         key = (user_reg_info.username +
             user_reg_info.password + user_reg_info.nickname)
@@ -770,6 +773,8 @@ class MemberManager(object):
         session = model.Session()
         username = smart_unicode(username)
         if new_email:
+            if not PROPER_EMAIL_REGEX.match(new_email):
+                raise InvalidOperation('email other than @KAIST not permitted')
             user_with_email = session.query(model.User).filter_by(email=new_email).all()
             if user_with_email:
                 user_with_email = user_with_email[0]

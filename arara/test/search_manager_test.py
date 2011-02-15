@@ -20,7 +20,7 @@ import time
 
 class Test(unittest.TestCase):
     def _get_user_reg_dic(self, id):
-        return {'username':id, 'password':id, 'nickname':id, 'email':id + u'@example.com',
+        return {'username':id, 'password':id, 'nickname':id, 'email':id + u'@kaist.ac.kr',
                 'signature':id, 'self_introduction':id, 'default_language':u'english', 'campus':u''}
 
     def _register_user(self, id):

@@ -27,7 +27,7 @@ class BoardManagerTest(unittest.TestCase):
         arara.model.init_test_database()
         self.engine = arara_engine.ARAraEngine()
         # Register one user, mikkang
-        user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang@example.com', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english', 'campus':u'seoul' }
+        user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang@kaist.ac.kr', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english', 'campus':u'seoul' }
         register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
         self.engine.member_manager.confirm(u'mikkang', register_key)
         # Then let it logged on.
@@ -497,7 +497,7 @@ class BoardManagerTest(unittest.TestCase):
         self.engine.board_manager.add_bbs_manager(self.session_key_sysop, u'test', u'mikkang')
         self.assertEqual(True, self.engine.board_manager.has_bbs_manager(u'test'))
         # Add another bbs manager
-        user_reg_dic = {'username':u'jean', 'password':u'jean', 'nickname':u'jean', 'email':u'jean@example.com', 'signature':u'jean', 'self_introduction':u'jean', 'default_language':u'english', 'campus':u'daejeon' }
+        user_reg_dic = {'username':u'jean', 'password':u'jean', 'nickname':u'jean', 'email':u'jean@kaist.ac.kr', 'signature':u'jean', 'self_introduction':u'jean', 'default_language':u'english', 'campus':u'daejeon' }
         register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
         self.engine.member_manager.confirm(u'jean', register_key)
         self.engine.board_manager.add_bbs_manager(self.session_key_sysop, u'test', u'jean')
@@ -520,7 +520,7 @@ class BoardManagerTest(unittest.TestCase):
         user_is_bbs_manager = self.engine.board_manager.is_bbs_manager_of(self.session_key, u'test')
         self.assertEqual(True, user_is_bbs_manager)
         # 게시판 관리자가 아닌 사용자의 권한 체크
-        user_reg_dic = {'username':u'mmmmm', 'password':u'mmmmm', 'nickname':u'mmmmm', 'email':u'mmmmm@example.com', 'signature':u'mmmmm', 'self_introduction':u'mmmmm', 'default_language':u'english', 'campus':u'seoul' }
+        user_reg_dic = {'username':u'mmmmm', 'password':u'mmmmm', 'nickname':u'mmmmm', 'email':u'mmmmm@kaist.ac.kr', 'signature':u'mmmmm', 'self_introduction':u'mmmmm', 'default_language':u'english', 'campus':u'seoul' }
         register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
         self.engine.member_manager.confirm(u'mmmmm', register_key)
         user_session_key = self.engine.login_manager.login(u'mmmmm', u'mmmmm', '143.248.234.140')
