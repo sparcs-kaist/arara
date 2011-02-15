@@ -486,7 +486,7 @@ service ARAraThriftInterface {
     void mark_as_viewed(1:string session_key, 2:i32 no)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void save_to_database(1:string username="")
+    void save_to_database(1:i32 user_id)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// ReadStatusManager Part End
