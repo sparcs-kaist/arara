@@ -128,7 +128,7 @@ struct Category {
 struct Board {
     1: bool read_only,
     2: string board_name,
-    3: string alias,
+    3: string board_alias,
     4: string board_description,
     5: i32 id,
     6: bool hide,
@@ -403,7 +403,7 @@ service ARAraThriftInterface {
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// BlacklistManager Part End
 /// BoardManager Part Begin
-    void add_board(1:string session_key, 2:string board_name, 3:string alias,
+    void add_board(1:string session_key, 2:string board_name, 3:string board_alias,
                    4:string board_description, 5:list<string> heading_list, 6:string category_name, 7:i32 board_type, 8:i32 to_read_level, 9:i32 to_write_level)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
@@ -443,7 +443,7 @@ service ARAraThriftInterface {
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void edit_board(1:string session_key, 2:string board_name, 3:string new_name,
-                    4:string alias, 5:string new_description, 6:string new_category_name)
+                    4:string board_alias, 5:string new_description, 6:string new_category_name)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void change_board_category(1:string session_key, 2:string board_name,

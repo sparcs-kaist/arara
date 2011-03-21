@@ -7,3 +7,4 @@ sys.path.append(THRIFT_PATH)
 sys.path.append(ARARA_PATH)
 
 from arara.server import get_server
+from arara_thrift.ttypes import *

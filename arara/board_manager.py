@@ -11,7 +11,7 @@ from arara_thrift.ttypes import *
 log_method_call = log_method_call_with_source('board_manager')
 log_method_call_important = log_method_call_with_source_important('board_manager')
 
-BOARD_MANAGER_WHITELIST = ('board_name', 'alias', 'board_description', 'read_only', 'hide', 'id', 'headings', 'order', 'category_id', 'type', 'to_read_level', 'to_write_level')
+BOARD_MANAGER_WHITELIST = ('board_name', 'board_alias', 'board_description', 'read_only', 'hide', 'id', 'headings', 'order', 'category_id', 'type', 'to_read_level', 'to_write_level')
 
 CATEGORY_WHITELIST = ('category_name', 'id', 'order')
 
@@ -204,7 +204,7 @@ class BoardManager(object):
                 board_count = self.all_category_and_board_dict[category_name][-1].order
                 return board_count
 
-    def _add_board(self, board_name, alias, board_description, heading_list, category_name, board_type, to_read_level, to_write_level):
+    def _add_board(self, board_name, board_alias, board_description, heading_list, category_name, board_type, to_read_level, to_write_level):
 
         '''
         보드를 신설한다. 내부 사용 전용.
@@ -248,7 +248,7 @@ class BoardManager(object):
         category = None
         if category_name != None:
             category = self._get_category_from_session(session, category_name)
-        board_to_add = model.Board(smart_unicode(board_name), alias, board_description, board_order, category, board_type, to_read_level, to_write_level)
+        board_to_add = model.Board(smart_unicode(board_name), board_alias, board_description, board_order, category, board_type, to_read_level, to_write_level)
         try:
             session.add(board_to_add)
             # Board Heading 들도 추가한다.
@@ -267,7 +267,7 @@ class BoardManager(object):
 
     @require_login
     @log_method_call_important
-    def add_board(self, session_key, board_name, alias, board_description, heading_list = [], category_name = None, board_type = BOARD_TYPE_NORMAL, to_read_level = 3, to_write_level = 3):
+    def add_board(self, session_key, board_name, board_alias, board_description, heading_list = [], category_name = None, board_type = BOARD_TYPE_NORMAL, to_read_level = 3, to_write_level = 3):
 
         '''
         보드를 신설한다.
@@ -300,7 +300,7 @@ class BoardManager(object):
         '''
         # TODO: 위의 "실패" 주석 제대로 정리하기
         self._is_sysop(session_key)
-        self._add_board(board_name, alias, board_description, heading_list, category_name, board_type, to_read_level, to_write_level)
+        self._add_board(board_name, board_alias, board_description, heading_list, category_name, board_type, to_read_level, to_write_level)
 
     def _add_bot_board(self, board_name, board_description = '', heading_list = [], hide = True, category_name = None, board_type = BOARD_TYPE_NORMAL, to_read_level = 3, to_write_level = 3):
         '''
