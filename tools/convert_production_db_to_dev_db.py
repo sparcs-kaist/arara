@@ -2,7 +2,12 @@
 # Convert Production DB into Dev-purpose DB
 #    - Removing Private Information and so on
 
-# After job done, SYSOP will be uu000001 and password is uu000001.
+# After job done,
+# 1) SYSOP will remain in SYSOP
+# 2) All the other users' username will be uu[NUMBER in 6 digit]
+# 3) All the users' password will be "1234" (4 letters)
+
+# TODO: Clear private information more and more
 
 import os
 import sys
