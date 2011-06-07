@@ -12,26 +12,32 @@
 {% block content %}
 {% load i18n %}
 <div id="account_content" class="account_content">
-    <div class="account_head_block"><div class="account_head">RESET E-MAIL ADDRESS</div></div>
+    <div class="account_head_block"><div class="account_head">
+        RESET E-MAIL ADDRESS (Must use @kaist.ac.kr E-Mail)
+    </div></div>
 
 
         <textarea name="agreement" id="agreement" readonly />
-아라 BBS 이용약관 ver 0.2
+아라 BBS 이용약관 ver 0.21
 
 1. "아라"는 KAIST 구성원의 원활한 정보공유를 위한 공용 게시판 서비스 (BBS) 입니다.
 
 2. "아라"에 가입하여 글을 읽고 쓰기 위해서는 E-Mail 인증이 필요합니다. 입력하신 메일 주소로 인증용 메일이 발송되며, 인증 링크를 클릭하셔야 합니다. 단, 1개의 메일 주소로는 1개의 id만 사용 가능합니다.
 
-3. 기존 "아라" 사용자들도 E-Mail 인증을 거쳐야 아라 사용이 가능합니다.
+3. 2009년 이전의 "아라" 사용자들은 기존의 id 와 비밀번호를 그대로 사용하실 수 있습니다. 단, E-Mail 인증을 거쳐야 아라 사용이 가능합니다.
 
 4. "아라"는 독립적이고 자발적인 운영자에 의해 개인적인 시간을 쪼개서 아무런 대가 없이 서비스되고 있습니다. 따라서 서비스가 부족하거나 일시적인 중단이 되더라도 사실 어쩔 수가 없습니다.
 
-5. 아라 사용중 발생하는 문의는 아라 시삽(변규홍, combacsa@sparcs.kaist.ac.kr / 010-5231-7494)에게 하시면 됩니다. ToSysop 보드에 글을 올리시면 더 좋습니다.
+5. 아라 사용중 발생하는 문의는 아라 시삽(ara@sparcs.kaist.ac.kr)에게 하시면 됩니다. ToSysop 보드에 글을 올리시면 더 좋습니다.
+
+6. 2011년 1월 11일부터 당분간 @kaist.ac.kr 이 아닌 다른 E-Mail 은 사용하실 수 없습니다. 졸업생 또한 @kaist.ac.kr 메일 계정 발급이 가능하며, 자세한 사항은 http://mail.kaist.ac.kr 을 확인하시기 바랍니다. 자치단체 등은 시삽진에게 개별 연락하시기 바랍니다. 번거롭더라도 더 나은 의사소통을 위해 부탁드리며, 당분간이 지난 후 다시 공지하겠습니다.
 
 아래에 이메일 주소를 입력하시고, Resend 를 눌러주신 뒤, 이메일 주소로 도착하는 메일을 확인하시고, 인증을 하신 뒤, 다시 한 번 로그인하시면 사용이 가능합니다.
 
-메일에 있는 URL로 인증이 안되시는 분은 아래에 있는 Passive Confirm 버튼을 누르신 뒤, 수동인증을 하시면 됩니다.
+메일에 있는 URL로 인증이 안되시는 분은 아래에 있는 Passive Confirm 버튼을 누르신 뒤, 수동인증을 하시면 됩니다. 메일이 오지 않으면 ara@sparcs.kaist.ac.kr 로 이메일을 주시기 바랍니다.
     </textarea>
+
+    <h1>이용약관 6조를 자.세.히. 읽어주십시오.</h1>
 
     <form action="/account/register/resendemail/" method="post" name="form" id="account_information_content">
         <span id="account_user_content">
