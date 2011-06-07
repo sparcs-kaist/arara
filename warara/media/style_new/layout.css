@@ -14,8 +14,8 @@ input { font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; }
 /* styles for Layout */
 #linksModalBG { display:none; z-index:99; position:absolute; left:0; top:0; width:100%; height:100%; }
 #linksModal { display:none; z-index:100; width:100%; height:100%; z-index:100; left:0; top:0; position:absolute; min-height:502px; min-height:402px; }
-#linksModal .modalMargin { width:100%; height:50%; margin-bottom:-211px; }
-#linksModal .modalWindow { z-index:102; margin:0 auto; padding:0; width:500px !important; width /**/:502px; height:420px !important; height /**/:422px; letter-spacing:-1px; }
+#linksModal .modalMargin { width:100%; height:50%; margin-bottom:-226px; }
+#linksModal .modalWindow { z-index:102; margin:0 auto; padding:0; width:500px !important; width /**/:502px; height:450px !important; height /**/:452px; letter-spacing:-1px; }
 #linksModal .modalWindow .modalTitle { float:left; height:30px; font-weight:bold; line-height:30px; width:460px !important; width /**/:470px; padding-left:10px; text-align:left; }
 #linksModal .modalWindow .quitModal { float:right; height:30px; font-weight:bold; line-height:0; font-size:0; width:30px; }
 #linksModal .modalWindow .modalContents { clear:both; }
