@@ -19,12 +19,12 @@
         <!--[if (gte IE 5.5)&(lte IE 8)]>
             <script type="text/javascript" src="/media/js/ie-css3.js"></script>
         <![endif]-->
-        
+
         <script type="text/javascript" src="/media/js/base.js"></script>
         {% block script %}
         {% endblock %}
     </head>
-    
+
     <body onload="setWidth();" onresize="setWidth();">
         <ul id="topLinks">
             <li class="kaist"><a href="http://www.kaist.ac.kr"><strong>KAIST</strong></a></li>
@@ -55,21 +55,6 @@
                 <!-- 카테고리 내 메뉴. 롤오버를 위해 모두 표시 -->
                 <div id="boardInCategory">
                     <!-- 카테고리 내 메뉴. 롤오버를 위해 모두 표시 -->
-                    <dl class="boardList" id="boardInFavorite">
-                        <dt><img src="/media/image/stealBlue/catMenu_category1.png" alt="모아보기" /></dt>
-                        <dd>
-                            {% get_board_list %}
-                            <ul>
-                                {% for board_info in board_list %}
-                                <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_alias}}</a></li>
-                                {% if forloop.counter|divisibleby:"5" %}
-                            </ul>
-                            <ul>
-                                {% endif %}
-                                {% endfor %}
-                            </ul>
-                        </dd>
-                    </dl>
                     <dl class="boardList" id="boardInCategory1">
                         <dt><img src="/media/image/stealBlue/catMenu_category2.png" alt="카테고리1" /></dt>
                         <dd>
@@ -161,7 +146,7 @@
                         </dd>
                     </dl>
                 </div>
-                
+
                 <!-- 컨텐츠 시작 -->
                 <div class="mainBody">
                     {% block main %}
