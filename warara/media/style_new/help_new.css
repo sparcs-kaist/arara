@@ -1,0 +1,61 @@
+#help_top_menu {
+	background: url(/media/image/head_background.png) repeat;
+	width: 100%;
+}
+
+#help_title {
+	padding: 0.2em 1em;
+	float: left;
+	font-size: 2em;
+	color: white;
+}
+
+#help_top_menu ul {
+	margin: 0.2em 0em;
+	list-style: none;
+	float: right;
+	position: relative;
+	top: 0.5em;
+}
+
+#help_top_menu ul li{
+	float: left;
+	list-style: none;
+	color: white;
+	line-height: 2em;
+}
+
+#help_top_menu ul a{
+	display: block;
+	float: left;
+	padding: 0em 1em;
+	line-height: 2em;
+	text-decoration: none;
+	color: white;
+}
+
+#help_top_menu li a.row_highlight{
+	color: #9f4;
+}
+
+#help_top_menu li a.selected{
+	font-weight: bold;
+}
+
+#help_top_menu ul a:hover {
+	border: 1px solid blue;
+}
+
+#help_top_menu ul .first_li a {
+	background-color: none;
+}
+
+#help_content{
+	clear: both;
+	width: 98%;
+	padding-left: 2%;
+}
+
+.clear{
+	clear: both;
+}
