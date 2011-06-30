@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     (r'^all/', include('warara.all.urls')),
     (r'^sysop/', include('warara.sysop.urls')),
     (r'^main/', include('warara.main.urls')),
+    (r'^mobile/', include('warara.mobile.urls')),
 
     # Uncomment this for admin:
 #     (r'^admin/', include('django.contrib.admin.urls')),

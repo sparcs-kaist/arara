@@ -354,6 +354,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'warara.main',
+    'warara.mobile',
 )
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.file'
