@@ -552,8 +552,8 @@ class BoardManagerTest(unittest.TestCase):
 
         # TODO: category 가 제대로 반영이 되고 있는 건가 ??
         # Cache 가 제대로 되었는지 확인한다
-        expect_dict = {None: [Board(read_only=False, hide=True, board_description=u'Testing Board', order=2, board_name=u'test2', alias=u'test2', headings=None, category_id=None, id=2, type=0, to_read_level=3, to_write_level=3)], u'test_category': [Board(read_only=False, hide=False, board_description=u'Testing Board', order=1, board_name=u'test', alias=u'테스트보드', headings=None, category_id=1, id=1, type=0, to_read_level=3, to_write_level=3)]}
-        expect_list = [[Board(read_only=False, hide=False, board_description=u'Testing Board', order=1, board_name=u'test', alias=u'테스트보드', headings=None, category_id=1, id=1, type=0, to_read_level=3, to_write_level=3)], [Board(read_only=False, hide=True, board_description=u'Testing Board', order=2, board_name=u'test2', alias=u'test2', headings=None, category_id=None, id=2, type=0, to_read_level=3, to_write_level=3)]]
+        expect_dict = {None: [Board(read_only=False, hide=True, board_description=u'Testing Board', order=2, board_name=u'test2', board_alias=u'test2', headings=None, category_id=None, id=2, type=0, to_read_level=3, to_write_level=3)], u'test_category': [Board(read_only=False, hide=False, board_description=u'Testing Board', order=1, board_name=u'test', board_alias=u'테스트보드', headings=None, category_id=1, id=1, type=0, to_read_level=3, to_write_level=3)]}
+        expect_list = [[Board(read_only=False, hide=False, board_description=u'Testing Board', order=1, board_name=u'test', board_alias=u'테스트보드', headings=None, category_id=1, id=1, type=0, to_read_level=3, to_write_level=3)], [Board(read_only=False, hide=True, board_description=u'Testing Board', order=2, board_name=u'test2', board_alias=u'test2', headings=None, category_id=None, id=2, type=0, to_read_level=3, to_write_level=3)]]
         self.assertEqual(expect_dict, self.engine.board_manager.all_category_and_board_dict)
         self.assertEqual(expect_list, self.engine.board_manager.all_category_and_board_list)
 
