@@ -34,6 +34,15 @@ class ArticleManagerTest(AraraTestBase):
         self.engine.member_manager.confirm(id, unicode(register_key))
         return self.engine.login_manager.login(id, id, u'143.248.234.140')
 
+    def _register_extra_users(self):
+        # Register extra users
+        self.session_key_hodduc = self._register_user(u'hodduc')
+        self.session_key_sillo = self._register_user(u'sillo')
+        self.session_key_orcjun = self._register_user(u'orcjun')
+        self.session_key_letyoursoulbefree = self._register_user(u'letyoursoulbefree')
+        self.session_key_koolvibes = self._register_user(u'koolvibes')
+        self.session_key_wiki = self._register_user(u'wiki')
+
     def setUp(self):
         # Common preparation for all tests
         super(ArticleManagerTest, self).setUp()
@@ -45,15 +54,9 @@ class ArticleManagerTest(AraraTestBase):
         self.org_time = time.time
         time.time = stub_time
         STUB_TIME_CURRENT = STUB_TIME_INITIAL
-        # Register users(almost of accounts will be used in voting test)
+        # Register two users
         self.session_key_mikkang = self._register_user(u'mikkang')
         self.session_key_serialx = self._register_user(u'serialx')
-        self.session_key_hodduc = self._register_user(u'hodduc')
-        self.session_key_sillo = self._register_user(u'sillo')
-        self.session_key_orcjun = self._register_user(u'orcjun')
-        self.session_key_letyoursoulbefree = self._register_user(u'letyoursoulbefree')
-        self.session_key_koolvibes = self._register_user(u'koolvibes')
-        self.session_key_wiki = self._register_user(u'wiki')
 
         # Create default board
         self.engine.board_manager.add_board(self.session_key_sysop, u'board', u'테스트보드', u'Test Board', [])
@@ -439,6 +442,8 @@ class ArticleManagerTest(AraraTestBase):
         # XXX : 제 3의 인물이 또 읽으면 hit 이 올라가는 거.
 
     def test_vote(self):
+        self._register_extra_users()
+
         # Writel an article
         article_no = self._dummy_article_write(self.session_key_mikkang)
         # Mikkang now positive vote
@@ -476,6 +481,8 @@ class ArticleManagerTest(AraraTestBase):
             self.engine.article_manager.vote_article(vote_order[i], board_name, article_num)
 
     def test_todays_best_and_weekly_best(self):
+        self._register_extra_users()
+
         # Phase 1.
         # Preparation - Step 1. Writing articles
         self._dummy_article_write(self.session_key_mikkang, u"", u"board")      #1
@@ -847,6 +854,8 @@ class ArticleManagerTest(AraraTestBase):
         # TODO: article_vote_status table 의 board_id가 바뀌는 것 확인하기? files 의 board_id가 바뀌는 것 확인하기?
 
     def test_change_article_heading(self):
+        self._register_extra_users()
+
         # 테스트를 위해 말머리가 2개 있는 보드를 생성한다.
         self.engine.board_manager.add_board(self.session_key_sysop, u'testboard', u'글머리가 있는 테스트보드', u'Test Board with heading', [u'heading1', u'heading2'])
 
