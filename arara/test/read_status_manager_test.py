@@ -2,23 +2,17 @@
 import unittest
 import os
 import sys
-import logging
+import time
 
 thrift_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'gen-py'))
 sys.path.append(thrift_path)
 arara_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(arara_path)
 
+from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
-import arara
-from arara import arara_engine
-import arara.model
-import etc.arara_settings
-from arara.test.test_common import AraraTestBase
 
-# Time is needed for testing file_manager
-import time
 
 class ReadStatusManagerTest(AraraTestBase):
     def _get_user_reg_dic(self, id):
@@ -67,7 +61,7 @@ class ReadStatusManagerTest(AraraTestBase):
 
         # Restore the time
         time.time = self.org_time
-        etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
+
     def test_check_stat(self):
         self._write_articles()
         ret = self.engine.read_status_manager.check_stat(
@@ -79,7 +73,7 @@ class ReadStatusManagerTest(AraraTestBase):
             self.fail()
         except InvalidOperation:
             pass
-        
+
         try:
             self.engine.read_status_manager.check_stat('asdfasdf', 1)
             self.fail()

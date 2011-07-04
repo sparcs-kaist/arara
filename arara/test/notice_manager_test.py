@@ -3,7 +3,6 @@
 import unittest
 import os
 import sys
-import logging
 import time
 
 THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'gen-py'))
@@ -11,16 +10,13 @@ sys.path.append(THRIFT_PATH)
 ARARA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(ARARA_PATH)
 
+from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
-import arara
-import arara.model
-from arara import arara_engine
-import etc.arara_settings
-from arara.test.test_common import AraraTestBase
 
 STUB_TIME_INITIAL = 31536000.1
 STUB_TIME_CURRENT = STUB_TIME_INITIAL
+
 
 def stub_time():
     # XXX Not Thread-safe!

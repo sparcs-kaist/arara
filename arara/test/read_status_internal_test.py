@@ -12,10 +12,10 @@ sys.path.append(thrift_path)
 arara_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(arara_path)
 
+from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 from arara import read_status_manager
-import etc.arara_settings
-from arara.test.test_common import AraraTestBase
+
 
 class ReadStatusInternalTest(AraraTestBase):
     def setUp(self):

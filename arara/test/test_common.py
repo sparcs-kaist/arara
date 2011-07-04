@@ -1,7 +1,7 @@
 import unittest
 import etc.arara_settings
 import logging
-import arara
+import arara.model, arara.arara_engine
 
 # Common Test Sets for all tests
 class AraraTestBase(unittest.TestCase):

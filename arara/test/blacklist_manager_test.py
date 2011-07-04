@@ -2,23 +2,17 @@
 import unittest
 import os
 import sys
-import logging
+import time
 
 THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'gen-py'))
 sys.path.append(THRIFT_PATH)
 ARARA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(ARARA_PATH)
 
+from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
-import arara
-from arara import arara_engine
-import arara.model
-import etc.arara_settings
-from arara.test.test_common import AraraTestBase
 
-# Time is needed for testing blacklist_manager
-import time
 
 class BlacklistManagerTest(AraraTestBase):
     def setUp(self):

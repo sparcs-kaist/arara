@@ -2,22 +2,17 @@
 import unittest
 import os
 import sys
-import logging
-
 
 THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../gen-py/'))
 sys.path.append(THRIFT_PATH)
 ARARA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
 sys.path.append(ARARA_PATH)
 
+from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
 from arara.model import BOARD_TYPE_PICTURE
-import arara
-from arara import arara_engine
-import arara.model
-import etc.arara_settings
-from arara.test.test_common import AraraTestBase
+
 
 class BoardManagerTest(AraraTestBase):
     def setUp(self):

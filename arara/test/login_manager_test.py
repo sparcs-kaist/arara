@@ -1,26 +1,20 @@
 #-*- coding: utf-8 -*-
-import logging
 import unittest
 import os
 import sys
-
+import time
 
 THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../gen-py/'))
 sys.path.append(THRIFT_PATH)
 ARARA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
 sys.path.append(ARARA_PATH)
 
+from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
-import arara
-from arara import arara_engine
-import arara.model
 from etc.arara_settings import SESSION_EXPIRE_TIME
-import etc.arara_settings
-from arara.test.test_common import AraraTestBase
 
 # Faking time.time (to check time field)
-import time
 def stub_time():
     return 1.1
 

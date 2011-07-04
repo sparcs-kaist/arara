@@ -3,22 +3,19 @@ import unittest
 import time
 import os
 import sys
-import logging
 import xml.dom.minidom
 import urllib
 import thread
+
 thrift_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'gen-py'))
 sys.path.append(thrift_path)
 arara_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(arara_path)
 
+from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
-from arara import arara_engine
-
-import etc.arara_settings
 from etc.arara_settings import BOT_SERVICE_SETTING, BOT_SERVICE_LIST
-from arara.test.test_common import AraraTestBase
 
 def stub_toprettyxml(url):
     return u'melong. this is xml'
@@ -160,7 +157,6 @@ class BotManagerTest(AraraTestBase):
         thread.start_new_thread = self.org_start_new_thread
         xml.dom.minidom.parseString = self.org_parseString
         urllib.urlopen = self.org_urlopen
-        etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(BotManagerTest)
