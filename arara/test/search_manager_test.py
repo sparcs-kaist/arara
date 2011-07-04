@@ -15,10 +15,11 @@ import arara
 from arara import arara_engine
 import arara.model
 import etc.arara_settings
+from arara.test.test_common import AraraTestBase
 
 import time
 
-class Test(unittest.TestCase):
+class SearchManagerTest(AraraTestBase):
     def _get_user_reg_dic(self, id):
         return {'username':id, 'password':id, 'nickname':id, 'email':id + u'@kaist.ac.kr',
                 'signature':id, 'self_introduction':id, 'default_language':u'english', 'campus':u''}
@@ -32,11 +33,7 @@ class Test(unittest.TestCase):
 
     def setUp(self):
         # Common preparation for all tests
-        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
-        etc.arara_settings.BOT_ENABLED = False
-        logging.basicConfig(level=logging.ERROR)
-        arara.model.init_test_database()
-        self.engine = arara_engine.ARAraEngine()
+        super(SearchManagerTest, self).setUp()
 
         # Fake time for further test
         def stub_time():
@@ -58,8 +55,9 @@ class Test(unittest.TestCase):
         self.engine.board_manager.add_board(self.session_key_sysop, u"search2", u'보드2', u"search2", [u'head1', u'head2'])
 
     def tearDown(self):
-        self.engine.shutdown()
-        arara.model.clear_test_database()
+        # Common tearDown
+        super(SearchManagerTest, self).tearDown()
+
         # Restore the time
         time.time = self.org_time
         etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
@@ -152,7 +150,7 @@ class Test(unittest.TestCase):
         self.assertEqual([u'head1', u'head1'], heading_list)
 
 def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(Test)
+    return unittest.TestLoader().loadTestsFromTestCase(SearchManagerTest)
 
 if __name__ == "__main__":
     unittest.TextTestRunner(verbosity=2).run(suite())

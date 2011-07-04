@@ -18,6 +18,7 @@ from arara import arara_engine
 
 import etc.arara_settings
 from etc.arara_settings import BOT_SERVICE_SETTING, BOT_SERVICE_LIST
+from arara.test.test_common import AraraTestBase
 
 def stub_toprettyxml(url):
     return u'melong. this is xml'
@@ -43,7 +44,7 @@ class stub_xmlobject(object):
 def stub_urlopen(target):
     return stub_xmlobject()
 
-class BotManagerTest(unittest.TestCase):
+class BotManagerTest(AraraTestBase):
     def _get_user_reg_dic(self, id, campus):
         return {'username':id, 'password':id, 'nickname':id, 'email':id + u'@kaist.ac.kr',
                 'signature':id, 'self_introduction':id, 'default_language':u'english', 'campus':campus}
@@ -69,13 +70,9 @@ class BotManagerTest(unittest.TestCase):
         self.org_urlopen = urllib.urlopen
         urllib.urlopen = stub_urlopen
 
-        # Common preparation for all tests ( Except etc.arara_settings.BOT_ENABLED = False )
-        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
-        etc.arara_settings.BOT_ENABLED = True
-
-        logging.basicConfig(level=logging.ERROR)
-        arara.model.init_test_database()
-        self.engine = arara_engine.ARAraEngine()
+        # Common preparation for all tests
+        # WITH use_bot = False option
+        super(BotManagerTest, self).setUp(use_bot = True)
 
         self.session_key_sysop = self.engine.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123.')
         self.session_key_mikkang = self._register_user(u'mikkang', u'seoul')
@@ -154,7 +151,9 @@ class BotManagerTest(unittest.TestCase):
         self.assertEqual(result.day_after_tomorrow_temperature_low, 66)
 
     def tearDown(self):
-        self.engine.shutdown()
+        # Common tearDown
+        super(BotManagerTest, self).tearDown()
+
         # Restore Stub Code
         xml.dom.minidom.Element.toprettyxml = self.org_toprettyxml
         time.strftime = self.org_strftime

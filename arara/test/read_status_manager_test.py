@@ -15,11 +15,12 @@ import arara
 from arara import arara_engine
 import arara.model
 import etc.arara_settings
+from arara.test.test_common import AraraTestBase
 
 # Time is needed for testing file_manager
 import time
 
-class ReadStatusManagerTest(unittest.TestCase):
+class ReadStatusManagerTest(AraraTestBase):
     def _get_user_reg_dic(self, id):
         return {'username':id, 'password':id, 'nickname':id, 
                 'email':id + u'@kaist.ac.kr', 'signature':id,
@@ -34,11 +35,7 @@ class ReadStatusManagerTest(unittest.TestCase):
 
     def setUp(self):
         # Common preparation for all tests
-        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
-        etc.arara_settings.BOT_ENABLED = False
-        logging.basicConfig(level=logging.ERROR)
-        arara.model.init_test_database()
-        self.engine = arara_engine.ARAraEngine()
+        super(ReadStatusManagerTest, self).setUp()
 
         # Fake time for further test
         def stub_time():
@@ -65,8 +62,9 @@ class ReadStatusManagerTest(unittest.TestCase):
                 self.session_key_mikkang, u'garbages', article)
 
     def tearDown(self):
-        self.engine.shutdown()
-        arara.model.clear_test_database()
+        # Common tearDown
+        super(ReadStatusManagerTest, self).tearDown()
+
         # Restore the time
         time.time = self.org_time
         etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED

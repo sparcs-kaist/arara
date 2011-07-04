@@ -17,15 +17,13 @@ import arara
 from arara import arara_engine
 import arara.model
 import etc.arara_settings
+from arara.test.test_common import AraraTestBase
 
-class BoardManagerTest(unittest.TestCase):
+class BoardManagerTest(AraraTestBase):
     def setUp(self):
         # Common preparation for all tests
-        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
-        etc.arara_settings.BOT_ENABLED = False
-        logging.basicConfig(level=logging.ERROR)
-        arara.model.init_test_database()
-        self.engine = arara_engine.ARAraEngine()
+        super(BoardManagerTest, self).setUp()
+
         # Register one user, mikkang
         user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang@kaist.ac.kr', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english', 'campus':u'seoul' }
         register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
@@ -666,9 +664,8 @@ class BoardManagerTest(unittest.TestCase):
             pass
 
     def tearDown(self):
-        self.engine.shutdown()
-        arara.model.clear_test_database()
-        etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
+        # Common tearDown
+        super(BoardManagerTest, self).tearDown()
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(BoardManagerTest)

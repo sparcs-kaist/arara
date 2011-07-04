@@ -19,13 +19,14 @@ STUB_TIME_INITIAL = 31536000.1
 STUB_TIME_CURRENT = STUB_TIME_INITIAL
 
 import etc.arara_settings
+from arara.test.test_common import AraraTestBase
 
 def stub_time():
     # XXX Not Thread-safe!
     global STUB_TIME_CURRENT
     return STUB_TIME_CURRENT
 
-class ArticleManagerTest(unittest.TestCase):
+class ArticleManagerTest(AraraTestBase):
     def _get_user_reg_dic(self, id):
         return {'username':id, 'password':id, 'nickname':id, 'email':id + u'@kaist.ac.kr',
                 'signature':id, 'self_introduction':id, 'default_language':u'english', 'campus':u''}
@@ -38,13 +39,10 @@ class ArticleManagerTest(unittest.TestCase):
         return self.engine.login_manager.login(id, id, u'143.248.234.140')
 
     def setUp(self):
-        global STUB_TIME_CURRENT
         # Common preparation for all tests
-        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
-        etc.arara_settings.BOT_ENABLED = False
-        logging.basicConfig(level=logging.ERROR)
-        arara.model.init_test_database()
-        self.engine = arara_engine.ARAraEngine()
+        super(ArticleManagerTest, self).setUp()
+
+        global STUB_TIME_CURRENT
         # SYSOP will appear.
         self.session_key_sysop = self.engine.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123')
         # Faking time.time
@@ -69,9 +67,10 @@ class ArticleManagerTest(unittest.TestCase):
         self.engine.board_manager.add_board(self.session_key_sysop, u'board_hide', u'숨겨질 보드', u'Test Board for hiding board test', [])
 
     def tearDown(self):
-        self.engine.shutdown()
-        arara.model.clear_test_database()
-        etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
+        # Common tearDown
+        super(ArticleManagerTest, self).tearDown()
+
+        # Restore time.time
         time.time = self.org_time
 
     def test_read_only_board(self):
