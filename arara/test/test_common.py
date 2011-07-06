@@ -5,7 +5,7 @@ import arara.model, arara.arara_engine
 import smtplib
 
 # Mockup Object for smtplib.SMTP()
-class SMTPMockup:
+class SMTPMockup(object):
     def __init__(self, debug = False):
         self.debug = debug
 
@@ -23,17 +23,17 @@ class SMTPMockup:
 
 # Common Test Sets for all tests
 class AraraTestBase(unittest.TestCase):
-    def setUp(self, use_bot = False, use_database = True, use_mail = False):
+    def setUp(self, use_bot = False, use_database = True, mock_mail = True):
         self.use_bot = use_bot
         self.use_database = use_database
-        self.use_mail = use_mail
+        self.mock_mail = mock_mail
 
         # Overwrite Bot-related configuration
         self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
         etc.arara_settings.BOT_ENABLED = use_bot
 
         # Overwrite Mail-Transferring Libraries
-        if not use_mail:
+        if mock_mail:
             self.org_SMTP = smtplib.SMTP
             smtplib.SMTP = SMTPMockup
 
@@ -54,5 +54,5 @@ class AraraTestBase(unittest.TestCase):
 
         etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
 
-        if not self.use_mail:
+        if self.mock_mail:
             smtplib.SMTP = SMTPMockup

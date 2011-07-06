@@ -68,7 +68,7 @@ class BotManagerTest(AraraTestBase):
         urllib.urlopen = stub_urlopen
 
         # Common preparation for all tests
-        # WITH use_bot = False option
+        # WITH use_bot = True option
         super(BotManagerTest, self).setUp(use_bot = True)
 
         self.session_key_sysop = self.engine.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123.')
