@@ -6,6 +6,8 @@ import smtplib
 
 # Mockup Object for smtplib.SMTP()
 class SMTPMockup(object):
+    mail_list = []
+
     def __init__(self, debug = False):
         self.debug = debug
 
@@ -14,12 +16,22 @@ class SMTPMockup(object):
             print "CONNECT", host, port
 
     def sendmail(self, from_addr, to_addrs, msg):
+        self.mail_list.append((from_addr, to_addrs, msg))
         if self.debug:
             print "SEND", from_addr, to_addrs, msg
 
     def quit(self):
         if self.debug:
             print "QUIT"
+
+    @classmethod
+    def print_mail(cls):
+        for from_addr, to_addrs, msg in cls.mail_list:
+            print "From:", from_addr
+            print "To:", to_addrs
+            print "Msg:"
+            print msg
+            print "======================================"
 
 # Common Test Sets for all tests
 class AraraTestBase(unittest.TestCase):
@@ -56,3 +68,5 @@ class AraraTestBase(unittest.TestCase):
 
         if self.mock_mail:
             smtplib.SMTP = SMTPMockup
+            # If you want to test SMTPMockup object, uncomment next line
+            # SMTPMockup.print_mail()
