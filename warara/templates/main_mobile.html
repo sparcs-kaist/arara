@@ -1,0 +1,35 @@
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=medium-dpi" />
+<title>아라</title>
+<link rel="stylesheet" href="/media/style/main_mobile.css">
+</head>
+
+{% load arara_tags %}
+
+{% block main %}
+{% load i18n %}
+<div class="boardNavi">
+    <ul>
+    <li class="boardli"><a href="" class="boarda">보드이름</a></li>
+    <li class="boardli"><a href="" class="boarda">나중에개인화</a></li>
+    </ul>
+</div>
+
+<hr />
+
+<div class="mainItem" id="todayBest">
+    <h3>TodayBest</h3>
+    <div class="best">
+	<ol>
+	{% for no, todays_best in todays_best_list %}
+	    <li class="bestli">{% if logged_in %}<a href="/board/{{todays_best.board_name}}/{{todays_best.root_id}}/#{{todays_best.id}}" class="besta"><span class="besttitle">{{todays_best.title}}</span><span class="bestinfo">{{todays_best.author_nickname}}</span>
+</a>{% else %}{{todays_best.title}}{% endif %}</li>    
+	{% endfor %}
+	</ol>
+    </div>
+</div>
+{% endblock %}
+
+<!-- this block is needed to empty content block -->
+{% block content %}
+{% endblock %}
