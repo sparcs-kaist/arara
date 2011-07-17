@@ -503,6 +503,20 @@ service ARAraThriftInterface {
     list<Article> get_weekly_best_list_specific(1:string board_name, 2:i32 count=5)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+
+    list<Article> get_today_most_list(1:i32 count=5)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<Article> get_today_most_list_specific(1:string board_name, 2:i32 count=5)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<Article> get_weekly_most_list(1:i32 count=5)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<Article> get_weekly_most_list_specific(1:string board_name, 2:i32 count=5)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+
     ArticleList not_article_list(1:string session_key,
                                  2:i32 page=1,
                                  3:i32 page_length=20)

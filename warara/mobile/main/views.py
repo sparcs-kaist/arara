@@ -42,6 +42,27 @@ def main(request):
         cache.set('weekly_best_list', ret, 60)
     ctx['weekly_best_list'] = enumerate(ret)
 
+    # Get the today most list
+    ret = cache.get('today_most_list')
+    if not ret:
+        ret = server.article_manager.get_today_most_list(5)
+        for item in ret:
+            item.date = datetime.datetime.fromtimestamp(item.date)
+        cache.set('today_most_list', ret, 60)
+    # TODO: Change the key 'todays_best_list' to 'today_best_list'
+    #       in both here and Template file.
+    ctx['todays_most_list'] = enumerate(ret)
+
+    # Get the weekly-best list
+    ret = cache.get('weekly_most_list')
+    if not ret:
+        ret = server.article_manager.get_weekly_most_list(5)
+        for item in ret:
+            item.date = datetime.datetime.fromtimestamp(item.date)
+        cache.set('weekly_most_list', ret, 60)
+    ctx['weekly_most_list'] = enumerate(ret)
+
+
     # Get messages for the current user
     if ctx['logged_in']:
         message_result = server.messaging_manager.receive_list(sess, 1, 1);

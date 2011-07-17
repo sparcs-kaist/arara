@@ -86,7 +86,7 @@ class ArticleManager(object):
         return ret
 
     @log_method_call_duration
-    def _get_best_article(self, session_key, board_id, count, time_to_filter, best_type):
+    def _get_best_article(self, session_key, board_id, count, time_to_filter, best_type, criteria):
         '''
         @type  sessino_key: string
         @param session_key: 사용자 Login Session
@@ -98,6 +98,8 @@ class ArticleManager(object):
         @param time_to_filter: 몇 초 이내의 글만을 대상으로 할 것인가?
         @type  best_type: string
         @param best_type: 글 목록을 돌려줄 때 저장할 목록의 속성 (today / weekly)
+	@type  criteria: string
+	@param criteria: best article을 정할 기준 (vote / hit)
         @rtype: list<ttypes.Article>
         @return: Best Article들
         '''
@@ -125,8 +127,11 @@ class ArticleManager(object):
                     model.Article.board.has(model.Board.deleted==False),
                     not_(model.articles_table.c.deleted==True)))
 
-        best_article = query.order_by(model.Article.positive_vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc())[:count]
-        best_article_dict_list = self._get_dict_list(best_article, BEST_ARTICLE_WHITELIST)
+	if criteria=="vote":
+            best_article = query.order_by(model.Article.positive_vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc())[:count]
+        else:
+	    best_article = query.order_by(model.Article.hit.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc())[:count]
+	best_article_dict_list = self._get_dict_list(best_article, BEST_ARTICLE_WHITELIST)
         session.close()
 
         best_article_list = list()
@@ -263,7 +268,7 @@ class ArticleManager(object):
             2. 투베를 가져오는데 실패:
                 1. 데이터베이스 오류: InternalError Exception 
         '''
-        return self._get_best_article(None, None, count, 86400, 'today')
+        return self._get_best_article(None, None, count, 86400, 'today', 'vote')
 
     @log_method_call
     def get_today_best_list_specific(self, board_name, count=5):
@@ -283,7 +288,7 @@ class ArticleManager(object):
         '''
         # TODO: 굳이 위 함수(get_today_best_list)와 이 함수가 따로 존재할 필요가 있을까?
         board_id = self.engine.board_manager.get_board_id(board_name)
-        return self._get_best_article(None, board_id, count, 86400, 'today')
+        return self._get_best_article(None, board_id, count, 86400, 'today', 'vote')
 
     @log_method_call
     def get_weekly_best_list(self, count=5):
@@ -299,7 +304,7 @@ class ArticleManager(object):
                 1. Not Existing Board: InvalidOperation Exception
                 2. 데이터베이스 오류: InternalError Exception
         '''
-        return self._get_best_article(None, None, count, 604800, 'weekly')
+        return self._get_best_article(None, None, count, 604800, 'weekly', 'vote')
 
     @log_method_call
     def get_weekly_best_list_specific(self, board_name, count=5):
@@ -318,7 +323,78 @@ class ArticleManager(object):
                 2. 데이터베이스 오류: InternalError Exception
         '''
         board_id = self.engine.board_manager.get_board_id(board_name)
-        return self._get_best_article(None, board_id, count, 604800, 'weekly')
+        return self._get_best_article(None, board_id, count, 604800, 'weekly', 'vote')
+
+    @log_method_call
+    def get_today_most_list(self, count=5):
+        '''
+        전체 보드에서 하루동안 가장 많이 읽힌 글을 가져오는 함수
+
+        @type  count: integer
+        @param count: Number of today's most read articles to get
+        @rtype: list<ttypes.Article>
+        @return:
+            1. 투베를 가져오는데 성공: Article list of Today's Best
+            2. 투베를 가져오는데 실패:
+                1. 데이터베이스 오류: InternalError Exception 
+        '''
+        return self._get_best_article(None, None, count, 86400, 'today', 'hit')
+
+    @log_method_call
+    def get_today_most_list_specific(self, board_name, count=5):
+        '''
+        해당 보드에서 하루동안 가장 많이 읽힌 글을 가져오는 함수
+
+        @type  board_name: string
+        @param board_name: Board Name
+        @type  count: integer
+        @param count: Number of today's most read articles to get
+        @rtype: list
+        @return:
+            1. 투베를 가져오는데 성공: Article list of Today's Best
+            2. 투베를 가져오는데 실패:
+                1. Not Existing Board: InvalidOperation Exception
+                2. 데이터베이스 오류: InternalError Exception
+        '''
+        # TODO: 굳이 위 함수(get_today_best_list)와 이 함수가 따로 존재할 필요가 있을까?
+        board_id = self.engine.board_manager.get_board_id(board_name)
+        return self._get_best_article(None, board_id, count, 86400, 'today', 'hit')
+
+    @log_method_call
+    def get_weekly_most_list(self, count=5):
+        '''
+        전체 보드에서 윅베를 가져오는 함수
+
+        @type  count: integer
+        @param count: Number of weekly most read articles to get
+        @rtype: list
+        @return:
+            1. 투베를 가져오는데 성공: Article list of Today's Best
+            2. 투베를 가져오는데 실패:
+                1. Not Existing Board: InvalidOperation Exception
+                2. 데이터베이스 오류: InternalError Exception
+        '''
+        return self._get_best_article(None, None, count, 604800, 'weekly', 'hit')
+
+    @log_method_call
+    def get_weekly_most_list_specific(self, board_name, count=5):
+        '''
+        해당 보드에서 윅베를 가져오는 함수
+
+        @type  board_name: string
+        @param board_name: Board Name
+        @type  count: integer
+        @param count: Number of weekly most read articles to get
+        @rtype: list
+        @return:
+            1. 투베를 가져오는데 성공: Article list of Today's Best
+            2. 투베를 가져오는데 실패:
+                1. Not Existing Board: InvalidOperation Exception 
+                2. 데이터베이스 오류: InternalError Exception
+        '''
+        board_id = self.engine.board_manager.get_board_id(board_name)
+        return self._get_best_article(None, board_id, count, 604800, 'weekly', 'hit')
+
 
     def _get_blacklist_userid(self, user_id):
         '''

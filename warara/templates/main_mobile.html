@@ -28,6 +28,19 @@
 	</ol>
     </div>
 </div>
+
+<div class="mainItem" id="todayBest">
+    <h3>TodayMost</h3>
+    <div class="best">
+        <ol>
+        {% for no, todays_most in todays_most_list %}
+            <li class="bestli">{% if logged_in %}<a href="/board/{{todays_most.board_name}}/{{todays_most.root_id}}/#{{todays_most.id}}" class="besta"><span class="besttitle">{{todays_most.title}}</span><span class="bestinfo">{{todays_most.author_nickname}}</span>
+</a>{% else %}{{todays_most.title}}{% endif %}</li>
+        {% endfor %}
+        </ol>
+    </div>
+</div>
+
 {% endblock %}
 
 <!-- this block is needed to empty content block -->
