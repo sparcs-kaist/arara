@@ -1,15 +1,229 @@
-ul,ol,li{list-style:none}
-body,p,h1,h2,h3,h4,h5,h6,ul,ol,li,dl,dt,dd,table,th,td,form,fieldset,legend,input,textarea,button,select{margin:0;padding:0;-webkit-text-size-adjust:none}
-a{color:inherit;text-decoration:none}
-hr{display:none}
+@charset "utf-8";
 
-.boardNavi{display:table;overflow:hidden;clear:both;width:100%;height:34px;border-bottom:1px solid #c9c9c9;background:#f0f0f0;line-height:34px;letter-spacing:-1px;}
-.boardli{display:table-cell;float:left;width:33%;text-align:center;}
-.boarda{display:block;height:100%;color:#222}
 
-.best{float:left;width:100%}
-.bestli{padding:2px 0 1px;border-bottom:1px solid #eee; height:30px}
-.besta{display:block;position:relative;padding:0 4em 0 10px; height:100%}
-.besttitle{display:block;overflow:hidden;width:100%;color:#222;letter-spacing:-1px;white-space:nowrap;text-overflow:ellipsis}
-.bestinfo{display:inline-block;position:absolute;top:0;right:10px;font-size:11px;font-family:Helvetica;color:#999;text-align:right;white-space:nowrap}
+/* 폰트 설정 */
+body, input, textarea, select, button, table, div, ul, li, p, form { 
+    font-family:Malgun gothic, 맑은 고딕, Dotum, gulim, Helvetica,AppleGothic,Arial,sans-serif; 
+    margin:0; 
+    padding:0; 
+    font-size: 13px;
+    letter-spacing: -1px;
+    -webkit-text-size-adjust:none
+}
+a { 
+    color: #000000;
+    text-decoration:none;
+}
 
+/* common */
+body { 
+    position:relative;
+    float: none;
+    width: auto;
+    display: block;
+}
+section, header, footer, article{ display: block;}
+section{ position: relative; }
+ul, ol{ list-style: none }
+img { border:0; }
+a img { border:0; }
+.re_number{
+    font-weight: normal;
+    padding-left: 6px;
+    color: #ff0060;
+}
+
+/* 여백제거 , 폰트 */
+p{ 
+    margin:0; margin-bottom:1em; 
+}
+h1,h2,h3,h4,h5,h6,form,div,fieldset,input,textarea { 
+    margin:0;padding:0; 
+}
+input { 
+    font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; 
+}
+
+/* header */
+#header{
+    margin: 0;
+    padding-top: 5px;
+    width: 100%;
+    background-color: #525252;
+    text-align: center;
+}
+#nav{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    font-weight: bold;
+}
+#nav a{
+    color: #ffffff;
+    letter-spacing: 0px;
+}
+
+#nav ul{
+}
+#nav li{
+    text-align: center;
+    white-space: nowrap;
+    display: inline-block;
+}
+#nav .l1{
+    width: 14%;
+}
+#nav .l2, .l3, .l4, .l5{
+    width: 24%;
+    margin-bottom: 10px;
+}
+#nav .l5{
+    width: 8%;
+}
+/* gray navi bar */
+#gray{
+    margin: 0;
+    width: 100%;
+    background: #dddddd;
+    padding: 5px 0 5px 0;
+    letter-spacing: 0px;
+}
+#gray span{
+    padding-left: 10px;
+    font-size: .9em;
+}
+
+/* content */
+#contentWrap{
+    margin: 0;
+    padding: 0;
+}
+
+/* user information */
+.userInfo{
+    padding: 1px 3px;
+    background: #dddddd;
+    font-size: .9em;
+}
+
+.userID {
+    line-height: 25px;
+    display: inline;
+    padding-left: 8px;
+}
+
+.userMenu {
+    padding-right: 8px;
+    line-height: 25px;
+    float: right;
+    display: inline;
+}
+
+/* user news (내 글에 달린 댓글) */
+.sec_news{
+    padding-top: 15px;
+    width: 100%;
+    line-height: 20px;
+    margin-bottom: 10px;
+}
+
+.news_re{
+    padding-left: 10px;
+    text-overflow: ellipsis;
+    border-bottom: 1px solid #ccc;
+    font-weight: bold;
+}
+
+
+.sec_news .li a{
+    padding-left: 0px;
+}
+
+
+/* today's best */
+.sec_tb{
+    margin-bottom: 1.1em;
+}
+
+.h_area{
+    display: block;
+    line-height: 1.2em;
+    padding: 20px 10px 7px 10px;
+    border-bottom: 1px solid #ff0060;
+}
+
+h3{
+    line-height: 1.2em;
+    letter-spacing: 0px;
+    text-transform: uppercase;
+}
+
+.tb_list, .wb_list, .hot_list{
+    line-height: 26px;
+    position: relative;
+}
+.vote{
+    top: 5px;
+    width: 35px;
+    height: 20px;
+    display: block;
+    font-size: 1.8em;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+    position: absolute;
+}
+.li{
+    display: block;
+    overflow: hidden;
+    padding: .6em 10px .3em;
+    border-bottom: 1px solid #e5e5e5;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    positioN: relative;
+}
+.li a{
+    padding-left: 47px;
+}
+
+/* weekly best */
+.sec_wb{
+    margin: .3em 0 
+}
+.sec_tb .m, .sec_hot .mrr{
+    margin: -21px 10px 0 0;
+}
+
+/* hot post */
+.sec_hot{
+    position:relative;
+    width:100%;
+}
+.view{
+    top: 5px;
+    width: 35px;
+    height: 20px;
+    display: block;
+    font-size: 1.3em;
+    text-align: center;
+    positioN: absolute;
+    white-space: nowrap;
+}
+/* footer */
+.footer{
+    width: 100%;
+    margin: 30px 0px 15px 0px
+}
+.ft_SPARCS{
+    display: block;
+    text-align: center;
+    padding-bottom: 5px;
+}
+
+.ft_cp{
+    display: block;
+    text-align: center;
+    line-height: 17px;
+    letter-spacing: 0px;
+    font-size: 11px;
+}
