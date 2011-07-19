@@ -3,7 +3,6 @@
 import unittest
 import os
 import sys
-import logging
 import time
 
 THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'gen-py'))
@@ -11,29 +10,23 @@ sys.path.append(THRIFT_PATH)
 ARARA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(ARARA_PATH)
 
+from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
-import arara
-import arara.model
-from arara import arara_engine
-import etc.arara_settings
 
 STUB_TIME_INITIAL = 31536000.1
 STUB_TIME_CURRENT = STUB_TIME_INITIAL
+
 
 def stub_time():
     # XXX Not Thread-safe!
     global STUB_TIME_CURRENT
     return STUB_TIME_CURRENT
 
-class NoticeManagerTest(unittest.TestCase):
+class NoticeManagerTest(AraraTestBase):
     def setUp(self):
         # Common preparation for all tests
-        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
-        etc.arara_settings.BOT_ENABLED = False
-        logging.basicConfig(level=logging.ERROR)
-        arara.model.init_test_database()
-        self.engine = arara_engine.ARAraEngine()
+        super(NoticeManagerTest, self).setUp()
 
         # SYSOP으로 로그인
         self.session_key_sysop = self.engine.login_manager.login(u'SYSOP', u'SYSOP', '143.234.234.234')
@@ -93,8 +86,10 @@ class NoticeManagerTest(unittest.TestCase):
         self.assertEqual(0, len(banner_list))
 
     def tearDown(self):
-        self.engine.shutdown()
-        arara.model.clear_test_database()
+        # Common tearDown
+        super(NoticeManagerTest, self).tearDown()
+
+        # Restore time.time
         time.time = self.org_time
 
 def suite():

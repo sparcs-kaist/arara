@@ -2,31 +2,23 @@
 import unittest
 import os
 import sys
-import logging
+import time
 
 thrift_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'gen-py'))
 sys.path.append(thrift_path)
 arara_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(arara_path)
 
+from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
-import arara
-from arara import arara_engine
-import arara.model
 import arara.util
-import etc.arara_settings
 
-import time
 
-class Test(unittest.TestCase):
+class UtilTest(AraraTestBase):
     def setUp(self):
         # Common preparation for all tests
-        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
-        etc.arara_settings.BOT_ENABLED = False
-        logging.basicConfig(level=logging.ERROR)
-        arara.model.init_test_database()
-        self.engine = arara_engine.ARAraEngine()
+        super(UtilTest, self).setUp()
 
         # Fake time for further test
         def stub_time():
@@ -59,13 +51,14 @@ class Test(unittest.TestCase):
         self.assertEqual([[1], [2], []], result)
 
     def tearDown(self):
-        self.engine.shutdown()
-        arara.model.clear_test_database()
+        # Common tearDown
+        super(UtilTest, self).tearDown()
+
         # Restore the time
         time.time = self.org_time
-        etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
+
 def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(Test)
+    return unittest.TestLoader().loadTestsFromTestCase(UtilTest)
 
 if __name__ == "__main__":
     unittest.TextTestRunner(verbosity=2).run(suite())

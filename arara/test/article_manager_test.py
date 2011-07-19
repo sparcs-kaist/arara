@@ -2,30 +2,27 @@
 import unittest
 import os
 import sys
-import logging
-
+import time
 
 THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../gen-py/'))
 sys.path.append(THRIFT_PATH)
 ARARA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
 sys.path.append(ARARA_PATH)
 
+from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
-import arara
-import time
-from arara import arara_engine
+
 STUB_TIME_INITIAL = 31536000.1
 STUB_TIME_CURRENT = STUB_TIME_INITIAL
 
-import etc.arara_settings
 
 def stub_time():
     # XXX Not Thread-safe!
     global STUB_TIME_CURRENT
     return STUB_TIME_CURRENT
 
-class ArticleManagerTest(unittest.TestCase):
+class ArticleManagerTest(AraraTestBase):
     def _get_user_reg_dic(self, id):
         return {'username':id, 'password':id, 'nickname':id, 'email':id + u'@kaist.ac.kr',
                 'signature':id, 'self_introduction':id, 'default_language':u'english', 'campus':u''}
@@ -37,29 +34,29 @@ class ArticleManagerTest(unittest.TestCase):
         self.engine.member_manager.confirm(id, unicode(register_key))
         return self.engine.login_manager.login(id, id, u'143.248.234.140')
 
-    def setUp(self):
-        global STUB_TIME_CURRENT
-        # Common preparation for all tests
-        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
-        etc.arara_settings.BOT_ENABLED = False
-        logging.basicConfig(level=logging.ERROR)
-        arara.model.init_test_database()
-        self.engine = arara_engine.ARAraEngine()
-        # SYSOP will appear.
-        self.session_key_sysop = self.engine.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123')
-        # Faking time.time
-        self.org_time = time.time
-        time.time = stub_time
-        STUB_TIME_CURRENT = STUB_TIME_INITIAL
-        # Register users(almost of accounts will be used in voting test)
-        self.session_key_mikkang = self._register_user(u'mikkang')
-        self.session_key_serialx = self._register_user(u'serialx')
+    def _register_extra_users(self):
+        # Register extra users
         self.session_key_hodduc = self._register_user(u'hodduc')
         self.session_key_sillo = self._register_user(u'sillo')
         self.session_key_orcjun = self._register_user(u'orcjun')
         self.session_key_letyoursoulbefree = self._register_user(u'letyoursoulbefree')
         self.session_key_koolvibes = self._register_user(u'koolvibes')
         self.session_key_wiki = self._register_user(u'wiki')
+
+    def setUp(self):
+        # Common preparation for all tests
+        super(ArticleManagerTest, self).setUp()
+
+        global STUB_TIME_CURRENT
+        # SYSOP will appear.
+        self.session_key_sysop = self.engine.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123')
+        # Faking time.time
+        self.org_time = time.time
+        time.time = stub_time
+        STUB_TIME_CURRENT = STUB_TIME_INITIAL
+        # Register two users
+        self.session_key_mikkang = self._register_user(u'mikkang')
+        self.session_key_serialx = self._register_user(u'serialx')
 
         # Create default board
         self.engine.board_manager.add_board(self.session_key_sysop, u'board', u'테스트보드', u'Test Board', [])
@@ -69,9 +66,10 @@ class ArticleManagerTest(unittest.TestCase):
         self.engine.board_manager.add_board(self.session_key_sysop, u'board_hide', u'숨겨질 보드', u'Test Board for hiding board test', [])
 
     def tearDown(self):
-        self.engine.shutdown()
-        arara.model.clear_test_database()
-        etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
+        # Common tearDown
+        super(ArticleManagerTest, self).tearDown()
+
+        # Restore time.time
         time.time = self.org_time
 
     def test_read_only_board(self):
@@ -444,6 +442,8 @@ class ArticleManagerTest(unittest.TestCase):
         # XXX : 제 3의 인물이 또 읽으면 hit 이 올라가는 거.
 
     def test_vote(self):
+        self._register_extra_users()
+
         # Writel an article
         article_no = self._dummy_article_write(self.session_key_mikkang)
         # Mikkang now positive vote
@@ -486,6 +486,8 @@ class ArticleManagerTest(unittest.TestCase):
             self.engine.article_manager.read_article(read_order[i], board_name, article_num)
 
     def test_todays_best_and_weekly_best(self):
+        self._register_extra_users()
+
         # Phase 1.
         # Preparation - Step 1. Writing articles
         self._dummy_article_write(self.session_key_mikkang, u"", u"board")      #1
@@ -578,6 +580,8 @@ class ArticleManagerTest(unittest.TestCase):
         self.assertEqual([10], [x.id for x in result])
 
     def test_todays_most_and_weekly_most(self):
+        self._register_extra_users()
+
         # Phase 1.
         # Preparation - Step 1. Writing articles
         self._dummy_article_write(self.session_key_mikkang, u"", u"board")      #1
@@ -950,6 +954,8 @@ class ArticleManagerTest(unittest.TestCase):
         # TODO: article_vote_status table 의 board_id가 바뀌는 것 확인하기? files 의 board_id가 바뀌는 것 확인하기?
 
     def test_change_article_heading(self):
+        self._register_extra_users()
+
         # 테스트를 위해 말머리가 2개 있는 보드를 생성한다.
         self.engine.board_manager.add_board(self.session_key_sysop, u'testboard', u'글머리가 있는 테스트보드', u'Test Board with heading', [u'heading1', u'heading2'])
 

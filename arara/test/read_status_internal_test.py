@@ -12,19 +12,23 @@ sys.path.append(thrift_path)
 arara_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(arara_path)
 
+from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 from arara import read_status_manager
-import etc.arara_settings
 
-class ReadStatusInternalTest(unittest.TestCase):
+
+class ReadStatusInternalTest(AraraTestBase):
     def setUp(self):
-        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
-        etc.arara_settings.BOT_ENABLED = False
+        # Common preparation for all tests
+        # WITH use_database = False option
+        super(ReadStatusInternalTest, self).setUp(use_database = False)
+
         # Common preparation for all tests
         logging.basicConfig(level=logging.ERROR)
 
     def tearDown(self):
-        etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
+        # Common tearDown
+        super(ReadStatusInternalTest, self).tearDown()
 
     def test_get(self):
         rs = read_status_manager.ReadStatus('N')

@@ -1,0 +1,26 @@
+.help_menu {
+    font-size: 13px;
+    width: 290px;
+    padding: 15px 0 1px 20px;
+    margin: 0;
+    background-color: #eee;
+}
+
+.help_menu a:link, a:visited {text-decoration:none; font-weight:bold;}
+.help_menu a:hover {text-decoration:underline; font-weight:bold;}
+
+.help_function {
+   padding: 20px 20px 10px 0;
+   margin: 20px 50px 10px 0;
+   border-top: 1px dashed #333;
+}
+
+.help_function_title {
+   font-size: 16px;
+   font-weight: bold; 
+}
+
+.help_function_image {
+    border: 1px solid; 
+}
+

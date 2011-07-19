@@ -98,8 +98,8 @@ class ArticleManager(object):
         @param time_to_filter: 몇 초 이내의 글만을 대상으로 할 것인가?
         @type  best_type: string
         @param best_type: 글 목록을 돌려줄 때 저장할 목록의 속성 (today / weekly)
-	@type  criteria: string
-	@param criteria: best article을 정할 기준 (vote / hit)
+        @type  criteria: string
+        @param criteria: best article을 정할 기준 (vote / hit)
         @rtype: list<ttypes.Article>
         @return: Best Article들
         '''
@@ -127,11 +127,11 @@ class ArticleManager(object):
                     model.Article.board.has(model.Board.deleted==False),
                     not_(model.articles_table.c.deleted==True)))
 
-	if criteria=="vote":
+        if criteria=="vote":
             best_article = query.order_by(model.Article.positive_vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc())[:count]
         else:
-	    best_article = query.order_by(model.Article.hit.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc())[:count]
-	best_article_dict_list = self._get_dict_list(best_article, BEST_ARTICLE_WHITELIST)
+            best_article = query.order_by(model.Article.hit.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc())[:count]
+        best_article_dict_list = self._get_dict_list(best_article, BEST_ARTICLE_WHITELIST)
         session.close()
 
         best_article_list = list()

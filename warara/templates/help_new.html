@@ -1,19 +1,108 @@
 {% extends "base.html" %}
 
+{% block style %}
+{{block.super}}
+<link rel="stylesheet" href="/media/style/help_new.css"></link>
+{% endblock style %}
+
+{% block script %}
+{{block.super}}
+<script type="text/javascript" src="/media/js/help_new.js"></script>
+{% endblock script %}
+
 {% load arara_tags %}
 {% block board_name %}Help{% endblock %}
 {% block board_description %}도움말{% endblock %}
 
 {% block content %}
-{{block.super}}
+
 <div id="help_content">
-    <h2>도움말은 준비중입니다.</h2>
-    <p>
-    <a href="http://ara.kaist.ac.kr/all">모든 게시판의 글을 한번에 보는 방법: http://ara.kaist.ac.kr/all 로 접속하세요.</a>
-    </p>
-    <p>
-    향후 "아라 사용법", "알려진 버그", "개발자 목록" 등이 업데이트될 예정입니다.
-    </p>
+	<br>
+	<div class="help_menu">
+		<p><a href="/main/help/">shortcut</a>  |  <a href="#weather">weather</a>  |  <a href="#blacklist">blacklist</a>  |  <a href="#forum">forum</a>  |  <a href="#tip">tip</a></p>
+	</div>
+	<br>
+	<div class="help_function_title">아라 단축키 모음</div>
+	<p>
+	단축키는 대소문자를 구별합니다.
+	</p>
+	<ul>
+		<li>q : main page로 이동한다. main page에서는 로그아웃</li>
+		<li>, : 아래로 스크롤</li>
+		<li>. : 위로 스크롤</li>
+		<li>j+i : 다음글</li>
+		<li>k+i : 이전글</li>
+		<br />
+		<img class="help_function_image" src="/media/image/help/cursor.gif">
+		
+		<li>j : 글 선택 커서를 위로 이동한다.</li>
+		<li>k : 글 선택 커서를 아래로 이동한다.</li>
+		<li>', i, space : 선택된 글 보기</li>
+		<br/>
+		<li>l : 글 리스트 보기</li>
+		<li>N : 다음 글 페이지</li>
+		<li>P : 이전 글 페이지</li>
+		<li>s : 검색 방법 컨트롤로 이동한다. 이미 커서에 있을 때는 검색창으로 커서가 옮겨간다.</li>
+		<li>R : 글쓰기</li>
+		<li>shift + Enter : 글 쓰는 중 글쓰기를 완료한다.</li>
+	</ul>
+	<a href="#help_content">맨 위로</a>
+	<div class="help_function" id="weather">
+		<div class="help_function_title">날씨</div>
+		<br />	
+		<img class="help_function_image" src="/media/image/help/weather_myinfo.png" /><br/>
+		<p>왼쪽 탭에서 '내 정보'를 클릭한다.</p><br />
+		<img class="help_function_image" src="/media/image/help/weather_modify.png" /><br/>
+		<p>상단 탭의 'Account Modify'를 클릭한다.</p><br />
+		<img class="help_function_image" src="/media/image/help/weather_campus.png" /><br/>
+		<p>Campus Location 항목에서 현재 위치를 선택한 뒤 저장한다.</p><br />
+		<img class="help_function_image" src="/media/image/help/weather_after.png" /><br/>
+		<p>저장하고 돌아오면 왼쪽 탭에서 날씨를 확인할 수 있다.</p>
+	<a href="#help_content">맨 위로</a>
+	</div>
+
+	<div class="help_function" id="blacklist">
+		<div class="help_function_title">블랙리스트</div>
+		<br />
+		<img class="help_function_image" src="/media/image/help/blacklist_how2.png" /><br/>
+		<p>유저 이름을 클릭하고 팝업 메뉴에서 'Add Blacklist'를 클릭하면<br/> 해당 유저가 블랙리스트에 추가된다. </p>
+
+		<img class="help_function_image" src="/media/image/help/blacklist_main.png" /><br/>
+		<p>다른 방법으로는, 왼쪽 탭의 '블랙리스트' 메뉴를 활용하는 것이 있다.</p>
+		<img class="help_function_image" src="/media/image/help/blacklist_how.png" /><br/>
+		<p>블랙리스트에 추가할 유저를 쓰고 add한다.</p>
+
+		<img class="help_function_image" src="/media/image/help/blacklist_added.png" /><br/>
+		<p>블랙리스트에 추가된 것을 확인한다.</p>
+		<img class="help_function_image" src="/media/image/help/blacklist_result.png" />
+		<p>블랙리스트에 추가된 유저가 쓴 글은 모두 BLACKLISTED라고 block된다.</p>
+	<a href="#help_content">맨 위로</a>
+	</div>
+	<div class="help_function" id="forum">
+		<div class="help_function_title">Forum 형식</div><br>
+		<img class="help_function_image" src="/media/image/help/forum.png" /><br>
+		<p>'Account Modification'에서 Listing Mode를 'Forum'으로 바꾸면<br> 게시판 글이 업데이트 순으로 보여진다.</p>
+		<img class="help_function_image" src="/media/image/help/forum-default.png" /><br>
+		<p>Default : 글 작성시각 순으로 정렬</p>
+		<img class="help_function_image" src="/media/image/help/forum-forum.png"><br>
+		<p>Forum : 글 업데이트 순으로 정렬</p>
+	<a href="#help_content">맨 위로</a>
+	</div>
+	<div class="help_function" id="tip">
+		<div class="help_function_title">기타 사용 Tip</div>
+		<ul>
+
+			<li>글 제목을 클릭하면 thread가 닫힌다.</li>
+			<li>
+			글쓴이 앞의 <font color="red"><u>N</u></font>는 새 글, <font color="#0073cf"><u>U</u></font>는 수정되거나 댓글이 달린 업데이트 글, 공백은 읽은 글을 뜻한다.</li>
+			<img class="help_function_image" src="/media/image/help/re.png" /><br>
+		<li>계정을 삭제하고 나면 자신이 쓴 글을 삭제할 수 없으니, 계정 탈퇴 전에 직접 삭제해야 한다.</li>
+		<li>글을 쓰는 도중 자동 로그아웃이 될 수 있으니, 긴 글을 작성할 때는 '확인' 버튼을 누르기 전에 다른 곳에 저장해두어야 한다.</li>
+
+		</ul>
+	<a href="#help_content">맨 위로</a>
+	</div>
+
 </div>
 {% endblock content %}
 

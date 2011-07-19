@@ -2,28 +2,21 @@
 import unittest
 import os
 import sys
-import logging
-
 
 THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../gen-py/'))
 sys.path.append(THRIFT_PATH)
 ARARA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
 sys.path.append(ARARA_PATH)
 
+from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
-import arara
-from arara import arara_engine
-import arara.model
-import etc.arara_settings
 
-class MemberManagerTest(unittest.TestCase):
+
+class MemberManagerTest(AraraTestBase):
     def setUp(self):
         # Common preparation for all tests
-        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
-        etc.arara_settings.BOT_ENABLED = False
-        arara.model.init_test_database()
-        self.engine = arara_engine.ARAraEngine()
+        super(MemberManagerTest, self).setUp()
 
         # Regiister one user, combacsa
         user_reg_dic = {'username':u'combacsa', 'password':u'combacsa', 'nickname':u'combacsa', 'email':u'combacsa@kaist.ac.kr', 'signature':u'combacsa', 'self_introduction':u'combacsa', 'default_language':u'english', 'campus':u'Daejeon'}
@@ -369,9 +362,9 @@ class MemberManagerTest(unittest.TestCase):
         self.assertEqual(1, self.engine.member_manager.get_listing_mode(session_key))
 
     def tearDown(self):
-        self.engine.shutdown()
-        arara.model.clear_test_database()
-        etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
+        # Common tearDown
+        super(MemberManagerTest, self).tearDown()
+
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(MemberManagerTest)
 

@@ -2,30 +2,23 @@
 import unittest
 import os
 import sys
-import logging
-
 
 THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../gen-py/'))
 sys.path.append(THRIFT_PATH)
 ARARA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
 sys.path.append(ARARA_PATH)
 
+from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
 from arara.model import BOARD_TYPE_PICTURE
-import arara
-from arara import arara_engine
-import arara.model
-import etc.arara_settings
 
-class BoardManagerTest(unittest.TestCase):
+
+class BoardManagerTest(AraraTestBase):
     def setUp(self):
         # Common preparation for all tests
-        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
-        etc.arara_settings.BOT_ENABLED = False
-        logging.basicConfig(level=logging.ERROR)
-        arara.model.init_test_database()
-        self.engine = arara_engine.ARAraEngine()
+        super(BoardManagerTest, self).setUp()
+
         # Register one user, mikkang
         user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang@kaist.ac.kr', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english', 'campus':u'seoul' }
         register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
@@ -552,8 +545,8 @@ class BoardManagerTest(unittest.TestCase):
 
         # TODO: category 가 제대로 반영이 되고 있는 건가 ??
         # Cache 가 제대로 되었는지 확인한다
-        expect_dict = {None: [Board(read_only=False, hide=True, board_description=u'Testing Board', order=2, board_name=u'test2', alias=u'test2', headings=None, category_id=None, id=2, type=0, to_read_level=3, to_write_level=3)], u'test_category': [Board(read_only=False, hide=False, board_description=u'Testing Board', order=1, board_name=u'test', alias=u'테스트보드', headings=None, category_id=1, id=1, type=0, to_read_level=3, to_write_level=3)]}
-        expect_list = [[Board(read_only=False, hide=False, board_description=u'Testing Board', order=1, board_name=u'test', alias=u'테스트보드', headings=None, category_id=1, id=1, type=0, to_read_level=3, to_write_level=3)], [Board(read_only=False, hide=True, board_description=u'Testing Board', order=2, board_name=u'test2', alias=u'test2', headings=None, category_id=None, id=2, type=0, to_read_level=3, to_write_level=3)]]
+        expect_dict = {None: [Board(read_only=False, hide=True, board_description=u'Testing Board', order=2, board_name=u'test2', board_alias=u'test2', headings=None, category_id=None, id=2, type=0, to_read_level=3, to_write_level=3)], u'test_category': [Board(read_only=False, hide=False, board_description=u'Testing Board', order=1, board_name=u'test', board_alias=u'테스트보드', headings=None, category_id=1, id=1, type=0, to_read_level=3, to_write_level=3)]}
+        expect_list = [[Board(read_only=False, hide=False, board_description=u'Testing Board', order=1, board_name=u'test', board_alias=u'테스트보드', headings=None, category_id=1, id=1, type=0, to_read_level=3, to_write_level=3)], [Board(read_only=False, hide=True, board_description=u'Testing Board', order=2, board_name=u'test2', board_alias=u'test2', headings=None, category_id=None, id=2, type=0, to_read_level=3, to_write_level=3)]]
         self.assertEqual(expect_dict, self.engine.board_manager.all_category_and_board_dict)
         self.assertEqual(expect_list, self.engine.board_manager.all_category_and_board_list)
 
@@ -666,9 +659,8 @@ class BoardManagerTest(unittest.TestCase):
             pass
 
     def tearDown(self):
-        self.engine.shutdown()
-        arara.model.clear_test_database()
-        etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
+        # Common tearDown
+        super(BoardManagerTest, self).tearDown()
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(BoardManagerTest)

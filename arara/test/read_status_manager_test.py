@@ -2,24 +2,19 @@
 import unittest
 import os
 import sys
-import logging
+import time
 
 thrift_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'gen-py'))
 sys.path.append(thrift_path)
 arara_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(arara_path)
 
+from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
-import arara
-from arara import arara_engine
-import arara.model
-import etc.arara_settings
 
-# Time is needed for testing file_manager
-import time
 
-class ReadStatusManagerTest(unittest.TestCase):
+class ReadStatusManagerTest(AraraTestBase):
     def _get_user_reg_dic(self, id):
         return {'username':id, 'password':id, 'nickname':id, 
                 'email':id + u'@kaist.ac.kr', 'signature':id,
@@ -34,11 +29,7 @@ class ReadStatusManagerTest(unittest.TestCase):
 
     def setUp(self):
         # Common preparation for all tests
-        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
-        etc.arara_settings.BOT_ENABLED = False
-        logging.basicConfig(level=logging.ERROR)
-        arara.model.init_test_database()
-        self.engine = arara_engine.ARAraEngine()
+        super(ReadStatusManagerTest, self).setUp()
 
         # Fake time for further test
         def stub_time():
@@ -65,11 +56,12 @@ class ReadStatusManagerTest(unittest.TestCase):
                 self.session_key_mikkang, u'garbages', article)
 
     def tearDown(self):
-        self.engine.shutdown()
-        arara.model.clear_test_database()
+        # Common tearDown
+        super(ReadStatusManagerTest, self).tearDown()
+
         # Restore the time
         time.time = self.org_time
-        etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
+
     def test_check_stat(self):
         self._write_articles()
         ret = self.engine.read_status_manager.check_stat(
@@ -81,7 +73,7 @@ class ReadStatusManagerTest(unittest.TestCase):
             self.fail()
         except InvalidOperation:
             pass
-        
+
         try:
             self.engine.read_status_manager.check_stat('asdfasdf', 1)
             self.fail()

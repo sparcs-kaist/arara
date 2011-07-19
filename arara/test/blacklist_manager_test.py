@@ -2,31 +2,22 @@
 import unittest
 import os
 import sys
-import logging
+import time
 
 THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'gen-py'))
 sys.path.append(THRIFT_PATH)
 ARARA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(ARARA_PATH)
 
+from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
-import arara
-from arara import arara_engine
-import arara.model
-import etc.arara_settings
 
-# Time is needed for testing blacklist_manager
-import time
 
-class BlacklistManagerTest(unittest.TestCase):
+class BlacklistManagerTest(AraraTestBase):
     def setUp(self):
         # Common preparation for all tests
-        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
-        etc.arara_settings.BOT_ENABLED = False
-        logging.basicConfig(level=logging.ERROR)
-        arara.model.init_test_database()
-        self.engine = arara_engine.ARAraEngine()
+        super(BlacklistManagerTest, self).setUp()
 
         # Fake time for further test
         def stub_time():
@@ -166,10 +157,11 @@ class BlacklistManagerTest(unittest.TestCase):
         # TODO : 없는 유저에 대해 작동 안하는 거 확인.
 
     def tearDown(self):
-        self.engine.shutdown()
-        arara.model.clear_test_database()
+        # Common tearDown
+        super(BlacklistManagerTest, self).tearDown()
+
+        # restore time.time
         time.time = self.org_time
-        etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(BlacklistManagerTest)

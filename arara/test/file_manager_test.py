@@ -2,31 +2,22 @@
 import unittest
 import os
 import sys
-import logging
+import time
 
 thrift_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'gen-py'))
 sys.path.append(thrift_path)
 arara_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(arara_path)
 
+from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
-import arara
-from arara import arara_engine
-import arara.model
-import etc.arara_settings
 
-# Time is needed for testing file_manager
-import time
 
-class FileManagerTest(unittest.TestCase):
+class FileManagerTest(AraraTestBase):
     def setUp(self):
         # Common preparation for all tests
-        self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
-        etc.arara_settings.BOT_ENABLED = False
-        logging.basicConfig(level=logging.ERROR)
-        arara.model.init_test_database()
-        self.engine = arara_engine.ARAraEngine()
+        super(FileManagerTest, self).setUp()
 
         # Fake time for further test
         def stub_time():
@@ -90,11 +81,11 @@ class FileManagerTest(unittest.TestCase):
         self.delete_file()
 
     def tearDown(self):
-        self.engine.shutdown()
-        arara.model.clear_test_database()
+        # Common tearDown
+        super(FileManagerTest, self).tearDown()
+
         # Restore the time
         time.time = self.org_time
-        etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(FileManagerTest)
