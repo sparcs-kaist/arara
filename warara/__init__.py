@@ -72,3 +72,11 @@ def cache_page(expire=60):
 
         return wrapper
     return cache_page_wrap
+
+def prevent_cached_by_browser(f):
+    def wrapper(request, *args, **kwargs):
+        response = f(request, *args, **kwargs)
+        response['Cache-Control'] = 'max-age=0, no-cache=True'
+        return response
+    return wrapper
+

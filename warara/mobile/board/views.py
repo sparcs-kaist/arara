@@ -156,6 +156,7 @@ def get_article_list(request, r, mode):
             r['board_heading_list'] = board_dict.headings
             r['default_heading'] = heading
 
+@warara.prevent_cached_by_browser
 @warara.wrap_error_mobile
 def list(request, board_name):
     server = warara_middleware.get_server()
@@ -334,7 +335,7 @@ def _read(request, r, sess, board_name, article_id):
     # r['is_sysop_or_manager'] = is_sysop_or_manager
     r['is_sysop_or_manager'] = False # 캐싱이 도입되면 이 줄을 지우고 위 2줄로 되돌아가자.
 
-
+@warara.prevent_cached_by_browser
 @warara.wrap_error_mobile
 def read(request, board_name, article_id):
     '''
@@ -456,6 +457,7 @@ def reply(request, board_name, article_id):
 
     return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(root_id)))
 
+@warara.prevent_cached_by_browser
 @warara.wrap_error_mobile
 def vote(request, board_name, root_id, article_no, vote_type):
     server = warara_middleware.get_server()
@@ -472,7 +474,6 @@ def vote(request, board_name, root_id, article_no, vote_type):
     except InvalidOperation, e:
         response = HttpResponse("ALREADY_VOTED")
 
-    response['Cache-Control'] = 'max-age=0, no-cache=True'
     return response
 
 @warara.wrap_error_mobile
@@ -615,6 +616,10 @@ def search(request, board_name):
     rendered = render_to_string('board/list.html', r)
     return HttpResponse(rendered)
 
+# Django's never_cache decorator causes empty file, so we do it manually.
+# NOTE: Django's cache warara_middleware uses cache backends with timeout value from http headers
+#       with simultaneously setting appropriate http headers to control web browsers.
+@warara.prevent_cached_by_browser
 @warara.wrap_error_mobile
 def file_download(request, board_name, article_root_id, article_id, file_id):
     server = warara_middleware.get_server()
@@ -624,10 +629,6 @@ def file_download(request, board_name, article_root_id, article_id, file_id):
 
     response = HttpResponse(file_ob, mimetype="application/x-forcedownload")
     response['Content-Disposition'] = "attachment; filename=" + unicode(file.real_filename).encode('cp949', 'replace')
-    # Django's never_cache decorator causes empty file, so we do it manually.
-    # NOTE: Django's cache warara_middleware uses cache backends with timeout value from http headers
-    #       with simultaneously setting appropriate http headers to control web browsers.
-    response['Cache-Control'] = 'max-age=0, no-cache=True'
     return response
 
 # Using Django's default HTML handling util, escape all tags and urlize
