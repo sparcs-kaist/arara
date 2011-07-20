@@ -62,7 +62,7 @@ def get_article_list(request, r, mode):
     # XXX 2010.05.18. page_length 변수를 사용하지 않던 걸 사용하도록 고치다.
     #                 이 값은 Backend 에서 가져오는 페이지당 글의 갯수이다.
     #                 article_per_page 정도가 적당하다. 나중에 이름을 바꾸자.
-    page_length = 20
+    page_length = 10
     if mode == 'list':
         # GET 으로 넘어온 말머리가 있는지 본다.
         heading = request.GET.get('heading', None)
@@ -103,7 +103,7 @@ def get_article_list(request, r, mode):
         article_result = server.search_manager.search(sess, False, u'', u'', search_method, page_no, page_length, True) 
 
     # XXX 2010.05.18. page_range_length 는 글 목록 하단에 표시하는 page 들의 갯수이다.
-    page_range_length = 10
+    page_range_length = 5
 
     # XXX 2010.05.18. page_range_no 는 현 page 가 글 목록 하단의 page 들 중 몇 째인가이다.
     page_range_no = page_no / page_range_length
@@ -130,7 +130,7 @@ def get_article_list(request, r, mode):
     r['next_group'] = '》'
     r['prev_group'] = '《'
     r['page_num'] = article_result.last_page
-    page_o = Paginator([x+1 for x in range(r['page_num'])],10)
+    page_o = Paginator([x+1 for x in range(r['page_num'])],page_range_length)
     r['page_list'] = page_o.page(page_range_no).object_list
     if page_o.page(page_range_no).has_next():
         r['next_page_group'] = {'mark':r['next'], 'no':page_o.page(page_o.page(page_range_no).next_page_number()).start_index()}
@@ -164,7 +164,7 @@ def list(request, board_name):
     r['board_name'] = board_name
     get_article_list(request, r, 'list')
 
-    rendered = render_to_string('board/list.html', r)
+    rendered = render_to_string('mobile/board/list.html', r)
     return HttpResponse(rendered)
 
 @warara.wrap_error

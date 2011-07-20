@@ -1,0 +1,90 @@
+.listhead{
+}
+.listLi{
+    display: block;
+    overflow: hidden;
+    padding: 5px 10px 5px;
+    border-bottom: 1px solid #e5e5e5;
+    position:relative;
+    height: 47px;
+}    
+.list a{
+    text-overflow: ellipsis;
+}
+.listTitle{
+    font-weight: bold;
+    font-size: 15px;
+    display: block;
+    padding-top: 3px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.re_num{
+    position: relative;
+    font-weight: normal;
+    padding-left: 5px;
+    color: #ff0060;
+    letter-spacing: 0px;
+}
+
+.listInfo{
+    line-height: 1em;
+    font-size: 12px;
+    letter-spacing: 0px;
+    color: #444444;
+    padding: 5px 0;
+    display: block;
+}
+.paginate{
+    padding-top: 20px;
+    text-align:center;
+}
+.paginate a, strong{
+    display:inline-block;
+    position:relative;
+    margin-left:-5px;
+    padding:3px 7px 1px 4px;
+    color:#333;
+    font-size:1.1em;
+    line-height:normal;
+    text-decoration:none;
+}
+.paginate strong{
+    background: #ff0060;
+    padding: 1px 6px;
+    color: #ffffff;
+}
+.list_buttons{
+    padding: 0px 10px 15px 15px; 
+}
+.button{
+     margin: 0;
+     border: 1px solid #cccccc;
+     padding: 6px 8px;
+     display: inline-block;
+     color: #000000;
+     float: left;
+ }
+ .buttonR{
+     margin: 0;
+     border: 1px solid #cccccc;
+     color: #ff0060;
+     display: inline-block;
+     padding: 6px 8px;
+     float: right;
+}
+
+/* 검색 */
+#search{
+    clear both;
+    text-align: center;
+    margin: 0.4em 0;
+}
+.hidden{
+    positioN: absolute;
+    width: 0.01em;
+    height: 0.01em;
+    overflow: hidden;
+}
+

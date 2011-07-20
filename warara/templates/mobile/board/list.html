@@ -1,0 +1,63 @@
+{% extends "mobile/base.html" %}
+{% load arara_tags %}
+
+{% block style %}<link rel="stylesheet" href="/media/style_new/mobile/list.css" type="text/css">{% endblock %}
+{% block header %}
+<div id="gray">
+    <span><a href="http://143.248.234.153/~panda/list.html">전체게시판</a>  &gt;&gt; <a href="http://143.248.234.153/~panda/list.html">garbages</a></span>
+</div>
+{% endblock %}
+{% block content %}
+<div class="list">
+    <ul>
+        {% for article in article_list %}
+        <li class="listLi">
+        <a href="{{ base_url}}{{article.id}}/?page_no={{page_no}}"><span class="listTitle">{% if article.blacklisted %}"BLACKLISTED" {% else %}{{ article.title }}{% endif %}
+                {% if article.reply_count %}<span class="re_num">({{article.reply_count}})</span>{% endif %}
+        </span></a>
+        <span class="listInfo">{{article.author_nickname|truncatechars:"8"}} | 추천 {{article.positive_vote}} / 반대 {{article.negative_vote}} | 조회: {{article.hit}}</span>
+        </li>
+        {% endfor %}
+    </div>
+</div>
+<div class="paginate">
+    {% ifequal method 'search' %}
+        {% if prev_page_group.no %}<a href="{{ path }}&page_no={{prev_page_group.no}}">{{prev_page_group.mark}}</a> {% endif %}
+        {% for page in page_list %}
+        <a href="{{ path }}&page_no={{page}}">{% ifequal page page_no %}<strong>{{page}}</strong>{% else %}{{page}}{% endifequal%}</a>
+        {% endfor %}
+        {% if next_page_group.no %}<a href="{{ path }}&page_no={{next_page_group.no}}">{{next_page_group.mark}}</a> {% endif %}
+    {% else %}
+        {% if prev_page_group.no %}<a href="{{ base_url }}?page_no={{prev_page_group.no}}">{{prev_page_group.mark}}</a> {% endif %}
+        {% for page in page_list %}
+        <a href="{{ base_url }}?page_no={{page}}">{% ifequal page page_no %}<strong>{{page}}</strong>{% else %}{{page}}{% endifequal%}</a>
+        {% endfor %}
+        {% if next_page_group.no %}<a href="{{ base_url }}?page_no={{next_page_group.no}}">{{next_page_group.mark}}</a> {% endif %}
+    {% endifequal %}
+</div>
+
+<div class="list_buttons">
+    <a href="#" onclick="$('#search').toggle(); this.blur(); return false;"  class="button">검색</a>
+    <a href="{{ base_url }}write/" class="buttonR{% if board_dict.read_only %} hidden{% endif %}">글쓰기</a>
+
+    <div class="cb"></div>
+</div>
+
+<div id="search" class="hidden">
+    <form action="#">
+        <fieldset>
+            <legend>카테고리</legend>
+            <input type = "hidden" name = "come_idx" value = "2368"/>
+            <input type = "hidden" name = "iskin" value = ""/>
+            <p>
+            <select name = "stype">
+                <option value = "nickname">닉네임</option>
+                <option value = "subject" selected = "selected">제목</option>
+            </select>
+            <input type = "text" name = "svalue" value = ""/>
+            <input type = "submit" value = "검색"/>
+            </p>
+        </fieldset>
+    </form>
+</div>
+{% endblock %}
