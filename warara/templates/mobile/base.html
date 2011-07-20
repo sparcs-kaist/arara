@@ -33,14 +33,15 @@
                     <li class="l5">
                         <a href="/mobile/board/list/">+</a>
                     </li>
-                </div>
+                </ul>
             </div>
-            <div id="contentWrap">
-                {% block header %}
-                {% endblock %}
-            </div>
-            {% block content %}
+        </div>
+        <div id="contentWrap">
+            {% block header %}
             {% endblock %}
+        </div>
+        {% block content %}
+        {% endblock %}
         </div>
         <div class="footer">
             {% block footer %}
