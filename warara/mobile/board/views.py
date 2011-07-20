@@ -18,7 +18,7 @@ from etc.warara_settings import FILE_DIR, FILE_MAXIMUM_SIZE
 
 IMAGE_FILETYPE = ['jpg', 'jpeg', 'gif', 'png']
 
-@warara.wrap_error
+@warara.wrap_error_mobile
 def index(request):
     rendered = render_to_string('board/index.html', {})
     return HttpResponse(rendered)
@@ -156,7 +156,7 @@ def get_article_list(request, r, mode):
             r['board_heading_list'] = board_dict.headings
             r['default_heading'] = heading
 
-@warara.wrap_error
+@warara.wrap_error_mobile
 def list(request, board_name):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
@@ -167,7 +167,7 @@ def list(request, board_name):
     rendered = render_to_string('mobile/board/list.html', r)
     return HttpResponse(rendered)
 
-@warara.wrap_error
+@warara.wrap_error_mobile
 def write(request, board_name):
     server = warara_middleware.get_server()
     if request.method == 'POST':
@@ -219,7 +219,7 @@ def write(request, board_name):
     rendered = render_to_string('board/write.html', r)
     return HttpResponse(rendered)
 
-@warara.wrap_error
+@warara.wrap_error_mobile
 def write_(request, board_name):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
@@ -334,7 +334,7 @@ def _read(request, r, sess, board_name, article_id):
     r['is_sysop_or_manager'] = False # 캐싱이 도입되면 이 줄을 지우고 위 2줄로 되돌아가자.
 
 
-@warara.wrap_error
+@warara.wrap_error_mobile
 def read(request, board_name, article_id):
     '''
     주어진 게시판의 주어진 글을 읽어온다.
@@ -365,7 +365,7 @@ def read(request, board_name, article_id):
 
     return HttpResponse(rendered)
 
-@warara.wrap_error
+@warara.wrap_error_mobile
 def _reply(request, board_name, article_id):
     '''
     주어진 게시판의 주어진 글에 실제로 reply 를 단다.
@@ -405,7 +405,7 @@ def _reply(request, board_name, article_id):
 
     return root_id
 
-@warara.wrap_error
+@warara.wrap_error_mobile
 def _relay_fiction_reply(request, board_name, article_id):
     '''
     이벤트용 임시 답글 함수.
@@ -436,7 +436,7 @@ def _relay_fiction_reply(request, board_name, article_id):
 
     return root_id
 
-@warara.wrap_error
+@warara.wrap_error_mobile
 def reply(request, board_name, article_id):
     '''
     주어진 게시판의 주어진 글에 reply 를 단다.
@@ -455,7 +455,7 @@ def reply(request, board_name, article_id):
 
     return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(root_id)))
 
-@warara.wrap_error
+@warara.wrap_error_mobile
 def vote(request, board_name, root_id, article_no, vote_type):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
@@ -474,7 +474,7 @@ def vote(request, board_name, root_id, article_no, vote_type):
     response['Cache-Control'] = 'max-age=0, no-cache=True'
     return response
 
-@warara.wrap_error
+@warara.wrap_error_mobile
 def move_article(request):
     '''
     현재 글과 그 리플들을 다른 게시판으로 이동하며, article_vote_status, files의 보드 정보를 함께 수정한다.
@@ -494,7 +494,7 @@ def move_article(request):
         server.article_manager.move_article(sess, board_name, int(article_no), board_to_move)
         return HttpResponseRedirect('/board/%s/' % board_name)
 
-@warara.wrap_error
+@warara.wrap_error_mobile
 def _delete(request, board_name, root_id, article_no):
     '''
     주어진 게시판의 주어진 글을 실제로 지운다.
@@ -514,7 +514,7 @@ def _delete(request, board_name, root_id, article_no):
     
     server.article_manager.delete_article(sess, board_name, int(article_no))
 
-@warara.wrap_error
+@warara.wrap_error_mobile
 def delete(request, board_name, root_id, article_no):
     '''
     주어진 게시판의 주어진 글을 지운다.
@@ -597,7 +597,7 @@ def _search(request, r, sess, board_name):
     path = path.split('?')[0]
     r['path'] = path + "?search_word=" + search_word + "&chosen_search_method=" + r['chosen_search_method']
 
-@warara.wrap_error
+@warara.wrap_error_mobile
 def search(request, board_name):
     '''
     @type  request: Django Request
@@ -614,7 +614,7 @@ def search(request, board_name):
     rendered = render_to_string('board/list.html', r)
     return HttpResponse(rendered)
 
-@warara.wrap_error
+@warara.wrap_error_mobile
 def file_download(request, board_name, article_root_id, article_id, file_id):
     server = warara_middleware.get_server()
     file = {}

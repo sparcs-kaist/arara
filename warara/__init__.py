@@ -18,32 +18,37 @@ def check_logged_in(request):
 
     return sess, r
 
-def wrap_error(f):
-    def check_error(request, *args, **argv):
-        r = {} #render item
-        try:
-            return f(request, *args, **argv)
-        except NotLoggedIn, e:
-            r['error_message'] = "You are not logged in!"
-            rendered = render_to_string("error.html", r)
-            if "arara_session_key" in request.session:
-                request.session.clear()
-            return HttpResponse(rendered)
-        except InvalidOperation, e:
-            r['error_message'] = e.why
-            rendered = render_to_string("error.html", r)
-            return HttpResponse(rendered)
-        except InternalError, e:
-            r['error_message'] = "Internal Error"
-            rendered = render_to_string("error.html", r)
-            return HttpResponse(rendered)
-        except IOError, e:
-            # board/views.py:file_download() might throwgh this error
-            r['error_message'] = "IO Error (File Not Found)"
-            rendered = render_to_string("error.html", r)
-            return HttpResponse(rendered)
+def wrap_error_base(template="error.html"):
+    def wrap_error_wrap(f):
+        def check_error(request, *args, **argv):
+            r = {} #render item
+            try:
+                return f(request, *args, **argv)
+            except NotLoggedIn, e:
+                r['error_message'] = "You are not logged in!"
+                rendered = render_to_string(template, r)
+                if "arara_session_key" in request.session:
+                    request.session.clear()
+                return HttpResponse(rendered)
+            except InvalidOperation, e:
+                r['error_message'] = e.why
+                rendered = render_to_string(template, r)
+                return HttpResponse(rendered)
+            except InternalError, e:
+                r['error_message'] = "Internal Error"
+                rendered = render_to_string(template, r)
+                return HttpResponse(rendered)
+            except IOError, e:
+                # board/views.py:file_download() might throwgh this error
+                r['error_message'] = "IO Error (File Not Found)"
+                rendered = render_to_string(template, r)
+                return HttpResponse(rendered)
 
-    return check_error
+        return check_error
+    return wrap_error_wrap
+
+wrap_error = wrap_error_base()
+wrap_error_mobile = wrap_error_base("mobile/error.html")
 
 def cache_page(expire=60):
     def cache_page_wrap(function):

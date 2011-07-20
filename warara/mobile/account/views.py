@@ -9,7 +9,7 @@ import warara
 from warara import warara_middleware
 
 
-@warara.wrap_error
+@warara.wrap_error_mobile
 def logout(request):
     session_key, r = warara.check_logged_in(request)
     server = warara_middleware.get_server()
