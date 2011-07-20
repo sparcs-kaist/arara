@@ -1,0 +1,20 @@
+{% extends "mobile/base.html" %}
+
+{% block style %}
+<link rel="stylesheet" href="/media/style/error.css"></link>
+{% endblock style %}
+
+{% block content %}
+{% load i18n %}
+{% if error_message %}
+    <div id="error_notice">
+            <div id="error_title">{% trans "에러가 발생했습니다" %}</div>
+        <div id="error_content">{{error_message}}</div>
+    </div>
+{% else %}
+    <div id="error_notice">
+        <div id="error_title">{% trans "에러가 발생했습니다. 시삽에게 문의하세요." %}</div>
+        <div id="error_content">{{error_message}}</div>
+    </div>
+{% endif %}
+{% endblock content %}
