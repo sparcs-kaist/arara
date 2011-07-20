@@ -1,0 +1,66 @@
+{% extends "mobile/base.html" %}
+{% load arara_tags %}
+
+{% block style %}<link rel="stylesheet" href="/media/style_new/mobile/write.css" type="text/css">{% endblock %}
+{% block header %}
+<div id="gray">
+    <span><a href="/mobile/board/list/">전체게시판</a>  &gt;&gt; <a href="/mobile/board/{{ board_name }}/">{{ board_name }}</a></span>
+</div>
+{% endblock %}
+{% block content %}
+<form name="write_form" method="post" action="/mobile/board/{{board_name}}/write/" enctype="multipart/form-data">
+    <div class="contentWrap">
+        <div id="write">
+            <div class="wr">
+                {% if have_heading %}
+                <dl class="wr1">
+                    <dt><label for="w1">말머리</label></dt>
+                    <dd>
+                    <select name="heading" id="w1" class="ip">
+                        <option value="" {% if default_heading and default_heading == '' %} selected{% endif %}>말머리 없음</option>
+                        {% for heading in board_heading_list %}
+                        <option value="{{ heading }}" {% if default_heading and default_heading == heading %} selected{% endif %}>{{ heading }}</option>
+                        {% endfor %}
+                    </select>
+                    </dd>
+                </dl>
+                {% endif %}
+                <dl class="wr1">
+                    <dt><label for="w2">제목</label></dt>
+                    <dd>
+                    <input name="title" type="text" id="w2" class="ip ip_s" value="{{default_title}}" />
+                    </dd>
+                </dl>
+                <dl class="wr2">
+                    <dt class="hd"><label for="w3">내용</label></dt>
+                    <dd>
+                    <textarea name="text" rows="9" cols="30" id="w3" class="ip_t">{% if deaulf_text %}{{ default_text }}{% endif %}</textarea></dd>
+                </dl>
+                <dl class="wr1">
+                    <dt>시그</dt>
+                    <dd class="rad_option">
+                    <input type="radio" id="w4" name="signature_check" value="Y" class="rad" checked="checked" /> <label for="w4">사용 </label>
+                    <input type="radio" id="w5" name="signature_check" value="N" class="rad" /><label for="w5">사용안함 </label>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="write_buttons">
+        <div class="left">
+            <input type="submit" class="button" value="취소" />
+        </div>
+        <div class="right">
+            <input type="submit" class="buttonR" value="V 확인" />
+        </div>
+        <div class="cb"></div>
+    </div>
+    <input type="hidden" value="{{t_write}}" name="write_type" />
+    {% if modify %} <input type="hidden" value="{{root_id}}" name="root_id" /> {% endif %}
+    <input type="hidden" value="{{article_no}}" name="article_no" />
+    <input type="hidden" value="{{board_name}}" name="board_name" />
+    <input type="hidden" value="{{board_type}}" name="board_type" />
+    <input type="hidden" value="" name="delete_file" />
+    <textarea class="hidden" name="signature">{{user_signature}}</textarea>
+</form>
+{% endblock %}

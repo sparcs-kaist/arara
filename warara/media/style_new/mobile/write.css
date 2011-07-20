@@ -1,0 +1,101 @@
+div, form, dt{
+    display: block;
+}
+select{
+    -webkit-appearance: menulist;
+    box-sizing: border-box;
+    border: 1px solid;
+    -webkit-rtl-ordering: logical;
+    cursor: default;
+    font-size: 1.1em;
+    -webkit-border-radius: 0;
+}
+input, textarea {
+    -webkit-border-radius: 0;
+}
+dl {
+    display: block;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+}
+dd{
+    display: block;
+    margin-left: 10px;
+}
+label{
+    cursor: pointer;
+}
+
+/* write */
+#write{
+    padding: 0 7px;
+}
+.wr{
+    padding-bottom: 0.5em;
+}
+.wr1{
+    padding-top: 0.5em;
+    position: relative;
+}
+.wr1 dt{
+    position: absolute;
+    left: 10px;
+    white-space: nowrap;
+    font-size: 1.1em;
+}
+.wr1 dd{
+    padding-right: 10px;
+    padding-left: 4.5em;
+}
+
+.wr1 .ip{
+    width: 100%;
+    height: 1.5em;
+}
+.hd{
+    visibility: hidden;
+    overflow: hidden;
+    left: -111111px;
+    width: 0;
+    height: 0;
+    font-size: 0;
+}
+.wr2 .ip_t{
+    width: 97%;
+    font-size: 14px;
+    line-height: 1.5em;
+}
+
+.wr1 dd label{
+    margin-right: 0.9em;
+}
+.rad_option{
+    padding-left: 9em;
+}
+.rad{
+    margin-right: 0.4em; 
+}
+
+/* 글쓰기, 취소 버튼 */
+.write_buttons{
+    padding: 15px 15px 0px 15px; 
+    border-top: 1px solid #cccccc;
+}
+.button{
+    margin: 0;
+    border: 1px solid #cccccc;
+    padding: 6px 8px;
+    color: #000000;
+    background-color: #ffffff;
+    cursor: pointer;
+ }
+.buttonR{
+    margin: 0;
+    border: 1px solid #cccccc;
+    color: #ff0060;
+    padding: 6px 8px;
+    background-color: #ffffff;
+    cursor: pointer;
+}
+
+.hidden{ display: none; }

@@ -173,14 +173,15 @@ def write(request, board_name):
     if request.method == 'POST':
         return write_(request, board_name)
 
-    if request.GET.get('multi', 0):
-        sess, r = warara.check_logged_in(request)
-        rec_num = request.GET['multi']
-        article_dic={'title':'test title', 'content':'test content', 'heading': u''}
-        for i in range(int(rec_num)):
-            article_id = server.article_manager.write_article(sess, board_name, WrittenArticle(**article_dic))
-
-        return HttpResponseRedirect('../')
+    # 모바일에서 사용되지 않음
+#    if request.GET.get('multi', 0):
+#        sess, r = warara.check_logged_in(request)
+#        rec_num = request.GET['multi']
+#        article_dic={'title':'test title', 'content':'test content', 'heading': u''}
+#        for i in range(int(rec_num)):
+#            article_id = server.article_manager.write_article(sess, board_name, WrittenArticle(**article_dic))
+#
+#        return HttpResponseRedirect('../')
 
     sess, r = warara.check_logged_in(request)
     article_id = request.GET.get('article_id', 0)
@@ -216,7 +217,7 @@ def write(request, board_name):
 
     r['board_type'] = board_dict.type
 
-    rendered = render_to_string('board/write.html', r)
+    rendered = render_to_string('mobile/board/write.html', r)
     return HttpResponse(rendered)
 
 @warara.wrap_error_mobile
@@ -224,7 +225,7 @@ def write_(request, board_name):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
     article_dic = {}
-    r['url'] = ''.join(['/board/', board_name, '/'])
+#    r['url'] = ''.join(['/board/', board_name, '/']) XXX: 왜 있는 걸까?
     article_dic['content'] = request.POST.get('text', '')
     use_signature = request.POST.get('signature_check', None)
     if use_signature:
@@ -246,23 +247,23 @@ def write_(request, board_name):
     else:
         article_id = server.article_manager.write_article(sess, board_name, WrittenArticle(**article_dic))
 
-    #upload file
-    if request.FILES:
-        file = {}
-        for key, file_ob in request.FILES.items():
-            if file_ob.size > FILE_MAXIMUM_SIZE:
-                continue
-            file = server.file_manager.save_file(sess, int(article_id), file_ob.name)
-            if not os.path.isdir('%s/%s' % (FILE_DIR, file.file_path)):
-                os.makedirs('%s/%s' % (FILE_DIR, file.file_path))
-            fp = open('%s/%s/%s' % (FILE_DIR, file.file_path, file.saved_filename), 'wb')
-
-            fp.write(file_ob.read())
+    #upload file : 모바일에서 사용되지 않음
+#    if request.FILES:
+#        file = {}
+#        for key, file_ob in request.FILES.items():
+#            if file_ob.size > FILE_MAXIMUM_SIZE:
+#                continue
+#            file = server.file_manager.save_file(sess, int(article_id), file_ob.name)
+#            if not os.path.isdir('%s/%s' % (FILE_DIR, file.file_path)):
+#                os.makedirs('%s/%s' % (FILE_DIR, file.file_path))
+#            fp = open('%s/%s/%s' % (FILE_DIR, file.file_path, file.saved_filename), 'wb')
+#
+#            fp.write(file_ob.read())
 
     if request.POST.get('write_type', 0) == 'modify':
-        return HttpResponseRedirect('/board/%s/%s#%s' % (board_name, request.POST.get('root_id', article_id), article_id))
+        return HttpResponseRedirect('/mobile/board/%s/%s#%s' % (board_name, request.POST.get('root_id', article_id), article_id))
     else:
-        return HttpResponseRedirect('/board/%s/%s' % (board_name, str(article_id)))
+        return HttpResponseRedirect('/mobile/board/%s/%s' % (board_name, str(article_id)))
 
 def _read(request, r, sess, board_name, article_id):
     '''
