@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+{% load i18n %}
+{% load arara_tags %}
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=medium-dpi">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="description" content="KAIST  학내 커뮤니티 아라">
+
+        <link rel="stylesheet" href="/media/style_new/mobile/base.css" type="text/css">
+        {% block style %}{% endblock %}
+        {% block script %}{% endblock %}
+        <title>{% block title %}아라{% endblock %}</title>
+    </head>
+    <body>
+        <div id="header">
+            <a href="/mobile/"><img src="/media/image/mobile/header.png" width="140px"></a>
+
+            <div id="nav">
+                <ul>
+                    <li class="l1">
+                        <a href="/mobile/all/">all</a>
+                    </li>
+                    <li class="l2">
+                        <a href="/mobile/board/garbages/">garbages</a>
+                    </li>
+                    <li class="l3">
+                        <a href="/mobile/board/qandA[etc]/">QandA[etc]</a>
+                    </li>
+                    <li class="l4">
+                        <a href="/mobile/board/love/">Love</a>
+                    </li>
+                    <li class="l5">
+                        <a href="/mobile/board/list/">+</a>
+                    </li>
+                </div>
+            </div>
+            <div id="contentWrap">
+                {% block header %}
+                {% endblock %}
+            </div>
+            {% block content %}
+            {% endblock %}
+        </div>
+        <div class="footer">
+            {% block footer %}
+            <ul>
+                <li class="ft_cp">
+                Copyright ⓒ 2011 SPARCS. All rights reserved.
+                </li>
+            </ul>
+            {% endblock %}
+        </div>
+    </body>
+</html>
+

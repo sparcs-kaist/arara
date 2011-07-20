@@ -71,6 +71,6 @@ def main(request):
         else:
             ctx['new_message'] = False
 
-    rendered = render_to_string('main_mobile.html', ctx)
+    rendered = render_to_string('mobile/main.html', ctx)
     return HttpResponse(rendered)
 

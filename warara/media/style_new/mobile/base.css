@@ -1,0 +1,132 @@
+@charset "utf-8";
+
+
+/* 폰트 설정 */
+body, input, textarea, select, button, table, div, ul, li, p, form { 
+    font-family:"Malgun gothic", "맑은 고딕",Dotum,gulim,Helvetica,AppleGothic,Arial,sans-serif;
+    margin:0;
+    padding:0;
+    font-size: 13px;
+    letter-spacing: -1px;
+    -webkit-text-size-adjust:none
+}
+a {
+    color: #000000;
+    text-decoration:none;
+}
+
+/* common */
+body {
+    position:relative;
+    float: none;
+    width: auto;
+    display: block;
+}
+section, header, footer, article{ display: block;}
+section{ position: relative; }
+ul, ol{ list-style: none }
+img { border:0; }
+a img { border:0; }
+.re_number{
+    font-weight: normal;
+    padding-left: 6px;
+    color: #ff0060;
+}
+
+/* 여백제거 , 폰트 */
+p{ 
+    margin:0; margin-bottom:1em; 
+}
+h1,h2,h3,h4,h5,h6,form,div,fieldset,input,textarea { 
+    margin:0;padding:0; 
+}
+input { 
+    font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; 
+}
+
+/* header */
+#header{
+    margin: 0;
+    padding-top: 5px;
+    width: 100%;
+    background-color: #525252;
+    text-align: center;
+}
+#nav{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    font-weight: bold;
+}
+#nav a{
+    color: #ffffff;
+    letter-spacing: 0px;
+}
+#nav li{
+    text-align: center;
+    white-space: nowrap;
+    display: -moz-inline-stack;
+    display: inline-block;
+    zoom:1;
+    *display: inline;
+
+}
+#nav .l1{
+    width: 14%;
+    margin-bottom: 10px;
+}
+#nav .l2, .l3, .l4, .l5{
+    width: 24%;
+    margin-bottom: 10px;
+}
+#nav .l5{
+    width: 8%;
+}
+/* gray navi bar */
+#gray{
+    margin: 0;
+    width: 100%;
+    background: #dddddd;
+    padding: 5px 0 5px 0;
+    letter-spacing: 0px;
+}
+#gray span{
+    padding-left: 10px;
+    font-size: .9em;
+}
+
+/* content */
+#contentWrap{
+    margin: 0;
+    padding: 0;
+}
+
+/* footer */
+.footer{
+    width: 100%;
+    margin: 30px 0px 15px 0px
+}
+.ft_SPARCS{
+    display: block;
+    text-align: center;
+    padding-bottom: 5px;
+}
+
+.ft_cp{
+    display: block;
+    text-align: center;
+    line-height: 17px;
+    letter-spacing: 0px;
+    font-size: 11px;
+}
+
+/* float problems in old IE */
+.left{
+    float: left;
+}
+.right{
+    float: right;
+}
+.cb {
+    clear: both;
+}

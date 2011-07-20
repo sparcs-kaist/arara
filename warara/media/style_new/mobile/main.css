@@ -1,0 +1,111 @@
+@charset "utf-8";
+
+/* user information */
+.userInfo{
+    padding: 1px 3px;
+    background: #dddddd;
+    font-size: .9em;
+}
+
+.userID {
+    line-height: 25px;
+    display: inline;
+    float: left;
+    padding-left: 8px;
+}
+
+.userMenu {
+    padding-right: 8px;
+    line-height: 25px;
+    float: right;
+    display: inline;
+}
+
+/* user news (내 글에 달린 댓글) */
+.sec_news{
+    width: 100%;
+    line-height: 20px;
+    margin-bottom: 10px;
+}
+.sec_news .h_area{
+    border-bottom: 1px solid #cccccc;
+    font-size: 1em;
+}
+
+.news_re{
+    text-overflow: ellipsis;
+}
+
+.sec_news .li a{
+    padding-left: 0px;
+}
+
+/* today's best */
+.sec_tb{
+    margin-bottom: 1.1em;
+}
+
+.h_area{
+    display: block;
+    line-height: 1.2em;
+    padding: 20px 10px 7px 10px;
+    border-bottom: 1px solid #ff0060;
+}
+
+h3{
+    line-height: 1.2em;
+    letter-spacing: 0px;
+    text-transform: uppercase;
+}
+
+.tb_list, .wb_list, .hot_list{
+    line-height: 26px;
+    position: relative;
+}
+.vote{
+    top: 5px;
+    width: 35px;
+    height: 20px;
+    display: block;
+    font-size: 1.8em;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+    position: absolute;
+}
+.li{
+    display: block;
+    overflow: hidden;
+    padding: .6em 10px .3em;
+    border-bottom: 1px solid #e5e5e5;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    positioN: relative;
+}
+.li a{
+    padding-left: 47px;
+}
+
+/* weekly best */
+.sec_wb{
+    margin: .3em 0 
+}
+.sec_tb .m, .sec_hot .mrr{
+    margin: -21px 10px 0 0;
+}
+
+/* hot post */
+.sec_hot{
+    position:relative;
+    width:100%;
+}
+.view{
+    top: 5px;
+    width: 35px;
+    height: 20px;
+    display: block;
+    font-size: 1.3em;
+    text-align: center;
+    positioN: absolute;
+    white-space: nowrap;
+}
