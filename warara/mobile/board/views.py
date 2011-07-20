@@ -361,36 +361,8 @@ def read(request, board_name, article_id):
     r['rendered_reply'] = rendered_reply
     r['article'] = r['article_read_list'][0]
 
-    rendered = render_to_string('board/read.html', r)
+    rendered = render_to_string('mobile/board/read.html', r)
 
-    return HttpResponse(rendered)
-
-@warara.wrap_error
-def read_root(request, board_name, article_id):
-    '''
-    주어진 게시판의 주어진 글이 답글인 경우 root글의 주소로 읽어온다.
-
-    @type  request: Django Request
-    @param request: Request
-    @type  board_name: string
-    @param board_name: 읽고자 하는 글이 있는 Board Name
-    @type  article_id: string (int)
-    @param article_id: 읽고자 하는 글의 번호
-    '''
-    server = warara_middleware.get_server() #
-    sess, r = warara.check_logged_in(request) #
-
-    r['mode'] = 'board'
-    article_list = server.article_manager.read_article(sess, board_name, int(article_id))
-
-    root_article_id = article_list[0].root_id
-    # 글의 정보를 r 에 저장
-    _read(request, r, sess, board_name, root_article_id)
-
-    # 화면 하단의 글목록의 정보를 r 에 저장
-    get_article_list(request, r, 'read')
-
-    rendered = render_to_string('board/read.html', r)
     return HttpResponse(rendered)
 
 @warara.wrap_error
@@ -672,18 +644,9 @@ def render_reply(board_name, article_list, base_url):
         return ''
 
     r_string = ''
-    target_depth = article_list[0].depth
 
-    for i in xrange(len(article_list)):
-        if article_list[i].depth == target_depth:
-            target_article = article_list[i]
-            target_children_list = []
-        else:
-            target_children_list.append(article_list[i])
-        
-        if i+1 == len(article_list) or article_list[i+1].depth == target_depth:
-            rendered_target_children = render_reply(board_name, target_children_list, base_url)
-            rendered_target_article = render_to_string('board/read_reply.html', {'article': target_article, 'rendered_reply': rendered_target_children, 'board_name': board_name, 'base_url': base_url})
-            r_string += rendered_target_article
+    for article in article_list:
+        rendered_article = render_to_string('mobile/board/read_reply.html', {'article': article, 'board_name': board_name, 'base_url': base_url, 'depth': xrange(article.depth)})
+        r_string += rendered_article
 
     return r_string

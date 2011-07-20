@@ -1,0 +1,49 @@
+{% extends "mobile/base.html" %}
+{% load arara_tags %}
+
+{% block style %}<link rel="stylesheet" href="/media/style_new/mobile/read.css" type="text/css">{% endblock %}
+{% block header %}
+<div id="gray">
+    <span><a href="/mobile/board/list/">전체게시판</a>  &gt;&gt; <a href="/mobile/board/{{ board_name }}/">{{ board_name }}</a></span>
+</div>
+{% endblock %}
+{% block content %}
+<div id="article_head">
+    <div class="article_title">
+        {{article.title}}
+    </div>
+    <span class="article_info">{{article.author_nickname}} |  {{article.date|date:"Y-m-d H:i"}} | 추천 {{article.positive_vote}} / 반대 {{article.negative_vote}} | 조회 {{article.hit}}</span>
+</div>
+<div id="article_contents">
+    <p class="article_contents">
+        {{article.content|safe|linebreaksbr}}
+    </p>
+    <div id="article_buttons">
+        <div class="left">
+            <a href="#reply"><span class="button">답글달기</span></a>
+            <a href="#reply"><span class="button">추천</span></a>
+            <a href="#reply"><span class="button">반대</span></a>
+        </div>
+        <div class="right">
+            <a href="#reply"><span class="buttonR">수정</span></a>
+        </div>
+        <div class="cb"></div>
+    </div>
+</div>
+<div id="reply">
+    <ul>
+        {% autoescape off %}
+        {{ rendered_reply }}
+        {% endautoescape %}
+    </ul>
+    <div id="re_nav">
+        <div class="left">
+            <a href="#"><span class="button">목록</span></a> 
+        </div>
+        <div class="right">
+            <a href="#header"><span class="button">위로</span></a> 
+        </div>
+        <div class="cb"></div>
+    </div>
+</div>
+{% endblock %}

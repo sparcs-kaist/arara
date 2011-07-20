@@ -1,0 +1,14 @@
+<li class="re_list">
+<div class="re_info">
+    <div class="left">
+        {% for i in depth %}<img src="/media/image/mobile/re_arrow.png" class="re_arrow">{% endfor %}
+        <span class="re_id">{{article.author_username}}</span> {{article.date|date:"Y-m-d H:i"}} <a href="#">▲ {{article.positive_vote}}</a> / <a href="#">▼ {{article.negative_vote}}</a>
+    </div>
+    <div class="right">
+        <a href="#" class="rere">답글</a>
+    </div>
+    <div class="cb"></div>
+</div>
+<span class="re_contents">{{ article.content|safe|linebreaksbr }}
+</span>
+</li>

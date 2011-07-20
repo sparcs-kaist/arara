@@ -1,0 +1,94 @@
+/* article 본문 부분 */
+#article_head{
+    padding: 12px 10px 10px 10px;
+}
+.article_title{
+    font-size: 16px;
+    font-weight: bold;
+    padding-bottom: 7px;
+}
+.article_info{
+    letter-spacing: 0px;
+    color: #ff0060;
+    font-size: .9em;
+}
+#article_contents{
+    padding: 10px;
+    overflow: hidden;
+    border-top: 1px dashed #525252;
+    border-bottom: 1px dashed #525252;
+    line-height: 1.7em;
+    margin-bottom: 5px;
+}
+
+.article_contents p{
+    padding: 10px;
+}
+
+/* article 수정 삭제 등의 버튼들 */
+.article_buttons{
+   padding: 10px 0; 
+}
+.button{
+     margin: 0;
+     border: 1px solid #cccccc;
+     padding: 3px 5px;
+     display: inline-block;
+     color: #ff0060;
+ }
+ .buttonR{
+     margin: 0;
+     border: 1px solid #cccccc;
+     color: #000000;
+     display: inline-block;
+     padding: 3px 5px;
+     float: right;
+} 
+ /* 댓글 영역 */
+#reply{
+}
+.re_list{
+    line-height: 23px;
+    border-bottom: 1px solid #ccc;
+    position: relative;
+    padding: 5px 10px;
+}
+/* 댓글의 정보 */
+.re_info{
+    color: #999999;
+    font-size: 11px;
+    margin:0;
+}
+.re_info .left{
+    font-size: 11px;
+    letter-spacing: 0px;
+}
+.re_info a{
+    margin-top: 0;
+    color: #ff0060;
+    font-size: 12px;
+}
+.re_id{
+    font-weight: bold;
+    font-size: 15px;
+    color: #000000;
+    margin-right: 10px;
+}
+.rere{
+    color: #ff0060;
+}
+/* 리리플 화살표 */
+.re_arrow{
+    padding-right: 5px;
+}
+
+.re_contents{
+    line-height: 1.6em;
+}
+#re_nav{
+    padding: 20px 10px 0 10px;
+}
+#re_nav .button {
+    color: #000000;
+    padding: 3px 5px;
+}
