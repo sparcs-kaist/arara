@@ -34,8 +34,9 @@
                 <dl class="wr2">
                     <dt class="hd"><label for="w3">내용</label></dt>
                     <dd>
-                    <textarea name="text" rows="9" cols="30" id="w3" class="ip_t">{% if deaulf_text %}{{ default_text }}{% endif %}</textarea></dd>
+                    <textarea name="text" rows="9" cols="30" id="w3" class="ip_t">{% if default_text %}{{ default_text }}{% endif %}</textarea></dd>
                 </dl>
+                {% if not modify %}
                 <dl class="wr1">
                     <dt>시그</dt>
                     <dd class="rad_option">
@@ -43,6 +44,7 @@
                     <input type="radio" id="w5" name="signature_check" value="N" class="rad" /><label for="w5">사용안함 </label>
                     </dd>
                 </dl>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -19,16 +19,20 @@
         {{article.content|safe|linebreaksbr}}
     </p>
     <div id="article_buttons">
+    {% if not article.deleted %}
         <div class="left">
             <a href="#reply"><span class="button">답글달기</span></a>
             <a href="#reply"><span class="button">추천</span></a>
             <a href="#reply"><span class="button">반대</span></a>
         </div>
+        {% if article.flag_modify %}
         <div class="right">
-            <a href="#reply"><span class="buttonR">수정</span></a>
+            <a href="/mobile/board/{{ article.board_name }}/write?article_id={{ article.id }}"><span class="buttonR">수정</span></a>
         </div>
+        {% endif %}
         <div class="cb"></div>
     </div>
+    {% endif %}
 </div>
 <div id="reply">
     <ul>
