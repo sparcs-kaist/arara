@@ -1,20 +1,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 {% load i18n %}
 {% load arara_tags %}
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
     <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=medium-dpi">
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <meta name="description" content="KAIST  학내 커뮤니티 아라">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=medium-dpi" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="description" content="KAIST  학내 커뮤니티 아라" />
 
-        <link rel="stylesheet" href="/media/style_new/mobile/base.css" type="text/css">
+        <link rel="stylesheet" href="/media/style_new/mobile/base.css" type="text/css" />
         {% block style %}{% endblock %}
         {% block script %}{% endblock %}
         <title>{% block title %}아라{% endblock %}</title>
     </head>
     <body>
         <div id="header">
-            <a href="/mobile/"><img src="/media/image/mobile/header.png" width="140px"></a>
+            <a href="/mobile/"><img src="/media/image/mobile/header.png" width="140px" alt="Mobile Ara" /></a>
 
             <div id="nav">
                 <ul>
@@ -42,7 +42,6 @@
         </div>
         {% block content %}
         {% endblock %}
-        </div>
         <div class="footer">
             {% block footer %}
             <ul>

@@ -1,5 +1,5 @@
 {% extends "mobile/base.html" %}
-{% block style %}<link rel="stylesheet" href="/media/style_new/mobile/main.css" type="text/css">{% endblock %}
+{% block style %}<link rel="stylesheet" href="/media/style_new/mobile/main.css" type="text/css" />{% endblock %}
 {% block header %}
 <div class="userInfo">
     <span class="userID"><a href="#">{{ username }}님 ▼</a></span>
@@ -9,7 +9,6 @@
 {% endblock %}
 {% block content %}
 <!--
-<section>
 <div class="sec_news">
     <div class="h_area">
         <h4>내 글에 대한 반응</h4>
@@ -26,9 +25,7 @@
         </li>
     </ul>
 </div>
-</section>
 -->
-<section>
 <div id="sec_tb">
     <div class="h_area">
         <h3>Today Best</h3>
@@ -44,8 +41,6 @@
         </ul>
     </div>
 </div>
-</section>
-<section>
 <div id="sec_wb">
     <div class="h_area">
         <h3>Weekly Best</h3>
@@ -61,8 +56,6 @@
         </ul>
     </div>
 </div>
-</section>
-<section>
 <div id="sec_hot">
     <div class="h_area">
         <h3>HOT IT HIT 암튼 조회수 베스트</h3>
@@ -78,13 +71,12 @@
         </ul>
     </div>
 </div>
-</section>
 {% endblock %}
 
 {% block footer %}
 <ul>
     <li class="ft_SPARCS">
-    <a href="http://sparcs.org/"><img src="/media/image/mobile/sparcs.png"></a>
+    <a href="http://sparcs.org/"><img src="/media/image/mobile/sparcs.png" alt="SPARCS" /></a>
     </li>
 
     <li class="ft_cp">

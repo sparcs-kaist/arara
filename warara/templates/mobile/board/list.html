@@ -1,7 +1,7 @@
 {% extends "mobile/base.html" %}
 {% load arara_tags %}
 
-{% block style %}<link rel="stylesheet" href="/media/style_new/mobile/list.css" type="text/css">{% endblock %}
+{% block style %}<link rel="stylesheet" href="/media/style_new/mobile/list.css" type="text/css" />{% endblock %}
 {% block header %}
 <div id="gray">
     <span><a href="/mobile/board/list/">전체게시판</a>  &gt;&gt; <a href="/mobile/board/{{ board_name }}/">{{ board_name }}</a></span>
@@ -18,7 +18,7 @@
         <span class="listInfo">{{article.author_nickname|truncatechars:"8"}} | 추천 {{article.positive_vote}} / 반대 {{article.negative_vote}} | 조회: {{article.hit}}</span>
         </li>
         {% endfor %}
-    </div>
+    </ul>
 </div>
 <div class="paginate">
     {% ifequal method 'search' %}
