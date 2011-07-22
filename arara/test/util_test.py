@@ -9,17 +9,13 @@ sys.path.append(thrift_path)
 arara_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(arara_path)
 
-from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
 import arara.util
 
 
-class UtilTest(AraraTestBase):
+class UtilTest(unittest.TestCase):
     def setUp(self):
-        # Common preparation for all tests
-        super(UtilTest, self).setUp()
-
         # Fake time for further test
         def stub_time():
             return 1.1
@@ -51,9 +47,6 @@ class UtilTest(AraraTestBase):
         self.assertEqual([[1], [2], []], result)
 
     def tearDown(self):
-        # Common tearDown
-        super(UtilTest, self).tearDown()
-
         # Restore the time
         time.time = self.org_time
 
