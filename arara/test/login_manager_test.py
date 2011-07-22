@@ -168,6 +168,8 @@ class LoginManagerTest(AraraTestBase):
         self.assertEqual(result, stub_time_2())
 
     def tearDown(self):
+        time.time = self.org_time
+
         # Common tearDown
         super(LoginManagerTest, self).tearDown()
 

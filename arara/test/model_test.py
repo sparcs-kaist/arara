@@ -77,6 +77,7 @@ class ModelTest(AraraTestBase):
         session.close()
 
     def tearDown(self):
+        time.time = self.org_time
         super(ModelTest, self).tearDown()
 
 def suite():
