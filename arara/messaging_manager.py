@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-import datetime
-import time
-
 from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy import or_, not_, and_
 from arara import model

@@ -2,7 +2,6 @@
 
 import traceback
 import logging
-import datetime
 import time
 import struct
 import smtplib

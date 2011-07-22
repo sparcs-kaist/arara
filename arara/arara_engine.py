@@ -1,5 +1,4 @@
 #-*- coding: utf-8 -*-
-import sys
 from arara.article_manager import ArticleManager
 from arara.blacklist_manager import BlacklistManager
 from arara.board_manager import BoardManager
