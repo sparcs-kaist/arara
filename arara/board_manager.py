@@ -1204,13 +1204,17 @@ class BoardManager(object):
         # TODO: hide 와 delete 의 차이는 ?
         self._is_sysop(session_key)
         session = model.Session()
-        board = self._get_board_from_session(session, smart_unicode(board_name))
+        board_to_delete = self._get_board_from_session(session, smart_unicode(board_name))
+        board_order_to_delete = board_to_delete.order
 
-        if board.order != None:
-            self.change_board_order(session_key, board_name, session.query(model.Board).filter(model.Board.order != None).count())
-            board.order = None
+        # 삭제할 게시판보다 뒤에 있는 게시판들의 order 를 하나씩 당겨 준다.
+        if board_to_delete.order != None:
+            boards = session.query(model.Board).filter(model.Board.order != None).order_by(model.Board.order)[board_order_to_delete:]
+            for board in boards:
+                board.order -= 1
+            board_to_delete.order = None
 
-        board.deleted = True
+        board_to_delete.deleted = True
         session.commit()
         session.close()
         # 보드에 변경이 발생하므로 캐시 초기화

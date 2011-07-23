@@ -212,6 +212,59 @@ class BoardManagerTest(AraraTestBase):
         except InvalidOperation:
             pass
 
+    def testRemoveBoardWithCategories(self):
+        # Category 2개를 만들고, 각 카테고리별로 2개의 게시판을 둔다
+        self.engine.board_manager.add_category(self.session_key_sysop, u'category1')
+        self.engine.board_manager.add_category(self.session_key_sysop, u'category2')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board11', u'board11', u'test', [], u'category1')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board12', u'board12', u'test', [], u'category1')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board21', u'board21', u'test', [], u'category2')
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board22', u'board22', u'test', [], u'category2')
+        # Category 가 없는 게시판도 2개 만들어 둔다
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board1', u'board1', u'test', [])
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board2', u'board2', u'test', [])
+
+        # 현 시점에서 게시판의 순서는 [11, 12, 21, 22, 1, 2] 이다.
+
+        # Test 1. board11 을 삭제한다. (가장 위의 게시판) 5개가 바른 순서로 남는지 확인한다.
+        self.engine.board_manager.delete_board(self.session_key_sysop, u'board11')
+        board_list = self.engine.board_manager.get_board_list()
+        self.assertEqual(5, len(board_list))
+        self.assertEqual(u'board12', board_list[0].board_name)
+        self.assertEqual(u'board21', board_list[1].board_name)
+        self.assertEqual(u'board22', board_list[2].board_name)
+        self.assertEqual(u'board1',  board_list[3].board_name)
+        self.assertEqual(u'board2',  board_list[4].board_name)
+        self.assertEqual(1, board_list[0].order)
+        self.assertEqual(2, board_list[1].order)
+        self.assertEqual(3, board_list[2].order)
+        self.assertEqual(4, board_list[3].order)
+        self.assertEqual(5, board_list[4].order)
+
+        # Test 2. board2 를 삭제한다. (가장 마지막 게시판) 나머지의 순서에 변동이 없어야 한다.
+        self.engine.board_manager.delete_board(self.session_key_sysop, u'board2')
+        board_list = self.engine.board_manager.get_board_list()
+        self.assertEqual(4, len(board_list))
+        self.assertEqual(u'board12', board_list[0].board_name)
+        self.assertEqual(u'board21', board_list[1].board_name)
+        self.assertEqual(u'board22', board_list[2].board_name)
+        self.assertEqual(u'board1',  board_list[3].board_name)
+        self.assertEqual(1, board_list[0].order)
+        self.assertEqual(2, board_list[1].order)
+        self.assertEqual(3, board_list[2].order)
+        self.assertEqual(4, board_list[3].order)
+
+        # Test 3. board21 을 삭제한다. (정가운데) board22, board1 만 당겨져야 한다.
+        self.engine.board_manager.delete_board(self.session_key_sysop, u'board21')
+        board_list = self.engine.board_manager.get_board_list()
+        self.assertEqual(3, len(board_list))
+        self.assertEqual(u'board12', board_list[0].board_name)
+        self.assertEqual(u'board22', board_list[1].board_name)
+        self.assertEqual(u'board1',  board_list[2].board_name)
+        self.assertEqual(1, board_list[0].order)
+        self.assertEqual(2, board_list[1].order)
+        self.assertEqual(3, board_list[2].order)
+
     def testAddAndRemoveBotBoard(self):
         # Bot용 Board가 잘 생성되는가?
         self.engine.board_manager._add_bot_board(u'garbages', u'Garbages Board', [], True)
