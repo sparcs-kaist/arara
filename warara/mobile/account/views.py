@@ -72,5 +72,5 @@ def logout(request):
     del request.session['arara_username']
     del request.session['arara_userid']
     request.session.clear()
-    return HttpResponseRedirect('/mobile/login.html')
+    return HttpResponseRedirect('/mobile/')
 
