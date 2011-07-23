@@ -649,7 +649,7 @@ def render_reply(board_name, article_list, base_url):
     r_string = ''
 
     for article in article_list:
-        rendered_article = render_to_string('mobile/board/read_reply.html', {'article': article, 'board_name': board_name, 'base_url': base_url, 'depth': xrange(article.depth)})
+        rendered_article = render_to_string('mobile/board/read_reply.html', {'article': article, 'board_name': board_name, 'base_url': base_url, 'depth': xrange(article.depth - 2)}) # 가장 낮은 단계의 답글이 Depth 2를 가지므로
         r_string += rendered_article
 
     return r_string
