@@ -7,13 +7,8 @@
         <meta name="description" content="KAIST  학내 커뮤니티 아라">
         <link rel="stylesheet" href="/media/style_new/mobile/login.css" type="text/css">
         <link rel="stylesheet" href="/media/style_new/mobile/base.css" type="text/css">
-        <script type="text/javascript" src="jquery.hint.js"></script>
-        <script type="text/javascript" src="jquery.js"></script> 
-        <script type="text/javascript" charset="utf-8">
-            $(function(){
-                    $('input[title!=""]').hint();
-            });    
-        </script>
+        <script type="text/javascript" src="/media/thirdparty/jquery-latest.min.js"></script>
+        <script type="text/javascript" src="/media/js/mobile/mobile.js"></script>
     </head>
     <body>
         <div id="content">
@@ -26,12 +21,12 @@
                         <ul class="ip"> 
                             <li>
                             <span class="login_id">
-                                <input type="text" id="submit" name="username" />
+                                <input type="text" id="id" name="username" onfocus="clear_input('id');" onblur="set_input('id');" />
                             </span>
                             </li>
                             <li>
                             <span class="login_pw">
-                                <input type="password" id="pw" onfocus="border_on('pwb', 'pw'); clear_text('pw');" onblur="border_off('pwb', 'pw');" name="password" />
+                                <input type="password" id="pw" name="password" onfocus="clear_input('pw');" onblur="set_input('pw');" />
                             </span>
                             </li>
                         </ul> 
