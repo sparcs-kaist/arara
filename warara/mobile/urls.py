@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
-#    (r'^$', 'warara.mobile.main.urls'), # TODO : Link this to the main page of mobile (maybe login..?)
+    (r'^$', 'warara.mobile.main.views.index'),
     (r'^account/', include('warara.mobile.account.urls')),
     (r'^board/', include('warara.mobile.board.urls')),
     (r'^main/', include('warara.mobile.main.urls')),

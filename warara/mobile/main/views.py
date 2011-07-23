@@ -13,9 +13,28 @@ from warara import warara_middleware
 from arara_thrift.ttypes import InvalidOperation
 from arara_thrift.ttypes import *
 
+from etc.warara_settings import KSEARCH_ENABLED
 
+@warara.wrap_error
+def index(request):
+    server = warara_middleware.get_server()
+    sess, ctx = warara.check_logged_in(request)
 
-def main(request):
+    # Redirect to main page if user logged in
+    if ctx['logged_in']:
+        return HttpResponseRedirect('/mobile/main/')
+
+    if request.session.get('django_language', 0):
+        request.session["django_language"] = "en"
+    r = server.login_manager.total_visitor()
+    r.__dict__['KSEARCH_ENABLED'] = KSEARCH_ENABLED
+
+    rendered = render_to_string('mobile/login.html', r.__dict__)
+    return HttpResponse(rendered)
+
+@warara.wrap_error_mobile
+@warara.prevent_cached_by_browser
+def mobile_main(request):
     server = warara_middleware.get_server()
     sess, ctx = warara.check_logged_in(request)
 

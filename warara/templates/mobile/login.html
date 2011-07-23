@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+    <head>
+        <title>아라</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=medium-dpi">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="description" content="KAIST  학내 커뮤니티 아라">
+        <link rel="stylesheet" href="/media/style_new/mobile/login.css" type="text/css">
+        <link rel="stylesheet" href="/media/style_new/mobile/base.css" type="text/css">
+        <script type="text/javascript" src="jquery.hint.js"></script>
+        <script type="text/javascript" src="jquery.js"></script> 
+        <script type="text/javascript" charset="utf-8">
+            $(function(){
+                    $('input[title!=""]').hint();
+            });    
+        </script>
+    </head>
+    <body>
+        <div id="content">
+            <div class="bg">
+                <div class="logo">
+                    <img src="/media/image/mobile/logo.png">
+                </div>
+                <div class="box">
+                    <form method="post" action="/mobile/account/login/">
+                        <ul class="ip"> 
+                            <li>
+                            <span class="login_id">
+                                <input type="text" id="submit" name="username" />
+                            </span>
+                            </li>
+                            <li>
+                            <span class="login_pw">
+                                <input type="password" id="pw" onfocus="border_on('pwb', 'pw'); clear_text('pw');" onblur="border_off('pwb', 'pw');" name="password" />
+                            </span>
+                            </li>
+                        </ul> 
+                        <p class="lgbutton"> 
+                            <input type="submit" class="button" value="로그인"/> 
+                        </p> 
+                    </form>
+                    <p class="sv"> 
+                    <input type="checkbox" id="saveID" name="sID" onclick="checkSmartLevel(this);"/> 
+                    <label >아이디 저장</label> 
+                    <input type="checkbox" id="savePWD" name="sPWD" onclick="initPwd();checkSmartLevel(this);" /> 
+                    <label class="sPW">비밀번호 저장</label> 
+                    </p> 
+
+                </div> 
+            </div>
+        </div>
+    </body>
+</html>
