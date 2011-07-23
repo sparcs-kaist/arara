@@ -22,8 +22,8 @@
     {% if not article.deleted %}
         <div class="left">
             <a href="#reply"><span class="button">답글달기</span></a>
-            <a href="#reply"><span class="button">추천</span></a>
-            <a href="#reply"><span class="button">반대</span></a>
+            <a class="rec" href="/board/{{article.board_name}}/{{article.root_id}}/{{article.id}}/vote/+"><span class="button">추천</span></a>
+            <a class="rec" href="/board/{{article.board_name}}/{{article.root_id}}/{{article.id}}/vote/-"><span class="button">반대</span></a>
         </div>
         {% if article.flag_modify %}
         <div class="right">

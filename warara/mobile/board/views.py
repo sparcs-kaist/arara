@@ -457,24 +457,25 @@ def reply(request, board_name, article_id):
 
     return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(root_id)))
 
-@warara.prevent_cached_by_browser
-@warara.wrap_error_mobile
-def vote(request, board_name, root_id, article_no, vote_type):
-    server = warara_middleware.get_server()
-    sess, r = warara.check_logged_in(request)
-
-    if vote_type == '+':
-        positive_vote = True
-    else:
-        positive_vote = False
-
-    try:
-        server.article_manager.vote_article(sess, board_name, int(article_no), positive_vote)
-        response = HttpResponse("OK")
-    except InvalidOperation, e:
-        response = HttpResponse("ALREADY_VOTED")
-
-    return response
+    # 모바일에서 필요 없음 ( 원래의 AJAX API를 공유함 )
+#@warara.prevent_cached_by_browser
+#@warara.wrap_error_mobile
+#def vote(request, board_name, root_id, article_no, vote_type):
+#    server = warara_middleware.get_server()
+#    sess, r = warara.check_logged_in(request)
+#
+#    if vote_type == '+':
+#        positive_vote = True
+#    else:
+#        positive_vote = False
+#
+#    try:
+#        server.article_manager.vote_article(sess, board_name, int(article_no), positive_vote)
+#        response = HttpResponse("OK")
+#    except InvalidOperation, e:
+#        response = HttpResponse("ALREADY_VOTED")
+#
+#    return response
 
 @warara.wrap_error_mobile
 def move_article(request):

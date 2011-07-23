@@ -13,3 +13,17 @@ function set_input(f){
         else input.style.background = "url('/media/image/mobile/input_bg.gif') no-repeat left bottom";
     }
 }
+
+$(document).ready(function(){
+    // 글/답글의 추천 버튼이 클릭되었을 때의 핸들러.
+    // AJAX로 요청을 처리한 후 반환함
+    $(".rec").click(function(event){
+        url = $(this).attr('href');
+        $.get(url, function(data){
+            if(data == "OK") alert("Successfully voted");
+            else if(data == "ALREADY_VOTED") alert("You voted already");
+            else alert("Unknown error");
+        });
+        event.preventDefault();
+    });
+});
