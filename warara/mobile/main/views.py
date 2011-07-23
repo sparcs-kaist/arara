@@ -15,7 +15,8 @@ from arara_thrift.ttypes import *
 
 from etc.warara_settings import KSEARCH_ENABLED
 
-@warara.wrap_error
+@warara.wrap_error_mobile
+@warara.prevent_cached_by_browser
 def index(request):
     server = warara_middleware.get_server()
     sess, ctx = warara.check_logged_in(request)
