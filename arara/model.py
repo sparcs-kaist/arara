@@ -368,6 +368,18 @@ class Visitor(object):
     def __repr__(self):
         return "<Visitor<'%d','%d'>" % (self.total, self.today)
 
+class SelectedBoards(object):
+    def __init__(self, user, board):
+        '''
+        @type user: model.User 
+        @type board: model.Board
+        '''
+        self.user = user
+        self.board = board
+        
+    def __repr__(self):
+        return "<SelectedBoards('%s')>" % (self.board)
+
 # TODO: Table 정의에 Key Index 추가하기
 metadata = MetaData()
 users_table = Table('users', metadata,
@@ -569,6 +581,13 @@ visitor_table = Table('visitors', metadata,
     mysql_engine='InnoDB'
 )
 
+selected_boards_table = Table('selected_boards', metadata,
+    Column('id', Integer, primary_key=True),
+    Column('user_id', Integer, ForeignKey('users.id'), index=True),
+    Column('board_id', Integer, ForeignKey('boards.id')),
+    mysql_engine='InnoDB'
+)
+
 # TODO: 아래 mapper 들 좀 제대로 올바르게 정의하기
 mapper(Category, category_table)
 
@@ -658,6 +677,14 @@ mapper(Blacklist, blacklist_table, properties={
                     backref=backref('blacklisted', lazy=True, join_depth=1,
                                     primaryjoin=blacklist_table.c.blacklisted_user_id==users_table.c.id,
                                     viewonly=True)),
+})
+
+mapper(SelectedBoards, selected_boards_table, properties={
+    'user': relation(User, lazy=False, primaryjoin=selected_boards_table.c.user_id==users_table.c.id,
+                    backref=backref('selected_boards', lazy=True, join_depth=1,
+                                    primaryjoin=selected_boards_table.c.user_id==users_table.c.id,
+                                    viewonly=True)),
+    'board': relation(Board, None, lazy=True),
 })
 
 engine = None
