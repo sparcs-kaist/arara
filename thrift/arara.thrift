@@ -383,6 +383,12 @@ service ARAraThriftInterface {
                                         2:i32 limit=-1)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void set_selected_boards(1:string session_key, 2: list<i32> boards_id)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<Board> get_selected_boards(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// MemberManager Part End
 /// BlacklistManager Part Begin
     void add_blacklist(1:string session_key, 2:string username,
