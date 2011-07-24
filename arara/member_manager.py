@@ -6,7 +6,7 @@ import time
 import logging
 
 from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy import or_, not_, and_
 
 from arara_thrift.ttypes import *
@@ -1145,5 +1145,52 @@ class MemberManager(object):
         session.close()
 
         return result
+    
+    def get_selected_boards(self, session_key):
+        '''
+        사용자들이 선택한 몇 개의 즐겨찾는 게시판 목록을 반환하는 함수이다.
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        @rtype: list<ttypes.Board> 
+        @return: 주어진 사용자가 즐겨찾기 한 게시판들의 목록
+        '''
+        session = model.Session()
+        user = self._get_user_by_session(session, session_key)
+#        boards = session.query(model.SelectedBoards).filter_by(user_id=user.id).all()
+        boards = user.selected_boards
+        ttypes_boards = [self.engine.board_manager._get_board(x.board.board_name) for x in boards]
+        session.close()
+
+        return ttypes_boards
+    
+    def set_selected_boards(self, session_key, boards_id):
+        '''
+        boards_id로 주어진 게시판들을 주어진 사용자의 즐겨찾는 게시판으로 설정한다
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        @type  boards_id: list<int>
+        @param boards_id: 게시판들의 아이디
+        @rtype: void
+        @return: None
+        '''
+        session = model.Session()
+        user = self._get_user_by_session(session, session_key)
+        try:
+            boards = [session.query(model.Board).filter_by(id=x).one() for x in boards_id]
+        except NoResultFound, MultipleResultsFound:
+            session.close()
+            raise InvalidOperation("Not a valid board id")
+
+        session.query(model.SelectedBoards).filter_by(user_id=user.id).delete()
+        session.flush()
+
+        for board in boards:
+            selected_board = model.SelectedBoards(user, board)
+            session.add(selected_board)
+        session.commit()
+        session.close()
+
 
 # vim: set et ts=8 sw=4 sts=4
