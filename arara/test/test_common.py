@@ -35,9 +35,8 @@ class SMTPMockup(object):
 
 # Common Test Sets for all tests
 class AraraTestBase(unittest.TestCase):
-    def setUp(self, use_bot = False, use_database = True, mock_mail = True):
+    def setUp(self, use_bot = False, mock_mail = True):
         self.use_bot = use_bot
-        self.use_database = use_database
         self.mock_mail = mock_mail
 
         # Overwrite Bot-related configuration
@@ -53,16 +52,12 @@ class AraraTestBase(unittest.TestCase):
         logging.basicConfig(level=logging.ERROR)
 
         # Initialize Database
-        if use_database:
-            arara.model.init_test_database()
-            self.engine = arara.arara_engine.ARAraEngine()
-        else:
-            self.engine = None
+        arara.model.init_test_database()
+        self.engine = arara.arara_engine.ARAraEngine()
 
     def tearDown(self):
-        if self.use_database:
-            self.engine.shutdown()
-            arara.model.clear_test_database()
+        self.engine.shutdown()
+        arara.model.clear_test_database()
 
         etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
 
