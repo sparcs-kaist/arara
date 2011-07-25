@@ -35,7 +35,7 @@
             {% for no, todays_best in todays_best_list %}
             <li class="li">
             <span class="vote">{{todays_best.positive_vote}}</span>
-            <a{% if logged_in %} href="/mobile/board/{{todays_best.board_name}}/{{todays_best.root_id}}/#{{todays_best.id}}"{% endif %}>{{todays_best.title}}</a>
+            <a{% if logged_in %} href="/mobile/board/{{todays_best.board_name}}/{{todays_best.root_id}}/#{{todays_best.id}}"{% endif %} class="block">{{todays_best.title}}</a>
             </li>
             {% endfor %}
         </ul>
@@ -50,7 +50,7 @@
             {% for no, weekly_best in weekly_best_list %}
             <li class="li">
             <span class="vote">{{weekly_best.positive_vote}}</span>
-            <a{% if logged_in %} href="/mobile/board/{{weekly_best.board_name}}/{{weekly_best.root_id}}/#{{weekly_best.id}}"{% endif %}>{{weekly_best.title}}</a>
+            <a{% if logged_in %} href="/mobile/board/{{weekly_best.board_name}}/{{weekly_best.root_id}}/#{{weekly_best.id}}"{% endif %} class="block">{{weekly_best.title}}</a>
             </li>
             {% endfor %}
         </ul>
@@ -65,7 +65,7 @@
             {% for no, todays_most in todays_most_list %}
             <li class="li">
             <span class="view">{{todays_most.hit}}</span>
-            <a{% if logged_in %} href="/mobile/board/{{todays_most.board_name}}/{{todays_most.root_id}}/#{{todays_most.id}}"{% endif %}>{{todays_most.title}}</a>
+            <a{% if logged_in %} href="/mobile/board/{{todays_most.board_name}}/{{todays_most.root_id}}/#{{todays_most.id}}"{% endif %} class="block">{{todays_most.title}}</a>
             </li>
             {% endfor %}
         </ul>

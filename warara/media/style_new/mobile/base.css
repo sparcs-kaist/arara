@@ -32,6 +32,7 @@ a img { border:0; }
     padding-left: 6px;
     color: #ff0060;
 }
+.block{ display: block; }
 
 /* 여백제거 , 폰트 */
 p{ 
