@@ -22,7 +22,10 @@ log_method_call_important = log_method_call_with_source_important('member_manage
 
 import re
 PROPER_USERNAME_REGEX = re.compile(r'^[a-zA-Z0-9_\-\.]+$')
-PROPER_EMAIL_REGEX = re.compile(r'^.+kaist.ac.kr$')
+
+# KAIST E-Mail Address Restriction
+# TODO: non-KAIST E-Mail Address 에 대한 검증도 준비한다
+PROPER_EMAIL_REGEX = re.compile(r'^[0-9a-zA-Z\_\-\.]{4,20}@kaist.ac.kr$')
 
 class NoPermission(Exception):
     pass

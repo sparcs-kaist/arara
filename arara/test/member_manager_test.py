@@ -396,7 +396,40 @@ class MemberManagerTest(AraraTestBase):
             board_id_set.add(selected_board.board.id)
         
         self.assertEqual(set((board0.id,board1.id,board2.id)),board_id_set)
-        
+
+    def test_blocking_non_kaist_email(self):
+        # Try to register one user, richking, with non-kaist e-mail address, but faking as if it is KAIST e-mail
+        user_reg_dic = {'username':u'richking', 'password':u'richking', 'nickname':u'richking', 'email':u'richking@example.com (@kaist.ac.kr', 'signature':u'richking', 'self_introduction':u'richking', 'default_language':u'english', 'campus':u'Daejeon'}
+        try:
+            register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
+            self.fail("non-kaist email address must not be able to register.")
+        except InvalidOperation:
+            pass
+
+    def test_blocking_invalid_email_address(self):
+        # @ 의 갯수가 2 개
+        user_reg_dic = {'username':u'richking', 'password':u'richking', 'nickname':u'richking', 'email':u'richking@@kaist.ac.kr', 'signature':u'richking', 'self_introduction':u'richking', 'default_language':u'english', 'campus':u'Daejeon'}
+        try:
+            register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
+            self.fail("Allowed EMail address must not contain more than one @.")
+        except InvalidOperation:
+            pass
+
+        # @ 의 갯수가 0 개
+        user_reg_dic = {'username':u'richking', 'password':u'richking', 'nickname':u'richking', 'email':u'sparcs.kaist.ac.kr', 'signature':u'richking', 'self_introduction':u'richking', 'default_language':u'english', 'campus':u'Daejeon'}
+        try:
+            register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
+            self.fail("Allowed EMail address must contain exactly one @.")
+        except InvalidOperation:
+            pass
+
+        # E-Mail 주소에 허용되지 않는 문자 ([]) 포함
+        user_reg_dic = {'username':u'richking', 'password':u'richking', 'nickname':u'richking', 'email':u'[hello]@kaist.ac.kr', 'signature':u'richking', 'self_introduction':u'richking', 'default_language':u'english', 'campus':u'Daejeon'}
+        try:
+            register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
+            self.fail("Allowed EMail address must not contain any of [, ], \\")
+        except InvalidOperation:
+            pass
         
     def tearDown(self):
         # Common tearDown
