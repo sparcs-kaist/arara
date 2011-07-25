@@ -223,7 +223,8 @@ def _upload_file(server, sess, article_id, FILES):
     '''
     파일을 업로드한다.
     '''
-    for key, file_ob in FILES.items():
+    file_list = sorted(FILES.items(), key=lambda (key, file_ob): key)
+    for key, file_ob in file_list:
         if file_ob.size > FILE_MAXIMUM_SIZE:
             # TODO: 사용자에게 기각된 파일임을 알려야 한다
             continue
