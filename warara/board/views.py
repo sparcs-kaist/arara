@@ -219,6 +219,20 @@ def write(request, board_name):
     rendered = render_to_string('board/write.html', r)
     return HttpResponse(rendered)
 
+def _upload_file(server, sess, article_id, FILES):
+    '''
+    파일을 업로드한다.
+    '''
+    for key, file_ob in FILES.items():
+        if file_ob.size > FILE_MAXIMUM_SIZE:
+            # TODO: 사용자에게 기각된 파일임을 알려야 한다
+            continue
+        file = server.file_manager.save_file(sess, int(article_id), file_ob.name)
+        if not os.path.isdir('%s/%s' % (FILE_DIR, file.file_path)):
+            os.makedirs('%s/%s' % (FILE_DIR, file.file_path))
+        fp = open('%s/%s/%s' % (FILE_DIR, file.file_path, file.saved_filename), 'wb')
+        fp.write(file_ob.read())
+
 @warara.wrap_error
 def write_(request, board_name):
     server = warara_middleware.get_server()
@@ -248,16 +262,7 @@ def write_(request, board_name):
 
     #upload file
     if request.FILES:
-        file = {}
-        for key, file_ob in request.FILES.items():
-            if file_ob.size > FILE_MAXIMUM_SIZE:
-                continue
-            file = server.file_manager.save_file(sess, int(article_id), file_ob.name)
-            if not os.path.isdir('%s/%s' % (FILE_DIR, file.file_path)):
-                os.makedirs('%s/%s' % (FILE_DIR, file.file_path))
-            fp = open('%s/%s/%s' % (FILE_DIR, file.file_path, file.saved_filename), 'wb')
-
-            fp.write(file_ob.read())
+        _upload_file(server, sess, article_id, request.FILES)
 
     if request.POST.get('write_type', 0) == 'modify':
         return HttpResponseRedirect('/board/%s/%s#%s' % (board_name, request.POST.get('root_id', article_id), article_id))
@@ -423,13 +428,7 @@ def _reply(request, board_name, article_id):
 
     #upload file
     if request.FILES:
-        file = {}
-        for key, file_ob in request.FILES.items():
-            file = server.file_manager.save_file(sess, int(article_id), file_ob.name)
-            if not os.path.isdir('%s/%s' % (FILE_DIR, file.file_path)):
-                os.makedirs('%s/%s' % (FILE_DIR, file.file_path))
-            fp = open('%s/%s/%s' % (FILE_DIR, file.file_path, file.saved_filename), 'wb')
-            fp.write(file_ob.read())
+        _upload_file(server, sess, article_id, request.FILES)
 
     return root_id
 
