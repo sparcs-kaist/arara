@@ -11,7 +11,6 @@ sys.path.append(ARARA_PATH)
 
 from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
-import arara.model
 from etc.arara_settings import SESSION_EXPIRE_TIME
 
 # Faking time.time (to check time field)
@@ -29,65 +28,88 @@ class LoginManagerTest(AraraTestBase):
         self.org_time = time.time
         time.time = stub_time
 
-        # Register pipoket
-        user_reg_dic = {'username':u'pipoket', 'password':u'pipoket', 'nickname':u'pipoket', 'email':u'pipoket@kaist.ac.kr', 'signature':u'pipoket', 'self_introduction':u'pipoket', 'default_language':u'english', 'campus':u'Seoul' }
-        register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
-        self.engine.member_manager.confirm(u'pipoket', unicode(register_key))
+    def _register_user(self, username, manual_setting = {}):
+        user_reg_dic = {'username': username, 'password': username, 'nickname': username, 'email': username + '@kaist.ac.kr', 'signature': username, 'self_introduction': username, 'default_language': u'english', 'campus': u'Daejeon'}
+        for key in manual_setting:
+            if key in user_reg_dic:
+                user_reg_dic[key] = manual_setting[key]
+        registration_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
+        self.engine.member_manager.confirm(username, registration_key)
 
-        # Register serialx
-        user_reg_dic = {'username':u'serialx', 'password':u'serialx', 'nickname':u'serialx', 'email':u'serialx@kaist.ac.kr', 'signature':u'serialx', 'self_introduction':u'serialx', 'default_language':u'serialx', 'campus':u'Seoul' }
-        register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
-        self.engine.member_manager.confirm(u'serialx', unicode(register_key))
+    def test_login(self):
+        self._register_user(u'pipoket')
 
-    def testNormalLoginLogout(self):
-        # Login as both user
-        session_key_pipoket = self.engine.login_manager.login(u'pipoket', u'pipoket', u'143.248.234.145')
-        session_key_serialx = self.engine.login_manager.login(u'serialx', u'serialx', u'143.248.234.140')
-        # Then logout
-        self.engine.login_manager.logout(session_key_pipoket)
-        self.engine.login_manager.logout(session_key_serialx)
+        # Successfully log in
+        self.engine.login_manager.login(u'pipoket', u'pipoket', u'143.248.234.145')
 
-    def testWrongLogin(self):
         # Wrong Password
         try:
             self.engine.login_manager.login(u'pipoket', u'not_test', '143.248.234.145')
-            fail()
+            self.fail("with wrong password, user can't log in")
         except InvalidOperation:
             pass
         # Not existing user
         try:
-            self.engine.login_manager.login(u'not_test', u'test', '143.248.234.145')
-            fail()
+            self.engine.login_manager.login(u'hodduc', u'hodduc', '143.248.234.145')
+            self.fail("nonexisting user can't login")
         except InvalidOperation:
             pass
 
-    def testIsLoggedIn(self):
-        session_key = self.engine.login_manager.login(u'pipoket', u'pipoket', '143.248.234.145')
-        session_bee = u'thisisnotapropermd5sessionkey...'
-        self.assertEqual(False, self.engine.login_manager.is_logged_in(unicode(session_bee)))
+        # TODO: LoginManager 의 login 메소드가 잘 작동했는지를 검사하려면,
+        #       사실 session_key 가 바르게 생성되었는지 검토하는 것이 필요.
+
+        # TODO: Last Login Time 정보가 바르게 기록되었는지를 검사한다
+
+    def test_logout(self):
+        self._register_user(u'hodduc')
+        session_key = self.engine.login_manager.login(u'hodduc', u'hodduc', '143.248.234.145')
+
+        # Logout 성공
+        self.engine.login_manager.logout(session_key)
+
+        # Login 되지 않은 Session Key 로는 logout 할 수 없어야 한다
+        try:
+            self.engine.login_manager.logout(session_key)
+            self.fail("One can't logout with not logged in session key")
+        except NotLoggedIn:
+            pass
+
+        # TODO: Last Logout Time 정보가 바르게 기록되는지를 검사한다
+
+    def test_is_logged_in(self):
+        self._register_user(u'panda')
+
+        # 로그인을 통해 발행되지 않은 session key 는 False
+        session_key = u'thisisnotapropermd5sessionkey...'
+        self.assertEqual(False, self.engine.login_manager.is_logged_in(unicode(session_key)))
+
+        # 로그인을 통해 발행된 session key 는 True
+        session_key = self.engine.login_manager.login(u'panda', u'panda', '143.248.234.145')
         self.assertEqual(True, self.engine.login_manager.is_logged_in(unicode(session_key)))
+        
+        # 로그아웃하면 False
         self.engine.login_manager.logout(session_key)
         self.assertEqual(False, self.engine.login_manager.is_logged_in(unicode(session_key)))
 
-    def testGetSession(self):
+    def test_get_session(self):
+        self._register_user(u'pipoket')
         session_key = self.engine.login_manager.login(u'pipoket', u'pipoket', '143.248.234.145')
         result = self.engine.login_manager.get_session(unicode(session_key))
         self.assertEqual('143.248.234.145', result.ip)
         self.assertEqual(u'pipoket', result.username)
-        self.engine.login_manager.logout(session_key)
 
-    def testGetUserId(self):
-        # 정상적인 경우
-        session_key = self.engine.login_manager.login(u'pipoket', u'pipoket', '143.248.234.145')
-        result = self.engine.login_manager.get_user_id(unicode(session_key))
-        self.assertEqual(2, result)
-        self.engine.login_manager.logout(session_key)
-        # 다른 사용자에 대해서도 테스트
+    def test_get_user_id(self):
+        # SYSOP 은 1
         session_key = self.engine.login_manager.login(u'SYSOP', u'SYSOP', '143.248.234.145')
         result = self.engine.login_manager.get_user_id(unicode(session_key))
         self.assertEqual(1, result)
+        # pipoket 은 2
+        self._register_user(u'pipoket')
+        session_key = self.engine.login_manager.login(u'pipoket', u'pipoket', '143.248.234.145')
+        result = self.engine.login_manager.get_user_id(unicode(session_key))
+        self.assertEqual(2, result)
+        # 로그아웃한 경우에는 안된다
         self.engine.login_manager.logout(session_key)
-        # 이미 로그아웃한 경우
         try:
             self.engine.login_manager.get_user_id(unicode(session_key))
             self.fail("User already logged out, but was able to get user_id")
@@ -95,33 +117,31 @@ class LoginManagerTest(AraraTestBase):
             pass
 
     def test_get_user_id_wo_error(self):
+        self._register_user(u'panda')
         # 정상적인 경우
-        session_key = self.engine.login_manager.login(u'pipoket', u'pipoket', '143.248.234.145')
+        session_key = self.engine.login_manager.login(u'panda', u'panda', '143.248.234.145')
         result = self.engine.login_manager.get_user_id_wo_error(unicode(session_key))
         self.assertEqual(2, result)
-        self.engine.login_manager.logout(session_key)
 
         # 이미 로그아웃한 경우
-        session_key = self.engine.login_manager.login(u'SYSOP', u'SYSOP', '143.248.234.145')
         self.engine.login_manager.logout(session_key)
         result = self.engine.login_manager.get_user_id_wo_error(unicode(session_key))
         self.assertEqual(-1, result)
 
-        # 로그인한 적이 없는 경우
-        result = self.engine.login_manager.get_user_id_wo_error(unicode(''))
-        self.assertEqual(-1, result)
+    def test_get_user_ip(self):
+        self._register_user(u"sillo")
 
-    def testGetUserIp(self):
-        session_key1 = self.engine.login_manager.login(u'pipoket', u'pipoket', '143.248.234.145')
+        # 서로 다른 두 IP 에 대하여 검사한다
+        session_key1 = self.engine.login_manager.login(u'sillo', u'sillo', '143.248.234.145')
         session_key2 = self.engine.login_manager.login(u'SYSOP', u'SYSOP', '143.248.234.146')
         result1 = self.engine.login_manager.get_user_ip(unicode(session_key1))
         result2 = self.engine.login_manager.get_user_ip(unicode(session_key2))
         self.assertEqual("143.248.234.145", result1)
         self.assertEqual("143.248.234.146", result2)
-        self.engine.login_manager.logout(session_key1)
-        self.engine.login_manager.logout(session_key2)
 
-    def testGetCurrentOnline(self):
+    def test_get_current_online(self):
+        self._register_user(u'pipoket')
+        self._register_user(u'serialx')
         session_key_pipoket = self.engine.login_manager.login(u'pipoket', u'pipoket', '143.248.234.145')
         session_key_serialx = self.engine.login_manager.login(u'serialx', u'serialx', '143.248.234.140')
         session = self.engine.login_manager.get_current_online(session_key_pipoket)
@@ -141,21 +161,14 @@ class LoginManagerTest(AraraTestBase):
         self.engine.login_manager.logout(session_key_pipoket)
 
         try:
-            self.engine.login_manager.get_current_online("wrong_key")
-            fail()
-        except NotLoggedIn:
-            pass
-
-
-    def testWrongLogOut(self):
-        try:
-            self.engine.login_manager.logout(unicode("wrong_key"))
-            fail()
+            self.engine.login_manager.get_current_online("session_key_serialx")
+            self.fail("get_current_online can't be called by someone who is not logged in")
         except NotLoggedIn:
             pass
 
     def testUpdateMonitorStatus(self):
         # 본 테스트의 목적은 로그인 이후 활동을 하는 사용자가 로그아웃되는것을 막기 위함이다.
+        self._register_user(u'pipoket')
         session_key_pipoket = self.engine.login_manager.login(u'pipoket', u'pipoket', u'143.248.234.145')
         time.time = stub_time_2
 
@@ -173,7 +186,7 @@ class LoginManagerTest(AraraTestBase):
         # Common tearDown
         super(LoginManagerTest, self).tearDown()
 
-    def testCount(self):
+    def test_count(self):
         visitors = self.engine.login_manager.total_visitor() 
         self.assertEqual(1, visitors.total_visitor_count)
         self.assertEqual(1, visitors.today_visitor_count)
