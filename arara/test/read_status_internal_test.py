@@ -3,7 +3,6 @@ import unittest
 import os
 import sys
 import random
-import logging
 
 from collections import defaultdict
 
@@ -12,26 +11,17 @@ sys.path.append(thrift_path)
 arara_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(arara_path)
 
-from arara.test.test_common import AraraTestBase
-from arara_thrift.ttypes import *
-from arara import read_status_manager
+from arara.read_status_manager import ReadStatus
 
-
-class ReadStatusInternalTest(AraraTestBase):
+class ReadStatusInternalTest(unittest.TestCase):
     def setUp(self):
-        # Common preparation for all tests
-        # WITH use_database = False option
-        super(ReadStatusInternalTest, self).setUp(use_database = False)
-
-        # Common preparation for all tests
-        logging.basicConfig(level=logging.ERROR)
+        pass
 
     def tearDown(self):
-        # Common tearDown
-        super(ReadStatusInternalTest, self).tearDown()
+        pass
 
     def test_get(self):
-        rs = read_status_manager.ReadStatus('N')
+        rs = ReadStatus('N')
         self.assertEqual([(0, 'N')], rs.data)
 
         self.assertEqual(rs.get(0), "N")
@@ -47,7 +37,7 @@ class ReadStatusInternalTest(AraraTestBase):
         self.assertEqual(rs.get_range(xrange(1, 6)), ["N"] * 5)
 
     def test_set(self):
-        rs = read_status_manager.ReadStatus('N')
+        rs = ReadStatus('N')
         self.assertEqual([(0, 'N')], rs.data)
 
         rs.set(1, 'V')
@@ -69,7 +59,7 @@ class ReadStatusInternalTest(AraraTestBase):
         self.assertEqual(rs.get_range(xrange(1, 6)), 
                 ['V', 'V', 'N', 'N', 'N'])
 
-        rs = read_status_manager.ReadStatus('N')
+        rs = ReadStatus('N')
         rs.set(5, 'K')
         rs.set(0, 'X')
         self.assertEqual(rs.get_range(xrange(0, 6)),
@@ -77,7 +67,7 @@ class ReadStatusInternalTest(AraraTestBase):
 
     def test_getset(self):
         d = defaultdict(lambda: 'N')
-        rs = read_status_manager.ReadStatus('N')
+        rs = ReadStatus('N')
         for i in range(10):
             n = random.randint(0, 1000)
             v = chr(random.randint(ord('A'), ord('Z')))
@@ -87,7 +77,7 @@ class ReadStatusInternalTest(AraraTestBase):
             self.assert_(d[n] == rs.get(n))
 
         d = defaultdict(lambda: 'N')
-        rs = read_status_manager.ReadStatus('N')
+        rs = ReadStatus('N')
         log = []
         for i in range(20000):
             n = random.randint(0, 10)
@@ -100,7 +90,7 @@ class ReadStatusInternalTest(AraraTestBase):
 
 
         d = defaultdict(lambda: 'N')
-        rs = read_status_manager.ReadStatus('N')
+        rs = ReadStatus('N')
         for i in range(10000):
             n = abs(int(random.gauss(500, 10)))
             v = chr(random.randint(ord('A'), ord('C')))
@@ -110,7 +100,7 @@ class ReadStatusInternalTest(AraraTestBase):
 
 
         d = defaultdict(lambda: 'N')
-        rs = read_status_manager.ReadStatus('N')
+        rs = ReadStatus('N')
         for i in range(10000):
             n = abs(int(random.gauss(500000000, 100000000)))
             v = chr(random.randint(ord('A'), ord('C')))
