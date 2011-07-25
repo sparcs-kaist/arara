@@ -476,6 +476,21 @@ class MemberManagerTest(AraraTestBase):
         except InvalidOperation:
             pass
 
+        # KAIST E-Mail 주소의 길이제한 (4-20) 을 기준으로 한 경계값 검증
+        user_reg_dic = self._get_user_reg_dic(u'richking', {'email': 'a@kaist.ac.kr'})
+        try:
+            self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
+            self.fail("too short KAIST email address must not be allowed.")
+        except InvalidOperation:
+            pass
+
+        user_reg_dic = self._get_user_reg_dic(u'richking', {'email': 'abcdefghijklmnopqrstuvwxyz@kaist.ac.kr'})
+        try:
+            self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
+            self.fail("too long KAIST email address must not be allowed.")
+        except InvalidOperation:
+            pass
+
     def test_blocking_invalid_email_address(self):
         # @ 의 갯수가 2 개
         user_reg_dic = self._get_user_reg_dic(u'richking', {'email': 'richking@@kaist.ac.kr'})

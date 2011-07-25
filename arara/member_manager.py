@@ -24,8 +24,10 @@ import re
 PROPER_USERNAME_REGEX = re.compile(r'^[a-zA-Z0-9_\-\.]+$')
 
 # KAIST E-Mail Address Restriction
+# 계정명 길이 경계값이 4-20 또는 3-20 으로 알려져 있어서, 1씩 여유를 두었다
+PROPER_EMAIL_REGEX = re.compile(r'^[0-9a-zA-Z\_\-\.]{2,21}@kaist.ac.kr$')
+
 # TODO: non-KAIST E-Mail Address 에 대한 검증도 준비한다
-PROPER_EMAIL_REGEX = re.compile(r'^[0-9a-zA-Z\_\-\.]{4,20}@kaist.ac.kr$')
 
 class NoPermission(Exception):
     pass
