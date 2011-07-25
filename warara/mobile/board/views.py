@@ -168,6 +168,7 @@ def list(request, board_name):
     rendered = render_to_string('mobile/board/list.html', r)
     return HttpResponse(rendered)
 
+@warara.prevent_cached_by_browser
 @warara.wrap_error_mobile
 def write(request, board_name):
     server = warara_middleware.get_server()

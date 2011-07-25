@@ -8,7 +8,8 @@ from libs import timestamp2datetime
 import warara
 from warara import warara_middleware
 
-@warara.wrap_error
+@warara.prevent_cached_by_browser
+@warara.wrap_error_mobile
 def login(request):
     if request.method != 'POST':
         return HttpResponseRedirect('/mobile/')
@@ -63,6 +64,7 @@ def login(request):
         return HttpResponseRedirect('/mobile/main/')
     return HttpResponseRedirect(current_page)
 
+@warara.prevent_cached_by_browser
 @warara.wrap_error_mobile
 def logout(request):
     session_key, r = warara.check_logged_in(request)
