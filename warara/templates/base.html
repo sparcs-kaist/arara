@@ -52,13 +52,13 @@
         </div>
         <div id="mainWrap">
             <div id="contents">
+                {% get_board_list %}
                 <!-- 카테고리 내 메뉴. 롤오버를 위해 모두 표시 -->
                 <div id="boardInCategory">
                     <!-- 카테고리 내 메뉴. 롤오버를 위해 모두 표시 -->
                     <dl class="boardList" id="boardInCategory1">
                         <dt><img src="/media/image/stealBlue/catMenu_category2.png" alt="카테고리1" /></dt>
                         <dd>
-                            {% get_board_list %}
                             <ul>
                                 {% for board_info in category1_list %}
                                 <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_alias}}</a></li>
@@ -73,7 +73,6 @@
                     <dl class="boardList" id="boardInCategory2">
                         <dt><img src="/media/image/stealBlue/catMenu_category3.png" alt="카테고리2" /></dt>
                         <dd>
-                            {% get_board_list %}
                             <ul>
                                 {% for board_info in category2_list %}
                                 <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_alias}}</a></li>
@@ -88,7 +87,6 @@
                     <dl class="boardList" id="boardInCategory3">
                         <dt><img src="/media/image/stealBlue/catMenu_category4.png" alt="카테고리3" /></dt>
                         <dd>
-                            {% get_board_list %}
                             <ul>
                                 {% for board_info in category3_list %}
                                 <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_alias}}</a></li>
@@ -103,7 +101,6 @@
                     <dl class="boardList" id="boardInCategory4">
                         <dt><img src="/media/image/stealBlue/catMenu_category5.png" alt="카테고리4" /></dt>
                         <dd>
-                            {% get_board_list %}
                             <ul>
                                 {% for board_info in category4_list %}
                                 <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_alias}}</a></li>
@@ -118,7 +115,6 @@
                     <dl class="boardList" id="boardInCategory5">
                         <dt><img src="/media/image/stealBlue/catMenu_category6.png" alt="카테고리5" /></dt>
                         <dd>
-                            {% get_board_list %}
                             <ul>
                                 {% for board_info in category5_list %}
                                 <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_alias}}</a></li>
@@ -133,7 +129,6 @@
                     <dl class="boardList" id="boardInCategory6">
                         <dt><img src="/media/image/stealBlue/catMenu_category7.png" alt="카테고리6" /></dt>
                         <dd>
-                            {% get_board_list %}
                             <ul>
                                 {% for board_info in category6_list %}
                                 <li rel="{{forloop.counter}}"><a href="/board/{{board_info.board_name}}/">{{board_info.board_name}}</a></li>
