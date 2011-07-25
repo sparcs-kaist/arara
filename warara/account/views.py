@@ -126,14 +126,10 @@ def login(request):
         # XXX 2010.07.02. 사실 합당한 에러를 만들어야 하는데 ...
         raise NotLoggedIn()
 
-    # XXX 2010.05.15.
-    # 경위는 알 수 없지만 current_page_url 이 넘어오지 않아서
-    # current_page 값이 진짜로 0 이 되어버리는 사례가 있었다.
-    # 따라서 저~~ 아래에서 current_page.find 를 호출하면
-    # int 에 대해서 호출하므로 맛이 가버리는 일이 발생한다.
-    # 임시방편으로, current_page 를 /main 으로 설정해 본다.
-    current_page = request.POST.get('current_page_url', '/main')
-    # XXX 여기까지.
+    # 로그인 요청을 수행한 url 을 current_page 로 설정한다
+    # 해당되는 url 이 없을 경우 /main/ 을 기본값으로 설정한다
+    current_page = request.POST.get('current_page_url', '/main/')
+
     client_ip = request.META['REMOTE_ADDR']
     server = warara_middleware.get_server()
 
