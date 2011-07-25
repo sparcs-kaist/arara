@@ -20,6 +20,9 @@ def stub_time():
 def stub_time_2():
     return 1.1 + (SESSION_EXPIRE_TIME / 2)
 
+def stub_time_3():
+    return 1.1 + 86400 # one day
+
 class LoginManagerTest(AraraTestBase):
     def setUp(self):
         # Common preparation for all tests
@@ -193,13 +196,14 @@ class LoginManagerTest(AraraTestBase):
         visitors = self.engine.login_manager.total_visitor() 
         self.assertEqual(2, visitors.total_visitor_count)
         self.assertEqual(2, visitors.today_visitor_count)
+        # 하루가 지난다. today_visitor_count 는 다시 1부터 올라간다
+        time.time = stub_time_3
         visitors = self.engine.login_manager.total_visitor() 
         self.assertEqual(3, visitors.total_visitor_count)
-        self.assertEqual(3, visitors.today_visitor_count)
+        self.assertEqual(1, visitors.today_visitor_count)
         visitors = self.engine.login_manager.total_visitor() 
         self.assertEqual(4, visitors.total_visitor_count)
-        self.assertEqual(4, visitors.today_visitor_count)
-        # TODO: 하루가 지난 뒤에는 totday_visitor_count 가 0 이 되는 것
+        self.assertEqual(2, visitors.today_visitor_count)
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(LoginManagerTest)
