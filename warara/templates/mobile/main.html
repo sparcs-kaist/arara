@@ -3,7 +3,13 @@
 {% block header %}
 <div class="userInfo">
     <span class="userID"><a href="#">{{ username }}님 ▼</a></span>
-    <span class="userMenu"><a href="/mobile/account/logout/">로그아웃</a></span>
+    <span class="userMenu">
+        {% if logged_in %}
+        <a href="/mobile/account/logout/">로그아웃</a>
+        {% else %}
+        <a href="/mobile/">로그인</a>
+        {% endif %}
+    </span>
     <div class="cb"> </div>
 </div>
 {% endblock %}
