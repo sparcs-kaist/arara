@@ -127,6 +127,7 @@ class ARAraEngine(object):
             'delete_file': self.file_manager.delete_file,
             'sent_list': self.messaging_manager.sent_list,
             'receive_list': self.messaging_manager.receive_list,
+            'get_unread_message_count': self.messaging_manager.get_unread_message_count,
             'send_message_by_username': self.messaging_manager.send_message_by_username,
             'send_message_by_nickname': self.messaging_manager.send_message_by_nickname,
             'send_message': self.messaging_manager.send_message,

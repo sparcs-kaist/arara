@@ -617,6 +617,9 @@ service ARAraThriftInterface {
                 3:i32 page_length=20)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    i32 get_unread_message_count(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void send_message_by_username(1:string session_key,
                 2:string to_username,
                 3:string msg)
