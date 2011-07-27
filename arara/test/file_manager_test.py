@@ -80,6 +80,19 @@ class FileManagerTest(AraraTestBase):
         self.save_file()
         self.delete_file()
 
+    def test__get_attached_file_list(self):
+        # 파일이 있는 경우
+        fileinfo = self.engine.file_manager.save_file(
+                self.mikkang_session_key, self.article_id , u'hahahah.jpg')
+        result = self.engine.file_manager._get_attached_file_list(self.article_id)
+        self.assertEqual(1, len(result))
+        self.assertEqual(u'hahahah.jpg', result[0].filename)
+        self.assertEqual(1, result[0].file_id)
+
+        # 파일이 없는 경우
+        result = self.engine.file_manager._get_attached_file_list(self.article_id + 3)
+        self.assertEqual(0, len(result))
+
     def tearDown(self):
         # Common tearDown
         super(FileManagerTest, self).tearDown()

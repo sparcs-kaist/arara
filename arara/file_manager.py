@@ -109,6 +109,24 @@ class FileManager(object):
             raise InvalidOperation('file not found')
 
     @log_method_call
+    def _get_attached_file_list(self, article_id):
+        '''
+        @type  article_id: int
+        @param article_id: Article Number
+        @rtype: ttypes.AttachDict
+        @return: 해당 게시물에 첨부된 파일의 목록
+        '''
+        session = model.Session()
+        try:
+            attach_files_query = session.query(model.File).filter_by(article_id=article_id).filter_by(deleted=False)
+            result = [AttachDict(filename=x.filename, file_id=x.id) for x in attach_files_query]
+            session.close()
+            return result
+        except InvalidRequestError:
+            session.close()
+            return [] # No file found
+
+    @log_method_call
     def download_file(self, article_id, file_id):
         '''
         article의 파일을 다운로드 할때 실제로 파일이 저장된 장소와 저장된 파일명을 리턴해주는 함수 
