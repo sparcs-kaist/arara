@@ -176,6 +176,34 @@ class MessagingManagerTest(AraraTestBase):
         self.assertEqual(msg.message, u'hello2')
         self.assertEqual(msg.read_status, u'N')
 
+    def test_get_unread_message_count(self):
+        # 처음엔 한 통도 받은 메시지가 없다
+        self.assertEqual(0, self.engine.messaging_manager.get_unread_message_count(self.mikkang_session_key))
+
+        # serialx 가 mikkang 에게 메시지를 보낸다.
+        # serialx 는 받은 메시지가 없지만 mikkang 이 받은 건 있게 됨.
+        self.engine.messaging_manager.send_message(self.serialx_session_key, u'mikkang', u'hello')
+        self.assertEqual(0, self.engine.messaging_manager.get_unread_message_count(self.serialx_session_key))
+        self.assertEqual(1, self.engine.messaging_manager.get_unread_message_count(self.mikkang_session_key))
+
+        # serialx 가 mikkang 에게 한통 더 메시지를 보낸다.
+        # mikkang 이 받은 메시지만 한 통 증가한다.
+        self.engine.messaging_manager.send_message(self.serialx_session_key, u'mikkang', u'hello2')
+        self.assertEqual(0, self.engine.messaging_manager.get_unread_message_count(self.serialx_session_key))
+        self.assertEqual(2, self.engine.messaging_manager.get_unread_message_count(self.mikkang_session_key))
+
+        # mikkang 이 메시지를 한 통 읽는다
+        self.engine.messaging_manager.read_received_message(self.mikkang_session_key, 1)
+        self.assertEqual(1, self.engine.messaging_manager.get_unread_message_count(self.mikkang_session_key))
+
+        # 이미 읽은 메시지를 읽는다고 unread message count 가 줄어들지는 않는다.
+        self.engine.messaging_manager.read_received_message(self.mikkang_session_key, 1)
+        self.assertEqual(1, self.engine.messaging_manager.get_unread_message_count(self.mikkang_session_key))
+
+        # 아직 안 읽은 메시지를 읽으면 마저 줄어든다.
+        self.engine.messaging_manager.read_received_message(self.mikkang_session_key, 2)
+        self.assertEqual(0, self.engine.messaging_manager.get_unread_message_count(self.mikkang_session_key))
+
     def test_send_message_by_username(self):
         self.engine.messaging_manager.send_message_by_username(self.mikkang_session_key, u'zzongaly', u'hi dodo username test')
 

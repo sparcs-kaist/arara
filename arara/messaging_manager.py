@@ -208,6 +208,31 @@ class MessagingManager(object):
         return MessageList(**ret_dict)
 
     @require_login
+    @log_method_call
+    def get_unread_message_count(self, session_key):
+        '''
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        @rtype: int
+        @return:
+            받은 메시지 중 사용자가 아직 읽지 않은 메시지의 수
+            오류시,
+                1. 로그인되지 않은 사용자: NotLoggedIn Exception
+                2. 데이터베이스 오류: InternalError Exception
+        '''
+        # TODO: 위의 received_message_list 와 코드 중복을 해소한다
+        user_info = self.engine.login_manager.get_session(session_key)
+        session = model.Session()
+        to_user = self.engine.member_manager._get_user(session, user_info.username)
+        received_unread_messages_count = session.query(model.Message).filter(
+                and_(model.message_table.c.to_id==to_user.id,
+                    model.message_table.c.read_status==u'N',
+                    not_(model.message_table.c.received_deleted==True)
+                    )).count()
+        session.close()
+        return received_unread_messages_count
+
+    @require_login
     @log_method_call_important
     def send_message_by_username(self, session_key, to_username, msg):
         '''
