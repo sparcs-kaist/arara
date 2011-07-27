@@ -151,7 +151,6 @@ class ArticleManager(object):
         '''
         # TODO: 여기서 할 필요가 없는 query (file 관련) filemanager 로 옮기기
         # TODO: 여기 저기 흩어져 있는 datetime2timestamp 이리로 모으기
-        session = model.Session()
         item_dict = item.__dict__
         if not item_dict.get('title'):
             item_dict['title'] = u'Untitled'
@@ -171,11 +170,9 @@ class ArticleManager(object):
             if whitelist == SEARCH_ARTICLE_WHITELIST:
                 item_dict['content'] = item_dict['content'][:40]
             if whitelist == READ_ARTICLE_WHITELIST:
-                attach_files = session.query(model.File).filter_by(
-                        article_id=item.id).filter_by(deleted=False)
-                if attach_files.count() > 0:
-                    item_dict['attach'] = [AttachDict(filename=x.filename, file_id=x.id) for x in attach_files]
-        session.close()
+                attach_list = self.engine.file_manager._get_attached_file_list(item.id)
+                if attach_list:
+                    item_dict['attach'] = attach_list
 
         if whitelist:
             return filter_dict(item_dict, whitelist)
