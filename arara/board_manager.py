@@ -28,20 +28,6 @@ class BoardManager(object):
         @type  engine: ARAraEngine
         '''
         self.engine = engine
-        #added category list and dict, cache function
-        self.all_category_list = None
-        self.all_category_dict = None
-        self.cache_category_list()
-        # Internal Cache!
-        self.all_board_list = None
-        self.all_board_dict = None
-        self.all_board_and_heading_list = None
-        self.all_board_and_heading_dict = None
-        self.cache_board_list()
-        # Integrated category & board list
-        self.all_category_and_board_list = None
-        self.all_category_and_board_dict = None
-        self.cache_category_and_board_list()
         # Integrity Check
         self._check_integrity()
 
@@ -122,8 +108,7 @@ class BoardManager(object):
         # TODO: category_name 에 공백 문자 금지
         # TODO: 좀더 다양한 예외상황에 대한 처리
         session = model.Session()
-        # 모든 category 는 cache 되어 있으므로 category 의 수에 1 더한 값이 새 order 가 됨
-        category_order = len(self.all_category_list) + 1
+        category_order = len(self.get_category_list()) + 1
         category_to_add = model.Category(smart_unicode(category_name), category_order)
         try:
             session.add(category_to_add)
@@ -133,8 +118,6 @@ class BoardManager(object):
             session.rollback()
             session.close()
             raise InvalidOperation('already added')
-        # 새로운 카테고리가 추가되었으므로 cache 를 update 한다
-        self.cache_category_list()
 
     @require_login
     @log_method_call_important
@@ -181,27 +164,27 @@ class BoardManager(object):
         '''
         if category_name == None:
             board_count = 0
-            if len(self.all_category_and_board_dict[None]) == 0:
+            if len(self.get_category_and_board_dict()[None]) == 0:
                 # category name 이 있는 보드들 뿐이므로 그 보드의 갯수가 곧 order 가 된다
-                board_count = len(self.all_board_list)
+                board_count = len(self.get_board_list())
                 return board_count
             else:
                 # category 가 없는 board 들 중 마지막 것으로 하면 된다
-                board_count = self.all_category_and_board_dict[None][-1].order
+                board_count = self.get_category_and_board_dict()[None][-1].order
                 return board_count
         else:
             board_count = 0
-            if len(self.all_category_and_board_dict[category_name]) == 0:
+            if len(self.get_category_and_board_dict()[category_name]) == 0:
                 # 선택한 category 까지의 board 들의 갯수를 계속 더한다
-                for category in self.all_category_list:
+                for category in self.get_category_list():
                     if category.category_name == category_name:
                         break
                     else:
-                        board_count += len(self.all_category_and_board_dict[category.category_name])
+                        board_count += len(self.get_category_and_board_dict()[category.category_name])
                 return board_count
             else:
                 # 선택한 category 의 board 들 중 마지막 것으로 하면 된다.
-                board_count = self.all_category_and_board_dict[category_name][-1].order
+                board_count = self.get_category_and_board_dict()[category_name][-1].order
                 return board_count
 
     def _add_board(self, board_name, board_alias, board_description, heading_list, category_name, board_type, to_read_level, to_write_level):
@@ -263,7 +246,6 @@ class BoardManager(object):
             session.close()
             raise InvalidOperation('already added')
         # 보드에 변경이 발생하므로 캐시 초기화
-        self.cache_board_list()
 
     @require_login
     @log_method_call_important
@@ -334,8 +316,6 @@ class BoardManager(object):
         self._add_board(board_name, board_name, board_description, heading_list, category_name, board_type, to_read_level, to_write_level)
         if hide:
             self._hide_board(board_name)
-            # 보드에 변경이 발생하므로 캐시 초기화
-            self.cache_board_list()
     
     def _get_board(self, board_name):
         '''
@@ -347,7 +327,7 @@ class BoardManager(object):
         @return: 해당 board 의 객체
         '''
         try:
-            return self.all_board_dict[smart_unicode(board_name)]
+            return self.get_board_dict()[smart_unicode(board_name)]
         except KeyError:
             raise InvalidOperation('board does not exist')
         return board
@@ -385,7 +365,7 @@ class BoardManager(object):
             2. 실패 : 존재하지 않는 카테고리 : InvalidOperation('category does not exist')
         '''
         try:
-            return self.all_category_dict[smart_unicode(category_name)]
+            return self.get_category_dict()[smart_unicode(category_name)]
         except KeyError:
             raise InvalidOperation('category does not exist')
         return category
@@ -422,7 +402,6 @@ class BoardManager(object):
         @param board_name: 찾고자 하는 board 의 이름
         @rtype: ttypes.Board
         '''
-        # TODO: board cache 구조 대개편
         return self._get_board(smart_unicode(board_name))
 
     @log_method_call
@@ -567,8 +546,7 @@ class BoardManager(object):
     @log_method_call
     def get_board_heading_list(self, board_name):
         '''
-        cache 로부터 주어진 board의 heading 의 목록을 가져온다.
-        주의 : internal cache 에 영향을 받으므로 internal cache 를 생성하는 중에는 사용하면 안 된다.
+        주어진 board의 heading 의 목록을 가져온다.
 
         @type  board_name: string
         @param board_name: heading 을 가져올 보드의 이름
@@ -591,26 +569,36 @@ class BoardManager(object):
 
         return self._get_board(board_name).type
 
-    def cache_category_list(self):
+    def get_category_list(self):
         '''
-        DB 로부터 category 목록을 읽어들여 cache 를 생성한다.
+        DB 로부터 category 목록을 읽어들여 return 한다.
+
+        @rtype: list<ttypes.Category>
         '''
-        # TODO: 이 또한 좀더 깔끔하게 Python 스럽게 고칠 수 있다.
         session = model.Session()
         categories = session.query(model.Category).order_by(model.Category.order).all()
         category_dict_list = self._get_dict_list(categories, CATEGORY_WHITELIST)
         session.close()
 
-        self.all_category_list = [Category(**d) for d in category_dict_list]
-        self.all_category_dict = {}
-        for category in self.all_category_list:
-            self.all_category_dict[category.category_name] = category
+        return [Category(**d) for d in category_dict_list]
 
-        self.cache_category_and_board_list()
-
-    def cache_board_list(self):
+    def get_category_dict(self):
         '''
-        DB 로부터 board 목록을 읽어들여 cache 를 생성한다.
+        DB 로부터 category 목록을 읽어들여 dictionary 형태로 return 한다.
+
+        @rtype: dict<str:ttypes.Category>
+        '''
+        all_category_dict = {}
+        for category in self.get_category_list():
+            all_category_dict[category.category_name] = category
+        return all_category_dict
+
+
+    def get_board_list(self):
+        '''
+        DB 로부터 board 목록을 읽어들여 board_list 를 리턴한다.
+
+        @rtype: list<ttypes.Board>
         '''
         # TODO: 이 또한 좀더 깔끔하게 Python 스럽게 고칠 수 있다.
         session = model.Session()
@@ -620,52 +608,63 @@ class BoardManager(object):
         # Board Heading 도 전부 가져온다.
         for each_board in board_dict_list:
             each_board['headings'] = self.get_board_heading_list_fromid(each_board['id'])
-        # all_board_list 와 all_board_dict 로 만든다. 
-        self.all_board_list = [Board(**d) for d in board_dict_list]
-        self.all_board_dict = {}
-        for board in self.all_board_list:
-            self.all_board_dict[board.board_name] = board
+        return [Board(**d) for d in board_dict_list]
 
-        self.cache_category_and_board_list()
-
-    def cache_category_and_board_list(self):
+    def get_board_dict(self):
         '''
-        DB 로부터 Category 별 Board 목록을 읽어들여 cache 를 생성한다.
-        즉, all_category_and_board_dict 는 키가 category 이름이고
-        value 가 board 의 list 인 녀석이 된다.
+        DB 로부터 board 목록을 읽어들여 board_dict 를 리턴한다.
+
+        @rtype: dict<string: ttypes.Board>
+        '''
+        all_board_dict = {}
+        for board in self.get_board_list():
+            all_board_dict[board.board_name] = board
+        return all_board_dict
+
+    def get_category_and_board_list(self):
+        '''
+        DB 로부터 Category 별 Board 목록을 읽어들여 list 를 생성한다.
+
+        @rtype: list<list<ttypes.Board>>
         '''
         session = model.Session()
-        categories = session.query(model.Category).order_by(model.Category.order).all()
-        category_dict_list = self._get_dict_list(categories, CATEGORY_WHITELIST)
-
-        self.all_category_and_board_list = []
-        self.all_category_and_board_dict = {}
-
-        for category in category_dict_list:
-            category_name = category['category_name']
-            category_id   = category['id']
+        all_category_and_board_list = []
+        for category in self.get_category_list():
+            category_id   = category.id
 
             boards = session.query(model.Board).filter_by(deleted=False).filter_by(category_id=category_id).order_by(model.Board.order).all()
             board_dict_list = self._get_dict_list(boards, BOARD_MANAGER_WHITELIST)
             board_list = [Board(**d) for d in board_dict_list]
 
-            self.all_category_and_board_dict[category_name] = board_list
-            self.all_category_and_board_list.append(board_list)
+            all_category_and_board_list.append(board_list)
 
         # Category 가 None 인 board 들도 챙겨준다
         boards = session.query(model.Board).filter_by(deleted=False).filter_by(category=None).order_by(model.Board.order).all()
         board_dict_list = self._get_dict_list(boards, BOARD_MANAGER_WHITELIST)
         board_list = [Board(**d) for d in board_dict_list]
         
-        self.all_category_and_board_dict[None] = board_list
-        self.all_category_and_board_list.append(board_list)
-
-        # 끝.
+        all_category_and_board_list.append(board_list)
         session.close()
+
+        return all_category_and_board_list
+
+    def get_category_and_board_dict(self):
+        '''
+        DB 로부터 Category 별 Board 목록을 읽어들여 list 를 생성한다.
+
+        @rtype: dict<str: list<ttypes.Board>>
+        '''
+        all_category_and_board_list = self.get_category_and_board_list()
+        all_category_and_board_dict = {}
+        for idx, category in enumerate(self.get_category_list()):
+            all_category_and_board_dict[category.category_name] = all_category_and_board_list[idx]
+
+        all_category_and_board_dict[None] = all_category_and_board_list[-1]
+        return all_category_and_board_dict
 
     def _get_heading(self, session, board, heading):
         '''
-        cache로부터 주어진 heading 객체를 찾아낸다.
+        주어진 heading 객체를 찾아낸다.
 
         @type  session: SQLAlchemy Session object
         @param session: 현재 사용중인 session
@@ -711,25 +710,6 @@ class BoardManager(object):
             session.close()
             raise InvalidOperation('heading not exist')
 
-    @log_method_call
-    def get_board_list(self):
-        '''
-        cache 가 있다면 cache 된 board_list, 를 그렇지 않다면 cache 를 생성하고 리턴한다.
-        '''
-        if self.all_board_list == None:
-            self.cache_board_list()
-        return self.all_board_list
-
-    @log_method_call
-    def get_category_list(self):
-        '''
-        cache 가 있다면 cache 된 category_list, 를 그렇지 않다면 cache 를 생성하고 리턴한다.
-        '''
-        if self.all_category_list == None:
-            self.cache_category_list()
-        return self.all_category_list
-
-
     @require_login
     @log_method_call_important
     def add_read_only_board(self, session_key, board_name):
@@ -761,8 +741,6 @@ class BoardManager(object):
         board.read_only = True
         session.commit()
         session.close()
-        # 보드에 변경이 발생하므로 캐시 초기화
-        self.cache_board_list()
 
     @require_login
     @log_method_call_important
@@ -794,8 +772,6 @@ class BoardManager(object):
         board.read_only = False
         session.commit()
         session.close()
-        # 보드에 변경이 발생하므로 캐시 초기화
-        self.cache_board_list()
 
     @require_login
     @log_method_call_important
@@ -854,7 +830,6 @@ class BoardManager(object):
             raise InternalError("DATABASE ERROR")
 
         session.close()
-        self.cache_board_list()
 
     @require_login
     @log_method_call_important
@@ -889,7 +864,6 @@ class BoardManager(object):
             raise InvalidOperation("category already exists")
         except InvalidRequestError: # TODO: 어떤 경우에 이렇게 되나?
             raise InternalError()
-        self.cache_category_list()
 
     @require_login
     @log_method_call_important
@@ -910,7 +884,7 @@ class BoardManager(object):
         '''
         self._is_sysop(session_key)
         # 올바른 order 인지 검사
-        if not 0 < new_order <= len(self.all_category_list):
+        if not 0 < new_order <= len(self.get_category_list()):
             raise InvalidOperation('invalid order')
 
         session = model.Session()
@@ -919,7 +893,7 @@ class BoardManager(object):
         category_list = session.query(model.Category).order_by(model.Category.order).all()
 
         if new_order < current_category.order :
-            board_offset = len(self.all_category_and_board_dict[current_category.category_name])
+            board_offset = len(self.get_category_and_board_dict()[current_category.category_name])
             new_board_offset = 0
             # 순서가 뒤로 밀리는 category 에 속하는 board 들을 뒤로 밀기
             for board in board_list:
@@ -937,7 +911,7 @@ class BoardManager(object):
                 if new_order <= category.order < current_category.order:
                     category.order += 1
         elif category.order < new_order:
-            board_offset = len(self.all_category_and_board_dict[current_category.category_name])
+            board_offset = len(self.get_category_and_board_dict()[current_category.category_name])
             new_board_offset = 0
             # 순서가 위로 끌려오는 category 에 속하는 board 들을 앞으로 끌기
             for board in board_list:
@@ -963,9 +937,6 @@ class BoardManager(object):
             session.rollback()
             session.close()
             raise InvalidOperation('DATABASE Error?')
-
-        self.cache_category_list()
-        self.cache_board_list()
 
     @require_login
     @log_method_call_important
@@ -994,7 +965,6 @@ class BoardManager(object):
         except:
             session.rollback()
         session.close()
-        self.cache_board_list()
 
     @require_login
     @log_method_call_important
@@ -1053,8 +1023,6 @@ class BoardManager(object):
         # TODO :전체적인 Error 들 정리 ...
         except InvalidRequestError:
             raise InternalError()
-        # 보드에 변경이 생겼으므로 캐시 초기화
-        self.cache_board_list()
 
     @require_login
     @log_method_call_important
@@ -1102,8 +1070,6 @@ class BoardManager(object):
         board.hide = True
         session.commit()
         session.close()
-        # 보드에 변경이 발생하므로 캐시 초기화
-        self.cache_board_list()
 
     @require_login
     @log_method_call_important
@@ -1157,9 +1123,6 @@ class BoardManager(object):
         board.hide = False
         session.commit()
         session.close()
-        # 보드에 변경이 발생하므로 캐시 초기화
-        self.cache_board_list()
-
 
     @require_login
     @log_method_call_important
@@ -1188,7 +1151,6 @@ class BoardManager(object):
         session.delete(category)
         session.commit()
         session.close()
-        self.cache_category_list()
 
     @require_login
     @log_method_call_important
@@ -1217,8 +1179,6 @@ class BoardManager(object):
         board_to_delete.deleted = True
         session.commit()
         session.close()
-        # 보드에 변경이 발생하므로 캐시 초기화
-        self.cache_board_list()
     
     def has_bbs_manager(self, board_name):
         '''
