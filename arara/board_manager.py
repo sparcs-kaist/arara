@@ -18,6 +18,8 @@ CATEGORY_WHITELIST = ('category_name', 'id', 'order')
 USER_QUERY_WHITELIST = ('username', 'nickname', 'email',
         'signature', 'self_introduction', 'campus', 'last_login_ip', 'last_logout_time')
 
+from arara import ara_memcached
+
 class BoardManager(object):
     '''
     보드 추가 삭제 및 관리 관련 클래스
@@ -30,6 +32,18 @@ class BoardManager(object):
         self.engine = engine
         # Integrity Check
         self._check_integrity()
+        self._clear_cache(board=True, category=True)
+
+    def _clear_cache(self, board=False, category=False):
+        if category:
+            ara_memcached.clear_memcached(self.get_category_list)
+            ara_memcached.clear_memcached(self.get_category_dict)
+        if board:
+            ara_memcached.clear_memcached(self.get_board_list)
+            ara_memcached.clear_memcached(self.get_board_dict)
+        if category or board:
+            ara_memcached.clear_memcached(self.get_category_and_board_list)
+            ara_memcached.clear_memcached(self.get_category_and_board_dict)
 
     def _check_integrity(self):
         '''
@@ -118,6 +132,7 @@ class BoardManager(object):
             session.rollback()
             session.close()
             raise InvalidOperation('already added')
+        self._clear_cache(category=True)
 
     @require_login
     @log_method_call_important
@@ -245,7 +260,7 @@ class BoardManager(object):
             session.rollback()
             session.close()
             raise InvalidOperation('already added')
-        # 보드에 변경이 발생하므로 캐시 초기화
+        self._clear_cache(board=True)
 
     @require_login
     @log_method_call_important
@@ -484,6 +499,7 @@ class BoardManager(object):
             session.rollback()
             session.close()
             raise InternalError("unknown error")
+        self._clear_cache(board=True)
             
     @require_login
     @log_method_call_important
@@ -520,6 +536,7 @@ class BoardManager(object):
             session.rollback()
             session.close()
             raise
+        self._clear_cache(board=True)
         
     @log_method_call
     def get_board_heading_list_fromid(self, board_id):
@@ -569,6 +586,7 @@ class BoardManager(object):
 
         return self._get_board(board_name).type
 
+    @ara_memcached.memcached_decorator
     def get_category_list(self):
         '''
         DB 로부터 category 목록을 읽어들여 return 한다.
@@ -582,6 +600,7 @@ class BoardManager(object):
 
         return [Category(**d) for d in category_dict_list]
 
+    @ara_memcached.memcached_decorator
     def get_category_dict(self):
         '''
         DB 로부터 category 목록을 읽어들여 dictionary 형태로 return 한다.
@@ -593,7 +612,7 @@ class BoardManager(object):
             all_category_dict[category.category_name] = category
         return all_category_dict
 
-
+    @ara_memcached.memcached_decorator
     def get_board_list(self):
         '''
         DB 로부터 board 목록을 읽어들여 board_list 를 리턴한다.
@@ -610,6 +629,7 @@ class BoardManager(object):
             each_board['headings'] = self.get_board_heading_list_fromid(each_board['id'])
         return [Board(**d) for d in board_dict_list]
 
+    @ara_memcached.memcached_decorator
     def get_board_dict(self):
         '''
         DB 로부터 board 목록을 읽어들여 board_dict 를 리턴한다.
@@ -621,6 +641,7 @@ class BoardManager(object):
             all_board_dict[board.board_name] = board
         return all_board_dict
 
+    @ara_memcached.memcached_decorator
     def get_category_and_board_list(self):
         '''
         DB 로부터 Category 별 Board 목록을 읽어들여 list 를 생성한다.
@@ -648,6 +669,7 @@ class BoardManager(object):
 
         return all_category_and_board_list
 
+    @ara_memcached.memcached_decorator
     def get_category_and_board_dict(self):
         '''
         DB 로부터 Category 별 Board 목록을 읽어들여 list 를 생성한다.
@@ -741,6 +763,7 @@ class BoardManager(object):
         board.read_only = True
         session.commit()
         session.close()
+        self._clear_cache(board=True)
 
     @require_login
     @log_method_call_important
@@ -772,6 +795,7 @@ class BoardManager(object):
         board.read_only = False
         session.commit()
         session.close()
+        self._clear_cache(board=True)
 
     @require_login
     @log_method_call_important
@@ -830,6 +854,7 @@ class BoardManager(object):
             raise InternalError("DATABASE ERROR")
 
         session.close()
+        self._clear_cache(board=True)
 
     @require_login
     @log_method_call_important
@@ -864,6 +889,7 @@ class BoardManager(object):
             raise InvalidOperation("category already exists")
         except InvalidRequestError: # TODO: 어떤 경우에 이렇게 되나?
             raise InternalError()
+        self._clear_cache(category=True)
 
     @require_login
     @log_method_call_important
@@ -937,6 +963,7 @@ class BoardManager(object):
             session.rollback()
             session.close()
             raise InvalidOperation('DATABASE Error?')
+        self._clear_cache(category=True, board=True)
 
     @require_login
     @log_method_call_important
@@ -965,6 +992,7 @@ class BoardManager(object):
         except:
             session.rollback()
         session.close()
+        self._clear_cache(board=True)
 
     @require_login
     @log_method_call_important
@@ -1023,6 +1051,7 @@ class BoardManager(object):
         # TODO :전체적인 Error 들 정리 ...
         except InvalidRequestError:
             raise InternalError()
+        self._clear_cache(board=True)
 
     @require_login
     @log_method_call_important
@@ -1070,6 +1099,7 @@ class BoardManager(object):
         board.hide = True
         session.commit()
         session.close()
+        self._clear_cache(board=True)
 
     @require_login
     @log_method_call_important
@@ -1123,6 +1153,7 @@ class BoardManager(object):
         board.hide = False
         session.commit()
         session.close()
+        self._clear_cache(board=True)
 
     @require_login
     @log_method_call_important
@@ -1151,6 +1182,7 @@ class BoardManager(object):
         session.delete(category)
         session.commit()
         session.close()
+        self._clear_cache(category=True)
 
     @require_login
     @log_method_call_important
@@ -1179,6 +1211,7 @@ class BoardManager(object):
         board_to_delete.deleted = True
         session.commit()
         session.close()
+        self._clear_cache(board=True)
     
     def has_bbs_manager(self, board_name):
         '''
