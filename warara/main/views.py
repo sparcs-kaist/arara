@@ -63,8 +63,8 @@ def main(request):
 
     # Get messages for the current user
     if ctx['logged_in']:
-        message_result = server.messaging_manager.receive_list(sess, 1, 1);
-        if message_result.new_message_count:
+        unread_message_count = server.messaging_manager.get_unread_message_count(sess)
+        if unread_message_count > 0:
             ctx['new_message'] = True
         else:
             ctx['new_message'] = False

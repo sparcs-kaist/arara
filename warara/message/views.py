@@ -263,8 +263,8 @@ def count_new_message(request):
     server = warara_middleware.get_server()
     sess, _ = warara.check_logged_in(request)
     try:
-        message_result = server.messaging_manager.receive_list(sess, 1, 10)
-        return HttpResponse(str(message_result.new_message_count));
+        result = server.messaging_manager.get_unread_message_count(sess)
+        return HttpResponse(str(result));
     except:
         return HttpResponse("0");
 
