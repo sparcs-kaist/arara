@@ -14,7 +14,7 @@ from arara import model
 from arara.util import require_login, filter_dict, is_keys_in_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important, log_method_call_with_source_duration
 from arara.util import smart_unicode, datetime2timestamp, send_mail
-from etc.arara_settings import *
+import etc.arara_settings
 
 log_method_call = log_method_call_with_source('member_manager')
 log_method_call_duration = log_method_call_with_source_duration('member_manager')
@@ -64,9 +64,7 @@ class MemberManager(object):
         self.logger = logging.getLogger('member_manager')
         self._register_sysop()
 
-        # Test Code에서의 Stub Code 작성을 위해 etc.arara_settings의 BOT_ENABLED를 Reload할 필요가 있다
-        from etc.arara_settings import BOT_ENABLED
-        if BOT_ENABLED:
+        if etc.arara_settings.BOT_ENABLED:
             self._register_bot()
 
         # Listing mode 를 빠르게 로드하기 위하여
@@ -358,7 +356,7 @@ class MemberManager(object):
             user_reg_info.__dict__[keys] = smart_unicode(user_reg_info.__dict__[keys])
 
         # Check if username is proper
-        if user_reg_info.username.lower() == SYSOP_INITIAL_USERNAME.lower():
+        if user_reg_info.username.lower() == etc.arara_settings.SYSOP_INITIAL_USERNAME.lower():
             raise InvalidOperation('permission denied')
         if not PROPER_USERNAME_REGEX.match(user_reg_info.username):
             raise InvalidOperation('username not permitted')
@@ -412,9 +410,9 @@ class MemberManager(object):
         # TODO: exception 적절하게 handling 하기
         # TODO: _charset 이 왜 euc_kr 로 되어있는 걸까?
 
-        title = MAIL_TITLE['activation']
-        content = MAIL_CONTENT['activation']
-        confirm_url = 'http://' + WARARA_SERVER_ADDRESS + '/account/confirm/%s/%s' % (username.strip(), activation_code)
+        title = etc.arara_settings.MAIL_TITLE['activation']
+        content = etc.arara_settings.MAIL_CONTENT['activation']
+        confirm_url = 'http://' + etc.arara_settings.WARARA_SERVER_ADDRESS + '/account/confirm/%s/%s' % (username.strip(), activation_code)
         confirm_link = '<a href=\'%s\'>%s</a>' % (confirm_url, confirm_url)
         confirm_key = '<br />Confirm Key : %s' % activation_code
 
