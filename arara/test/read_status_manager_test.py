@@ -69,12 +69,6 @@ class ReadStatusManagerTest(AraraTestBase):
         self.assertEqual("N", ret)
 
         try:
-            self.engine.read_status_manager.check_stat(self.session_key_mikkang, 3)
-            self.fail()
-        except InvalidOperation:
-            pass
-
-        try:
             self.engine.read_status_manager.check_stat('asdfasdf', 1)
             self.fail()
         except NotLoggedIn:
@@ -85,12 +79,6 @@ class ReadStatusManagerTest(AraraTestBase):
         ret = self.engine.read_status_manager.check_stats(
                 self.session_key_mikkang, [1,2])
         self.assertEqual(["N", "N"], ret)
-
-        try:
-            self.engine.read_status_manager.check_stats(self.session_key_mikkang, [1,2,3])
-            self.fail()
-        except InvalidOperation:
-            pass
 
         try:
             self.engine.read_status_manager.check_stats('asdfasdf', [1,2])
@@ -114,12 +102,6 @@ class ReadStatusManagerTest(AraraTestBase):
         self.assertEqual("R", ret)
 
         try:
-            self.engine.read_status_manager.mark_as_read(self.session_key_mikkang, 3)
-            self.fail()
-        except InvalidOperation:
-            pass
-
-        try:
             self.engine.read_status_manager.mark_as_read('asdfasdf', 1)
             self.fail()
         except NotLoggedIn:
@@ -139,12 +121,6 @@ class ReadStatusManagerTest(AraraTestBase):
         ret = self.engine.read_status_manager.check_stat(
                 self.session_key_mikkang, 2)
         self.assertEqual("V", ret)
-
-        try:
-            self.engine.read_status_manager.mark_as_viewed(self.session_key_mikkang, 3)
-            self.fail()
-        except InvalidOperation:
-            pass
 
         try:
             self.engine.read_status_manager.mark_as_viewed('asdfasdf', 1)

@@ -897,37 +897,6 @@ class ArticleManagerTest(AraraTestBase):
         # 세션을 닫는다.
         session.close()
 
-    def test_check_article_exist(self):
-        # 글을 하나도 안 썼을 때의 상황을 테스트한다
-        try:
-            self.engine.article_manager.check_article_exist([1, 2, 3])
-            self.fail("nonexisting article must fail to check_article_exist")
-        except InvalidOperation:
-            pass
-        # 글을 쓴다
-        self._dummy_article_write(self.session_key_mikkang, u"1", u"board")
-        self._dummy_article_write(self.session_key_mikkang, u"1", u"board_h")
-        # 리스트, 숫자 모두 통과한다
-        self.engine.article_manager.check_article_exist([1, 2])
-        self.engine.article_manager.check_article_exist(1)
-        self.engine.article_manager.check_article_exist(2)
-        # 여전히, 존재하지 않는 글에 대해서는 실패한다
-        try:
-            self.engine.article_manager.check_article_exist([1, 2, 3])
-            self.fail("nonexisting article must fail to check_article_exist")
-        except InvalidOperation:
-            pass
-        try:
-            self.engine.article_manager.check_article_exist(3)
-            self.fail("nonexisting article must fail to check_article_exist")
-        except InvalidOperation:
-            pass
-        # 글을 쓴다
-        self._dummy_article_write(self.session_key_mikkang, u"1", u"board")
-        # 이번엔 말끔히 통과한다
-        self.engine.article_manager.check_article_exist([1, 2, 3])
-        self.engine.article_manager.check_article_exist(3)
-
     def test_move_article(self):
         #유저가 SYSOP 일 경우 글을 선택해서 다른 게시판으로 옮길 수 있는지 테스트 한다.
         # Write an article, reply to the article, and create board2

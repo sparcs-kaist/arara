@@ -164,10 +164,6 @@ class ReadStatusManager(object):
             return_list.append(filtered_dict)
         return return_list
 
-    def _check_article_exist(self, no_data):
-        # 함수의 내용이 ArticleManager 로 옮겨갔다. 
-        self.engine.article_manager.check_article_exist(no_data)
-
     def _initialize_data(self, user_id):
         if not self.read_status.has_key(user_id):
             try:
@@ -189,6 +185,7 @@ class ReadStatusManager(object):
     def _check_stat(self, user_id, no):
         '''
         읽은 글인지의 여부를 체크. 로그 따로 남기지 않음.
+        존재하지 않는 글번호를 입력하지 않도록 주의.
 
         @type  user_id: int
         @param user_id: 사용자 고유 id
@@ -204,7 +201,6 @@ class ReadStatusManager(object):
                 1. 데이터베이스 오류: InternalError('DATABASE_ERROR') <- 정말 이럴까?
         '''
         ret, _ = self._initialize_data(user_id)
-        self._check_article_exist(no)
         status = self.read_status[user_id].get(no)
         return status
 
@@ -213,6 +209,7 @@ class ReadStatusManager(object):
     def check_stat(self, session_key, no):
         '''
         읽은 글인지의 여부를 체크
+        존재하지 않는 글번호를 입력하지 않도록 주의.
 
         >>> readstat.check_stat(session_key, 334)
         'R'
@@ -240,6 +237,7 @@ class ReadStatusManager(object):
     def check_stats(self, session_key, no_list):
         '''
         복수개의 글의 읽은 여부를 체크
+        존재하지 않는 글번호를 입력하지 않도록 주의.
 
         >>> readstat.check_stats(session_key, 'garbages', [1, 2, 3, 4, 5, 6])
         True, ['N', 'N', 'R', 'R', 'V', 'R']
@@ -257,7 +255,6 @@ class ReadStatusManager(object):
         '''
         user_id = self.engine.login_manager.get_user_id(session_key)
         ret, _ = self._initialize_data(user_id)
-        self._check_article_exist(no_list)
         status = self.read_status[user_id].get_range(no_list)
         return status
 
@@ -265,6 +262,7 @@ class ReadStatusManager(object):
     def _mark_as_read_list(self, user_id, no_list):
         '''
         복수개의 글을 읽은 글로 등록하기
+        존재하지 않는 글번호를 입력하지 않도록 주의.
 
         @type  user_id: int
         @param user_id: 사용자 고유 id
@@ -278,7 +276,6 @@ class ReadStatusManager(object):
                 2. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR')
         '''
         ret, _ = self._initialize_data(user_id)
-        self._check_article_exist(no_list)
         status = self.read_status[user_id].set_range(no_list, 'R')
 
     @require_login
@@ -286,6 +283,7 @@ class ReadStatusManager(object):
     def mark_as_read_list(self, session_key, no_list):
         '''
         복수개의 글을 읽은 글로 등록하기
+        존재하지 않는 글번호를 입력하지 않도록 주의.
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
@@ -306,6 +304,7 @@ class ReadStatusManager(object):
     def _mark_as_read(self, user_id, no):
         '''
         읽은 글로 등록하기
+        존재하지 않는 글번호를 입력하지 않도록 주의.
 
         @type  user_id: int
         @param user_id: 사용자 고유 id
@@ -318,7 +317,6 @@ class ReadStatusManager(object):
                 2. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR')
         '''
         ret, _ = self._initialize_data(user_id)
-        self._check_article_exist(no)
         status = self.read_status[user_id].set(no, 'R')
 
     @require_login
@@ -326,6 +324,7 @@ class ReadStatusManager(object):
     def mark_as_read(self, session_key, no):
         '''
         읽은 글로 등록하기
+        존재하지 않는 글번호를 입력하지 않도록 주의.
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
@@ -347,6 +346,7 @@ class ReadStatusManager(object):
     def mark_as_viewed(self, session_key, no):
         '''
         통과한 글로 등록하기
+        존재하지 않는 글번호를 입력하지 않도록 주의.
 
         @type  session_key: string
         @param session_key: User Key
@@ -362,7 +362,6 @@ class ReadStatusManager(object):
         '''
         user_id = self.engine.login_manager.get_user_id(session_key)
         ret, _ = self._initialize_data(user_id)
-        self._check_article_exist(no)
         status = self.read_status[user_id].set(no, 'V')
 
     @log_method_call_duration
