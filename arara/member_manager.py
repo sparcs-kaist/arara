@@ -304,7 +304,7 @@ class MemberManager(object):
         except Exception, e:
             self.logger.warning("Exception occur on member_manager.authenticate. username <%s> and Error <%s>" % (username, repr(e)))
             raise InvalidOperation("unexpected error on authentication, contact SYSOP")
-   
+
     def _get_dict(self, item, whitelist=None):
         '''
         @type  item: model.User
@@ -368,7 +368,7 @@ class MemberManager(object):
         key = (user_reg_info.username +
             user_reg_info.password + user_reg_info.nickname)
         activation_code = hashlib.md5(key).hexdigest()
-        
+
         session = model.Session()
         try:
             # Register user to db
@@ -398,7 +398,7 @@ class MemberManager(object):
 
     def _send_activation_code(self, email, username, activation_code):
         '''
-        회원 가입하는 사용자 email로  activation_code를 보내는 함수 
+        회원 가입하는 사용자 email로  activation_code를 보내는 함수
 
         @type  email: string
         @param email: 사용자 E-mail
@@ -440,7 +440,7 @@ class MemberManager(object):
         # TODO: check_sysop 같은 함수를 구현하여 만들자.
         # TODO: 사용자 Query 하는 함수 별도로 분리하기
         username = smart_unicode(username)
-        
+
         if not self.is_sysop(session_key):
             raise InvalidOperation('not sysop')
 
@@ -467,7 +467,7 @@ class MemberManager(object):
         인증코드(activation code) 확인.
         예외상황:
             1. 잘못된 인증코드 입력시: InvalidOperation('wrong activation code')
-        
+
         @type  username_to_confirm: string
         @param username_to_confirm: Confirm 하고자 하는 Username
         @type  activation_code: string
@@ -475,7 +475,7 @@ class MemberManager(object):
         '''
         # TODO: user 쿼리하는 거 별도로 분리하기
         username_to_confirm = smart_unicode(username_to_confirm)
-        
+
         session = model.Session()
         user = self._get_user(session, username_to_confirm, 'user does not exist')
         try:
@@ -631,7 +631,7 @@ class MemberManager(object):
         session.close()
         return UserInformation(**user_dict)
 
-    @require_login    
+    @require_login
     def modify_password(self, session_key, user_password_info):
         '''
         회원의 password를 수정.
@@ -669,7 +669,7 @@ class MemberManager(object):
             self.logger.info(u"PASSWORD CHANGE:(username=%s)" % username)
             session.close()
             return
-            
+
         except NoPermission:
             session.close()
             raise InvalidOperation('no permission')
@@ -682,7 +682,7 @@ class MemberManager(object):
             session.close()
             raise NotLoggedIn()
 
-    @require_login    
+    @require_login
     def modify_password_sysop(self, session_key, user_password_info):
         '''
         회원의 password를 시삽이 강제로 수정.
@@ -817,7 +817,7 @@ class MemberManager(object):
     def query_by_username(self, session_key, username):
         '''
         username 기반 쿼리 함수. 다른 사용자의 정보를 알아내는 데 사용한다.
-        
+
         @type  session_key: string
         @param session_key: 사용자 Login Session
         @type  username: string
@@ -848,7 +848,7 @@ class MemberManager(object):
     def query_by_nick(self, session_key, nickname):
         '''
         nickname 기반 쿼리 함수. 다른 사용자의 정보를 알아내는 데 사용한다.
-        
+
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
@@ -896,7 +896,7 @@ class MemberManager(object):
             1. 성공시: void
             2. 실패시: NotLoggedIn
         '''
-        # TODO: 밑의 함수는 "정말로 정말로 사용자를 지워버리는 용도" 로 사용하도록 분리한다. 
+        # TODO: 밑의 함수는 "정말로 정말로 사용자를 지워버리는 용도" 로 사용하도록 분리한다.
         raise InvalidOperation('Not Allowed Right Now')
         session = model.Session()
         username = smart_unicode(self.engine.login_manager.get_session(session_key).username)
@@ -925,8 +925,8 @@ class MemberManager(object):
         @param search_key: Search key
         @rtype: list<ttypes.SearchUserResult>
         @return:
-            1. 성공시: True, {'username':'kmb1109','nickname':'mikkang'} 
-            2. 실패시: 
+            1. 성공시: True, {'username':'kmb1109','nickname':'mikkang'}
+            2. 실패시:
                 1. 존재하지 않는 사용자: InvalidOperation('NOT_EXIST_USER'
                 2. 잘못된 검색 키:InvalidOperation('INCORRECT_SEARCH_KEY')
         '''
@@ -999,7 +999,7 @@ class MemberManager(object):
     def is_sysop(self, session_key):
         '''
         로그인한 user가 SYSOP인지 아닌지를 확인하는 함수
-        
+
         @type  session_key: string
         @param session_key: 사용자 Login Session
         @rtype: bool
@@ -1150,40 +1150,43 @@ class MemberManager(object):
         session.close()
 
         return result
-    
+
     def get_selected_boards(self, session_key):
         '''
         사용자들이 선택한 몇 개의 즐겨찾는 게시판 목록을 반환하는 함수이다.
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
-        @rtype: list<ttypes.Board> 
+        @rtype: list<ttypes.Board>
         @return: 주어진 사용자가 즐겨찾기 한 게시판들의 목록
         '''
         session = model.Session()
         user = self._get_user_by_session(session, session_key)
-#        boards = session.query(model.SelectedBoards).filter_by(user_id=user.id).all()
         boards = user.selected_boards
-        ttypes_boards = [self.engine.board_manager._get_board(x.board.board_name) for x in boards]
+        ttypes_boards = [self.engine.board_manager.get_board(x.board.board_name) for x in boards]
         session.close()
 
         return ttypes_boards
-    
-    def set_selected_boards(self, session_key, boards_id):
+
+    def set_selected_boards(self, session_key, board_ids):
         '''
         boards_id로 주어진 게시판들을 주어진 사용자의 즐겨찾는 게시판으로 설정한다
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
-        @type  boards_id: list<int>
-        @param boards_id: 게시판들의 아이디
+        @type  board_ids: list<int>
+        @param board_ids: 게시판들의 아이디 목록
         @rtype: void
         @return: None
         '''
         session = model.Session()
         user = self._get_user_by_session(session, session_key)
+
+        if len(board_ids) >3:
+            session.close()
+            raise InvalidOperation("Please check 3 boards at most")
         try:
-            boards = [session.query(model.Board).filter_by(id=x).one() for x in boards_id]
+            boards = [session.query(model.Board).filter_by(id=x).one() for x in board_ids]
         except NoResultFound, MultipleResultsFound:
             session.close()
             raise InvalidOperation("Not a valid board id")

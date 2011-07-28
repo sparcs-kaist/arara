@@ -333,7 +333,7 @@ class MemberManagerTest(AraraTestBase):
         session_key = self.engine.login_manager.login(u'SYSOP', u'SYSOP', u'127.0.0.1')
         self.engine.member_manager.user_to_sysop(session_key, u'combacsa')
         self.engine.login_manager.logout(session_key)
-        
+
         session_key = self.engine.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.145')
         #check if user is not SYSOP
         self.assertEqual(True, self.engine.member_manager.is_sysop(session_key))
@@ -437,19 +437,7 @@ class MemberManagerTest(AraraTestBase):
         self.engine.member_manager.change_listing_mode(session_key, 1)
         self.assertEqual(1, self.engine.member_manager.get_listing_mode(session_key))
 
-    def test_get_selected_boards(self): 
-        session_key = self.engine.login_manager.login(u"SYSOP", u"SYSOP", "127.0.0.1")
-        self.engine.board_manager.add_board(session_key, 'testboard0', 'testboard0', 'board0 for test')
-        self.engine.board_manager.add_board(session_key, 'testboard1', 'testboard1', 'board1 for test')
-        self.engine.board_manager.add_board(session_key, 'testboard2', 'testboard2', 'board2 for test')
-        board0 = self.engine.board_manager.get_board('testboard0')
-        board1 = self.engine.board_manager.get_board('testboard1')
-        board2 = self.engine.board_manager.get_board('testboard2')
-        self.engine.member_manager.set_selected_boards(session_key,[board0.id,board1.id,board2.id])
-        board_name_set=set([board.board_name for board in self.engine.member_manager.get_selected_boards(session_key)])
-        self.assertEqual(set(('testboard0', 'testboard1', 'testboard2')), board_name_set)
-
-    def test_set_selected_boards(self): 
+    def test_get_selected_boards(self):
         session = arara.model.Session()
         session_key = self.engine.login_manager.login(u"SYSOP", u"SYSOP", "127.0.0.1")
         self.engine.board_manager.add_board(session_key, 'testboard0', 'testboard0', 'board0 for test')
@@ -459,12 +447,24 @@ class MemberManagerTest(AraraTestBase):
         board1 = self.engine.board_manager.get_board('testboard1')
         board2 = self.engine.board_manager.get_board('testboard2')
         user = self.engine.member_manager._get_user_by_session(session, session_key)
+        session.add(arara.model.SelectedBoards(user,session.query(arara.model.Board).filter_by(id=board0.id).one()))
+        session.add(arara.model.SelectedBoards(user,session.query(arara.model.Board).filter_by(id=board1.id).one()))
+        session.add(arara.model.SelectedBoards(user,session.query(arara.model.Board).filter_by(id=board2.id).one()))
+        session.commit()
+        board_id_set=set([x.id for x in self.engine.member_manager.get_selected_boards(session_key)])
+        self.assertEqual(set((board0.id, board1.id, board2.id)), board_id_set)
+
+    def test_set_selected_boards(self):
+        session = arara.model.Session()
+        session_key = self.engine.login_manager.login(u"SYSOP", u"SYSOP", "127.0.0.1")
+        self.engine.board_manager.add_board(session_key, 'testboard0', 'testboard0', 'board0 for test')
+        self.engine.board_manager.add_board(session_key, 'testboard1', 'testboard1', 'board1 for test')
+        self.engine.board_manager.add_board(session_key, 'testboard2', 'testboard2', 'board2 for test')
+        board0 = self.engine.board_manager.get_board('testboard0')
+        board1 = self.engine.board_manager.get_board('testboard1')
+        board2 = self.engine.board_manager.get_board('testboard2')
         self.engine.member_manager.set_selected_boards(session_key,[board0.id,board1.id,board2.id])
-        print '\nsetting is done'
-        board_id_set=set()
-        for selected_board in session.query(arara.model.SelectedBoards).filter_by(user_id=user.id).all():
-            board_id_set.add(selected_board.board.id)
-        
+        board_id_set=set([x.board.id for x in session.query(arara.model.SelectedBoards).filter_by(user_id=self.engine.login_manager.get_user_id(session_key))])
         self.assertEqual(set((board0.id,board1.id,board2.id)),board_id_set)
 
     def test_blocking_non_kaist_email(self):
@@ -515,11 +515,11 @@ class MemberManagerTest(AraraTestBase):
             self.fail("Allowed EMail address must not contain any of [, ], \\")
         except InvalidOperation:
             pass
-        
+
     def tearDown(self):
         # Common tearDown
         super(MemberManagerTest, self).tearDown()
-    
+
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(MemberManagerTest)
 
