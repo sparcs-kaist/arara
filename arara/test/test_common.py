@@ -3,6 +3,7 @@ import etc.arara_settings
 import logging
 import arara.model, arara.arara_engine
 import smtplib
+import time
 
 # Mockup Object for smtplib.SMTP()
 class SMTPMockup(object):
@@ -48,6 +49,11 @@ class AraraTestBase(unittest.TestCase):
             self.org_SMTP = smtplib.SMTP
             smtplib.SMTP = SMTPMockup
 
+        # Memcache Prefix Change to prevent collision
+        if etc.arara_settings.USE_MEMCACHED:
+            self.org_MEMCACHED_PREFIX = etc.arara_settings.MEMCACHED_PREFIX
+            etc.arara_settings.MEMCACHED_PREFIX = str(int(time.time()) % 10000)
+
         # Set Logger
         logging.basicConfig(level=logging.ERROR)
 
@@ -65,3 +71,8 @@ class AraraTestBase(unittest.TestCase):
             smtplib.SMTP = SMTPMockup
             # If you want to test SMTPMockup object, uncomment next line
             # SMTPMockup.print_mail()
+
+
+        # Memcache Prefix Rollback
+        if etc.arara_settings.USE_MEMCACHED:
+            etc.arara_settings.MEMCACHED_PREFIX = self.org_MEMCACHED_PREFIX
