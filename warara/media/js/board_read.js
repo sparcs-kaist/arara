@@ -202,3 +202,26 @@ $(document).ready(function(){
     });
 });
 
+
+// Resize image, and make pop-up windows when every image has loaded
+$(window).load(function(){
+    $(".lightbox").lightBox({
+        imageLoading: '/media/thirdparty/lightbox/images/lightbox-ico-loading.gif',
+        imageBtnClose: '/media/thirdparty/lightbox/images/lightbox-btn-close.gif',
+        imageBtnPrev: '/media/thirdparty/lightbox/images/lightbox-btn-prev.gif',
+        imageBtnNext: '/media/thirdparty/lightbox/images/lightbox-btn-next.gif',
+        imageBlank: '/media/thirdparty/lightbox/images/lightbox-blank.gif'
+    });
+    resizeImage();
+    $(window).resize(resizeImage);
+});
+function resizeImage(){
+    var document_size = $(window).width();
+    $(".lightbox img").each(function(){
+        var t = document_size - $(this).offset().left - 100;
+        t = t > 500 ? t : 500;
+        if($(this).width() > t)
+            $(this).css("width", t);
+    });
+}
+

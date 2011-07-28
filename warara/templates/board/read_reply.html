@@ -16,7 +16,7 @@
                         <td><a href="{{ base_url }}{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" target="_blank">{{file.filename}}</a>
                             {% if file.file_id in article.image %}
                             <div>
-                                <a href="{{ base_url }}{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" target="_blank"><img src="{{ base_url }}{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" alt="{{file.file_id}}" /></a>
+                                <a href="{{ base_url }}{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" target="_blank" class="lightbox" title="{{article.title}}"><img src="{{ base_url }}{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" alt="{{file.file_id}}" /></a>
                             </div>
                             {% endif %}
                         </td>
