@@ -200,18 +200,22 @@ $(document).ready(function(){
         $(this).parent().parent().parent().parent().parent().submit();
         $(this).attr("disabled", "disabled");
     });
+
+    // make pop-up windows for attached images
+    $(".lightbox").each(function(){
+        $(this).lightBox({
+            imageLoading: '/media/thirdparty/lightbox/images/lightbox-ico-loading.gif',
+            imageBtnClose: '/media/thirdparty/lightbox/images/lightbox-btn-close.gif',
+            imageBtnPrev: '/media/thirdparty/lightbox/images/lightbox-btn-prev.gif',
+            imageBtnNext: '/media/thirdparty/lightbox/images/lightbox-btn-next.gif',
+            imageBlank: '/media/thirdparty/lightbox/images/lightbox-blank.gif'
+        });
+    });
 });
 
 
-// Resize image, and make pop-up windows when every image has loaded
+// Resize image when every image has loaded
 $(window).load(function(){
-    $(".lightbox").lightBox({
-        imageLoading: '/media/thirdparty/lightbox/images/lightbox-ico-loading.gif',
-        imageBtnClose: '/media/thirdparty/lightbox/images/lightbox-btn-close.gif',
-        imageBtnPrev: '/media/thirdparty/lightbox/images/lightbox-btn-prev.gif',
-        imageBtnNext: '/media/thirdparty/lightbox/images/lightbox-btn-next.gif',
-        imageBlank: '/media/thirdparty/lightbox/images/lightbox-blank.gif'
-    });
     resizeImage();
     $(window).resize(resizeImage);
 });
