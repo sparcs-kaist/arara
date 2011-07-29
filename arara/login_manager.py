@@ -176,7 +176,8 @@ class LoginManager(object):
         try:
             user_id  = self.session_dic[session_key]['id']
             username = self.session_dic[session_key]['username']
-            self.engine.member_manager._logout_process(user_id)
+            self.engine.member_manager.logout_process(user_id)
+            self.engine.read_status_manager.save_to_database(user_id)
             del self.session_dic[session_key]
             self.logger.info("User '%s' has LOGGED OUT" % username)
         except KeyError:

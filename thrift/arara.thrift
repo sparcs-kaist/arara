@@ -372,7 +372,7 @@ service ARAraThriftInterface {
     bool is_sysop(1:string session_key)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void _logout_process(1:i32 user_id)
+    void logout_process(1:i32 user_id)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void change_listing_mode(1:string session_key,

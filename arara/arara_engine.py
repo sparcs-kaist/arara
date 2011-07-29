@@ -64,7 +64,7 @@ class ARAraEngine(object):
             'search_user': self.member_manager.search_user,
             'send_id_recovery_email': self.member_manager.send_id_recovery_email,
             'is_sysop': self.member_manager.is_sysop,
-            '_logout_process': self.member_manager._logout_process,
+            'logout_process': self.member_manager.logout_process,
             'get_activated_users': self.member_manager.get_activated_users,
             'set_selected_boards': self.member_manager.set_selected_boards,
             'get_selected_boards': self.member_manager.get_selected_boards,
