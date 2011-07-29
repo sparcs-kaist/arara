@@ -90,42 +90,47 @@ class WeatherBot(object):
         self.board_name = BOT_SERVICE_SETTING['weather_board_name']
         self.refresh_period = BOT_SERVICE_SETTING['weather_refresh_period']
 
-        # Check 1. Board Initialization
-        while not (self.manager._init_board(self.board_name)):
-            pass
-
-        # Check 2. Manager Status Check
-        self.check_manager_status()
-
-        # Check를 모두 통과하면 이제 새로운 스레드를 시작한다
         thread.start_new_thread(self.process, tuple())
 
     def check_manager_status(self):
         '''
         Weather Bot에 필요한 각 Manager들이 제대로 작동하고 있는지 검사한다.
 
-        @rtype: void
+        @rtype: Boolean
         @return:
-            1. 로그인에 실패했을 경우: Invalid Operation
-            2. 보드 접근에 실패했을 경우: Invalid Operation
-            3. 검사에 성공했을 경우: void
+            잘 작동되고 있을 때는 True, 그렇지 않을 때는 logger 에 로그를 남기고 False
         '''
+        # Check 1. Board Initialization
+        if not (self.manager._init_board(self.board_name)):
+            return False
+
         try:
             # BOT_ACCOUNT_USERNAME, BOT_ACCOUNTPASSWORD의 설정이 잘못되었을 경우 문제가 발생한다
             session_key = self.engine.login_manager.login(BOT_ACCOUNT_USERNAME, BOT_ACCOUNT_PASSWORD, u'127.0.0.1')
         # TODO: 상황에 따라 다른 대처가 필요하다
         except:
-            raise InvalidOperation('Weather BOT cannot login with bot account')
+            logger = logging.getLogger('weather_refresh_bot')
+            logger.exception('Weather BOT cannot login with bot account')
+            return False
 
         try:
             # Board name 설정이 잘못된 경우 문제가 발생한다
             # weather용 board에 대한 article_list를 Test용 함수로 사용한다.
-            self.engine.article_manager.article_list(session_key, self.board_name, u'')
-            self.engine.login_manager.logout(session_key)
-        # TODO: 상황에 따라 다른 대처가 필요하다
+            self.engine.article_manager.article_list(session_key, self.board_name, u'', 1, 1, True)
         except:
+            logger = logging.getLogger('weather_refresh_bot')
+            logger.exception('Weather BOT cannot get article list from weather board')
+            return False
+
+        try:
             self.engine.login_manager.logout(session_key)
-            raise InvalidOperation('Weather BOT cannot get article list from weather board')
+        except:
+            logger = logging.getLogger('weather_refresh_bot')
+            logger.exception('Weather BOT cannot logout (...)')
+            return False
+
+        # 이상의 테스트를 모두 통과하면 문제없이 동작한다는 것.
+        return True
 
     def process(self):
         '''
@@ -134,6 +139,10 @@ class WeatherBot(object):
         @rtype: void
         @return: void
         '''
+        # Weather Bot 이 활동할 수 있는 상황이 될 때까지 기다린다
+        while not self.check_manager_status():
+            time.sleep(1)
+
         # TODO: 프로그램이 종료됨이 확실한 순간에는 스레드도 죽이도록 하자
         while self.write_weather_article():
             time.sleep(self.refresh_period)

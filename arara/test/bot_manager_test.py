@@ -74,6 +74,10 @@ class BotManagerTest(AraraTestBase):
         self.session_key_sysop = self.engine.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123.')
         self.session_key_mikkang = self._register_user(u'mikkang', u'seoul')
 
+        # Weather Bot 준비가 되었는지 확인
+        # 준비가 되지 않으면 이하의 테스트를 모두 시행할 수 없다
+        self.assertEqual(True, self.engine.bot_manager.weather_bot.check_manager_status())
+
     def testInit(self):
         # 각각의 Bot의 Instance들을 제대로 생성했는지 검사
         if not('weather' in BOT_SERVICE_LIST and self.engine.bot_manager.weather_bot):
