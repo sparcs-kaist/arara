@@ -251,7 +251,7 @@ class ArticleManager(object):
         '''
         전체 보드에서 투베를 가져오는 함수
 
-        @type  count: integer
+        @type  count: int
         @param count: Number of today's best articles to get
         @rtype: list<ttypes.Article>
         @return:
@@ -268,9 +268,9 @@ class ArticleManager(object):
 
         @type  board_name: string
         @param board_name: Board Name
-        @type  count: integer
+        @type  count: int
         @param count: Number of today's best articles to get
-        @rtype: list
+        @rtype: list<ttypes.Article>
         @return:
             1. 투베를 가져오는데 성공: Article list of Today's Best
             2. 투베를 가져오는데 실패:
@@ -286,9 +286,9 @@ class ArticleManager(object):
         '''
         전체 보드에서 윅베를 가져오는 함수
 
-        @type  count: integer
+        @type  count: int
         @param count: Number of weekly best articles to get
-        @rtype: list
+        @rtype: list<ttypes.Article>
         @return:
             1. 투베를 가져오는데 성공: Article list of Today's Best
             2. 투베를 가져오는데 실패:
@@ -304,9 +304,9 @@ class ArticleManager(object):
 
         @type  board_name: string
         @param board_name: Board Name
-        @type  count: integer
+        @type  count: int
         @param count: Number of weekly best articles to get
-        @rtype: list
+        @rtype: list<ttypes.Article>
         @return:
             1. 투베를 가져오는데 성공: Article list of Today's Best
             2. 투베를 가져오는데 실패:
@@ -321,7 +321,7 @@ class ArticleManager(object):
         '''
         전체 보드에서 하루동안 가장 많이 읽힌 글을 가져오는 함수
 
-        @type  count: integer
+        @type  count: int
         @param count: Number of today's most read articles to get
         @rtype: list<ttypes.Article>
         @return:
@@ -338,9 +338,9 @@ class ArticleManager(object):
 
         @type  board_name: string
         @param board_name: Board Name
-        @type  count: integer
+        @type  count: int
         @param count: Number of today's most read articles to get
-        @rtype: list
+        @rtype: list<ttypes.Article>
         @return:
             1. 투베를 가져오는데 성공: Article list of Today's Best
             2. 투베를 가져오는데 실패:
@@ -356,9 +356,9 @@ class ArticleManager(object):
         '''
         전체 보드에서 윅베를 가져오는 함수
 
-        @type  count: integer
+        @type  count: int
         @param count: Number of weekly most read articles to get
-        @rtype: list
+        @rtype: list<ttypes.Article>
         @return:
             1. 투베를 가져오는데 성공: Article list of Today's Best
             2. 투베를 가져오는데 실패:
@@ -374,9 +374,9 @@ class ArticleManager(object):
 
         @type  board_name: string
         @param board_name: Board Name
-        @type  count: integer
+        @type  count: int
         @param count: Number of weekly most read articles to get
-        @rtype: list
+        @rtype: list<ttypes.Article>
         @return:
             1. 투베를 가져오는데 성공: Article list of Today's Best
             2. 투베를 가져오는데 실패:
@@ -490,7 +490,7 @@ class ArticleManager(object):
         @param page: 글을 가져올 페이지의 번호
         @type  page_length: int
         @param page_length: 페이지당 글 갯수
-        @type  include_all_headings: boolean
+        @type  include_all_headings: bool
         @param include_all_headings: 모든 글머리의 글을 가져올지에 대한 여부
         @type  order_by: int - LIST_ORDER
         @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
@@ -624,7 +624,7 @@ class ArticleManager(object):
         @param page: 글을 가져올 페이지의 번호
         @type  page_length: int
         @param page_length: 페이지당 글 갯수
-        @type  include_all_headings: boolean
+        @type  include_all_headings: bool
         @param include_all_headings: 모든 글머리의 글을 가져올지에 대한 여부
         @type  order_by: int - LIST_ORDER
         @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
@@ -648,14 +648,14 @@ class ArticleManager(object):
         @type  session_key: string
         @param session_key: 사용자 Login Session
         @type  board_name: string
-        @param board_name : BBS Name (0글자 문자열을 넘기면 모든 게시판에 대하여 적용)
+        @param board_name: BBS Name (0글자 문자열을 넘기면 모든 게시판에 대하여 적용)
         @type  heading_name: string
         @param heading_name: 가져올 글의 글머리 이름
-        @type  page: integer
+        @type  page: int
         @param page: Page Number to Request
-        @type  page_length: integer
+        @type  page_length: int
         @param page_length: Count of Article on a Page
-        @type  include_all_headings: boolean
+        @type  include_all_headings: bool
         @param include_all_headings: 모든 글머리의 글을 가져올지에 대한 여부
         @rtype: list
         @return:
@@ -688,12 +688,12 @@ class ArticleManager(object):
     @log_method_call_important
     def read_article(self, session_key, board_name, no):
         '''
-        DB로부터 게시글 하나를 읽어옴
+        DB로부터 게시글 하나(Root 글일 경우 답글도 함께) 읽어옴
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
-        @type board_name: string
-        @param board_name : BBS Name
+        @type  board_name: string
+        @param board_name: 게시판 이름
         @type  no: int
         @param no: Article Number
         @rtype: list<ttypes.Article>
@@ -731,12 +731,10 @@ class ArticleManager(object):
         '''
         DB로부터 주어진 게시판의 최근의 게시글 하나만을 읽어옴
 
-        Article Dictionary { no, read_status, title, content, author, date, hit, vote }
-
         @type  session_key: string
         @param session_key: 사용자 Login Session
         @type  board_name: string
-        @param board_name : BBS Name
+        @param board_name: 게시판의 이름
         @rtype: list<ttypes.Article>
         @return:
             1. Read 성공: list<ttypes.Article>
@@ -816,7 +814,7 @@ class ArticleManager(object):
         @param heading_id: 목록에서 보여줄 선택된 말머리
         @type  no: int
         @param no: 글번호
-        @type  include_all_headings: boolean
+        @type  include_all_headings: bool
         @param include_all_headings: 모든 말머리를 보여줄 것인지의 여부
         @type  order_by: int - LIST_ORDER
         @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
@@ -860,7 +858,7 @@ class ArticleManager(object):
         @param no: 글번호
         @type  page_length: int
         @param page_length: 페이지당 글 갯수
-        @type  include_all_headings: boolean
+        @type  include_all_headings: bool
         @param include_all_headings: 모든 말머리를 보여줄 것인지의 여부
         @type  order_by: int - LIST_ORDER
         @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
@@ -906,7 +904,7 @@ class ArticleManager(object):
         @param no: Article No
         @type  page_length: int
         @param page_length: Number of articles to be displayed on a page
-        @type  include_all_headings: boolean
+        @type  include_all_headings: bool
         @param include_all_headings: 모든 글머리의 글을 가져올지에 대한 여부
         @rtype: ttypes.ArticleList
         @return:
@@ -974,10 +972,10 @@ class ArticleManager(object):
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
-        @type  article_dic: dict(WrittenArticle)
-        @param article_dic: Article Dictionary
         @type  board_name: string
         @param board_name: BBS Name
+        @type  article_dic: ttypes.WrittenArticle
+        @param article_dic: Article Dictionary
         @rtype: int
         @return:
             1. Write 성공: Article Number
@@ -1032,7 +1030,7 @@ class ArticleManager(object):
         @param board_name: BBS Name
         @type  article_no: int
         @param article_no: Article No in which the reply will be added
-        @type  reply_dic: dict
+        @type  reply_dic: ttypes.WrittenArticle
         @param reply_dic: Reply Dictionary
         @rtype: string
         @return:
@@ -1096,11 +1094,11 @@ class ArticleManager(object):
         @type  session_key: string
         @param session_key: 사용자 Login Session
         @type  board_name: string
-        @param board_name : BBS Name
+        @param board_name: 게시판 이름
         @type  no: int
         @param no: Article Number
-        @type  article_dic : dictionary
-        @param article_dic : Article Dictionary
+        @type  article_dic: ttypes.WrittenArticle
+        @param article_dic: Article Dictionary
         @rtype: string
         @return:
             1. Modify 성공: Article Number
@@ -1323,7 +1321,7 @@ class ArticleManager(object):
         @param board_name: BBS Name
         @type  no: int
         @param no: Article Number
-        @rtype: boolean 
+        @rtype: bool
         @return:
             1. Delete 성공: True
             2. Delete 실패:
@@ -1399,12 +1397,12 @@ class ArticleManager(object):
         @type  session_key: string
         @param session_key: 사용자 Login Session
         @type  board_name: string
-        @param board_name : BBS Name
-        @type  no: number
+        @param board_name: BBS Name
+        @type  no: int
         @param no: Article Number
-        @rtype: boolean 
+        @rtype: void
         @return:
-            1. Delete 성공: True
+            1. Delete 성공: void
             2. Delete 실패:
                 1. 존재하지 않는 게시물번호: InvalidOperation Exception
                 2. 존재하지 않는 게시판: InvalidOperation Exception
@@ -1423,7 +1421,6 @@ class ArticleManager(object):
             self._destroy_article(board_id, no)
         else:
             raise InvalidOperation("NO_PERMISSION")
-        return True
 
     @require_login
     @log_method_call_important
@@ -1439,9 +1436,9 @@ class ArticleManager(object):
         @param original_heading_name: 원래 말머리 이름
         @type  new_heading_name: string
         @param new_heading_name: 새 말머리 이름
-        @rtype: None
+        @rtype: void
         @return:
-            1. 성공: None
+            1. 성공: void
             2. 실패
                 1. 로그인되지 않은 유저 : NotLoggedIn()
                 2. 시삽이 아닌 경우 : InvalidOperation('no permission')
@@ -1551,12 +1548,12 @@ class ArticleManager(object):
         @type  session_key: string
         @param session_key: 사용자 Login Session (시삽이어야 함)
         @type  board_name: string
-        @param board_name : BBS Name
-        @type  no: number
+        @param board_name: BBS Name
+        @type  no: int
         @param no: Article Number
-        @rtype: boolean 
+        @rtype: void
         @return:
-            1. Fix 성공: True
+            1. Fix 성공: void
             2. Fix 실패:
                 1. 존재하지 않는 게시물번호: InvalidOperation Exception
                 2. 존재하지 않는 게시판: InvalidOperation Exception
@@ -1572,10 +1569,9 @@ class ArticleManager(object):
         # 시삽만 이 작업을 할 수 있다.
         if user.is_sysop:
             board_id = self.engine.board_manager.get_board_id(board_name)
-            return self._fix_article_concurrency(board_id, no)
+            self._fix_article_concurrency(board_id, no)
         else:
             session.close()
             raise InvalidOperation("NO_PERMISSION")
-        return True
 
 # vim: set et ts=8 sw=4 sts=4

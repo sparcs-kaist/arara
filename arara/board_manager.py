@@ -223,9 +223,9 @@ class BoardManager(object):
         @param to_read_level: 게시판 글을 읽기위해 필요한 authentication_mode 레벨 (초기값: 3 포탈인증자 읽기 가능)
         @type  to_write_level: int
         @param to_write_level: 게시판 글을 쓰기위해 필요한 authenticatino_mode 레벨 (초기값: 3 포탈인증자 쓰기 가능)
-        @rtype: boolean, string 
+        @rtype: void
         @return:
-            1. 성공: None
+            1. 성공: void
             2. 실패:
                 1. 로그인되지 않은 유저: 'NOT_LOGGEDIN'
                 2. 시샵이 아닌 경우: 'no permission'
@@ -580,8 +580,8 @@ class BoardManager(object):
 
         @type  board_name: string
         @param board_name: type을 돌려줄 board의 이름
-        @rtype : integer
-        @return: type을 나타내는 integer
+        @rtype : int
+        @return: type을 나타내는 int
         '''
 
         return self._get_board(board_name).type
@@ -973,7 +973,7 @@ class BoardManager(object):
         @type  session_key: string
         @param session_key: 시삽의 session key
         @type  board_name: string
-        @param board_name: 선택된 게시판
+        @param board_name: 선택된 게시판의 이름
         @type  read_level: int (1~3)
         @param read_level: 새로 설정된 읽기 권한
         @type  write_level: int (1~3)
@@ -1006,6 +1006,8 @@ class BoardManager(object):
         @param board_name: 설명을 수정하고자 하는 Board Name
         @type  new_name: string
         @param new_name: 보드에게 할당할 새 이름 (미변경시 '')
+        @type  new_alias: string
+        @param new_alias: 보드에게 할당할 새 Alias (미변경시 '')
         @type  new_description: string
         @param new_description: 보드에게 할당할 새 설명 (미변경시 '')
         @type  new_category_name: string
@@ -1014,9 +1016,9 @@ class BoardManager(object):
         @return:
             1. 성공: 아무것도 리턴하지 않음
             2. 실패:
-                1. 로그인되지 않은 유저: 'NOT_LOGGEDIN'
-                2. 시샵이 아닌 경우: 'no permission'
-                3. 존재하지 않는 게시판: 'board does not exist'
+                1. 로그인되지 않은 유저: NotLoggedIn
+                2. 시샵이 아닌 경우: InvalidOperation('no permission')
+                3. 존재하지 않는 게시판: InvalidOperation('board does not exist')
                 4. 기타 오류 : 주석 추가해 주세요
         '''
         # XXX (2010.12.05)
@@ -1070,9 +1072,9 @@ class BoardManager(object):
         @return:
             1. 성공: 아무것도 리턴하지 않음
             2. 실패:
-                1. 로그인되지 않은 유저: 'NOT_LOGGEDIN'
-                2. 시샵이 아닌 경우: 'no permission'
-                3. 존재하지 않는 게시판: 'board does not exist'
+                1. 로그인되지 않은 유저: NotLoggedIn
+                2. 시샵이 아닌 경우: InvalidOperation('no permission')
+                3. 존재하지 않는 게시판: InvalidOperation('board does not exist')
                 4. 기타 오류 : 주석 추가해 주세요
         '''
         self.edit_board(session_key, board_name, u"", u"", u"", new_category_name)
@@ -1131,18 +1133,18 @@ class BoardManager(object):
         숨겨진 보드를 다시 보여주는 함수
 
         @type  session_key: string
-        @param session_key: User Key
+        @param session_key: 사용자 Login Session (SYSOP)
         @type  board_name: string
         @param board_name: Board Name
         @rtype: void
         @return:
             1. 성공: void
             2. 실패:
-                1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                2. 시샵이 아닌 경우: False, 'no permission'
-                3. 존재하지 않는 게시판: False, 'board does not exist'
-                4. 숨겨져 있는 보드가 아닌 경우: False, 'not hidden board'
-                5. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 로그인되지 않은 유저: NotLoggedIn
+                2. 시샵이 아닌 경우: InvalidOperation('no permission')
+                3. 존재하지 않는 게시판: InvalidOperation('board does not exist')
+                4. 숨겨져 있는 보드가 아닌 경우: InvalidOperation('not hidden board')
+                5. 데이터베이스 오류: InternelError('DATABASE_ERROR')
         '''
         self._is_sysop(session_key)
         session = model.Session()
@@ -1257,7 +1259,7 @@ class BoardManager(object):
         '''
         시삽이 각 게시판의 관리자(들) 등록.(한 관리자가 여러 게시판 관리도 가능)
         @type   session_key: string
-        @param  session_key: User Key (SYSOP)
+        @param  session_key: 사용자 Login Session (SYSOP)
         @type   board_name: string
         @param  board_name: 관리자를 지정할 보드
         @type   username: string

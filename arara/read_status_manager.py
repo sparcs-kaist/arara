@@ -189,7 +189,7 @@ class ReadStatusManager(object):
 
         @type  user_id: int
         @param user_id: 사용자 고유 id
-        @type  no: integer
+        @type  no: int
         @param no: Article Number
         @rtype: string
         @return:
@@ -215,8 +215,8 @@ class ReadStatusManager(object):
         'R'
 
         @type  session_key: string
-        @param session_key: User Key
-        @type  no: integer
+        @param session_key: 사용자 Login Session
+        @type  no: int
         @param no: Article Number
         @rtype: string
         @return:
@@ -243,15 +243,15 @@ class ReadStatusManager(object):
         True, ['N', 'N', 'R', 'R', 'V', 'R']
 
         @type  session_key: string
-        @param session_key: User Key
-        @type  no_list: list
+        @param session_key: 사용자 Login Session
+        @type  no_list: list<int>
         @param no_list: Article Numbers
-        @rtype: list
+        @rtype: list<string>
         @return:
-            1. 읽은글 여부 체크 성공: True, read_stat_list
+            1. 읽은글 여부 체크 성공: read_stat_list
             2. 읽은글 여부 체크 실패:
-                1. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                2. 데이터베이스 오류: False, 'DATABASE_ERROR'
+                1. 로그인되지 않은 유저: NotLoggedIn
+                2. 데이터베이스 오류: InternalError('DATABASE_ERROR')
         '''
         user_id = self.engine.login_manager.get_user_id(session_key)
         ret, _ = self._initialize_data(user_id)
@@ -308,8 +308,8 @@ class ReadStatusManager(object):
 
         @type  user_id: int
         @param user_id: 사용자 고유 id
-        @type  no : integer
-        @param no : Article Number
+        @type  no: int
+        @param no: Article Number
         @return:
             1. 등록 성공: void
             2. 등록 실패:
@@ -349,9 +349,9 @@ class ReadStatusManager(object):
         존재하지 않는 글번호를 입력하지 않도록 주의.
 
         @type  session_key: string
-        @param session_key: User Key
-        @type  no : integer
-        @param no : Article Number
+        @param session_key: 사용자 Login Session
+        @type  no: int
+        @param no: Article Number
         @rtype: string
         @return:
             1. 등록 성공: True, 'OK'

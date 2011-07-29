@@ -133,8 +133,8 @@ class FileManager(object):
         
         @type  article_id: int
         @param article_id: Article Number 
-        @type  filename: string
-        @param filename: File Name
+        @type  file_id: int
+        @param file_id: 다운로드하려는 파일의 번호
         @rtype: ttypes.DownloadFileInfo
         @return:
             1. 경로 찾기 성공: {'file_path': blah, 'saved_filename': blah, 'real_filename': blah}
@@ -164,9 +164,9 @@ class FileManager(object):
         @param session_key: 사용자 Login Session
         @type  article_id: int
         @param article_id: Article Number 
-        @type  filename: string
-        @param filename: File Name
-        @rtype: FileInfo
+        @type  file_id: int
+        @param file_id: File 번호
+        @rtype: ttypes.FileInfo
         @return:
             1. 성공: {'file_path': 'blah/blah', 'saved_filename': 'blah'}
             2. 실패:

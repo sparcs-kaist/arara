@@ -92,7 +92,7 @@ class User(object):
     def compare_password(self, password):
         '''
         @type password: string
-        @rtype: boolean
+        @rtype: bool
         '''
         hash_from_user = self.encrypt_password(password, self.password)
         hash_from_db = self.password
@@ -272,8 +272,8 @@ class Blacklist(object):
         '''
         @type user: model.User
         @type target_user: model.User
-        @type block_article: boolean
-        @type block_message: boolean
+        @type block_article: bool
+        @type block_message: bool
         '''
         self.user = user 
         self.target_user = target_user

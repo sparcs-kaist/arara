@@ -68,9 +68,9 @@ class BlacklistManager(object):
         @param session_key: 사용자 Login Session
         @type  username: string
         @param username: 차단하고자 하는 사용자의 username
-        @type  block_article: boolean
+        @type  block_article: bool
         @param block_article: 해당 사용자의 글을 읽지 않을 것인지의 여부
-        @type  block_message: boolean
+        @type  block_message: bool
         @param block_message: 해당 사용자의 메시지를 받지 않을 것인지의 여부
         @rtype: void
         @return:
@@ -150,7 +150,7 @@ class BlacklistManager(object):
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
-        @type  blacklist_info: dict(BLACKLIST_DICT)
+        @type  blacklist_info: ttypes.BlacklistRequest
         @param blacklist_info: 수정하고자 하는 블랙리스트 정보
         @rtype: void
         @return:
@@ -188,9 +188,9 @@ class BlacklistManager(object):
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
-        @rtype: list<BlacklistInformation>
+        @rtype: list<ttypes.BlacklistInformation>
         @return:
-            1. 성공: Blacklist Dictionary List
+            1. 성공: BlacklistInformation 의 List
             2. 실패:
                 1. 로그인되지 않은 사용자:InvalidOperation 'NOT_LOGGEDIN'
                 2. 데이터베이스 오류: InternalError 'DATABASE_ERROR'

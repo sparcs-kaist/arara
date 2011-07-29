@@ -104,7 +104,7 @@ class MessagingManager(object):
         @param session_key: 사용자 Login Session
         @type  page: int
         @param page: Page Number
-        @type  page_length: integer
+        @type  page_length: int
         @param page_length: Number of Messages to get in one page
         @rtype: ttypes.MessageList
         @return:
@@ -154,7 +154,7 @@ class MessagingManager(object):
         @param session_key: 사용자 Login Session
         @type  page: int
         @param page: Page Number
-        @type  page_length: integer
+        @type  page_length: int
         @param page_length: Number of Messages to get in one page
         @rtype: ttypes.MessageList
         @return:
@@ -351,7 +351,7 @@ class MessagingManager(object):
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
-        @type  msg_no: integer
+        @type  msg_no: int
         @param msg_no: Message Number
         @rtype: ttypes.Message
         @return:
@@ -385,7 +385,7 @@ class MessagingManager(object):
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
-        @type  msg_no: integer
+        @type  msg_no: int
         @param msg_no: Message Number
         @rtype: dictionary
         @return:
@@ -419,7 +419,7 @@ class MessagingManager(object):
 
         @type  session_key: string
         @param session_key: 사용자 Login Sesion
-        @type  msg_no: integer
+        @type  msg_no: int
         @param msg_no: Message Number
         @rtype: void
         @return:
@@ -461,7 +461,7 @@ class MessagingManager(object):
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
-        @type  msg_no: integer
+        @type  msg_no: int
         @param msg_no: Message Number
         @rtype: void
         @return:

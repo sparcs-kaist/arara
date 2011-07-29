@@ -129,7 +129,7 @@ class LoginManager(object):
     def login(self, username, password, user_ip):
         '''
         로그인 처리를 담당하는 함수.
-        아이디와 패스워드를 받은 뒤 User Key를 리턴.
+        아이디와 패스워드를 받은 뒤 사용자 Login Session를 리턴.
 
         @type  username: string
         @param username: User Username
@@ -202,7 +202,7 @@ class LoginManager(object):
         @param session_key: 사용자 Login Session
         @type  action: string
         @param action: 사용자가 취하고 있는 동작
-        @rtype: boolean
+        @rtype: bool
         @return: 사용자가 로그인 중이면 True, 아니면 False
         '''
         # TODO: 이 함수를 누가 호출하는지 보고, 왜 T/F 가 필요한지 확인하기
@@ -269,7 +269,7 @@ class LoginManager(object):
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
-        @rtype: boolean
+        @rtype: bool
         @return:
             사용자가 로그인중이면 True, 아니면 False
         '''
@@ -384,7 +384,7 @@ class LoginManager(object):
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
-        @rtype: boolean
+        @rtype: bool
         @return: session_key 의 사용자가 로그인 해 있는지 여부
         '''
         # TODO: is_logged_in 의 결과에 따라 Exception 을 Raise 하는 check_logged_in 을 만들까?

@@ -172,8 +172,8 @@ class NoticeManager(object):
         InvalidOperation
         
         @type  session_key: string
-        @param session_key: User Key
-        @type  notice_reg_dic: dictionary
+        @param session_key: 사용자 Login Session
+        @type  notice_reg_dic: ttypes.WrittenNotice 
         @param notice_reg_dic: Notice Dictionary
         @rtype: int
         @return:
@@ -220,7 +220,7 @@ class NoticeManager(object):
         InvalidOperation
         
         @type  session_key: string
-        @param session_key: User Key
+        @param session_key: 사용자 Login Session
         @type  notice_reg_dic: dictionary
         @param notice_reg_dic: Notice Dictionary
         @rtype: void
@@ -262,10 +262,10 @@ class NoticeManager(object):
         배너의 valid 필드만 바꿔주는 함수
        
         @type  session_key: string
-        @param session_key: User Key
+        @param session_key: 사용자 Login Session
         @type  id: int
         @param id: 바꾸고자 하는 banner 의 id
-        @type  valid: boolean
+        @type  valid: bool
         @param valid: 설정하고자 하는 해당 banner 의 validity
         @rtype: void
         @return:
@@ -310,6 +310,10 @@ class NoticeManager(object):
             ...
         InvalidOperation
 
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        @type  id: i32
+        @param id: 제거하고자 하는 banner 의 id
         @rtype: void
         @return:
             1. 배너 제거에 성공하였을 때: void
@@ -351,11 +355,15 @@ class NoticeManager(object):
             ...
         InvalidOperation
 
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        @type  id: i32
+        @param id: 제거하고자 하는 banner 의 id
         @rtype: void
         @return:
             1. welcome 제거에 성공하였을 때: void
             2. welcome 제거에 실패하였을 때:
-                1. 시삽이 아닐 때: False, 'NOT_SYSOP'
+                1. 시삽이 아닐 때: InvalidOperation('not sysop')
                 2. 존재하지 않는 welcome번호일 때: InvalidOperation Exception
                 3. 데이터베이스 오류: InternalError Exception
         '''

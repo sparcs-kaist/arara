@@ -310,7 +310,7 @@ service ARAraThriftInterface {
                                     3:string user_ip)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void register_(1:UserRegistration user_reg)
+    void register_(1:UserRegistration user_reg_info)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void backdoor_confirm(1:string session_key, 2:string username)
@@ -372,7 +372,7 @@ service ARAraThriftInterface {
     bool is_sysop(1:string session_key)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void _logout_process(1:string username)
+    void _logout_process(1:i32 user_id)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void change_listing_mode(1:string session_key,
@@ -383,7 +383,7 @@ service ARAraThriftInterface {
                                         2:i32 limit=-1)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void set_selected_boards(1:string session_key, 2: list<i32> boards_id)
+    void set_selected_boards(1:string session_key, 2: list<i32> board_ids)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     list<Board> get_selected_boards(1:string session_key)
@@ -465,11 +465,11 @@ service ARAraThriftInterface {
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void add_bbs_manager(1:string session_key, 2:string board_name,
-                         3:string user_name)
+                         3:string username)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void remove_bbs_manager(1:string session_key, 2:string board_name,
-                         3:string user_name)
+                         3:string username)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     list<PublicUserInformation> get_bbs_managers(1:string board_name)
@@ -522,12 +522,6 @@ service ARAraThriftInterface {
     list<Article> get_weekly_most_list_specific(1:string board_name, 2:i32 count=5)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-
-    ArticleList not_article_list(1:string session_key,
-                                 2:i32 page=1,
-                                 3:i32 page_length=20)
-        throws (1:InvalidOperation invalid,
-                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     ArticleList article_list(1:string session_key,
                              2:string board_name,
                              3:string heading_name,
@@ -574,7 +568,7 @@ service ARAraThriftInterface {
                      3:id_t no, 4:string board_to_move)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void delete_article(1:string session_key,
+    bool delete_article(1:string session_key,
                         2:string board_name,
                         3:id_t no)
         throws (1:InvalidOperation invalid,
@@ -686,8 +680,8 @@ service ARAraThriftInterface {
     list<Notice> list_welcome(1:string session_key)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void add_banner(1:string session_key,
-                    2:WrittenNotice notice_reg_dic)
+    i32 add_banner(1:string session_key,
+                   2:WrittenNotice notice_reg_dic)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void add_welcome(1:string session_key,

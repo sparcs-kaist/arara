@@ -73,6 +73,10 @@ class SearchManager(object):
         return board
 
     def register_article(self):
+        '''
+        현재 정상적으로 작동하지 않는다. 사용하지 말 것
+        '''
+        raise InternalError("Deprecated")
         sess = self.engine.login_manager.login('SYSOP', 'SYSOP', '234.234.234.234')
         #XXX SYSOP LOGIN MUST BE IMPLEMENTED HERE 
         board_list = self.engine.board_manager.get_board_list()
@@ -106,12 +110,13 @@ class SearchManager(object):
     def ksearch(self, query_text, page=1, page_length=20):
         '''
         K-Search를 이용한 게시물 검색
+        현재는 Deprecate 되어 있다 (작동하지 않음)
 
         @type  query_text: string
         @param query_text: Text to Query
-        @type  page: integer
+        @type  page: int
         @param page: Page Number
-        @type  page_length: integer
+        @type  page_length: int
         @param page_length: Count of Articles on a page
         '''
         raise InternalError('Please Re-Implement this Method!')
@@ -369,22 +374,22 @@ class SearchManager(object):
         **date는 현재 구현되지 않았음. 값을 넘겨도 무시됨 (2008.08.25 00:09)
 
         @type  session_key: string
-        @param session_key: User Key
-        @type  all_flag: boolean
+        @param session_key: 사용자 Login Session
+        @type  all_flag: bool
         @param all_flag: Search all or not
         @type  board_name: string
         @param board_name: BBS Name
         @type  heading_name: string
         @param heading_name: 검색하고자 하는 말머리 한정 (board_name 주어졌을 때)
-        @type  query_dict: dictionary
+        @type  query_dict: ttypes.SearchQuery
         @param query_dict: Search Dictionary
-        @type  page: integer
+        @type  page: int
         @param page: Page Number to Request
-        @type  page_length: integer
+        @type  page_length: int
         @param page_length: Count of Article on a page
-        @type  include_all_headings: boolean
+        @type  include_all_headings: bool
         @param include_all_headings: 모든 말머리를 대상으로 하는 검색인지 여부 (board_name 주어졌을 때)
-        @rtype: dictionary
+        @rtype: ttypes.ArticleSearchResult
         @return:
             1. 검색성공: Search Result Dictionary ('hit': '검색결과', 'results': '결과 수', 'search_time': '검색 소요 시간', 'last_page': '마지막 페이지 번호')
             2. 검색 실패:

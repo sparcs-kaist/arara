@@ -74,7 +74,7 @@ class MemberManager(object):
 
         @type  user_reg_dic: dict('username', 'password', 'nickname', 'email', 'signature', 'self_introduction', 'default_language', 'campus')
         @param user_reg_dic: User Information
-        @type  is_sysop: boolean
+        @type  is_sysop: bool
         @param is_sysop: 유저가 시삽권한을 가질지를 결정
         @rtype: void
         @return:
@@ -915,8 +915,8 @@ class MemberManager(object):
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
-        @type  search_user_info: string
-        @param search_user_info: User Info(username or nickname)
+        @type  search_user: string
+        @param search_user: User Info(username or nickname)
         @type  search_key: string
         @param search_key: Search key
         @rtype: list<ttypes.SearchUserResult>
@@ -1045,7 +1045,7 @@ class MemberManager(object):
 
         @type session_key: string
         @param session_key: 사용자 Login Session
-        @rtype: integer
+        @rtype: int
         @return:
             1. 비회원 : 0
             2. 메일인증(non @kaist) : 1
