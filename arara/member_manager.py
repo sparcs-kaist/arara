@@ -11,6 +11,7 @@ from sqlalchemy import or_, not_, and_
 
 from arara_thrift.ttypes import *
 from arara import model
+from arara import ara_memcached
 from arara.util import require_login, filter_dict, is_keys_in_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important, log_method_call_with_source_duration
 from arara.util import smart_unicode, datetime2timestamp, send_mail
@@ -66,9 +67,6 @@ class MemberManager(object):
 
         if etc.arara_settings.BOT_ENABLED:
             self._register_bot()
-
-        # Listing mode 를 빠르게 로드하기 위하여
-        self._listing_mode = {}
 
     def _register_without_confirm(self, user_reg_dic, is_sysop):
         '''
@@ -750,7 +748,7 @@ class MemberManager(object):
         session.close()
 
         # Member Manager Cache
-        self._listing_mode[session_info.id] = user_modification.listing_mode
+        ara_memcached.clear_memcached(self._get_listing_mode, session_info.id)
 
     # @require_login
     @log_method_call_important
@@ -1085,7 +1083,28 @@ class MemberManager(object):
             raise InvalidOperation('database error')
 
         # Cache update
-        self._listing_mode[user_id] = listing_mode
+        ara_memcached.clear_memcached(self._get_listing_mode, user_id)
+
+    @ara_memcached.memcached_decorator
+    def _get_listing_mode(self, user_id):
+        '''
+        사용자의 listing_mode (글 목록 정렬 방식) 을 돌려준다.
+        user_id 를 직접 사용하므로 내부 사용 전용.
+
+        @type  user_id: int
+        @param user_id: 사용자 고유 id
+        @rtype: int
+        @return: 해당 사용자의 글 목록 정렬 방식
+        '''
+        session = model.Session()
+        try:
+            user = self._get_user_by_id(session, user_id)
+            result = user.listing_mode
+            session.close()
+            return result
+        except InvalidRequestError:
+            session.close()
+            raise InvalidOperation('uesr does not exist')
 
     def get_listing_mode(self, session_key):
         '''
@@ -1097,24 +1116,10 @@ class MemberManager(object):
         @rtype: int
         @return: 해당 사용자의 글 목록 정렬 방식
         '''
-        if session_key == '': # 로그인되지 않을 경우
+        if session_key == '': # 로그인되지 않은 경우
             return 0
 
-        user_id = self.engine.login_manager.get_user_id(session_key)
-        if self._listing_mode.has_key(user_id): # 캐시에 있는 경우
-            return self._listing_mode[user_id]
-        else: # 캐시에 없는 경우
-            session = model.Session()
-            try:
-                user = self._get_user_by_id(session, user_id)
-                result = user.listing_mode
-                session.close()
-                self._listing_mode[user_id] = result
-                return result
-            except NotLoggedIn:
-                # 프론트엔드에서는 로그인되어있다고 생각하는데
-                # 실제로는 로그인되어있지 않은 사용자가 이 경우에 해당된다
-                return 0
+        return self._get_listing_mode(self.engine.login_manager.get_user_id(session_key))
 
     def get_activated_users(self, session_key, limit = -1):
         '''

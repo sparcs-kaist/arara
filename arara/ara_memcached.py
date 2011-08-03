@@ -57,7 +57,7 @@ def memcached_decorator(function):
                 result = function(self, *args)
                 MEMCACHED_CLIENT.set(key, result)
         else:
-            result = function(self)
+            result = function(self, *args)
 
         return result
 
