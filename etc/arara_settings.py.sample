@@ -61,6 +61,11 @@ ARARA_DEBUG_LOG_PATH = 'arara_server_debug.log'
 # Number of Threads to use
 ARARA_NUM_THREADS = 20
 
+# Memcache
+USE_MEMCACHED = False
+MEMCACHED_SERVER_LIST = [ '127.0.0.1:11211' ]
+MEMCACHED_PREFIX = ''
+
 # K-Search Server Setting
 KSEARCH_API_SERVER_ADDRESS = 'http://nan.sparcs.org:9000/api'
 KSEARCH_API_KEY = '54ebf56de7684dba0d69bffc9702e1b4'
