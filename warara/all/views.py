@@ -120,5 +120,34 @@ def search(request):
     return HttpResponse(rendered)
 
 @warara.wrap_error
+def rss(request):
+    '''
+    모든 게시판에 대한 RSS 파일을 제공한다.
+
+    @type  request: Django Request
+    @param request: Request
+    '''
+
+    from django.utils import feedgenerator
+
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+
+    feed = feedgenerator.Atom1Feed(title = u'ARA', link = u'/all/rss/', description = u'A RSS of all articles in ARA')
+    
+    page_no = 1
+    page_length = 20
+    article_list = server.article_manager.article_list(sess, u"", u"", page_no, page_length, True).hit
+
+    for article in article_list:
+        feed.add_item(title='[%s]%s' % (article.board_name, article.title),
+            link=u'/all/%d/' % article.id,
+            author_name=article.author_nickname,
+            pubdate=datetime.datetime.fromtimestamp(article.date),
+            description=u'author : %s date : %s' % (article.author_nickname, datetime.datetime.fromtimestamp(article.date)))
+
+    return HttpResponse(feed.writeString('utf-8'), mimetype=feedgenerator.Atom1Feed.mime_type)
+
+@warara.wrap_error
 def file_download(request, article_root_id, article_id, file_id):
     return warara.board.views.file_download(request, u'', article_root_id, article_id, file_id)

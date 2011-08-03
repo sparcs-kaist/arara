@@ -2,6 +2,7 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
     (r'^$', 'warara.all.views.list'),
+    (r'^rss/$', 'warara.all.views.rss'),
     (r'^([\d]+)/$', 'warara.all.views.read'),
     (r'^([\d]+)/reply/$', 'warara.all.views.reply'),
     (r'^([\d]+)/(\d+)/vote/$', 'warara.all.views.vote'),

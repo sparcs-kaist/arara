@@ -681,7 +681,7 @@ def rss(request, board_name):
 
     for article in article_list:
         if article.heading:
-            article_title = u'[%s]%s' % (article.heading, article.title)
+            article_title = u'[%s] %s' % (article.heading, article.title)
         else:
             article_title = u'%s' % article.title
         feed.add_item(title=article_title,
