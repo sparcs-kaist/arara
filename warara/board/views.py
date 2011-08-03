@@ -657,6 +657,41 @@ def file_download(request, board_name, article_root_id, article_id, file_id):
     response['Content-Disposition'] = "attachment; filename=" + unicode(file.real_filename).encode('cp949', 'replace')
     return response
 
+@warara.wrap_error
+def rss(request, board_name):
+    '''
+    주어진 게시판에 대한 RSS 파일을 제공한다.
+
+    @type  request: Django Request
+    @param request: Request
+    @type  board_name: string
+    @param board_name: 검색하려는 글이 있는 board name
+    '''
+
+    from django.utils import feedgenerator
+
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+
+    feed = feedgenerator.Atom1Feed(title = u'ARA/%s' % board_name, link = u'/board/%s/rss/' % board_name, description = u'A RSS of all articles in %s board' % board_name)
+    
+    page_no = 1
+    page_length = 20
+    article_list = server.article_manager.article_list(sess, board_name, None, page_no, page_length, True).hit
+
+    for article in article_list:
+        if article.heading:
+            article_title = u'[%s]%s' % (article.heading, article.title)
+        else:
+            article_title = u'%s' % article.title
+        feed.add_item(title=article_title,
+            link=u'/board/%s/%d/' % (board_name, article.id),
+            author_name=article.author_nickname,
+            pubdate=datetime.datetime.fromtimestamp(article.date),
+            description=u'author : %s date : %s' % (article.author_nickname, datetime.datetime.fromtimestamp(article.date)))
+
+    return HttpResponse(feed.writeString('utf-8'), mimetype=feedgenerator.Atom1Feed.mime_type)
+
 # Using Django's default HTML handling util, escape all tags and urlize
 # 동시에 <a> tag 를 target="_blank" 로 설정되도록 regex 를 써서 바꿔버린다.
 # TODO: 더 나은 방법이 있다면 (CSS 에 a tag 에 속성 먹이기가 더 예쁘지 않을까...전체를 div class 로 감싸서)
