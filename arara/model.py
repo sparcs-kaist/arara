@@ -9,6 +9,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import backref, relationship
 from sqlalchemy.orm.session import sessionmaker
+from sqlalchemy.pool import NullPool
 from sqlalchemy.schema import Column, ForeignKey, Index
 from sqlalchemy.types import Boolean, DateTime, Integer, LargeBinary, PickleType, Text, Unicode, UnicodeText
 
@@ -718,7 +719,8 @@ def get_engine():
         CONNECTION_STRING = 'sqlite:///%s' % arara_settings.SQLITE_PATH
         SQLALCHEMY_KWARGS = {'encoding': 'utf-8',
                              'convert_unicode': True,
-                             'assert_unicode': None}
+                             'assert_unicode': None,
+                             'poolclass': NullPool}
     elif arara_settings.ARARA_DBTYPE == 'other':
         CONNECTION_STRING = arara_settings.DB_CONNECTION_STRING
         SQLALCHEMY_KWARGS = {'encoding': 'utf-8',
