@@ -3,6 +3,8 @@ all:
 	thrift -v -gen py middleware/arara_interface.thrift
 clean:
 	rm -f `find * -name *.pyc`
+test_warara:
+	PYTHONPATH=.:gen-py warara/manage.py test
 pep8:
 	tools/run_pep8.sh `hg st | egrep "^[MA].+.py$$" | awk '{print $$2}'`
 pyflakes:
