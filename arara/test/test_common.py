@@ -38,11 +38,39 @@ class SMTPMockup(object):
             print msg
             print "======================================"
 
+
+# Mockup Object for time.time()
+class StubTime(object):
+    def __init__(self, initial_time=31536000.1):
+        '''
+        @type  initial_time: float
+        @param initial_time: 시간 초기값 (31536000.1)
+        '''
+        self.current_time = initial_time
+
+    def __call__(self):
+        '''
+        time.time() 대신 호출된다.
+
+        @rtype:  float
+        @return: 현재 시각으로 지정된 값
+        '''
+        return self.current_time
+
+    def elapse(self, interval=1.0):
+        '''
+        @type  interval: float
+        @param interval: time.time() 에서 돌려줄 시간의 증분량 (1.0)
+        '''
+        self.current_time += interval
+
+
 # Common Test Sets for all tests
 class AraraTestBase(unittest.TestCase):
-    def setUp(self, use_bot = False, mock_mail = True):
+    def setUp(self, use_bot = False, mock_mail = True, stub_time=False, stub_time_initial=0.0):
         self.use_bot = use_bot
         self.mock_mail = mock_mail
+        self.stub_time = stub_time
 
         # Overwrite Bot-related configuration
         self.org_BOT_ENABLED = etc.arara_settings.BOT_ENABLED
@@ -57,6 +85,11 @@ class AraraTestBase(unittest.TestCase):
         if etc.arara_settings.USE_MEMCACHED:
             self.org_MEMCACHED_PREFIX = etc.arara_settings.MEMCACHED_PREFIX
             etc.arara_settings.MEMCACHED_PREFIX = str(int(time.time()) % 10000)
+
+        # Overwrite time.time
+        if stub_time:
+            self.org_time = time.time
+            time.time = StubTime(stub_time_initial)
 
         # Set Logger
         logging.basicConfig(level=logging.ERROR)
@@ -79,6 +112,10 @@ class AraraTestBase(unittest.TestCase):
         # Memcache Prefix Rollback
         if etc.arara_settings.USE_MEMCACHED:
             etc.arara_settings.MEMCACHED_PREFIX = self.org_MEMCACHED_PREFIX
+
+        # time.time rollback
+        if self.stub_time:
+            time.time = self.org_time
 
     @classmethod
     def get_user_reg_dic(cls, username, default_user_reg_dic=None):
