@@ -2,12 +2,7 @@
 all:
 	thrift -v -gen py thrift/arara.thrift
 clean:
-	rm -f -r gen-*/
-	rm -f *.pyc
-	rm -f */*.pyc
-	rm -f */*/*.pyc
-	rm -f */*/*/*.pyc
-	rm -f */*/*/*/*.pyc
+	rm -f `find * -name *.pyc`
 pep8:
 	tools/run_pep8.sh `hg st | egrep "^[MA].+.py$$" | awk '{print $$2}'`
 pyflakes:
