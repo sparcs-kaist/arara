@@ -72,8 +72,6 @@ class ArticleManager(arara_manager.ARAraManager):
             else:
                 dic['blacklisted'] = False
 
-            dic['date'] = datetime2timestamp(dic['date'])
-            dic['last_modified_date'] = datetime2timestamp(dic['last_modified_date'])
             ret.append(Article(**dic))
 
         return ret
@@ -128,8 +126,6 @@ class ArticleManager(arara_manager.ARAraManager):
         best_article_list = list()
         for article in best_article_dict_list:
             article['type'] = best_type
-            article['date'] = datetime2timestamp(article['date'])
-            article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
             best_article_list.append(Article(**article))
         return best_article_list
 
@@ -143,8 +139,11 @@ class ArticleManager(arara_manager.ARAraManager):
         @return: item 에서 whitelist 에 있는 필드만 남기고 적절히 dictionary 로 변환한 결과물
         '''
         # TODO: 여기서 할 필요가 없는 query (file 관련) filemanager 로 옮기기
-        # TODO: 여기 저기 흩어져 있는 datetime2timestamp 이리로 모으기
         item_dict = item.__dict__
+
+        item_dict['date'] = datetime2timestamp(item_dict['date'])
+        item_dict['last_modified_date'] = datetime2timestamp(item_dict['last_modified_date'])
+
         if not item_dict.get('title'):
             item_dict['title'] = u'Untitled'
         if item_dict.has_key('author_id'):
@@ -561,8 +560,6 @@ class ArticleManager(arara_manager.ARAraManager):
             if not article.has_key('type'):
                 article['type'] = 'normal'
 
-            article['date'] = datetime2timestamp(article['date'])
-            article['last_modified_date'] = datetime2timestamp(article['last_modified_date'])
             yield Article(**article)
         raise StopIteration
 
