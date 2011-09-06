@@ -498,6 +498,9 @@ service ARAraThriftInterface {
     void save_to_database(1:i32 user_id)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void save_users_read_status_to_database(1:list<i32> user_ids)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// ReadStatusManager Part End
 /// ArticleManager Part Begin
     list<Article> get_today_best_list(1:i32 count=5)

@@ -12,6 +12,7 @@ sys.path.append(arara_path)
 from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
+from arara import model
 
 
 class ReadStatusManagerTest(AraraTestBase):
@@ -127,6 +128,25 @@ class ReadStatusManagerTest(AraraTestBase):
             self.fail()
         except NotLoggedIn:
             pass
+
+    def test_save_read_status_to_database(self):
+        # mikkang 이 2개의 게시물을 작성
+        self._write_articles()
+
+        # SYSOP 이 2번 글을 읽음
+        session_key_sysop = self.engine.login_manager.login('SYSOP', 'SYSOP', '127.0.0.1')
+        self.engine.article_manager.read_article(session_key_sysop, 'garbages', 2)
+
+        # SYSOP 에 대한 정보를 ReadStatusManager 에서 제거
+        self.engine.read_status_manager.save_users_read_status_to_database([1])
+
+        # 실제로 정보가 제거되었는지 확인
+        self.assertEqual({}, self.engine.read_status_manager.read_status)
+
+        # 실제로 정보가 저장되었는지 확인
+        read_status = model.Session().query(model.ReadStatus).filter_by(id=1).one()
+        self.assertEqual('\x03\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x03\x00\x00\x00', read_status.read_status_numbers)
+        self.assertEqual('NRN', read_status.read_status_markers)
 
 
 def suite():

@@ -449,10 +449,32 @@ class ReadStatusManager(arara_manager.ARAraManager):
         session.commit()
         session.close()
 
+    @log_method_call_duration
+    def save_users_read_status_to_database(self, user_ids):
+        '''
+        주어진 사용자들에 대한 ReadStatus 를 DB 에 기록하고 메모리에서 지운다.
+
+        @type  user_ids: list<int>
+        @param user_ids: ReadStatus 를 기록할 사용자들의 고유 id
+        '''
+        session = model.Session()
+        try:
+            for user_id in user_ids:
+                try:
+                    self._save_to_database(session, user_id)
+                except Exception:
+                    logging.error(traceback.format_exc())
+            session.commit()
+            session.close()
+        except Exception:
+            logging.error(traceback.format_exc())
+            session.close()
+
     __public__ = [
             check_stat,
             check_stats,
             mark_as_read_list,
             mark_as_read,
             mark_as_viewed,
-            save_to_database]
+            save_to_database,
+            save_users_read_status_to_database]
