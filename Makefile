@@ -10,3 +10,5 @@ pyflakes:
 pylint:
 	tools/run_pylint.sh `hg st | egrep "^[MA].+.py$$" | awk '{print $$2}'`
 check: pep8 pyflakes pylint
+miss:
+	tools/test_thrift_engine_mismatches.py
