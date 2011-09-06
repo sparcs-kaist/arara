@@ -12,3 +12,5 @@ pep8:
 	tools/run_pep8.sh `hg st | egrep "^[MA].+.py$$" | awk '{print $$2}'`
 pyflakes:
 	tools/run_pyflakes.sh `hg st | egrep "^[MA].+.py$$" | awk '{print $$2}'`
+pylint:
+	tools/run_pylint.sh `hg st | egrep "^[MA].+.py$$" | awk '{print $$2}'`
