@@ -148,6 +148,24 @@ class ReadStatusManagerTest(AraraTestBase):
         self.assertEqual('\x03\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x03\x00\x00\x00', read_status.read_status_numbers)
         self.assertEqual('NRN', read_status.read_status_markers)
 
+    def test_get_read_status_loaded_users(self):
+        # 아무 유저도 글을 읽거나 하지 않은 상태를 점검
+        self.assertEqual([], self.engine.read_status_manager.get_read_status_loaded_users())
+
+        # mikkang 이 2개의 게시물을 작성
+        self._write_articles()
+
+        # SYSOP 이 2번 글을 읽음
+        session_key_sysop = self.engine.login_manager.login('SYSOP', 'SYSOP', '127.0.0.1')
+        self.engine.article_manager.read_article(session_key_sysop, 'garbages', 2)
+
+        # 이제 글 읽음 정보가 하나는 존재하여야 함
+        self.assertEqual([1], self.engine.read_status_manager.get_read_status_loaded_users())
+
+        # SYSOP 이 사라지면 글 읽음 정보가 하나도 없어야 함
+        self.engine.read_status_manager.save_to_database(1)
+        self.assertEqual([], self.engine.read_status_manager.get_read_status_loaded_users())
+
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(ReadStatusManagerTest)

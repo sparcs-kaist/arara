@@ -470,6 +470,17 @@ class ReadStatusManager(arara_manager.ARAraManager):
             logging.error(traceback.format_exc())
             session.close()
 
+    @log_method_call_duration
+    def get_read_status_loaded_users(self):
+        '''
+        현재 ReadStatus 정보를 Memory에 들고 있는 사용자의 목록을 구한다.
+
+        @rtype: list<int>
+        @return: 사용자 고유 id 의 목록
+        '''
+
+        return self.read_status.keys()
+
     __public__ = [
             check_stat,
             check_stats,
@@ -477,4 +488,5 @@ class ReadStatusManager(arara_manager.ARAraManager):
             mark_as_read,
             mark_as_viewed,
             save_to_database,
-            save_users_read_status_to_database]
+            save_users_read_status_to_database,
+            get_read_status_loaded_users]
