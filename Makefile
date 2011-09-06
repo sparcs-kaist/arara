@@ -14,3 +14,4 @@ pyflakes:
 	tools/run_pyflakes.sh `hg st | egrep "^[MA].+.py$$" | awk '{print $$2}'`
 pylint:
 	tools/run_pylint.sh `hg st | egrep "^[MA].+.py$$" | awk '{print $$2}'`
+check: pep8 pyflakes pylint
