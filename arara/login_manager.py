@@ -3,7 +3,6 @@
 import hashlib
 import logging
 import datetime
-import thread
 import time
 
 from sqlalchemy.exceptions import InvalidRequestError, ConcurrentModificationError
@@ -29,16 +28,12 @@ class LoginManager(arara_manager.ARAraManager):
         '''
         @type  engine: ARAraEngine
         '''
-        # 2010.09.29. 성능 문제로 인해 Lock 을 제거하였다.
-        # self.lock_session_dic = thread.allocate_lock()
         super(LoginManager, self).__init__(engine)
         self.session_dic = {}
         self.logger = logging.getLogger('login_manager')
         self._create_counter_column()
         # Engine 이 가동중인 동안 True, 가동을 멈추면 False 가 되는 변수
         self.engine_online = True
-        # Thread 가동 시작
-        self.session_checker = thread.start_new_thread(self._check_session_status, tuple())
         # Terminate Session 을 위하여
         self.terminated_done = None
 
@@ -218,52 +213,6 @@ class LoginManager(arara_manager.ARAraManager):
         except KeyError:
             return False
     
-    def _clean_specific_session(self, session_key):
-        '''
-        주어진 사용자가 장시간 작업이 없었다면 Logout 시킨다.
-
-        @type  session_key: string
-        @param session_key: 사용자 Login Session
-        '''
-        if not self.session_dic.has_key(session_key):
-            # 이미 로그아웃한 사용자라면 이하의 절차가 필요없다.
-            return
-
-        # 2010.09.29. 성능 문제로 Lock 을 제거.
-        # with self.lock_session_dic:
-        try:
-            current_time = time.time()
-            session_time = self.session_dic[session_key]['last_action_time']
-            diff_time = current_time - session_time
-            if diff_time > SESSION_EXPIRE_TIME:
-                # Session Cleaning 이 필요하므로 로그아웃 처리!
-                self._logout(session_key)
-        except NotLoggedIn:
-            pass
-        except KeyError:
-            pass
-
-    def _check_session_status(self):
-        '''
-        정기적으로 실행되면서 장시간 작업이 없었던 사용자를 Logout 시킨다.
-        '''
-        while self.engine_online:
-            logger = logging.getLogger('SESSION CLEANER')
-            logger.info("=================== SESSION CLEANING STARTED") 
-
-            for session_key in self.session_dic.keys():
-                try:
-                    self._clean_specific_session(session_key)
-                except Exception:
-                    import traceback
-                    logger.exception("EXCEPTION at SESSION CLEANER : \n%s", traceback.format_exc())
-                # 중간에 엔진이 꺼지면 Session Cleaner 도 죽어야 합당하다
-                if not self.engine_online:
-                    break
-
-            logger.info("=================== SESSION CLEANING FINISHED") 
-            time.sleep(SESSION_EXPIRE_TIME)
-
     def update_session(self, session_key):
         '''
         세션 expire시간을 연장해주는 함수
