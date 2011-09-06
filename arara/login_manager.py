@@ -424,6 +424,24 @@ class LoginManager(arara_manager.ARAraManager):
 
         return expired_sessions
 
+    @log_method_call_duration
+    def get_active_sessions(self):
+        '''
+        최근 작업이 있었던 사용자들의 Session 목록을 만든다.
+        get_expired_sessions 의 반대 개념.
+
+        @rtype: list<(str, int)>
+        @return: 사용자 Login Session과 각 Session Key 별 사용자 고유 id의 목록
+        '''
+        current_time = time.time()
+        expired_time = current_time - SESSION_EXPIRE_TIME
+
+        active_sessions = [(session_key, session['id'])
+                for session_key, session in self.session_dic.iteritems()
+                if session['last_action_time'] >= expired_time]
+
+        return active_sessions
+
     __public__ = [
             guest_login,
             total_visitor,
@@ -436,4 +454,5 @@ class LoginManager(arara_manager.ARAraManager):
             get_current_online,
             is_logged_in,
             terminate_all_sessions,
-            get_expired_sessions]
+            get_expired_sessions,
+            get_active_sessions]
