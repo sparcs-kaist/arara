@@ -4,8 +4,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.paginator import Paginator
 from django.core.cache import cache
 
-from thirdparty.postmarkup import render_bbcode
-
 from arara_thrift.ttypes import *
 
 import os
