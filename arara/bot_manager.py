@@ -3,11 +3,12 @@
 import logging
 import time
 
+from arara import arara_manager
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 from arara_thrift.ttypes import *
 from etc.arara_settings import BOT_ACCOUNT_USERNAME, BOT_ACCOUNT_PASSWORD, BOT_SERVICE_SETTING
 
-class BotManager(object):
+class BotManager(arara_manager.ARAraManager):
     '''
     ARA BOT Service 관련 클래스
     '''
@@ -16,7 +17,7 @@ class BotManager(object):
         @type  engine: ARAraEngine
         '''
         # TODO: BOT_ENABLED 를 ARAraEngine 의 생성자로 넣는 게 어떨까
-        self.engine = engine
+        super(BotManager, self).__init__(engine)
 
         # BOT 설정이 켜져있지 않으면 종료
         from etc.arara_settings import BOT_ENABLED, BOT_SERVICE_LIST
@@ -75,6 +76,10 @@ class BotManager(object):
         if not self.weather_bot:
             raise InvalidOperation('Weather Bot is not enabled!')
         return self.weather_bot.recent_weather_info(session_key)
+
+    __public__ = [
+            refresh_weather_info,
+            get_weather_info]
 
 class WeatherBot(object):
     def __init__(self, engine, manager):

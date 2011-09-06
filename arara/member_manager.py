@@ -10,6 +10,7 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy import or_, not_, and_
 
 from arara_thrift.ttypes import *
+from arara import arara_manager
 from arara import model
 from arara import ara_memcached
 from arara.util import require_login, filter_dict, is_keys_in_dict
@@ -52,7 +53,7 @@ USER_PUBLIC_MODIFIABLE_WHITELIST= ('nickname', 'signature',
 # User Search Whitelist : 사용자에 대한 검색 결과를 받을 Dict의 형식을 결정. (arara.thrift에서는 SearchUserResult)
 USER_SEARCH_WHITELIST = ('username', 'nickname')
 
-class MemberManager(object):
+class MemberManager(arara_manager.ARAraManager):
     '''
     회원 가입, 회원정보 수정, 회원정보 조회, 이메일 인증등을 담당하는 클래스
     '''
@@ -61,8 +62,7 @@ class MemberManager(object):
         '''
         @type  engine: ARAraEngine
         '''
-        self.engine = engine
-        self.logger = logging.getLogger('member_manager')
+        super(MemberManager, self).__init__(engine)
         self._register_sysop()
 
         if etc.arara_settings.BOT_ENABLED:
@@ -1201,5 +1201,27 @@ class MemberManager(object):
         session.commit()
         session.close()
 
-
-# vim: set et ts=8 sw=4 sts=4
+    __public__ = [
+            authenticate,
+            register_,
+            backdoor_confirm,
+            confirm,
+            cancel_confirm,
+            is_registered,
+            is_registered_nickname,
+            is_registered_email,
+            get_info,
+            modify_password,
+            modify_password_sysop,
+            modify_user,
+            modify_authentication_email,
+            query_by_username,
+            query_by_nick,
+            remove_user,
+            search_user,
+            send_id_recovery_email,
+            is_sysop,
+            logout_process,
+            get_activated_users,
+            set_selected_boards,
+            get_selected_boards]

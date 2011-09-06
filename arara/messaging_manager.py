@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy import or_, not_, and_
+from arara import arara_manager
 from arara import model
 from arara_thrift.ttypes import *
 from arara.util import require_login, filter_dict
@@ -13,16 +14,10 @@ log_method_call_important = log_method_call_with_source_important('messaging_man
 
 MESSAGE_WHITELIST = ['id', 'from_', 'to', 'from_nickname', 'to_nickname', 'message', 'sent_time', 'read_status', 'blacklisted']
 
-class MessagingManager(object):
+class MessagingManager(arara_manager.ARAraManager):
     '''
     회원간 쪽지기능등을 담당하는 클래스
     '''
-
-    def __init__(self, engine):
-        '''
-        @type  engine: ARAraEngine
-        '''
-        self.engine = engine
 
     def _get_dict(self, item, whitelist=None, blacklist_users=None):
         '''
@@ -494,4 +489,15 @@ class MessagingManager(object):
                 return
         session.close()
         raise InvalidOperation('message not exist')
-# vim: set et ts=8 sw=4 sts=4
+
+    __public__ = [
+            sent_list,
+            receive_list,
+            get_unread_message_count,
+            send_message_by_username,
+            send_message_by_nickname,
+            send_message,
+            read_received_message,
+            read_sent_message,
+            delete_received_message,
+            delete_sent_message]

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import datetime
 import time
-import logging
 import thread
 
 from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy import and_, or_, not_
 from sqlalchemy.orm import eagerload
 from sqlalchemy.sql import func, select
+from arara import arara_manager
 from arara import model
 from arara.util import require_login, filter_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_duration, log_method_call_with_source_important
@@ -34,7 +34,7 @@ BEST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_co
 LIST_ORDER_ROOT_ID         = 0
 LIST_ORDER_LAST_REPLY_DATE = 1
 
-class ArticleManager(object):
+class ArticleManager(arara_manager.ARAraManager):
     '''
     글 (게시물) 과 관련된 거의 모든 일을 수행한다.
 
@@ -46,9 +46,6 @@ class ArticleManager(object):
         - 루트 글 : 답글이 아닌 글 (목록에 반드시 나오는 글)
         - 답글 : 루트 글 혹은 다른 답글에 귀속되어 있는 글
     '''
-    def __init__(self, engine):
-        self.logger = logging.getLogger('article_manager')
-        self.engine = engine
 
     def _article_thread_to_list(self, article_thread, blacklisted_userid):
         '''
@@ -1573,5 +1570,28 @@ class ArticleManager(object):
         else:
             session.close()
             raise InvalidOperation("NO_PERMISSION")
+
+    __public__ = [
+            get_today_best_list,
+            get_today_best_list_specific,
+            get_weekly_best_list,
+            get_weekly_best_list_specific,
+            get_today_most_list,
+            get_today_most_list_specific,
+            get_weekly_most_list,
+            get_weekly_most_list_specific,
+            article_list,
+            read_article,
+            read_recent_article,
+            article_list_below,
+            vote_article,
+            write_article,
+            write_reply,
+            modify_article,
+            modify_nickname_in_article,
+            move_article,
+            delete_article,
+            destroy_article,
+            fix_article_concurrency]
 
 # vim: set et ts=8 sw=4 sts=4

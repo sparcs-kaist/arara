@@ -11,6 +11,7 @@ from arara.util import log_method_call_with_source, log_method_call_with_source_
 from arara.util import datetime2timestamp
 from arara.util import smart_unicode
 from arara_thrift.ttypes import *
+from arara import arara_manager
 from arara import model
 from etc.arara_settings import *
 
@@ -22,13 +23,11 @@ SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'heading', 'date', 'last_modified_dat
                     'deleted', 'author_username', 'author_nickname', 'author_id', 'positive_vote', 'negative_vote', 'hit', 'content', 'board_name')
 SEARCH_DICT = ('title', 'content', 'author_nickname', 'author_username', 'date', 'query')
 
-class SearchManager(object):
+class SearchManager(arara_manager.ARAraManager):
     '''
     게시물 검색 기능을 담당하는 클래스
     '''
 
-    def __init__(self, engine):
-        self.engine = engine
 
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
@@ -402,5 +401,7 @@ class SearchManager(object):
         query_text = unicode('%' + query_dict[key] + '%')
         return query_text
 
-if __name__ == "__main__":
-    pass
+    __public__ = [
+            register_article,
+            ksearch,
+            search]

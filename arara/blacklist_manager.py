@@ -4,6 +4,7 @@ import datetime
 import time
 
 from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
+from arara import arara_manager
 from arara import model
 from arara.util import filter_dict, require_login, is_keys_in_dict
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
@@ -17,15 +18,10 @@ log_method_call_important = log_method_call_with_source_important('blacklist_man
 BLACKLIST_DICT = ['blacklist_username', 'block_article', 'block_message']
 BLACKLIST_LIST_DICT = ['id', 'blacklisted_user_nickname', 'blacklisted_user_username', 'blacklisted_date', 'last_modified_date', 'block_article', 'block_message']
 
-class BlacklistManager(object):
+class BlacklistManager(arara_manager.ARAraManager):
     '''
     블랙리스트 처리 관련 클래스
     '''
-    def __init__(self, engine):
-        '''
-        @type  engine: ARAraEngine
-        '''
-        self.engine = engine
 
     def _get_dict(self, item, whitelist):
         '''
@@ -244,5 +240,13 @@ class BlacklistManager(object):
         # TODO: user_id 를 파라메터로 하는 함수 분리
         user_id = self.engine.login_manager.get_user_id(session_key)
         return self._get_article_blacklisted_userid_list(user_id)
+
+    __public__ = [
+            add_blacklist,
+            delete_blacklist,
+            modify_blacklist,
+            get_blacklist,
+            get_article_blacklisted_userid_list]
+
 
 # vim: set et ts=8 sw=4 sts=4

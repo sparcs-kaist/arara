@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
+from arara import arara_manager
 from arara import model
 from arara.model import BOARD_TYPE_NORMAL, BOARD_TYPE_PICTURE
 from arara.util import filter_dict, require_login
@@ -20,7 +21,7 @@ USER_QUERY_WHITELIST = ('username', 'nickname', 'email',
 
 from arara import ara_memcached
 
-class BoardManager(object):
+class BoardManager(arara_manager.ARAraManager):
     '''
     보드 추가 삭제 및 관리 관련 클래스
     '''
@@ -29,7 +30,7 @@ class BoardManager(object):
         '''
         @type  engine: ARAraEngine
         '''
-        self.engine = engine
+        super(BoardManager, self).__init__(engine)
         # Integrity Check
         self._check_integrity()
         self._clear_cache(board=True, category=True)
@@ -1353,3 +1354,27 @@ class BoardManager(object):
             return False
         session.close()
         return True
+
+    __public__ = [
+            add_board,
+            get_board,
+            get_board_id,
+            get_board_type,
+            get_board_heading_list,
+            get_board_list,
+            add_read_only_board,
+            return_read_only_board,
+            change_board_order,
+            hide_board,
+            return_hide_board,
+            delete_board,
+            edit_board,
+            change_board_category,
+            change_auth,
+            add_category,
+            edit_category,
+            delete_category,
+            get_category_list,
+            add_bbs_manager,
+            remove_bbs_manager,
+            get_bbs_managers]

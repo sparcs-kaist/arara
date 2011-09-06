@@ -5,6 +5,7 @@ import traceback
 from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy.sql import func, select
 from arara.util import require_login
+from arara import arara_manager
 from arara import model
 from arara.util import require_login
 from arara.util import log_method_call_with_source, log_method_call_with_source_duration, log_method_call_with_source_important
@@ -139,15 +140,14 @@ class ReadStatus(object):
             printed_str += str(item)
         return printed_str
 
-class ReadStatusManager(object):
+class ReadStatusManager(arara_manager.ARAraManager):
     '''
     읽은 글, 통과한글 처리관련 클래스
     '''
 
     def __init__(self, engine):
-        self.engine = engine
+        super(ReadStatusManager, self).__init__(engine)
         self.read_status = {}
-        self.logger = logging.getLogger('read_status_manager')
 
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
@@ -449,4 +449,10 @@ class ReadStatusManager(object):
         session.commit()
         session.close()
 
-# vim: set et ts=8 sw=4 sts=4
+    __public__ = [
+            check_stat,
+            check_stats,
+            mark_as_read_list,
+            mark_as_read,
+            mark_as_viewed,
+            save_to_database]

@@ -1,8 +1,8 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import random
 from sqlalchemy.exceptions import InvalidRequestError
+from arara import arara_manager
 from arara import model
 from arara_thrift.ttypes import *
 from arara.util import require_login, filter_dict, is_keys_in_dict
@@ -16,13 +16,10 @@ NOTICE_QUERY_WHITELIST = ('id', 'content', 'issued_date', 'due_date', 'valid', '
 NOTICE_PUBLIC_WHITELIST= ('id', 'content', 'issued_date', 'due_date', 'valid', 'weight')
 NOTICE_ADD_WHITELIST = ('content','due_date','weight')
 
-class NoticeManager(object):
+class NoticeManager(arara_manager.ARAraManager):
     '''
     배너 및 환영 페이지 처리 관련 클래스
     '''
-
-    def __init__(self, engine):
-        self.engine = engine
 
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
@@ -384,4 +381,13 @@ class NoticeManager(object):
             session.close()
             raise InternalError('database error')
 
-# vim: set et ts=8 sw=4 sts=4
+    __public__ = [
+            get_banner,
+            get_welcome,
+            list_banner,
+            list_welcome,
+            add_banner,
+            add_welcome,
+            modify_banner_validity,
+            remove_banner,
+            remove_welcome]

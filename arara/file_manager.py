@@ -6,6 +6,7 @@ import time
 
 from sqlalchemy import and_, or_, not_
 from sqlalchemy.exceptions import InvalidRequestError
+from arara import arara_manager
 from arara import model
 from arara_thrift.ttypes import *
 from arara.util import require_login
@@ -17,17 +18,11 @@ log_method_call_important = log_method_call_with_source_important('file_manager'
 DANGER_FILE = ('php', 'asp', 'php3', 'php4', 'htaccess', 'js',
                'html', 'htm', '.htaccess', 'jsp')
 
-class FileManager(object):
+class FileManager(arara_manager.ARAraManager):
     '''
     파일 처리 관련 클래스
     '''
     
-    def __init__(self, engine):
-        '''
-        @type  engine: ARAraEngine
-        '''
-        self.engine = engine
-
     def _get_article(self, session, article_id):
         '''
         @type  session: model.Session
@@ -185,3 +180,8 @@ class FileManager(object):
         session.commit()
         session.close()
         return FileInfo(download_path, ghost_filename)
+
+    __public__ = [
+            save_file,
+            download_file,
+            delete_file]

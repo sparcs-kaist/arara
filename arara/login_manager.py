@@ -10,6 +10,7 @@ from sqlalchemy.exceptions import InvalidRequestError, ConcurrentModificationErr
 
 from arara_thrift.ttypes import *
 
+from arara import arara_manager
 from arara import model
 from util import log_method_call_with_source, log_method_call_with_source_duration
 from util import smart_unicode
@@ -19,7 +20,7 @@ from etc.arara_settings import SESSION_EXPIRE_TIME
 log_method_call = log_method_call_with_source('login_manager')
 log_method_call_duration = log_method_call_with_source_duration('login_manager')
 
-class LoginManager(object):
+class LoginManager(arara_manager.ARAraManager):
     '''
     로그인 처리 관련 클래스
     '''
@@ -30,7 +31,7 @@ class LoginManager(object):
         '''
         # 2010.09.29. 성능 문제로 인해 Lock 을 제거하였다.
         # self.lock_session_dic = thread.allocate_lock()
-        self.engine = engine
+        super(LoginManager, self).__init__(engine)
         self.session_dic = {}
         self.logger = logging.getLogger('login_manager')
         self._create_counter_column()
@@ -406,4 +407,15 @@ class LoginManager(object):
         self.engine.read_status_manager._save_all_users_to_database()
         self.logger.info("=================== SESSION TERMINATION FINISHED") 
 
-# vim: set et ts=8 sw=4 sts=4
+    __public__ = [
+            guest_login,
+            total_visitor,
+            login,
+            logout,
+            update_session,
+            get_session,
+            get_user_id,
+            get_user_ip,
+            get_current_online,
+            is_logged_in,
+            terminate_all_sessions]
