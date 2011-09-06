@@ -758,7 +758,3 @@ def init_test_database():
     engine = create_engine('sqlite://', convert_unicode=True, encoding='utf-8', echo=False)
     Session = sessionmaker(bind=engine, autoflush=True, autocommit=False)
     metadata.create_all(engine)
-
-def clear_test_database():
-    """테스트 이후의 흔적을 지운다."""
-    pass

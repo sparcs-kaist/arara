@@ -63,7 +63,6 @@ class AraraTestBase(unittest.TestCase):
 
     def tearDown(self):
         self.engine.shutdown()
-        arara.model.clear_test_database()
 
         etc.arara_settings.BOT_ENABLED = self.org_BOT_ENABLED
 
