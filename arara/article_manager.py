@@ -885,6 +885,42 @@ class ArticleManager(arara_manager.ARAraManager):
         # 이상을 바탕으로 _article_list 함수를 호출한다
         return self._article_list(session_key, board_name, heading_name, page_position, page_length, include_all_headings, order_by)
 
+    def get_page_no_of_article(self, board_name, heading_name, no, page_length, include_all_headings=True, order_by=LIST_ORDER_ROOT_ID):
+        '''
+        주어진 게시물이 주어진 방식의 글 목록에서 어느 page 에 있는지 리턴한다.
+
+        @type  board_name: str
+        @param board_name: 글을 가져올 게시판의 이름
+        @type  heading_name: str
+        @param heading_name: 목록에서 보여줄 선택된 말머리
+        @type  no: int
+        @param no: 글 번호
+        @type  page_length: int
+        @param page_length: 페이지당 글 갯수
+        @type  include_all_headings: bool
+        @param include_all_headings: 모든 말머리를 보여줄 것인지의 여부
+        @type  order_by: int
+        @param order_by: 정렬 방식 [LIST_ORDER_ROOT_ID, LIST_ORDER_LAST_REPLY_DATE]
+        @rtype: int
+        @return: 해당 게시물이 있는 page 의 번호
+        '''
+        session = model.Session()
+
+        # Heading ID, Board ID 를 구한다
+        board_id = None
+        if board_name != u"":
+            board_id = self.engine.board_manager.get_board_id(board_name)
+
+        heading_id = None
+        if not include_all_headings and heading_name != u"":
+            heading_id = self.engine.board_manager._get_heading_by_boardid(session, board_id, heading_name).id
+
+        # 게시판에 선택된 글 이후 게시된 글의 갯수를 센다
+        remaining_article_count = self._get_remaining_article_count(session, board_id, heading_id, no, include_all_headings, order_by)
+
+        session.close()
+        return (remaining_article_count / page_length) + 1
+
     @require_login
     @log_method_call
     def article_list_below(self, session_key, board_name, heading_name, no, page_length=20, include_all_headings=True):
@@ -1592,6 +1628,7 @@ class ArticleManager(arara_manager.ARAraManager):
             move_article,
             delete_article,
             destroy_article,
-            fix_article_concurrency]
+            fix_article_concurrency,
+            get_page_no_of_article]
 
 # vim: set et ts=8 sw=4 sts=4

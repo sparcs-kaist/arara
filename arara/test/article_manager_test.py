@@ -1007,6 +1007,18 @@ class ArticleManagerTest(AraraTestBase):
         list2 = self.engine.article_manager.article_list_below(self.session_key_mikkang, u'board', u'', 1, 10).hit
         self.assertEqual(list1, list2)
  
+    def test_get_page_no_of_article(self):
+        # 1개의 글은 1번째 페이지에 위치
+        self._dummy_article_write(self.session_key_mikkang)
+        self.assertEqual(1, self.engine.article_manager.get_page_no_of_article(u'board', u'', 1, 5))
+
+        # 게시물이 6개가 되면 2-6번 글은 1페이지, 1번 글은 2페이지에 위치해야 한다
+        for _ in xrange(5):
+            self._dummy_article_write(self.session_key_mikkang)
+        self.assertEqual(1, self.engine.article_manager.get_page_no_of_article(u'board', u'', 2, 5))
+        self.assertEqual(2, self.engine.article_manager.get_page_no_of_article(u'board', u'', 1, 5))
+
+ 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(ArticleManagerTest)
 
