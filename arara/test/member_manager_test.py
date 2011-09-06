@@ -435,10 +435,10 @@ class MemberManagerTest(AraraTestBase):
     def test_get_listing_mode(self):
         self._register_and_confirm(u"combacsa")
         session_key = self.engine.login_manager.login(u"combacsa", u"combacsa", "127.0.0.1")
-        self.assertEqual(0, self.engine.member_manager.get_listing_mode(session_key))
+        self.assertEqual(0, self.engine.member_manager.get_listing_mode_by_key(session_key))
         # change 후에도 반영되는가
         self.engine.member_manager.change_listing_mode(session_key, 1)
-        self.assertEqual(1, self.engine.member_manager.get_listing_mode(session_key))
+        self.assertEqual(1, self.engine.member_manager.get_listing_mode_by_key(session_key))
 
     def test_get_selected_boards(self):
         session = arara.model.Session()

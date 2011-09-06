@@ -395,6 +395,12 @@ service ARAraThriftInterface {
     list<Board> get_selected_boards(1:string session_key)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    i32 get_listing_mode(1:i32 user_id)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    i32 get_listing_mode_by_key(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// MemberManager Part End
 /// BlacklistManager Part Begin
     void add_blacklist(1:string session_key, 2:string username,

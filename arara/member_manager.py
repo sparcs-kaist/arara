@@ -746,7 +746,7 @@ class MemberManager(arara_manager.ARAraManager):
         session.close()
 
         # Member Manager Cache
-        ara_memcached.clear_memcached(self._get_listing_mode, session_info.id)
+        ara_memcached.clear_memcached(self.get_listing_mode, session_info.id)
 
     # @require_login
     @log_method_call_important
@@ -1081,10 +1081,10 @@ class MemberManager(arara_manager.ARAraManager):
             raise InvalidOperation('database error')
 
         # Cache update
-        ara_memcached.clear_memcached(self._get_listing_mode, user_id)
+        ara_memcached.clear_memcached(self.get_listing_mode, user_id)
 
     @ara_memcached.memcached_decorator
-    def _get_listing_mode(self, user_id):
+    def get_listing_mode(self, user_id):
         '''
         사용자의 listing_mode (글 목록 정렬 방식) 을 돌려준다.
         user_id 를 직접 사용하므로 내부 사용 전용.
@@ -1094,6 +1094,10 @@ class MemberManager(arara_manager.ARAraManager):
         @rtype: int
         @return: 해당 사용자의 글 목록 정렬 방식
         '''
+        # 존재하지 않는 사용자에 대한 기본값 처리
+        if user_id == -1:
+            return 0
+
         session = model.Session()
         try:
             user = self._get_user_by_id(session, user_id)
@@ -1104,7 +1108,7 @@ class MemberManager(arara_manager.ARAraManager):
             session.close()
             raise InvalidOperation('uesr does not exist')
 
-    def get_listing_mode(self, session_key):
+    def get_listing_mode_by_key(self, session_key):
         '''
         로그인한 사용자의 listing_mode (글 목록 정렬 방식) 을 돌려준다.
         만일 로그인하지 않은 사용자라면 그냥 0 (default) 을 돌려준다.
@@ -1114,10 +1118,11 @@ class MemberManager(arara_manager.ARAraManager):
         @rtype: int
         @return: 해당 사용자의 글 목록 정렬 방식
         '''
-        if session_key == '': # 로그인되지 않은 경우
+        # 로그인되지 않은 사용자에 대한 기본값 처리
+        if session_key == '':
             return 0
 
-        return self._get_listing_mode(self.engine.login_manager.get_user_id(session_key))
+        return self.get_listing_mode(self.engine.login_manager.get_user_id(session_key))
 
     def get_activated_users(self, session_key, limit = -1):
         '''
@@ -1225,4 +1230,6 @@ class MemberManager(arara_manager.ARAraManager):
             get_activated_users,
             set_selected_boards,
             get_selected_boards,
-            update_last_logout_time]
+            update_last_logout_time,
+            get_listing_mode,
+            get_listing_mode_by_key]

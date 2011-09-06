@@ -662,7 +662,7 @@ class ArticleManager(arara_manager.ARAraManager):
                 2. 페이지 번호 오류: InvalidOperation Exception
                 3. 데이터베이스 오류: InternalError Exception 
         '''
-        listing_mode = self.engine.member_manager.get_listing_mode(session_key)
+        listing_mode = self.engine.member_manager.get_listing_mode_by_key(session_key)
         return self._article_list(session_key, board_name, heading_name, page, page_length, include_all_headings, listing_mode)
 
     @log_method_call_duration
@@ -910,7 +910,7 @@ class ArticleManager(arara_manager.ARAraManager):
                 1. 존재하지 않는 게시판: InvalidOperation Exception
                 2. 데이터베이스 오류: InternalError Exception
         '''
-        listing_mode = self.engine.member_manager.get_listing_mode(session_key)
+        listing_mode = self.engine.member_manager.get_listing_mode_by_key(session_key)
         return self._article_list_below(session_key, board_name, heading_name, no, page_length, include_all_headings, listing_mode)
 
     @require_login
