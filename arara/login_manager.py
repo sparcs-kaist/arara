@@ -442,6 +442,23 @@ class LoginManager(arara_manager.ARAraManager):
 
         return active_sessions
 
+    @log_method_call_duration
+    def cleanup_expired_sessions(self):
+        '''
+        사용자들 중 Session Expire time 이 지난 사용자들을 로그아웃시킨다.
+        '''
+        expired_sessions = self.get_expired_sessions()
+
+        user_ids = [x[1] for x in expired_sessions]
+        self.engine.member_manager.update_last_logout_time(user_ids)
+        self.engine.read_status_manager.save_users_read_status_to_database(user_ids)
+
+        for session_key, user_id in expired_sessions:
+            try:
+                del self.session_dic[session_key]
+            except KeyError:  # 이 함수 시행중 로그아웃된 경우
+                pass
+
     __public__ = [
             guest_login,
             total_visitor,
@@ -455,4 +472,5 @@ class LoginManager(arara_manager.ARAraManager):
             is_logged_in,
             terminate_all_sessions,
             get_expired_sessions,
-            get_active_sessions]
+            get_active_sessions,
+            cleanup_expired_sessions]

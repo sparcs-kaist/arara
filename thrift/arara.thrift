@@ -304,6 +304,9 @@ service ARAraThriftInterface {
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     bool _update_monitor_status(1:string session_key, 2:string action),
+    void cleanup_expired_sessions()
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// Login Manager Part end
 /// MemberManager Part Begin
     AuthenticationInfo authenticate(1:string username, 2:string password,

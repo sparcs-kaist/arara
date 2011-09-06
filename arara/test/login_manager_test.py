@@ -1,4 +1,5 @@
 #-*- coding: utf-8 -*-
+import datetime
 import unittest
 import os
 import sys
@@ -12,6 +13,7 @@ sys.path.append(ARARA_PATH)
 from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 from etc.arara_settings import SESSION_EXPIRE_TIME
+from arara import model
 
 # Faking time.time (to check time field)
 def stub_time():
@@ -242,6 +244,41 @@ class LoginManagerTest(AraraTestBase):
 
         result = self.engine.login_manager.get_active_sessions()
         self.assertEqual([], result)
+
+    def test_cleanup_expired_sessions(self):
+        # 테스트 상황 설계
+        # 1) 2명의 사용자 모두 ReadStatus 가 로드되어 있음
+        # 2) 이중 1명만 Session 이 Expire 되어야 함
+        session_key_panda = self.register_and_login(u'panda')  # user 2
+        session_key_sillo = self.register_and_login(u'sillo')  # user 3
+        self.engine.read_status_manager._initialize_data(2)
+        self.engine.read_status_manager._initialize_data(3)
+        def stub_time_new():
+            return 1.1 + SESSION_EXPIRE_TIME + 1
+        time.time = stub_time_new
+        self.engine.login_manager.update_session(session_key_sillo)
+
+        self.engine.login_manager.cleanup_expired_sessions()
+
+        # LoginManager
+        self.assertEqual(
+                {session_key_sillo: {'username': u'sillo',
+                        'current_action': 'login_manager.login()',
+                        'ip': u'127.0.0.1',
+                        'logintime': 1.1000000000000001,
+                        'last_action_time': 3612.0999999999999,
+                        'nickname': u'sillo',
+                        'id': 3}},
+                self.engine.login_manager.session_dic)
+        # MemberManager
+        expect = datetime.datetime.fromtimestamp(1.1 + SESSION_EXPIRE_TIME + 1)
+        result = model.Session().query(model.User).filter_by(id=2).one()
+        self.assertEqual(expect, result.last_logout_time)
+        # ReadStatusManager
+        self.assertEqual([3],
+                self.engine.read_status_manager.read_status.keys())
+        self.assertEqual([(0, 'N')],
+                self.engine.read_status_manager.read_status[3].data)
 
 
 def suite():
