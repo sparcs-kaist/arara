@@ -205,6 +205,26 @@ class LoginManagerTest(AraraTestBase):
         self.assertEqual(4, visitors.total_visitor_count)
         self.assertEqual(2, visitors.today_visitor_count)
 
+    def test_get_expired_sesion_list(self):
+        # 로그인한 사용자가 없을 때
+        result = self.engine.login_manager.get_expired_sessions()
+        self.assertEqual([], result)
+
+        # 한 명의 사용자가 로그인했지만 아직 Expire 되지 않았을 때
+        self._register_user(u'panda')
+        panda_session_key = self.engine.login_manager.login(u'panda', u'panda', '127.0.0.1')
+        result = self.engine.login_manager.get_expired_sessions()
+        self.assertEqual([], result)
+
+        # 그 사용자가 Expire 되었을 때
+        def stub_time_new():
+            return 1.1 + SESSION_EXPIRE_TIME + 1
+        time.time = stub_time_new
+
+        result = self.engine.login_manager.get_expired_sessions()
+        self.assertEqual([(panda_session_key, 2)], result)
+
+
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(LoginManagerTest)
 

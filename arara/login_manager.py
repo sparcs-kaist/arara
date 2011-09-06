@@ -407,6 +407,23 @@ class LoginManager(arara_manager.ARAraManager):
         self.engine.read_status_manager._save_all_users_to_database()
         self.logger.info("=================== SESSION TERMINATION FINISHED") 
 
+    @log_method_call_duration
+    def get_expired_sessions(self):
+        '''
+        장시간 작업이 없었던 사용자들의 Session 목록을 만든다.
+
+        @rtype: list<(str, int)>
+        @return: 사용자 Login Session과 각 Session Key 별 사용자 고유 id의 목록
+        '''
+        current_time = time.time()
+        expired_time = current_time - SESSION_EXPIRE_TIME
+
+        expired_sessions = [(session_key, session['id'])
+                for session_key, session in self.session_dic.iteritems()
+                if session['last_action_time'] < expired_time]
+
+        return expired_sessions
+
     __public__ = [
             guest_login,
             total_visitor,
@@ -418,4 +435,5 @@ class LoginManager(arara_manager.ARAraManager):
             get_user_ip,
             get_current_online,
             is_logged_in,
-            terminate_all_sessions]
+            terminate_all_sessions,
+            get_expired_sessions]
