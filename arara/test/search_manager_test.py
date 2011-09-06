@@ -143,6 +143,21 @@ class SearchManagerTest(AraraTestBase):
         self.assertEqual([6, 3], id_list)
         self.assertEqual([u'head1', u'head1'], heading_list)
 
+    def test_register_article(self):
+        try:
+            self.engine.search_manager.register_article()
+            self.fail("Deprecated method search_manager.register_article() must raise InternalError")
+        except InternalError, e:
+            self.assertEqual(e.why, "Deprecated")
+
+    def test_ksearch(self):
+        try:
+            self.engine.search_manager.ksearch(self.session_key_mikkang, "", 1, 20)
+            self.fail("Deprecated method search_manager.ksearch() must raise InternalError")
+        except InternalError, e:
+            self.assertEqual(e.why, "Deprecated")
+
+
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(SearchManagerTest)
 

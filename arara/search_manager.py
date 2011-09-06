@@ -74,73 +74,19 @@ class SearchManager(object):
 
     def register_article(self):
         '''
-        현재 정상적으로 작동하지 않는다. 사용하지 말 것
+        K-Search 에 게시물을 등록하는 함수였으나,
+        현재 K-Search 가 작동하지 않아 Deprecated.
         '''
         raise InternalError("Deprecated")
-        sess = self.engine.login_manager.login('SYSOP', 'SYSOP', '234.234.234.234')
-        #XXX SYSOP LOGIN MUST BE IMPLEMENTED HERE 
-        board_list = self.engine.board_manager.get_board_list()
-        if not ret:
-            raise InternalError('database error')
-
-        for board_info in board_list:
-            try:
-                session = model.Session()
-                board_name = board_info['board_name']
-                board = self._get_board(session, board_name)
-                article_count = session.query(model.Article).filter_by(board_id=board.id).count()
-                for article_no in range(1, article_count):
-                    article = session.query(model.Article).filter_by(id=article_no).one()
-                    article_dict = self._get_dict(article, READ_ARTICLE_WHITELIST)
-                    if article_dict['is_searchable']:
-                        ksearch = xmlrpclib.Server(KSEARCH_API_SERVER_ADDRESS)
-                        uri = 'http://' + WARARA_SERVER_ADDRESS + '/' + board_name + '/' + str(article_no)
-                        result = ksearch.index(KSEARCH_API_KEY, 'ara', uri, article_dict['title'], article_dict['content'], 1.0, board_name)
-                        assert result == 'OK'
-                session.close()
-            except AssertionError:
-                session.close()
-                raise InternalError('error on ksearch')
-            except Exception:
-                session.close()
-                raise InternalError('unknown error during article registration')
 
     @require_login
     @log_method_call
-    def ksearch(self, query_text, page=1, page_length=20):
+    def ksearch(self, session_key, query_text, page=1, page_length=20):
         '''
-        K-Search를 이용한 게시물 검색
-        현재는 Deprecate 되어 있다 (작동하지 않음)
-
-        @type  query_text: string
-        @param query_text: Text to Query
-        @type  page: int
-        @param page: Page Number
-        @type  page_length: int
-        @param page_length: Count of Articles on a page
+        K-Search 를 사용하여 검색을 하는 함수였으나,
+        현재 K-Search 가 작동하지 않아 Deprecated.
         '''
-        raise InternalError('Please Re-Implement this Method!')
-        search_manager = xmlrpclib.Server(KSEARCH_API_SERVER_ADDRESS)
-        query = str(query_text) + ' source:arara'
-        result = search_manager.search('00000000000000000000000000000000', query)
-        for one_result in result['hits']:
-            if one_result.has_key('uri'):
-                parsed_uri = one_result['uri'].rsplit('/', 2)
-                one_result['id'] = parsed_uri[::-1][0]
-                one_result['board_name'] = parsed_uri[::-1][1]
-        return result
-
-    @log_method_call
-    def _search_via_ksearch(self, query_text, page=1, page_length=20):
-        # XXX: Still Working...
-        return False, 'KSEARCH_DEAD'
-        #try:
-        #    ret, result = ksearch(query_text, page, page_length)
-        #except:
-        #    return False, 'KSEARCH_DEAD'
-        #if not ret:
-        #    return False, 'KSEARCH_DEAD'
-        #return ret, result
+        raise InternalError('Deprecated')
 
     def _get_heading_id(self, session, board, heading):
         '''
@@ -359,7 +305,6 @@ class SearchManager(object):
         기본적으로 전체검색은 K-Search를 사용하지만,
         K-Search가 비정상적으로 작동할경우 자체 쿼리 검색을 사용한다.
         (2010/12/06 combacsa: K-Search 관련 검색 코드를 제거.
-         나중에 K-Search 와의 연동을 별도로 테스트 후 부활시키자.)
 
         all_flag 'TRUE'  ==> query_dict {'query': 'QUERY TEXT'}
         all_flag 'FALSE' ==> query_dict {'title': '...', 'content': '...',
