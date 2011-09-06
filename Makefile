@@ -8,3 +8,5 @@ clean:
 	rm -f */*/*.pyc
 	rm -f */*/*/*.pyc
 	rm -f */*/*/*/*.pyc
+pep8:
+	tools/run_pep8.sh `hg st | egrep "^[MA].+.py$$" | awk '{print $$2}'`
