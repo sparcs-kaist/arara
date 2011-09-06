@@ -13,7 +13,6 @@ from arara_thrift.ttypes import *
 from arara import model
 from util import log_method_call_with_source, log_method_call_with_source_duration
 from util import smart_unicode
-from util import run_job_in_parallel
 
 from etc.arara_settings import SESSION_EXPIRE_TIME
 

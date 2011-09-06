@@ -37,15 +37,6 @@ class UtilTest(unittest.TestCase):
         if a != c:
             self.fail( repr(a) + " / " + repr(c))
 
-    def test_split_list(self):
-        a = [1, 2, 3, 4, 5, 6, 7]
-        result = arara.util.split_list(a, 4)
-        self.assertEqual([[1, 2], [3, 4], [5, 6], [7]], result)
-
-        a = [1, 2]
-        result = arara.util.split_list(a, 3)
-        self.assertEqual([[1], [2], []], result)
-
     def tearDown(self):
         # Restore the time
         time.time = self.org_time
