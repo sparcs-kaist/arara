@@ -86,46 +86,7 @@ class WeatherBot(object):
         self.manager = manager
         self.board_name = BOT_SERVICE_SETTING['weather_board_name']
         self.refresh_period = BOT_SERVICE_SETTING['weather_refresh_period']
-
-    def check_manager_status(self):
-        '''
-        Weather Bot에 필요한 각 Manager들이 제대로 작동하고 있는지 검사한다.
-
-        @rtype: Boolean
-        @return:
-            잘 작동되고 있을 때는 True, 그렇지 않을 때는 logger 에 로그를 남기고 False
-        '''
-        # Check 1. Board Initialization
-        if not (self.manager._init_board(self.board_name)):
-            return False
-
-        try:
-            # BOT_ACCOUNT_USERNAME, BOT_ACCOUNTPASSWORD의 설정이 잘못되었을 경우 문제가 발생한다
-            session_key = self.engine.login_manager.login(BOT_ACCOUNT_USERNAME, BOT_ACCOUNT_PASSWORD, u'127.0.0.1')
-        # TODO: 상황에 따라 다른 대처가 필요하다
-        except:
-            logger = logging.getLogger('weather_refresh_bot')
-            logger.exception('Weather BOT cannot login with bot account')
-            return False
-
-        try:
-            # Board name 설정이 잘못된 경우 문제가 발생한다
-            # weather용 board에 대한 article_list를 Test용 함수로 사용한다.
-            self.engine.article_manager.article_list(session_key, self.board_name, u'', 1, 1, True)
-        except:
-            logger = logging.getLogger('weather_refresh_bot')
-            logger.exception('Weather BOT cannot get article list from weather board')
-            return False
-
-        try:
-            self.engine.login_manager.logout(session_key)
-        except:
-            logger = logging.getLogger('weather_refresh_bot')
-            logger.exception('Weather BOT cannot logout (...)')
-            return False
-
-        # 이상의 테스트를 모두 통과하면 문제없이 동작한다는 것.
-        return True
+        self.manager._init_board(self.board_name)
 
     def write_weather_article(self):
         '''
