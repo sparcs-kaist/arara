@@ -14,7 +14,7 @@ sys.path.append(arara_path)
 from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
-from etc.arara_settings import BOT_SERVICE_SETTING, BOT_SERVICE_LIST
+from etc.arara_settings import BOT_SERVICE_SETTING
 
 def stub_toprettyxml(url):
     return u'melong. this is xml'
@@ -70,8 +70,8 @@ class BotManagerTest(AraraTestBase):
 
     def testInit(self):
         # 각각의 Bot의 Instance들을 제대로 생성했는지 검사
-        if not('weather' in BOT_SERVICE_LIST and self.engine.bot_manager.weather_bot):
-            self.fail('Weather bot is in service list but has not initialized')
+        if not self.engine.bot_manager.weather_bot:
+            self.fail('Weather bot has not initialized')
 
     def testWeatherBot(self):
         # Weather Bot을 테스트

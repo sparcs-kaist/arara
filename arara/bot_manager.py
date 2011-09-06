@@ -20,13 +20,11 @@ class BotManager(arara_manager.ARAraManager):
         super(BotManager, self).__init__(engine)
 
         # BOT 설정이 켜져있지 않으면 종료
-        from etc.arara_settings import BOT_ENABLED, BOT_SERVICE_LIST
+        from etc.arara_settings import BOT_ENABLED
         if not BOT_ENABLED:
             return
 
-        # BOT_SERVICE_LIST에 있는 BOT들을 검사 후 해당 BOT의 Instance를 생성
-        if 'weather' in BOT_SERVICE_LIST:
-            self.weather_bot = WeatherBot(engine, self)
+        self.weather_bot = WeatherBot(engine, self)
 
     def _init_board(self, board_name):
         '''
@@ -85,7 +83,6 @@ class WeatherBot(object):
         self.engine = engine
         self.manager = manager
         self.board_name = BOT_SERVICE_SETTING['weather_board_name']
-        self.refresh_period = BOT_SERVICE_SETTING['weather_refresh_period']
         self.manager._init_board(self.board_name)
 
     def write_weather_article(self):
