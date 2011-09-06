@@ -7,10 +7,11 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-sys.path.append('./gen-py')
+THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'gen-py'))
+sys.path.append(THRIFT_PATH)
 import optparse
 
-PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
+PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(PROJECT_PATH)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'warara.settings'
@@ -19,7 +20,7 @@ from django.core.handlers.wsgi import WSGIHandler
 
 import os
 
-from thirdparty import wsgiserver  # cherrypy wsgi server
+from bin.thirdparty import wsgiserver  # cherrypy wsgi server
 
 warara_app = WSGIHandler()
 
