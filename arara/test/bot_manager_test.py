@@ -97,13 +97,7 @@ class BotManagerTest(AraraTestBase):
             return u'melong. this is self-refreshed xml'
         xml.dom.minidom.Element.toprettyxml = new_stub_toprettyxml
 
-        # 시삽이 아닌데도 refresh를 시도할 경우 에러를 내놓아야 한다
-        try:
-            self.engine.bot_manager.refresh_weather_info(self.session_key_mikkang)
-            self.fail()
-        except:
-            pass
-        self.engine.bot_manager.refresh_weather_info(self.session_key_sysop)
+        self.engine.bot_manager.refresh_weather_info()
 
         # Recent Article을 긁어왔을 때 새로 갱신된 글이어야 한다.
         recent_article = self.engine.article_manager.read_recent_article(self.session_key_sysop, BOT_SERVICE_SETTING['weather_board_name'])
@@ -115,7 +109,7 @@ class BotManagerTest(AraraTestBase):
         # Initial setting for test this function
         self.session_key_hodduc = self._register_user(u'hodduc', u'daejeon')
         self.session_key_sillo = self._register_user(u'sillo', u'')
-        self.engine.bot_manager.refresh_weather_info(self.session_key_sysop)
+        self.engine.bot_manager.refresh_weather_info()
 
         # Session Key가 비었을 때 빈 인스턴스를 잘 들고 오는가?
         result = self.engine.bot_manager.get_weather_info(u"")

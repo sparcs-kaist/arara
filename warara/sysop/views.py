@@ -246,7 +246,7 @@ def refresh_weather(request):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
 
-    server.bot_manager.refresh_weather_info(sess)
+    server.bot_manager.refresh_weather_info()
 
     return HttpResponseRedirect('/sysop/')
 

@@ -50,16 +50,10 @@ class BotManager(arara_manager.ARAraManager):
         except:
             return False
 
-    def refresh_weather_info(self, session_key):
+    def refresh_weather_info(self):
         '''
         WeatherBot 에게 일부러 날씨 정보 갱신 명령을 내린다.
-
-        @type  session_key: string
-        @param session_key: 사용자 Login Session (SYSOP)
         '''
-        # TODO: sysop 이 아니라면 알아서 InvalidOperation 을 raise 해 주는 그런 게 있음 좋겠다
-        if not self.engine.member_manager.is_sysop(session_key):
-            raise InvalidOperation('You are not SYSOP')
         if not self.weather_bot:
             raise InvalidOperation('Weather Bot is not enabled!')
         self.weather_bot.write_weather_article()
