@@ -168,19 +168,19 @@ class MemberManager(arara_manager.ARAraManager):
             session.close()
             raise InvalidOperation('DATABASE_ERROR')
 
-    def _update_last_logout_time(self, ids):
+    def update_last_logout_time(self, user_ids):
         '''
         주어진 사용자들의 로그아웃 타임을 현재 시각으로 갱신한다.
+        실존하는 사용자인지는 검사하지 않고 따로 에러도 안 나므로 주의.
 
-        @type  ids: list<int>
-        @param ids: 로그아웃 타임을 갱신하고자 하는 사용자의 id 목록
+        @type  user_ids: list<int>
+        @param user_ids: 로그아웃 타임을 갱신하고자 하는 사용자의 id 목록
         '''
-        # TODO: 사용자 정보 가져오는 쿼리문을 다른 함수로 빼기
-        # TODO: 여기서 익셉션이 나면 어떻게 로깅을 할 지 고민해보자
+        now = datetime.datetime.fromtimestamp(time.time())
         session = model.Session()
         try:
-            cond = or_(*[model.users_table.c.id == id for id in ids])
-            session.execute(model.users_table.update().values(last_logout_time=datetime.datetime.fromtimestamp(time.time())).where(cond))
+            cond = or_(*[model.users_table.c.id == id for id in user_ids])
+            session.execute(model.users_table.update().values(last_logout_time=now).where(cond))
             session.commit()
             session.close()
         except InvalidRequestError:
@@ -1224,4 +1224,5 @@ class MemberManager(arara_manager.ARAraManager):
             logout_process,
             get_activated_users,
             set_selected_boards,
-            get_selected_boards]
+            get_selected_boards,
+            update_last_logout_time]

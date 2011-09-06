@@ -313,6 +313,9 @@ service ARAraThriftInterface {
     void register_(1:UserRegistration user_reg_info)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void update_last_logout_time(1:list<i32> user_ids)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void backdoor_confirm(1:string session_key, 2:string username)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),

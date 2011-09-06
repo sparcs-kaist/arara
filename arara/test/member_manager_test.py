@@ -1,7 +1,9 @@
 #-*- coding: utf-8 -*-
+import datetime
 import unittest
 import os
 import sys
+import time
 
 THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../gen-py/'))
 sys.path.append(THRIFT_PATH)
@@ -11,12 +13,13 @@ sys.path.append(ARARA_PATH)
 from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
+from arara import model
 
 
 class MemberManagerTest(AraraTestBase):
     def setUp(self):
         # Common preparation for all tests
-        super(MemberManagerTest, self).setUp()
+        super(MemberManagerTest, self).setUp(stub_time=True)
 
     def _get_user_reg_dic(self, username, manual_setting = {}):
         user_reg_dic = {'username': username, 'password': username, 'nickname': username, 'email': username + '@kaist.ac.kr', 'signature': username, 'self_introduction': username, 'default_language': u'english', 'campus': u'Daejeon'}
@@ -515,6 +518,29 @@ class MemberManagerTest(AraraTestBase):
             self.fail("Allowed EMail address must not contain any of [, ], \\")
         except InvalidOperation:
             pass
+
+    def test_update_last_logout_time(self):
+        # 2명의 사용자를 등록한다
+        self.register_user(u'panda')     # user 2
+        self.register_user(u'bbashong')  # user 3
+
+        # 시삽과 이 2명의 사용자의 로그아웃 시간을 업데이트한다
+        self.engine.member_manager.update_last_logout_time([1, 2, 3])
+        # 사용자들의 로그아웃 시간이 잘 업데이트되었는지 확인
+        time_1 = datetime.datetime.fromtimestamp(time.time())
+        users = model.Session().query(model.User).order_by(model.User.id.asc()).all()
+        self.assertEqual(time_1, users[0].last_logout_time)
+        self.assertEqual(time_1, users[1].last_logout_time)
+        self.assertEqual(time_1, users[2].last_logout_time)
+
+        # 두 사용자만 업데이트하고 둘만 변화했는지 확인
+        time.time.elapse(1)
+        self.engine.member_manager.update_last_logout_time([1, 3])
+        time_2 = datetime.datetime.fromtimestamp(time.time())
+        users = model.Session().query(model.User).order_by(model.User.id.asc()).all()
+        self.assertEqual(time_2, users[0].last_logout_time)
+        self.assertEqual(time_1, users[1].last_logout_time)
+        self.assertEqual(time_2, users[2].last_logout_time)
 
     def tearDown(self):
         # Common tearDown
