@@ -5,7 +5,6 @@ import os
 import sys
 import xml.dom.minidom
 import urllib
-import thread
 
 thrift_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'gen-py'))
 sys.path.append(thrift_path)
@@ -22,9 +21,6 @@ def stub_toprettyxml(url):
 
 def stub_strftime(formatstring, target):
     return u'melong. this is time'
-
-def stub_start_new_thread(function, argument):
-    pass
 
 def stub_parseString(string):
     f = open(os.path.join(os.path.dirname(__file__), 'bot_manager_test_weather_info.xml'), 'r')
@@ -60,8 +56,6 @@ class BotManagerTest(AraraTestBase):
         xml.dom.minidom.Element.toprettyxml = stub_toprettyxml
         self.org_strftime = time.strftime
         time.strftime = stub_strftime
-        self.org_start_new_thread = thread.start_new_thread
-        thread.start_new_thread = stub_start_new_thread
         self.org_parseString = stub_parseString
         xml.dom.minidom.parseString = stub_parseString
         self.org_urlopen = urllib.urlopen
@@ -152,7 +146,6 @@ class BotManagerTest(AraraTestBase):
         # Restore Stub Code
         xml.dom.minidom.Element.toprettyxml = self.org_toprettyxml
         time.strftime = self.org_strftime
-        thread.start_new_thread = self.org_start_new_thread
         xml.dom.minidom.parseString = self.org_parseString
         urllib.urlopen = self.org_urlopen
 

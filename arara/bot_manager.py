@@ -81,15 +81,11 @@ class WeatherBot(object):
         @type  engine: ARAraEngine
         @type  manager: BotManager
         '''
-        import thread
-
         # 설정을 받아옴
         self.engine = engine
         self.manager = manager
         self.board_name = BOT_SERVICE_SETTING['weather_board_name']
         self.refresh_period = BOT_SERVICE_SETTING['weather_refresh_period']
-
-        thread.start_new_thread(self.process, tuple())
 
     def check_manager_status(self):
         '''
@@ -131,25 +127,10 @@ class WeatherBot(object):
         # 이상의 테스트를 모두 통과하면 문제없이 동작한다는 것.
         return True
 
-    def process(self):
-        '''
-        일정 주기마다 한 번씩 새 글을 작성하는 함수를 호출함
-        
-        @rtype: void
-        @return: void
-        '''
-        # Weather Bot 이 활동할 수 있는 상황이 될 때까지 기다린다
-        while not self.check_manager_status():
-            time.sleep(1)
-
-        # TODO: 프로그램이 종료됨이 확실한 순간에는 스레드도 죽이도록 하자
-        while self.write_weather_article():
-            time.sleep(self.refresh_period)
-    
     def write_weather_article(self):
         '''
         날씨 정보를 긁어와 WEATHER_BOARD_NAME 게시판에 새 글로 작성함
-        WeatherBot.process에서 일정 주기로 호출하거나, SYSOP 페이지에서 호출한다
+        BotManager.refresh_weather_info() 가 호출해준다
 
         @rtype: bool
         @return: 
