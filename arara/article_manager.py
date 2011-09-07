@@ -207,12 +207,10 @@ class ArticleManager(arara_manager.ARAraManager):
             raise InvalidOperation("article does not exist")
         return article
 
-    def _get_page_info(self, session, article_count, page, page_length):
+    def get_page_info(self, article_count, page, page_length):
         '''
         요청한 페이지에 해당되는 글의 번호 대역을 알아낸다.
 
-        @type  session: SQLAlchemy session
-        @param session: 현재 사용중인 SQLAlchemy session
         @type  article_count: int
         @param article_count: Query 의 모든 글의 갯수
         @type  page: int
@@ -222,8 +220,6 @@ class ArticleManager(arara_manager.ARAraManager):
         @rtype: (int, int, int)
         @return: last page 번호, 주어진 page 의 첫 글의 위치, 마지막 글의 위치
         '''
-        # TODO: 이 함수에서 session 을 사용할 필요가 전혀 없으므로 제거시키기
-
         # part 1. last page 구하기 
         last_page = int(article_count / page_length)
         if article_count % page_length != 0:
@@ -233,8 +229,7 @@ class ArticleManager(arara_manager.ARAraManager):
 
         # part 2. 페이지가 비정상 범위라면? InvalidOperation.
         if (page > last_page) or (page < 0):
-            session.close()
-            raise InvalidOperation('WRONG_PAGENUM')
+            raise ValueError('WRONG_PAGENUM')
 
         # part 3. Page 의 시작 글과 끝 글의 번째수를 구한다.
         offset = page_length * (page - 1)
@@ -502,7 +497,14 @@ class ArticleManager(arara_manager.ARAraManager):
         article_count = desired_query.count()
 
         # Part 2. 페이지번호 관련 정보 구하기
-        last_page, offset, last = self._get_page_info(session, article_count, page, page_length)
+        try:
+            last_page, offset, last = self.get_page_info(article_count, page, page_length)
+        except ValueError as e:
+            session.close()
+            if str(e) == 'WRONG_PAGENUM':
+                raise InvalidOperation(str(e))
+            else:  # Unexpected Exception
+                raise
 
         # Part 3. 목록의 정렬.
         desired_query = self._get_ordered_query(session, desired_query, order_by)

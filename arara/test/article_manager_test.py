@@ -1033,6 +1033,16 @@ class ArticleManagerTest(AraraTestBase):
         # 로그인하지 않은 사용자의 경우 모든 글이 새 글
         self.engine.article_manager.put_user_specific_info(-1, article_list, [1, 2, 3, 4, 5])
         self.assertEqual(['N', 'N', 'N', 'N', 'N'], [x.read_status for x in article_list.hit])
+
+    def get_get_page_info(self):
+        self.assertEqual((2, 6, 2), self.engine.article_manager.get_page_info(6, 1, 5))
+        self.assertEqual((3, 11, 7), self.engine.article_manager.get_page_info(11, 1, 5))
+
+        try:
+            self.engine.article_manager.get_page_info(6, 3, 5)
+            self.fail("Getting page info of nonexisting page must fail.")
+        except ValueError as e:
+            self.assertEqual("WRONG_PAGENUM", str(e))
  
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(ArticleManagerTest)
