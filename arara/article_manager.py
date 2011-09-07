@@ -452,22 +452,6 @@ class ArticleManager(arara_manager.ARAraManager):
             session.close()
             raise InvalidOperation("WRONG_ORDERING")
 
-    @log_method_call_duration
-    def _get_article_list_from_query(self, desired_query, offset, last):
-        '''
-        Internal.
-        주어진 쿼리에서 offset 번째부터 last 번째까지의 글의 목록을 가져온다.
-        실질적으로 MySQL 에서 객체들을 받아오는 부분.
-
-        @type  query: SQLAlchemy Query
-        @param query: 글의 목록에 대한 query
-        @type  offset: int
-        @param offset: 몇 번째 글부터 가져올 것인가
-        @type  last: int
-        @param last: 몇 번째 글까지 가져올 것인가
-        '''
-        return list(desired_query[offset:last])
-
     def _get_article_list(self, board_name, heading_name, page, page_length, include_all_headings = True, order_by = LIST_ORDER_ROOT_ID):
         '''
         Internal.
@@ -508,7 +492,7 @@ class ArticleManager(arara_manager.ARAraManager):
 
         # Part 3. 목록의 정렬.
         desired_query = self._get_ordered_query(session, desired_query, order_by)
-        article_list  = self._get_article_list_from_query(desired_query, offset, last)
+        article_list  = desired_query[offset:last]
 
         session.close()
         # 적당히 리턴한다.
