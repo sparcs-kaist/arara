@@ -16,6 +16,7 @@ import arara.model
 STUB_TIME_INITIAL = 31536000.1
 STUB_TIME_CURRENT = STUB_TIME_INITIAL
 
+from arara_thrift import ttypes
 
 def stub_time():
     # XXX Not Thread-safe!
@@ -1018,6 +1019,20 @@ class ArticleManagerTest(AraraTestBase):
         self.assertEqual(1, self.engine.article_manager.get_page_no_of_article(u'board', u'', 2, 5))
         self.assertEqual(2, self.engine.article_manager.get_page_no_of_article(u'board', u'', 1, 5))
 
+    def test_put_user_specific_info(self):
+        # 사용자에 따른 정보가 바르게 입혀지는지 확인
+        self.engine.read_status_manager.mark_as_read_list(self.session_key_mikkang, [1, 3, 5])
+        article_list = ttypes.ArticleList(hit=[ttypes.Article(id=1),
+                                               ttypes.Article(id=2),
+                                               ttypes.Article(id=3),
+                                               ttypes.Article(id=4),
+                                               ttypes.Article(id=5)])
+        self.engine.article_manager.put_user_specific_info(2, article_list, [1, 2, 3, 4, 5])
+        self.assertEqual(['R', 'N', 'R', 'N', 'R'], [x.read_status for x in article_list.hit])
+
+        # 로그인하지 않은 사용자의 경우 모든 글이 새 글
+        self.engine.article_manager.put_user_specific_info(-1, article_list, [1, 2, 3, 4, 5])
+        self.assertEqual(['N', 'N', 'N', 'N', 'N'], [x.read_status for x in article_list.hit])
  
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(ArticleManagerTest)

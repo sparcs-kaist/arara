@@ -635,6 +635,50 @@ class ArticleManager(arara_manager.ARAraManager):
         return self._article_list_2_article_list(session_key, article_list, page, last_page, article_count)
         
     @log_method_call
+    def put_user_specific_info(self, user_id, article_list, last_reply_id_list):
+        '''
+        게시물 목록에 각 사용자를 위한 다음의 정보들을 추가한다.
+
+        (1) 새글/새 댓글 알림
+        (2) Blacklist
+
+        @type  user_id: int
+        @param user_id: 사용자 고유 id (로그인하지 않은 사용자는 -1)
+        @type  article_list: ttypes.ArticleList
+        @param article_list: 게시물 목록
+        @type  last_reply_id_list: list<int>
+        @param last_reply_id_list: 각 게시물의 마지막 글번호의 목록
+        @rtype: void
+        @return: 없음 (article_list 파라메터에 직접 수정을 가한다)
+        '''
+        if user_id == -1:
+            # 로그인하지 않았으므로 모든 글은 새 글, 차단된 사용자는 없음
+            for article in article_list.hit:
+                article.read_status = 'N'
+                article.blacklisted = False
+                article.type = 'normal'
+        else:
+            root_id_list = [article.id for article in article_list.hit]
+            # ReadStatusManager 와 BlacklistManager 로부터 정보 가져오기
+            read_status_main = self.engine.read_status_manager.check_stats_by_id(user_id, root_id_list)
+            read_status_sub  = self.engine.read_status_manager.check_stats_by_id(user_id, last_reply_id_list)
+            blacklisted_users = self._get_blacklist_userid(user_id)
+            for idx, article in enumerate(article_list.hit):
+                # Root 글은 읽었는데 마지막 답글은 안 읽었다면 새 댓글
+                # Root 글도 읽었고   마지막 답글도 읽었다면 다 읽은 글
+                if read_status_main[idx] == 'R':
+                    if read_status_sub[idx] == 'N':
+                        article.read_status = 'U'
+                    else:
+                        article.read_status = 'R'
+                else:
+                    article.read_status = 'N'
+                # Blacklist
+                article.blacklisted = article.author_id in blacklisted_users
+                # Article Type
+                article.type = 'normal'
+
+    @log_method_call
     def article_list(self, session_key, board_name, heading_name, page=1, page_length=20, include_all_headings=True):
         '''
         게시판의 게시글 목록 읽어오기
