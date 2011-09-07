@@ -87,6 +87,14 @@ class ReadStatusManagerTest(AraraTestBase):
         except NotLoggedIn:
             pass
 
+    def test_check_stats_by_id(self):
+        ret = self.engine.read_status_manager.check_stats_by_id(2, [1, 2])
+        self.assertEqual(["N", "N"], ret)
+
+        self.engine.read_status_manager.mark_as_read(self.session_key_mikkang, 1)
+        ret = self.engine.read_status_manager.check_stats_by_id(2, [1, 2])
+        self.assertEqual(["R", "N"], ret)
+
     def test_mark_as_read(self):
         self._write_articles()
         ret = self.engine.read_status_manager.check_stat(

@@ -495,6 +495,9 @@ service ARAraThriftInterface {
     list<string> check_stats(1:string session_key, 2:list<i32> no_list)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<string> check_stats_by_id(1:i32 user_id, 2:list<i32> no_list)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void mark_as_read_list(1:string session_key, 2:list<i32> no_list)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),

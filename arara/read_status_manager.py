@@ -232,6 +232,23 @@ class ReadStatusManager(arara_manager.ARAraManager):
         user_id = self.engine.login_manager.get_user_id(session_key)
         return self._check_stat(user_id, no)
 
+    @log_method_call
+    def check_stats_by_id(self, user_id, no_list):
+        '''
+        사용자 고유 id 를 받아 복수개의 글의 읽은 여부를 체크
+        존재하지 않는 글번호를 입력하지 않도록 주의.
+
+        >>> readstat.check_stats(session_key, [1, 2, 3, 4, 5, 6])
+        ['N', 'N', 'R', 'R', 'V', 'R']
+
+        @type  no_list: list<int>
+        @param no_list: Article Numbers
+        @rtype: list<str>
+        @return: 주어진 각 게시물별 글읽음 상태
+        '''
+        self._initialize_data(user_id)
+        return self.read_status[user_id].get_range(no_list)
+
     @require_login
     @log_method_call
     def check_stats(self, session_key, no_list):
@@ -484,6 +501,7 @@ class ReadStatusManager(arara_manager.ARAraManager):
     __public__ = [
             check_stat,
             check_stats,
+            check_stats_by_id,
             mark_as_read_list,
             mark_as_read,
             mark_as_viewed,
