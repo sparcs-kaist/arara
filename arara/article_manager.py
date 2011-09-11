@@ -716,11 +716,11 @@ class ArticleManager(arara_manager.ARAraManager):
         '''
         게시판의 게시글 목록 읽어오기
 
-        @type  session_key: string
+        @type  session_key: str
         @param session_key: 사용자 Login Session
-        @type  board_name: string
-        @param board_name: BBS Name (0글자 문자열을 넘기면 모든 게시판에 대하여 적용)
-        @type  heading_name: string
+        @type  board_name: str
+        @param board_name: 게시판의 이름 / 모든 게시판은 "" 로 지정
+        @type  heading_name: str
         @param heading_name: 가져올 글의 글머리 이름
         @type  page: int
         @param page: Page Number to Request
@@ -728,16 +728,27 @@ class ArticleManager(arara_manager.ARAraManager):
         @param page_length: Count of Article on a Page
         @type  include_all_headings: bool
         @param include_all_headings: 모든 글머리의 글을 가져올지에 대한 여부
-        @rtype: list
+        @rtype: ttypes.ArticleList
         @return:
             1. 리스트 읽어오기 성공: Article List
             2. 리스트 읽어오기 실패:
                 1. 존재하지 않는 게시판: InvalidOperation Exception
                 2. 페이지 번호 오류: InvalidOperation Exception
-                3. 데이터베이스 오류: InternalError Exception 
+                3. 데이터베이스 오류: InternalError Exception
         '''
-        listing_mode = self.engine.member_manager.get_listing_mode_by_key(session_key)
-        return self._article_list(session_key, board_name, heading_name, page, page_length, include_all_headings, listing_mode)
+        # page 번호가 0 이 들어오더라도 1로 교정
+        if page == 0:
+            page = 1
+
+        # 사용자에 대한 정보 가져오기
+        user_id = self.engine.login_manager.get_user_id_wo_error(session_key)
+        listing_mode = self.engine.member_manager.get_listing_mode(user_id)
+
+        # 게시물 목록 가져오기
+        article_list, last_reply_ids = self.get_article_list(board_name, heading_name, page, page_length, include_all_headings, listing_mode)
+        self.put_user_specific_info(user_id, article_list, last_reply_ids)
+
+        return article_list
 
     @log_method_call_duration
     def _read_article(self, session, no):
