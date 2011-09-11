@@ -499,53 +499,6 @@ class ArticleManager(arara_manager.ARAraManager):
  
         return article_list, last_reply_ids
 
-    def _get_article_list(self, board_name, heading_name, page, page_length, include_all_headings = True, order_by = LIST_ORDER_ROOT_ID):
-        '''
-        Internal.
-        주어진 게시판의 주어진 페이지에 있는 글의 목록을 가져온다.
-
-        @type  board_name: string
-        @param board_name: 글을 가져올 게시판의 이름
-        @type  heading_name: string
-        @param heading_name: 가져올 글의 글머리 이름
-        @type  page: int
-        @param page: 글을 가져올 페이지의 번호
-        @type  page_length: int
-        @param page_length: 페이지당 글 갯수
-        @type  include_all_headings: bool
-        @param include_all_headings: 모든 글머리의 글을 가져올지에 대한 여부
-        @type  order_by: int - LIST_ORDER
-        @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
-        @rtype: (list<model.Article>, int, int)
-        @return:
-            1. article_list  : model.Article 의 list
-            2. last page     : 글 목록의 마지막 페이지의 번호
-            3. article_count : 글의 전체 갯수
-        '''
-        session = model.Session()
-        # Part 1. Query : Board Name, Heading Name 을 따르는 모든 글
-        desired_query = self._get_basic_query(session, board_name, heading_name, include_all_headings)
-        article_count = desired_query.count()
-
-        # Part 2. 페이지번호 관련 정보 구하기
-        try:
-            last_page, offset, last = self.get_page_info(article_count, page, page_length)
-        except ValueError as e:
-            session.close()
-            if str(e) == 'WRONG_PAGENUM':
-                raise InvalidOperation(str(e))
-            else:  # Unexpected Exception
-                raise
-
-        # Part 3. 목록의 정렬.
-        desired_query = self._get_ordered_query(session, desired_query, order_by)
-        article_list  = desired_query[offset:last]
-
-        session.close()
-        # 적당히 리턴한다.
-
-        return article_list, last_page, article_count
-
     def _get_read_status_generator(self, user_id, article_list, whitelist):
         '''
         @type  user_id: int
