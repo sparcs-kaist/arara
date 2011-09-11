@@ -19,13 +19,7 @@ class ReadStatusManagerTest(AraraTestBase):
 
     def setUp(self):
         # Common preparation for all tests
-        super(ReadStatusManagerTest, self).setUp()
-
-        # Fake time for further test
-        def stub_time():
-            return 1.1
-        self.org_time = time.time
-        time.time = stub_time
+        super(ReadStatusManagerTest, self).setUp(stub_time=True, stub_time_initial=1.1)
 
         # Login as SYSOP and create 'garbage'
         session_key_sysop = self.engine.login_manager.login(
@@ -44,13 +38,6 @@ class ReadStatusManagerTest(AraraTestBase):
         article = Article(**{'title': u'serialx is...', 'content': u'polarbear', 'heading': u''})
         self.engine.article_manager.write_article(
                 self.session_key_mikkang, u'garbages', article)
-
-    def tearDown(self):
-        # Common tearDown
-        super(ReadStatusManagerTest, self).tearDown()
-
-        # Restore the time
-        time.time = self.org_time
 
     def test_check_stat(self):
         self._write_articles()

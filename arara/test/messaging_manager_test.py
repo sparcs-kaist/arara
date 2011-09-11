@@ -17,13 +17,7 @@ import arara.model
 class MessagingManagerTest(AraraTestBase):
     def setUp(self):
         # Common preparation for all tests
-        super(MessagingManagerTest, self).setUp()
-
-        # Fake time for further test
-        def stub_time():
-            return 1.1
-        self.org_time = time.time
-        time.time = stub_time
+        super(MessagingManagerTest, self).setUp(stub_time=True, stub_time_initial=1.1)
 
         # Register mikkang for test
         self.mikkang_session_key = self.register_and_login(u"mikkang")
@@ -418,12 +412,6 @@ class MessagingManagerTest(AraraTestBase):
         except NotLoggedIn:
             pass
 
-    def tearDown(self):
-        # Common tearDown
-        super(MessagingManagerTest, self).tearDown()
-
-        # Restore the time
-        time.time = self.org_time
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(MessagingManagerTest)

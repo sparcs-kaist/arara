@@ -15,24 +15,12 @@ from arara_thrift.ttypes import *
 from etc.arara_settings import SESSION_EXPIRE_TIME
 from arara import model
 
-# Faking time.time (to check time field)
-def stub_time():
-    return 1.1
-
-def stub_time_2():
-    return 1.1 + (SESSION_EXPIRE_TIME / 2)
-
-def stub_time_3():
-    return 1.1 + 86400 # one day
 
 class LoginManagerTest(AraraTestBase):
     def setUp(self):
         # Common preparation for all tests
-        super(LoginManagerTest, self).setUp()
+        super(LoginManagerTest, self).setUp(stub_time=True, stub_time_initial=1.1)
         
-        self.org_time = time.time
-        time.time = stub_time
-
     def test_login(self):
         self.register_user(u'pipoket')
 
@@ -167,7 +155,7 @@ class LoginManagerTest(AraraTestBase):
         # 본 테스트의 목적은 로그인 이후 활동을 하는 사용자가 로그아웃되는것을 막기 위함이다.
         self.register_user(u'pipoket')
         session_key_pipoket = self.engine.login_manager.login(u'pipoket', u'pipoket', u'143.248.234.145')
-        time.time = stub_time_2
+        time.time.elapse(SESSION_EXPIRE_TIME / 2)
 
         self.engine.login_manager._update_monitor_status(session_key_pipoket, "read")
         # XXX 지금은 dictionary 에 직접 접근하는데 ...
@@ -175,13 +163,7 @@ class LoginManagerTest(AraraTestBase):
         #     어떻게 해야 좋을까? 아흥.
         result = self.engine.login_manager.session_dic[session_key_pipoket]['last_action_time']
 
-        self.assertEqual(result, stub_time_2())
-
-    def tearDown(self):
-        time.time = self.org_time
-
-        # Common tearDown
-        super(LoginManagerTest, self).tearDown()
+        self.assertEqual(result, 1.1 + SESSION_EXPIRE_TIME / 2)
 
     def test_count(self):
         visitors = self.engine.login_manager.total_visitor() 
@@ -191,7 +173,7 @@ class LoginManagerTest(AraraTestBase):
         self.assertEqual(2, visitors.total_visitor_count)
         self.assertEqual(2, visitors.today_visitor_count)
         # 하루가 지난다. today_visitor_count 는 다시 1부터 올라간다
-        time.time = stub_time_3
+        time.time.elapse(86400)
         visitors = self.engine.login_manager.total_visitor() 
         self.assertEqual(3, visitors.total_visitor_count)
         self.assertEqual(1, visitors.today_visitor_count)
@@ -211,9 +193,7 @@ class LoginManagerTest(AraraTestBase):
         self.assertEqual([], result)
 
         # 그 사용자가 Expire 되었을 때
-        def stub_time_new():
-            return 1.1 + SESSION_EXPIRE_TIME + 1
-        time.time = stub_time_new
+        time.time.elapse(SESSION_EXPIRE_TIME + 1.0)
 
         result = self.engine.login_manager.get_expired_sessions()
         self.assertEqual([(panda_session_key, 2)], result)
@@ -230,9 +210,7 @@ class LoginManagerTest(AraraTestBase):
         self.assertEqual([(panda_session_key, 2)], result)
 
         # 그 사용자가 Expire 되었을 때
-        def stub_time_new():
-            return 1.1 + SESSION_EXPIRE_TIME + 1
-        time.time = stub_time_new
+        time.time.elapse(SESSION_EXPIRE_TIME + 1.0)
 
         result = self.engine.login_manager.get_active_sessions()
         self.assertEqual([], result)
@@ -245,9 +223,7 @@ class LoginManagerTest(AraraTestBase):
         session_key_sillo = self.register_and_login(u'sillo')  # user 3
         self.engine.read_status_manager._initialize_data(2)
         self.engine.read_status_manager._initialize_data(3)
-        def stub_time_new():
-            return 1.1 + SESSION_EXPIRE_TIME + 1
-        time.time = stub_time_new
+        time.time.elapse(SESSION_EXPIRE_TIME + 1.0)
         self.engine.login_manager.update_session(session_key_sillo)
 
         self.engine.login_manager.cleanup_expired_sessions()

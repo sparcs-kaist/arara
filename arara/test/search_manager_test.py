@@ -18,13 +18,7 @@ class SearchManagerTest(AraraTestBase):
 
     def setUp(self):
         # Common preparation for all tests
-        super(SearchManagerTest, self).setUp()
-
-        # Fake time for further test
-        def stub_time():
-            return 1.1
-        self.org_time = time.time
-        time.time = stub_time
+        super(SearchManagerTest, self).setUp(stub_time=True, stub_time_initial=1.1)
 
         # Register two users
         # Login
@@ -35,13 +29,6 @@ class SearchManagerTest(AraraTestBase):
         # Add two board
         self.engine.board_manager.add_board(self.session_key_sysop, u"search1", u'보드1', u"search1")
         self.engine.board_manager.add_board(self.session_key_sysop, u"search2", u'보드2', u"search2", [u'head1', u'head2'])
-
-    def tearDown(self):
-        # Common tearDown
-        super(SearchManagerTest, self).tearDown()
-
-        # Restore the time
-        time.time = self.org_time
 
     def _dummy_article_write(self, session_key, board, title_append = u"", heading = u""):
         article_dic = {'title': u'TITLE' + title_append, 'content': u'CONTENT', 'heading': heading}

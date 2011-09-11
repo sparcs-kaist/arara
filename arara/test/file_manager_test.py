@@ -17,13 +17,7 @@ import arara.model
 class FileManagerTest(AraraTestBase):
     def setUp(self):
         # Common preparation for all tests
-        super(FileManagerTest, self).setUp()
-
-        # Fake time for further test
-        def stub_time():
-            return 1.1
-        self.org_time = time.time
-        time.time = stub_time
+        super(FileManagerTest, self).setUp(stub_time=True, stub_time_initial=1.1)
 
         # Login as SYSOP and create 'garbage'
         session_key_sysop = self.engine.login_manager.login(
@@ -85,12 +79,6 @@ class FileManagerTest(AraraTestBase):
         result = self.engine.file_manager._get_attached_file_list(self.article_id + 3)
         self.assertEqual(0, len(result))
 
-    def tearDown(self):
-        # Common tearDown
-        super(FileManagerTest, self).tearDown()
-
-        # Restore the time
-        time.time = self.org_time
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(FileManagerTest)

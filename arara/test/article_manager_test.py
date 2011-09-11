@@ -10,18 +10,10 @@ ARARA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
 sys.path.append(ARARA_PATH)
 
 from arara.test.test_common import AraraTestBase
+from arara_thrift import ttypes
 from arara_thrift.ttypes import *
 import arara.model
 
-STUB_TIME_INITIAL = 31536000.1
-STUB_TIME_CURRENT = STUB_TIME_INITIAL
-
-from arara_thrift import ttypes
-
-def stub_time():
-    # XXX Not Thread-safe!
-    global STUB_TIME_CURRENT
-    return STUB_TIME_CURRENT
 
 class ArticleManagerTest(AraraTestBase):
 
@@ -36,15 +28,10 @@ class ArticleManagerTest(AraraTestBase):
 
     def setUp(self):
         # Common preparation for all tests
-        super(ArticleManagerTest, self).setUp()
+        super(ArticleManagerTest, self).setUp(stub_time=True, stub_time_initial=31536000.1)
 
-        global STUB_TIME_CURRENT
         # SYSOP will appear.
         self.session_key_sysop = self.engine.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123')
-        # Faking time.time
-        self.org_time = time.time
-        time.time = stub_time
-        STUB_TIME_CURRENT = STUB_TIME_INITIAL
         # Register two users
         self.session_key_mikkang = self.register_and_login(u'mikkang')
         self.session_key_serialx = self.register_and_login(u'serialx')
@@ -55,13 +42,6 @@ class ArticleManagerTest(AraraTestBase):
 
         self.engine.board_manager.add_board(self.session_key_sysop, u'board_del', u'지워질 보드', u'Test Board for deleting board test', [])
         self.engine.board_manager.add_board(self.session_key_sysop, u'board_hide', u'숨겨질 보드', u'Test Board for hiding board test', [])
-
-    def tearDown(self):
-        # Common tearDown
-        super(ArticleManagerTest, self).tearDown()
-
-        # Restore time.time
-        time.time = self.org_time
 
     def test_read_only_board(self):
         # Add a read-only board. Try to write an article. Must fail.
@@ -75,8 +55,7 @@ class ArticleManagerTest(AraraTestBase):
             pass
 
     def _dummy_article_write(self, session_key, title_append = u"", board_name=u'board', heading=u''):
-        global STUB_TIME_CURRENT
-        STUB_TIME_CURRENT += 1.0
+        time.time.elapse(1.0)
         article_dic = {'title': u'TITLE' + title_append, 'content': u'CONTENT', 'heading': heading}
         return self.engine.article_manager.write_article(session_key, board_name, Article(**article_dic))
 
@@ -158,8 +137,7 @@ class ArticleManagerTest(AraraTestBase):
             pass
         # Test successfully reply on an existing article.
         article_id = self._dummy_article_write(self.session_key_mikkang)
-        global STUB_TIME_CURRENT
-        STUB_TIME_CURRENT += 1.0
+        time.time.elapse(1.0)
         reply_id   = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board', 1, reply_dic)
         self.assertEqual(2, reply_id)
         # Test read original article again.
@@ -191,11 +169,10 @@ class ArticleManagerTest(AraraTestBase):
     def test_reply_with_heading(self):
         # Write an article
         article_id = self._dummy_article_write(self.session_key_mikkang, u'', u'board_h')
-        global STUB_TIME_CURRENT
-        STUB_TIME_CURRENT += 1.0
+        time.time.elapse(1.0)
         reply_dic = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u'head1'})
         reply_id1 = self.engine.article_manager.write_reply(self.session_key_serialx, u'board_h', article_id, reply_dic)
-        STUB_TIME_CURRENT += 1.0
+        time.time.elapse(1.0)
         reply_dic = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u'head2'})
         reply_id2 = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board_h', article_id, reply_dic)
 
@@ -220,8 +197,7 @@ class ArticleManagerTest(AraraTestBase):
         # Preparation
         article_1_id = self._dummy_article_write(self.session_key_mikkang)
         article_2_id = self._dummy_article_write(self.session_key_serialx)
-        global STUB_TIME_CURRENT
-        STUB_TIME_CURRENT += 1.0
+        time.time.elapse(1.0)
         reply_dic    = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
         reply_id     = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board', 1, reply_dic)
         # Without reply, listing order must be [article 2, article 1].
@@ -283,14 +259,13 @@ class ArticleManagerTest(AraraTestBase):
         article_3_id = self._dummy_article_write(self.session_key_mikkang) # 루트글도 답글도 읽음
         self.engine.article_manager.read_article(self.session_key_serialx, u'board', article_1_id)
         self.engine.article_manager.read_article(self.session_key_serialx, u'board', article_3_id)
-        global STUB_TIME_CURRENT
-        STUB_TIME_CURRENT += 1.0
+        time.time.elapse(1.0)
         reply_dic    = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
         reply_1_id   = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board', 1, reply_dic)
-        STUB_TIME_CURRENT += 1.0
+        time.time.elapse(1.0)
         reply_dic    = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
         reply_2_id   = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board', 2, reply_dic)
-        STUB_TIME_CURRENT += 1.0
+        time.time.elapse(1.0)
         reply_dic    = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
         reply_3_id   = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board', 3, reply_dic)
         self.engine.article_manager.read_article(self.session_key_serialx, u'board', reply_3_id)
@@ -556,8 +531,7 @@ class ArticleManagerTest(AraraTestBase):
         self.assertEqual([4, 6, 8, 5, 1], [x.id for x in result])
 
         # 하루가 지났다. 새로운 글이 하나 올라왔다
-        global STUB_TIME_CURRENT
-        STUB_TIME_CURRENT += 86400
+        time.time.elapse(86400)
         self._dummy_article_write(self.session_key_mikkang, u"", u"board_hide") #10
         self._vote(10, 7, u"board_hide")
 
@@ -650,8 +624,7 @@ class ArticleManagerTest(AraraTestBase):
         self.assertEqual([4, 6, 8, 5, 1], [x.id for x in result])
 
         # 하루가 지났다. 새로운 글이 하나 올라왔다
-        global STUB_TIME_CURRENT
-        STUB_TIME_CURRENT += 86400
+        time.time.elapse(86400)
         self._dummy_article_write(self.session_key_mikkang, u"", u"board_hide") #10
         self._read(10, 7, u"board_hide")
 
@@ -878,10 +851,9 @@ class ArticleManagerTest(AraraTestBase):
         # Write an article, reply to the article, and create board2
         article_no1 = self._dummy_article_write(self.session_key_mikkang)
         reply_dic = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
-        global STUB_TIME_CURRENT
-        STUB_TIME_CURRENT += 1.0
+        time.time.elapse(1)
         reply_no2 = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board', 1, reply_dic)
-        STUB_TIME_CURRENT += 1.0
+        time.time.elapse(1)
         reply_no3 = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board', 2, reply_dic)
         self.engine.board_manager.add_board(self.session_key_sysop, u'board2', u'board2', u'Test Board2', [])
         # Vote for article
@@ -943,12 +915,11 @@ class ArticleManagerTest(AraraTestBase):
 
         # 답글을 달고 Listing Method 를 바꿔 보자.
         reply_dic = WrittenArticle(**{'title':u'dummy', 'content': u'asdf', 'heading': u''})
-        global STUB_TIME_CURRENT
-        STUB_TIME_CURRENT += 1.0
+        time.time.elapse(1)
         reply_id   = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board', 1, reply_dic)
-        STUB_TIME_CURRENT += 1.0
+        time.time.elapse(1)
         reply_id   = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board', 3, reply_dic)
-        STUB_TIME_CURRENT += 1.0
+        time.time.elapse(1)
         reply_id   = self.engine.article_manager.write_reply(self.session_key_mikkang, u'board', 6, reply_dic)
 
         self.assertEqual(9, self.engine.article_manager._get_remaining_article_count(session, None, None, 2, True, 1))

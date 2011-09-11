@@ -2,7 +2,6 @@
 import unittest
 import os
 import sys
-import time
 
 THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'gen-py'))
 sys.path.append(THRIFT_PATH)
@@ -17,13 +16,7 @@ import arara.model
 class BlacklistManagerTest(AraraTestBase):
     def setUp(self):
         # Common preparation for all tests
-        super(BlacklistManagerTest, self).setUp()
-
-        # Fake time for further test
-        def stub_time():
-            return 1.1
-        self.org_time = time.time
-        time.time = stub_time
+        super(BlacklistManagerTest, self).setUp(stub_time=True, stub_time_initial=1.1)
 
         # Register mikkang for test
         self.mikkang_session_key = self.register_and_login(u'mikkang')
@@ -132,12 +125,6 @@ class BlacklistManagerTest(AraraTestBase):
         self.assertEqual([3], result)
         # TODO : 없는 유저에 대해 작동 안하는 거 확인.
 
-    def tearDown(self):
-        # Common tearDown
-        super(BlacklistManagerTest, self).tearDown()
-
-        # restore time.time
-        time.time = self.org_time
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(BlacklistManagerTest)
