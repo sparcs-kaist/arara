@@ -19,14 +19,10 @@ THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../gen-py
 sys.path.append(THRIFT_PATH)
 sys.path.append(PROJECT_PATH)
 
-from thrift.protocol import TBinaryProtocol
-from thrift.transport import TTransport
-from thrift.transport import TSocket
-from thrift.server import TServer
-
 from etc import arara_settings
 from arara.arara_engine import ARAraEngine
 import arara.model
+from middleware.thrift_server import open_thrift_server
 
 from arara_thrift import ARAraThriftInterface
 
@@ -47,31 +43,6 @@ if arara_settings.ARARA_DEBUG_HANDLER_ON:
     logging.getLogger('').addHandler(handler_for_debug)
 
     
-def open_thrift_server(processor, handler, port):
-    '''
-    실제 Thrift Server 를 생성한다.
-
-    @type  processor: module
-    @param processor: 자동으로 생성된 Thrift Service Class
-    @type  handler: Class
-    @param handler: Backend Instance 를 생성할 Class
-    '''
-    handler_instance = handler()
-    processor_ = processor.Processor(handler_instance)
-    transport = TSocket.TServerSocket(port)
-    tfactory = TTransport.TBufferedTransportFactory()
-    #tfactory = TTransport.TFramedTransportFactory()
-    pfactory = TBinaryProtocol.TBinaryProtocolAcceleratedFactory()
-
-    # 서버를 어떻게 띄울 것인가?
-    # 1. TThreadedServer   : Thread per Connection
-    # 2. TForkingServer    : Process per Connection
-    # 3. TThreadPoolServer : Preloaded Thread with Pool
-
-    server = TServer.TThreadPoolServer(processor_, transport, tfactory, pfactory)
-    server.setNumThreads(arara_settings.ARARA_NUM_THREADS)
-    return server, handler_instance
-
 def open_server(base_port):
     '''
     @type  base_port: int
@@ -81,8 +52,8 @@ def open_server(base_port):
     thrift_class = ARAraThriftInterface
     port = base_port
     logger.info("Opening ARAra Thrift middleware on port starting from %s...", port)
-    server, instance = open_thrift_server(thrift_class, base_class, port)
-    return server
+    server, handler = open_thrift_server(thrift_class, base_class, port, "TThreadPoolServer", 30)
+    return server, handler
 
 if __name__ == '__main__':
     logger = logging.getLogger('main')
@@ -100,7 +71,7 @@ if __name__ == '__main__':
 
     sys.excepthook = exception_handler
 
-    server = open_server(options.port)
+    server, _ = open_server(options.port)
 
     logger.info('Starting the server...')
     server.serve()
