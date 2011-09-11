@@ -596,46 +596,6 @@ class ArticleManager(arara_manager.ARAraManager):
             yield Article(**article)
         raise StopIteration
 
-    def _article_list_2_article_list(self, session_key, article_list, current_page, last_page, article_count, whitelist = LIST_ARTICLE_WHITELIST):
-        '''
-        주어진 list<model.Article> 에 적절한 정보들을 입혀서 Thrift 형식의 Article 객체의 list 로 만든다.
-
-        @type  session_key: string
-        @param session_key: 사용자 Login Session
-        @type  article_list: list<model.Article>
-        @param article_list: SQLAlchemy 객체로 되어 있는 글목록
-        @type  current_page: int
-        @param current_page: 글 목록의 현재 페이지 번호
-        @type  last_page: int
-        @param last page: 글 목록의 마지막 페이지의 번호
-        @type  article_count: int
-        @param article_count: 글의 전체 갯수
-        @type  whitelist: list<string>
-        @param whitelist: filtering 에 사용할 whitelist (Default: LIST_ARTICLE_WHITELIST)
-        @rtype: list<ttypes.Article>
-        @return: 주어진 article_list 를 SQLAlchemy 형식에서 Thrift 형식으로 변환한 것
-        '''
-        # TODO: article_list 를 아예 generator 로 받아도 될까?
-
-        # Phase 0. 사용자 고유 id 를 미리 빼낸다. 이를 통해 이후에는 session_key 와 무관하게 됨.
-        user_id = self.engine.login_manager.get_user_id_wo_error(session_key)
-        blacklisted_users = self._get_blacklist_userid(user_id)
-
-        # Phase 1. SQLAlchemy Article List -> Article Dictionary (ReadStatus Marked)
-        article_dict_list_generator = self._get_read_status_generator(user_id, article_list, whitelist)
-
-        # Phase 2. Article Dictionary -> Thrift Article Object (Blacklisted Marked)
-        article_list_generator = self._thrift_article_generator(article_dict_list_generator, blacklisted_users)
-
-        # Phase 3. 이제 이를 바탕으로 Article List 객체를 돌려준다.
-        article_list = ArticleList()
-        article_list.hit = list(article_list_generator)
-        article_list.current_page = current_page
-        article_list.last_page = last_page
-        article_list.results = article_count
-
-        return article_list
-
     @log_method_call
     def put_user_specific_info(self, user_id, article_list, last_reply_id_list):
         '''
