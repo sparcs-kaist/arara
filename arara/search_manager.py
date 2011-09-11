@@ -391,11 +391,21 @@ class SearchManager(arara_manager.ARAraManager):
 
         search_list = list(result)
 
-        article_list = self.engine.article_manager._article_list_2_article_list(session_key, search_list, page, last_page, article_count, SEARCH_ARTICLE_WHITELIST)
-
         session.close()
-        article_list.search_time = end_time-start_time
-        return article_list
+
+        # ArticleManager.get_article_list() 의 하단부 참고
+        last_reply_ids = [article.last_reply_id for article in search_list]
+        search_list    = [Article(**self._get_dict(article, SEARCH_ARTICLE_WHITELIST)) for article in search_list]
+        search_list    = ArticleSearchResult(hit=search_list,
+                last_page=last_page,
+                results=article_count,
+                search_time=end_time - start_time)
+
+        # ArticleManager.article_list() 의 하단부 참고
+        user_id = self.engine.login_manager.get_user_id_wo_error(session_key)
+        self.engine.article_manager.put_user_specific_info(user_id, search_list, last_reply_ids)
+
+        return search_list
 
     def _get_query_text(self, query_dict, key):
         query_text = unicode('%' + query_dict[key] + '%')

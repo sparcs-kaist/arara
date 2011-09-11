@@ -677,7 +677,7 @@ class ArticleManager(arara_manager.ARAraManager):
 
         @type  user_id: int
         @param user_id: 사용자 고유 id (로그인하지 않은 사용자는 -1)
-        @type  article_list: ttypes.ArticleList
+        @type  article_list: ttypes.ArticleList / ttypes.ArticleSearchResult
         @param article_list: 게시물 목록
         @type  last_reply_id_list: list<int>
         @param last_reply_id_list: 각 게시물의 마지막 글번호의 목록
