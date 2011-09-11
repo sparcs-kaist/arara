@@ -925,51 +925,6 @@ class ArticleManager(arara_manager.ARAraManager):
         # query 조립 완료
         return query.count()
 
-    def _article_list_below(self, session_key, board_name, heading_name, no, page_length, include_all_headings = True, order_by = LIST_ORDER_ROOT_ID):
-        '''
-        Internal.
-        주어진 게시판의 주어진 게시물의 하단에 표시될 글의 목록을 가져와 Thrift 형식의 Article 객체의 list 로 돌려준다.
-
-        @type  session_key: string
-        @param session_key: 사용자의 session_key
-        @type  board_name: string
-        @param board_name: 글을 가져올 게시판의 이름
-        @type  heading_name: string
-        @param heading_name: 목록에서 보여줄 선택된 말머리
-        @type  no: int
-        @param no: 글번호
-        @type  page_length: int
-        @param page_length: 페이지당 글 갯수
-        @type  include_all_headings: bool
-        @param include_all_headings: 모든 말머리를 보여줄 것인지의 여부
-        @type  order_by: int - LIST_ORDER
-        @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
-        @rtype: ttypes.ArticleList
-        @return:
-            선택한 게시판의 선택한 page 에 있는 글 (Article 객체) 의 list
-        '''
-        # TODO : session 을 굳이 따로 사용할 필요가 있나?
-        session = model.Session()
-
-        # Heading ID, Board ID 를 구한다
-        board_id = None
-        if board_name != u"":
-            board_id = self.engine.board_manager.get_board_id(board_name)
-
-        heading_id = None
-        if not include_all_headings and heading_name != u"":
-            heading_id = self.engine.board_manager._get_heading_by_boardid(session, board_id, heading_name).id
-
-        # 게시판에 선택된 글 이후 게시된 글의 갯수를 센다
-        remaining_article_count = self._get_remaining_article_count(session, board_id, heading_id, no, include_all_headings, order_by)
-
-        session.close()
-        # 이로부터 합당한 쪽번호를 계산한다
-        page_position = (remaining_article_count / page_length) + 1
-
-        # 이상을 바탕으로 _article_list 함수를 호출한다
-        return self._article_list(session_key, board_name, heading_name, page_position, page_length, include_all_headings, order_by)
-
     def get_page_no_of_article(self, board_name, heading_name, no, page_length, include_all_headings=True, order_by=LIST_ORDER_ROOT_ID):
         '''
         주어진 게시물이 주어진 방식의 글 목록에서 어느 page 에 있는지 리턴한다.
