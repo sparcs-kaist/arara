@@ -17,14 +17,23 @@ import arara.model
 
 class ArticleManagerTest(AraraTestBase):
 
-    def _register_extra_users(self):
-        # Register extra users
-        self.session_key_hodduc = self.register_and_login(u'hodduc')
-        self.session_key_sillo = self.register_and_login(u'sillo')
-        self.session_key_orcjun = self.register_and_login(u'orcjun')
-        self.session_key_letyoursoulbefree = self.register_and_login(u'letyoursoulbefree')
-        self.session_key_koolvibes = self.register_and_login(u'koolvibes')
-        self.session_key_wiki = self.register_and_login(u'wiki')
+    def register_extra_users(self):
+        '''
+        6명의 사용자를 추가로 등록하고, 1번사용자 (sysop) 부터의 session key 반환
+
+        @rtype: list<str>
+        @return: 총 9명의 사용자의 Login Session
+        '''
+         
+        return [self.session_key_sysop,
+                self.session_key_mikkang,
+                self.session_key_serialx,
+                self.register_and_login(u'hodduc'),
+                self.register_and_login(u'sillo'),
+                self.register_and_login(u'bbashong'),
+                self.register_and_login(u'panda'),
+                self.register_and_login(u'koolvibes'),
+                self.register_and_login(u'wiki')]
 
     def setUp(self):
         # Common preparation for all tests
@@ -408,7 +417,7 @@ class ArticleManagerTest(AraraTestBase):
         # XXX : 제 3의 인물이 또 읽으면 hit 이 올라가는 거.
 
     def test_vote(self):
-        self._register_extra_users()
+        session_keys = self.register_extra_users()
 
         # Writel an article
         article_no = self._dummy_article_write(self.session_key_mikkang)
@@ -441,18 +450,40 @@ class ArticleManagerTest(AraraTestBase):
         self.assertEqual(1, len(result))
         self.assertEqual(expected_result, self._to_dict(result[0]))
 
-    def _vote(self, article_num, vote_num, board_name):
-        vote_order = [self.session_key_mikkang, self.session_key_serialx, self.session_key_hodduc, self.session_key_sillo, self.session_key_orcjun, self.session_key_letyoursoulbefree, self.session_key_koolvibes, self.session_key_wiki]
-        for i in range(vote_num):
-            self.engine.article_manager.vote_article(vote_order[i], board_name, article_num)
+    def _vote(self, article_num, vote_num, board_name, session_keys):
+        '''
+        넉넉한 갯수의 session_key 를 받아 특정 게시물을 주어진만큼 추천한다
 
-    def _read(self, article_num, read_num, board_name):
-        read_order = [self.session_key_mikkang, self.session_key_serialx, self.session_key_hodduc, self.session_key_sillo, self.session_key_orcjun, self.session_key_letyoursoulbefree, self.session_key_koolvibes, self.session_key_wiki]
-        for i in range(read_num):
-            self.engine.article_manager.read_article(read_order[i], board_name, article_num)
+        @type  article_num: int
+        @param article_num: 추천할 게시물의 번호
+        @type  vote_num: int
+        @param vote_num: 추천할 횟수 ( < len(session_keys))
+        @type  board_name: str
+        @param board_name: 추천할 게시물이 있는 board 이름
+        @type  session_keys: list<str>
+        @param session_keys: 추천에 사용할 session key 의 목록
+        '''
+        for session_key in session_keys[:vote_num]:
+            self.engine.article_manager.vote_article(session_key, board_name, article_num)
+
+    def _read(self, article_num, read_num, board_name, session_keys):
+        '''
+        넉넉한 갯수의 session_key 를 받아 특정 게시물을 주어진만큼 읽는다
+
+        @type  article_num: int
+        @param article_num: 읽을 게시물의 번호
+        @type  read_num: int
+        @param read_num: 읽을 횟수 ( < len(session_keys))
+        @type  board_name: str
+        @param board_name: 읽을 게시물이 있는 board 이름
+        @type  session_keys: list<str>
+        @param session_keys: 글읽기에 사용할 session key 의 목록
+        '''
+        for session_key in session_keys[:read_num]:
+            self.engine.article_manager.read_article(session_key, board_name, article_num)
 
     def test_todays_best_and_weekly_best(self):
-        self._register_extra_users()
+        session_keys = self.register_extra_users()
 
         # Phase 1.
         # Preparation - Step 1. Writing articles
@@ -467,14 +498,14 @@ class ArticleManagerTest(AraraTestBase):
         self._dummy_article_write(self.session_key_mikkang, u"", u"board_del")  #9
 
         # Preparation - Step 2. Vote (article no, vote num, board name)
-        self._vote(4, 8, u"board_hide")
-        self._vote(9, 7, u"board_del")
-        self._vote(2, 6, u"board_hide")
-        self._vote(6, 5, u"board")
-        self._vote(7, 4, u"board_del")
-        self._vote(8, 3, u"board_hide")
-        self._vote(5, 2, u"board")
-        self._vote(3, 1, u"board_del")
+        self._vote(4, 8, u"board_hide", session_keys)
+        self._vote(9, 7, u"board_del", session_keys)
+        self._vote(2, 6, u"board_hide", session_keys)
+        self._vote(6, 5, u"board", session_keys)
+        self._vote(7, 4, u"board_del", session_keys)
+        self._vote(8, 3, u"board_hide", session_keys)
+        self._vote(5, 2, u"board", session_keys)
+        self._vote(3, 1, u"board_del", session_keys)
 
         # 추천한 대로 잘 뽑히는가?
         result = self.engine.article_manager.get_weekly_best_list(5)
@@ -533,7 +564,7 @@ class ArticleManagerTest(AraraTestBase):
         # 하루가 지났다. 새로운 글이 하나 올라왔다
         time.time.elapse(86400)
         self._dummy_article_write(self.session_key_mikkang, u"", u"board_hide") #10
-        self._vote(10, 7, u"board_hide")
+        self._vote(10, 7, u"board_hide", session_keys)
 
         # Weekly Best 와 Today's Best 를 구해봐!
         result = self.engine.article_manager.get_weekly_best_list(5)
@@ -545,7 +576,7 @@ class ArticleManagerTest(AraraTestBase):
         self.assertEqual([10], [x.id for x in result])
 
     def test_todays_most_and_weekly_most(self):
-        self._register_extra_users()
+        session_keys = self.register_extra_users()
 
         # Phase 1.
         # Preparation - Step 1. Writing articles
@@ -560,14 +591,14 @@ class ArticleManagerTest(AraraTestBase):
         self._dummy_article_write(self.session_key_mikkang, u"", u"board_del")  #9
 
         # Preparation - Step 2. Vote (article no, vote num, board name)
-        self._read(4, 8, u"board_hide")
-        self._read(9, 7, u"board_del")
-        self._read(2, 6, u"board_hide")
-        self._read(6, 5, u"board")
-        self._read(7, 4, u"board_del")
-        self._read(8, 3, u"board_hide")
-        self._read(5, 2, u"board")
-        self._read(3, 1, u"board_del")
+        self._read(4, 8, u"board_hide", session_keys)
+        self._read(9, 7, u"board_del", session_keys)
+        self._read(2, 6, u"board_hide", session_keys)
+        self._read(6, 5, u"board", session_keys)
+        self._read(7, 4, u"board_del", session_keys)
+        self._read(8, 3, u"board_hide", session_keys)
+        self._read(5, 2, u"board", session_keys)
+        self._read(3, 1, u"board_del", session_keys)
 
         # 추천한 대로 잘 뽑히는가?
         result = self.engine.article_manager.get_weekly_most_list(5)
@@ -626,7 +657,7 @@ class ArticleManagerTest(AraraTestBase):
         # 하루가 지났다. 새로운 글이 하나 올라왔다
         time.time.elapse(86400)
         self._dummy_article_write(self.session_key_mikkang, u"", u"board_hide") #10
-        self._read(10, 7, u"board_hide")
+        self._read(10, 7, u"board_hide", session_keys)
 
         # Weekly Best 와 Today's Best 를 구해봐!
         result = self.engine.article_manager.get_weekly_most_list(5)
@@ -871,17 +902,17 @@ class ArticleManagerTest(AraraTestBase):
         # TODO: article_vote_status table 의 board_id가 바뀌는 것 확인하기? files 의 board_id가 바뀌는 것 확인하기?
 
     def test_change_article_heading(self):
-        self._register_extra_users()
+        session_keys = self.register_extra_users()
 
         # 테스트를 위해 말머리가 2개 있는 보드를 생성한다.
         self.engine.board_manager.add_board(self.session_key_sysop, u'testboard', u'글머리가 있는 테스트보드', u'Test Board with heading', [u'heading1', u'heading2'])
 
         # 글을 2개의 말머리를 섞어서 작성한다.
-        article1 = self._dummy_article_write(self.session_key_sysop, board_name = 'testboard', heading = 'heading1')
-        article2 = self._dummy_article_write(self.session_key_mikkang, board_name = 'testboard', heading = 'heading1')
-        article3 = self._dummy_article_write(self.session_key_hodduc, board_name = 'testboard', heading = 'heading2')
-        article4 = self._dummy_article_write(self.session_key_sillo, board_name = 'testboard', heading = 'heading2')
-        article5 = self._dummy_article_write(self.session_key_wiki, board_name = 'testboard', heading = 'heading1')
+        article1 = self._dummy_article_write(session_keys[0], board_name = 'testboard', heading = 'heading1')
+        article2 = self._dummy_article_write(session_keys[1], board_name = 'testboard', heading = 'heading1')
+        article3 = self._dummy_article_write(session_keys[3], board_name = 'testboard', heading = 'heading2')
+        article4 = self._dummy_article_write(session_keys[4], board_name = 'testboard', heading = 'heading2')
+        article5 = self._dummy_article_write(session_keys[8], board_name = 'testboard', heading = 'heading1')
 
         # 말머리 1의 글을 모두 말머리 2로 옮기고, 전부 옮겨지는지 확인한다.
         self.engine.article_manager.change_article_heading(self.session_key_sysop, 'testboard', 'heading1', 'heading2')
