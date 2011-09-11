@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-
 import traceback
 import logging
 import time
-import struct
 import smtplib
 from email.MIMEText import MIMEText
 
@@ -11,27 +9,6 @@ from arara import model
 from etc import arara_settings
 from arara_thrift.ttypes import *
 
-import thread
-
-
-def smart_unicode(string):
-    '''
-    주어진 문자열이 unicode 라면 그대로 리턴하고, 그렇지 않다면 unicode 로 만듦.
-
-    @type string: unicode / string
-    @rtype: unicode
-    '''
-    if isinstance(string, unicode): return string
-    else:
-        try:
-            return unicode(string, 'utf-8')
-        except:
-            try:
-                return unicode(string, 'cp949')
-            except:
-                raise
-
-from libs import timestamp2datetime, datetime2timestamp
 
 def log_method_call_with_source_important(source):
     '''
@@ -185,25 +162,6 @@ def require_login(function):
     wrapper.__name__ = function.__name__
     wrapper.__doc__ = function.__doc__
     return wrapper
-
-
-def filter_dict(dictionary, keys):
-    """Dictionary is filtered by the given keys."""
-    return dict((x, y) for (x, y) in dictionary.iteritems() if x in keys)
-
-def is_keys_in_dict(dictionary, keys):
-    for key in keys:
-        if not key in dictionary:
-            return False
-    return True
-
-def intlist_to_string(int_list):
-    length = len(int_list)
-    return "".join((struct.pack("i", length), struct.pack("i" * length, *int_list)))
-
-def string_to_intlist(string_):
-    length = struct.unpack("i", string_[:4])[0]
-    return list(struct.unpack("i" * length, string_[4:]))
 
 
 def send_mail(subject, mailto, content, subtype='html', charset='euc_kr'):
