@@ -1429,30 +1429,6 @@ class ArticleManager(arara_manager.ARAraManager):
             session.close()
             raise InvalidOperation("Internal Error")
 
-    def _get_maximum_article_id(self):
-        '''
-        현존하는 가장 큰 번호의 게시물의 id 를 알아낸다.
-
-        @rtype: int
-        @return:
-            1. 평상시 : 가장 큰 번호의 게시물의 id
-            2. 글이 존재하지 않을 경우 : 0
-        '''
-        session = model.Session()
-        try:
-            top_article = session.query(model.Article).from_statement(
-                    select(
-                        [model.articles_table],
-                        select([func.max(model.articles_table.c.id)]).label('top_article_id')==model.articles_table.c.id)
-                    ).first()
-        except IndexError:
-            session.close()
-            return 0
-        session.close()
-        if top_article == None:
-            return 0
-        return top_article.id
-
     @require_login
     @log_method_call_important
     def fix_article_concurrency(self, session_key, board_name, no):
