@@ -452,6 +452,53 @@ class ArticleManager(arara_manager.ARAraManager):
             session.close()
             raise InvalidOperation("WRONG_ORDERING")
 
+    def get_article_list(self, board_name, heading_name, page, page_length, include_all_headings=True, order_by=LIST_ORDER_ROOT_ID):
+        '''
+        게시물의 목록, 각 게시물에 마지막으로 달린 답글의 번호를 반환한다.
+
+        @type  board_name: str
+        @param board_name: 글을 가져올 게시판의 이름
+        @type  heading_name: str
+        @param heading_name: 가져올 글의 글머리 이름
+        @type  page: int
+        @param page: 글을 가져올 페이지의 번호
+        @type  page_length: int
+        @param page_length: 페이지당 글 갯수
+        @type  include_all_headings: bool
+        @param include_all_headings: 모든 글머리의 글을 가져올지에 대한 여부
+        @type  order_by: int
+        @param order_by: 정렬 방식 [LIST_ORDER_ROOT_ID, LIST_ORDER_LAST_REPLY_ID]
+        @rtype: list<ttypes.ArticleList>, list<int>
+        @return: 선택된 게시물의 목록, 각 게시물의 마지막 답글 번호의 목록
+        '''
+        session = model.Session()
+        # 게시판, 선택된 말머리를 바탕으로 Query 생성
+        desired_query = self._get_basic_query(session, board_name, heading_name, include_all_headings)
+        article_count = desired_query.count()
+
+        # 페이지 정보 확인, 불러올 게시물의 범위 확정
+        try:
+            last_page, offset, last = self.get_page_info(article_count, page, page_length)
+        except ValueError as e:
+            session.close()
+            if str(e) == 'WRONG_PAGENUM':
+                raise InvalidOperation(str(e))
+            else:  # Unexpected Exception
+                raise
+ 
+        # 정렬 방식 적용, 범위에 있는 게시물 불러오기
+        desired_query = self._get_ordered_query(session, desired_query, order_by)
+        article_list  = desired_query[offset:last]
+
+        session.close()
+
+        # 게시물의 목록, 마지막 답글 번호 목록 정리
+        last_reply_ids = [article.last_reply_id for article in article_list]
+        article_list   = [Article(**self._get_dict(article, LIST_ARTICLE_WHITELIST)) for article in article_list]
+        article_list   = ArticleList(hit=article_list, current_page=page, last_page=last_page, results=article_count)
+ 
+        return article_list, last_reply_ids
+
     def _get_article_list(self, board_name, heading_name, page, page_length, include_all_headings = True, order_by = LIST_ORDER_ROOT_ID):
         '''
         Internal.

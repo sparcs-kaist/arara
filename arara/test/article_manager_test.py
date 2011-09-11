@@ -711,8 +711,8 @@ class ArticleManagerTest(AraraTestBase):
         self.assertEqual(1, len(result))
         self.assertEqual(expected_result, self._to_dict(result[0]))
 
-    def test__get_article_list_and__article_list_and__article_list_below(self):
-        # ArticleManager._get_article_list 와 _article_list, _article_list_below 테스트가 목적이다.
+    def test_get_article_list_and__article_list_and__article_list_below(self):
+        # ArticleManager.get_article_list 와 _article_list, _article_list_below 테스트가 목적이다.
         # 게시판에 적당한 갯수의 글을 쓰고 적당한 page 의 상황을 확인한다
         for i in range(55):
             if i % 2 == 1:
@@ -721,15 +721,10 @@ class ArticleManagerTest(AraraTestBase):
                 self._dummy_article_write(self.session_key_mikkang, u"", u"board_h", u"head1")
 
         # TEST 1 : 모든 heading 을 불러와보자
-        result = self.engine.article_manager._get_article_list(u'board_h', u"", 1, 5)
-        article_list  = result[0]
-        last_page     = result[1]
-        article_count = result[2]
-        article_list_id_only = [x.id for x in article_list]
-
-        self.assertEqual([55, 54, 53, 52, 51], article_list_id_only)
-        self.assertEqual(11, last_page)
-        self.assertEqual(55, article_count)
+        article_list, _ = self.engine.article_manager.get_article_list(u'board_h', u"", 1, 5)
+        self.assertEqual([55, 54, 53, 52, 51], [x.id for x in article_list.hit])
+        self.assertEqual(11, article_list.last_page)
+        self.assertEqual(55, article_list.results)
 
         # 관심 있는 것은 글의 id 와 heading 이다.
         result = self.engine.article_manager._article_list(self.session_key_serialx, u"board_h", u"", 1, 5)
@@ -745,15 +740,10 @@ class ArticleManagerTest(AraraTestBase):
         self.assertEqual([u'head1', u'', u'head1', u'', u'head1'], [x.heading for x in result.hit])
 
         # TEST 2 : heading 이 없는 것만
-        result = self.engine.article_manager._get_article_list(u'board_h', u"", 1, 5, False)
-        article_list  = result[0]
-        last_page     = result[1]
-        article_count = result[2]
-        article_list_id_only = [x.id for x in article_list]
-
-        self.assertEqual([54, 52, 50, 48, 46], article_list_id_only)
-        self.assertEqual(6, last_page)
-        self.assertEqual(27, article_count)
+        article_list, _ = self.engine.article_manager.get_article_list(u'board_h', u"", 1, 5, False)
+        self.assertEqual([54, 52, 50, 48, 46], [x.id for x in article_list.hit])
+        self.assertEqual(6,  article_list.last_page)
+        self.assertEqual(27, article_list.results)
 
         result = self.engine.article_manager._article_list(self.session_key_serialx, u"board_h", u"", 1, 5, False)
         self.assertEqual(27, result.results)
@@ -768,15 +758,10 @@ class ArticleManagerTest(AraraTestBase):
         self.assertEqual([u'', u'', u'', u'', u''], [x.heading for x in result.hit])
 
         # TEST 3 : heading == head1
-        result = self.engine.article_manager._get_article_list(u'board_h', u"head1", 1, 5, False)
-        article_list  = result[0]
-        last_page     = result[1]
-        article_count = result[2]
-        article_list_id_only = [x.id for x in article_list]
-
-        self.assertEqual([55, 53, 51, 49, 47], article_list_id_only)
-        self.assertEqual(6, last_page)
-        self.assertEqual(28, article_count)
+        article_list, _ = self.engine.article_manager.get_article_list(u'board_h', u"head1", 1, 5, False)
+        self.assertEqual([55, 53, 51, 49, 47], [x.id for x in article_list.hit])
+        self.assertEqual(6, article_list.last_page)
+        self.assertEqual(28, article_list.results)
 
         result = self.engine.article_manager._article_list(self.session_key_serialx, u"board_h", u"head1", 1, 5, False)
         self.assertEqual(28, result.results)
