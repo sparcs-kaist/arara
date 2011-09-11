@@ -636,37 +636,6 @@ class ArticleManager(arara_manager.ARAraManager):
 
         return article_list
 
-    def _article_list(self, session_key, board_name, heading_name, page, page_length, include_all_headings = True, order_by = LIST_ORDER_ROOT_ID):
-        '''
-        Internal.
-        주어진 게시판의 주어진 페이지에 있는 글의 목록을 가져와 Thrift 형식의 Article 객체의 list 로 돌려준다.
-
-        @type  session_key: string
-        @param session_key: 사용자 Login Session
-        @type  board_name: string
-        @param board_name: 글을 가져올 게시판의 이름
-        @type  heading_name: string
-        @param heading_name: 가져올 글의 글머리 이름
-        @type  page: int
-        @param page: 글을 가져올 페이지의 번호
-        @type  page_length: int
-        @param page_length: 페이지당 글 갯수
-        @type  include_all_headings: bool
-        @param include_all_headings: 모든 글머리의 글을 가져올지에 대한 여부
-        @type  order_by: int - LIST_ORDER
-        @param order_by: 글 정렬 방식 (현재는 LIST_ORDER_ROOT_ID 만 테스트됨)
-        @rtype: list<ttypes.Article>
-        @return:
-            선택한 게시판의 선택한 page 에 있는 글 (Article 객체) 의 list
-        '''
-        # Phase 1. page 번호가 0 이 들어오면 1로 교정한다.
-        if page == 0: page = 1
-            
-        # Phase 2. SQLAlchemy Article List, Last Page, Article Count 를 구한다.
-        article_list, last_page, article_count = self._get_article_list(board_name, heading_name, page, page_length, include_all_headings, order_by)
-
-        return self._article_list_2_article_list(session_key, article_list, page, last_page, article_count)
-        
     @log_method_call
     def put_user_specific_info(self, user_id, article_list, last_reply_id_list):
         '''
