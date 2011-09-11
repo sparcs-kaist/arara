@@ -181,7 +181,7 @@ class MemberManager(arara_manager.ARAraManager):
         session = model.Session()
         try:
             cond = or_(*[model.User.id == id for id in user_ids])
-            session.execute(model.users_table.update().values(last_logout_time=now).where(cond))
+            session.execute(model.User.__table__.update().values(last_logout_time=now).where(cond))
             session.commit()
             session.close()
         except InvalidRequestError:

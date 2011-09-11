@@ -5,14 +5,49 @@ import time
 import string
 import random
 
-from sqlalchemy import *
-from sqlalchemy.orm import *
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import backref, relationship
+from sqlalchemy.orm.session import sessionmaker
+from sqlalchemy.schema import Column, ForeignKey, Index
+from sqlalchemy.types import Boolean, DateTime, Integer, LargeBinary, PickleType, Text, Unicode, UnicodeText
 
 from libs import smart_unicode
 
 SALT_SET = string.lowercase + string.uppercase + string.digits + './'
 
-class User(object):
+Base = declarative_base()
+
+
+class User(Base):
+    __tablename__  = 'users'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    id = Column(Integer, primary_key=True)
+    username = Column(Unicode(40), unique=True, index=True)
+    password = Column(Unicode(50))
+    nickname = Column(Unicode(40), index=True)
+    email = Column(Unicode(60), unique=True, index=True)
+    signature = Column(Unicode(1024))
+    self_introduction = Column(Unicode(1024))
+    # ko_KR, en_US
+    default_language = Column(Unicode(5))
+    # Null, Seoul, Daejeon
+    campus = Column(Unicode(15))
+    activated = Column(Boolean)
+    widget = Column(Integer)
+    layout = Column(Integer)
+    join_time = Column(DateTime)
+    last_login_time = Column(DateTime)
+    last_logout_time = Column(DateTime)
+    last_login_ip = Column(Unicode(15))
+    is_sysop = Column(Boolean)
+    # 0 : 비회원 , 1 : 메일인증(non @kaist), 2 : 메일인증(@kaist), 3 : 포탈인증
+    authentication_mode = Column(Integer)
+    # 0 : LIST_ORDER_ROOT_ID , 1 : LIST_ORDER_LAST_REPLY_DATE
+    listing_mode = Column(Integer)
+    activated_backup = Column(Boolean)
+
     def __init__(self, username, password, nickname, email, signature,
                  self_introduction, default_language, campus):
         '''
@@ -98,19 +133,17 @@ class User(object):
     def __repr__(self):
         return "<User('%s', '%s')>" % (self.username, self.nickname)
 
-class BBSManager(object):
-    def __init__(self, board, manager):
-        '''
-        @type board: model.Board
-        @type manager: model.User
-        '''
-        self.board = board
-        self.manager = manager
 
-    def __repr__(self):
-        return "<BBSManager('%s', '%s')>" % (self.board, self.manager)
+class UserActivation(Base):
+    __tablename__  = 'user_activation'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
 
-class UserActivation(object):
+    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    activation_code = Column(Unicode(50), unique=True)
+    issued_date = Column(DateTime)
+
+    user = relationship(User, backref='activation', uselist=False)
+
     def __init__(self, user, activation_code):
         '''
         @type user: model.User
@@ -123,7 +156,15 @@ class UserActivation(object):
     def __repr__(self):
         return "<UserActivation('%s', '%s')>" % (self.user.username, self.activation_code)
 
-class Category(object):
+
+class Category(Base):
+    __tablename__  = 'categories'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    id = Column(Integer, primary_key=True)
+    category_name = Column(Unicode(30), unique=True, index=True)
+    order = Column(Integer, nullable=True)
+
     def __init__(self, category_name, order):
         '''
         @type category_name: string
@@ -135,11 +176,31 @@ class Category(object):
     def __repr__(self):
         return "<Category('%s')>" % (self.category_name)
 
+
 BOARD_TYPE_NORMAL = 0
 BOARD_TYPE_PICTURE = 1
 
-class Board(object):
-    def __init__(self, board_name, board_alias, board_description, order, category, type = None, to_read_level = 3, to_write_level = 3):
+
+class Board(Base):
+    __tablename__  = 'boards'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    id          = Column(Integer, primary_key=True)
+    category_id = Column(Integer, ForeignKey('categories.id'))
+    board_name  = Column(Unicode(30), unique=True, index=True)
+    board_alias = Column(Unicode(30), unique=True)
+    board_description = Column(Unicode(300))
+    deleted   = Column(Boolean)
+    read_only = Column(Boolean)
+    hide      = Column(Boolean)
+    type      = Column(Integer)
+    order     = Column(Integer, nullable=True, index=True)
+    to_read_level  = Column(Integer)
+    to_write_level = Column(Integer)
+
+    category = relationship(Category, backref='boards')
+
+    def __init__(self, board_name, board_alias, board_description, order, category, type=None, to_read_level=3, to_write_level=3):
         '''
         @type board_name: string
         @type board_description: string
@@ -167,25 +228,40 @@ class Board(object):
     def __repr__(self):
         return "<Board('%s', '%s', '%s')>" % (self.board_name, self.board_alias, self.board_description)
 
-class Link(object):
-    def __init__(self, link_name, link_description, link_url, order):
-        '''
-        @type link_name: string
-        @type link_description: string
-        @type link_url: string
-        @type order: int
-        '''
-        self.link_name = smart_unicode(link_name)
-        self.link_description = smart_unicode(link_description)
-        self.link_url = smart_unicode(link_url)
-        self.ishidden = False
-        self.deleted = False
-        self.order = order
-    
-    def __repr__(self):
-        return "<Link('%s', '%s', '%s')>" % (self.link_name, self.link_description, self.link_url)
 
-class BoardHeading(object):
+class BBSManager(Base):
+    __tablename__  = 'bbs_managers'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    id = Column(Integer, primary_key=True)
+    board_id = Column(Integer, ForeignKey('boards.id'))
+    manager_id = Column(Integer, ForeignKey('users.id'))
+
+    board = relationship(Board, backref='management', lazy=True)
+    manager = relationship(User, backref='managing_board', lazy=True)
+
+    def __init__(self, board, manager):
+        '''
+        @type board: model.Board
+        @type manager: model.User
+        '''
+        self.board = board
+        self.manager = manager
+
+    def __repr__(self):
+        return "<BBSManager('%s', '%s')>" % (self.board, self.manager)
+
+
+class BoardHeading(Base):
+    __tablename__  = 'board_headings'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    id = Column(Integer, primary_key=True)
+    board_id = Column(Integer, ForeignKey('boards.id'), index=True)
+    heading = Column(Unicode(10))
+
+    board = relationship(Board, backref='headings', lazy=False)
+
     def __init__(self, board, heading):
         '''
         @type board: model.Board
@@ -197,7 +273,62 @@ class BoardHeading(object):
     def __repr__(self):
         return "<BoardHeading('%s', '%s')>" % (self.board, self.heading)
 
-class Article(object):
+
+class Article(Base):
+    __tablename__  = 'articles'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    # 사용자가 작성한 내용물
+    id      = Column(Integer, primary_key=True)
+    title   = Column(Unicode(200))
+    content = Column(UnicodeText)
+    date    = Column(DateTime)
+
+    # 게시물이 속하는 곳
+    board_id = Column(Integer, ForeignKey('boards.id'), index=True)
+    # TODO: nullable=True 는 어디까지나 임시방편이므로 어서 지운다.
+    heading_id = Column(Integer, ForeignKey('board_headings.id'), nullable=True)
+
+    # 게시자 정보
+    author_id = Column(Integer, ForeignKey('users.id'))
+    author_nickname = Column(Unicode(40))
+    author_ip = Column(Unicode(15))
+
+    # 반응
+    hit = Column(Integer)
+    positive_vote = Column(Integer)
+    negative_vote = Column(Integer)
+
+    # 플래그
+    deleted = Column(Boolean)
+    destroyed = Column(Boolean)
+    is_searchable = Column(Boolean, nullable=False)
+
+    # 다른 글과의 관계
+    root_id = Column(Integer, ForeignKey('articles.id'), nullable=True)
+    parent_id = Column(Integer, ForeignKey('articles.id'), nullable=True)
+    reply_count = Column(Integer, nullable=False)
+    last_reply_id = Column(Integer)
+    last_reply_date = Column(DateTime)
+    last_modified_date = Column(DateTime, index=True)
+
+    # 맵핑
+    author  = relationship(User, backref='articles', lazy=False)
+    board   = relationship(Board, backref='articles', lazy=False)
+    heading = relationship(BoardHeading, backref='articles', lazy=False)
+
+    children = relationship('Article', join_depth=3,
+        primaryjoin='articles.c.parent_id == articles.c.id',
+        backref=backref('parent', lazy=True,
+            remote_side=[id],
+            primaryjoin='articles.c.parent_id == articles.c.id'))
+
+    descendants = relationship('Article', lazy=True,
+        primaryjoin='articles.c.root_id == articles.c.id',
+        backref=backref('root',
+            remote_side=[id],
+            primaryjoin='articles.c.root_id == articles.c.id'))
+
     def __init__(self, board, heading, title, content, author, author_ip, parent):
         '''
         @type board: model.Board
@@ -237,7 +368,20 @@ class Article(object):
     def __repr__(self):
         return "<Article('%s', '%s', %s)>" % (self.title, self.author.username, str(self.date))
 
-class ArticleVoteStatus(object):
+
+class ArticleVoteStatus(Base):
+    __tablename__  = 'article_vote_status'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    id = Column(Integer, primary_key=True)
+    board_id = Column(Integer, ForeignKey('boards.id'), nullable=False, index=True)
+    article_id = Column(Integer, ForeignKey('articles.id'), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)
+
+    article = relationship(Article, backref='voted_users', lazy=True)
+    user = relationship(User, backref='voted_articles', lazy=True)
+    board = relationship(Board, backref=None, lazy=True)
+
     def __init__(self, user, board, article):
         '''
         @type user: model.User
@@ -248,7 +392,23 @@ class ArticleVoteStatus(object):
         self.board = board
         self.article = article
 
-class ReadStatus(object):
+
+class ReadStatus(Base):
+
+    class MyPickleType(PickleType):
+        impl = LargeBinary(length=2 ** 30)
+
+    __tablename__  = 'read_status'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), index=True)
+    read_status_data = Column(MyPickleType)
+    read_status_numbers = Column(LargeBinary(length=2 ** 30))
+    read_status_markers = Column(LargeBinary(length=2 ** 30))
+
+    user = relationship(User, backref='read_status')
+
     def __init__(self, user, read_status_data):
         '''
         @type user: model.User
@@ -262,7 +422,30 @@ class ReadStatus(object):
     def __repr__(self):
         return "<ReadStatus('%s', '%s')>" % (self.user.username, self.read_status_data)
 
-class Blacklist(object):
+
+class Blacklist(Base):
+    __tablename__  = 'blacklists'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), index=True)
+    blacklisted_user_id = Column(Integer, ForeignKey('users.id'))
+    blacklisted_date = Column(DateTime)
+    last_modified_date = Column(DateTime)
+    block_article = Column(Boolean)
+    block_message = Column(Boolean)
+
+    user = relationship(User, lazy=False,
+            primaryjoin='blacklists.c.user_id == users.c.id',
+            backref=backref('blacklist', lazy=True, join_depth=1,
+                    primaryjoin='blacklists.c.user_id == users.c.id',
+                    viewonly=True))
+    target_user = relationship(User, lazy=False,
+            primaryjoin='blacklists.c.blacklisted_user_id == users.c.id',
+            backref=backref('blacklisted', lazy=True, join_depth=1,
+                    primaryjoin='blacklists.c.blacklisted_user_id == users.c.id',
+                    viewonly=True))
+
     def __init__(self, user, target_user, block_article, block_message):
         '''
         @type user: model.User
@@ -280,7 +463,30 @@ class Blacklist(object):
     def __repr__(self):
         return "<Blacklist('%s','%s')>" % (self.user.username, self.target_user.username) 
 
-class Message(object):
+
+class Message(Base):
+    __tablename__  = 'messages'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    id = Column(Integer, primary_key=True)
+    from_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)
+    from_ip = Column(Unicode(15))
+    to_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)
+    sent_time = Column(DateTime)
+    message = Column(Unicode(1000))
+    received_deleted = Column(Boolean)
+    sent_deleted = Column(Boolean)
+    read_status = Column(Unicode(1))
+
+    from_user = relationship(User, primaryjoin='messages.c.from_id == users.c.id',
+            backref=backref('send_messages', lazy=True, join_depth=1,
+                    primaryjoin='messages.c.from_id == users.c.id',
+                    viewonly=False))
+    to_user = relationship(User, primaryjoin='messages.c.to_id == users.c.id',
+            backref=backref('received_messages', lazy=True, join_depth=1,
+                    primaryjoin='messages.c.to_id == users.c.id',
+                    viewonly=False))
+
     def __init__(self, from_user, from_user_ip, to_user, message):
         '''
         @type from_user: model.User
@@ -300,8 +506,19 @@ class Message(object):
     def __repr__(self):
         return "<Message('%s','%s','%s')>" % (self.from_user, self.to_user, self.message)
 
-class Banner(object): 
-    def __init__(self, content, weight, due_date): 
+
+class Banner(Base):
+    __tablename__  = 'banners'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    id = Column(Integer, primary_key=True)
+    content = Column(UnicodeText)
+    issued_date = Column(DateTime)
+    due_date = Column(DateTime)
+    valid = Column(Boolean)
+    weight = Column(Integer)
+
+    def __init__(self, content, weight, due_date):
         '''
         @type content: string
         @type weight: int
@@ -316,8 +533,19 @@ class Banner(object):
     def __repr__(self):
         return "<Banner('%s','%s')>" % (self.content, self.valid)
 
-class Welcome(object): 
-    def __init__(self, content, weight, due_date): 
+
+class Welcome(Base):
+    __tablename__  = 'welcomes'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    id = Column(Integer, primary_key=True)
+    content = Column(UnicodeText)
+    issued_date = Column(DateTime)
+    due_date = Column(DateTime)
+    valid = Column(Boolean)
+    weight = Column(Integer)
+
+    def __init__(self, content, weight, due_date):
         '''
         @type content: string
         @type weight: int
@@ -332,8 +560,25 @@ class Welcome(object):
     def __repr__(self):
         return "<Welcome('%s','%s')>" % (self.content, self.valid)
 
-class File(object): 
-    def __init__(self, filename, saved_filename, filepath, user, board, article): 
+
+class File(Base):
+    __tablename__  = 'files'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    id = Column(Integer, primary_key=True)
+    filename = Column(Unicode(200))
+    saved_filename = Column(Unicode(200))
+    filepath = Column(Text)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    board_id = Column(Integer, ForeignKey('boards.id'), index=True)
+    article_id = Column(Integer, ForeignKey('articles.id'), index=True)
+    deleted = Column(Boolean)
+
+    user = relationship(User, backref='files', lazy=True)
+    board = relationship(Board, backref=None, lazy=True)
+    article = relationship(Article, backref=None, lazy=True)
+
+    def __init__(self, filename, saved_filename, filepath, user, board, article):
         '''
         @type filename: string
         @type saved_filename: string
@@ -354,7 +599,15 @@ class File(object):
     def __repr__(self):
         return "<File('%s')>" % (self.filename)
 
-class Visitor(object):
+
+class Visitor(Base):
+    __tablename__  = 'visitors'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    total = Column(Integer, primary_key=True)
+    today = Column(Integer)
+    date = Column(DateTime)
+
     def __init__(self):
         self.total = 0
         self.today = 0
@@ -363,7 +616,51 @@ class Visitor(object):
     def __repr__(self):
         return "<Visitor<'%d','%d'>" % (self.total, self.today)
 
-class SelectedBoards(object):
+class Link(Base):
+    __tablename__  = 'links'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    id = Column(Integer, primary_key=True)
+    link_name = Column(Unicode(30), unique=True)
+    link_description = Column(Unicode(300))
+    link_url = Column(Unicode(100))
+    ishidden = Column(Boolean)
+    deleted = Column(Boolean)
+    order = Column(Integer)
+
+    def __init__(self, link_name, link_description, link_url, order):
+        '''
+        @type link_name: string
+        @type link_description: string
+        @type link_url: string
+        @type order: int
+        '''
+        self.link_name = smart_unicode(link_name)
+        self.link_description = smart_unicode(link_description)
+        self.link_url = smart_unicode(link_url)
+        self.ishidden = False
+        self.deleted = False
+        self.order = order
+
+    def __repr__(self):
+        return "<Link('%s', '%s', '%s')>" % (self.link_name, self.link_description, self.link_url)
+
+
+class SelectedBoards(Base):
+    __tablename__  = 'selected_boards'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), index=True)
+    board_id = Column(Integer, ForeignKey('boards.id'))
+
+    user = relationship(User, lazy=False,
+            primaryjoin='selected_boards.c.user_id == users.c.id',
+            backref=backref('selected_boards', lazy=True, join_depth=1,
+                    primaryjoin='selected_boards.c.user_id == users.c.id',
+                    viewonly=True))
+    board = relationship(Board, None, lazy=True)
+
     def __init__(self, user, board):
         '''
         @type user: model.User 
@@ -371,319 +668,20 @@ class SelectedBoards(object):
         '''
         self.user = user
         self.board = board
-        
+
     def __repr__(self):
         return "<SelectedBoards('%s')>" % (self.board)
 
-# TODO: Table 정의에 Key Index 추가하기
-metadata = MetaData()
-users_table = Table('users', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('username', Unicode(40), unique=True, index=True),
-    Column('password', Unicode(50)),
-    Column('nickname', Unicode(40), index=True),
-    Column('email', Unicode(60), unique=True, index=True),
-    Column('signature', Unicode(1024)),
-    Column('self_introduction', Unicode(1024)),
-    Column('default_language', Unicode(5)),  # ko_KR, en_US
-    Column('campus', Unicode(15)),  # Null, Seoul, Daejeon
-    Column('activated', Boolean),
-    Column('widget', Integer),
-    Column('layout', Integer),
-    Column('join_time', DateTime),
-    Column('last_login_time', DateTime),
-    Column('last_logout_time', DateTime),
-    Column('last_login_ip', Unicode(15)),
-    Column('is_sysop', Boolean),
-    Column('authentication_mode', Integer), # 0 : 비회원 , 1 : 메일인증(non @kaist), 2 : 메일인증(@kaist), 3 : 포탈인증
-    Column('listing_mode', Integer), # 0 : LIST_ORDER_ROOT_ID , 1 : LIST_ORDER_LAST_REPLY_DATE
-    Column('activated_backup', Boolean),
-    mysql_engine='InnoDB'
-)
 
-bbs_managers_table = Table('bbs_managers', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('board_id', Integer, ForeignKey('boards.id')),
-    Column('manager_id', Integer, ForeignKey('users.id')),
-    mysql_engine='InnoDB'
-)
+Index('articles_board_and_id', Article.__table__.c.board_id)
+Index('articles_board_and_last_reply_id', Article.__table__.c.board_id, Article.__table__.c.last_reply_id)
+Index('votes_user_and_board_and_article', ArticleVoteStatus.__table__.c.board_id, ArticleVoteStatus.__table__.c.article_id, ArticleVoteStatus.__table__.c.user_id)
+Index('blacklisted_user_and_user', Blacklist.__table__.c.user_id, Blacklist.__table__.c.blacklisted_user_id)
 
-user_activation_table = Table('user_activation', metadata,
-    Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
-    Column('activation_code', Unicode(50), unique=True),
-    Column('issued_date', DateTime),
-    mysql_engine='InnoDB'
-)
-
-board_table = Table('boards', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('category_id', Integer, ForeignKey('categories.id')),
-    Column('board_name', Unicode(30), unique=True, index=True),
-    Column('board_alias', Unicode(30), unique=True),
-    Column('board_description', Unicode(300)),
-    Column('deleted', Boolean),
-    Column('read_only', Boolean),
-    Column('hide', Boolean),
-    Column('order', Integer, nullable=True, index=True),
-    Column('type', Integer),
-    Column('to_read_level', Integer),
-    Column('to_write_level',Integer),
-    mysql_engine='InnoDB'
-)
-
-category_table = Table('categories', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('category_name', Unicode(30), unique=True, index=True),
-    Column('order', Integer, nullable=True),
-    mysql_engine='InnoDB'
-)
-
-board_heading_table = Table('board_headings', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('board_id', Integer, ForeignKey('boards.id'), index=True),
-    Column('heading', Unicode(10)),
-    mysql_engine='InnoDB'
-)
-
-link_table = Table('links', metadata, 
-    Column('id', Integer, primary_key=True),
-    Column('link_name', Unicode(30), unique=True),
-    Column('link_description', Unicode(300)),
-    Column('link_url', Unicode(100)),
-    Column('ishidden', Boolean),
-    Column('deleted', Boolean),
-    Column('order', Integer),
-    mysql_engine='InnoDB'
-)
-
-articles_table = Table('articles', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('title', Unicode(200)),
-    Column('board_id', Integer, ForeignKey('boards.id'), index=True),
-    Column('heading_id', Integer, ForeignKey('board_headings.id'), nullable=True), # TODO: nullable=True 는 어디까지나 임시방편이므로 어서 지운다.
-    Column('content', UnicodeText),
-    Column('author_id', Integer, ForeignKey('users.id')),
-    Column('author_nickname', Unicode(40)),
-    Column('author_ip', Unicode(15)),
-    Column('date', DateTime),
-    Column('hit', Integer),
-    Column('positive_vote', Integer),
-    Column('negative_vote', Integer),
-    Column('deleted', Boolean),
-    Column('root_id', Integer, ForeignKey('articles.id'), nullable=True),
-    Column('parent_id', Integer, ForeignKey('articles.id'), nullable=True),
-    Column('reply_count', Integer, nullable=False),
-    Column('is_searchable', Boolean, nullable=False),
-    Column('last_modified_date', DateTime, index=True),
-    # XXX 2010.05.17.
-    # destroyed 필드는 nullable = False 로 해야 할 것 같은데
-    # 이렇게 하면 테스트 코드가 깨진다.
-    # SQLite 자체의 문제인 것 같으나 아직은 확신이 없다.
-    Column('destroyed', Boolean),
-    Column('last_reply_date', DateTime),
-    # TODO: 사실 이 자리에는 id 가 아니라 article 객체가 와야 한다.
-    Column('last_reply_id', Integer),
-    mysql_engine='InnoDB'
-)
-
-Index('articles_board_and_id', articles_table.c.board_id)
-Index('articles_board_and_last_reply_id', articles_table.c.board_id, articles_table.c.last_reply_id)
-
-article_vote_table = Table('article_vote_status', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('board_id', Integer, ForeignKey('boards.id'), nullable=False),
-    Column('article_id', Integer, ForeignKey('articles.id'), nullable=False),
-    Column('user_id', Integer, ForeignKey('users.id'), nullable=False),
-    mysql_engine='InnoDB'
-)
-
-Index('votes_user_and_board_and_article', article_vote_table.c.board_id, article_vote_table.c.article_id, article_vote_table.c.user_id)
-
-class MyPickleType(PickleType):
-    impl = LargeBinary(length=2**30)
-
-read_status_table = Table('read_status', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('user_id', Integer, ForeignKey('users.id'), index=True),
-    Column('read_status_data', MyPickleType),
-    Column('read_status_numbers', LargeBinary(length=2**30)),
-    Column('read_status_markers', LargeBinary(length=2**30)),
-    mysql_engine='InnoDB'
-)
-
-blacklist_table = Table('blacklists' , metadata,
-    Column('id', Integer, primary_key=True),
-    Column('user_id', Integer, ForeignKey('users.id'), index=True),
-    Column('blacklisted_user_id', Integer, ForeignKey('users.id')),
-    Column('blacklisted_date', DateTime),
-    Column('last_modified_date', DateTime),
-    Column('block_article', Boolean),
-    Column('block_message', Boolean),
-    mysql_engine='InnoDB'
-)
-
-Index('blacklisted_user_and_user', blacklist_table.c.user_id, blacklist_table.c.blacklisted_user_id)
-
-message_table = Table('messages', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('from_id', Integer, ForeignKey('users.id'), nullable=False, index=True),
-    Column('from_ip', Unicode(15)),
-    Column('to_id', Integer, ForeignKey('users.id'), nullable=False, index=True),
-    Column('sent_time', DateTime),
-    Column('message', Unicode(1000)),
-    Column('received_deleted', Boolean),
-    Column('sent_deleted', Boolean),
-    Column('read_status', Unicode(1)),
-    mysql_engine='InnoDB'
-)
-
-banner_table = Table('banners' , metadata,
-    Column('id', Integer, primary_key=True),
-    Column('content', UnicodeText),
-    Column('issued_date', DateTime),
-    Column('due_date', DateTime),
-    Column('valid', Boolean),
-    Column('weight', Integer),
-    mysql_engine='InnoDB'
-)
-
-welcome_table = Table('welcomes' , metadata,
-    Column('id', Integer, primary_key=True),
-    Column('content', UnicodeText),
-    Column('issued_date', DateTime),
-    Column('due_date', DateTime),
-    Column('valid', Boolean),
-    Column('weight', Integer),
-    mysql_engine='InnoDB'
-)
-
-file_table = Table('files', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('filename', Unicode(200)),
-    Column('saved_filename', Unicode(200)),
-    Column('filepath', Text), 
-    Column('user_id', Integer, ForeignKey('users.id')),
-    Column('board_id', Integer, ForeignKey('boards.id'), index=True),
-    Column('article_id', Integer, ForeignKey('articles.id'), index=True),
-    Column('deleted', Boolean),
-    mysql_engine='InnoDB'
-)
-
-visitor_table = Table('visitors', metadata,
-    Column('total', Integer, primary_key=True),
-    Column('today', Integer),
-    Column('date', DateTime),
-    mysql_engine='InnoDB'
-)
-
-selected_boards_table = Table('selected_boards', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('user_id', Integer, ForeignKey('users.id'), index=True),
-    Column('board_id', Integer, ForeignKey('boards.id')),
-    mysql_engine='InnoDB'
-)
-
-# TODO: 아래 mapper 들 좀 제대로 올바르게 정의하기
-mapper(Category, category_table)
-
-mapper(Visitor, visitor_table)
-
-mapper(File, file_table, properties={
-    'user':relation(User, backref='files', lazy=True),
-    'board':relation(Board, backref=None, lazy=True),
-    'article':relation(Article, backref=None, lazy=True),
-})
-
-mapper(Link, link_table)
-
-mapper(Banner, banner_table)
-
-mapper(Welcome, welcome_table)
-
-mapper(User, users_table)
-
-mapper(BBSManager, bbs_managers_table, properties={
-    'board': relation(Board, backref='management', lazy=True),
-    'manager': relation(User, backref='managing_board', lazy=True),
-})
-
-mapper(UserActivation, user_activation_table, properties={
-    'user':relation(User, backref='activation', uselist=False)
-})
-
-mapper(Article, articles_table, properties={
-    'author':relation(User, backref='articles', lazy=False),
-    'board':relation(Board, backref='articles', lazy=False),
-    'heading':relation(BoardHeading, backref='articles', lazy=False),
-    'children':relation(Article,
-        join_depth=3,
-        primaryjoin=articles_table.c.parent_id==articles_table.c.id,
-        backref=backref('parent', lazy=True,
-            remote_side=[articles_table.c.id],
-            primaryjoin=articles_table.c.parent_id==articles_table.c.id,
-            )
-        ),
-    'descendants':relation(Article, lazy=True,
-        primaryjoin=articles_table.c.root_id==articles_table.c.id,
-        backref=backref('root',
-            remote_side=[articles_table.c.id],
-            primaryjoin=articles_table.c.root_id==articles_table.c.id,
-            )
-        )
-})
-
-mapper(ArticleVoteStatus, article_vote_table, properties={
-    'article':relation(Article, backref='voted_users', lazy=True),
-    'user':relation(User, backref='voted_articles', lazy=True),
-    'board':relation(Board, backref=None, lazy=True),
-})
-
-mapper(ReadStatus, read_status_table, properties={
-    'user': relation(User, backref='read_status'),
-})
-
-mapper(Board, board_table, properties={
-    'category': relation(Category, backref='boards')
-})
-
-mapper(BoardHeading, board_heading_table, properties={
-    'board': relation(Board, backref='headings', lazy=False),
-})
-
-mapper(Message, message_table, properties={
-    'from_user': relation(User, primaryjoin=message_table.c.from_id==users_table.c.id,
-                    backref=backref('send_messages', lazy=True, join_depth=1,
-                                    primaryjoin=message_table.c.from_id==users_table.c.id,
-                                    viewonly=False)
-        ),
-    'to_user': relation(User, primaryjoin=message_table.c.to_id==users_table.c.id,
-                    backref=backref('received_messages', lazy=True, join_depth=1,
-                                    primaryjoin=message_table.c.to_id==users_table.c.id,
-                                    viewonly=False)
-        ),
-})
-
-mapper(Blacklist, blacklist_table, properties={
-    'user':relation(User, lazy=False, primaryjoin=blacklist_table.c.user_id==users_table.c.id,
-                    backref=backref('blacklist', lazy=True, join_depth=1,
-                                    primaryjoin=blacklist_table.c.user_id==users_table.c.id,
-                                    viewonly=True)),
-    'target_user':relation(User, lazy=False, primaryjoin=blacklist_table.c.blacklisted_user_id==users_table.c.id,
-                    backref=backref('blacklisted', lazy=True, join_depth=1,
-                                    primaryjoin=blacklist_table.c.blacklisted_user_id==users_table.c.id,
-                                    viewonly=True)),
-})
-
-mapper(SelectedBoards, selected_boards_table, properties={
-    'user': relation(User, lazy=False, primaryjoin=selected_boards_table.c.user_id==users_table.c.id,
-                    backref=backref('selected_boards', lazy=True, join_depth=1,
-                                    primaryjoin=selected_boards_table.c.user_id==users_table.c.id,
-                                    viewonly=True)),
-    'board': relation(Board, None, lazy=True),
-})
 
 engine = None
 pool = None
+
 
 def get_engine():
     '''
@@ -742,7 +740,7 @@ def init_database():
     '''
     global Session
     get_engine()
-    metadata.create_all(engine)
+    Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine, autoflush=True, autocommit=False)
 
 def init_test_database():
@@ -752,4 +750,4 @@ def init_test_database():
     global engine, Session
     engine = create_engine('sqlite://', convert_unicode=True, encoding='utf-8', echo=False)
     Session = sessionmaker(bind=engine, autoflush=True, autocommit=False)
-    metadata.create_all(engine)
+    Base.metadata.create_all(engine)
