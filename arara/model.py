@@ -8,12 +8,7 @@ import random
 from sqlalchemy import *
 from sqlalchemy.orm import *
 
-def smart_unicode(string):
-    # TODO: util.py 나 적당한 곳으로 옮긴다. util.py 에 있지 않나?
-    if type(string) == str:
-        return unicode(string, 'UTF-8', 'replace')
-    else:
-        return unicode(string)
+from libs import smart_unicode
 
 SALT_SET = string.lowercase + string.uppercase + string.digits + './'
 

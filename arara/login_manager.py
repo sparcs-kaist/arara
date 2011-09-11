@@ -7,12 +7,13 @@ import time
 
 from sqlalchemy.exceptions import InvalidRequestError, ConcurrentModificationError
 
+from libs import smart_unicode
+
 from arara_thrift.ttypes import *
 
 from arara import arara_manager
 from arara import model
 from util import log_method_call_with_source, log_method_call_with_source_duration
-from util import smart_unicode
 
 from etc.arara_settings import SESSION_EXPIRE_TIME
 
