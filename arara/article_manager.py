@@ -1010,18 +1010,18 @@ class ArticleManager(arara_manager.ARAraManager):
     @log_method_call
     def article_list_below(self, session_key, board_name, heading_name, no, page_length=20, include_all_headings=True):
         '''
-        게시물을 읽을 때 밑에 표시될 게시글 목록을 가져오는 함수
+        어떤 게시물의 하단에 표시될 게시물 목록을 구한다.
 
-        @type  session_key: string
+        @type  session_key: str
         @param session_key: 사용자 Login Session
-        @type  board_name: string
-        @param board_name: Board Name
+        @type  board_name: str
+        @param board_name: 게시판 이름
         @type  heading_name: string
         @param heading_name: 가져올 글의 글머리 이름
         @type  no: int
-        @param no: Article No
+        @param no: 글 번호
         @type  page_length: int
-        @param page_length: Number of articles to be displayed on a page
+        @param page_length: 한 페이지당 표시되는 게시물의 수
         @type  include_all_headings: bool
         @param include_all_headings: 모든 글머리의 글을 가져올지에 대한 여부
         @rtype: ttypes.ArticleList
@@ -1031,8 +1031,18 @@ class ArticleManager(arara_manager.ARAraManager):
                 1. 존재하지 않는 게시판: InvalidOperation Exception
                 2. 데이터베이스 오류: InternalError Exception
         '''
-        listing_mode = self.engine.member_manager.get_listing_mode_by_key(session_key)
-        return self._article_list_below(session_key, board_name, heading_name, no, page_length, include_all_headings, listing_mode)
+        # 사용자 정보 조회
+        user_id = self.engine.login_manager.get_user_id_wo_error(session_key)
+        listing_mode = self.engine.member_manager.get_listing_mode(user_id)
+
+        # 페이지 정보 조회
+        page = self.get_page_no_of_article(board_name, heading_name, no, page_length, include_all_headings, listing_mode)
+
+        # 게시물 목록 조회
+        article_list, last_reply_ids = self.get_article_list(board_name, heading_name, page, page_length, include_all_headings, listing_mode)
+        self.put_user_specific_info(user_id, article_list, last_reply_ids)
+
+        return article_list
 
     @require_login
     @log_method_call_important
