@@ -33,16 +33,8 @@ class LoginManagerTest(AraraTestBase):
         self.org_time = time.time
         time.time = stub_time
 
-    def _register_user(self, username, manual_setting = {}):
-        user_reg_dic = {'username': username, 'password': username, 'nickname': username, 'email': username + '@kaist.ac.kr', 'signature': username, 'self_introduction': username, 'default_language': u'english', 'campus': u'Daejeon'}
-        for key in manual_setting:
-            if key in user_reg_dic:
-                user_reg_dic[key] = manual_setting[key]
-        registration_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
-        self.engine.member_manager.confirm(username, registration_key)
-
     def test_login(self):
-        self._register_user(u'pipoket')
+        self.register_user(u'pipoket')
 
         # Successfully log in
         self.engine.login_manager.login(u'pipoket', u'pipoket', u'143.248.234.145')
@@ -66,7 +58,7 @@ class LoginManagerTest(AraraTestBase):
         # TODO: Last Login Time 정보가 바르게 기록되었는지를 검사한다
 
     def test_logout(self):
-        self._register_user(u'hodduc')
+        self.register_user(u'hodduc')
         session_key = self.engine.login_manager.login(u'hodduc', u'hodduc', '143.248.234.145')
 
         # Logout 성공
@@ -82,7 +74,7 @@ class LoginManagerTest(AraraTestBase):
         # TODO: Last Logout Time 정보가 바르게 기록되는지를 검사한다
 
     def test_is_logged_in(self):
-        self._register_user(u'panda')
+        self.register_user(u'panda')
 
         # 로그인을 통해 발행되지 않은 session key 는 False
         session_key = u'thisisnotapropermd5sessionkey...'
@@ -97,7 +89,7 @@ class LoginManagerTest(AraraTestBase):
         self.assertEqual(False, self.engine.login_manager.is_logged_in(unicode(session_key)))
 
     def test_get_session(self):
-        self._register_user(u'pipoket')
+        self.register_user(u'pipoket')
         session_key = self.engine.login_manager.login(u'pipoket', u'pipoket', '143.248.234.145')
         result = self.engine.login_manager.get_session(unicode(session_key))
         self.assertEqual('143.248.234.145', result.ip)
@@ -109,7 +101,7 @@ class LoginManagerTest(AraraTestBase):
         result = self.engine.login_manager.get_user_id(unicode(session_key))
         self.assertEqual(1, result)
         # pipoket 은 2
-        self._register_user(u'pipoket')
+        self.register_user(u'pipoket')
         session_key = self.engine.login_manager.login(u'pipoket', u'pipoket', '143.248.234.145')
         result = self.engine.login_manager.get_user_id(unicode(session_key))
         self.assertEqual(2, result)
@@ -122,7 +114,7 @@ class LoginManagerTest(AraraTestBase):
             pass
 
     def test_get_user_id_wo_error(self):
-        self._register_user(u'panda')
+        self.register_user(u'panda')
         # 정상적인 경우
         session_key = self.engine.login_manager.login(u'panda', u'panda', '143.248.234.145')
         result = self.engine.login_manager.get_user_id_wo_error(unicode(session_key))
@@ -134,7 +126,7 @@ class LoginManagerTest(AraraTestBase):
         self.assertEqual(-1, result)
 
     def test_get_user_ip(self):
-        self._register_user(u"sillo")
+        self.register_user(u"sillo")
 
         # 서로 다른 두 IP 에 대하여 검사한다
         session_key1 = self.engine.login_manager.login(u'sillo', u'sillo', '143.248.234.145')
@@ -145,8 +137,8 @@ class LoginManagerTest(AraraTestBase):
         self.assertEqual("143.248.234.146", result2)
 
     def test_get_current_online(self):
-        self._register_user(u'pipoket')
-        self._register_user(u'serialx')
+        self.register_user(u'pipoket')
+        self.register_user(u'serialx')
         session_key_pipoket = self.engine.login_manager.login(u'pipoket', u'pipoket', '143.248.234.145')
         session_key_serialx = self.engine.login_manager.login(u'serialx', u'serialx', '143.248.234.140')
         session = self.engine.login_manager.get_current_online(session_key_pipoket)
@@ -173,7 +165,7 @@ class LoginManagerTest(AraraTestBase):
 
     def testUpdateMonitorStatus(self):
         # 본 테스트의 목적은 로그인 이후 활동을 하는 사용자가 로그아웃되는것을 막기 위함이다.
-        self._register_user(u'pipoket')
+        self.register_user(u'pipoket')
         session_key_pipoket = self.engine.login_manager.login(u'pipoket', u'pipoket', u'143.248.234.145')
         time.time = stub_time_2
 
@@ -213,7 +205,7 @@ class LoginManagerTest(AraraTestBase):
         self.assertEqual([], result)
 
         # 한 명의 사용자가 로그인했지만 아직 Expire 되지 않았을 때
-        self._register_user(u'panda')
+        self.register_user(u'panda')
         panda_session_key = self.engine.login_manager.login(u'panda', u'panda', '127.0.0.1')
         result = self.engine.login_manager.get_expired_sessions()
         self.assertEqual([], result)
@@ -232,7 +224,7 @@ class LoginManagerTest(AraraTestBase):
         self.assertEqual([], result)
 
         # 한 명의 사용자가 로그인했지만 아직 Expire 되지 않았을 때
-        self._register_user(u'panda')
+        self.register_user(u'panda')
         panda_session_key = self.engine.login_manager.login(u'panda', u'panda', '127.0.0.1')
         result = self.engine.login_manager.get_active_sessions()
         self.assertEqual([(panda_session_key, 2)], result)

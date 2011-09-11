@@ -24,25 +24,15 @@ def stub_time():
     return STUB_TIME_CURRENT
 
 class ArticleManagerTest(AraraTestBase):
-    def _get_user_reg_dic(self, id):
-        return {'username':id, 'password':id, 'nickname':id, 'email':id + u'@kaist.ac.kr',
-                'signature':id, 'self_introduction':id, 'default_language':u'english', 'campus':u''}
-
-    def _register_user(self, id):
-        # Register a user, log-in, and then return its session_key
-        user_reg_dic = self._get_user_reg_dic(id)
-        register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
-        self.engine.member_manager.confirm(id, unicode(register_key))
-        return self.engine.login_manager.login(id, id, u'143.248.234.140')
 
     def _register_extra_users(self):
         # Register extra users
-        self.session_key_hodduc = self._register_user(u'hodduc')
-        self.session_key_sillo = self._register_user(u'sillo')
-        self.session_key_orcjun = self._register_user(u'orcjun')
-        self.session_key_letyoursoulbefree = self._register_user(u'letyoursoulbefree')
-        self.session_key_koolvibes = self._register_user(u'koolvibes')
-        self.session_key_wiki = self._register_user(u'wiki')
+        self.session_key_hodduc = self.register_and_login(u'hodduc')
+        self.session_key_sillo = self.register_and_login(u'sillo')
+        self.session_key_orcjun = self.register_and_login(u'orcjun')
+        self.session_key_letyoursoulbefree = self.register_and_login(u'letyoursoulbefree')
+        self.session_key_koolvibes = self.register_and_login(u'koolvibes')
+        self.session_key_wiki = self.register_and_login(u'wiki')
 
     def setUp(self):
         # Common preparation for all tests
@@ -56,8 +46,8 @@ class ArticleManagerTest(AraraTestBase):
         time.time = stub_time
         STUB_TIME_CURRENT = STUB_TIME_INITIAL
         # Register two users
-        self.session_key_mikkang = self._register_user(u'mikkang')
-        self.session_key_serialx = self._register_user(u'serialx')
+        self.session_key_mikkang = self.register_and_login(u'mikkang')
+        self.session_key_serialx = self.register_and_login(u'serialx')
 
         # Create default board
         self.engine.board_manager.add_board(self.session_key_sysop, u'board', u'테스트보드', u'Test Board', [])

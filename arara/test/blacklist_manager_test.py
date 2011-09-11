@@ -26,37 +26,13 @@ class BlacklistManagerTest(AraraTestBase):
         time.time = stub_time
 
         # Register mikkang for test
-        user_reg_dict = {'username':u'mikkang', 'password':u'mikkang', 
-                        'nickname':u'mikkang', 'email':u'mikkang@kaist.ac.kr',
-                        'signature':u'mikkang', 'self_introduction':u'mikkang',
-                        'default_language':u'english', 'campus':u'Seoul' }
-        register_key = self.engine.member_manager.register_(
-                UserRegistration(**user_reg_dict))
-        self.engine.member_manager.confirm(u'mikkang', unicode(register_key))
-        self.mikkang_session_key = self.engine.login_manager.login(
-                u'mikkang', u'mikkang', u'143.248.234.140')
+        self.mikkang_session_key = self.register_and_login(u'mikkang')
         
         # Register combacsa for test
-        user_reg_dic = {'username':u'combacsa', 'password':u'combacsa', 
-                        'nickname':u'combacsa', 'email':u'combacsa@kaist.ac.kr', 
-                        'signature':u'combacsa', 'self_introduction':u'combacsa', 
-                        'default_language':u'english', 'campus':u'Seoul' }
-        register_key = self.engine.member_manager.register_(
-                UserRegistration(**user_reg_dic))
-        self.engine.member_manager.confirm(u'combacsa', register_key)
-        self.combacsa_session_key = self.engine.login_manager.login(
-                 u'combacsa', u'combacsa', '143.248.234.140')
+        self.combacsa_session_key = self.register_and_login(u'combacsa')
 
         # Register serialx for test 
-        user_reg_dic = {'username':u'serialx', 'password':u'serialx', 
-                        'nickname':u'serialx', 'email':u'serialx@kaist.ac.kr', 
-                        'signature':u'serialx', 'self_introduction':u'serialx',
-                        'default_language':u'english', 'campus':u'' }
-        register_key = self.engine.member_manager.register_(
-                UserRegistration(**user_reg_dic))
-        self.engine.member_manager.confirm(u'serialx', register_key)
-        self.serialx_session_key = self.engine.login_manager.login(
-                u'serialx', u'serialx', u'143.248.234.140')
+        self.serialx_session_key = self.register_and_login(u'serialx')
 
     def test_add(self):
         self.engine.blacklist_manager.add_blacklist(self.mikkang_session_key, u'combacsa')

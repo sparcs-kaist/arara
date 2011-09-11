@@ -26,48 +26,16 @@ class MessagingManagerTest(AraraTestBase):
         time.time = stub_time
 
         # Register mikkang for test
-        user_reg_dict = {'username':u'mikkang', 'password':u'mikkang', 
-                        'nickname':u'mikkang', 'email':u'mikkang@kaist.ac.kr',
-                        'signature':u'mikkang', 'self_introduction':u'mikkang',
-                        'default_language':u'english', 'campus':u'Daejeon' }
-        register_key = self.engine.member_manager.register_(
-                UserRegistration(**user_reg_dict))
-        self.engine.member_manager.confirm(u'mikkang', unicode(register_key))
-        self.mikkang_session_key = self.engine.login_manager.login(
-                u'mikkang', u'mikkang', u'143.248.234.140')
-                
+        self.mikkang_session_key = self.register_and_login(u"mikkang")
+
         # Register combacsa for test
-        user_reg_dic = {'username':u'combacsa', 'password':u'combacsa',
-                        'nickname':u'combacsa', 'email':u'combacsa@kaist.ac.kr',
-                        'signature':u'combacsa', 'self_introduction':u'combacsa', 
-                        'default_language':u'english', 'campus':u'Seoul' }
-        register_key = self.engine.member_manager.register_(
-                UserRegistration(**user_reg_dic))
-        self.engine.member_manager.confirm(u'combacsa', unicode(register_key))
-        self.combacsa_session_key = self.engine.login_manager.login(
-                u'combacsa', u'combacsa', '143.248.234.140')
+        self.combacsa_session_key = self.register_and_login(u"combacsa")
 
         # Register serialx for test
-        user_reg_dic = {'username':u'serialx', 'password':u'serialx',
-                'nickname':u'serialx', 'email':u'serialx@kaist.ac.kr', 
-                'signature':u'serialx', 'self_introduction':u'serialx', 
-                'default_language':u'english', 'campus':u'' }
-        register_key = self.engine.member_manager.register_(
-                UserRegistration(**user_reg_dic))
-        self.engine.member_manager.confirm(u'serialx', unicode(register_key))
-        self.serialx_session_key = self.engine.login_manager.login(
-                u'serialx', u'serialx', '143.248.234.140')
-        
+        self.serialx_session_key = self.register_and_login(u"serialx")
+
         # Register dodo for test
-        user_reg_dic = {'username':u'zzongaly', 'password':u'zzongaly', 
-                'nickname':u'dodo', 'email':u'zzongaly@kaist.ac.kr', 
-                'signature':u'mikkang friend', 'self_introduction':u'i am dodo', 
-                'default_language':u'english', 'campus':u'' }
-        register_key = self.engine.member_manager.register_(
-                UserRegistration(**user_reg_dic))
-        self.engine.member_manager.confirm(u'zzongaly', unicode(register_key))
-        self.zzongaly_session_key = self.engine.login_manager.login(
-                u'zzongaly', u'zzongaly', '143.248.234.140')
+        self.zzongaly_session_key = self.register_and_login(u"zzongaly", default_user_reg_dic={u"nickname": u"dodo"})
 
     def test_sent_list(self):
         ret = self.engine.messaging_manager.sent_list(self.serialx_session_key)

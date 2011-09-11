@@ -15,16 +15,6 @@ import arara.model
 
 
 class SearchManagerTest(AraraTestBase):
-    def _get_user_reg_dic(self, id):
-        return {'username':id, 'password':id, 'nickname':id, 'email':id + u'@kaist.ac.kr',
-                'signature':id, 'self_introduction':id, 'default_language':u'english', 'campus':u''}
-
-    def _register_user(self, id):
-        # Register a user, log-in, and then return its session_key
-        user_reg_dic = self._get_user_reg_dic(id)
-        register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
-        self.engine.member_manager.confirm(id, unicode(register_key))
-        return self.engine.login_manager.login(id, id, u'143.248.234.140')
 
     def setUp(self):
         # Common preparation for all tests
@@ -37,13 +27,10 @@ class SearchManagerTest(AraraTestBase):
         time.time = stub_time
 
         # Register two users
-        self._register_user('pipoket')
-        self._register_user('mikkang')
-
         # Login
         self.session_key_sysop = self.engine.login_manager.login(u"SYSOP", u"SYSOP", u"123.123.123.123")
-        self.session_key_pipoket = self.engine.login_manager.login(u"pipoket", u"pipoket", u"123.123.123.123")
-        self.session_key_mikkang = self.engine.login_manager.login(u"mikkang", u"mikkang", u"123.123.123.123")
+        self.session_key_pipoket = self.register_and_login('pipoket')
+        self.session_key_mikkang = self.register_and_login('mikkang')
 
         # Add two board
         self.engine.board_manager.add_board(self.session_key_sysop, u"search1", u'보드1', u"search1")

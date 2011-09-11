@@ -20,11 +20,8 @@ class BoardManagerTest(AraraTestBase):
         super(BoardManagerTest, self).setUp()
 
         # Register one user, mikkang
-        user_reg_dic = {'username':u'mikkang', 'password':u'mikkang', 'nickname':u'mikkang', 'email':u'mikkang@kaist.ac.kr', 'signature':u'mikkang', 'self_introduction':u'mikkang', 'default_language':u'english', 'campus':u'seoul' }
-        register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
-        self.engine.member_manager.confirm(u'mikkang', register_key)
         # Then let it logged on.
-        self.session_key = self.engine.login_manager.login(u'mikkang', u'mikkang', '143.248.234.140')
+        self.session_key = self.register_and_login(u'mikkang')
         # Login as sysop
         self.session_key_sysop = self.engine.login_manager.login(u'SYSOP', u'SYSOP', '143.234.234.234')
         self.assertEqual(0, len(self.engine.board_manager.get_board_list())) # XXX combacsa: is it allowed?

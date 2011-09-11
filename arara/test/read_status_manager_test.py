@@ -16,17 +16,6 @@ from arara import model
 
 
 class ReadStatusManagerTest(AraraTestBase):
-    def _get_user_reg_dic(self, id):
-        return {'username':id, 'password':id, 'nickname':id, 
-                'email':id + u'@kaist.ac.kr', 'signature':id,
-                'self_introduction':id, 'default_language':u'english', 'campus':u''}
-
-    def _register_user(self, id):
-        # Register a user, log-in, and then return its session_key
-        user_reg_dic = self._get_user_reg_dic(id)
-        register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
-        self.engine.member_manager.confirm(id, unicode(register_key))
-        return self.engine.login_manager.login(id, id, u'143.248.234.140')
 
     def setUp(self):
         # Common preparation for all tests
@@ -45,7 +34,7 @@ class ReadStatusManagerTest(AraraTestBase):
                 unicode(session_key_sysop), u'garbages', u'쓰레기가 모이는 곳', u'Garbage Board')
        
         # Register one user, mikkang
-        self.session_key_mikkang = self._register_user(u'mikkang')
+        self.session_key_mikkang = self.register_and_login(u'mikkang')
 
     def _write_articles(self):
         article = Article(**{'title': u'serialx is...', 'content': u'polarbear', 'heading': u''})

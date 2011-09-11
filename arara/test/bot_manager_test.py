@@ -38,16 +38,6 @@ def stub_urlopen(target):
     return stub_xmlobject()
 
 class BotManagerTest(AraraTestBase):
-    def _get_user_reg_dic(self, id, campus):
-        return {'username':id, 'password':id, 'nickname':id, 'email':id + u'@kaist.ac.kr',
-                'signature':id, 'self_introduction':id, 'default_language':u'english', 'campus':campus}
-
-    def _register_user(self, id, campus):
-        # Register a user, log-in, and then return its session_key
-        user_reg_dic = self._get_user_reg_dic(id, campus)
-        register_key = self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
-        self.engine.member_manager.confirm(id, unicode(register_key))
-        return self.engine.login_manager.login(id, id, u'143.248.234.140')
 
     def setUp(self):
         # Before Initialization Engines, BOTs object should be Mock object
@@ -66,7 +56,7 @@ class BotManagerTest(AraraTestBase):
         super(BotManagerTest, self).setUp(use_bot = True)
 
         self.session_key_sysop = self.engine.login_manager.login(u'SYSOP', u'SYSOP', u'123.123.123.123.')
-        self.session_key_mikkang = self._register_user(u'mikkang', u'seoul')
+        self.session_key_mikkang = self.register_and_login(u'mikkang', default_user_reg_dic={u'campus': u'seoul'})
 
     def testInit(self):
         # 각각의 Bot의 Instance들을 제대로 생성했는지 검사
@@ -97,8 +87,8 @@ class BotManagerTest(AraraTestBase):
     def testGetWeatherInfo(self):
         # get_weather_info가 정보를 잘 받아오는지 검사하는 테스트이다.
         # Initial setting for test this function
-        self.session_key_hodduc = self._register_user(u'hodduc', u'daejeon')
-        self.session_key_sillo = self._register_user(u'sillo', u'')
+        self.session_key_hodduc = self.register_and_login(u'hodduc', default_user_reg_dic={u'campus':u'daejeon'})
+        self.session_key_sillo = self.register_and_login(u'sillo', default_user_reg_dic={u'campus': u''})
         self.engine.bot_manager.refresh_weather_info()
 
         # Session Key가 비었을 때 빈 인스턴스를 잘 들고 오는가?

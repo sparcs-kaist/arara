@@ -32,15 +32,7 @@ class FileManagerTest(AraraTestBase):
                 unicode(session_key_sysop), u'garbages', u'쓰레기가 모이는 곳', u'Garbage Board')
 
         # Register mikkang for test
-        user_reg_dict = {'username':u'mikkang', 'password':u'mikkang', 
-                        'nickname':u'mikkang', 'email':u'mikkang@kaist.ac.kr',
-                        'signature':u'mikkang', 'self_introduction':u'mikkang',
-                        'default_language':u'english', 'campus':u'Seoul' }
-        register_key = self.engine.member_manager.register_(
-                UserRegistration(**user_reg_dict))
-        self.engine.member_manager.confirm(u'mikkang', unicode(register_key))
-        self.mikkang_session_key = self.engine.login_manager.login(
-                u'mikkang', u'mikkang', u'143.248.234.140')
+        self.mikkang_session_key = self.register_and_login(u'mikkang')
 
         # Write an article for filemanager test
         article_dict = {'title': u'serialx is...', 'content': u'polarbear', 'heading': u''}
