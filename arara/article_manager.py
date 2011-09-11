@@ -499,56 +499,6 @@ class ArticleManager(arara_manager.ARAraManager):
  
         return article_list, last_reply_ids
 
-    def _get_read_status_generator(self, user_id, article_list, whitelist):
-        '''
-        @type  user_id: int
-        @param user_id: 사용자 고유 id
-        @type  article_list: list<SQLAlchemy model.Article>
-        @param article_list: SQLAlchemy 형식의 글 객체의 모음
-        @type  whitelist: list<string>
-        @param whitelist: self._get_dict 에 통과시킬 whitelist
-        @rtype: generator<dict>
-        @return:
-            LIST_ARTICLE_WHITELIST 를 통과한 article dictionary를 그때 그때 yield 한다
-        '''
-        for article in article_list:
-            article_dict = self._get_dict(article, whitelist)
-            if user_id != -1: # 로그인되어 있는 경우
-                try:
-                    read_status_main = self.engine.read_status_manager._check_stat(user_id, article.id)
-                    read_status_sub  = self.engine.read_status_manager._check_stat(user_id, article.last_reply_id)
-                    if read_status_main == 'R' and read_status_sub == 'N':
-                        read_status_main = 'U'
-                    article_dict['read_status'] = read_status_main
-                    yield article_dict
-                except NotLoggedIn, InvalidOperation:
-                    article_dict['read_status'] = 'N'
-                    yield article_dict
-            else: # 그렇지 않은 경우
-                article_dict['read_status'] = 'N'
-                yield article_dict
-        raise StopIteration
-
-    def _thrift_article_generator(self, article_dict_list_generator, blacklisted_users):
-        '''
-        @type  article_dict_list_generator: generator<dict> (LIST_ARTICLE_WHITELIST)
-        @param article_dict_list_generator: Thrift 객체로 만들어버릴 딕셔너리의 모음
-        @type  blacklisted_users: list<int>
-        @param blacklisted_users: 블랙리스트에 들어있는 사용자의 id
-        @rtype: generator<ttypes.Article>
-        @return: Thrift Article들의 모임
-        '''
-        for article in article_dict_list_generator:
-            if article['author_id'] in blacklisted_users:
-                article['blacklisted'] = True
-            else:
-                article['blacklisted'] = False
-            if not article.has_key('type'):
-                article['type'] = 'normal'
-
-            yield Article(**article)
-        raise StopIteration
-
     @log_method_call
     def put_user_specific_info(self, user_id, article_list, last_reply_id_list):
         '''
