@@ -96,25 +96,25 @@ class ArticleManager(arara_manager.ARAraManager):
         '''
         #TODO: Query 의 코드 중복 제거하기 (성능 분석 포함)
         #TODO: Query 부분과 글목록화 부분 분리하기
-        #XXX(hodduc): root 글이 아닌 글도 포함하려면, 다음 쿼리에서 model.articles_table.c.root_id==None 부분만 지우면 된다.
+        #XXX(hodduc): root 글이 아닌 글도 포함하려면, 다음 쿼리에서 model.Article.root_id==None 부분만 지우면 된다.
 
         session = model.Session()
         time_to_filter = datetime.datetime.fromtimestamp(time.time()-time_to_filter)
         if board_id:
             query = session.query(model.Article).filter(and_(
-                    model.articles_table.c.board_id==board_id,
-                    model.articles_table.c.root_id==None,
-                    model.articles_table.c.last_modified_date > time_to_filter,
+                    model.Article.board_id==board_id,
+                    model.Article.root_id==None,
+                    model.Article.last_modified_date > time_to_filter,
                     model.Article.board.has(model.Board.hide==False),
                     model.Article.board.has(model.Board.deleted==False),
-                    not_(model.articles_table.c.deleted==True)))
+                    not_(model.Article.deleted==True)))
         else:
             query = session.query(model.Article).filter(and_(
-                    model.articles_table.c.root_id==None,
-                    model.articles_table.c.last_modified_date > time_to_filter,
+                    model.Article.root_id==None,
+                    model.Article.last_modified_date > time_to_filter,
                     model.Article.board.has(model.Board.hide==False),
                     model.Article.board.has(model.Board.deleted==False),
-                    not_(model.articles_table.c.deleted==True)))
+                    not_(model.Article.deleted==True)))
 
         if criteria=="vote":
             best_article = query.order_by(model.Article.positive_vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc())[:count]
@@ -423,8 +423,8 @@ class ArticleManager(arara_manager.ARAraManager):
         else:
             # 모든 board 에 있는 글을 선택한다. 단 hide 된 보드나 delete 된 보드는 제외한다.
             query = query.filter(and_(
-                    model.articles_table.c.root_id==None,
-                    model.articles_table.c.destroyed==False,
+                    model.Article.root_id==None,
+                    model.Article.destroyed==False,
                     model.Article.board.has(model.Board.hide==False),
                     model.Article.board.has(model.Board.deleted==False)))
 
@@ -703,8 +703,8 @@ class ArticleManager(arara_manager.ARAraManager):
 
         if board_id == None:
             query = query.filter(and_(
-                    model.articles_table.c.root_id==None,
-                    model.articles_table.c.destroyed==False,
+                    model.Article.root_id==None,
+                    model.Article.destroyed==False,
                     model.Article.board.has(model.Board.hide==False),
                     model.Article.board.has(model.Board.deleted==False)))
         else:
@@ -737,21 +737,21 @@ class ArticleManager(arara_manager.ARAraManager):
         '''
         query = session.query(model.Article)
         # query 조립 개시
-        query = query.filter(model.articles_table.c.root_id==None)
-        query = query.filter(model.articles_table.c.destroyed==False)
+        query = query.filter(model.Article.root_id==None)
+        query = query.filter(model.Article.destroyed==False)
         if board_id == None:
             query = query.filter(model.Article.board.has(model.Board.hide==False))
             query = query.filter(model.Article.board.has(model.Board.deleted==False))
         else:
-            query = query.filter(model.articles_table.c.board_id==board_id)
+            query = query.filter(model.Article.board_id==board_id)
             if not include_all_headings:
                 query = query.filter_by(heading_id=heading_id)
         # Listing 방식에 따른 정렬순서
         if order_by == LIST_ORDER_ROOT_ID:
-            query = query.filter(model.articles_table.c.id > no)
+            query = query.filter(model.Article.id > no)
         elif order_by == LIST_ORDER_LAST_REPLY_DATE:
             last_reply_date = self._get_article(session, board_id, no).last_reply_date
-            query = query.filter(model.articles_table.c.last_reply_date > last_reply_date)
+            query = query.filter(model.Article.last_reply_date > last_reply_date)
         else:
             raise InvalidOperation("wrong ordering mode")
         # query 조립 완료

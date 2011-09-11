@@ -116,8 +116,8 @@ class MessagingManager(arara_manager.ARAraManager):
         session = model.Session()
         sent_user = self.engine.member_manager._get_user(session, user_info.username)
         sent_messages_count = session.query(model.Message).filter(
-                and_(model.message_table.c.from_id==sent_user.id,
-                    not_(model.message_table.c.sent_deleted==True)
+                and_(model.Message.from_id==sent_user.id,
+                    not_(model.Message.sent_deleted==True)
                     )).count()
         page = int(page)
         last_page = int(sent_messages_count / page_length)
@@ -131,8 +131,8 @@ class MessagingManager(arara_manager.ARAraManager):
         offset = page_length * (page - 1)
         last = offset + page_length
         sent_messages = session.query(model.Message).filter(
-                and_(model.message_table.c.from_id==sent_user.id,
-                    not_(model.message_table.c.sent_deleted==True)
+                and_(model.Message.from_id==sent_user.id,
+                    not_(model.Message.sent_deleted==True)
                     )).order_by(model.Message.id.desc())[offset:last]
         sent_messages_dict_list = self._get_dict_list(sent_messages, MESSAGE_WHITELIST)
         ret_dict['hit'] = sent_messages_dict_list
@@ -172,13 +172,13 @@ class MessagingManager(arara_manager.ARAraManager):
             if blacklist_item.block_message:
                 blacklist_users.add(blacklist_item.blacklisted_user_username)
         received_messages_count = session.query(model.Message).filter(
-                and_(model.message_table.c.to_id==to_user.id,
-                    not_(model.message_table.c.received_deleted==True)
+                and_(model.Message.to_id==to_user.id,
+                    not_(model.Message.received_deleted==True)
                     )).count()
         received_new_messages_count = session.query(model.Message).filter(
-                and_(model.message_table.c.to_id==to_user.id,
-                    model.message_table.c.read_status==u'N',
-                    not_(model.message_table.c.received_deleted==True)
+                and_(model.Message.to_id==to_user.id,
+                    model.Message.read_status==u'N',
+                    not_(model.Message.received_deleted==True)
                     )).count()
         last_page = int(received_messages_count / page_length)
         page = int(page)
@@ -192,8 +192,8 @@ class MessagingManager(arara_manager.ARAraManager):
         offset = page_length * (page - 1)
         last = offset + page_length
         received_messages = session.query(model.Message).filter(
-                and_(model.message_table.c.to_id==to_user.id, 
-                    not_(model.message_table.c.received_deleted==True)
+                and_(model.Message.to_id==to_user.id, 
+                    not_(model.Message.received_deleted==True)
                     )).order_by(model.Message.id.desc())[offset:last]
         received_messages_dict_list = self._get_dict_list(received_messages, MESSAGE_WHITELIST, blacklist_users)
         ret_dict['hit'] = received_messages_dict_list
@@ -221,9 +221,9 @@ class MessagingManager(arara_manager.ARAraManager):
         session = model.Session()
         to_user = self.engine.member_manager._get_user(session, user_info.username)
         received_unread_messages_count = session.query(model.Message).filter(
-                and_(model.message_table.c.to_id==to_user.id,
-                    model.message_table.c.read_status==u'N',
-                    not_(model.message_table.c.received_deleted==True)
+                and_(model.Message.to_id==to_user.id,
+                    model.Message.read_status==u'N',
+                    not_(model.Message.received_deleted==True)
                     )).count()
         session.close()
         return received_unread_messages_count
@@ -363,7 +363,7 @@ class MessagingManager(arara_manager.ARAraManager):
         session = model.Session()
         to_user = self.engine.member_manager._get_user(session, user_info.username)
         try:
-            message = session.query(model.Message).filter(and_(model.message_table.c.to_id==to_user.id, model.message_table.c.id==msg_no, not_(model.message_table.c.received_deleted==True))).one()
+            message = session.query(model.Message).filter(and_(model.Message.to_id==to_user.id, model.Message.id==msg_no, not_(model.Message.received_deleted==True))).one()
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('message not exist')
@@ -397,7 +397,7 @@ class MessagingManager(arara_manager.ARAraManager):
         session = model.Session()
         from_user = self.engine.member_manager._get_user(session, user_info.username)
         try:
-            message = session.query(model.Message).filter(and_(model.message_table.c.from_id==from_user.id, model.message_table.c.id==msg_no, not_(model.message_table.c.sent_deleted==True))).one()
+            message = session.query(model.Message).filter(and_(model.Message.from_id==from_user.id, model.Message.id==msg_no, not_(model.Message.sent_deleted==True))).one()
         except InvalidRequestError:
             session.close()
             raise InvalidOperation('message not exist')

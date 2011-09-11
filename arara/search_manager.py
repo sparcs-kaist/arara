@@ -185,17 +185,17 @@ class SearchManager(arara_manager.ARAraManager):
             query_text = query_dict['query']
             query_text = self._get_query_text(query_dict, 'query')
             query = query.join('author').filter(or_(
-                    model.articles_table.c.title.like(query_text),
-                    model.articles_table.c.content.like(query_text),
+                    model.Article.title.like(query_text),
+                    model.Article.content.like(query_text),
                     model.User.username.like(query_text),
                     model.User.nickname.like(query_text)))
         else:
             condition = None
-            refer_dict = {'title': model.articles_table.c.title.like,
-                    'content': model.articles_table.c.content.like,
+            refer_dict = {'title': model.Article.title.like,
+                    'content': model.Article.content.like,
                     'author_nickname': model.User.nickname.like,
                     'author_username': model.User.username.like,
-                    'date': model.articles_table.c.date}
+                    'date': model.Article.date}
             for key in query_dict.keys():
                 if key.upper() == "DATE":
                     continue #TODO: DATE SEARCH DISABLED!

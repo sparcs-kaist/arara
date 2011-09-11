@@ -93,11 +93,11 @@ class FileManager(arara_manager.ARAraManager):
         # TODO: article "객체" 를 받아야 할 이유가 있는지
         try:
             return session.query(model.File).filter(
-                    and_(model.file_table.c.id == file_id,
-                    model.file_table.c.user_id == article.author.id,
-                    model.file_table.c.board_id == article.board.id,
-                    model.file_table.c.article_id == article.id, 
-                    model.file_table.c.deleted == False
+                    and_(model.File.id == file_id,
+                    model.File.user_id == article.author.id,
+                    model.File.board_id == article.board.id,
+                    model.File.article_id == article.id, 
+                    model.File.deleted == False
                     )).one()
         except InvalidRequestError:
             session.close()

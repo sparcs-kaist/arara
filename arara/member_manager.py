@@ -180,7 +180,7 @@ class MemberManager(arara_manager.ARAraManager):
         now = datetime.datetime.fromtimestamp(time.time())
         session = model.Session()
         try:
-            cond = or_(*[model.users_table.c.id == id for id in user_ids])
+            cond = or_(*[model.User.id == id for id in user_ids])
             session.execute(model.users_table.update().values(last_logout_time=now).where(cond))
             session.commit()
             session.close()
@@ -934,8 +934,8 @@ class MemberManager(arara_manager.ARAraManager):
         try:
             if not search_key:
                 user = session.query(model.User).filter(
-                        or_(model.users_table.c.username==search_user,
-                            model.users_table.c.nickname==search_user)).all()
+                        or_(model.User.username==search_user,
+                            model.User.nickname==search_user)).all()
             else:
                 if search_key.lower() == u'username':
                     user = session.query(model.User).filter_by(
