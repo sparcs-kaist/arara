@@ -1,14 +1,16 @@
 #-*- coding: utf:-8 -*-
-import unittest
 import os
 import sys
+import unittest
 
-arara_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(arara_path)
+ARARA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(ARARA_PATH)
 
 import libs
 
+
 class LibsTest(unittest.TestCase):
+
     def setUp(self):
         pass
 
@@ -27,6 +29,31 @@ class LibsTest(unittest.TestCase):
         self.assertEqual(unicode_string, libs.smart_unicode(cp949_string))
         self.assertEqual(unicode_string, libs.smart_unicode(utf_8_string))
         self.assertEqual(unicode_string, libs.smart_unicode(unicode_string))
+
+    def test_intlist_to_string(self):
+        self.assertEqual('\x03\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x03\x00\x00\x00',
+                libs.intlist_to_string([1, 2, 3]))
+
+    def test_string_to_intlist(self):
+        self.assertEqual([1, 2, 3],
+                libs.string_to_intlist('\x03\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x03\x00\x00\x00'))
+
+    def test_filter_dict(self):
+        self.assertEqual({'user_id': 1},
+                libs.filter_dict({'user_id': 1, 'dummy': 'garbage'}, ['user_id']))
+
+    def test_is_keys_in_dict(self):
+        self.assertEqual(True,
+                libs.is_keys_in_dict({'user_id': 1, 'dummy': 'garbages'}, ['user_id']))
+        self.assertEqual(False,
+                libs.is_keys_in_dict({'user_id': 1, 'dummy': 'garbages'}, ['username']))
+
+    def test_intlist_to_string_to_intlist(self):
+        a = range(1024, 0, -3)
+        b = libs.intlist_to_string(a)
+        c = libs.string_to_intlist(b)
+        if a != c:
+            self.fail(repr(a) + " / " + repr(c))
 
 
 def suite():
