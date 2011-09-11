@@ -95,7 +95,7 @@ class MessagingManagerTest(AraraTestBase):
 
         try:
             self.engine.messaging_manager.sent_list(u'strange_session')
-            fail()
+            self.fail(u'Wrong user must fail to fetch sent_list.')
         except NotLoggedIn:
             pass
 
@@ -248,13 +248,13 @@ class MessagingManagerTest(AraraTestBase):
 
         try:
             self.engine.messaging_manager.send_message(u'strange_session', u'mikkang', u'SPAM_SPAM!!!!')
-            fail()
+            self.fail(u'Wrong user must fail to send new message.')
         except NotLoggedIn:
             pass
 
         try:
             self.engine.messaging_manager.send_message(self.serialx_session_key, u'non_exist', u'SPAM~')
-            fail()
+            self.fail(u'User must fail to send message to nonexisting user.')
         except InvalidOperation:
             pass
 
@@ -273,13 +273,13 @@ class MessagingManagerTest(AraraTestBase):
 
         try:
             self.engine.messaging_manager.read_received_message(self.serialx_session_key, 12)
-            fail()
+            self.fail(u'fetching nonexisting received message must fail.')
         except InvalidOperation:
             pass
 
         try:
             self.engine.messaging_manager.read_received_message(u'starnge_session_key', 5)
-            fail()
+            self.fail(u'nonexisting user must fail to fetch any received message.')
         except NotLoggedIn:
             pass
 
@@ -319,13 +319,13 @@ class MessagingManagerTest(AraraTestBase):
 
         try:
             self.engine.messaging_manager.read_sent_message(u'strange_session', 3)
-            fail()
+            fail('nonexisting user must fail to fetch read_sent_message')
         except NotLoggedIn:
             pass
 
         try:
             self.engine.messaging_manager.read_sent_message(self.serialx_session_key, 99)
-            fail()
+            self.fail('user must fail to fetch nonexisting over-numbered message')
         except InvalidOperation:
             pass
 
@@ -350,7 +350,7 @@ class MessagingManagerTest(AraraTestBase):
         self.engine.messaging_manager.delete_received_message(self.mikkang_session_key, 1)
         try:
             self.engine.messaging_manager.read_received_message(self.mikkang_session_key, 1)
-            fail()
+            self.fail('one must fail to read already deleted message')
         except InvalidOperation:
             pass
 
@@ -361,13 +361,13 @@ class MessagingManagerTest(AraraTestBase):
 
         try:
             self.engine.messaging_manager.delete_received_message(self.serialx_session_key, 99)
-            fail()
+            self.fail('one must fail to delete nonexisting message.')
         except InvalidOperation:
             pass
 
         try:
             self.engine.messaging_manager.delete_received_message(u'starnge_session', 2)
-            fail()
+            self.fail('nonexisting user must not delete any message.')
         except NotLoggedIn:
             pass
 
@@ -391,7 +391,7 @@ class MessagingManagerTest(AraraTestBase):
         self.engine.messaging_manager.delete_sent_message(self.serialx_session_key, 1)
         try:
             self.engine.messaging_manager.read_sent_message(self.serialx_session_key, 1)
-            fail()
+            self.fail('one must fail to read any deleted message.')
         except InvalidOperation:
             pass
 
@@ -402,13 +402,13 @@ class MessagingManagerTest(AraraTestBase):
 
         try:
             self.engine.messaging_manager.delete_sent_message(self.serialx_session_key, 99)
-            fail()
+            self.fail('one must fail to delete nonexisting over-numbered message')
         except InvalidOperation:
             pass
 
         try:
             self.engine.messaging_manager.delete_sent_message(u'starnge_session', 2)
-            fail()
+            self.fail('nonexisting user muts fail to delete any sent message')
         except NotLoggedIn:
             pass
 
