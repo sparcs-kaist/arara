@@ -12,31 +12,7 @@ FILE_MAXIMUM_SIZE = 100*1024*1024
 
 # ARAra forecast Service Setting
 USE_WEATHER_FORECAST = True
-WEATHER_ICON_PATH = '/media/image/weather/'
-WEATHER_ICON_SET = [
-    # weather view grep first string and replace it to second string
-    ('chance_of_snow.gif', '13.png'),
-    ('flurries.gif', '14.png'),
-    ('snow.gif', '15.png'),
-    ('sleet.gif', '10.png'),
-    ('chance_of_rain.gif', '9.png'),
-    ('chance_of_storm.gif', '9.png'),
-    ('showers.gif', '11.png'),
-    ('mist.gif', '2.png'),
-    ('rain.gif', '2.png'),
-    ('storm.gif', '12.png'),
-    ('thunderstorm.gif', '4.png'),
-    ('rain_snow.gif', '10.png'),
-    ('sunny.gif', '32.png'),
-    ('partly_cloudy.gif', '30.png'),
-    ('mostly_cloudy.gif', '28.png'),
-    ('cloudy.gif', '26.png'),
-    ('fog.gif', '20.png'),
-    ('smoke.gif', '22.png'),
-    ('haze.gif', '21.png'),
-    ('dust.gif', '19.png'),
-    ('icy.gif', '25.png'),
-]
+
 # Imgeffect Relay Fiction Article Setting
 # XXX: This is temporary. Remove this after festival
 # XXX: This line is not added in bin/devel_setup_script.sh

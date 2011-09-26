@@ -2,8 +2,34 @@
 from warara import warara_middleware
 from django import template
 from django.core.cache import cache
-from etc.warara_settings import USE_WEATHER_FORECAST, WEATHER_ICON_PATH, WEATHER_ICON_SET
+from etc import warara_settings
 register = template.Library()
+
+WEATHER_ICON_PATH = '/media/image/weather/'
+WEATHER_ICON_SET = [
+    # weather view grep first string and replace it to second string
+    ('chance_of_snow.gif', '13.png'),
+    ('flurries.gif', '14.png'),
+    ('snow.gif', '15.png'),
+    ('sleet.gif', '10.png'),
+    ('chance_of_rain.gif', '9.png'),
+    ('chance_of_storm.gif', '9.png'),
+    ('showers.gif', '11.png'),
+    ('mist.gif', '2.png'),
+    ('rain.gif', '2.png'),
+    ('storm.gif', '12.png'),
+    ('thunderstorm.gif', '4.png'),
+    ('rain_snow.gif', '10.png'),
+    ('sunny.gif', '32.png'),
+    ('partly_cloudy.gif', '30.png'),
+    ('mostly_cloudy.gif', '28.png'),
+    ('cloudy.gif', '26.png'),
+    ('fog.gif', '20.png'),
+    ('smoke.gif', '22.png'),
+    ('haze.gif', '21.png'),
+    ('dust.gif', '19.png'),
+    ('icy.gif', '25.png'),
+]
 
 #CACHETIME_BOARD_LIST = 600
 CACHETIME_BOARD_LIST = 6
@@ -69,7 +95,7 @@ class WeatherInfoNode(template.Node):
             return ''
         sess = ctx['arara_session']
         # Get Weather info
-        if USE_WEATHER_FORECAST:
+        if warara_settings.USE_WEATHER_FORECAST:
             ctx['weather_info'] = server.bot_manager.get_weather_info(sess)
             if ctx['weather_info'].city == None:
                 ctx['has_weather'] = False
