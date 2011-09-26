@@ -12,7 +12,6 @@ sys.setdefaultencoding('utf-8')
 import optparse
 import traceback
 import logging
-import logging.handlers
 
 PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
 THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../gen-py"))
@@ -23,24 +22,9 @@ from etc import arara_settings
 from arara.arara_engine import ARAraEngine
 import arara.model
 from middleware.thrift_server import open_thrift_server
+from middleware.thrift_server import set_default_log_handlers
 
 from arara_thrift import ARAraThriftInterface
-
-# LOG 파일 관련 설정
-handler_for_info = logging.handlers.RotatingFileHandler(arara_settings.ARARA_LOG_PATH, 'a', 2**20*50, 10)
-formatter = logging.Formatter('%(asctime)s [%(process)d:%(thread)X] <%(name)s> ** %(levelname)s ** %(message)s')
-handler_for_info.setFormatter(formatter)
-handler_for_info.setLevel(logging.INFO)
-
-logging.getLogger('').setLevel(logging.NOTSET)
-logging.getLogger('').addHandler(handler_for_info)
-
-if arara_settings.ARARA_DEBUG_HANDLER_ON:
-    handler_for_debug = logging.handlers.RotatingFileHandler(arara_settings.ARARA_DEBUG_LOG_PATH, 'a', 2**20*50, 10)
-    handler_for_debug.setFormatter(formatter)
-    handler_for_debug.setLevel(logging.DEBUG)
-
-    logging.getLogger('').addHandler(handler_for_debug)
 
     
 def open_server(base_port):
@@ -56,6 +40,10 @@ def open_server(base_port):
     return server, handler
 
 if __name__ == '__main__':
+    set_default_log_handlers(arara_settings.ARARA_LOG_PATH,
+            arara_settings.ARARA_DEBUG_HANDLER_ON,
+            arara_settings.ARARA_DEBUG_LOG_PATH)
+
     logger = logging.getLogger('main')
     parser = optparse.OptionParser()
     parser.add_option("-p", "--port=", dest="port", default=arara_settings.ARARA_SERVER_BASE_PORT, type="int",

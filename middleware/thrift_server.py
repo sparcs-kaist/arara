@@ -2,6 +2,9 @@
 """
 Thrift Server 를 생성한다.
 """
+import logging
+import logging.handlers
+
 from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
 from thrift.transport import TSocket, TTransport
@@ -44,3 +47,30 @@ def open_thrift_server(processor, handler, port, server_type, num_threads=None):
         raise Exception("Unknown Server Type")
 
     return server, handler_instance
+
+
+def set_default_log_handlers(info_path, log_debug=False, debug_path=""):
+    '''
+    Thrift Middleware Server 가 가동중인 동안 Log 파일을 기록할 곳을 정한다.
+
+    @type  info_path: str
+    @param info_path: Log 파일을 기록할 곳 (info level)
+    @type  log_debug: bool
+    @param log_debug: debug Log 파일도 남길지의 여부
+    @type  debug_path: str
+    @param debug_path: Log 파일을 기록할 곳 (debug level)
+    '''
+    handler_for_info = logging.handlers.RotatingFileHandler(info_path, 'a', 2 ** 20 * 50, 10)
+    formatter = logging.Formatter('%(asctime)s [%(process)d:%(thread)X] <%(name)s> ** %(levelname)s ** %(message)s')
+    handler_for_info.setFormatter(formatter)
+    handler_for_info.setLevel(logging.INFO)
+
+    logging.getLogger('').setLevel(logging.NOTSET)
+    logging.getLogger('').addHandler(handler_for_info)
+
+    if log_debug:
+        handler_for_debug = logging.handlers.RotatingFileHandler(debug_path, 'a', 2 ** 20 * 50, 10)
+        handler_for_debug.setFormatter(formatter)
+        handler_for_debug.setLevel(logging.DEBUG)
+
+        logging.getLogger('').addHandler(handler_for_debug)
