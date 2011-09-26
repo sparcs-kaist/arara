@@ -60,7 +60,7 @@ def set_default_log_handlers(info_path, log_debug=False, debug_path=""):
     @type  debug_path: str
     @param debug_path: Log 파일을 기록할 곳 (debug level)
     '''
-    handler_for_info = logging.handlers.RotatingFileHandler(info_path, 'a', 2 ** 20 * 50, 10)
+    handler_for_info = logging.handlers.WatchedFileHandler(info_path, 'a')
     formatter = logging.Formatter('%(asctime)s [%(process)d:%(thread)X] <%(name)s> ** %(levelname)s ** %(message)s')
     handler_for_info.setFormatter(formatter)
     handler_for_info.setLevel(logging.INFO)
@@ -69,7 +69,7 @@ def set_default_log_handlers(info_path, log_debug=False, debug_path=""):
     logging.getLogger('').addHandler(handler_for_info)
 
     if log_debug:
-        handler_for_debug = logging.handlers.RotatingFileHandler(debug_path, 'a', 2 ** 20 * 50, 10)
+        handler_for_debug = logging.handlers.WatchedFileHandler(debug_path, 'a')
         handler_for_debug.setFormatter(formatter)
         handler_for_debug.setLevel(logging.DEBUG)
 
