@@ -173,16 +173,6 @@ def write(request, board_name):
     if request.method == 'POST':
         return write_(request, board_name)
 
-    # 모바일에서 사용되지 않음
-#    if request.GET.get('multi', 0):
-#        sess, r = warara.check_logged_in(request)
-#        rec_num = request.GET['multi']
-#        article_dic={'title':'test title', 'content':'test content', 'heading': u''}
-#        for i in range(int(rec_num)):
-#            article_id = server.article_manager.write_article(sess, board_name, WrittenArticle(**article_dic))
-#
-#        return HttpResponseRedirect('../')
-
     sess, r = warara.check_logged_in(request)
     article_id = request.GET.get('article_id', 0)
     r['t_write'] = 'write'
