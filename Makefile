@@ -1,6 +1,6 @@
 # 현재 python 만 사용되고 있으므로 다른 건 필요없다.
 all:
-	thrift -v -gen py thrift/arara.thrift
+	thrift -v -gen py middleware/arara_interface.thrift
 clean:
 	rm -f `find * -name *.pyc`
 pep8:
