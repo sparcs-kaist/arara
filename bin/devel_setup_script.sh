@@ -351,12 +351,14 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'warara.main',
-    'warara.mobile',
+        'warara.account',
+        'warara.all',
+        'warara.blacklist',
+        'warara.board',
+        'warara.main',
+        'warara.message',
+        'warara.mobile',
+        'warara.sysop'
 )
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.file'
