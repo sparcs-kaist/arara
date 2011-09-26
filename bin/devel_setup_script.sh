@@ -232,128 +232,28 @@ WEATHER_ICON_PATH = '/media/image/weather/'
 
 # Indicates whether KSearch is available
 KSEARCH_ENABLED = False
-" > etc/warara_settings.py
 
-echo "import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
-# Django settings for warara project.
+# Django Frontend Setting (will be imported by warara/settings.py)
 
-# To disable DEBUG feature, uncomment below:
+# Set DEBUG to either True or False.
 # DEBUG = False
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    #  When you disabled DEBUG feature, you must specify your information below
-    # to keep track on DEBUG information.
-    # ('Your Name', 'your_email@domain.com'),
-    # ('Kyuhong Byun', 'combacsa@gmail.com'),
-    # ('Sung-jin Hong', 'serialx@serialx.net'),
+        #  When you disabled DEBUG feature, you must specify your information below
+        # to keep track on DEBUG information.
+        # ('Your Name', 'your_email@domain.com'),
+        # ('ARA SYSOP', 'ara@ara.kaist.ac.kr'),
 )
 
-MANAGERS = ADMINS
+# If you don't want to set SESSION_FILE_PATH using default option, uncomment below.
+# SET_SESSION_FILE_PATH = False
 
-DATABASE_ENGINE = ''           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = ''             # Or path to database file if using sqlite3.
-DATABASE_USER = ''             # Not used with sqlite3.
-DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
-# EMAIL SETTINGS
-
-# Local time zone for this installation. Choices can be found here:
-# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-# although not all choices may be available on all operating systems.
-# If running in a Windows environment this must be set to the same as your
-# system time zone.
-TIME_ZONE = 'Asia/Seoul'
-
-# Language code for this installation. All choices can be found here:
-# http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
-
-SITE_ID = 1
-
-# If you set this to False, Django will make some optimizations so as not
-# to load the internationalization machinery.
-USE_I18N = True
-
-# Absolute path to the directory that holds media.
-# Example: \"/home/media/media.lawrence.com/\"
-MEDIA_ROOT = ''
-
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash if there is a path component (optional in other cases).
-# Examples: \"http://media.lawrence.com\", \"http://example.com/media/\"
-MEDIA_URL = ''
-
-# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
-# trailing slash.
-# Examples: \"http://foo.com/media/\", \"/media/\".
-ADMIN_MEDIA_PREFIX = '/admin_media/'
-
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = 'm+k6a(t0&&3z6aiej1!7g@c4yrp=!d*=x241s+i4_6(\$yopp=%'
-
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.load_template_source',
-    'django.template.loaders.app_directories.load_template_source',
-#     'django.template.loaders.eggs.load_template_source',
-)
-
-MIDDLEWARE_CLASSES = (
-    'django.middleware.cache.UpdateCacheMiddleware',  # (pipoket): Django provided automatic caching middleware
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.middleware.doc.XViewMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',  # (pipoket): Django provided automatic caching middleware
-)
-
-ROOT_URLCONF = 'warara.urls'
-
-import os
-PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
-
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_PATH, 'templates'),
-)
-
-INSTALLED_APPS = (
-        'warara.account',
-        'warara.all',
-        'warara.blacklist',
-        'warara.board',
-        'warara.main',
-        'warara.message',
-        'warara.mobile',
-        'warara.sysop'
-)
-
-SESSION_ENGINE = 'django.contrib.sessions.backends.file'
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-
-import tempfile
-#login = os.getlogin()
-login = os.getenv('USER')
-if login == None:
-    login = 'www-data'
-temp_dir = tempfile.gettempdir()
-session_dir = os.path.join(temp_dir, 'warara-' + login)
-#session_dir = os.path.join(temp_dir, 'warara')
-if not os.path.exists(session_dir):
-    os.mkdir(session_dir)
-SESSION_FILE_PATH = session_dir
-
-#CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
-#CACHE_MIDDLEWARE_SECONDS = 30  # (pipoket): Minimum caching time" > warara/settings.py
+# If you somehow want to set memcached configuration, uncomment below
+# CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
+# CACHE_MIDDLEWARE_SECONDS = 30  # (pipoket): Minimum caching time
+" > etc/warara_settings.py
 
 mkdir log >& /dev/null
 mkdir run >& /dev/null

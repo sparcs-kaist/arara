@@ -8,7 +8,6 @@ run/*
 *.db
 *.log
 arara/settings.py
-warara/settings.py
 etc/arara_settings.py
 etc/warara_settings.py
 supervisord.conf

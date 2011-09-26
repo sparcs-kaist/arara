@@ -3,19 +3,9 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 # Django settings for warara project.
 
-# To disable DEBUG feature, uncomment below:
-# DEBUG = False
-DEBUG = True
+from etc.warara_settings import DEBUG, ADMINS
+
 TEMPLATE_DEBUG = DEBUG
-
-ADMINS = (
-    #  When you disabled DEBUG feature, you must specify your information below
-    # to keep track on DEBUG information.
-    # ('Your Name', 'your_email@domain.com'),
-    # ('Kyuhong Byun', 'combacsa@gmail.com'),
-    # ('Sung-jin Hong', 'serialx@serialx.net'),
-)
-
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -84,7 +74,7 @@ import os
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+    # Put strings here, like /home/html/django_templates or C:/www/django/templates.
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(PROJECT_PATH, 'templates'),
@@ -104,16 +94,25 @@ INSTALLED_APPS = (
 SESSION_ENGINE = 'django.contrib.sessions.backends.file'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-#import tempfile
-##login = os.getlogin()
-#temp_dir = tempfile.gettempdir()
-##session_dir = os.path.join(temp_dir, 'warara-' + login)
-#session_dir = os.path.join(temp_dir, 'warara')
-#if not os.path.exists(session_dir):
-#    os.mkdir(session_dir)
-#SESSION_FILE_PATH = session_dir
+try:
+    from etc.warara_settings import SET_SESSION_FILE_PATH
+except ImportError:
+    SET_SESSION_FILE_PATH = True
 
-#CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
-#CACHE_MIDDLEWARE_SECONDS = 30  # (pipoket): Minimum caching time
+if SET_SESSION_FILE_PATH:
+    import tempfile
+    #login = os.getlogin()
+    login = os.getenv('USER')
+    if login == None:
+        login = 'www-data'
+    temp_dir = tempfile.gettempdir()
+    session_dir = os.path.join(temp_dir, 'warara-' + login)
+    #session_dir = os.path.join(temp_dir, 'warara')
+    if not os.path.exists(session_dir):
+        os.mkdir(session_dir)
+    SESSION_FILE_PATH = session_dir
 
-# vim: set et ts=8 sw=4 sts=4
+try:
+    from etc.warara_settings import CACHE_BACKEND, CACHE_MIDDLEWARE_SECONDS
+except ImportError:
+    pass

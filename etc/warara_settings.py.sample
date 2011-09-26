@@ -20,3 +20,24 @@ RELAY_FICTION_ARTICLE_NO = 2
 
 # Indicates whether KSearch is available
 KSEARCH_ENABLED = False
+
+# Django Frontend Setting (will be imported by warara/settings.py)
+
+# Set DEBUG to either True or False.
+# DEBUG = False
+DEBUG = True
+
+ADMINS = (
+        #  When you disabled DEBUG feature, you must specify your information below
+        # to keep track on DEBUG information.
+        # ('Your Name', 'your_email@domain.com'),
+        # ('ARA SYSOP', 'ara@ara.kaist.ac.kr'),
+)
+
+# If you don't want to set SESSION_FILE_PATH using default option, uncomment below.
+# SET_SESSION_FILE_PATH = False
+
+
+# If you somehow want to set memcached configuration, uncomment below
+# CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
+# CACHE_MIDDLEWARE_SECONDS = 30  # (pipoket): Minimum caching time
