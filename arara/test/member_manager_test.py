@@ -526,6 +526,12 @@ class MemberManagerTest(AraraTestBase):
         self.assertEqual(time_1, users[1].last_logout_time)
         self.assertEqual(time_2, users[2].last_logout_time)
 
+    def test_send_id_recovery_mail(self):
+        self.register_user(u'panda')
+        self.assertEqual(True, self.engine.member_manager.send_id_recovery_email(u'panda@kaist.ac.kr'))
+        self.assertEqual(False, self.engine.member_manager.send_id_recovery_email(u'bbashong@kaist.ac.kr'))
+
+
     def tearDown(self):
         # Common tearDown
         super(MemberManagerTest, self).tearDown()

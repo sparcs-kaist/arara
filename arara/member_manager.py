@@ -18,6 +18,7 @@ from arara.util import require_login
 from arara.util import log_method_call_with_source, log_method_call_with_source_important, log_method_call_with_source_duration
 from arara.util import send_mail
 import etc.arara_settings
+from etc import arara_settings
 
 log_method_call = log_method_call_with_source('member_manager')
 log_method_call_duration = log_method_call_with_source_duration('member_manager')
@@ -979,11 +980,11 @@ class MemberManager(arara_manager.ARAraManager):
             session.close()
             return False
 
-        title = MAIL_TITLE['id_recovery']
-        content = MAIL_CONTENT['id_recovery']
+        title = arara_settings.MAIL_TITLE['id_recovery']
+        content = arara_settings.MAIL_CONTENT['id_recovery']
         content += ' Here is your ARA account username which is associated with %s <br /><br /> ' % email
         content += '    Your ID  :  %s   <br /><br />' % user.username
-        content += ' Please visit http://' + WARARA_SERVER_ADDRESS + '<br /><br />'
+        content += ' Please visit http://' + arara_settings.WARARA_SERVER_ADDRESS + '<br /><br />'
         content += ' This is post-only mailing. <br /> Thanks. '
         send_mail(title, email, content)
 
