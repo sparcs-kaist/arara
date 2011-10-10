@@ -37,7 +37,7 @@ MYSQL_PASSWD = \"$mysql_account_password\"
 MYSQL_DBHOST = \"127.0.0.1\"
 MYSQL_DBNAME = \"$USER\"
 # To use SQLite, Path to the db is required.
-SQLITE_PATH  = \"arara_sqlite.db\"
+SQLITE_PATH  = \"var/arara_sqlite.db\"
 # Or, if you are using a DB which is supported by SQLAlchemy,
 # you could use your own DB_CONNECTION_STRING.
 DB_CONNECTION_STRING = \"\"
@@ -81,8 +81,8 @@ SYSOP_INITIAL_USERNAME = u'SYSOP'
 SYSOP_INITIAL_PASSWORD = u'SYSOP'
 
 # LOG FILE PATH
-ARARA_LOG_PATH = 'arara_server.log'
-ARARA_DEBUG_LOG_PATH = 'arara_server_debug.log'
+ARARA_LOG_PATH = 'var/log/arara_server.log'
+ARARA_DEBUG_LOG_PATH = 'var/log/arara_server_debug.log'
 
 # Number of Threads to use
 ARARA_NUM_THREADS = 20
@@ -105,7 +105,7 @@ ARARA_SERVER_BASE_PORT = $((base_port+2))
 WARARA_SERVER_ADDRESS = '127.0.0.1'
 
 # Web Server FILEDIR Setting
-FILE_DIR = '/home/ara/arara/files'
+FILE_DIR = '`pwd`/var/files'
 FILE_MAXIMUM_SIZE = 100*1024*1024
 
 # ARAra forecast Service Setting
@@ -137,8 +137,10 @@ ADMINS = (
 # CACHE_MIDDLEWARE_SECONDS = 30  # (pipoket): Minimum caching time
 " > etc/warara_settings.py
 
-mkdir log >& /dev/null
-mkdir run >& /dev/null
+mkdir var >& /dev/null
+mkdir var/log >& /dev/null
+mkdir var/run >& /dev/null
+mkdir var/files >& /dev/null
 
 supervisorctl stop all >& /dev/null
 supervisorctl shutdown >& /dev/null
