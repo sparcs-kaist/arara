@@ -10,4 +10,4 @@ run/*
 arara/settings.py
 etc/arara_settings.py
 etc/warara_settings.py
-supervisord.conf
+etc/supervisord.conf
