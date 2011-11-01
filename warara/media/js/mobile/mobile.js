@@ -26,4 +26,10 @@ $(document).ready(function(){
         });
         event.preventDefault();
     });
+
+    // 글 쓰기/수정 모드에서 취소를 눌렀을 때 바로 전으로 이동
+    $(".write_buttons .left input").click(function(event){
+        history.go(-1);
+        event.preventDefault();
+    });
 });
