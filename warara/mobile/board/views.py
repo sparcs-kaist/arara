@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 from django.core.cache import cache
 
 from arara_thrift.ttypes import *
+from urlparse import urlparse
 
 import os
 import datetime
@@ -15,6 +16,7 @@ from warara import warara_middleware
 from etc.warara_settings import FILE_DIR, FILE_MAXIMUM_SIZE
 
 IMAGE_FILETYPE = ['jpg', 'jpeg', 'gif', 'png']
+IS_ARTICLE_LIST_PAGE = re.compile(r'^/mobile/board/[\w \[\]\.]+/$')
 
 @warara.wrap_error_mobile
 def index(request):
@@ -350,8 +352,17 @@ def read(request, board_name, article_id):
     r['rendered_reply'] = rendered_reply
     r['article'] = r['article_read_list'][0]
 
-    rendered = render_to_string('mobile/board/read.html', r)
+    # 만약 REFERER가 Board의 LIST이면 backlink를 해당 페이지로 설정.
+    # 그렇지 않으면 해당 Board의 첫 페이지로 설정
+    referer = request.META.get('HTTP_REFERER') or '/'
+    prev_path = urlparse(referer)
 
+    if IS_ARTICLE_LIST_PAGE.match(prev_path.path) is not None:
+        r['backlink'] = prev_path.path + '?' + prev_path.query
+    else:
+        r['backlink'] = '/mobile/board/%s/' % board_name
+
+    rendered = render_to_string('mobile/board/read.html', r)
     return HttpResponse(rendered)
 
 @warara.wrap_error_mobile
