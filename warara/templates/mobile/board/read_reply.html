@@ -2,7 +2,7 @@
 <div class="re_info">
     <div class="left">
         {% for i in depth %}<img src="/media/image/mobile/re_arrow.png" class="re_arrow">{% endfor %}
-        <span class="re_id">{{article.author_username}}</span> {{article.date|date:"Y-m-d H:i"}} <a class="rec" href="/board/{{article.board_name}}/{{article.root_id}}/{{article.id}}/vote/+">▲ {{article.positive_vote}}</a> / <a class="rec" href="/board/{{article.board_name}}/{{article.root_id}}/{{article.id}}/vote/-">▼ {{article.negative_vote}}</a>
+        <span class="re_id">{{article.author_nickname}}</span> {{article.date|date:"Y-m-d H:i"}} <a class="rec" href="/board/{{article.board_name}}/{{article.root_id}}/{{article.id}}/vote/+">▲ {{article.positive_vote}}</a> / <a class="rec" href="/board/{{article.board_name}}/{{article.root_id}}/{{article.id}}/vote/-">▼ {{article.negative_vote}}</a>
     </div>
     <div class="right">
         <a href="#" class="rere">답글</a>
