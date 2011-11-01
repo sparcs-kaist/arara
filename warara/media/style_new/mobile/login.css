@@ -1,23 +1,19 @@
 body{
-    background: #525252;
+    background: #525252 url('/media/image/mobile/apple6.png') top center no-repeat;
 }
 #content{
     width: 100%;
     height: 100%;
-    background: url('/media/image/mobile/bi.png') bottom right no-repeat;
-    background-size: 50%;
 }
 .bg{
-    width: 90%;
-    margin: auto;
-    padding: 7em 0;
+    padding: 240px 0 2em 0;
 }
-.logo{
-    margin-bottom: 15px;
-}
+
 
 /* 로그인 박스 영역 */
 .box{
+    width: 80%;
+    margin: auto;
     position: relative;
     display: block;
 }
@@ -26,7 +22,6 @@ body{
     padding: 0;
 }
 .ip{
-    padding: 0 85px 0 0;
 }
 .ip li{
     width: 100%;
@@ -42,18 +37,15 @@ body{
     margin-bottom: 10px;
 }
 .lgbutton{
-    top: 0px;
-    position: absolute;
-    right: 0;
-    width: 70px;
+    width: 100%;
 }
 .lgbutton p{
     display: block;
     margin: 0;
 }
 .lgbutton input{
-    width: 70px;
-    height: 71px;
+    width: 100%;
+    height: 30px;
     color: #ffffff;
     background-color: black;
     text-align: center;
@@ -64,11 +56,11 @@ body{
     -webkit-appearance: push-button;
 }
 .lgbutton .button{
-    background: url('/media/image/mobile/login_button_square.gif') repeat-x left bottom;
+    background: url('/media/image/mobile/login_button.gif') repeat-x left bottom;
 }
 
 input{
-    border: 1px solid #ffffff;
+    border: 0px solid #000000;
     line-height: 1.6em;
     letter-spacing: 0px;
     -moz-border-radius: 0;
@@ -80,7 +72,7 @@ input[type="text"], input[type="password"] {
     -webkit-appearance: textfield;
     -webkit-user-select: text;
     cursor: auto;
-    height: 28px;
+    height: 25px;
     letter-spacing: 1px;
     font-size: 1.1em;
 }
@@ -90,11 +82,12 @@ input[type="text"], input[type="password"] {
 }
 .sv label{
     color: #ffffff;
-    margin: 0 18px 0 4px;
+    margin: 0 33px 0 4px;
 }
 .sv .sPW{
     margin: 0 0 0 4px;
 }
+
 #id{
     background: url('/media/image/mobile/input_bg.gif') no-repeat left top; /* warara/media/js/mobile/mobile.js의 set_input과 같은 코드를 공유함 */
     border: 1px solid #9b9b9b;
@@ -103,3 +96,4 @@ input[type="text"], input[type="password"] {
     background: url('/media/image/mobile/input_bg.gif') no-repeat left bottom; /* warara/media/js/mobile/mobile.js의 set_input과 같은 코드를 공유함 */
     border: 1px solid #9b9b9b;
 }
+
