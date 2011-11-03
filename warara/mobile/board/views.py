@@ -376,8 +376,8 @@ def _reply(request, board_name, article_id):
     @param board_name: reply를 달고자 하는 글이 있는 board name
     @type  article_id: string (int)
     @param article_id: reply를 달고자 하는 글의 번호
-    @rtype: int
-    @return: reply 가 달리는 글의 root id
+    @rtype: int, int
+    @return: reply 가 달리는 글의 root id와 해당 reply의 article id
     '''
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
@@ -388,6 +388,7 @@ def _reply(request, board_name, article_id):
     root_id = request.POST.get('root_id', '')
 
     use_signature = request.POST.get('signature_check', None)
+    if use_signature == 'N': use_signature = None
     if use_signature:
         reply_dic['content'] += '\n\n' + request.POST.get('signature', '')
 
@@ -403,7 +404,7 @@ def _reply(request, board_name, article_id):
             fp = open('%s/%s/%s' % (FILE_DIR, file.file_path, file.saved_filename), 'wb')
             fp.write(file_ob.read())
 
-    return root_id
+    return root_id, article_id
 
 @warara.wrap_error_mobile
 def _relay_fiction_reply(request, board_name, article_id):
@@ -451,9 +452,9 @@ def reply(request, board_name, article_id):
     @return: 답글이 달린 원글을 읽는 페이지로 재전송
 
     '''
-    root_id = _reply(request, board_name, article_id)
+    root_id, new_article_id = _reply(request, board_name, article_id)
 
-    return HttpResponseRedirect('/board/%s/%s/' % (board_name, str(root_id)))
+    return HttpResponseRedirect('/mobile/board/%s/%s/#%d' % (board_name, str(root_id), new_article_id))
 
     # 모바일에서 필요 없음 ( 원래의 AJAX API를 공유함 )
 #@warara.prevent_cached_by_browser

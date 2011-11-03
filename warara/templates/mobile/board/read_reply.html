@@ -1,13 +1,15 @@
-<li class="re_list">
+<li class="re_list" id="{{article.id}}">
 <div class="re_info">
     <div class="left">
         {% for i in depth %}<img src="/media/image/mobile/re_arrow.png" class="re_arrow">{% endfor %}
         <span class="re_id">{{article.author_nickname}}</span> {{article.date|date:"Y-m-d H:i"}} <a class="rec" href="/board/{{article.board_name}}/{{article.root_id}}/{{article.id}}/vote/+">▲ {{article.positive_vote}}</a> / <a class="rec" href="/board/{{article.board_name}}/{{article.root_id}}/{{article.id}}/vote/-">▼ {{article.negative_vote}}</a>
     </div>
     <div class="right">
-        <a href="#" class="rere">답글</a>
+        <a href="#" class="reply">답글</a>
     </div>
     <div class="cb"></div>
+    <input type="hidden" class="meta board_name" value="{{article.board_name}}" />
+    <input type="hidden" class="meta article_id" value="{{article.id}}" />
 </div>
 <span class="re_contents">{{ article.content|safe|linebreaksbr }}
 </span>

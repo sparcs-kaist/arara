@@ -1,6 +1,7 @@
 {% extends "mobile/base.html" %}
 {% load arara_tags %}
 
+
 {% block style %}<link rel="stylesheet" href="/media/style_new/mobile/read.css" type="text/css" />{% endblock %}
 {% block header %}
 <div id="gray">
@@ -8,6 +9,9 @@
 </div>
 {% endblock %}
 {% block content %}
+
+{% ifequal mode 'board' %} {% url warara.mobile.board.views.list board_name as base_url %} {% endifequal %}
+{# ifequal mode 'all' %} {% url warara.mobile.all.views.list as base_url %} {% endifequal #}
 <div id="article_head">
     <div class="article_title">
         {{article.title}}
@@ -21,7 +25,7 @@
     <div id="article_buttons">
     {% if not article.deleted %}
         <div class="left">
-            <a href="#reply"><span class="button">답글달기</span></a>
+            <a class="reply" href="#reply"><span class="button">답글달기</span></a>
             <a class="rec" href="/board/{{article.board_name}}/{{article.root_id}}/{{article.id}}/vote/+"><span class="button">추천</span></a>
             <a class="rec" href="/board/{{article.board_name}}/{{article.root_id}}/{{article.id}}/vote/-"><span class="button">반대</span></a>
         </div>
@@ -31,8 +35,29 @@
         </div>
         {% endif %}
         <div class="cb"></div>
+        <input type="hidden" class="meta board_name" value="{{article.board_name}}" />
+        <input type="hidden" class="meta article_id" value="{{article.id}}" />
     </div>
     {% endif %}
+    <div class="add_reply">
+        <form method="post" action="{{ base_url }}{{article.id}}/reply/" enctype="multipart/form-data">
+            <input type="hidden" name="root_id" value="{{article.id}}" />
+            <input type="hidden" name="article_no" value="{{article.id}}" />
+            <input type="hidden" name="title" value="{{article.title}}" />
+            <dl>
+                <textarea name="content"></textarea>
+            </dl>
+            <dl class="sig">
+                <dt>시그</dt>
+                <dd class="rad_option">
+                <input type="radio" id="a" name="signature_check" value="Y" class="rad" checked="checked"><label for="signature_check">사용</label>
+                <input type="radio" id="b" name="signature_check" value="N" class="rad"><label for="signature_check">사용안함</label>
+                <input type="submit" class="buttonR" value="V 확인">
+                <textarea name="signature" style="display: none;">{{ user_signature }}</textarea>
+                </dd>
+            </dl>
+        </form>
+    </div>
 </div>
 <div id="reply">
     <ul>

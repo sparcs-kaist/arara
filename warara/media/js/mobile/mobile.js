@@ -32,4 +32,33 @@ $(document).ready(function(){
         history.go(-1);
         event.preventDefault();
     });
+
+    // 답글 달기 버튼 핸들러
+    $(".add_reply").hide();
+    function reply_handler(event) {
+        // 만약 다른 곳에 있었던 답글 상자를 가져와야 한다면
+        if($(this).parent().parent().parent().children(".add_reply").length == 0){
+            var board_name = $(this).parent().parent().children("input.board_name").val();
+            var article_id = $(this).parent().parent().children("input.article_id").val();
+            var reply_url = "/mobile/board/" + board_name + "/" + article_id + "/reply/";
+
+            p = $(".add_reply").hide().detach();
+            if($(this).parent().parent().hasClass("re_info"))
+                p = p.insertAfter($(this).parent().parent().next());
+            else
+                p = p.insertAfter($(this).parent().parent());
+
+            p.toggle("fast");
+            p.children().children("input[name='article_no']").val(article_id);
+            p.children().attr('action', reply_url);
+        }
+        // 그렇지 않을 경우 toggle만
+        else {
+            $(".add_reply").toggle("fast");
+        }
+        $(".add_reply textarea").focus();
+        event.preventDefault();
+    }
+    $('#article_buttons .reply').click(reply_handler);
+    $('.re_info .reply').click(reply_handler);
 });

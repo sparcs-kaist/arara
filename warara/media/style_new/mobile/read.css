@@ -92,3 +92,36 @@
     color: #000000;
     padding: 3px 5px;
 }
+/* 댓글쓰기 */
+.add_reply{
+    display: block;
+    border-top: 1px dashed #cccccc;
+    margin-top: 13px;
+}
+.add_reply textarea{
+    width: 100%;
+    height: 100px;
+    overflow-y: hidden;
+    border: 1px solid #cccccc;
+}
+.add_reply .sig{
+    display: block;
+}
+.add_reply .sig dt{
+    position: absolute;
+    left: 10px;
+    white-space: nowrap;
+}
+.add_reply .sig input{
+    padding-bottom: -5px;
+}
+.add_reply .sig label{
+    padding: 0 10px 0 3px;
+}
+.add_reply .buttonR{
+    padding: 5px 10px;
+    background: #ffffff;
+    color: #ff0060;
+    border: 1px solid #cccccc;
+    font-weight: bold;
+}
