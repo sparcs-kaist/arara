@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 from django.core.management import execute_manager
+import os, sys
+THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'gen-py'))
+sys.path.append(THRIFT_PATH)
+PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(PROJECT_PATH)
+
 try:
     import settings # Assumed to be in the same directory.
 except ImportError:
