@@ -15,7 +15,7 @@
         <a href="{{ base_url}}{{article.id}}/?page_no={{page_no}}"><span class="listTitle">{% if article.blacklisted %}"BLACKLISTED" {% else %}{{ article.title }}{% endif %}
                 {% if article.reply_count %}<span class="re_num">({{article.reply_count}})</span>{% endif %}
         </span></a>
-        <span class="listInfo">{{article.author_nickname|truncatechars:"8"}} | 추천 {{article.positive_vote}} / 반대 {{article.negative_vote}} | 조회: {{article.hit}}</span>
+        <span class="listInfo">{% ifequal mode 'all' %}<b>{{article.board_name}}</b> | {% endifequal %}{{article.author_nickname|truncatechars:"8"}} | 추천 {{article.positive_vote}} / 반대 {{article.negative_vote}} | 조회: {{article.hit}}</span>
         </li>
         {% endfor %}
     </ul>
@@ -38,8 +38,9 @@
 
 <div class="list_buttons">
     <a href="#" onclick="$('#search').toggle(); this.blur(); return false;"  class="button">검색</a>
+    {% ifnotequal mode 'all' %}
     <a href="{{ base_url }}write/" class="buttonR{% if board_dict.read_only %} hidden{% endif %}">글쓰기</a>
-
+    {% endifnotequal %}
     <div class="cb"></div>
 </div>
 

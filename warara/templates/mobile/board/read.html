@@ -11,7 +11,7 @@
 {% block content %}
 
 {% ifequal mode 'board' %} {% url warara.mobile.board.views.list board_name as base_url %} {% endifequal %}
-{# ifequal mode 'all' %} {% url warara.mobile.all.views.list as base_url %} {% endifequal #}
+{% ifequal mode 'all' %} {% url warara.mobile.all.views.list as base_url %} {% endifequal %}
 <div id="article_head">
     <div class="article_title">
         {{article.title}}
