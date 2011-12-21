@@ -503,6 +503,11 @@ class MemberManagerTest(AraraTestBase):
         except InvalidOperation:
             pass
 
+    def test_nonblocking_kaist_edu_email_address(self):
+        # 다음이 성공적으로 수행되어야 한다.
+        user_reg_dic = self.get_user_reg_dic(u'richking', {'email': 'richking@kaist.edu'})
+        self.engine.member_manager.register_(UserRegistration(**user_reg_dic))
+
     def test_update_last_logout_time(self):
         # 2명의 사용자를 등록한다
         self.register_user(u'panda')     # user 2
