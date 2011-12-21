@@ -14,3 +14,6 @@ pylint:
 check: pep8 pyflakes pylint
 miss:
 	tools/test_thrift_engine_mismatches.py
+test:
+	python arara/test_set.py
+	python libs/test_libs.py
