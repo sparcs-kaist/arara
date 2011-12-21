@@ -301,21 +301,9 @@ class SearchManager(arara_manager.ARAraManager):
         검색을 요청할 때 board_name을 지정하면, 그 보드만 검색을,
         board_name을 u''(string)로 지정하면 전체 보드 검색을 시도한다.
 
-        기본적으로 전체검색은 K-Search를 사용하지만,
-        K-Search가 비정상적으로 작동할경우 자체 쿼리 검색을 사용한다.
-        (2010/12/06 combacsa: K-Search 관련 검색 코드를 제거.
-
         all_flag 'TRUE'  ==> query_dict {'query': 'QUERY TEXT'}
         all_flag 'FALSE' ==> query_dict {'title': '...', 'content': '...',
         'author_nickname': '...', 'author_username': '...', 'date': '...'}
-
-        date 조건의 경우 YYYYMMDDHHmmSS (ex 20080301123423) 식으로 보내준다.
-        
-        @2008년 4월 3일부터 2008년 4월 5일까지의 게시물 20080403~20080405
-        @2008년 4월 3일 이후의 게시물 20080403~
-        @2008년 4월 3일 까지의 게시물 ~20080403
-
-        **date는 현재 구현되지 않았음. 값을 넘겨도 무시됨 (2008.08.25 00:09)
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
@@ -344,6 +332,7 @@ class SearchManager(arara_manager.ARAraManager):
                 5. 로그인되지 않은 유저: NotLoggedIn Exception
                 6. 데이터베이스 오류: InternalError Exception
         '''
+        # TODO: date 파라메터 도입 (게시물 작성 날짜 기준 검색)
         # QueryDict 를 정돈한다.
         query_dict = self._filter_query_dict(all_flag, query_dict)
 
