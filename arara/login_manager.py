@@ -205,7 +205,7 @@ class LoginManager(arara_manager.ARAraManager):
         # TODO: 이 함수를 누가 호출하는지 보고, 왜 T/F 가 필요한지 확인하기
         action = smart_unicode(action)  
         try:
-            if self.session_dic.has_key(session_key):
+            if session_key in self.session_dic:
                 self.session_dic[session_key]['current_action'] = action
                 self.update_session(session_key)
                 return True
@@ -225,7 +225,7 @@ class LoginManager(arara_manager.ARAraManager):
             사용자가 로그인중이면 True, 아니면 False
         '''
         # TODO: 이 함수는 왜 T/F 를 리턴하는가?
-        if self.session_dic.has_key(session_key):
+        if session_key in self.session_dic:
             self.session_dic[session_key]['last_action_time'] = time.time()
             return True
         else:
@@ -282,7 +282,7 @@ class LoginManager(arara_manager.ARAraManager):
         @rtype: i32
         @return: 해당 세션의 사용자의 internal id 혹은 -1
         '''
-        if self.session_dic.has_key(session_key):
+        if session_key in self.session_dic:
             try:
                 return self.session_dic[session_key]['id']
             except KeyError:
@@ -320,7 +320,7 @@ class LoginManager(arara_manager.ARAraManager):
         # TODO: check_logged_in 같은 것으로 감싸면 구현이 좀 더 깔끔하지 않을까
 
         ret = []
-        if self.session_dic.has_key(session_key):
+        if session_key in self.session_dic:
             for user_info in self.session_dic.values():
                 del user_info["last_action_time"]
                 ret.append(Session(**user_info))

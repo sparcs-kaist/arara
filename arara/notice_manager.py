@@ -26,9 +26,9 @@ class NoticeManager(arara_manager.ARAraManager):
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
 
-        if item_dict.has_key('issued_date'):
+        if 'issued_date' in item_dict:
             item_dict['issued_date'] = datetime2timestamp(item_dict['issued_date'])
-        if item_dict.has_key('due_date'):
+        if 'due_date' in item_dict:
             item_dict['due_date'] = datetime2timestamp(item_dict['due_date'])
 
         if whitelist:

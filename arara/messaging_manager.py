@@ -32,19 +32,19 @@ class MessagingManager(arara_manager.ARAraManager):
         @return: item 에서 whitelist 에 있는 필드만 남기고 적절히 dictionary 로 변환한 결과물
         '''
         item_dict = item.__dict__
-        if item_dict.has_key('from_id'):
+        if 'from_id' in item_dict:
             item_dict['from_'] = item.from_user.username
             item_dict['from_nickname'] = item.from_user.nickname
             del item_dict['from_id']
-        if item_dict.has_key('to_id'):
+        if 'to_id' in item_dict:
             item_dict['to'] = item.to_user.username
             item_dict['to_nickname'] = item.to_user.nickname
             del item_dict['to_id']
-        if item_dict.has_key('sent_time'):
+        if 'sent_time' in item_dict:
             item_dict['sent_time']=datetime2timestamp(
                     item_dict['sent_time'])
         if blacklist_users:
-            if item_dict.has_key('from_'):
+            if 'from_' in item_dict:
                 if item_dict['from_'] in blacklist_users:
                     item_dict['blacklisted'] = True
                 else:

@@ -167,7 +167,7 @@ class ReadStatusManager(arara_manager.ARAraManager):
         return return_list
 
     def _initialize_data(self, user_id):
-        if not self.read_status.has_key(user_id):
+        if not user_id in self.read_status:
             try:
                 session = model.Session()
                 read_status = session.query(model.ReadStatus).filter_by(user_id=user_id).one()
@@ -396,7 +396,7 @@ class ReadStatusManager(arara_manager.ARAraManager):
         @param user_id: 사용자 고유 id
         '''
         read_stat = None
-        if self.read_status.has_key(user_id):
+        if user_id in self.read_status:
             # Memory 에 있는 경우
             try:
                 read_stat = session.query(model.ReadStatus).filter_by(user_id=user_id).one()

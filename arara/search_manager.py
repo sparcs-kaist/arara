@@ -31,25 +31,25 @@ class SearchManager(arara_manager.ARAraManager):
 
     def _get_dict(self, item, whitelist=None):
         item_dict = item.__dict__
-        if item_dict.has_key('author_id'):
+        if 'author_id' in item_dict:
             item_dict['author_username'] = item.author.username
             item_dict['author_nickname'] = item.author.nickname
             del item_dict['author_id']
-        if item_dict.has_key('board_id'):
+        if 'board_id' in item_dict:
             item_dict['board_name'] = item.board.board_name
             del item_dict['board_id']
-        if item_dict.has_key('heading_id'):
+        if 'heading_id' in item_dict:
             if item.heading == None:
                 item_dict['heading'] = u''
             else:
                 item_dict['heading'] = item.heading.heading
-        if item_dict.has_key('root_id'):
+        if 'root_id' in item_dict:
             if not item_dict['root_id']:
                 item_dict['root_id'] = item_dict['id']
-	if item_dict.has_key('date'):
-	    item_dict['date'] = datetime2timestamp(item_dict['date'])
-	if item_dict.has_key('last_modified_date'):
-	    item_dict['last_modified_date'] = datetime2timestamp(item_dict['last_modified_date'])
+        if 'date' in item_dict:
+            item_dict['date'] = datetime2timestamp(item_dict['date'])
+        if 'last_modified_date' in item_dict:
+            item_dict['last_modified_date'] = datetime2timestamp(item_dict['last_modified_date'])
         if whitelist:
             filtered_dict = filter_dict(item_dict, whitelist)
         else:
@@ -129,7 +129,7 @@ class SearchManager(arara_manager.ARAraManager):
             raise InvalidOperation('wrong dictionary')
 
         if all_flag:
-            if not query_dict.has_key('query') or not query_dict['query']:
+            if not 'query' in query_dict or not query_dict['query']:
                 raise InvalidOperation('wrong dictionary')
             return {'query': query_dict['query']}
         else:

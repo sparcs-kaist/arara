@@ -146,19 +146,19 @@ class ArticleManager(arara_manager.ARAraManager):
 
         if not item_dict.get('title'):
             item_dict['title'] = u'Untitled'
-        if item_dict.has_key('author_id'):
+        if 'author_id' in item_dict:
             item_dict['author_username'] = item.author.username
-        if item_dict.has_key('board_id'):
+        if 'board_id' in item_dict:
             item_dict['board_name'] = item.board.board_name
             del item_dict['board_id']
-        if item_dict.has_key('heading_id'):
+        if 'heading_id' in item_dict:
             if item.heading == None:
                 item_dict['heading'] = u''
             else:
                 item_dict['heading'] = item.heading.heading
         if not item_dict.get('root_id'):
             item_dict['root_id'] = item_dict['id']
-        if item_dict.has_key('content'):
+        if 'content' in item_dict:
             if whitelist == SEARCH_ARTICLE_WHITELIST:
                 item_dict['content'] = item_dict['content'][:40]
             if whitelist == READ_ARTICLE_WHITELIST:
@@ -920,7 +920,7 @@ class ArticleManager(arara_manager.ARAraManager):
                                         user_ip,
                                         None)
             session.add(new_article)
-            if article_dic.__dict__.has_key('is_searchable'):
+            if 'is_searchable' in article_dic.__dict__:
                 if not article_dic.is_searchable:
                     new_article.is_searchable = False
             session.commit()
