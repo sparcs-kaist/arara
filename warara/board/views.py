@@ -64,8 +64,8 @@ def get_article_list(request, r, mode):
     if mode == 'list':
         # GET 으로 넘어온 말머리가 있는지 본다.
         heading = request.GET.get('heading', None)
-        if heading == None and request.GET.has_key('page_no'):
-            if request.session.has_key('heading'):
+        if heading == None and 'page_no' in request.GET:
+            if 'heading' in request.session:
                 heading = request.session['heading']
         else:
             request.session['heading'] = heading
@@ -75,7 +75,7 @@ def get_article_list(request, r, mode):
         article_result = server.article_manager.article_list(sess, u"", u"", page_no, page_length, True)
     elif mode == 'read':
         #TODO: heading 과 include_all_headings
-        if request.session.has_key('heading'):
+        if 'heading' in request.session:
             heading = request.session['heading']
         else:
             heading = None
@@ -291,7 +291,7 @@ def _read(request, r, sess, board_name, article_id):
             article.image = None
             continue
 
-        if article.__dict__.has_key('attach') and article.attach: #image view
+        if 'attach' in article.__dict__ and article.attach: #image view
             image_attach_list = []
             for file in article.attach:
                 if file.filename.split('.')[-1].lower() in IMAGE_FILETYPE:

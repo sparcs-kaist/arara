@@ -109,7 +109,7 @@ class WeatherInfoNode(template.Node):
         server = warara_middleware.get_server()
         # XXX(hodduc) : wairara.check_logged_in을 거쳤음에도 불구하고 Context를 따로 만들어서 쓰는 view가 너무 많다.
         # 하나로 통일하는 것이 깔끔해 보인다
-        if not ctx.has_key('arara_session'):
+        if not 'arara_session' in ctx:
             return ''
         sess = ctx['arara_session']
         # Get Weather info

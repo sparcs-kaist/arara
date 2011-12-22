@@ -101,7 +101,7 @@ def outbox(request):
     server = warara_middleware.get_server()
     r = {}
     sess, _ = warara.check_logged_in(request)
-    if request.GET.has_key('page_no'):
+    if 'page_no' in request.GET:
         page = request.GET['page_no']
     else:
         page = 1
