@@ -1,5 +1,8 @@
 #-*- coding: utf8 -*-
-# ARARA Server Setting
+# ARARA Server Type in ['THRIFT', 'DIRECT']
+SERVER_TYPE = 'THRIFT'
+
+# ARARA Server Setting (Applied when using THRIFT Server Type)
 ARARA_SERVER_HOST = '127.0.0.1'
 ARARA_SERVER_BASE_PORT = 10000
 

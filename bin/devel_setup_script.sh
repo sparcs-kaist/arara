@@ -101,7 +101,10 @@ KSEARCH_API_KEY = '54ebf56de7684dba0d69bffc9702e1b4'
 USE_READ_STATUS = True" > etc/arara_settings.py
 
 echo "#-*- coding: utf8 -*-
-# ARARA Server Setting
+# ARARA Server Type in ['THRIFT', 'DIRECT']
+SERVER_TYPE = 'THRIFT'
+
+# ARARA Server Setting (Applied when using THRIFT Server Type)
 ARARA_SERVER_HOST = '127.0.0.1'
 ARARA_SERVER_BASE_PORT = $((base_port+2))
 
