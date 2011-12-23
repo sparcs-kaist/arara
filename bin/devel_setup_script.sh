@@ -112,6 +112,9 @@ FILE_MAXIMUM_SIZE = 100*1024*1024
 # ARAra forecast Service Setting
 USE_WEATHER_FORECAST = True
 
+# ReadStatus Display
+READ_STATUS_ENABLED = True
+
 # Indicates whether KSearch is available
 KSEARCH_ENABLED = False
 

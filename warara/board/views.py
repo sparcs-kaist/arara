@@ -13,6 +13,7 @@ import warara
 from warara import warara_middleware
 
 from etc.warara_settings import FILE_DIR, FILE_MAXIMUM_SIZE
+from etc import warara_settings
 
 IMAGE_FILETYPE = ['jpg', 'jpeg', 'gif', 'png']
 
@@ -114,6 +115,11 @@ def get_article_list(request, r, mode):
             article.title = '-- Deleted --'
             article.author_username = ''
         article.date = datetime.datetime.fromtimestamp(article.date)
+
+    if not warara_settings.READ_STATUS_ENABLED:
+        # 모든 글이 무조건 읽은 글로 표시되도록 한다
+        for article in article_list:
+            article.read_status = 'R'
 
     r['article_list'] = article_list
     for i, smi in enumerate(r['search_method_list']):
