@@ -142,8 +142,7 @@ ADMINS = (
 
 # If you somehow want to set memcached configuration, uncomment below
 # CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
-# CACHE_MIDDLEWARE_SECONDS = 30  # (pipoket): Minimum caching time
-" > etc/warara_settings.py
+# CACHE_MIDDLEWARE_SECONDS = 30  # (pipoket): Minimum caching time" > etc/warara_settings.py
 
 mkdir var >& /dev/null
 mkdir var/log >& /dev/null

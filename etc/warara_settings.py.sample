@@ -12,11 +12,7 @@ FILE_MAXIMUM_SIZE = 100*1024*1024
 
 # ARAra forecast Service Setting
 USE_WEATHER_FORECAST = True
-
-# Imgeffect Relay Fiction Article Setting
-# XXX: This is temporary. Remove this after festival
-# XXX: This line is not added in bin/devel_setup_script.sh
-RELAY_FICTION_ARTICLE_NO = 2
+WEATHER_ICON_PATH = '/media/image/weather/'
 
 # Indicates whether KSearch is available
 KSEARCH_ENABLED = False
