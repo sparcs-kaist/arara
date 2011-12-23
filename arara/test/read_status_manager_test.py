@@ -13,6 +13,7 @@ from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
 from arara import model
+from etc import arara_settings
 
 
 class ReadStatusManagerTest(AraraTestBase):
@@ -29,6 +30,10 @@ class ReadStatusManagerTest(AraraTestBase):
        
         # Register one user, mikkang
         self.session_key_mikkang = self.register_and_login(u'mikkang')
+
+        # ReadStatusManager를 사용하도록 설정되어 있음을 가정한다.
+        self.orig_USE_READ_STATUS = arara_settings.USE_READ_STATUS
+        arara_settings.USE_READ_STATUS = True
 
     def _write_articles(self):
         article = Article(**{'title': u'serialx is...', 'content': u'polarbear', 'heading': u''})
@@ -149,6 +154,10 @@ class ReadStatusManagerTest(AraraTestBase):
         # SYSOP 이 사라지면 글 읽음 정보가 하나도 없어야 함
         self.engine.read_status_manager.save_to_database(1)
         self.assertEqual([], self.engine.read_status_manager.get_read_status_loaded_users())
+
+    def tearDown(self):
+        arara_settings.USE_READ_STATUS = self.orig_USE_READ_STATUS
+        super(ReadStatusManagerTest, self).tearDown()
 
 
 def suite():

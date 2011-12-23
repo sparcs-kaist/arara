@@ -14,6 +14,7 @@ from arara.util import require_login
 from arara.util import log_method_call_with_source, log_method_call_with_source_duration, log_method_call_with_source_important
 
 from arara_thrift.ttypes import *
+from etc import arara_settings
 
 log_method_call = log_method_call_with_source('read_status_manager')
 log_method_call_duration = log_method_call_with_source_duration('read_status_manager')
@@ -202,6 +203,10 @@ class ReadStatusManager(arara_manager.ARAraManager):
             2. 읽은글 여부 체크 실패:
                 1. 데이터베이스 오류: InternalError('DATABASE_ERROR') <- 정말 이럴까?
         '''
+        # ReadStatus를 강제로 비활성화한 경우 무조건 새 글로 표시된다.
+        if not arara_settings.USE_READ_STATUS:
+            return 'N'
+
         ret, _ = self._initialize_data(user_id)
         status = self.read_status[user_id].get(no)
         return status
@@ -272,6 +277,9 @@ class ReadStatusManager(arara_manager.ARAraManager):
                 1. 로그인되지 않은 유저: NotLoggedIn
                 2. 데이터베이스 오류: InternalError('DATABASE_ERROR')
         '''
+        # ReadStatus를 강제로 비활성화한 경우 무조건 새 글로 표시된다.
+        if not arara_settings.USE_READ_STATUS:
+            return ['N'] * len(no_list)
         user_id = self.engine.login_manager.get_user_id(session_key)
         ret, _ = self._initialize_data(user_id)
         status = self.read_status[user_id].get_range(no_list)
@@ -294,6 +302,10 @@ class ReadStatusManager(arara_manager.ARAraManager):
                 1. 존재하지 않는 글: InvalidOperation('ARTICLE_NOT_EXIST')
                 2. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR')
         '''
+        # ReadStatus를 강제로 비활성화한 경우 아무 일도 하지 않는다.
+        if not arara_settings.USE_READ_STATUS:
+            return
+
         ret, _ = self._initialize_data(user_id)
         status = self.read_status[user_id].set_range(no_list, 'R')
 
@@ -335,6 +347,10 @@ class ReadStatusManager(arara_manager.ARAraManager):
                 1. 존재하지 않는 글: InvalidOperation('ARTICLE_NOT_EXIST')
                 2. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR')
         '''
+        # ReadStatus를 강제로 비활성화한 경우 아무 일도 하지 않는다.
+        if not arara_settings.USE_READ_STATUS:
+            return
+
         ret, _ = self._initialize_data(user_id)
         status = self.read_status[user_id].set(no, 'R')
 
@@ -379,6 +395,10 @@ class ReadStatusManager(arara_manager.ARAraManager):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
+        # ReadStatus를 강제로 비활성화한 경우 아무 일도 하지 않는다.
+        if not arara_settings.USE_READ_STATUS:
+            return
+
         user_id = self.engine.login_manager.get_user_id(session_key)
         ret, _ = self._initialize_data(user_id)
         status = self.read_status[user_id].set(no, 'V')
@@ -395,6 +415,10 @@ class ReadStatusManager(arara_manager.ARAraManager):
         @type  user_id: int
         @param user_id: 사용자 고유 id
         '''
+        # ReadStatus를 강제로 비활성화한 경우 아무 일도 하지 않는다.
+        if not arara_settings.USE_READ_STATUS:
+            return
+
         read_stat = None
         if user_id in self.read_status:
             # Memory 에 있는 경우
@@ -440,6 +464,10 @@ class ReadStatusManager(arara_manager.ARAraManager):
         @type  user_id: int
         @param user_id: 사용자 고유 id
         '''
+        # ReadStatus를 강제로 비활성화한 경우 아무 일도 하지 않는다.
+        if not arara_settings.USE_READ_STATUS:
+            return
+
         session = model.Session()
         try:
             result = self._save_to_database(session, user_id)
@@ -454,6 +482,10 @@ class ReadStatusManager(arara_manager.ARAraManager):
         '''
         메모리에 존재하는 모든 사용자의 ReadStatus 를 DB 에 기록하고 메모리에서 지운다.
         '''
+        # ReadStatus를 강제로 비활성화한 경우 아무 일도 하지 않는다.
+        if not arara_settings.USE_READ_STATUS:
+            return
+
         session = model.Session()
         list_of_user_id = self.read_status.keys()
         list_of_proxies = [None] * len(list_of_user_id)
@@ -476,6 +508,10 @@ class ReadStatusManager(arara_manager.ARAraManager):
         @type  user_ids: list<int>
         @param user_ids: ReadStatus 를 기록할 사용자들의 고유 id
         '''
+        # ReadStatus를 강제로 비활성화한 경우 아무 일도 하지 않는다.
+        if not arara_settings.USE_READ_STATUS:
+            return
+
         session = model.Session()
         try:
             for user_id in user_ids:
