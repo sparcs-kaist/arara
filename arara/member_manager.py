@@ -1159,6 +1159,7 @@ class MemberManager(arara_manager.ARAraManager):
 
         return result
 
+    @ara_memcached.memcached_decorator
     def get_selected_boards(self, session_key):
         '''
         사용자들이 선택한 몇 개의 즐겨찾는 게시판 목록을 반환하는 함수이다.
@@ -1207,6 +1208,9 @@ class MemberManager(arara_manager.ARAraManager):
             session.add(selected_board)
         session.commit()
         session.close()
+
+        # Cache update
+        ara_memcached.clear_memcached(self.get_selected_boards, session_key)
 
     __public__ = [
             authenticate,
