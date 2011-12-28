@@ -82,6 +82,24 @@ class BoardListUpdateNode(template.Node):
 
         return ""
 
+@register.tag(name="get_selected_boards")
+def do_get_selected_boards(parser, token):
+    return SelectedBoardsNode()
+
+class SelectedBoardsNode(template.Node):
+    def render(self, context):
+        server = warara_middleware.get_server()
+        if context.get('logged_in'):
+            selected_boards = [(x.board_alias, x.board_name) for x in server.member_manager.get_selected_boards(context['arara_session'])]
+        else:
+            selected_boards = warara_settings.DEFAULT_MOBILE_BOARDS
+        if len(selected_boards) == 0:
+            selected_boards = warara_settings.DEFAULT_MOBILE_BOARDS
+
+        context['selected_boards'] = selected_boards[:3]
+
+        return ""
+
 @register.tag(name="get_weather_info")
 def do_get_weather_info(parser, token):
     return WeatherInfoNode()

@@ -72,15 +72,15 @@ input {
     *display: inline;
 
 }
-#nav .l1{
+#nav .l0{
     width: 14%;
     margin-bottom: 10px;
 }
-#nav .l2, .l3, .l4, .l5{
+#nav .l1, .l2, .l3, .l4{
     width: 24%;
     margin-bottom: 10px;
 }
-#nav .l5{
+#nav .l4{
     width: 8%;
 }
 /* gray navi bar */

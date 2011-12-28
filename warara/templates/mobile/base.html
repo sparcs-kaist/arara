@@ -21,19 +21,16 @@
 
             <div id="nav">
                 <ul>
-                    <li class="l1">
+                    <li class="l0">
                         <a href="/mobile/all/" class="block">all</a>
                     </li>
-                    <li class="l2">
-                        <a href="/mobile/board/garbages/" class="block">garbages</a>
+                    {% get_selected_boards %}
+                    {% for board in selected_boards %}
+                    <li class="l{{ forloop.counter }}">
+                        <a href="/mobile/board/{{ board.1 }}/" class="block">{{ board.0 }}</a>
                     </li>
-                    <li class="l3">
-                        <a href="/mobile/board/qandA[etc]/" class="block">QandA[etc]</a>
-                    </li>
+                    {% endfor %}
                     <li class="l4">
-                        <a href="/mobile/board/love/" class="block">Love</a>
-                    </li>
-                    <li class="l5">
                         <a href="/mobile/board/list/" class="block">+</a>
                     </li>
                 </ul>

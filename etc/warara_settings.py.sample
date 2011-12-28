@@ -21,6 +21,14 @@ RELAY_FICTION_ARTICLE_NO = 2
 # Indicates whether KSearch is available
 KSEARCH_ENABLED = False
 
+# List of 3 boards which will be displayed on the top of the mobile page (default)
+DEFAULT_MOBILE_BOARDS = [
+    ('Garbages', 'garbages'),
+    ('Love', 'Love'),
+    ('Food', 'food'),
+    # ( display name, URI )
+]
+
 # Django Frontend Setting (will be imported by warara/settings.py)
 
 # Set DEBUG to either True or False.
