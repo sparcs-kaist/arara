@@ -47,6 +47,7 @@ ARARA_DBTYPE = \"$database_type\"
 # Part 2. Backend Server Setting
 ARARA_SERVER_HOST = '127.0.0.1'
 ARARA_SERVER_BASE_PORT = $((base_port+2))
+SESSION_TYPE = \"dict\"
 SESSION_EXPIRE_TIME = 3610 # seconds
 ARARA_POOL_DEBUG_MODE = False
 #To use POOL DEBUG MODE, turn on the flag above. (see changeset 1247)

@@ -15,6 +15,7 @@ from arara import arara_manager
 from arara import model
 from util import log_method_call_with_source, log_method_call_with_source_duration
 
+from etc import arara_settings
 from etc.arara_settings import SESSION_EXPIRE_TIME
 
 log_method_call = log_method_call_with_source('login_manager')
@@ -30,7 +31,10 @@ class LoginManager(arara_manager.ARAraManager):
         @type  engine: ARAraEngine
         '''
         super(LoginManager, self).__init__(engine)
-        self.session_dic = {}
+        if arara_settings.SESSION_TYPE == "dict":
+            self.session_dic = {}
+        else:  # Wrong Setting
+            raise InternalError("Wrong value for arara_settings.SESSION_TYPE")
         self.logger = logging.getLogger('login_manager')
         self._create_counter_column()
         # Engine 이 가동중인 동안 True, 가동을 멈추면 False 가 되는 변수
