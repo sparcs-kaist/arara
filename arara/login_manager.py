@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import collections
 import hashlib
 import logging
 import datetime
 import time
 import UserDict
 
-from sqlalchemy.exceptions import InvalidRequestError, ConcurrentModificationError
+from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.orm.exc import ConcurrentModificationError, NoResultFound, StaleDataError
 
 from libs import smart_unicode
 
@@ -30,6 +32,76 @@ class DictSessionStore(UserDict.UserDict):
     '''
     pass
 
+
+class DatabaseSessionStore(collections.MutableMapping):
+    '''
+    현재 Login되어 있는 사용자들의 Session을 DB에 저장한다.
+    '''
+
+    def __contains__(self, key):
+        session = model.Session()
+        try:
+            login_session = session.query(model.LoginSession).filter_by(session_key=key).one()
+            session.close()
+            return True
+        except NoResultFound:
+            session.close()
+            return False
+
+    def __getitem__(self, key):
+        session = model.Session()
+        try:
+            login_session = session.query(model.LoginSession).filter_by(session_key=key).one()
+            session.close()
+            return login_session.session_data
+        except NoResultFound:
+            session.close()
+            raise KeyError()
+
+    def __setitem__(self, key, value):
+        session = model.Session()
+        try:
+            # 로그인되어 있는 사용자의 경우 DB의 해당 row에 새로운 값을 기록한다
+            login_session = session.query(model.LoginSession).filter_by(session_key=key).one()
+            login_session.session_data = value
+        except NoResultFound:
+            # 로그인되어 있지 않은 사용자의 경우 DB에 새로운 row를 생성한다
+            login_session = model.LoginSession(key, value, datetime.datetime.now())
+            session.add(login_session)
+        session.commit()
+        session.close()
+
+    def __delitem__(self, key):
+        session = model.Session()
+        try:
+            login_session = session.query(model.LoginSession).filter_by(session_key=key).one()
+            session.delete(login_session)
+            session.commit()
+            session.close()
+        except NoResultFound:
+            # 이미 로그아웃된 세션에 대하여 로그아웃을 시도한 경우
+            # session.one() 에서 발생함.
+            # 어차피 로그아웃되어 있는 것이므로 무시해도 좋다
+            session.close()
+        except StaleDataError:
+            # 같은 사용자 Login Session에 대하여 로그아웃을 시도한 경우
+            # session.delete() 에서 발생함.
+            # 어차피 삭제된 것이므로 무시해도 괜찮다.
+            session.close()
+
+    def __iter__(self):
+        session = model.Session()
+        result = (x.session_key for x in session.query(model.LoginSession).all())
+        session.close()
+        return result
+
+    def __len__(self):
+        session = model.Session()
+        result = session.query(model.LoginSession).count()
+        session.close()
+        return result
+
+
 class LoginManager(arara_manager.ARAraManager):
     '''
     로그인 처리 관련 클래스
@@ -42,6 +114,8 @@ class LoginManager(arara_manager.ARAraManager):
         super(LoginManager, self).__init__(engine)
         if arara_settings.SESSION_TYPE == "dict":
             self.session_dic = DictSessionStore()
+        elif arara_settings.SESSION_TYPE == "db":
+            self.session_dic = DatabaseSessionStore()
         else:  # Wrong Setting
             raise InternalError("Wrong value for arara_settings.SESSION_TYPE")
         self.logger = logging.getLogger('login_manager')

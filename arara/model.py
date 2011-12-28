@@ -11,7 +11,7 @@ from sqlalchemy.orm import backref, relationship
 from sqlalchemy.orm.session import sessionmaker
 from sqlalchemy.pool import NullPool
 from sqlalchemy.schema import Column, ForeignKey, Index
-from sqlalchemy.types import Boolean, DateTime, Integer, LargeBinary, PickleType, Text, Unicode, UnicodeText
+from sqlalchemy.types import Boolean, DateTime, Integer, LargeBinary, PickleType, String, Text, Unicode, UnicodeText
 
 from libs import smart_unicode
 
@@ -672,6 +672,25 @@ class SelectedBoards(Base):
 
     def __repr__(self):
         return "<SelectedBoards('%s')>" % (self.board)
+
+
+class LoginSession(Base):
+    __tablename__ = 'login_sessions'
+    __table__args = {'mysql_engine': 'InnoDB'}
+
+    session_key = Column(String(40), primary_key=True)
+    session_data = Column(PickleType)
+    expire_date = Column(DateTime, index=True)
+
+    def __init__(self, session_key, session_data, expire_date):
+        '''
+        @type session_key: str
+        @type session_data: object
+        @type expire_date: datetime.datetime
+        '''
+        self.session_key = session_key
+        self.session_data = session_data
+        self.expire_date = expire_date
 
 
 Index('articles_board_and_id', Article.__table__.c.board_id)
