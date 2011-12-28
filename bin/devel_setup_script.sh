@@ -110,10 +110,17 @@ FILE_MAXIMUM_SIZE = 100*1024*1024
 
 # ARAra forecast Service Setting
 USE_WEATHER_FORECAST = True
-WEATHER_ICON_PATH = '/media/image/weather/'
 
 # Indicates whether KSearch is available
 KSEARCH_ENABLED = False
+
+# List of 3 boards which will be displayed on the top of the mobile page (default)
+DEFAULT_MOBILE_BOARDS = [
+    ('Garbages', 'garbages'),
+    ('Love', 'Love'),
+    ('Food', 'food'),
+    # ( display name, URI )
+]
 
 # Django Frontend Setting (will be imported by warara/settings.py)
 
