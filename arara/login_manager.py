@@ -4,6 +4,7 @@ import hashlib
 import logging
 import datetime
 import time
+import UserDict
 
 from sqlalchemy.exceptions import InvalidRequestError, ConcurrentModificationError
 
@@ -21,6 +22,14 @@ from etc.arara_settings import SESSION_EXPIRE_TIME
 log_method_call = log_method_call_with_source('login_manager')
 log_method_call_duration = log_method_call_with_source_duration('login_manager')
 
+
+class DictSessionStore(UserDict.UserDict):
+    '''
+    현재 Login되어 있는 사용자들의 Session을 dictionary로 저장한다.
+    사용시 LoginManager는 Backend 서버에 단일 객체만 존재해야 한다.
+    '''
+    pass
+
 class LoginManager(arara_manager.ARAraManager):
     '''
     로그인 처리 관련 클래스
@@ -32,7 +41,7 @@ class LoginManager(arara_manager.ARAraManager):
         '''
         super(LoginManager, self).__init__(engine)
         if arara_settings.SESSION_TYPE == "dict":
-            self.session_dic = {}
+            self.session_dic = DictSessionStore()
         else:  # Wrong Setting
             raise InternalError("Wrong value for arara_settings.SESSION_TYPE")
         self.logger = logging.getLogger('login_manager')
@@ -210,7 +219,11 @@ class LoginManager(arara_manager.ARAraManager):
         action = smart_unicode(action)  
         try:
             if session_key in self.session_dic:
-                self.session_dic[session_key]['current_action'] = action
+                # self.session_dic 구현에 상관없이 갱신된 값이 저장되도록 설정
+                user_session = self.session_dic[session_key]
+                user_session['current_action'] = action
+                self.session_dic[session_key] = user_session
+                # last_action_time 갱신
                 self.update_session(session_key)
                 return True
             else:
@@ -230,7 +243,10 @@ class LoginManager(arara_manager.ARAraManager):
         '''
         # TODO: 이 함수는 왜 T/F 를 리턴하는가?
         if session_key in self.session_dic:
-            self.session_dic[session_key]['last_action_time'] = time.time()
+            # self.session_dic 구현에 상관없이 갱신된 값이 저장되도록 설정
+            user_session = self.session_dic[session_key]
+            user_session['last_action_time'] = time.time()
+            self.session_dic[session_key] = user_session
             return True
         else:
             return False
