@@ -8,7 +8,7 @@ body, input, textarea, select, button, table, div, ul, li, p, form {
     padding:0;
     font-size: 13px;
     letter-spacing: -1px;
-    -webkit-text-size-adjust:none
+    -webkit-text-size-adjust:none;
 }
 a {
     color: #000000;
@@ -113,14 +113,19 @@ input {
     padding-bottom: 5px;
 }
 
-.ft_cp{
+.ft_cp, .ft_link{
     display: block;
     text-align: center;
     line-height: 17px;
     letter-spacing: 0px;
     font-size: 11px;
 }
-
+.ft_cp{
+    margin: 10px 0;
+}
+.ft_link a{
+    margin: 0 15px;
+}
 /* float problems in old IE */
 .left{
     float: left;

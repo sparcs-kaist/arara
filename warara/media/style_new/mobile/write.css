@@ -45,7 +45,7 @@ label{
 }
 .wr1 dd{
     padding-right: 10px;
-    padding-left: 4.5em;
+    padding-left: 50px;
 }
 
 .wr1 .ip{
@@ -61,10 +61,14 @@ label{
     font-size: 0;
 }
 .wr2 .ip_t{
-    width: 97%;
+    width: 100%;
     font-size: 14px;
     line-height: 1.5em;
 }
+
+.wr2 dd{
+    padding-right: 10px;
+   } 
 
 .wr1 dd label{
     margin-right: 0.9em;
@@ -88,6 +92,8 @@ label{
     color: #000000;
     background-color: #ffffff;
     cursor: pointer;
+    display: inline-block;
+    -webkit-appearance:none;
  }
 .buttonR{
     margin: 0;
@@ -96,6 +102,7 @@ label{
     padding: 6px 8px;
     background-color: #ffffff;
     cursor: pointer;
+    -webkit-appearance:none;
 }
 
 .hidden{ display: none; }

@@ -37,26 +37,29 @@
     display: block;
 }
 .paginate{
-    padding-top: 20px;
+    padding: 20px 0;
     text-align:center;
 }
 .paginate a, strong{
     display:inline-block;
     position:relative;
-    margin-left:-5px;
-    padding:3px 7px 1px 4px;
     color:#333;
     font-size:1.1em;
     line-height:normal;
     text-decoration:none;
 }
+.paginate a{
+    margin: 0 7px;
+    padding: 3px 6px;
+}
 .paginate strong{
     background: #ff0060;
-    padding: 1px 6px;
     color: #ffffff;
+    padding: 3px 8px;
+    margin: 0 1px;
 }
 .list_buttons{
-    padding: 0px 10px 15px 15px; 
+    padding: 0px 10px 0 15px; 
 }
 .button{
      margin: 0;
