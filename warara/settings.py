@@ -1,7 +1,9 @@
+import os
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 # Django settings for warara project.
+PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 
 from etc.warara_settings import DEBUG, ADMINS
 
@@ -36,12 +38,12 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -70,9 +72,6 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'warara.urls'
 
-import os
-PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
-
 TEMPLATE_DIRS = (
     # Put strings here, like /home/html/django_templates or C:/www/django/templates.
     # Always use forward slashes, even on Windows.
@@ -88,8 +87,11 @@ INSTALLED_APPS = (
         'warara.main',
         'warara.message',
         'warara.mobile',
-        'warara.sysop'
+        'warara.sysop',
+        'compressor'
 )
+
+COMPRESS = True
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.file'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
