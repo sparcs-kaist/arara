@@ -1,0 +1,65 @@
+.dash{
+    border: 2px dashed #ff0060;
+    padding: 0px;
+}
+.nodash{
+    padding: 2px;
+}
+.fav{
+    margin-left: 4px;
+    border: 1px solid #ff0060;
+    padding: 1px 3px;
+    color: #ff0060;
+    background: #fff;
+}
+.iconwrap{
+    padding: 10px 4px;
+    margin-top: 5px;
+}
+li{
+    position: relative;
+}
+ul{
+    list-style: none;
+}
+.icon{
+    float: left;
+    margin: 5px 10px;
+    text-align: center;
+}
+.icona{
+    display: block;
+    height: 96px;
+    width: 57px;
+    overflow: hidden;
+    position: relative;
+}
+.ic{
+    background-image:url(/media/image/mobile/icon3.png);
+    -webkit-background-size: 342px 118px;
+    display: block;
+    height:57px;
+    width: 57px;
+    margin: 8px 0;
+}
+.selected{ color: #ff0060; }
+.selected > .ic { background-image:url(/media/image/mobile/icon_colored.png); }
+
+.tt{
+    display: block;
+    font-size: 1em;
+    line-height: 1.1em;
+}
+.no_iconwrap{
+    padding: 0px 4px;
+}
+.no_icona{
+    display: block;
+    height: 30px;
+    width: 57px;
+    overflow: hidden;
+    position: relative;
+}
+.cb{
+    clear: both;
+}

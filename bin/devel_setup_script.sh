@@ -132,6 +132,54 @@ DEFAULT_MOBILE_BOARDS = [
     # ( display name, URI )
 ]
 
+# Ordered List of board name & icon which will be displayed on the boardlist page
+BOARD_ICON_MAP = [
+    ('garbages', 'garbages', 0, -4),
+    ('Love', 'Love', -57, -4),
+    ('food', 'food', -114, -4),
+    ('QnA', 'qandA[Etc]', -171, -4),
+    ('buy & sell', 'buySell[Etc]', -228, -4),
+    ('wanted', 'Wanted', -285, -4),
+    ('lost found', 'lostfound', 0, -61),
+    ('Siggame', 'Siggame', -57, -61),
+    ('infoworld', 'Infoworld', -114, -61),
+    ('KAIST', 'KAIST', -171, -61),
+    ('test', 'test', -228, -61),
+    ('to sysop', 'ToSysop', -285, -61),
+    # ( display name, URI, background-position-x, background-position-y )
+]
+
+BOARD_WITHOUT_ICON = [
+    ('whitePaper', 'whitePaper'),
+    ('welfare', 'welfare'),
+    ('imgEffect', 'imgEffect'),
+    ('dormUni', 'dormUni'),
+    ('Times', 'Times'),
+    ('Foreigner', 'Foreigner'),
+    ('dormchg', 'dormchange'),
+    ('discuss', 'discuss_kaist'),
+    ('buy sell [C]', 'BuySell[Com]'),
+    ('QnA [C]', 'QandA[Com]'),
+    ('abroad', 'abroad'),
+    ('research', 'research'),
+    ('Lecture', 'Lecture'),
+    ('moneytech', 'moneyTechs'),
+    ('vehicle', 'vehicle'),
+    ('Filmspecial', 'Filmspecial'),
+    ('sportsEvent', 'sportsEvent'),
+    ('bookshelf', 'bookshelf'),
+    ('AniMania', 'AniMania'),
+    ('MusicLand', 'MusicLand'),
+    ('tripTour', 'tripTour'),
+    ('Hangul', 'Hangul'),
+    ('hobby', 'hobby'),
+    ('game.star', 'Siggame.star'),
+    ('game.dia2', 'Siggame.dia2'),
+    ('game.war', 'Siggame.war'),
+    ('game.Laby', 'Siggame.Laby'),
+    # ( display name, URI )
+]
+
 # Django Frontend Setting (will be imported by warara/settings.py)
 
 # Set DEBUG to either True or False.

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.template.loader import render_to_string
+from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.paginator import Paginator
 from django.core.cache import cache
@@ -13,7 +14,7 @@ import re
 import warara
 from warara import warara_middleware
 
-from etc.warara_settings import FILE_DIR, FILE_MAXIMUM_SIZE
+from etc.warara_settings import FILE_DIR, FILE_MAXIMUM_SIZE, BOARD_ICON_MAP, BOARD_WITHOUT_ICON
 
 IMAGE_FILETYPE = ['jpg', 'jpeg', 'gif', 'png']
 IS_ARTICLE_LIST_PAGE = re.compile(r'^/mobile/board/[\w \[\]\.]+/$')
@@ -630,6 +631,35 @@ def file_download(request, board_name, article_root_id, article_id, file_id):
     response = HttpResponse(file_ob, mimetype="application/x-forcedownload")
     response['Content-Disposition'] = "attachment; filename=" + unicode(file.real_filename).encode('cp949', 'replace')
     return response
+
+@warara.prevent_cached_by_browser
+@warara.wrap_error_mobile
+def board_list(request):
+    sess, r = warara.check_logged_in(request)
+    server = warara_middleware.get_server()
+    r['board_icon'] = BOARD_ICON_MAP
+    r['board_noicon'] = BOARD_WITHOUT_ICON
+    if sess:
+        s_boards = [x.board_name for x in server.member_manager.get_selected_boards(sess)]
+        r['selected_boards_query'] = '/'.join(s_boards)
+    else:
+        r['selected_boards_query'] = ''
+
+    return render_to_response('mobile/board/boardlist.html', r)
+
+@warara.prevent_cached_by_browser
+@warara.wrap_error_mobile
+def save_selected_boards(request):
+    sess, r = warara.check_logged_in(request)
+    server = warara_middleware.get_server()
+    all_boards = server.board_manager.get_board_list()
+    query = request.POST.get('boards', '')
+
+    s_boards = query.split('/')
+    s_boards_id = [x.id for x in all_boards if x.board_name in s_boards]
+    server.member_manager.set_selected_boards(sess, s_boards_id)
+
+    return HttpResponseRedirect("/mobile/board/list/")
 
 # Using Django's default HTML handling util, escape all tags and urlize
 # 동시에 <a> tag 를 target="_blank" 로 설정되도록 regex 를 써서 바꿔버린다.

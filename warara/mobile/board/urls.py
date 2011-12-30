@@ -3,6 +3,8 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('',
     (r'^$', 'warara.mobile.board.views.index'),
 #    (r'^move_article/$','warara.mobile.board.views.move_article'),
+    (r'^list/$', 'warara.mobile.board.views.board_list'),
+    (r'^list/save/$', 'warara.mobile.board.views.save_selected_boards'),
     (r'^(?P<board_name>[\w \[\]\.]+)/$', 'warara.mobile.board.views.list'),
     (r'^(?P<board_name>[\w \[\]\.]+)/write/$', 'warara.mobile.board.views.write'),
     (r'^([\w \[\]\.]+)/([\d]+)/$', 'warara.mobile.board.views.read'),

@@ -1,0 +1,47 @@
+{% extends "mobile/base.html" %}
+{% block style %}
+<link rel="stylesheet" href="/media/style_new/mobile/boardlist.css" type="text/css" />
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="/media/js/mobile/selectboard.js"></script>
+{% endblock %}
+{% block header %}
+<div id="gray">
+    <span class>게시판목록</span>
+    {% if logged_in %}
+    <a href="#" class="fav">edit</a>
+    {% endif %}
+    <div class="cb"> </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="nodash">
+    <div class="iconwrap">
+        <ul>
+            {% for board in board_icon %}
+            <li class="icon">
+            <a href="/mobile/board/{{ board.1 }}/" class="icona">
+                <span class="ic" style="background-position:{{ board.2 }}px {{ board.3 }}px"></span>
+                <span class="tt" id="{{ board.1 }}">{{ board.0 }}</span>
+            </a>
+            </li>
+            {% endfor %}
+        </ul>
+        <div class="cb"></div>
+    </div>
+    <div class="no_iconwrap">
+        <ul>
+            {% for board in board_noicon %}
+            <li class="icon"><a class="no_icona" href="/mobile/board/{{ board.1 }}/">
+                <span class="tt" id="{{ board.0 }}">{{ board.0 }}</span>
+            </a></li>
+            {% endfor %}
+        </ul>
+        <div class="cb"></div>
+    </div>
+    <form method="post" id="save_form" action="/mobile/board/list/save/">
+        <input type="hidden" name="boards" id="boards" value="{{ selected_boards_query }}" />
+    </form>
+</div>
+{% endblock %}
