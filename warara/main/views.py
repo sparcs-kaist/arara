@@ -14,9 +14,14 @@ from arara_thrift.ttypes import InvalidOperation
 from arara_thrift.ttypes import *
 
 from etc.warara_settings import KSEARCH_ENABLED
+from warara.thirdparty.minidetector import detect_mobile
 
+@detect_mobile
 @warara.wrap_error
 def index(request):
+    if request.mobile:
+        return HttpResponseRedirect('/mobile/')
+
     server = warara_middleware.get_server()
     sess, ctx = warara.check_logged_in(request)
 
