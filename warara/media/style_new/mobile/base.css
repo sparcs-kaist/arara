@@ -3,7 +3,7 @@
 
 /* 폰트 설정 */
 body, input, textarea, select, button, table, div, ul, li, p, form { 
-    font-family:"Malgun gothic", "맑은 고딕",Dotum,gulim,Helvetica,AppleGothic,Arial,sans-serif;
+    font-family:"Malgun gothic", "맑은 고딕",Dotum,gulim,Helvetica,Arial,sans-serif;
     margin:0;
     padding:0;
     font-size: 13px;
@@ -42,7 +42,7 @@ h1,h2,h3,h4,h5,h6,form,div,fieldset,input,textarea {
     margin:0;padding:0; 
 }
 input { 
-    font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; 
+    font-family:Dotum,돋움,Helvetica,Arial,sans-serif; 
 }
 
 /* header */

@@ -1,7 +1,7 @@
 @charset "utf-8";
 
 html { overflow: -moz-scrollbars-vertical; overflow-y: scroll; overflow-x: auto;}
-body { font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; font-size:12px; text-align:center; margin:0; padding:0; line-height:1.6; color:#454545; }
+body { font-family:Dotum,돋움,Helvetica,Arial,sans-serif; font-size:12px; text-align:center; margin:0; padding:0; line-height:1.6; color:#454545; }
 
 a img { border:0; }
 
@@ -9,7 +9,7 @@ a img { border:0; }
 p{ margin:0; margin-bottom:1em; }
 h1,h2,h3,h4,h5,h6,form,div,fieldset,input,textarea { margin:0;padding:0; }
 fieldset { border:0; }
-input { font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; }
+input { font-family:Dotum,돋움,Helvetica,Arial,sans-serif; }
 
 /* styles for Layout */
 #linksModalBG { display:none; z-index:99; position:absolute; left:0; top:0; width:100%; height:100%; }
@@ -71,7 +71,7 @@ input { font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; }
 
 #sideContents span.sideRight { display:block; float:right; }
 #sideContents #myInfo span.sideRight { font-weight:bold; font-family:Helvetica,Arial,sans-serif; padding:0 5px; letter-spacing:normal; }
-#sideContents dt span.sideRight { font-weight:normal; font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; letter-spacing:-1px; }
+#sideContents dt span.sideRight { font-weight:normal; font-family:Dotum,돋움,Helvetica,Arial,sans-serif; letter-spacing:-1px; }
 
 #sideContents #weather strong { font-family: Helvetica, Arial, sans-serif; font-size:1.5em; line-height:1.3; }
 #sideContents #weather .future { clear:both; padding-top:10px; }
@@ -206,7 +206,7 @@ input { font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; }
 .mainBody .mainItem .mainItemContents { float:left; }
 .mainBody .mainItem .desc { padding-top:15px; font-size:0.9em; line-height:1.3; }
 .mainBody .mainItem #KsearchBox { height:30px; line-height:0; font-size:0; }
-.mainBody .mainItem #KsearchText { padding:3px; font-size:14px; line-height:0px; font-family:Dotum,돋움,Helvetica,AppleGothic,Arial,sans-serif; font-weight:bold; height:20px; vertical-align:top; margin-right:5px; width:470px; }
+.mainBody .mainItem #KsearchText { padding:3px; font-size:14px; line-height:0px; font-family:Dotum,돋움,Helvetica,Arial,sans-serif; font-weight:bold; height:20px; vertical-align:top; margin-right:5px; width:470px; }
 .mainBody .mainItem #KsearchButton { vertical-align:top; }
 
 .mainBody .mainItem .bestArticles { float:left; letter-spacing:-1px; }
