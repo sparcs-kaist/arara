@@ -9,6 +9,8 @@ from arara_thrift.ttypes import *
 import os
 import datetime
 import re
+import mimetypes
+import urllib
 import warara
 from warara import warara_middleware
 
@@ -638,16 +640,32 @@ def search(request, board_name):
 # Django's never_cache decorator causes empty file, so we do it manually.
 # NOTE: Django's cache warara_middleware uses cache backends with timeout value from http headers
 #       with simultaneously setting appropriate http headers to control web browsers.
+# reference: http://code.google.com/p/cciu-open-course-labs/source/browse/opencourselabs/utils/__init__.py
 @warara.prevent_cached_by_browser
 @warara.wrap_error
 def file_download(request, board_name, article_root_id, article_id, file_id):
     server = warara_middleware.get_server()
-    file = {}
-    file= server.file_manager.download_file(int(article_id), int(file_id))
-    file_ob = open("%s/%s/%s" % (FILE_DIR, file.file_path, file.saved_filename))
+    file = server.file_manager.download_file(int(article_id), int(file_id))
+    file_path = "%s/%s/%s" % (FILE_DIR, file.file_path, file.saved_filename)
+    file_ob = open(file_path, 'rb')
+    response = HttpResponse(file_ob.read())
+    file_ob.close()
+    type, encoding = mimetypes.guess_type(file.real_filename)
+    if type is None:
+        type = 'application/octet-stream'
+    response['Content-Type'] = type
+    response['Content-Length'] = str(os.stat(file_path).st_size)
+    if encoding is not None:
+        response['Content-Encoding'] = encoding
 
-    response = HttpResponse(file_ob, mimetype="application/x-forcedownload")
-    response['Content-Disposition'] = "attachment; filename=" + unicode(file.real_filename).encode('cp949', 'replace')
+    if u'WebKit' in request.META['HTTP_USER_AGENT']:
+        filename_header = 'filename=%s' % file.real_filename.encode('utf-8')
+    elif u'MSIE' in request.META['HTTP_USER_AGENT']:
+        filename_header = ''
+    else:
+        filename_header = 'filename*=UTF-8\'\'%s' % urllib.quote(file.real_filename.encode('utf-8'))
+
+    response['Content-Disposition'] = 'attachment; ' + filename_header
     return response
 
 @warara.wrap_error
