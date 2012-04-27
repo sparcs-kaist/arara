@@ -692,6 +692,19 @@ class LoginSession(Base):
         self.session_data = session_data
         self.expire_date = expire_date
 
+class LostPasswordToken(Base):
+    __tablename__ = 'lost_password_token'
+    __table__args = {'mysql_engine': 'InnoDB'}
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), index=True)
+    code = Column(String(25))
+
+    user = relationship(User, lazy=False,
+            primaryjoin='lost_password_token.c.user_id == users.c.id',
+            backref=backref('lost_password_token', lazy=True, join_depth=1,
+                    primaryjoin='lost_password_token.c.user_id == users.c.id',
+                    viewonly=True))
 
 Index('articles_board_and_id', Article.__table__.c.board_id)
 Index('articles_board_and_last_reply_id', Article.__table__.c.board_id, Article.__table__.c.last_reply_id)

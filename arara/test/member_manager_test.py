@@ -4,6 +4,8 @@ import unittest
 import os
 import sys
 import time
+import smtplib
+import email
 
 THRIFT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../gen-py/'))
 sys.path.append(THRIFT_PATH)
@@ -19,7 +21,7 @@ from arara import model
 class MemberManagerTest(AraraTestBase):
     def setUp(self):
         # Common preparation for all tests
-        super(MemberManagerTest, self).setUp(stub_time=True)
+        super(MemberManagerTest, self).setUp(mock_mail=True, stub_time=True)
 
     def test__register_without_confirm(self):
         '''
@@ -536,6 +538,126 @@ class MemberManagerTest(AraraTestBase):
         self.assertEqual(True, self.engine.member_manager.send_id_recovery_email(u'panda@kaist.ac.kr'))
         self.assertEqual(False, self.engine.member_manager.send_id_recovery_email(u'bbashong@kaist.ac.kr'))
 
+    def test_send_password_recovery_email(self):
+        self.register_user(u'panda')
+        # 정상적인 상황
+        mail_count = len(smtplib.SMTP.mail_list)
+        self.engine.member_manager.send_password_recovery_email(u'panda', u'panda@kaist.ac.kr')
+        self.assertEqual(1, len(smtplib.SMTP.mail_list) - mail_count)
+        mail_count = len(smtplib.SMTP.mail_list)
+
+        from_addr, to_addrs, msg = smtplib.SMTP.mail_list[-1]
+        msg = email.message_from_string(msg).get_payload(decode=True).decode('utf8')
+
+        session = model.Session()
+        user = self.engine.member_manager._get_user(session, 'panda')
+        codes = user.lost_password_token
+        self.assertEqual(1, len(codes))
+        session.close()
+
+        if not codes[0].code in msg:
+            self.fail("Recovery code is not in the mail content.")
+
+        # 등록되지 않은 유저일때
+        try:
+            self.engine.member_manager.send_password_recovery_email(u'hodduc', u'panda@kaist.ac.kr')
+            self.fail("Sent password recovery email for non-existing user.")
+        except InvalidOperation:
+            pass
+
+        # 유저는 맞으나 이메일이 다를때
+        try:
+            self.engine.member_manager.send_password_recovery_email(u'panda', u'hodduc@kaist.ac.kr')
+            self.fail("Sent password recoveryt email for wrong email address.")
+        except InvalidOperation:
+            pass
+
+        # 다시 보내면 다른 코드로 갱신되어야 함
+        self.engine.member_manager.send_password_recovery_email(u'panda', u'panda@kaist.ac.kr')
+        self.assertEqual(1, len(smtplib.SMTP.mail_list) - mail_count)
+        from_addr, to_addrs, new_msg = smtplib.SMTP.mail_list[-1]
+        new_msg = email.message_from_string(new_msg).get_payload(decode=True).decode('utf8')
+
+        self.assertNotEqual(new_msg, msg)
+
+        session = model.Session()
+        user = self.engine.member_manager._get_user(session, 'panda')
+        new_codes = user.lost_password_token
+        self.assertEqual(1, len(new_codes))
+        session.close()
+
+        if codes[0].code in new_msg:
+            self.fail("Recovery code is not flushed.")
+        if not new_codes[0].code in new_msg:
+            self.fail("Recovery code is not in the mail content.")
+
+    def test_modify_password_with_token(self):
+        self.register_user(u'panda')
+        self.register_user(u'hodduc')
+
+        # 우선 토큰을 발급받는다
+        self.engine.member_manager.send_password_recovery_email(u'panda', u'panda@kaist.ac.kr')
+        session = model.Session()
+        user = self.engine.member_manager._get_user(session, 'panda')
+        codes = user.lost_password_token
+        self.assertEqual(1, len(codes))
+        session.close()
+
+        valid_code = codes[0].code
+        wrong_code = valid_code[::-1]
+
+        # recovery를 신청하지 않은 유저에게는 동작하지 않아야 한다
+        user_password_dic = {'username':u'hodduc', 'current_password':u'', 'new_password':u'thepanda'}
+        try:
+            self.engine.member_manager.modify_password_with_token(UserPasswordInfo(**user_password_dic), valid_code)
+            self.fail('Accepted invalid approach.')
+        except InvalidOperation:
+            pass
+
+        # recovery를 신청했지만 code가 다르다면 동작하지 않아야 한다
+        user_password_dic = {'username':u'panda', 'current_password':u'', 'new_password':u'pandaking'}
+        try:
+            self.engine.member_manager.modify_password_with_token(UserPasswordInfo(**user_password_dic), wrong_code)
+            self.fail('Acceepted password recovery with incorrect token.')
+        except InvalidOperation:
+            pass
+
+        # recovery가 정상적으로 되었다면 바꾼 비밀번호로 접속되어야 한다
+        user_password_dic = {'username':u'panda', 'current_password':u'', 'new_password':u'cutypanda'}
+        self.engine.member_manager.modify_password_with_token(UserPasswordInfo(**user_password_dic), valid_code)
+        session_key = self.engine.login_manager.login(u'panda', u'cutypanda', '0.0.0.1')
+
+        # 이제 다시 해당 링크에 접속해도 recovery가 동작하지 않아야 한다
+        user_password_dic = {'username':u'panda', 'current_password':u'', 'new_password':u'lordpanda'}
+        try:
+            self.engine.member_manager.modify_password_with_token(UserPasswordInfo(**user_password_dic), valid_code)
+            self.fail('Acceepted password recovery with old token.')
+        except InvalidOperation:
+            pass
+
+    def test_password_recovery_token_invalidation(self):
+        # recovery token 메일이 날아가더라도, 해당 계정에 로그인 기록이 있으면 기 발급된 token은 사라져야 한다.
+        # 이것이 올바르게 작동하는지 확인하는 테스트이다.
+
+        self.register_user(u'panda')
+
+        # 우선 토큰을 발급받는다
+        self.engine.member_manager.send_password_recovery_email(u'panda', u'panda@kaist.ac.kr')
+        session = model.Session()
+        user = self.engine.member_manager._get_user(session, 'panda')
+        codes = user.lost_password_token
+        self.assertEqual(1, len(codes))
+        session.close()
+
+        # 로그인해본다
+        session_key = self.engine.login_manager.login(u'panda', u'panda', '0.0.0.1')
+
+        # 아직 토큰이 남아있으면 안 된다
+        session = model.Session()
+        user = self.engine.member_manager._get_user(session, 'panda')
+        codes = user.lost_password_token
+        self.assertEqual(0, len(codes))
+        session.close()
 
     def tearDown(self):
         # Common tearDown

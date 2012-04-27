@@ -4,6 +4,8 @@ import hashlib
 import datetime
 import time
 import logging
+import random
+import string
 
 from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
@@ -286,6 +288,9 @@ class MemberManager(arara_manager.ARAraManager):
                     ret = {'last_login_time': current_time,
                            'nickname': user.nickname,
                            'id': user.id}
+                    if user.lost_password_token:
+                        for tok in user.lost_password_token:
+                            session.delete(tok)
                     session.commit()
                     session.close()
                     return AuthenticationInfo(**ret)
@@ -415,7 +420,6 @@ class MemberManager(arara_manager.ARAraManager):
         confirm_key = '<br />Confirm Key : %s' % activation_code
 
         send_mail(title, email, content + confirm_link + confirm_key)
-
 
     @require_login
     @log_method_call_important
@@ -711,6 +715,41 @@ class MemberManager(arara_manager.ARAraManager):
         self.logger.info(u"PASSWORD CHANGE:(username=%s)" % username)
         session.close()
 
+    def modify_password_with_token(self, user_password_info, token_code):
+        '''
+        Recovery Token을 사용하여 비밀번호를 수정
+
+        ---user_password_info {username, current_password, new_password}
+
+        @type  user_password_info: ttypes.UserPasswordInfo
+        @param user_password_info: 사용자의 비밀번호 정보
+        @rtype: void
+        @return:
+            1. modify 성공: void
+            2. modify 실패:
+                1. 잘못된 토큰: InvalidOperation('INVALID_APPROACH')
+                2. DB 에러 : InternalError
+        '''
+        # TODO: 비밀번호 암호화하여 전달하기
+        session = model.Session()
+        user = self._get_user(session, user_password_info.username)
+        try:
+            token = session.query(model.LostPasswordToken).filter_by(user_id=user.id, code=token_code).one()
+        except NoResultFound:
+            session.close()
+            raise InvalidOperation('INVALID_APPROACH')
+        except MultipleResultsFound:
+            session.close()
+            raise InternalError()
+
+        user.set_password(user_password_info.new_password)
+        session.delete(token)
+        session.commit()
+        # pipoket: SECURITY ISSUE! PASSWORD SHOULD NOT BE LOGGED!
+        #           This logging function will log necessary information but NOT PASSWORD.
+        self.logger.info(u"PASSWORD CHANGE:(username=%s)" % user_password_info.username)
+        session.close()
+
     @require_login
     @log_method_call_important
     def modify_user(self, session_key, user_modification):
@@ -990,6 +1029,38 @@ class MemberManager(arara_manager.ARAraManager):
 
         return True
 
+    @log_method_call
+    def send_password_recovery_email(self, username, email):
+        '''
+        비밀번호를 분실했을 때, username과 등록된 email 주소가 맞으면 패스워드를 변경할 수 있는 일회용 Token을 생성해 이메일로 전송한다.
+
+        @type  username: string
+        @param username: 비밀번호를 찾으려는 유저 이름
+        @type  email: string
+        @param email: 등록된 E-mail 주소
+        @rtype: None
+        @return: None
+        '''
+        session = model.Session()
+        user = self._get_user(session, username)
+
+        if user.email != email:
+            raise InvalidOperation("No account found with that email address.")
+
+        session.query(model.LostPasswordToken).filter_by(user_id=user.id).delete()
+        session.flush()
+
+        generated_string = ''.join([random.choice(string.lowercase + string.uppercase + string.digits) for i in range(24)])
+        token = model.LostPasswordToken(user_id=user.id, code=generated_string)
+        session.add(token)
+        session.commit()
+        session.close()
+
+        url = 'http://' + etc.arara_settings.WARARA_SERVER_ADDRESS + '/account/recover/%s/%s/' % (username, generated_string)
+        title = arara_settings.MAIL_TITLE['password_recovery']
+        content = arara_settings.MAIL_CONTENT['password_recovery'] + '<a href=\'%s\'>%s</a>' % (url, url)
+        send_mail(title, email, content)
+
     @require_login
     @log_method_call_important
     def is_sysop(self, session_key):
@@ -1224,6 +1295,7 @@ class MemberManager(arara_manager.ARAraManager):
             get_info,
             modify_password,
             modify_password_sysop,
+            modify_password_with_token,
             modify_user,
             modify_authentication_email,
             query_by_username,
@@ -1231,6 +1303,7 @@ class MemberManager(arara_manager.ARAraManager):
             remove_user,
             search_user,
             send_id_recovery_email,
+            send_password_recovery_email,
             is_sysop,
             logout_process,
             get_activated_users,
