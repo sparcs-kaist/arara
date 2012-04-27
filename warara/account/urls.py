@@ -19,4 +19,6 @@ urlpatterns = patterns('',
     (r'^register/confirm_passive/$','warara.account.views.confirm_passive'),
     (r'^register/confirm_passive_url/$','warara.account.views.confirm_passive_url'),
     (r'^id_recovery/$','warara.account.views.id_recovery'),
+    (r'^recover/$','warara.account.views.send_password_recovery_email'),
+    (r'^recover/([\w\-\.]+)/([\w\-\.]+)/$','warara.account.views.password_recovery'),
 )

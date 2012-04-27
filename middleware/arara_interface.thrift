@@ -348,6 +348,10 @@ service ARAraThriftInterface {
                                2:UserPasswordInfo user_password_info)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void modify_password_with_token(1:UserPasswordInfo user_password_info,
+                                    2:string token_code)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     void modify_user(1:string session_key,
                      2:UserModification user_modification_info)
         throws (1:InvalidOperation invalid,
@@ -373,6 +377,10 @@ service ARAraThriftInterface {
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     bool send_id_recovery_email(1:string email)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void send_password_recovery_email(1:string username,
+                                      2:string email)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
     bool is_sysop(1:string session_key)

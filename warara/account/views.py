@@ -323,3 +323,62 @@ def id_recovery(request):
         rendered = render_to_string('account/id_recovery.html')
         return HttpResponse(rendered)
 
+def send_password_recovery_email(request):
+    sess, r = warara.check_logged_in(request)
+    server = warara_middleware.get_server()
+    if r['logged_in'] == True:
+        raise InvalidOperation("Already logged in!")
+
+    if request.method == 'POST':
+        username = request.POST.get('username_field', '')
+        email = request.POST.get('email_field', '')
+
+        error_msg = ''
+        if not username:
+            error_msg = 'Username field is empty.'
+        if not email:
+            error_msg = 'Email field is empty.'
+        if error_msg:
+            return HttpResponse('<script>alert("%s"); history.back(); </script>' % error_msg)
+
+        try:
+            server.member_manager.send_password_recovery_email(username, email)
+            resp = "We sent e-mail to your e-mail address. Please check your inbox."
+        except InvalidOperation, e:
+            resp = e.why
+
+        return HttpResponse('<script>alert("%s"); history.back(); </script>' % resp)
+    else:
+        rendered = render_to_string('account/password_recovery_send_email.html', r)
+        return HttpResponse(rendered)
+
+def password_recovery(request, username, token_code):
+    sess, r = warara.check_logged_in(request)
+    server = warara_middleware.get_server()
+    if r['logged_in'] == True:
+        raise InvalidOperation("Already logged in!")
+
+    if request.method == 'POST':
+        new_password = request.POST.get('password', '')
+        new_password_check = request.POST.get('re_password', '')
+
+        error_msg = ''
+        if new_password != new_password_check:
+            error_msg = 'Passwords are not agree.'
+        if new_password == '':
+            error_msg = 'Password cannot be empty.'
+        if error_msg:
+            return HttpResponse('<script>alert("%s"); history.back(); </script>' % error_msg)
+
+        user_password_dic = {'username':username, 'current_password':u'', 'new_password':new_password}
+        try:
+            server.member_manager.modify_password_with_token(UserPasswordInfo(**user_password_dic), token_code)
+        except InvalidOperation, e:
+            return HttpResponse('<script>alert("%s"); history.back(); </script>' % e.why)
+
+        return HttpResponseRedirect("/")
+    else:
+        r['username'] = username
+        r['token_code'] = token_code
+        rendered = render_to_string('account/password_recovery_process.html', r)
+        return HttpResponse(rendered)
