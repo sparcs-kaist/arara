@@ -149,6 +149,12 @@ def login(request):
             return HttpResponse('<script>alert("Login failed!"); history.back()</script>');
 
     User_Info = server.member_manager.get_info(session_key)
+    # Check mismatch
+    if User_Info.username != username:
+        server.login_manager.debug__check_session(session_key, username)
+        server.login_manager.logout(session_key)
+        return HttpResponse('<script>alert("Something is Wrong. Please report to Sysop."); history.back()</script>')
+
     if User_Info.default_language == "kor":
         request.session["django_language"] = "ko"
     elif User_Info.default_language == "eng":
