@@ -703,15 +703,21 @@ def rss(request, board_name):
 
     return HttpResponse(feed.writeString('utf-8'), mimetype=feedgenerator.Atom1Feed.mime_type)
 
-# Using Django's default HTML handling util, escape all tags and urlize
+# Using Django's default HTML handling util, escape all tags and urlize, and do some content substitution.
 # 동시에 <a> tag 를 target="_blank" 로 설정되도록 regex 를 써서 바꿔버린다.
 # TODO: 더 나은 방법이 있다면 (CSS 에 a tag 에 속성 먹이기가 더 예쁘지 않을까...전체를 div class 로 감싸서)
 #       그거로 바꾸기!
 from django.utils import html
 import re
+youtube_tag = re.compile(r'http(?:s?)://(?:www\.)?youtu(?:be\.com/watch\?v=|\.be/)([\w\-]+)(&(amp;)?[\w\?=]*)?')
 a_tag = re.compile(r'<a href="(.+?)">')
 def render_content(content):
-    return a_tag.sub(r'<a href="\1" target="_blank">', html.urlize(html.escape(content)))
+    content = html.escape(content)
+    # Do the substitution
+    content = youtube_tag.sub(r'\g<0>\n<iframe width="560" height="315" src="http://www.youtube.com/embed/\1" frameborder="0" allowfullscreen></iframe>\n', content)
+    content = html.urlize(content)
+    content = a_tag.sub(r'<a href="\1" target="_blank">', content)
+    return content
 
 def render_reply(board_name, article_list, base_url):
     if article_list == []:
