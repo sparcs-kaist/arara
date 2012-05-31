@@ -1017,6 +1017,15 @@ class ArticleManagerTest(AraraTestBase):
         self.engine.article_manager.put_user_specific_info(-1, article_list, [1, 2, 3, 4, 5])
         self.assertEqual(['N', 'N', 'N', 'N', 'N'], [x.read_status for x in article_list.hit])
 
+    def test_article_list_by_user(self):
+        id_list = []
+        for x in xrange(10):
+            id_list.append(self._dummy_article_write(self.session_key_mikkang))
+
+        result_id_list = self.engine.article_manager.get_article_list_by_username(self.engine.login_manager.get_session(self.session_key_mikkang).username)
+        self.assertEqual(sorted(id_list), sorted(result_id_list))
+        
+
     def get_get_page_info(self):
         self.assertEqual((2, 6, 2), self.engine.article_manager.get_page_info(6, 1, 5))
         self.assertEqual((3, 11, 7), self.engine.article_manager.get_page_info(11, 1, 5))

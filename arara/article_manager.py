@@ -452,6 +452,18 @@ class ArticleManager(arara_manager.ARAraManager):
             session.close()
             raise InvalidOperation("WRONG_ORDERING")
 
+    def get_article_list_by_username(self, username):
+        '''
+        해당 username이 작성한 글 번호 리스트를 반환한다.
+
+        @type  username: str
+        @param username: 글을 가져올 유저 아이디
+        @return: username에 해당하는 user가 쓴 게시물의 목록
+        '''
+        session = model.Session()
+        user_id = session.query(model.User).filter_by(username=username).first().id
+        return [article.id for article in session.query(model.Article).filter_by(author_id=user_id)]
+
     def get_article_list(self, board_name, heading_name, page, page_length, include_all_headings=True, order_by=LIST_ORDER_ROOT_ID):
         '''
         게시물의 목록, 각 게시물에 마지막으로 달린 답글의 번호를 반환한다.
