@@ -462,7 +462,7 @@ class ArticleManager(arara_manager.ARAraManager):
         '''
         session = model.Session()
         user_id = session.query(model.User).filter_by(username=username).first().id
-        return [article.id for article in session.query(model.Article).filter_by(author_id=user_id)]
+        return session.query(model.Article).filter_by(author_id=user_id)
 
     def get_article_list(self, board_name, heading_name, page, page_length, include_all_headings=True, order_by=LIST_ORDER_ROOT_ID):
         '''

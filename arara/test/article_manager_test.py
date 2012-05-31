@@ -1022,15 +1022,15 @@ class ArticleManagerTest(AraraTestBase):
         for x in xrange(10):
             id_list.append(self._dummy_article_write(self.session_key_mikkang))
 
-        result_id_list = self.engine.article_manager.get_article_list_by_username(self.engine.login_manager.get_session(self.session_key_mikkang).username)
-        self.assertEqual(sorted(id_list), sorted(result_id_list))
+        article_list = self.engine.article_manager.get_article_list_by_username(self.engine.login_manager.get_session(self.session_key_mikkang).username)
+        self.assertEqual(sorted(id_list), sorted([article.id for article in article_list]))
 
         id_list = []
         for x in xrange(10):
             id_list.append(self._dummy_article_write(self.session_key_serialx))
 
-        result_id_list = self.engine.article_manager.get_article_list_by_username(self.engine.login_manager.get_session(self.session_key_serialx).username)
-        self.assertEqual(sorted(id_list), sorted(result_id_list))
+        article_list = self.engine.article_manager.get_article_list_by_username(self.engine.login_manager.get_session(self.session_key_serialx).username)
+        self.assertEqual(sorted(id_list), sorted([article.id for article in article_list]))
         
 
     def get_get_page_info(self):
