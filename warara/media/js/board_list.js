@@ -120,7 +120,11 @@ $(document).ready(function(){
                     break;
                 case 106:  // j
                     cursor_pos += 1;
-                    if (cursor_pos >= row_count) cursor_pos = row_count - 1;
+                    if (cursor_pos >= row_count) {
+                        var next_page = $("#now_page").next().attr("href");
+                        if (next_page != undefined) location.href = next_page;
+                        else cursor_pos = row_count-1;
+                    }
                     update_table(cursor_pos);
                     break;
                 case 107:  // k
