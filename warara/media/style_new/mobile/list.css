@@ -13,19 +13,33 @@
 }
 .listTitle{
     font-weight: bold;
-    font-size: 15px;
-    display: block;
-    padding-top: 3px;
+    display: inline-block;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    max-width: 100%;
+    margin-right: -44px;
+}
+.listTitleWrap{
+    padding-top: 3px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 15px;
+}
+.listTitleReply{
+    padding-right: 40px;
 }
 .re_num{
-    position: relative;
+    display: inline-block;
+    font-size: 15px;
     font-weight: normal;
     padding-left: 5px;
+    padding-top: 3px;
     color: #ff0060;
     letter-spacing: 0px;
+    width: 34px;
+    text-overflow: crop;
+    overflow: hidden;
 }
 
 .listInfo{
