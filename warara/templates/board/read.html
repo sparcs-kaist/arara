@@ -33,8 +33,14 @@
 {% endif %}
 
 <div class="articleView">
-    <div class="articleTitle {% if article.deleted %} deleted {% endif %}">
-        <h3><a href="#" id="{{article.id}}">{{article.title}}</a></h3>
+    <div class="articleTitle {% if article.deleted or article.blacklisted %} deleted {% endif %}">
+        <h3><a href="#" id="{{article.id}}">
+                {% if not article.deleted and article.blacklisted %}
+                    {% trans "-- Blacklisted --" %}
+                {% else %}
+                    {{article.title}}
+                {% endif %}
+        </a></h3>
         <p class="smallCat">
         {% ifequal mode 'all' %}
             <a href="/board/{{article.board_name}}/">{{article.board_name}}</a>
@@ -53,8 +59,8 @@
         </div>
     </div>
     <div class="articleContents">
-        {% if not article.blacklisted %}
         <table class="attached" cellspacing="0">
+            {% if not article.blacklisted %}
             <tbody>
                 {% for file in article.attach %}
                 <tr>
@@ -69,15 +75,17 @@
                 </tr>
                 {% endfor %}
             </tbody>
+            {% endif %}
         </table>
-        <div class="article {% if article.deleted %} deleted {% endif %}">
-            {{article.content|safe|linebreaksbr}}
+        <div class="article {% if article.deleted or article.blacklisted %} deleted {% endif %}">
+            {% if not article.deleted and article.blacklisted %}
+                {% trans "-- Blacklisted --" %}
+            {% else %}
+                {{article.content|safe|linebreaksbr}}
+            {% endif %}
         </div>
-        {% else %}
-        {% trans "BLACKLISTED" %}
-        {% endif %}
 
-        {% if not article.deleted %}
+        {% if not article.deleted and not article.blacklisted %}
         <p class="articleButtons">
             <input type="submit" class="smallButton reply" value="답글달기" />
             <input type="submit" class="smallButton rec" value="추천하기" />

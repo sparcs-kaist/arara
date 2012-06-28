@@ -23,7 +23,7 @@
     </thead>
     <tbody>
         {% for article in article_list %}
-        <tr {% if article.deleted %} class = "deleted" {% endif %} rel="{{forloop.counter}}">
+        <tr {% if article.deleted or article.blacklisted %} class = "deleted" {% endif %} rel="{{forloop.counter}}">
             <td class="indicator">
                 {% ifequal article.read_status 'U' %}<span class="update">U</span>{% endifequal %}
                 {% ifequal article.read_status 'N' %}<span class="new">N</span>{% endifequal %}
@@ -47,8 +47,8 @@
             <td class="title">
                 {% if logged_in %}
                     <a href="{{ base_url }}{{article.id}}/?page_no={{page_no}}">
-                        {% if article.blacklisted %}
-                            {% trans "BLACKLISTED" %}
+                        {% if not article.deleted and article.blacklisted %}
+                            {% trans "-- Blacklisted --" %}
                         {% else %}
                             {{ article.title }}
                             {% if article.reply_count %}
