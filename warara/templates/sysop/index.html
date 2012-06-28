@@ -139,6 +139,18 @@
     </form>
 </fieldset>
 
+<fieldset id="modify_password">
+    <legend>사용자 비밀번호 바꾸기</legend>
+    <form method="post" action="/sysop/modify_password/">
+        <label for="modifying_username">사용자 아이디</label>
+        <input type="text" class="textfield" name="modifying_username" id="modifying_username" /><br />
+        <label for="new_password">새 비밀번호</label>
+        <input type="text" class="textfield" name="new_password" id="new_password" /><br />
+
+        <input type="submit" class="button" value="적용" />
+    </form>
+</fieldset>
+
 <fieldset id="refresh_weather">
     <legend>날씨 정보 갱신</legend>
     <form method="post" action="/sysop/refresh_weather/">

@@ -2,6 +2,7 @@
 import datetime
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
+from arara_thrift.ttypes import *
 
 import warara
 from warara import warara_middleware
@@ -197,6 +198,14 @@ def confirm_user(request):
     server = warara_middleware.get_server()
     sess, r = warara.check_logged_in(request)
     msg = server.member_manager.backdoor_confirm(sess, request.POST['confirm_username'])
+    return HttpResponseRedirect('/sysop/')
+
+@warara.wrap_error
+def modify_password(request):
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+    user_information_dic = {'username':request.POST['modifying_username'], 'new_password':request.POST['new_password']}
+    msg = server.member_manager.modify_password_sysop(sess, UserPasswordInfo(**user_information_dic))
     return HttpResponseRedirect('/sysop/')
 
 @warara.wrap_error
