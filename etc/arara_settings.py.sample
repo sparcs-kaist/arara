@@ -42,7 +42,7 @@ MAIL_TITLE = {
 }
 
 # Part 4. BOT Setting
-BOT_ENABLED = True
+BOT_ENABLED = False
 # BOT's account name and password setting.
 # Warning : Do not change BOT's password in web page.
 BOT_ACCOUNT_USERNAME = u'BOT'

@@ -71,7 +71,7 @@ MAIL_TITLE = {
 }
 
 # Part 4. BOT Setting
-BOT_ENABLED = True
+BOT_ENABLED = False
 # BOT's account name and password setting.
 # Warning : Do not change BOT's password in web page.
 BOT_ACCOUNT_USERNAME = u'BOT'
@@ -118,7 +118,7 @@ FILE_DIR = '`pwd`/var/files'
 FILE_MAXIMUM_SIZE = 100*1024*1024
 
 # ARAra forecast Service Setting
-USE_WEATHER_FORECAST = True
+USE_WEATHER_FORECAST = False
 
 # ReadStatus Display
 READ_STATUS_ENABLED = True
