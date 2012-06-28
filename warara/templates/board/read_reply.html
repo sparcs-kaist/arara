@@ -1,4 +1,4 @@
-<ul class="replyBox">
+<ul class="replyBox {% if article.deleted %} deleted {% endif %} " >
     <li>
         <div class="replyTitle">
             <h4><a href="#" id="{{article.id}}">{{article.title}}</a></h4>

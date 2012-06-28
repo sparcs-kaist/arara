@@ -33,7 +33,7 @@
 {% endif %}
 
 <div class="articleView">
-    <div class="articleTitle">
+    <div class="articleTitle {% if article.deleted %} deleted {% endif %}">
         <h3><a href="#" id="{{article.id}}">{{article.title}}</a></h3>
         <p class="smallCat">
         {% ifequal mode 'all' %}
@@ -70,7 +70,7 @@
                 {% endfor %}
             </tbody>
         </table>
-        <div class="article">
+        <div class="article {% if article.deleted %} deleted {% endif %}">
             {{article.content|safe|linebreaksbr}}
         </div>
         {% else %}

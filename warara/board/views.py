@@ -293,8 +293,8 @@ def _read(request, r, sess, board_name, article_id):
         if article.deleted: #deleted article access
             article.author_nickname = ''
             article.author_username = ''
-            article.content = '-- deleted --'
-            article.title  = '-- deleted --'
+            article.content = '-- Deleted --'
+            article.title  = '-- Deleted --'
             article.attach = None
             article.image = None
             continue
