@@ -48,13 +48,13 @@
             {% if article.attach %}
             {% for file in article.attach %}
             <tr class="deleteAttach">
-                <th>첨부{{ forloop.counter }}</th>
+                <th>첨부</th>
                 <td><a name="file_name" rel="{{file.file_id}}" href="/board/{{board_name}}/0/{{article.id}}/file/{{file_id}}" target="_blank">{{file.filename}}</a><a class="deleteAttachLink" href="#">삭제</a><input type="hidden" name="file_id" value="{{file.file_id}}" /></td>
             </tr>
             {% endfor %}
             {% endif %}
             <tr class="writeAttach">
-                <th><label for="writePost_attach_1">첨부1</label></th>
+                <th><label for="writePost_attach_1">첨부</label></th>
                 <td><input name="writePost_attach_1" id="writePost_attach_1" type="file" /> <a id="attach_more" href="#">더 첨부하기</a></td>
             </tr>
         </tbody>

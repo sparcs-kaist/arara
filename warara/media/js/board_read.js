@@ -66,7 +66,7 @@ $(document).ready(function(){
         var new_attach = this_select.parent().parent().clone();
         var new_attach_id = "write_reply_attach_" + $file_no;
         
-        new_attach.children("th").children("label").attr("for", new_attach_id).text("첨부" + $file_no);
+        new_attach.children("th").children("label").attr("for", new_attach_id).text("첨부");
         new_attach.children("td").children("input").attr("name", new_attach_id).attr("id", new_attach_id);
         new_attach.children("td").children("input").html(new_attach.children("td input").html()); //reset the input field
         new_attach.children("td").children("a").click(function(event){
