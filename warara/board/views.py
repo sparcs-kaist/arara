@@ -291,8 +291,8 @@ def _read(request, r, sess, board_name, article_id):
         article.date = datetime.datetime.fromtimestamp(article.date)
 
         if article.deleted: #deleted article access
-            article.author_nickname = ''
-            article.author_username = ''
+            #article.author_nickname = ''
+            #article.author_username = ''
             article.content = '-- Deleted --'
             article.title  = '-- Deleted --'
             article.attach = None

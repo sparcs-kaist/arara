@@ -1,6 +1,6 @@
 {% extends "mobile/base.html" %}
 {% load arara_tags %}
-
+{% load i18n %}
 
 {% block style %}<link rel="stylesheet" href="/media/style_new/mobile/read.css" type="text/css" />{% endblock %}
 {% block header %}
@@ -14,20 +14,29 @@
 {% ifequal mode 'all' %} {% url warara.mobile.all.views.list as base_url %} {% endifequal %}
 <div id="article_head">
     <div class="article_title">
-        {{article.title}}
+        {% if not article.deleted and article.blacklisted %}
+            {% trans "-- Blacklisted --" %}
+        {% else %}
+            {{article.title}}
+        {% endif %}
     </div>
     <span class="article_info">{{article.author_nickname}} |  {{article.date|date:"Y-m-d H:i"}} | 추천 {{article.positive_vote}} / 반대 {{article.negative_vote}} | 조회 {{article.hit}}</span>
 </div>
 <div id="article_contents">
     <p class="article_contents">
-        {{article.content|safe|linebreaksbr}}
+        {% if not article.deleted and article.blacklisted %}
+            {% trans "-- Blacklisted --" %}
+        {% else %}
+            {{article.content|safe|linebreaksbr}}
+        {% endif %}
     </p>
     <div id="article_buttons">
-    {% if not article.deleted %}
         <div class="left">
+        {% if not article.deleted and not article.blacklisted %}
             <a class="reply" href="#reply"><span class="button">답글달기</span></a>
             <a class="rec" href="/board/{{article.board_name}}/{{article.root_id}}/{{article.id}}/vote/+"><span class="button">추천</span></a>
             <a class="rec" href="/board/{{article.board_name}}/{{article.root_id}}/{{article.id}}/vote/-"><span class="button">반대</span></a>
+        {% endif %}
         </div>
         {% if article.flag_modify %}
         <div class="right">
@@ -38,7 +47,6 @@
         <input type="hidden" class="meta board_name" value="{{article.board_name}}" />
         <input type="hidden" class="meta article_id" value="{{article.id}}" />
     </div>
-    {% endif %}
     <div class="add_reply">
         <form method="post" action="{{ base_url }}{{article.id}}/reply/" enctype="multipart/form-data">
             <input type="hidden" name="root_id" value="{{article.id}}" />

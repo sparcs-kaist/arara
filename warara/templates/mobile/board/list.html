@@ -1,5 +1,6 @@
 {% extends "mobile/base.html" %}
 {% load arara_tags %}
+{% load i18n %}
 
 {% block style %}<link rel="stylesheet" href="/media/style_new/mobile/list.css" type="text/css" />{% endblock %}
 {% block header %}
@@ -12,8 +13,16 @@
     <ul>
         {% for article in article_list %}
         <li class="listLi">
-        <a href="{{ base_url}}{{article.id}}/?page_no={{page_no}}"><div class="listTitle"><div class="listTitleWrap {% if article.reply_count %}listTitleReply{% endif %}">{% if article.blacklisted %}"BLACKLISTED" {% else %}{{ article.title }}{% endif %}</div></div>
-                {% if article.reply_count %}<div class="re_num">({{article.reply_count}})</div>{% endif %}</a>
+        <a href="{{ base_url}}{{article.id}}/?page_no={{page_no}}"><div class="listTitle">
+            <div class="listTitleWrap {% if article.reply_count %}listTitleReply{% endif %}">
+                {% if not article.deleted and article.blacklisted %}
+                    {% trans "-- Blacklisted --" %}
+                {% else %}
+                    {{ article.title }}
+                {% endif %}
+            </div></div>
+            {% if article.reply_count %}<div class="re_num">({{article.reply_count}})</div>{% endif %}
+        </a>
         <span class="listInfo">{% ifequal mode 'all' %}<b>{{article.board_name}}</b> | {% endifequal %}{{article.author_nickname|truncatechars:"8"}} | 추천 {{article.positive_vote}} / 반대 {{article.negative_vote}} | 조회: {{article.hit}}</span>
         </li>
         {% endfor %}

@@ -1,16 +1,31 @@
+{% load i18n %}
 <li class="re_list" id="{{article.id}}">
 <div class="re_info">
     <div class="left">
         {% for i in depth %}<img src="/media/image/mobile/re_arrow.png" class="re_arrow">{% endfor %}
-        <span class="re_id">{{article.author_nickname}}</span> {{article.date|date:"Y-m-d H:i"}} <a class="rec" href="/board/{{article.board_name}}/{{article.root_id}}/{{article.id}}/vote/+">▲ {{article.positive_vote}}</a> / <a class="rec" href="/board/{{article.board_name}}/{{article.root_id}}/{{article.id}}/vote/-">▼ {{article.negative_vote}}</a>
+        <span class="re_id">{{article.author_nickname}}</span> {{article.date|date:"Y-m-d H:i"}} 
+        {% if not article.deleted and not article.blacklisted %}
+            <a class="rec" href="/board/{{article.board_name}}/{{article.root_id}}/{{article.id}}/vote/+">▲ {{article.positive_vote}}</a> / 
+            <a class="rec" href="/board/{{article.board_name}}/{{article.root_id}}/{{article.id}}/vote/-">▼ {{article.negative_vote}}</a>
+        {% else %}
+            <a href="#"> ▲  {{article.positive_vote}} </a> / 
+            <a href="#"> ▼ {{article.negative_vote}} </a>
+        {% endif %}
     </div>
     <div class="right">
+        {% if not article.deleted and not article.blacklisted %}
         <a href="#" class="reply">답글</a>
+        {% endif %}
     </div>
     <div class="cb"></div>
     <input type="hidden" class="meta board_name" value="{{article.board_name}}" />
     <input type="hidden" class="meta article_id" value="{{article.id}}" />
 </div>
-<span class="re_contents">{{ article.content|safe|linebreaksbr }}
+<span class="re_contents">
+    {% if article.blacklisted %}
+        {% trans "-- Blacklisted --" %}
+    {% else %}
+        {{ article.content|safe|linebreaksbr }}
+    {% endif %}
 </span>
 </li>
