@@ -253,6 +253,9 @@ class ReadStatusManager(arara_manager.ARAraManager):
         @rtype: list<str>
         @return: 주어진 각 게시물별 글읽음 상태
         '''
+        if not arara_settings.USE_READ_STATUS:
+            return 'N' * len(no_list)
+
         self._initialize_data(user_id)
         return self.read_status[user_id].get_range(no_list)
 
