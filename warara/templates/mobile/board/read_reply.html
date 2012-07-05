@@ -1,5 +1,6 @@
 {% load i18n %}
 <li class="re_list" id="{{article.id}}">
+<div {% if article.deleted or article.blacklisted %} class = "deleted" {% endif %} >
 <div class="re_info">
     <div class="left">
         {% for i in depth %}<img src="/media/image/mobile/re_arrow.png" class="re_arrow">{% endfor %}
@@ -28,4 +29,5 @@
         {{ article.content|safe|linebreaksbr }}
     {% endif %}
 </span>
+</div>
 </li>

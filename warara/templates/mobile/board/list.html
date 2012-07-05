@@ -13,17 +13,20 @@
     <ul>
         {% for article in article_list %}
         <li class="listLi">
-        <a href="{{ base_url}}{{article.id}}/?page_no={{page_no}}"><div class="listTitle">
-            <div class="listTitleWrap {% if article.reply_count %}listTitleReply{% endif %}">
-                {% if not article.deleted and article.blacklisted %}
-                    {% trans "-- Blacklisted --" %}
-                {% else %}
-                    {{ article.title }}
-                {% endif %}
-            </div></div>
-            {% if article.reply_count %}<div class="re_num">({{article.reply_count}})</div>{% endif %}
-        </a>
-        <span class="listInfo">{% ifequal mode 'all' %}<b>{{article.board_name}}</b> | {% endifequal %}{{article.author_nickname|truncatechars:"8"}} | 추천 {{article.positive_vote}} / 반대 {{article.negative_vote}} | 조회: {{article.hit}}</span>
+        <div {% if article.deleted or article.blacklisted %}class = "deleted" {% endif %} >
+            <a href="{{ base_url}}{{article.id}}/?page_no={{page_no}}"><div class="listTitle">
+                <div class="listTitleWrap {% if article.reply_count %}listTitleReply{% endif %}">
+                    {% if not article.deleted and article.blacklisted %}
+                        {% trans "-- Blacklisted --" %}
+                    {% else %}
+                        {{ article.title }}
+                    {% endif %}
+                </div></div>
+                {% if article.reply_count %}<div class="re_num">({{article.reply_count}})</div>{% endif %}
+            </a>
+            <span class="listInfo">
+                {% ifequal mode 'all' %}<b>{{article.board_name}}</b> | {% endifequal %}{{article.author_nickname|truncatechars:"8"}} | 추천 {{article.positive_vote}} / 반대 {{article.negative_vote}} | 조회: {{article.hit}}</span>
+        </div>
         </li>
         {% endfor %}
     </ul>

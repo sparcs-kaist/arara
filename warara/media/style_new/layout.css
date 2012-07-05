@@ -244,6 +244,6 @@ input { font-family:Dotum,돋움,Helvetica,Arial,sans-serif; }
 .hidden { display:none; }
 /* Highlight Class */
 .highlight { font-weight:bold; }
-/* Deleted article */
+/* Deleted or Blacklisted article */
 .deleted{ -moz-opacity: 0.5; filter:alpha(opacity:50); opacity:0.5; }
 
