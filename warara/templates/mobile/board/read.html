@@ -86,4 +86,7 @@
     </div>
 </div>
 {% endblock %}
-{% block pc_url %}/board/{{ board_name }}/{{ article.id }}/{% endblock %}
+{% block pc_url %}
+    {% ifequal mode 'board' %} /board/{{ board_name }}/{{ article.id }}/{% endifequal %}
+    {% ifequal mode 'all' %} /all/{{ article.id }}/ {% endifequal %}
+{% endblock %}
