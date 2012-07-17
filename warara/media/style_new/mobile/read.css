@@ -131,3 +131,15 @@ span, p{
     border: 1px solid #cccccc;
     font-weight: bold;
 }
+#attached_table th{
+    width: 40px;
+}
+#attached_table {
+    width: 100%;
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+.attached_image{
+    max-width: 100%;
+    border: 0;
+}

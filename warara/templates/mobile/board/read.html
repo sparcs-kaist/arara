@@ -10,8 +10,14 @@
 {% endblock %}
 {% block content %}
 
-{% ifequal mode 'board' %} {% url warara.mobile.board.views.list board_name as base_url %} {% endifequal %}
-{% ifequal mode 'all' %} {% url warara.mobile.all.views.list as base_url %} {% endifequal %}
+{% ifequal mode 'board' %}
+{% url warara.mobile.board.views.list board_name as base_url %}
+{% url warara.board.views.list board_name as pcver_url %}
+{% endifequal %}
+{% ifequal mode 'all' %}
+{% url warara.mobile.all.views.list as base_url %}
+{% url warara.all.views.list as pcver_url %}
+{% endifequal %}
 <div id="article_head">
     <div {% if article.deleted or article.blacklisted %} class = "deleted" {% endif %} >
         <div class="article_title">
@@ -25,6 +31,28 @@
     </div>
 </div>
 <div id="article_contents">
+    <table id="attached_table" cellspacing="0">
+        {% if not article.blacklisted %}
+        <tbody>
+            {% for file in article.attach %}
+            <tr>
+                <th>첨부{{forloop.counter}}</th>
+                <td><a href="{{ pcver_url }}{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" target="_blank">{{file.filename}}</a>
+            </tr>
+            {% if file.file_id in article.image %}
+            <tr>
+                <td colspan="2">
+                    <div class="collapsed_img" style="display: none;" >
+                        <img src="{{ pcver_url }}{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" alt="{{file.file_id}}" class="attached_image" />
+                    </div>
+                    <a href="{{ pcver_url }}{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" class="toggle_img">이미지 열기</a>
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+        {% endif %}
+    </table>
     <p class="article_contents{% if article.deleted or article.blacklisted %} deleted {% endif %}">
         {% if not article.deleted and article.blacklisted %}
             {% trans "-- Blacklisted --" %}

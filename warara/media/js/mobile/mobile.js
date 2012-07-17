@@ -101,4 +101,12 @@ $(document).ready(function(){
         else 
             document.cookie = 'savePWD' + '=' + "; expires=" + expireDate.toGMTString();
     });
+
+    $(".toggle_img").click(function(event){
+        var prev = $(this).prev();
+        if(prev.css('display') == 'none') $(this).text("이미지 닫기");
+        else $(this).text("이미지 열기");
+        prev.toggle();
+        event.preventDefault();
+    });
 });
