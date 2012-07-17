@@ -503,12 +503,12 @@ class LoginManager(arara_manager.ARAraManager):
             except KeyError:  # 이 함수 시행중 로그아웃된 경우
                 pass
 
-    def debug__check_session(self, session_key, username):
+    def debug__check_session(self, session_key, username, user_ip):
         '''
         session_key에 따른 정보와 frontend 측의 username이 불일치할경우에 불리는 함수로, 관련 정보를 logging 하는 debug용 함수이다
         #457번 티켓(다른 사용자로 로그인되는 문제)의 해결을 위한 임시 함수로, 문제가 해결되면 제거하도록 하자.
         '''
-        self.logger.error(' XXX   Session mismatch detected   XXX ')
+        self.logger.error(' XXX   Session mismatch detected   on %s XXX ' % user_ip)
         self.logger.error(' 1. given session key returned by login_manager.login:' + session_key)
         self.logger.error(' 2. session info (backend, may be wrong): ' + str(self.session_dic.get(session_key, 'NO INFO IN DICT')))
         self.logger.error(' 3. actual username (frontend, always true): ' + username)

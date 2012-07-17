@@ -14,7 +14,7 @@ def check_logged_in(request):
         if request.COOKIES.get('arara_checksum', '') != checksum:
             from warara import warara_middleware
             server = warara_middleware.get_server()
-            server.login_manager.debug__check_session(sess, username)
+            server.login_manager.debug__check_session(sess, username, request.META['REMOTE_ADDR'])
             request.session.flush()
 
             sess = ""
