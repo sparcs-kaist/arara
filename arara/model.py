@@ -320,6 +320,7 @@ class Article(Base):
 
     children = relationship('Article', join_depth=3,
         primaryjoin='articles.c.parent_id == articles.c.id',
+        order_by='articles.c.id',
         backref=backref('parent', lazy=True,
             remote_side=[id],
             primaryjoin='articles.c.parent_id == articles.c.id'))
