@@ -659,7 +659,7 @@ def file_download(request, board_name, article_root_id, article_id, file_id):
         response['Content-Encoding'] = encoding
 
     if u'WebKit' in request.META['HTTP_USER_AGENT']:
-        filename_header = 'filename=%s' % file.real_filename.encode('utf-8')
+        filename_header = 'filename="%s"' % file.real_filename.encode('utf-8')
     elif u'MSIE' in request.META['HTTP_USER_AGENT']:
         filename_header = ''
     else:
