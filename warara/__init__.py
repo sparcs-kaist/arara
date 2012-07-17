@@ -2,14 +2,29 @@ from django.core.cache import cache
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
 from arara_thrift.ttypes import *
+import hashlib
 
 def check_logged_in(request):
     r = {}
     if "arara_session_key" in request.session:
         sess = request.session['arara_session_key']
-        r['arara_session'] = sess
-        r['logged_in'] = True
-        r['username'] = request.session.get('arara_username', 0);
+
+        username = request.session['arara_username']
+        checksum = hashlib.sha1(sess+"@"+username).hexdigest()
+        if request.COOKIES.get('arara_checksum', '') != checksum:
+            from warara import warara_middleware
+            server = warara_middleware.get_server()
+            server.login_manager.debug__check_session(sess, username)
+            request.session.flush()
+
+            sess = ""
+            r['logged_in'] = False
+            r['username'] = ""
+            request.session['django_language']="en"
+        else:
+            r['arara_session'] = sess
+            r['logged_in'] = True
+            r['username'] = request.session.get('arara_username', 0);
     else:
         sess = ""
         r['logged_in'] = False

@@ -8,6 +8,8 @@ from libs import timestamp2datetime
 import warara
 from warara import warara_middleware
 
+import hashlib
+
 @warara.wrap_error
 def register(request):
     sess, r = warara.check_logged_in(request)
@@ -165,8 +167,14 @@ def login(request):
 
     request.session.set_expiry(3600)
     if current_page.find('register')+1:
-        return HttpResponseRedirect('/main/')
-    return HttpResponseRedirect(current_page)
+        response = HttpResponseRedirect('/main/')
+    else:
+        response = HttpResponseRedirect(current_page)
+
+    # Additional cookie for detect session mismatch
+    checksum = hashlib.sha1(session_key+"@"+username).hexdigest()
+    response.set_cookie(key='arara_checksum', value=checksum, max_age=None)
+    return response
 
 @warara.wrap_error
 def logout(request):
@@ -177,7 +185,10 @@ def logout(request):
     del request.session['arara_username']
     del request.session['arara_userid']
     request.session.clear()
-    return HttpResponseRedirect('/')
+
+    response = HttpResponseRedirect('/')
+    response.delete_cookie('arara_checksum')
+    return response
 
 @warara.wrap_error
 def account(request):

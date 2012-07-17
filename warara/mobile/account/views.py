@@ -7,6 +7,7 @@ from libs import timestamp2datetime
 
 import warara
 from warara import warara_middleware
+import hashlib
 
 @warara.prevent_cached_by_browser
 @warara.wrap_error_mobile
@@ -51,6 +52,12 @@ def login(request):
             return HttpResponse('<script>alert("Login failed!"); history.back()</script>');
 
     User_Info = server.member_manager.get_info(session_key)
+    # Check mismatch
+    if User_Info.username != username:
+        server.login_manager.debug__check_session(session_key, username)
+        server.login_manager.logout(session_key)
+        return HttpResponse('<script>alert("Something is Wrong. Please report to Sysop."); history.back()</script>')
+
     if User_Info.default_language == "kor":
         request.session["django_language"] = "ko"
     elif User_Info.default_language == "eng":
@@ -61,8 +68,14 @@ def login(request):
 
     request.session.set_expiry(3600)
     if current_page.find('register')+1:
-        return HttpResponseRedirect('/mobile/main/')
-    return HttpResponseRedirect(current_page)
+        response = HttpResponseRedirect('/mobile/main/')
+    else:
+        response = HttpResponseRedirect(current_page)
+
+    # Additional cookie for detect session mismatch
+    checksum = hashlib.sha1(session_key+"@"+username).hexdigest()
+    response.set_cookie(key='arara_checksum', value=checksum, max_age=None)
+    return response
 
 @warara.prevent_cached_by_browser
 @warara.wrap_error_mobile
@@ -74,5 +87,8 @@ def logout(request):
     del request.session['arara_username']
     del request.session['arara_userid']
     request.session.clear()
-    return HttpResponseRedirect('/mobile/')
+
+    response = HttpResponseRedirect('/mobile/')
+    response.delete_cookie('arara_checksum')
+    return response
 
