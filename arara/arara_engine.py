@@ -28,6 +28,9 @@ class ARAraEngine(object):
         if arara_settings.READ_STATUS_STORE_TYPE == 'maindb':
             from arara.read_status.db_backend import ReadStatusManagerDB
             self.read_status_manager = ReadStatusManagerDB(self)
+        elif arara_settings.READ_STATUS_STORE_TYPE == 'redis':
+            from arara.read_status.redis_backend import ReadStatusManagerRedis
+            self.read_status_manager = ReadStatusManagerRedis(self)
         else:
             from arara.read_status.default_backend import ReadStatusManagerDefault
             self.read_status_manager = ReadStatusManagerDefault(self)

@@ -18,9 +18,20 @@ from etc import arara_settings
 
 
 class ReadStatusManagerTest(AraraTestBase):
+    store_type = 'maindb'
+
+    # Decorator for skipping the test if store type is redis
+    def skip_test_if_redis(function):
+        def wrap(self, *args, **kwargs):
+            if self.store_type == 'redis':
+                print >>sys.stderr, 'skip ... Not needed on redis ... ',
+            else:
+                function(self, *args, **kwargs)
+        return wrap
+
     def setUp(self):
         # Common preparation for all tests
-        super(ReadStatusManagerTest, self).setUp(stub_time=True, stub_time_initial=1.1)
+        super(ReadStatusManagerTest, self).setUp(stub_time=True, stub_time_initial=1.1, read_status_store_type=self.store_type)
 
         # Login as SYSOP and create 'garbage'
         session_key_sysop = self.engine.login_manager.login(
@@ -114,6 +125,7 @@ class ReadStatusManagerTest(AraraTestBase):
         except NotLoggedIn:
             pass
 
+    @skip_test_if_redis
     def test_save_read_status_to_database(self):
         # mikkang 이 2개의 게시물을 작성
         self._write_articles()
@@ -133,6 +145,7 @@ class ReadStatusManagerTest(AraraTestBase):
         self.assertEqual('\x03\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x03\x00\x00\x00', read_status.read_status_numbers)
         self.assertEqual('NRN', read_status.read_status_markers)
 
+    @skip_test_if_redis
     def test_get_read_status_loaded_users(self):
         # 아무 유저도 글을 읽거나 하지 않은 상태를 점검
         self.assertEqual([], self.engine.read_status_manager.get_read_status_loaded_users())
@@ -154,9 +167,42 @@ class ReadStatusManagerTest(AraraTestBase):
     def tearDown(self):
         super(ReadStatusManagerTest, self).tearDown()
 
+class PipelineMockup(object):
+    def __init__(self, redis):
+        self.buffer = []
+        self.redis = redis
+    def set(self, key, value):
+        self.redis.set(key, value)
+    def get(self, key):
+        self.buffer.append(self.redis.get(key))
+    def execute(self):
+        r = self.buffer
+        self.buffer = []
+        return r
+
+class RedisMockup(object):
+    def __init__(self, host, port, db):
+        self.data = {}
+    def get(self, key):
+        return self.data.get(key, None)
+    def set(self, key, val):
+        self.data[key] = val
+    def pipeline(self):
+        return PipelineMockup(self)
+
+class ReadStatusManagerTestRedis(ReadStatusManagerTest):
+    store_type = 'redis'
+    def setUp(self):
+        # Mock Redis
+        import redis
+        redis.StrictRedis = RedisMockup
+        # Ok. setup.
+        super(ReadStatusManagerTestRedis, self).setUp()
 
 def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(ReadStatusManagerTest)
+    suite_db = unittest.TestLoader().loadTestsFromTestCase(ReadStatusManagerTest)
+    suite_redis = unittest.TestLoader().loadTestsFromTestCase(ReadStatusManagerTestRedis)
+    return unittest.TestSuite([suite_db, suite_redis])
 
 if __name__ == "__main__":
     unittest.TextTestRunner(verbosity=2).run(suite())
