@@ -54,10 +54,6 @@ class ArticleManagerTest(AraraTestBase):
         self.engine.board_manager.add_board(self.session_key_sysop, u'board_del', u'지워질 보드', u'Test Board for deleting board test', [])
         self.engine.board_manager.add_board(self.session_key_sysop, u'board_hide', u'숨겨질 보드', u'Test Board for hiding board test', [])
 
-        # ReadStatusManager 가 정상적으로 작동한다고 가정한다.
-        self.orig_USE_READ_STATUS = arara_settings.USE_READ_STATUS
-        arara_settings.USE_READ_STATUS = True
-
     def test_read_only_board(self):
         # Add a read-only board. Try to write an article. Must fail.
         self.engine.board_manager.add_read_only_board(self.session_key_sysop, u'board')
@@ -1044,7 +1040,6 @@ class ArticleManagerTest(AraraTestBase):
             self.assertEqual("WRONG_PAGENUM", str(e))
 
     def tearDown(self):
-        arara_settings.USE_READ_STATUS = self.orig_USE_READ_STATUS
         super(ArticleManagerTest, self).tearDown()
  
 def suite():

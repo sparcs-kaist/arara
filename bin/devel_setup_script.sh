@@ -99,8 +99,8 @@ MEMCACHED_PREFIX = '$USER'
 KSEARCH_API_SERVER_ADDRESS = 'http://nan.sparcs.org:9000/api'
 KSEARCH_API_KEY = '54ebf56de7684dba0d69bffc9702e1b4'
 
-# Using ReadStatus?
-USE_READ_STATUS = True" > etc/arara_settings.py
+# Specify ReadStatus Store type. Choices are 'none', 'maindb'
+READ_STATUS_STORE_TYPE = 'none'" > etc/arara_settings.py
 
 echo "#-*- coding: utf8 -*-
 # ARARA Server Type in ['THRIFT', 'DIRECT']

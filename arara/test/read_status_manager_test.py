@@ -9,6 +9,7 @@ sys.path.append(thrift_path)
 arara_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(arara_path)
 
+from arara.read_status.db_backend import ReadStatusManagerDB
 from arara.test.test_common import AraraTestBase
 from arara_thrift.ttypes import *
 import arara.model
@@ -17,7 +18,6 @@ from etc import arara_settings
 
 
 class ReadStatusManagerTest(AraraTestBase):
-
     def setUp(self):
         # Common preparation for all tests
         super(ReadStatusManagerTest, self).setUp(stub_time=True, stub_time_initial=1.1)
@@ -27,13 +27,9 @@ class ReadStatusManagerTest(AraraTestBase):
                 u'SYSOP', u'SYSOP', u'123.123.123.123')
         self.engine.board_manager.add_board(
                 unicode(session_key_sysop), u'garbages', u'쓰레기가 모이는 곳', u'Garbage Board')
-       
+ 
         # Register one user, mikkang
         self.session_key_mikkang = self.register_and_login(u'mikkang')
-
-        # ReadStatusManager를 사용하도록 설정되어 있음을 가정한다.
-        self.orig_USE_READ_STATUS = arara_settings.USE_READ_STATUS
-        arara_settings.USE_READ_STATUS = True
 
     def _write_articles(self):
         article = Article(**{'title': u'serialx is...', 'content': u'polarbear', 'heading': u''})
@@ -156,7 +152,6 @@ class ReadStatusManagerTest(AraraTestBase):
         self.assertEqual([], self.engine.read_status_manager.get_read_status_loaded_users())
 
     def tearDown(self):
-        arara_settings.USE_READ_STATUS = self.orig_USE_READ_STATUS
         super(ReadStatusManagerTest, self).tearDown()
 
 
