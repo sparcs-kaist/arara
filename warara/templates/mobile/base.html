@@ -50,7 +50,11 @@
             {% block footer %}
             <ul>
                 <li class="ft_link">
-                <a href="/mobile/account/logout/">로그아웃</a> | <a href="{% block pc_url %}/main/{% endblock %}">PC버전</a>
+                {% if logged_in %}
+                    <a href="/mobile/account/logout/">로그아웃</a> | <a href="{% block pc_url %}/main/{% endblock %}">PC버전</a>
+                {% else %}
+                    <a href="/mobile/">로그인</a>
+                {% endif %}
                 </li>
                 <li class="ft_cp">
                 Copyright ⓒ 2011 SPARCS. All rights reserved.
