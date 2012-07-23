@@ -103,10 +103,8 @@ $(document).ready(function(){
     });
 
     $(".toggle_img").click(function(event){
-        var prev = $(this).prev();
-        if(prev.css('display') == 'none') $(this).text("이미지 닫기");
-        else $(this).text("이미지 열기");
-        prev.toggle();
+        $(this).prev().show();
+        $(this).hide();
         event.preventDefault();
     });
 });

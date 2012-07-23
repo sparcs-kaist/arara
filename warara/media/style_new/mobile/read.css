@@ -143,3 +143,7 @@ span, p{
     max-width: 100%;
     border: 0;
 }
+.toggle_img{
+    display: block;
+    text-align: center;
+}
