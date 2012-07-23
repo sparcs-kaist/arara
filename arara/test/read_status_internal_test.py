@@ -11,7 +11,7 @@ sys.path.append(thrift_path)
 arara_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(arara_path)
 
-from arara.read_status_manager import ReadStatus
+from arara.read_status import ReadStatus
 
 class ReadStatusInternalTest(unittest.TestCase):
     def setUp(self):

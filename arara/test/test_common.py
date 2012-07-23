@@ -67,7 +67,7 @@ class StubTime(object):
 
 # Common Test Sets for all tests
 class AraraTestBase(unittest.TestCase):
-    def setUp(self, use_bot = False, mock_mail = True, stub_time=False, stub_time_initial=0.0):
+    def setUp(self, use_bot = False, mock_mail = True, stub_time=False, stub_time_initial=0.0, read_status_store_type='maindb'):
         self.use_bot = use_bot
         self.mock_mail = mock_mail
         self.stub_time = stub_time
@@ -81,6 +81,10 @@ class AraraTestBase(unittest.TestCase):
             self.org_SMTP = smtplib.SMTP
             smtplib.SMTP = SMTPMockup
 
+        # Overwrite Read Status Manager Type
+        self.org_READ_STATUS_STORE_TYPE = etc.arara_settings.READ_STATUS_STORE_TYPE
+        etc.arara_settings.READ_STATUS_STORE_TYPE = read_status_store_type
+
         # Memcache Prefix Change to prevent collision
         if etc.arara_settings.USE_MEMCACHED:
             self.org_MEMCACHED_PREFIX = etc.arara_settings.MEMCACHED_PREFIX
@@ -93,6 +97,7 @@ class AraraTestBase(unittest.TestCase):
 
         # Set Logger
         logging.basicConfig(level=logging.ERROR)
+
 
         # Initialize Database
         arara.model.init_test_database()
@@ -108,6 +113,8 @@ class AraraTestBase(unittest.TestCase):
             # If you want to test SMTPMockup object, uncomment next line
             # SMTPMockup.print_mail()
 
+        # Overwrite Read Status Manager Type
+        etc.arara_settings.READ_STATUS_STORE_TYPE = self.org_READ_STATUS_STORE_TYPE
 
         # Memcache Prefix Rollback
         if etc.arara_settings.USE_MEMCACHED:

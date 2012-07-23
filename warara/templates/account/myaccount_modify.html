@@ -71,6 +71,14 @@
                         <option value="1" {% ifequal listing_mode 1 %}selected{% endifequal %}>Forum</option>
                     </select>
                 </div>
+                <div>
+                    <span class="my_acc_info_name">{% trans "Reset Read Status" %}</span>
+                    <span class="my_acc_info_content"><a href="/account/unmark_all_articles/">All articles in ARA will be shown as not read.</a></span>
+                </div>
+                <div>
+                    <span class="my_acc_info_name">{% trans "Mark all as read" %}</span>
+                    <span class="my_acc_info_content"><a href="/account/mark_all_articles/">All articles in ARA will be shown as read.</a></span>
+                </div>
             </div>
         </span>
         <div id="register_buttons">

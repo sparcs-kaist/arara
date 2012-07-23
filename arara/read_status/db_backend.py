@@ -5,151 +5,25 @@ import traceback
 from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy.sql import func, select
 
-from libs import intlist_to_string, smart_unicode, string_to_intlist
-
-from arara.util import require_login
-from arara import arara_manager
 from arara import model
 from arara.util import require_login
 from arara.util import log_method_call_with_source, log_method_call_with_source_duration, log_method_call_with_source_important
+from arara.read_status import ReadStatus
+from arara.read_status.default_backend import ReadStatusManagerDefault
 
 from arara_thrift.ttypes import *
-from etc import arara_settings
 
-log_method_call = log_method_call_with_source('read_status_manager')
-log_method_call_duration = log_method_call_with_source_duration('read_status_manager')
-log_method_call_important = log_method_call_with_source_important('read_status_manager')
+log_method_call = log_method_call_with_source('read_status_manager_db')
+log_method_call_duration = log_method_call_with_source_duration('read_status_manager_db')
+log_method_call_important = log_method_call_with_source_important('read_status_manager_db')
 
-class ReadStatus(object):
-    def __init__(self, default='N'):
-        self.default = default
-        self.data = [(0, default)]
-
-    def to_string(self):
-        '''
-        ReadStatus 객체로부터 2개의 문자열을 뽑아낸다.
-        '''
-        number_list = intlist_to_string([x[0] for x in self.data])
-        marker_list = "".join((x[1] for x in self.data))
-        return number_list, marker_list
-
-    @classmethod
-    def from_string(cl, number_string, marker_string):
-        '''
-        2개의 문자열로부터 ReadStatus 객체를 만들어낸다.
-
-        @type  number_string: string
-        @param number_string: util.intlist_to_string 으로 문자열화한 list<int>
-        @type  marker_string: string
-        @param marker_string: len(number_string == len(marker_string) 인 문자열
-        @rtype: ReadStatus
-        @return: 주어진 문자열을 통해 만든 ReadStatus 객체
-        '''
-        result = cl()
-        number_list = string_to_intlist(number_string)
-        result.data = [(x, marker_string[idx]) for idx, x in enumerate(number_list)]
-        return result
-
-    def _find(self, n):
-        '''적당한 터플을 찾는다'''
-        low = 0
-        high = len(self.data) - 1
-        while True:
-            middle = (high - low) / 2 + low
-            assert low <= middle <= high
-            if self.data[middle][0] <= n:
-                try:
-                    if n < self.data[middle+1][0]:
-                        return middle
-                except IndexError:
-                    return middle
-            if self.data[middle][0] <= n:
-                low = middle + 1
-            else:
-                high = middle - 1
-
-    def get(self, n):
-        idx = self._find(n)
-        return self.data[idx][1]
-
-    def get_range(self, range_list):
-        ret = []
-        for i in range_list:
-            ret.append(self.get(i))
-        return ret
-
-    def set_range(self, range_list, value):
-        for i in range_list:
-            self.set(i, value)
-        return True
-
-    def _merge_right(self, idx):
-        if self.data[idx][1] == self.data[idx + 1][1]:
-            del self.data[idx + 1]
-
-    def _merge_left(self, idx):
-        self._merge_right(idx - 1)
-
-    def _merge(self, idx):
-        #print idx
-        if idx == 0:
-            self._merge_right(idx)
-        elif idx == len(self.data) - 1:
-            self._merge_left(idx)
-        else:
-            self._merge_right(idx)
-            self._merge_left(idx)
-
-    def set(self, n, value):
-        found_idx = self._find(n)
-        found_lower_bound = self.data[found_idx][0]
-        found_value = self.data[found_idx][1]
-        if found_value == value: return
-
-        # 맨 앞일경우
-        if n == 0:
-            self.data[0] = (0, value)
-            if len(self.data) == 1:
-                self.data.append((1, self.default))
-                self._merge(0)
-            elif self.data[1][0] != 1:
-                self.data.insert(1, (1, self.default))
-                self._merge(1)
-            return
-
-        if found_lower_bound == n:
-            self.data[found_idx] = (n, value)
-            if len(self.data) == found_idx + 1:
-                self.data.append((n + 1, self.default))
-            elif self.data[found_idx + 1][0] != n + 1:
-                assert self.data[found_idx + 1][0] != n
-                self.data.insert(found_idx + 1, (n + 1, self.default))
-                self._merge(found_idx)
-            self._merge(found_idx - 1)
-            return
-
-        # 찾은 터플의 값이 셋팅 하려는 값과 다르므로 새로 맹근다.
-        self.data.insert(found_idx + 1, (n, value))
-        if len(self.data) == found_idx + 2:
-            self.data.append((n + 1, self.default))
-        elif self.data[found_idx + 2][0] != n + 1:
-            self.data.insert(found_idx + 2, (n+1, self.default))
-        self._merge(found_idx)
-        self._merge(found_idx + 1)
-
-    def __repr__(self):
-        printed_str = ""
-        for item in self.data:
-            printed_str += str(item)
-        return printed_str
-
-class ReadStatusManager(arara_manager.ARAraManager):
+class ReadStatusManagerDB(ReadStatusManagerDefault):
     '''
     읽은 글, 통과한글 처리관련 클래스
     '''
 
     def __init__(self, engine):
-        super(ReadStatusManager, self).__init__(engine)
+        super(ReadStatusManagerDB, self).__init__(engine)
         self.read_status = {}
 
     def _get_dict(self, item, whitelist=None):
@@ -203,10 +77,6 @@ class ReadStatusManager(arara_manager.ARAraManager):
             2. 읽은글 여부 체크 실패:
                 1. 데이터베이스 오류: InternalError('DATABASE_ERROR') <- 정말 이럴까?
         '''
-        # ReadStatus를 강제로 비활성화한 경우 무조건 새 글로 표시된다.
-        if not arara_settings.USE_READ_STATUS:
-            return 'N'
-
         ret, _ = self._initialize_data(user_id)
         status = self.read_status[user_id].get(no)
         return status
@@ -253,9 +123,6 @@ class ReadStatusManager(arara_manager.ARAraManager):
         @rtype: list<str>
         @return: 주어진 각 게시물별 글읽음 상태
         '''
-        if not arara_settings.USE_READ_STATUS:
-            return 'N' * len(no_list)
-
         self._initialize_data(user_id)
         return self.read_status[user_id].get_range(no_list)
 
@@ -280,9 +147,6 @@ class ReadStatusManager(arara_manager.ARAraManager):
                 1. 로그인되지 않은 유저: NotLoggedIn
                 2. 데이터베이스 오류: InternalError('DATABASE_ERROR')
         '''
-        # ReadStatus를 강제로 비활성화한 경우 무조건 새 글로 표시된다.
-        if not arara_settings.USE_READ_STATUS:
-            return ['N'] * len(no_list)
         user_id = self.engine.login_manager.get_user_id(session_key)
         ret, _ = self._initialize_data(user_id)
         status = self.read_status[user_id].get_range(no_list)
@@ -305,10 +169,6 @@ class ReadStatusManager(arara_manager.ARAraManager):
                 1. 존재하지 않는 글: InvalidOperation('ARTICLE_NOT_EXIST')
                 2. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR')
         '''
-        # ReadStatus를 강제로 비활성화한 경우 아무 일도 하지 않는다.
-        if not arara_settings.USE_READ_STATUS:
-            return
-
         ret, _ = self._initialize_data(user_id)
         status = self.read_status[user_id].set_range(no_list, 'R')
 
@@ -350,10 +210,6 @@ class ReadStatusManager(arara_manager.ARAraManager):
                 1. 존재하지 않는 글: InvalidOperation('ARTICLE_NOT_EXIST')
                 2. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR')
         '''
-        # ReadStatus를 강제로 비활성화한 경우 아무 일도 하지 않는다.
-        if not arara_settings.USE_READ_STATUS:
-            return
-
         ret, _ = self._initialize_data(user_id)
         status = self.read_status[user_id].set(no, 'R')
 
@@ -398,10 +254,6 @@ class ReadStatusManager(arara_manager.ARAraManager):
                 2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
                 3. 데이터베이스 오류: False, 'DATABASE_ERROR'
         '''
-        # ReadStatus를 강제로 비활성화한 경우 아무 일도 하지 않는다.
-        if not arara_settings.USE_READ_STATUS:
-            return
-
         user_id = self.engine.login_manager.get_user_id(session_key)
         ret, _ = self._initialize_data(user_id)
         status = self.read_status[user_id].set(no, 'V')
@@ -418,10 +270,6 @@ class ReadStatusManager(arara_manager.ARAraManager):
         @type  user_id: int
         @param user_id: 사용자 고유 id
         '''
-        # ReadStatus를 강제로 비활성화한 경우 아무 일도 하지 않는다.
-        if not arara_settings.USE_READ_STATUS:
-            return
-
         read_stat = None
         if user_id in self.read_status:
             # Memory 에 있는 경우
@@ -467,10 +315,6 @@ class ReadStatusManager(arara_manager.ARAraManager):
         @type  user_id: int
         @param user_id: 사용자 고유 id
         '''
-        # ReadStatus를 강제로 비활성화한 경우 아무 일도 하지 않는다.
-        if not arara_settings.USE_READ_STATUS:
-            return
-
         session = model.Session()
         try:
             result = self._save_to_database(session, user_id)
@@ -485,10 +329,6 @@ class ReadStatusManager(arara_manager.ARAraManager):
         '''
         메모리에 존재하는 모든 사용자의 ReadStatus 를 DB 에 기록하고 메모리에서 지운다.
         '''
-        # ReadStatus를 강제로 비활성화한 경우 아무 일도 하지 않는다.
-        if not arara_settings.USE_READ_STATUS:
-            return
-
         session = model.Session()
         list_of_user_id = self.read_status.keys()
         list_of_proxies = [None] * len(list_of_user_id)
@@ -511,10 +351,6 @@ class ReadStatusManager(arara_manager.ARAraManager):
         @type  user_ids: list<int>
         @param user_ids: ReadStatus 를 기록할 사용자들의 고유 id
         '''
-        # ReadStatus를 강제로 비활성화한 경우 아무 일도 하지 않는다.
-        if not arara_settings.USE_READ_STATUS:
-            return
-
         session = model.Session()
         try:
             for user_id in user_ids:

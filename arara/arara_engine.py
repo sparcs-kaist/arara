@@ -6,10 +6,10 @@ from arara.member_manager import MemberManager
 from arara.login_manager import LoginManager
 from arara.messaging_manager import MessagingManager
 from arara.notice_manager import NoticeManager
-from arara.read_status_manager import ReadStatusManager
 from arara.search_manager import SearchManager
 from arara.file_manager import FileManager
 from arara.bot_manager import BotManager
+from etc import arara_settings
 
 class ARAraEngine(object):
     '''
@@ -24,7 +24,17 @@ class ARAraEngine(object):
         self.member_manager = MemberManager(self)
         self.blacklist_manager = BlacklistManager(self)
         self.board_manager = BoardManager(self)
-        self.read_status_manager = ReadStatusManager(self)
+
+        if arara_settings.READ_STATUS_STORE_TYPE == 'maindb':
+            from arara.read_status.db_backend import ReadStatusManagerDB
+            self.read_status_manager = ReadStatusManagerDB(self)
+        elif arara_settings.READ_STATUS_STORE_TYPE == 'redis':
+            from arara.read_status.redis_backend import ReadStatusManagerRedis
+            self.read_status_manager = ReadStatusManagerRedis(self)
+        else:
+            from arara.read_status.default_backend import ReadStatusManagerDefault
+            self.read_status_manager = ReadStatusManagerDefault(self)
+
         self.article_manager = ArticleManager(self)
         self.messaging_manager = MessagingManager(self)
         self.notice_manager = NoticeManager(self)

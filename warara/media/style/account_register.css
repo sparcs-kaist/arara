@@ -337,7 +337,9 @@
     float: left;
     clear: both;
 }
-
+.my_acc_info_content a {
+    color: blue;
+}
 /* Account modify */
 #myaccount_modify {
     width: 100%;

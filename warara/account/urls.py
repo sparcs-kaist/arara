@@ -21,4 +21,6 @@ urlpatterns = patterns('',
     (r'^id_recovery/$','warara.account.views.id_recovery'),
     (r'^recover/$','warara.account.views.send_password_recovery_email'),
     (r'^recover/([\w\-\.]+)/([\w\-\.]+)/$','warara.account.views.password_recovery'),
+    (r'^mark_all_articles/$','warara.account.views.mark_all_articles'),
+    (r'^unmark_all_articles/$','warara.account.views.unmark_all_articles'),
 )
