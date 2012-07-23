@@ -388,3 +388,18 @@ def password_recovery(request, username, token_code):
         r['token_code'] = token_code
         rendered = render_to_string('account/password_recovery_process.html', r)
         return HttpResponse(rendered)
+
+
+@warara.wrap_error
+def mark_all_articles(request):
+    session_key, r = warara.check_logged_in(request)
+    server = warara_middleware.get_server()
+    account = server.read_status_manager.mark_all_articles(session_key)
+    return HttpResponseRedirect('/account/')
+
+@warara.wrap_error
+def unmark_all_articles(request):
+    session_key, r = warara.check_logged_in(request)
+    server = warara_middleware.get_server()
+    account = server.read_status_manager.unmark_all_articles(session_key)
+    return HttpResponseRedirect('/account/')
