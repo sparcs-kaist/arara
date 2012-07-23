@@ -103,6 +103,7 @@ $(document).ready(function(){
     });
 
     $(".toggle_img").click(function(event){
+        $(this).prev().append('<img src="' + $(this).attr('href') + '" class="attached_image" />');
         $(this).prev().show();
         $(this).hide();
         event.preventDefault();
