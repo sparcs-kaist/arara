@@ -1039,6 +1039,12 @@ class ArticleManagerTest(AraraTestBase):
         except ValueError as e:
             self.assertEqual("WRONG_PAGENUM", str(e))
 
+    def test_get_last_article_no(self):
+        self.assertEqual(self.engine.article_manager._get_last_article_no(), None)
+        self._dummy_article_write(self.session_key_mikkang)
+        self._dummy_article_write(self.session_key_mikkang)
+        self.assertEqual(self.engine.article_manager._get_last_article_no(), 2)
+
     def tearDown(self):
         super(ArticleManagerTest, self).tearDown()
  

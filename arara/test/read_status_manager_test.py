@@ -29,6 +29,15 @@ class ReadStatusManagerTest(AraraTestBase):
                 function(self, *args, **kwargs)
         return wrap
 
+    # Decorator for skipping the test if store type is maindb
+    def skip_test_if_maindb(function):
+        def wrap(self, *args, **kwargs):
+            if self.store_type == 'maindb':
+                print >>sys.stderr, 'skip ... Not needed on maindb ... ',
+            else:
+                function(self, *args, **kwargs)
+        return wrap
+
     def setUp(self):
         # Common preparation for all tests
         super(ReadStatusManagerTest, self).setUp(stub_time=True, stub_time_initial=1.1, read_status_store_type=self.store_type)
@@ -165,6 +174,58 @@ class ReadStatusManagerTest(AraraTestBase):
         self.engine.read_status_manager.save_to_database(1)
         self.assertEqual([], self.engine.read_status_manager.get_read_status_loaded_users())
 
+    @skip_test_if_maindb
+    def test_unmark_all_articles(self):
+        self.engine.read_status_manager.mark_as_read(self.session_key_mikkang, 1)
+        self.engine.read_status_manager.mark_as_read(self.session_key_mikkang, 2)
+        self.engine.read_status_manager.mark_as_read(self.session_key_mikkang, 3)
+        self.engine.read_status_manager.mark_as_read(self.session_key_mikkang, 4)
+        self.engine.read_status_manager.mark_as_read(self.session_key_mikkang, 5)
+
+        self.engine.read_status_manager.unmark_all_articles(self.session_key_mikkang)
+
+        ret = self.engine.read_status_manager.check_stats(self.session_key_mikkang, [1, 2, 3, 4, 5, 6])
+        self.assertEqual(["N", "N", "N", "N", "N", "N"], ret)
+
+    @skip_test_if_maindb
+    def test_mark_until_number_as_read(self):
+        for i in range(50):
+            self._write_articles()
+
+        # 100 개의 글이 이미 존재하던 게시판에서
+        self.engine.read_status_manager.mark_all_articles(self.session_key_mikkang)
+
+        self._write_articles()
+
+        # 모든 글을 읽은 것으로 처리하고 101 번 글까지 읽어보면
+        ret = self.engine.read_status_manager.check_stats(self.session_key_mikkang, range(1, 102))
+
+        # 결론은 당연히 100 번까지는 읽은 것, 101 번 글부터는 읽지 않은 것으로 떠야 한다.
+        self.assertEqual(["R"] * 100 + ["N"], ret)
+
+        # unmark_all_articles 와 연동되어도 문제없이 작동하는 것을 확인해 보자.
+        self.engine.read_status_manager.unmark_all_articles(self.session_key_mikkang)
+        self.engine.read_status_manager.mark_as_read(self.session_key_mikkang, 2)
+        self.engine.read_status_manager.mark_as_read(self.session_key_mikkang, 5)
+        self.engine.read_status_manager.mark_as_read(self.session_key_mikkang, 11)
+        self.engine.read_status_manager.mark_as_read(self.session_key_mikkang, 29)
+        self.engine.read_status_manager.mark_as_read(self.session_key_mikkang, 81)
+        self.engine.read_status_manager.mark_as_read(self.session_key_mikkang, 101)
+
+        ret = self.engine.read_status_manager.check_stats(self.session_key_mikkang, range(1, 102))
+        self.assertEqual(["N", "R", "N", "N", "R", "N", "N", "N", "N", "N",
+                          "R", "N", "N", "N", "N", "N", "N", "N", "N", "N",
+                          "N", "N", "N", "N", "N", "N", "N", "N", "R", "N",
+                          "N", "N", "N", "N", "N", "N", "N", "N", "N", "N",
+                          "N", "N", "N", "N", "N", "N", "N", "N", "N", "N",
+                          "N", "N", "N", "N", "N", "N", "N", "N", "N", "N",
+                          "N", "N", "N", "N", "N", "N", "N", "N", "N", "N",
+                          "N", "N", "N", "N", "N", "N", "N", "N", "N", "N",
+                          "R", "N", "N", "N", "N", "N", "N", "N", "N", "N",
+                          "N", "N", "N", "N", "N", "N", "N", "N", "N", "N",
+                          "R"], ret)
+
+
     def tearDown(self):
         super(ReadStatusManagerTest, self).tearDown()
 
@@ -176,6 +237,10 @@ class PipelineMockup(object):
         self.redis.sadd(key, value)
     def sismember(self, key, value):
         self.buffer.append(self.redis.sismember(key, value))
+    def set(self, key, value):
+        self.redis.set(key, value)
+    def get(self, key):
+        self.buffer.append(self.redis.get(key))
     def execute(self):
         r = self.buffer
         self.buffer = []
@@ -192,6 +257,13 @@ class RedisMockup(object):
         if not key in self.data:
             return False
         return val in self.data[key]
+    def get(self, key):
+        return self.data.get(key, None)
+    def set(self, key, val):
+        self.data[key] = val
+    def delete(self, key):
+        if key in self.data:
+            del self.data[key]
     def pipeline(self):
         return PipelineMockup(self)
 

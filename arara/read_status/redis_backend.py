@@ -22,13 +22,13 @@ class ReadStatusManagerRedis(ReadStatusManagerDefault):
         super(ReadStatusManagerRedis, self).__init__(engine)
         # r_check DB
         # DB No: 1
-        # Key: user_id + '_' + no, value: 
-        # Value: 'R' or 'V' ( readed, checked )
+        # Key: user_id
+        # Value: set of read articles
         self.r_check = redis.StrictRedis(host='127.0.0.1', port=arara_settings.REDIS_PORT, db=1)
         # r_user DB
         # DB No: 0
         # Key: user_id
-        # Value: list of read articles
+        # Value: article no ( 이 no 이하의 글은 읽은 것으로 침 )
         self.r_user = redis.StrictRedis(host='127.0.0.1', port=arara_settings.REDIS_PORT, db=0)
 
     def _make_key(self, user_id, no):
@@ -53,6 +53,9 @@ class ReadStatusManagerRedis(ReadStatusManagerDefault):
                 1. 데이터베이스 오류: InternalError('DATABASE_ERROR')
         '''
         try:
+            bound = self.r_user.get(user_id)
+            if bound is not None and bound >= no:
+                return 'R'
             if self.r_check.sismember(user_id, no):
                 return 'R'
             else:
@@ -100,6 +103,13 @@ class ReadStatusManagerRedis(ReadStatusManagerDefault):
         @rtype: list<str>
         @return: 주어진 각 게시물별 글읽음 상태
         '''
+        try:
+            bound = self.r_user.get(user_id)
+            if bound is None:
+                bound = 0
+        except ConnectionError:
+            raise InternalError('DATABASE_ERROR')
+
         pipe = self.r_check.pipeline()
         for n in no_list:
             pipe.sismember(user_id, n)
@@ -109,7 +119,8 @@ class ReadStatusManagerRedis(ReadStatusManagerDefault):
         except ConnectionError:
             raise InternalError('DATABASE_ERROR')
 
-        return [x and 'R' or 'N' for x in result]
+        result = [x and 'R' or 'N' for x in result]
+        return map(lambda no, read: no <= bound and 'R' or read, no_list, result)
 
     @log_method_call
     def check_stats(self, session_key, no_list):
@@ -229,4 +240,45 @@ class ReadStatusManagerRedis(ReadStatusManagerDefault):
         self.r_check.save()
         self.r_user.save()
 
-#    __public__ = []
+    @require_login
+    @log_method_call
+    def mark_all_articles(self, session_key):
+        '''
+        현재 아라에 있는 모든 글을 읽은 것으로 표시
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        '''
+        max_article_no = self.engine.article_manager._get_last_article_no()
+        if max_article_no is not None:
+            user_id = self.engine.login_manager.get_user_id(session_key)
+
+            try:
+                self.r_user.set(user_id, max_article_no)
+            except ConnectionError:
+                raise InternalError('DATABASE_ERROR')
+
+    @require_login
+    @log_method_call
+    def unmark_all_articles(self, session_key):
+        '''
+        현재 아라에 있는 모든 글을 안 읽은 것으로 표시
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        '''
+        user_id = self.engine.login_manager.get_user_id(session_key)
+        try:
+            self.r_check.delete(user_id)
+            self.r_user.delete(user_id)
+        except ConnectionError:
+            raise InternalError('DATABASE_ERROR')
+
+    __public__ = [
+            check_stat,
+            check_stats,
+            check_stats_by_id,
+            mark_as_read_list,
+            mark_as_read,
+            mark_all_articles,
+            unmark_all_articles]

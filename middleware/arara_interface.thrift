@@ -525,6 +525,12 @@ service ARAraThriftInterface {
     list<i32> get_read_status_loaded_users()
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void mark_all_articles(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void unmark_all_articles(1:string session_key)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// ReadStatusManager Part End
 /// ArticleManager Part Begin
     list<Article> get_today_best_list(1:i32 count=5)

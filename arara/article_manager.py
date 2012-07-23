@@ -4,7 +4,7 @@ import time
 import thread
 
 from sqlalchemy.exceptions import InvalidRequestError
-from sqlalchemy import and_, or_, not_
+from sqlalchemy import and_, or_, not_, func
 from sqlalchemy.orm import eagerload
 from sqlalchemy.sql import func, select
 
@@ -1476,6 +1476,22 @@ class ArticleManager(arara_manager.ARAraManager):
         else:
             session.close()
             raise InvalidOperation("NO_PERMISSION")
+
+    def _get_last_article_no(self):
+        '''
+        현재 존재하는 글 중 가장 마지막 글의 글 번호를 반환
+        글이 없을 경우 None을 반환
+
+        @rtype:  integer
+        @return:
+            1. 글 존재 : integer
+            2. 글이 하나도 없을 때 : None
+        '''
+
+        session = model.Session()
+        r = session.query(func.max(model.Article.id))[0][0]
+        session.close()
+        return r
 
     __public__ = [
             get_today_best_list,
