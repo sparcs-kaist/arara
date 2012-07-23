@@ -147,3 +147,7 @@ span, p{
     display: block;
     text-align: center;
 }
+.toggle_img.button{
+    width: 7em;
+    margin: 0 auto;
+}
