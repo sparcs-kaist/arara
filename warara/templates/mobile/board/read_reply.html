@@ -1,4 +1,10 @@
 {% load i18n %}
+{% ifequal mode 'board' %}
+{% url warara.board.views.list board_name as pcver_url %}
+{% endifequal %}
+{% ifequal mode 'all' %}
+{% url warara.all.views.list as pcver_url %}
+{% endifequal %}
 <li class="re_list" id="{{article.id}}">
 <div {% if article.deleted or article.blacklisted %} class = "deleted" {% endif %} >
 <div class="re_info">
@@ -22,6 +28,28 @@
     <input type="hidden" class="meta board_name" value="{{article.board_name}}" />
     <input type="hidden" class="meta article_id" value="{{article.id}}" />
 </div>
+<table id="attached_table" cellspacing="0">
+    {% if not article.blacklisted %}
+    <tbody>
+        {% for file in article.attach %}
+        <tr>
+            <th>첨부{{forloop.counter}}</th>
+            <td><a href="{{ pcver_url }}{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" target="_blank">{{file.filename}}</a>
+        </tr>
+        {% if file.file_id in article.image %}
+        <tr>
+            <td colspan="2">
+                <div class="collapsed_img" style="display: none;" >
+                    <img src="{{ pcver_url }}{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" alt="{{file.file_id}}" class="attached_image" />
+                </div>
+                <a href="{{ pcver_url }}{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" class="toggle_img">이미지 열기</a>
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+    {% endif %}
+</table>
 <span class="re_contents">
     {% if article.blacklisted %}
         {% trans "-- Blacklisted --" %}

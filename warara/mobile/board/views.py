@@ -671,14 +671,14 @@ a_tag = re.compile(r'<a href="(.+?)">')
 def render_content(content):
     return a_tag.sub(r'<a href="\1" target="_blank">', html.urlize(html.escape(content)))
 
-def render_reply(board_name, article_list, base_url):
+def render_reply(board_name, article_list, base_url, mode='board'):
     if article_list == []:
         return ''
 
     r_string = ''
 
     for article in article_list:
-        rendered_article = render_to_string('mobile/board/read_reply.html', {'article': article, 'board_name': board_name, 'base_url': base_url, 'depth': xrange(article.depth - 2)}) # 가장 낮은 단계의 답글이 Depth 2를 가지므로
+        rendered_article = render_to_string('mobile/board/read_reply.html', {'article': article, 'board_name': board_name, 'base_url': base_url, 'depth': xrange(article.depth - 2), 'mode': mode}) # 가장 낮은 단계의 답글이 Depth 2를 가지므로
         r_string += rendered_article
 
     return r_string

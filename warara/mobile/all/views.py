@@ -58,7 +58,7 @@ def read(request, article_id):
     r['mode'] = 'all'
 
     # 계층형 Reply 구조를 위해 reply를 미리 render
-    rendered_reply = warara.mobile.board.views.render_reply(u'All Articles', r['article_read_list'][1:], '/all/')
+    rendered_reply = warara.mobile.board.views.render_reply(u'All Articles', r['article_read_list'][1:], '/all/', 'all')
     r['rendered_reply'] = rendered_reply
     r['article'] = r['article_read_list'][0]
 
