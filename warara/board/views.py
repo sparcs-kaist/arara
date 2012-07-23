@@ -197,13 +197,14 @@ def write(request, board_name):
         r['root_id'] = article_list[0].root_id
     else:
         r['modify'] = False
+    board_dict = server.board_manager.get_board(board_name)
     r['board_name'] = board_name
+    r['board_desc'] = board_dict.board_description
 
     # 시그 선택할 수 있도록 시그를 보여준다.
     r['user_signature'] = user_info.signature 
 
     # heading control
-    board_dict = server.board_manager.get_board(board_name)
     if len(board_dict.headings) == 0:
         r['have_heading'] = False
         r['board_heading_list'] = []
