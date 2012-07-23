@@ -104,6 +104,7 @@ class ReadStatusManagerTest(AraraTestBase):
         except NotLoggedIn:
             pass
 
+    @skip_test_if_redis
     def test_mark_as_viewed(self):
         self._write_articles()
         ret = self.engine.read_status_manager.check_stat(
@@ -171,10 +172,10 @@ class PipelineMockup(object):
     def __init__(self, redis):
         self.buffer = []
         self.redis = redis
-    def set(self, key, value):
-        self.redis.set(key, value)
-    def get(self, key):
-        self.buffer.append(self.redis.get(key))
+    def sadd(self, key, value):
+        self.redis.sadd(key, value)
+    def sismember(self, key, value):
+        self.buffer.append(self.redis.sismember(key, value))
     def execute(self):
         r = self.buffer
         self.buffer = []
@@ -183,10 +184,14 @@ class PipelineMockup(object):
 class RedisMockup(object):
     def __init__(self, host, port, db):
         self.data = {}
-    def get(self, key):
-        return self.data.get(key, None)
-    def set(self, key, val):
-        self.data[key] = val
+    def sadd(self, key, val):
+        if not key in self.data:
+            self.data[key] = set()
+        self.data[key].add(val)
+    def sismember(self, key, val):
+        if not key in self.data:
+            return False
+        return val in self.data[key]
     def pipeline(self):
         return PipelineMockup(self)
 

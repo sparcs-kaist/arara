@@ -48,17 +48,15 @@ class ReadStatusManagerRedis(ReadStatusManagerDefault):
             1. 읽은글 여부 체크 성공:
                 1. 이미 읽은 글: 'R'
                 2. 읽지 않은 글: 'N'
-                3. 읽지 않고 통과한 글: 'V'
+                3. 읽지 않고 통과한 글: 'V' <- Not supported
             2. 읽은글 여부 체크 실패:
                 1. 데이터베이스 오류: InternalError('DATABASE_ERROR')
         '''
-        key = self._make_key(user_id, no)
         try:
-            r = self.r_check.get(key)
-            if r is None:
-                return 'N'
+            if self.r_check.sismember(user_id, no):
+                return 'R'
             else:
-                return r
+                return 'N'
         except ConnectionError:
             raise InternalError('DATABASE_ERROR')
 
@@ -80,7 +78,7 @@ class ReadStatusManagerRedis(ReadStatusManagerDefault):
             1. 읽은글 여부 체크 성공:
                 1. 이미 읽은 글: 'R'
                 2. 읽지 않은 글: 'N'
-                3. 읽지 않고 통과한 글: 'V'
+                3. 읽지 않고 통과한 글: 'V' <- Not supported
             2. 읽은글 여부 체크 실패:
                 1. 로그인되지 않은 유저: NotLoggedIn()
                 2. 데이터베이스 오류: InternalError('DATABASE_ERROR')
@@ -102,15 +100,16 @@ class ReadStatusManagerRedis(ReadStatusManagerDefault):
         @rtype: list<str>
         @return: 주어진 각 게시물별 글읽음 상태
         '''
+        pipe = self.r_check.pipeline()
+        for n in no_list:
+            pipe.sismember(user_id, n)
+
         try:
-            pipe = self.r_check.pipeline()
-            for n in no_list:
-                pipe.get(self._make_key(user_id, n))
             result = pipe.execute()
         except ConnectionError:
             raise InternalError('DATABASE_ERROR')
 
-        return [x or 'N' for x in result]
+        return [x and 'R' or 'N' for x in result]
 
     @log_method_call
     def check_stats(self, session_key, no_list):
@@ -152,11 +151,12 @@ class ReadStatusManagerRedis(ReadStatusManagerDefault):
                 1. 존재하지 않는 글: InvalidOperation('ARTICLE_NOT_EXIST')
                 2. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR')
         '''
+        pipe = self.r_check.pipeline()
+        for n in no_list:
+            pipe.sadd(user_id, n)
+
         try:
-            pipe = self.r_check.pipeline()
-            for n in no_list:
-                pipe.set(self._make_key(user_id, n), 'R')
-            pipe.execute()
+            result = pipe.execute()
         except ConnectionError:
             raise InternalError('DATABASE_ERROR')
 
@@ -199,7 +199,7 @@ class ReadStatusManagerRedis(ReadStatusManagerDefault):
                 2. 데이터베이스 오류: InvalidOperation('DATABASE_ERROR')
         '''
         try:
-            self.r_check.set(self._make_key(user_id, no), 'R')
+            self.r_check.sadd(user_id, no)
         except ConnectionError:
             raise InternalError('DATABASE_ERROR')
 
@@ -224,31 +224,6 @@ class ReadStatusManagerRedis(ReadStatusManagerDefault):
         '''
         user_id = self.engine.login_manager.get_user_id(session_key)
         self._mark_as_read(user_id, no)
-
-    @require_login
-    @log_method_call
-    def mark_as_viewed(self, session_key, no):
-        '''
-        통과한 글로 등록하기
-        존재하지 않는 글번호를 입력하지 않도록 주의.
-
-        @type  session_key: string
-        @param session_key: 사용자 Login Session
-        @type  no: int
-        @param no: Article Number
-        @rtype: string
-        @return:
-            1. 등록 성공: True, 'OK'
-            2. 등록 실패:
-                1. 존재하지 않는 글: False, 'ARTICLE_NOT_EXIST'
-                2. 로그인되지 않은 유저: False, 'NOT_LOGGEDIN'
-                3. 데이터베이스 오류: False, 'DATABASE_ERROR'
-        '''
-        user_id = self.engine.login_manager.get_user_id(session_key)
-        try:
-            self.r_check.set(self._make_key(user_id, no), 'V')
-        except ConnectionError:
-            raise InternalError('DATABASE_ERROR')
 
     def _save_all_users_to_database(self):
         self.r_check.save()
