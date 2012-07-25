@@ -63,7 +63,7 @@ def get_article_list(request, r, mode):
     # XXX 2010.05.18. page_length 변수를 사용하지 않던 걸 사용하도록 고치다.
     #                 이 값은 Backend 에서 가져오는 페이지당 글의 갯수이다.
     #                 article_per_page 정도가 적당하다. 나중에 이름을 바꾸자.
-    page_length = 8
+    page_length = 16
     if mode == 'list':
         # GET 으로 넘어온 말머리가 있는지 본다.
         heading = request.GET.get('heading', None)
