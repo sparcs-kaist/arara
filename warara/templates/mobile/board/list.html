@@ -74,5 +74,7 @@
     </form>
 </div>
 {% endblock %}
-{% block pc_url %}/board/{{ board_name }}/{% endblock %}
-
+{% block pc_url %}
+    {% ifequal mode 'board' %} /board/{{ board_name }}/ {% endifequal %}
+    {% ifequal mode 'all' %} /all/ {% endifequal %}
+{% endblock %}
