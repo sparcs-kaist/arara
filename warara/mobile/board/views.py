@@ -295,8 +295,6 @@ def _read(request, r, sess, board_name, article_id):
             for file in article.attach:
                 if file.filename.split('.')[-1].lower() in IMAGE_FILETYPE:
                     image_attach_list.append(file.file_id)
-                    insert_image_tag = "<p><img src=\"/board/%s/%d/%d/file/%d/\"></img></p>" % (board_name, article.root_id, article.id, file.file_id)
-                    image_attach_list.append(file.file_id)
             article.__dict__['image'] = image_attach_list
 
 #        if article.depth > 12: #set depth 12 which has bigger depth than 12
