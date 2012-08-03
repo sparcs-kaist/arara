@@ -293,6 +293,12 @@ def _read(request, r, sess, board_name, article_id):
         if 'attach' in article.__dict__ and article.attach: #image view
             image_attach_list = []
             for file in article.attach:
+                # Add filesize properties for mobile env.
+                filename = server.file_manager.download_file(article.id, file.file_id)
+                try:
+                    file.__dict__['filesize'] = os.path.getsize("%s/%s/%s" % (FILE_DIR, filename.file_path, filename.saved_filename))
+                except:
+                    file.__dict__['filesize'] = 0
                 if file.filename.split('.')[-1].lower() in IMAGE_FILETYPE:
                     image_attach_list.append(file.file_id)
             article.__dict__['image'] = image_attach_list
