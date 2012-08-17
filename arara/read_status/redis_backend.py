@@ -54,7 +54,7 @@ class ReadStatusManagerRedis(ReadStatusManagerDefault):
         '''
         try:
             bound = self.r_user.get(user_id)
-            if bound is not None and bound >= no:
+            if bound is not None and int(bound) >= no:
                 return 'R'
             if self.r_check.sismember(user_id, no):
                 return 'R'
@@ -107,6 +107,8 @@ class ReadStatusManagerRedis(ReadStatusManagerDefault):
             bound = self.r_user.get(user_id)
             if bound is None:
                 bound = 0
+            else:
+                bound = int(bound)
         except ConnectionError:
             raise InternalError('DATABASE_ERROR')
 
