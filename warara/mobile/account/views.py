@@ -53,8 +53,8 @@ def login(request):
 
     User_Info = server.member_manager.get_info(session_key)
     # Check mismatch
-    if User_Info.username != username:
-        server.login_manager.debug__check_session(session_key, username, client_ip)
+    if User_Info.username.lower() != username.lower():
+        server.login_manager.debug__check_session(session_key, username, client_ip, User_Info)
         server.login_manager.logout(session_key)
         return HttpResponse('<script>alert("Something is Wrong. Please report to Sysop."); history.back()</script>')
 

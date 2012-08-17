@@ -307,7 +307,7 @@ service ARAraThriftInterface {
     void cleanup_expired_sessions()
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    void debug__check_session(1:string session_key, 2:string username, 3:string user_ip),
+    void debug__check_session(1:string session_key, 2:string username, 3:string user_ip, 4:UserInformation userinfo),
 /// Login Manager Part end
 /// MemberManager Part Begin
     AuthenticationInfo authenticate(1:string username, 2:string password,
