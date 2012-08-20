@@ -1580,6 +1580,58 @@ class ArticleManager(arara_manager.ARAraManager):
 
         return article_list
 
+    @log_method_call
+    def scrapped_article_list_below(self, session_key, no, page_length=20):
+        '''
+        스크랩 된 게시물을 읽을 때 밑에 표시될 게시글 목록을 가져오는 함수이다.
+        Thrift 형식의 Article 객체 리스트를 반환한다
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        @type  no: integer
+        @param no: Article No
+        @type  page_length: integer
+        @param page_length: Count of Article on a Page
+        @rtype: list
+        @return:
+            1. 리스트 읽어오기 성공: Article List
+            2. 리스트 읽어오기 실패:
+                1. 페이지 번호 오류: InvalidOperation Exception
+                2. 데이터베이스 오류: InternalError Exception
+        '''
+        # TODO: 더 General한 Form으로 바꿀 수 있을 것이다
+
+        session = model.Session()
+        # Part 1. list<ScrapStatus> 형태의 객체 받아오기
+        user = self.engine.member_manager._get_user_by_session(session, session_key)
+        scrap_status_list = session.query(model.User).filter_by(id=user.id).one().scrapped_articles
+        session.close()
+
+        # Part 2. article id만 뽑아서 정렬
+        scrap_status_list = [x.article_id for x in scrap_status_list]
+        scrap_status_list.sort(reverse=True)
+
+        article_count = len(scrap_status_list)
+        if article_count == 0:
+            raise InvalidOperation("WRONG_ARTICLE_NUMBER")
+
+        # Part 3. 총 페이지 수 계산
+        total_page = (article_count + page_length - 1) / page_length
+
+        # Part 4. 적당한 쪽 번호를 계산 ( Binary Search )
+        low, high, page = (1, total_page, 1)
+        while low <= high:
+            mid = (low + high) / 2
+            _, offset, _ = self.get_page_info(article_count, mid, page_length)
+            if scrap_status_list[offset] >= no:
+                page = mid
+                low = mid + 1
+            else:
+                high = mid - 1
+
+        # Part 5. 가져온다.
+        return self.scrapped_article_list(session_key, page, page_length)
+
     __public__ = [
             get_today_best_list,
             get_today_best_list_specific,
@@ -1604,6 +1656,7 @@ class ArticleManager(arara_manager.ARAraManager):
             fix_article_concurrency,
             get_page_no_of_article,
             scrap_article,
-            scrapped_article_list]
+            scrapped_article_list,
+            scrapped_article_list_below]
 
 # vim: set et ts=8 sw=4 sts=4

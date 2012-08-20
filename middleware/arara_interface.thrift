@@ -634,6 +634,11 @@ service ARAraThriftInterface {
                              3:i32 page_length=20)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    ArticleList scrapped_article_list_below(1:string session_key,
+                             2:id_t no,
+                             3:i32 page_length=20)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// ArticleManager Part End
 /// FileManager Part Begin
     FileInfo save_file(1:string session_key,

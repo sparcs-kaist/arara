@@ -1089,7 +1089,7 @@ class ArticleManagerTest(AraraTestBase):
         except InvalidOperation:
             pass
 
-    def test_scrapped_article_list(self):
+    def test_scrapped_article_list_and_below(self):
         # 테스트용 게시판 만들자.
         self.engine.board_manager.add_board(self.session_key_sysop, u'scrap1', u'Test Board', u'')
 
@@ -1125,6 +1125,31 @@ class ArticleManagerTest(AraraTestBase):
         self.assertEqual(10, len(l.hit))
         self.assertEqual(3, l.last_page)
         self.assertEqual(50, l.results)
+        self.assertEqual(3, l.current_page)
+
+        # 100번 글을 읽었을 때 below 확인
+        l = self.engine.article_manager.scrapped_article_list_below(self.session_key_mikkang, 100, 20)
+        self.assertEqual(u'TITLE100', l.hit[0].title)
+        self.assertEqual(u'TITLE62', l.hit[19].title)
+        self.assertEqual(1, l.current_page)
+
+        # 62번 글을 읽었을 때 below 확인
+        l = self.engine.article_manager.scrapped_article_list_below(self.session_key_mikkang, 62, 20)
+        self.assertEqual(u'TITLE100', l.hit[0].title)
+        self.assertEqual(u'TITLE62', l.hit[19].title)
+        self.assertEqual(1, l.current_page)
+
+        # 60번 글을 읽었을 때 below 확인
+        l = self.engine.article_manager.scrapped_article_list_below(self.session_key_mikkang, 60, 20)
+        self.assertEqual(u'TITLE60', l.hit[0].title)
+        self.assertEqual(u'TITLE22', l.hit[19].title)
+        self.assertEqual(2, l.current_page)
+
+        # 2번 글을 읽었을 때 below 확인
+        l = self.engine.article_manager.scrapped_article_list_below(self.session_key_mikkang, 2, 20)
+        self.assertEqual(u'TITLE20', l.hit[0].title)
+        self.assertEqual(u'TITLE2', l.hit[9].title)
+        self.assertEqual(10, len(l.hit))
         self.assertEqual(3, l.current_page)
 
     def tearDown(self):
