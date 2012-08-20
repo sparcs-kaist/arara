@@ -16,7 +16,6 @@ import arara.model
 
 from etc import arara_settings
 
-
 class ArticleManagerTest(AraraTestBase):
 
     def register_extra_users(self):
@@ -1044,6 +1043,51 @@ class ArticleManagerTest(AraraTestBase):
         self._dummy_article_write(self.session_key_mikkang)
         self._dummy_article_write(self.session_key_mikkang)
         self.assertEqual(self.engine.article_manager._get_last_article_no(), 2)
+
+    def test_scrap_article(self):
+        session_keys = self.register_extra_users()
+        # Write two articles
+        article_no1 = self._dummy_article_write(session_keys[3])
+        article_no2 = self._dummy_article_write(self.session_key_serialx)
+
+        # Mikkang now scrap hodduc's article
+        self.engine.article_manager.scrap_article(self.session_key_mikkang, article_no1)
+
+        # So the mikkang's scrapped_article will be updated.
+        session = arara.model.Session()
+        article1 = session.query(arara.model.Article).filter_by(id=article_no1).one()
+        mikkang_instance = session.query(arara.model.User).filter_by(username=u'mikkang').one()
+        scraplist = mikkang_instance.scrapped_articles
+        self.assertEqual(len(scraplist), 1)
+        self.assertEqual(scraplist[0].article.id, article1.id)
+        session.close()
+
+        # Mikkang now scrap serialx's article
+        self.engine.article_manager.scrap_article(self.session_key_mikkang, article_no2)
+
+        # So the mikkang's scrapped_article will be updated again.
+        session = arara.model.Session()
+        article2 = session.query(arara.model.Article).filter_by(id=article_no2).one()
+        mikkang_instance = session.query(arara.model.User).filter_by(username=u'mikkang').one()
+        scraplist = mikkang_instance.scrapped_articles
+        self.assertEqual(len(scraplist), 2)
+        self.assertEqual(scraplist[0].article.id, article1.id)
+        self.assertEqual(scraplist[1].article.id, article2.id)
+        session.close()
+
+        # But he can't scrap again.
+        try:
+            self.engine.article_manager.scrap_article(self.session_key_mikkang, article_no1)
+            self.fail()
+        except InvalidOperation:
+            pass
+
+        # Try Scrap without article number.
+        try:
+            self.engine.article_manager.scrap_article(self.session_key_mikkang, -1)
+            self.fail()
+        except InvalidOperation:
+            pass
 
     def tearDown(self):
         super(ArticleManagerTest, self).tearDown()

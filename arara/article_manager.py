@@ -1493,6 +1493,35 @@ class ArticleManager(arara_manager.ARAraManager):
         session.close()
         return r
 
+    @require_login
+    @log_method_call_important
+    def scrap_article(self, session_key, article_no):
+        '''
+        주어진 글을 스크랩함
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        @type  article_no: int
+        @param article_no: 글 번호
+
+        @rtype:  void
+        @return: None
+        '''
+        session = model.Session()
+        article = self._get_article(session, u'', article_no)
+        user = self.engine.member_manager._get_user_by_session(session, session_key)
+        scrap_check_query = session.query(model.ScrapStatus).filter_by(user_id=user.id, article_id=article.id)
+        scrap_check = scrap_check_query.count()
+
+        if scrap_check:
+            session.close()
+            raise InvalidOperation('ALREADY_SCRAPPED')
+        else:
+            new_scrap = model.ScrapStatus(user, article)
+            session.add(new_scrap)
+            session.commit()
+            session.close()
+
     __public__ = [
             get_today_best_list,
             get_today_best_list_specific,
@@ -1515,6 +1544,7 @@ class ArticleManager(arara_manager.ARAraManager):
             delete_article,
             destroy_article,
             fix_article_concurrency,
-            get_page_no_of_article]
+            get_page_no_of_article,
+            scrap_article]
 
 # vim: set et ts=8 sw=4 sts=4
