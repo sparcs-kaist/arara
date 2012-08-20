@@ -424,6 +424,27 @@ class ReadStatus(Base):
     def __repr__(self):
         return "<ReadStatus('%s', '%s')>" % (self.user.username, self.read_status_data)
 
+class ScrapStatus(Base):
+    __tablename__  = 'scrap_status'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), index=True, nullable=False)
+    article_id = Column(Integer, ForeignKey('articles.id'), nullable=False)
+
+    user = relationship(User, backref='scrapped_articles', lazy=True)
+    article = relationship(Article, backref='scrapped_users', lazy=True)
+
+    def __init__(self, user, article):
+        '''
+        @type user: model.User
+        @type article: model.Article
+        '''
+        self.user = user
+        self.article = article
+
+    def __repr__(self):
+        return "<ScrapStatus('%s', '%s')>" % (self.user.username, self.article.title)
 
 class Blacklist(Base):
     __tablename__  = 'blacklists'
