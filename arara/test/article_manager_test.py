@@ -1089,6 +1089,44 @@ class ArticleManagerTest(AraraTestBase):
         except InvalidOperation:
             pass
 
+    def test_scrapped_article_list(self):
+        # 테스트용 게시판 만들자.
+        self.engine.board_manager.add_board(self.session_key_sysop, u'scrap1', u'Test Board', u'')
+
+        # 게시판에 글을 쓰자. 짝수 번째 게시물은 특별히 스크랩 해준다
+        for i in xrange(1, 101):
+            no = self._dummy_article_write(self.session_key_mikkang, unicode(i), u"scrap1")
+            if not i % 2:
+                self.engine.article_manager.scrap_article(self.session_key_mikkang, no)
+
+        # 1 페이지를 가져와 보자
+        l = self.engine.article_manager.scrapped_article_list(self.session_key_mikkang, 1)
+        self.assertEqual(u'TITLE100', l.hit[0].title)
+        self.assertEqual(u'TITLE98', l.hit[1].title)
+        self.assertEqual(u'TITLE62', l.hit[19].title)
+        self.assertEqual(3, l.last_page)
+        self.assertEqual(50, l.results)
+        self.assertEqual(1, l.current_page)
+
+        # 2 페이지를 가져와 보자
+        l = self.engine.article_manager.scrapped_article_list(self.session_key_mikkang, 2)
+        self.assertEqual(u'TITLE60', l.hit[0].title)
+        self.assertEqual(u'TITLE58', l.hit[1].title)
+        self.assertEqual(u'TITLE22', l.hit[19].title)
+        self.assertEqual(3, l.last_page)
+        self.assertEqual(50, l.results)
+        self.assertEqual(2, l.current_page)
+
+        # 3 페이지를 가져와 보자
+        l = self.engine.article_manager.scrapped_article_list(self.session_key_mikkang, 3)
+        self.assertEqual(u'TITLE20', l.hit[0].title)
+        self.assertEqual(u'TITLE18', l.hit[1].title)
+        self.assertEqual(u'TITLE2', l.hit[9].title)
+        self.assertEqual(10, len(l.hit))
+        self.assertEqual(3, l.last_page)
+        self.assertEqual(50, l.results)
+        self.assertEqual(3, l.current_page)
+
     def tearDown(self):
         super(ArticleManagerTest, self).tearDown()
  

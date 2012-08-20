@@ -1522,6 +1522,64 @@ class ArticleManager(arara_manager.ARAraManager):
             session.commit()
             session.close()
 
+    @log_method_call
+    def scrapped_article_list(self, session_key, page=1, page_length=20):
+        '''
+        스크랩 된 게시물 목록 읽어오기. 모든 보드에서 읽어오므로 board나 heading에 관한 옵션은 따로 필요치 않다.
+        Thrift 형식의 Article 객체 리스트를 반환한다
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session
+        @type  page: integer
+        @param page: Page Number to Request
+        @type  page_length: integer
+        @param page_length: Count of Article on a Page
+        @rtype: list
+        @return:
+            1. 리스트 읽어오기 성공: Article List
+            2. 리스트 읽어오기 실패:
+                1. 존재하지 않는 게시판: InvalidOperation Exception
+                2. 페이지 번호 오류: InvalidOperation Exception
+                3. 데이터베이스 오류: InternalError Exception
+        '''
+        # TODO : 여기에도 LIST_ORDERED_BY.. 형태를 적용시킬 수 있을까? 또, 그게 굳이 필요할까?
+        # TODO: 상당 부분 get_article_list 혹은 article_list들과 겹치는데, 잘 리팩토링하면 합칠 수 있을 듯.
+
+        if page == 0: page = 1
+
+        session = model.Session()
+        # Part 1. list<ScrapStatus> 형태의 객체 받아오기
+        user = self.engine.member_manager._get_user_by_session(session, session_key)
+        scrap_status_list = session.query(model.User).filter_by(id=user.id).one().scrapped_articles
+        article_count = len(scrap_status_list)
+
+        # Part 2. 페이지번호 관련 정보 구하기
+        try:
+            last_page, offset, last = self.get_page_info(article_count, page, page_length)
+        except ValueError as e:
+            session.close()
+            if str(e) == 'WRONG_PAGENUM':
+                raise InvalidOperation(str(e))
+            else:
+                raise
+
+        # Part 3. 목록을 정렬한 후 list<Article>화 한다
+        scrap_status_list.sort(key=lambda stat: stat.article_id, reverse=True)
+        scrap_status_list = scrap_status_list[offset:last]
+        article_list = [stat.article for stat in scrap_status_list]
+
+        session.close()
+
+        # Part 4. 게시물의 목록, 마지막 답글 번호 목록 정리
+        last_reply_ids = [article.last_reply_id for article in article_list]
+        article_list   = [Article(**self._get_dict(article, LIST_ARTICLE_WHITELIST)) for article in article_list]
+        article_list   = ArticleList(hit=article_list, current_page=page, last_page=last_page, results=article_count)
+
+        # Part 5. 이런저런 정보를 부착
+        self.put_user_specific_info(user.id, article_list, last_reply_ids)
+
+        return article_list
+
     __public__ = [
             get_today_best_list,
             get_today_best_list_specific,
@@ -1545,6 +1603,7 @@ class ArticleManager(arara_manager.ARAraManager):
             destroy_article,
             fix_article_concurrency,
             get_page_no_of_article,
-            scrap_article]
+            scrap_article,
+            scrapped_article_list]
 
 # vim: set et ts=8 sw=4 sts=4
