@@ -496,6 +496,20 @@ def vote(request, board_name, root_id, article_no, vote_type):
 
     return response
 
+@warara.prevent_cached_by_browser
+@warara.wrap_error
+def scrap(request, board_name, root_id, article_no):
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+
+    try:
+        server.article_manager.scrap_article(sess, int(article_no))
+        response = HttpResponse("OK")
+    except InvalidOperation, e:
+        response = HttpResponse("ALREADY_SCRAPPED")
+
+    return response
+
 @warara.wrap_error
 def move_article(request):
     '''

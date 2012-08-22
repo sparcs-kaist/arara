@@ -7,7 +7,7 @@
 {% block content %}
 {{block.super}}
 {% ifequal mode 'board' %} {% url warara.board.views.list board_name as base_url %} {% endifequal %}
-{% ifequal mode 'all' %} {% url warara.all.views.list as base_url %} {% endifequal %}
+{% ifequal mode 'all' %} {% url warara.collection.views.list mode='all' as base_url %} {% endifequal %}
 
 <div id="board_content">
     {% block board_content %}

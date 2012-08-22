@@ -137,6 +137,25 @@ $(document).ready(function(){
             var delete_url = "/board/" + board_name + "/" + root_id + "/" + article_id + "/delete/";
             location.href = delete_url;
     });
+    $(".articleButtons .scrap").click(function(event){
+            var board_name = $(this).parent().children("#board_name").val();
+            var root_id = $(this).parent().children("#root_id").val();
+            var article_id = $(this).parent().children("#article_id").val();
+            var scrap_url = "/board/" + board_name + "/" + root_id + "/" + article_id + "/scrap/";
+
+            $.get(scrap_url, function(data){
+                if(data == "OK"){
+                alert("Succesfully scrapped");
+                }
+                else if(data == "ALREADY_SCRAPPED"){
+                alert("You scrapped already");
+                }
+                else{
+                alert("Unknown error");
+                }
+                });
+            event.preventDefault();
+    });
     $(".articleButtons .rec, .articleButtons .dis").click(function(event){
             var board_name = $(this).parent().children("#board_name").val();
             var root_id = $(this).parent().children("#root_id").val();
