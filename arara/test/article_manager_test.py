@@ -1044,7 +1044,7 @@ class ArticleManagerTest(AraraTestBase):
         self._dummy_article_write(self.session_key_mikkang)
         self.assertEqual(self.engine.article_manager._get_last_article_no(), 2)
 
-    def test_scrap_article(self):
+    def test_scrap_and_unscrap_article(self):
         session_keys = self.register_extra_users()
         # Write two articles
         article_no1 = self._dummy_article_write(session_keys[3])
@@ -1085,6 +1085,33 @@ class ArticleManagerTest(AraraTestBase):
         # Try Scrap without article number.
         try:
             self.engine.article_manager.scrap_article(self.session_key_mikkang, -1)
+            self.fail()
+        except InvalidOperation:
+            pass
+
+        # Now, Try Unscrap one.
+        try:
+            self.engine.article_manager.unscrap_article(self.session_key_serialx, article_no1)
+            self.fail()
+        except InvalidOperation:
+            pass
+        try:
+            self.engine.article_manager.unscrap_article(self.session_key_mikkang, -1)
+            self.fail()
+        except InvalidOperation:
+            pass
+
+        self.engine.article_manager.unscrap_article(self.session_key_mikkang, article_no1)
+        session = arara.model.Session()
+        mikkang_instance = session.query(arara.model.User).filter_by(username=u'mikkang').one()
+        scraplist = mikkang_instance.scrapped_articles
+        self.assertEqual(len(scraplist), 1)
+        self.assertEqual(scraplist[0].article.id, article_no2)
+        session.close()
+
+        # He can't unscrap again
+        try:
+            self.engine.article_manager.unscrap_article(self.session_key_mikkang, article_no1)
             self.fail()
         except InvalidOperation:
             pass

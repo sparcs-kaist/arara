@@ -518,6 +518,19 @@ def scrap(request, board_name, root_id, article_no):
 
     return response
 
+@warara.prevent_cached_by_browser
+@warara.wrap_error
+def unscrap(request, board_name, root_id, article_no):
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+
+    try:
+        server.article_manager.unscrap_article(sess, int(article_no))
+        response = HttpResponse("OK")
+    except InvalidOperation, e:
+        response = HttpResponse("NOT_SCRAPPED")
+
+    return response
 @warara.wrap_error
 def move_article(request):
     '''

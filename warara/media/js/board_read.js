@@ -156,6 +156,25 @@ $(document).ready(function(){
                 });
             event.preventDefault();
     });
+    $(".articleButtons .unscrap").click(function(event){
+            var board_name = $(this).parent().children("#board_name").val();
+            var root_id = $(this).parent().children("#root_id").val();
+            var article_id = $(this).parent().children("#article_id").val();
+            var scrap_url = "/board/" + board_name + "/" + root_id + "/" + article_id + "/unscrap/";
+
+            $.get(scrap_url, function(data){
+                if(data == "OK"){
+                alert("Succesfully unscrapped");
+                }
+                else if(data == "NOT_SCRAPPED"){
+                alert("This article is not scrapped");
+                }
+                else{
+                alert("Unknown error");
+                }
+                });
+            event.preventDefault();
+    });
     $(".articleButtons .rec, .articleButtons .dis").click(function(event){
             var board_name = $(this).parent().children("#board_name").val();
             var root_id = $(this).parent().children("#root_id").val();
