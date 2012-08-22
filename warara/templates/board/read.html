@@ -90,7 +90,9 @@
             <input type="submit" class="smallButton reply" value="답글달기" />
             <input type="submit" class="smallButton rec" value="추천하기" />
             <input type="submit" class="smallButton dis" value="반대하기" />
-            <input type="submit" class="smallButton scrap" value="스크랩하기" />
+            {% ifequal mode 'scrapbook' %}<input type="submit" class="smallButton unscrap" value="스크랩취소" />
+            {% else %} <input type="submit" class="smallButton scrap" value="스크랩하기" />
+            {% endifequal %}
             {% if article.flag_modify %}
             <input type="submit" class="smallLightButton modify" value="수정하기" />
             <input type="submit" class="smallLightButton delete" value="삭제하기" />
