@@ -89,6 +89,7 @@
     {% endifequal %}
 </p>
 <div class="listBottom">
+    {% if mode == 'board' or mode == 'all' %}
     <form id="searchForm" name="searchPost" method="GET" action="{{ base_url }}search">
         <div class="searchBox">
             <p class="selectObject">
@@ -100,6 +101,7 @@
             </p>
         </div>
     </form>
+    {% endif %}
     {% ifequal mode 'board' %}
     <form id="writeForm" name="writePostForm" method="GET" action="{{ base_url }}write/" {% if board_dict.read_only %}class="hidden"{% endif %} style="display:inline-block;">
         <input type="submit" id="writePost" class="darkButton" value="글쓰기" />

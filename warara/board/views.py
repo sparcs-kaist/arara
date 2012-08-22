@@ -76,6 +76,8 @@ def get_article_list(request, r, mode):
         article_result = server.article_manager.article_list(sess, r['board_name'], heading, page_no, page_length, include_all_headings)
     elif mode == 'total_list':
         article_result = server.article_manager.article_list(sess, u"", u"", page_no, page_length, True)
+    elif mode == 'scrap_list':
+        article_result = server.article_manager.scrapped_article_list(sess, page_no, page_length)
     elif mode == 'read':
         #TODO: heading 과 include_all_headings
         if 'heading' in request.session:
@@ -87,6 +89,9 @@ def get_article_list(request, r, mode):
         r['page_no'] = article_result.current_page
     elif mode == 'total_read':
         article_result = server.article_manager.article_list_below(sess, u'', u'', int(r['article_id']), page_length, True)
+        r['page_no'] = article_result.current_page
+    elif mode == 'scrap_read':
+        article_result = server.article_manager.scrapped_article_list_below(sess, int(r['article_id']), page_length)
         r['page_no'] = article_result.current_page
     elif mode == 'search':
         for k, v in r['search_method'].items():
@@ -147,6 +152,9 @@ def get_article_list(request, r, mode):
 
     if mode == 'total_list' or mode == 'total_read' or mode == 'total_search':
         r['board_desc'] = u'All articles in ARA BBS!'
+        r['have_heading'] = False
+    elif mode == 'scrap_list' or mode == 'scrap_read' or mode == 'scrap_search':
+        r['board_desc'] = u'Scrapped articles'
         r['have_heading'] = False
     else:
         #read_only_control

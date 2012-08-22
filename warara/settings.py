@@ -81,9 +81,9 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
         'warara.account',
-        'warara.all',
         'warara.blacklist',
         'warara.board',
+        'warara.collection',
         'warara.main',
         'warara.message',
         'warara.mobile',
