@@ -514,16 +514,6 @@ class LoginManager(arara_manager.ARAraManager):
         self.logger.error(' 3. actual username (frontend, always true): ' + username)
         self.logger.error(' 4. User_info (in frontend): ' + str(userinfo))
         self.logger.error(' 5. User_info (in backend): ' + str(self.engine.member_manager.get_info(session_key)))
-        self.logger.error(' 6. related sessions .... ')
-
-        related_user = (username, self.get_user_id(session_key))
-        related_sess = [(session_key, session)
-                for session_key, session in self.session_dic.iteritems()
-                if session['username'] in related_user]
-
-        for k, v in related_sess:
-            self.logger.error(' (%s): %s' % (k, str(v)))
-
         self.logger.error(' XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ')
 
 
