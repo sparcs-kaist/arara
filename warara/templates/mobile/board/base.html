@@ -1,0 +1,11 @@
+{% extends "mobile/base.html" %}
+
+{% block content %}
+    {{block.super}}
+
+    {% ifequal mode 'board' %} {% url warara.mobile.board.views.list board_name as base_url %} {% endifequal %}
+    {% ifequal mode 'all' %} {% url warara.mobile.all.views.list as base_url %} {% endifequal %}
+
+    {% block board_content %}
+    {% endblock board_content %}
+{% endblock content %}

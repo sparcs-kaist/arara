@@ -1,4 +1,4 @@
-{% extends "mobile/base.html" %}
+{% extends "mobile/board/base.html" %}
 {% load arara_tags %}
 {% load i18n %}
 
@@ -11,7 +11,7 @@
     </span>
 </div>
 {% endblock %}
-{% block content %}
+{% block board_content %}
 
 {% ifequal mode 'board' %}
 {% url warara.mobile.board.views.list board_name as base_url %}
