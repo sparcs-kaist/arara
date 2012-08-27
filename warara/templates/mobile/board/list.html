@@ -59,18 +59,18 @@
     <div class="cb"></div>
 </div>
 
-<div id="search" class="hidden">
-    <form action="#">
+<div id="search">
+    <form method="GET" action="{{ base_url }}search">
         <fieldset>
             <legend>카테고리</legend>
-            <input type = "hidden" name = "come_idx" value = "2368"/>
-            <input type = "hidden" name = "iskin" value = ""/>
+            <!-- input type = "hidden" name = "come_idx" value = "2368"/>
+            <input type = "hidden" name = "iskin" value = ""/-->
             <p>
-            <select name = "stype">
-                <option value = "nickname">닉네임</option>
-                <option value = "subject" selected = "selected">제목</option>
+            <select name = "title">
+                <!-- option value = "nickname">닉네임</option-->
+                <option value = "title" selected = "selected">제목</option>
             </select>
-            <input type = "text" name = "svalue" value = ""/>
+            <input type = "text" name = "search_word" value = ""/>
             <input type = "submit" value = "검색"/>
             </p>
         </fieldset>

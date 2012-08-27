@@ -618,7 +618,7 @@ def search(request, board_name):
     r['mode'] = 'board'
     _search(request, r, sess, board_name)
 
-    rendered = render_to_string('board/list.html', r)
+    rendered = render_to_string('mobile/board/list.html', r)
     return HttpResponse(rendered)
 
 # Django's never_cache decorator causes empty file, so we do it manually.
