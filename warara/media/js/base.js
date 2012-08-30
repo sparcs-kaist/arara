@@ -496,7 +496,7 @@ $(document).ready(function(){
  * TODO: 현재 1. 단축키, 2. 유저인포팝업, 3. 메세지팝업 에 대한 내용이 섞여있음
  * 주석을 잘 달아서 필요없는 부분 쳐내고 필요한 부분 살려 사용해야함
  */
-    get_new_message_count_url = "/message/count_new"
+    get_new_message_count_url = "/message/count_new/"
     $.get(get_new_message_count_url, function(data){
         $("#countNewMessage").text(data);
     });
