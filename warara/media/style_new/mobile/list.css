@@ -75,7 +75,7 @@
 .list_buttons{
     padding: 0px 10px 0 15px; 
 }
-.button{
+.button, .buttonR{
      margin: 0;
      border: 1px solid #cccccc;
      padding: 6px 8px;
@@ -84,11 +84,7 @@
      float: left;
  }
  .buttonR{
-     margin: 0;
-     border: 1px solid #cccccc;
      color: #ff0060;
-     display: inline-block;
-     padding: 6px 8px;
      float: right;
 }
 
@@ -103,5 +99,38 @@
     width: 0.01em;
     height: 0.01em;
     overflow: hidden;
+}
+
+#search select{
+    height: 24px;
+    border: 0;
+}
+#search div{
+    border: 1px solid #cccccc;
+    height: 24px;
+    display: inline-block;
+    line-height: 24px;
+    padding-bottom: 0px;
+}
+.ip_box{
+    width: 150px;
+}
+#search .ip{
+    height:22px;
+    border: 0;
+}
+
+#search .button{
+    float: none;
+    background: #ffffff;
+    color: #ff0060;
+    padding: 3px;
+    height: 24px;
+    border: 0;
+}
+
+fieldset {
+    border: 0;
+
 }
 

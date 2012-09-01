@@ -62,17 +62,17 @@
 <div id="search">
     <form method="GET" action="{{ base_url }}search">
         <fieldset>
-            <legend>카테고리</legend>
-            <!-- input type = "hidden" name = "come_idx" value = "2368"/>
-            <input type = "hidden" name = "iskin" value = ""/-->
-            <p>
-            <select name = "title">
-                <!-- option value = "nickname">닉네임</option-->
-                <option value = "title" selected = "selected">제목</option>
-            </select>
-            <input type = "text" name = "search_word" value = ""/>
-            <input type = "submit" value = "검색"/>
-            </p>
+			<div class="criteria_box">
+				<select name="title">
+					<option value="title" selected="selected">제목</option>
+				</select>
+			</div>
+			<div class="ip_box">
+				<input type="text" class="ip" name="search_word" value=""/>
+			</div>
+			<div class="button_box">
+				<input type="submit" class="button" value="검색"/>
+			</div>
         </fieldset>
     </form>
 </div>
