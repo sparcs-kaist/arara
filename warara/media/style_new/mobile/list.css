@@ -93,6 +93,7 @@
     clear both;
     text-align: center;
     margin: 0.4em 0;
+    
 }
 .hidden{
     positioN: absolute;
@@ -131,6 +132,6 @@
 
 fieldset {
     border: 0;
-
+    margin-top: 20px;
 }
 
