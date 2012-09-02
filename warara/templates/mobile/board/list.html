@@ -1,14 +1,17 @@
-{% extends "mobile/base.html" %}
+{% extends "mobile/board/base.html" %}
 {% load arara_tags %}
 {% load i18n %}
 
 {% block style %}<link rel="stylesheet" href="/media/style_new/mobile/list.css" type="text/css" />{% endblock %}
 {% block header %}
 <div id="gray">
-    <span><a href="/mobile/board/list/">전체게시판</a>  &gt;&gt; <a href="/mobile/board/{{ board_name }}/">{{ board_name }}</a></span>
+    <span><a href="/mobile/board/list/">전체게시판</a>  &gt;&gt;
+        {% ifequal mode 'board' %} <a href="/mobile/board/{{ board_name }}/">{{ board_name }}</a> {% endifequal %}
+        {% ifequal mode 'all' %} <a href="/mobile/all/">{{ board_name }}</a> {% endifequal %}
+    </span>
 </div>
 {% endblock %}
-{% block content %}
+{% block board_content %}
 <div class="list">
     <ul>
         {% for article in article_list %}
@@ -56,23 +59,25 @@
     <div class="cb"></div>
 </div>
 
-<div id="search" class="hidden">
-    <form action="#">
+<div id="search">
+    <form method="GET" action="{{ base_url }}search">
         <fieldset>
             <legend>카테고리</legend>
-            <input type = "hidden" name = "come_idx" value = "2368"/>
-            <input type = "hidden" name = "iskin" value = ""/>
+            <!-- input type = "hidden" name = "come_idx" value = "2368"/>
+            <input type = "hidden" name = "iskin" value = ""/-->
             <p>
-            <select name = "stype">
-                <option value = "nickname">닉네임</option>
-                <option value = "subject" selected = "selected">제목</option>
+            <select name = "title">
+                <!-- option value = "nickname">닉네임</option-->
+                <option value = "title" selected = "selected">제목</option>
             </select>
-            <input type = "text" name = "svalue" value = ""/>
+            <input type = "text" name = "search_word" value = ""/>
             <input type = "submit" value = "검색"/>
             </p>
         </fieldset>
     </form>
 </div>
 {% endblock %}
-{% block pc_url %}/board/{{ board_name }}/{% endblock %}
-
+{% block pc_url %}
+    {% ifequal mode 'board' %} /board/{{ board_name }}/ {% endifequal %}
+    {% ifequal mode 'all' %} /all/ {% endifequal %}
+{% endblock %}

@@ -13,7 +13,7 @@ urlpatterns = patterns('',
 #    (r'^([\w \[\]\.]+)/([\d]+)/(\d+)/vote/(\+|\-)$', 'warara.mobile.board.views.vote'),
 #    (r'^([\w \[\]\.]+)/([\d]+)/(\d+)/delete/$', 'warara.mobile.board.views.delete'),
 #    (r'^([\w \[\]\.]+)/([\d]+)/(\d+)/destroy/$', 'warara.mobile.board.views.destroy'),
-#    (r'^([\w \[\]\.]+)/search/$', 'warara.mobile.board.views.search'),
+    (r'^([\w \[\]\.]+)/search/$', 'warara.mobile.board.views.search'),
 #    (r'^([\w \[\]\.]+)/delete_file/$', 'warara.mobile.board.views.file_delete'),
 #    (r'^([\w \[\]\.]+)/([\d]+)/(\d+)/file/(\d+)/$', 'warara.mobile.board.views.file_download'),
 )
