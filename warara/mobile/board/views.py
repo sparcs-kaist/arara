@@ -579,7 +579,7 @@ def _search(request, r, sess, board_name):
     r['search_word'] = search_word
     r['selected_method_list'] = []
 
-    r['chosen_search_method'] = request.GET.get('chosen_search_method', '')
+    r['chosen_search_method'] = request.GET.get('chosen_search_method', '').replace('%7C','|').replace('%7c','|')
     if r['chosen_search_method']:
         r['search_method'] = dict(zip(r['chosen_search_method'].split('|'), [search_word for x in range(100)]))
         r['selected_method_list'] = r['chosen_search_method'].split('|')
@@ -596,6 +596,7 @@ def _search(request, r, sess, board_name):
     else:
         get_article_list(request, r, 'total_search')
 
+    r['chosen_search_method'] = request.GET.get('chosen_search_method', '').replace('|','%7C')
     r['method'] = 'search'
     # XXX 2010.05.14.
     #  바로 다음 줄의 request.get_full_path() 를 호출하면 이상하게도 utf-8 error 가 발생한다. 한글로 검색했을 때 주로 발생하는데, 문제의 재현이 쉽지 않다. 어떤 땐 utf-8 error 가 나고, 어떤 땐 안 난다.

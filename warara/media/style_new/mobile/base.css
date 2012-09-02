@@ -34,6 +34,19 @@ a img { border:0; }
 }
 .block{ display: block; }
 
+/* iPhone 서식 제거 */
+select{
+    -webkit-appearance: menulist;
+    box-sizing: border-box;
+    border: 1px solid;
+    -webkit-rtl-ordering: logical;
+    cursor: default;
+    -webkit-border-radius: 0;
+}
+input, textarea {
+    -webkit-border-radius: 0;
+}
+
 /* 여백제거 , 폰트 */
 p{ 
     margin:0; margin-bottom:1em; 
