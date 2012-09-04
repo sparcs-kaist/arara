@@ -13,6 +13,7 @@ a:hover { color:#333; text-decoration:underline; }
 #linksModal .modalTitle { background:#666; color:#fff; }
 #linksModal .modalWindow ul li a { border-bottom:1px #dadada solid; }
 
+#topLinksDiv { position:absolute; z-index:2; }
 #topLinks { font-family:Helvetica,Arial,sans-serif; color:#cccccc; background:#333333; border-color:#000000; }
 #topLinks a:link { color:#ccc; text-decoration:none; }
 #topLinks a:visited { color:#ccc; text-decoration:none; }
@@ -152,7 +153,7 @@ a:hover { color:#333; text-decoration:underline; }
 .mainBody .bestArticles .top .BAtitle a, .mainBody .hotArticles .top .BAtitle a { color:#fff; }
 .mainBody .bestArticles .top a, .mainBody .hotArticles .top a { color:#fff; }
 
-#signInModal { background:url(/media/image/stealBlue/b_signin.png) bottom right no-repeat; }
+#signInModal { z-index:1; background:url(/media/image/stealBlue/b_signin.png) bottom right no-repeat; }
 #signInModal .modalWindow { background:#fff; -moz-box-shadow: 0 10px 20px #444; -webkit-box-shadow: 0 10px 20px #444; box-shadow: 0 10px 20px #444; }
 #signInModal .modalWindow>.aboutAra .desc { color:#666; }
 #signInModal .modalWindow>.signInInput #signIn .etc a { color:#333; text-decoration:underline; }
