@@ -28,6 +28,11 @@
                 </div></div>
                 {% if article.reply_count %}<div class="re_num">({{article.reply_count}})</div>{% endif %}
             <span class="listInfo">
+                <span class="indicator">
+                    {% ifequal article.read_status 'U' %}<span class="update">U</span>{% endifequal %}
+                    {% ifequal article.read_status 'N' %}<span class="new">N</span>{% endifequal %}
+                    {% ifequal article.read_status 'R' %}{% endifequal %}
+                </span>
                 {% ifequal mode 'all' %}<b>{{article.board_name}}</b> | {% endifequal %}{{article.author_nickname|truncatechars:"8"}} | 추천 {{article.positive_vote}} / 반대 {{article.negative_vote}} | 조회: {{article.hit}}</span>
         </div>
         </li>
