@@ -147,6 +147,16 @@ $(document).ready(function(){
         event.preventDefault();
     });
 
+    function nickname_search(){
+        document.location.href="/all/search/?author_username=author_username&search_word="+username;
+    }
+
+    $("#user_nickname_search").click(function(event) {
+        nickname_search();
+        event.preventDefault();
+    });
+
+
     $("html").click(function(event) {
         if($focus_input){
         return;
