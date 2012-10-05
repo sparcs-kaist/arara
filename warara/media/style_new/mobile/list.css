@@ -96,6 +96,7 @@
     clear both;
     text-align: center;
     margin: 0.4em 0;
+    display: none;
 }
 .hidden{
     positioN: absolute;
