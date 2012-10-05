@@ -3,7 +3,7 @@
 {% url warara.board.views.list board_name as pcver_url %}
 {% endifequal %}
 {% ifequal mode 'all' %}
-{% url warara.all.views.list as pcver_url %}
+{% url warara.collection.views.list 'all' as pcver_url %}
 {% endifequal %}
 <li class="re_list" id="{{article.id}}">
 <div {% if article.deleted or article.blacklisted %} class = "deleted" {% endif %} >
