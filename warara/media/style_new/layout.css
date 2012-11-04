@@ -67,7 +67,7 @@ input { font-family:Dotum,돋움,Helvetica,Arial,sans-serif; }
 #sideContents dd { margin:0; padding:0; letter-spacing:-1px; }
 #sideContents dd ul { margin:0; padding:0; list-style:none; list-style-image:none; line-height:20px; }
 #sideContents dd ul li { margin:0; padding:0; }
-#sideContents #myInfo { height:115px; }
+#sideContents #myInfo { height:135px; }
 
 #sideContents span.sideRight { display:block; float:right; }
 #sideContents #myInfo span.sideRight { font-weight:bold; font-family:Helvetica,Arial,sans-serif; padding:0 5px; letter-spacing:normal; }
