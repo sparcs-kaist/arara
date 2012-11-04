@@ -3,7 +3,7 @@
 {% url warara.board.views.list board_name as pcver_url %}
 {% endifequal %}
 {% ifequal mode 'all' %}
-{% url warara.all.views.list as pcver_url %}
+{% url warara.collection.views.list 'all' as pcver_url %}
 {% endifequal %}
 <li class="re_list" id="{{article.id}}">
 <div {% if article.deleted or article.blacklisted %} class = "deleted" {% endif %} >
@@ -34,7 +34,7 @@
         {% for file in article.attach %}
         <tr>
             <th>첨부{{forloop.counter}}</th>
-            <td><a href="{{ pcver_url }}{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" target="_blank">{{file.filename}}</a>
+            <td><a href="{{ pcver_url }}{{article.root_id}}/{{article.id}}/file/{{file.file_id}}" target="_blank">{{file.filename}} ( {{ file.filesize|filesizeformat }} )</a>
         </tr>
         {% if file.file_id in article.image %}
         <tr>

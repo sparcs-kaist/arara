@@ -19,7 +19,7 @@
 {% endifequal %}
 {% ifequal mode 'all' %}
 {% url warara.mobile.all.views.list as base_url %}
-{% url warara.all.views.list as pcver_url %}
+{% url warara.collection.views.list 'all' as pcver_url %}
 {% endifequal %}
 <div id="article_head">
     <div {% if article.deleted or article.blacklisted %} class = "deleted" {% endif %} >
