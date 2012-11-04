@@ -6,6 +6,8 @@
         <title>{% block title %}아라{% endblock %}</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="description" content="KAIST 학내 커뮤니티, 아라">
+        {% load compress %}
+        {% compress css %}
         <link rel="stylesheet" href="/media/style_new/layout.css" type="text/css" media="screen" />
         <link rel="stylesheet" href="/media/style_new/stealBlue.css" type="text/css" media="screen" />
         <link rel="stylesheet" href="/media/style_new/popup.css" type="text/css" media="screen" />
@@ -13,6 +15,9 @@
         {% block style %}{% endblock %}
         <link rel="shortcut icon" href="/media/image/favicon.ico" type="image/x-icon" />
         <!--<link rel="stylesheet" href="/media/style_new/print.css" type="text/css" media="print" />-->
+        {% endcompress %}
+
+        {% compress js %}
         <script type="text/javascript" src="/media/thirdparty/jquery-latest.min.js"></script>
         <script type="text/javascript" src="/media/js/layout.js"></script>
         <script type="text/javascript" src="/media/thirdparty/thickbox/thickbox.js"></script>
@@ -23,6 +28,7 @@
         <script type="text/javascript" src="/media/js/base.js"></script>
         {% block script %}
         {% endblock %}
+        {% endcompress %}
     </head>
 
     <body onload="setWidth();" onresize="setWidth();">
