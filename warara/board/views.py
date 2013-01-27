@@ -177,6 +177,7 @@ def list(request, board_name):
     r['mode'] = 'board'
     r['board_name'] = board_name
     get_article_list(request, r, 'list')
+    fake_author(r['article_list'], False)
 
     rendered = render_to_string('board/list.html', r)
     return HttpResponse(rendered)
@@ -364,6 +365,9 @@ def read(request, board_name, article_id):
     # 화면 하단의 글목록의 정보를 r 에 저장
     get_article_list(request, r, 'read')
 
+    fake_author(r['article_read_list'])
+    fake_author(r['article_list'], False)
+
     # 계층형 Reply 구조를 위해 reply를 미리 render
     rendered_reply = render_reply(board_name, r['article_read_list'][1:], '/board/%s/' % board_name)
     r['rendered_reply'] = rendered_reply
@@ -397,6 +401,9 @@ def read_root(request, board_name, article_id):
 
     # 화면 하단의 글목록의 정보를 r 에 저장
     get_article_list(request, r, 'read')
+
+    fake_author(r['article_read_list'])
+    fake_author(r['article_list'], False)
 
     rendered = render_to_string('board/read.html', r)
     return HttpResponse(rendered)
@@ -723,6 +730,7 @@ def rss(request, board_name):
     page_no = 1
     page_length = 20
     article_list = server.article_manager.article_list(sess, board_name, None, page_no, page_length, True).hit
+    fake_author(article_list, False)
 
     for article in article_list:
         if article.heading:
@@ -773,3 +781,22 @@ def render_reply(board_name, article_list, base_url):
             r_string += rendered_target_article
 
     return r_string
+
+def fake_author(article_list, classify=True):
+    # 글이 Anonymous한 경우 작성자를 Faking함.
+    # classify 옵션이 켜져있을 경우 같은 사용자는 구분할 수 있게 되며, 꺼져있을 경우 같은 사용자라 해도 다른 번호를 받게 됨
+    masks = {}
+    no = 1
+    prefix_nickname = u'아무개'
+    prefix_username = u'Anonymous'
+    for article in article_list:
+        if not article.anonymous:
+            continue
+
+        if not classify or article.author_id not in masks:
+            masks[article.author_id] = no
+            no += 1
+
+        article.author_nickname = prefix_nickname + str(masks[article.author_id])
+        article.author_username = prefix_username + str(masks[article.author_id])
+

@@ -4,7 +4,7 @@ from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
 from libs import datetime2timestamp, filter_dict, smart_unicode
 from arara import arara_manager
 from arara import model
-from arara.model import BOARD_TYPE_NORMAL, BOARD_TYPE_PICTURE
+from arara.model import BOARD_TYPE_NORMAL, BOARD_TYPE_PICTURE, BOARD_TYPE_ANONYMOUS
 from arara.util import require_login
 from arara.util import log_method_call_with_source, log_method_call_with_source_important
 
@@ -220,7 +220,7 @@ class BoardManager(arara_manager.ARAraManager):
         @type  category_name: string
         @param category_name: 보드가 속하는 카테고리의 이름(초기값 : None 카테고리 없음)
         @type  board_type: int
-        @param board_type: 보드의 종류 (0 : 일반 게시판, 1 : 사진 게시판)
+        @param board_type: 보드의 종류 (0 : 일반 게시판, 1 : 사진 게시판, 2 : 익명 게시판)
         @type  to_read_level: int
         @param to_read_level: 게시판 글을 읽기위해 필요한 authentication_mode 레벨 (초기값: 3 포탈인증자 읽기 가능)
         @type  to_write_level: int
@@ -282,7 +282,7 @@ class BoardManager(arara_manager.ARAraManager):
         @type  category_name: string
         @param category_name: 보드가 속하는 카테고리의 이름(초기값 : None 카테고리 없음)
         @type  board_type: int
-        @param board_type: 보드의 종류 (0 : 일반 게시판, 1 : 사진 게시판)
+        @param board_type: 보드의 종류 (0 : 일반 게시판, 1 : 사진 게시판, 2 : 익명 게시판)
         @type  to_read_level: int
         @param to_read_level: 게시판 글을 읽기위해 필요한 authentication_mode 레벨 (초기값: 3 포탈인증자 읽기 가능)
         @type  to_write_level: int

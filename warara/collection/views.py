@@ -45,6 +45,7 @@ def list(request, mode):
     r['mode'] = mode
 
     warara.board.views.get_article_list(request, r, COLLECTION_TYPE[mode]['list_mode'])
+    warara.board.views.fake_author(r['article_list'], False)
 
     rendered = render_to_string('board/list.html', r)
     return HttpResponse(rendered)
@@ -72,6 +73,9 @@ def read(request, mode, article_id):
     # board_name 이 없기 때문에 사용한 Hack.
     r['board_name'] = COLLECTION_TYPE[mode]['board_name']
     r['mode'] = mode
+
+    warara.board.views.fake_author(r['article_read_list'])
+    warara.board.views.fake_author(r['article_list'], False)
 
     # 계층형 Reply 구조를 위해 reply를 미리 render
     r['rendered_reply'] = warara.board.views.render_reply(r['board_name'], r['article_read_list'][1:], COLLECTION_TYPE[mode]['base_url'])
@@ -171,6 +175,8 @@ def rss(request, mode):
         article_list = server.article_manager.article_list(sess, u"", u"", page_no, page_length, True).hit
     elif mode == 'scrap':
         article_list = server.article_manager.scrapped_article_list(sess, page_no, page_length).hit
+
+    warara.board.views.fake_author(article_list, False)
 
     for article in article_list:
         feed.add_item(title='[%s]%s' % (article.board_name, article.title),

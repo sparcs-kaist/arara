@@ -180,7 +180,7 @@ class Category(Base):
 
 BOARD_TYPE_NORMAL = 0
 BOARD_TYPE_PICTURE = 1
-
+BOARD_TYPE_ANONYMOUS = 2
 
 class Board(Base):
     __tablename__  = 'boards'
@@ -201,7 +201,7 @@ class Board(Base):
 
     category = relationship(Category, backref='boards')
 
-    def __init__(self, board_name, board_alias, board_description, order, category, type=None, to_read_level=3, to_write_level=3):
+    def __init__(self, board_name, board_alias, board_description, order, category, type=BOARD_TYPE_NORMAL, to_read_level=3, to_write_level=3, anonymous=False):
         '''
         @type board_name: string
         @type board_description: string
@@ -219,10 +219,7 @@ class Board(Base):
         self.hide = False
         self.order = order
         self.category = category
-        if type:
-            self.type = type
-        else:
-            self.type = BOARD_TYPE_NORMAL
+        self.type = type
         self.to_read_level = to_read_level
         self.to_write_level = to_write_level
 

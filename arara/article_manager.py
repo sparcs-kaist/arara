@@ -11,6 +11,7 @@ from sqlalchemy.sql import func, select
 from libs import datetime2timestamp, filter_dict, smart_unicode
 from arara import arara_manager
 from arara import model
+from arara.model import BOARD_TYPE_ANONYMOUS
 from arara.util import require_login
 from arara.util import log_method_call_with_source, log_method_call_with_source_duration, log_method_call_with_source_important
 
@@ -22,9 +23,9 @@ log_method_call_important = log_method_call_with_source_important('article_manag
 
 # TODO: WRITE_ARTICLE_DICT 는 사실 쓰이지 않는다... SPEC 표시 용도일까?
 WRITE_ARTICLE_DICT = ('title', 'heading', 'content')
-READ_ARTICLE_WHITELIST = ('id', 'heading', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'author_nickname', 'author_id', 'positive_vote', 'negative_vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable', 'attach', 'board_name')
+READ_ARTICLE_WHITELIST = ('id', 'heading', 'title', 'content', 'last_modified_date', 'deleted', 'blacklisted', 'author_username', 'author_nickname', 'author_id', 'positive_vote', 'negative_vote', 'date', 'hit', 'depth', 'root_id', 'is_searchable', 'attach', 'board_name', 'anonymous')
 LIST_ARTICLE_WHITELIST = ('id', 'title', 'heading', 'date', 'last_modified_date', 'reply_count',
-                    'deleted', 'author_username', 'author_nickname', 'author_id', 'positive_vote', 'negative_vote', 'hit', 'board_name')
+                    'deleted', 'author_username', 'author_nickname', 'author_id', 'positive_vote', 'negative_vote', 'hit', 'board_name', 'anonymous')
 # TODO SEARCH_ARTICLE_WHITELIST 는 왜 여기에도 있는 걸까?
 SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'heading', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'author_nickname', 'author_id', 'vote', 'hit', 'content')
@@ -107,14 +108,16 @@ class ArticleManager(arara_manager.ARAraManager):
                     model.Article.last_modified_date > time_to_filter,
                     model.Article.board.has(model.Board.hide==False),
                     model.Article.board.has(model.Board.deleted==False),
-                    not_(model.Article.deleted==True)))
+                    not_(model.Article.deleted==True),
+                    model.Article.is_searchable==True))
         else:
             query = session.query(model.Article).filter(and_(
                     model.Article.root_id==None,
                     model.Article.last_modified_date > time_to_filter,
                     model.Article.board.has(model.Board.hide==False),
                     model.Article.board.has(model.Board.deleted==False),
-                    not_(model.Article.deleted==True)))
+                    not_(model.Article.deleted==True),
+                    model.Article.is_searchable==True))
 
         if criteria=="vote":
             best_article = query.order_by(model.Article.positive_vote.desc()).order_by(model.Article.reply_count.desc()).order_by(model.Article.id.desc())[:count]
@@ -143,6 +146,7 @@ class ArticleManager(arara_manager.ARAraManager):
 
         item_dict['date'] = datetime2timestamp(item_dict['date'])
         item_dict['last_modified_date'] = datetime2timestamp(item_dict['last_modified_date'])
+        item_dict['anonymous'] = False
 
         if not item_dict.get('title'):
             item_dict['title'] = u'Untitled'
@@ -151,6 +155,8 @@ class ArticleManager(arara_manager.ARAraManager):
         if 'board_id' in item_dict:
             item_dict['board_name'] = item.board.board_name
             del item_dict['board_id']
+            if item.board.type == BOARD_TYPE_ANONYMOUS:
+                item_dict['anonymous'] = True
         if 'heading_id' in item_dict:
             if item.heading == None:
                 item_dict['heading'] = u''
@@ -935,6 +941,9 @@ class ArticleManager(arara_manager.ARAraManager):
             if 'is_searchable' in article_dic.__dict__:
                 if not article_dic.is_searchable:
                     new_article.is_searchable = False
+            if board.type == BOARD_TYPE_ANONYMOUS:
+                new_article.is_searchable = False
+
             session.commit()
             id = new_article.id
             new_article.last_reply_id  = id
@@ -1008,6 +1017,9 @@ class ArticleManager(arara_manager.ARAraManager):
         article.last_reply_id = id
         if article.root:
             article.root.last_reply_id = new_reply.id
+        session.commit()
+        if board.type == BOARD_TYPE_ANONYMOUS:
+            new_reply.is_searchable = False
         session.commit()
         session.close()
         return id
