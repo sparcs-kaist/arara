@@ -9,7 +9,7 @@
                     {{article.title}}
                 {% endif %}
             </a></h4>
-            <p class="author"><a href="#" class="{% if not article.anonymous %}nickname{% endif %}">{{article.author_nickname}}</a> <span class="eng">{{article.author_username}}</span></p>
+            <p class="author"><a {% if not article.anonymous %}href="#" class="nickname"{% endif %}>{{article.author_nickname}}</a> <span class="eng">{{article.author_username}}</span></p>
             <p class="recCount">추천 <span class="eng">+<span id="positive_vote_num_{{article.id}}">{{article.positive_vote}}</span> / -<span id="negative_vote_num_{{article.id}}">{{article.negative_vote}}</span></span></p>
             <p class="date"><a href="#{{article.id}}">{% filter lower %}{{article.date|date:"Y/m/d g:i A"}}{% endfilter %}</a></p>
         </div>
