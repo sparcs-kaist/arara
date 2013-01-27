@@ -13,6 +13,7 @@ import datetime
 import re
 import warara
 from warara import warara_middleware
+from warara.board.views import fake_author
 
 from etc.warara_settings import FILE_DIR, FILE_MAXIMUM_SIZE, BOARD_ICON_MAP, BOARD_WITHOUT_ICON
 
@@ -165,6 +166,7 @@ def list(request, board_name):
     r['mode'] = 'board'
     r['board_name'] = board_name
     get_article_list(request, r, 'list')
+    fake_author(r['article_list'], False)
 
     rendered = render_to_string('mobile/board/list.html', r)
     return HttpResponse(rendered)
@@ -351,6 +353,9 @@ def read(request, board_name, article_id):
 
     # 화면 하단의 글목록의 정보를 r 에 저장
     get_article_list(request, r, 'read')
+
+    fake_author(r['article_read_list'])
+    fake_author(r['article_list'], False)
 
     # 계층형 Reply 구조를 위해 reply를 미리 render
     rendered_reply = render_reply(board_name, r['article_read_list'][1:], '/board/%s/' % board_name)

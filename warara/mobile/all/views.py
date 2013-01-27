@@ -12,6 +12,7 @@ import datetime
 import re
 import warara
 from warara import warara_middleware
+from warara.board.views import fake_author
 
 from etc.warara_settings import FILE_DIR, FILE_MAXIMUM_SIZE
 
@@ -29,6 +30,7 @@ def list(request):
     r['board_name'] = u'All Articles'
     r['mode'] = 'all'
     warara.mobile.board.views.get_article_list(request, r, 'total_list')
+    fake_author(r['article_list'], False)
 
     rendered = render_to_string('mobile/board/list.html', r)
     return HttpResponse(rendered)
@@ -56,6 +58,9 @@ def read(request, article_id):
     # board_name 이 없기 때문에 사용한 Hack.
     r['board_name'] = u'All Articles'
     r['mode'] = 'all'
+
+    fake_author(r['article_read_list'])
+    fake_author(r['article_list'], False)
 
     # 계층형 Reply 구조를 위해 reply를 미리 render
     rendered_reply = warara.mobile.board.views.render_reply(u'All Articles', r['article_read_list'][1:], '/all/', 'all')
