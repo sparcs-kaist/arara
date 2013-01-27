@@ -793,6 +793,8 @@ def fake_author(article_list, classify=True):
         if not article.anonymous:
             continue
 
+        article.blacklisted = False    # Blacklist를 무시함
+
         if not classify or article.author_id not in masks:
             masks[article.author_id] = no
             no += 1
