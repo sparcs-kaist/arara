@@ -40,8 +40,8 @@
                 <dl class="wr1">
                     <dt>시그</dt>
                     <dd class="rad_option">
-                    <input type="radio" id="w4" name="signature_check" value="Y" class="rad" checked="checked" /> <label for="w4">사용 </label>
-                    <input type="radio" id="w5" name="signature_check" value="N" class="rad" /><label for="w5">사용안함 </label>
+                    <input type="radio" id="w4" name="signature_check" value="Y" class="rad"{% if not board_type == 2 %}checked="checked"{% endif %} /> <label for="w4">사용 </label>
+                    <input type="radio" id="w5" name="signature_check" value="N" class="rad"{% if board_type == 2 %}checked="checked"{% endif %} /><label for="w5">사용안함 </label>
                     </dd>
                 </dl>
                 {% endif %}

@@ -90,8 +90,8 @@
             <dl class="sig">
                 <dt>시그</dt>
                 <dd class="rad_option">
-                <input type="radio" id="a" name="signature_check" value="Y" class="rad" checked="checked"><label for="signature_check">사용</label>
-                <input type="radio" id="b" name="signature_check" value="N" class="rad"><label for="signature_check">사용안함</label>
+                    <input type="radio" id="a" name="signature_check" value="Y" class="rad"{% if not article.anonymous %}checked="checked"{% endif %} /><label for="signature_check">사용</label>
+                <input type="radio" id="b" name="signature_check" value="N" class="rad"{% if article.anonymous %}checked="checked"{% endif %} /><label for="signature_check">사용안함</label>
                 <input type="submit" class="buttonR" value="V 확인">
                 <textarea name="signature" style="display: none;">{{ user_signature }}</textarea>
                 </dd>

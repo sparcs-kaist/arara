@@ -41,7 +41,7 @@
             <tr class="writeSignature">
                 <th><label for="writePost_signature">시그너쳐</label></th>
                 <td>
-                    <input type="checkbox" name="signature_check" id="writePost_enableSig" class="enableSig" {% if not modify %}checked{% endif %} /><label for="writePost_enableSig">시그너쳐를 사용합니다.</label><br />
+                    <input type="checkbox" name="signature_check" id="writePost_enableSig" class="enableSig" {% if not modify and not board_type == 2 %}checked{% endif %} /><label for="writePost_enableSig">시그너쳐를 사용합니다.</label><br />
                     <textarea name="signature" class="signatureBox">{{ user_signature }}</textarea>
                 </td>
             </tr>

@@ -31,7 +31,7 @@
             </td>
             <td class="articleid hidden" rel="{{ article.id }}">{{ article.id }}</td>
             <td class="author">
-                <a href="#" class="nickname">{{article.author_nickname|truncatechars:"8"}}</a><span class="username hidden">{{article.author_username}}</span>
+                <a href="#" class="{% if not article.anonymous %}nickname{% endif %}">{{article.author_nickname|truncatechars:"8"}}</a><span class="username hidden">{{article.author_username}}</span>
             </td>
             <td class="smallCat">
                 {% ifequal mode 'all' %}

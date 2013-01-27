@@ -789,16 +789,22 @@ def fake_author(article_list, classify=True):
     no = 1
     prefix_nickname = u'아무개'
     prefix_username = u'Anonymous'
+
     for article in article_list:
         if not article.anonymous:
             continue
 
         article.blacklisted = False    # Blacklist를 무시함
 
-        if not classify or article.author_id not in masks:
-            masks[article.author_id] = no
-            no += 1
+        if classify:
+            if article.author_id not in masks:
+                masks[article.author_id] = no
+                no += 1
 
-        article.author_nickname = prefix_nickname + str(masks[article.author_id])
-        article.author_username = prefix_username + str(masks[article.author_id])
+            article.author_nickname = prefix_nickname + str(masks[article.author_id])
+            article.author_username = prefix_username + str(masks[article.author_id])
+        else:
+            article.author_nickname = prefix_nickname
+            article.author_username = prefix_username
+
 
