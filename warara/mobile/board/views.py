@@ -352,10 +352,11 @@ def read(request, board_name, article_id):
     _read(request, r, sess, board_name, article_id)
 
     # 화면 하단의 글목록의 정보를 r 에 저장
-    get_article_list(request, r, 'read')
+    if filter(lambda x: x.board_name == board_name, r['board_list']):   # 게시판 통폐합으로 인해 기존 링크가 깨지는 것을 방지
+        get_article_list(request, r, 'read')
+        fake_author(r['article_list'], False)
 
     fake_author(r['article_read_list'])
-    fake_author(r['article_list'], False)
 
     # 계층형 Reply 구조를 위해 reply를 미리 render
     rendered_reply = render_reply(board_name, r['article_read_list'][1:], '/board/%s/' % board_name)
