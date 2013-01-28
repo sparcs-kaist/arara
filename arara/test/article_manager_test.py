@@ -920,7 +920,7 @@ class ArticleManagerTest(AraraTestBase):
         self.assertEqual(ArticleList(last_page=1, hit=[], results=0, current_page=1), self.engine.article_manager.article_list(self.session_key_sysop, 'testboard', 'heading1', include_all_headings = False))
         articleListOfHeading2 = self.engine.article_manager.article_list(self.session_key_sysop, 'testboard', 'heading2', include_all_headings = False).hit 
         self.assertEqual(5, len(articleListOfHeading2))
-        self.assertEqual(Article(negative_vote=0, positive_vote=0, last_modified_date=31536005.100000001, is_searchable=True, author_nickname=u'wiki', reply_count=0, id=5, title=u'TITLE', content=None, attach=None, type='normal', author_username=u'wiki', hit=0, root_id=None, deleted=False, board_name=u'testboard', date=31536005.100000001, blacklisted=False, read_status='N', depth=None, author_id=9, heading=u'heading2'), articleListOfHeading2[0])
+        self.assertEqual(Article(negative_vote=0, positive_vote=0, last_modified_date=31536005.100000001, is_searchable=True, author_nickname=u'wiki', reply_count=0, id=5, title=u'TITLE', content=None, attach=None, type='normal', author_username=u'wiki', hit=0, root_id=None, deleted=False, board_name=u'testboard', date=31536005.100000001, blacklisted=False, read_status='N', depth=None, author_id=9, heading=u'heading2', anonymous=False), articleListOfHeading2[0])
 
         # TODO: 말머리 1의 글이 전부 없어진 것 확인
         # TODO: 변수 이름 camelcase 에서 소문자와 언더바로 바꾸기
