@@ -21,7 +21,7 @@
         <ul>
             {% for board in board_icon %}
             <li class="icon">
-            <a href="/mobile/board/{{ board.1 }}/" class="icona">
+            <a href="/mobile/board/{{ board.1 }}" class="icona">
                 <span class="ic" style="background-position:{{ board.2 }}px {{ board.3 }}px"></span>
                 <span class="tt" id="{{ board.1 }}">{{ board.0 }}</span>
             </a>
@@ -33,7 +33,7 @@
     <div class="no_iconwrap">
         <ul>
             {% for board in board_noicon %}
-            <li class="icon"><a class="no_icona" href="/mobile/board/{{ board.1 }}/">
+            <li class="icon"><a class="no_icona" href="/mobile/board/{{ board.1 }}">
                 <span class="tt" id="{{ board.0 }}">{{ board.0 }}</span>
             </a></li>
             {% endfor %}
