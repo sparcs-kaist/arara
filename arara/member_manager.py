@@ -208,7 +208,7 @@ class MemberManager(arara_manager.ARAraManager):
             2. 사용자가 존재하지 않을 경우: errmsg 가 포함된 InvalidOperation
         '''
         try:
-            user = session.query(model.User).filter_by(username=smart_unicode(username)).one()
+            user = session.query(model.User).filter_by(username=smart_unicode(username)).filter_by(deleted=False).one()
             return user
         except InvalidRequestError:
             session.close()
@@ -230,7 +230,7 @@ class MemberManager(arara_manager.ARAraManager):
             2. 사용자가 존재하지 않을 경우: errmsg 가 포함된 InvalidOperation
         '''
         try:
-            user = session.query(model.User).filter_by(id=user_id).one()
+            user = session.query(model.User).filter_by(id=user_id).filter_by(deleted=False).one()
             return user
         except InvalidRequestError:
             if close_session:
@@ -900,7 +900,7 @@ class MemberManager(arara_manager.ARAraManager):
         session = model.Session()
         try:
             query_user = session.query(model.User).filter_by(
-                    nickname=nickname).one()
+                    nickname=nickname).filter_by(deleted=False).one()
             query_user_dict = filter_dict(query_user.__dict__,
                                           USER_QUERY_WHITELIST)
             if query_user_dict['last_logout_time']:
@@ -919,8 +919,7 @@ class MemberManager(arara_manager.ARAraManager):
     @log_method_call_important
     def remove_user(self, session_key):
         '''
-        session key로 로그인된 사용자를 등록된 사용자에서 제거한다' - 회원탈퇴
-        현재 구현되어 있지 않다.
+        session key로 로그인된 사용자를 등록된 사용자에서 제거하고, Primary Key Violation 방지와 재가입 꼼수 방지를 위해 적절한 placeholder를 같은 primary key와 같은 ID, email로서 배치한다.
 
         @type  session_key: string
         @param session_key: 사용자 Login Session
@@ -929,16 +928,32 @@ class MemberManager(arara_manager.ARAraManager):
             1. 성공시: void
             2. 실패시: NotLoggedIn
         '''
-        # TODO: 밑의 함수는 "정말로 정말로 사용자를 지워버리는 용도" 로 사용하도록 분리한다.
-        raise InvalidOperation('Not Allowed Right Now')
         session = model.Session()
         username = smart_unicode(self.engine.login_manager.get_session(session_key).username)
+
         try:
             user = session.query(model.User).filter_by(username=username).one()
-            session.delete(user)
+
+            # Create placeholder
+            user.password = u'youcannotlogin'
+            user.nickname = u'탈퇴회원'
+            user.signature = u''
+            user.self_introduction = u''
+            user.deleted = True
+
+            # Clean-Up almost everythings
+            session.query(model.UserActivation).filter_by(user_id=user.id).delete()
+            session.query(model.BBSManager).filter_by(manager_id=user.id).delete()
+            session.query(model.ScrapStatus).filter_by(user_id=user.id).delete()
+            session.query(model.Blacklist).filter(or_(model.Blacklist.user_id==user.id, model.Blacklist.blacklisted_user_id==user.id)).delete()
+            session.query(model.SelectedBoards).filter_by(user_id=user.id).delete()
+            session.query(model.LostPasswordToken).filter_by(user_id=user.id).delete()
+
             session.commit()
             session.close()
+
             return
+
         except KeyError:
             session.close()
             raise NotLoggedIn()
@@ -973,14 +988,14 @@ class MemberManager(arara_manager.ARAraManager):
             if not search_key:
                 user = session.query(model.User).filter(
                         or_(model.User.username==search_user,
-                            model.User.nickname==search_user)).all()
+                            model.User.nickname==search_user)).filter_by(deleted=False).all()
             else:
                 if search_key.lower() == u'username':
                     user = session.query(model.User).filter_by(
-                            username=search_user).all()
+                            username=search_user).filter_by(deleted=False).all()
                 elif search_key.lower() == u'nickname':
                     user = session.query(model.User).filter_by(
-                            nickname=search_user).all()
+                            nickname=search_user).filter_by(deleted=False).all()
                 else:
                     session.close()
                     raise InvalidOperation('incorrect search key')

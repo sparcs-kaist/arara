@@ -48,6 +48,7 @@ class User(Base):
     # 0 : LIST_ORDER_ROOT_ID , 1 : LIST_ORDER_LAST_REPLY_DATE
     listing_mode = Column(Integer)
     activated_backup = Column(Boolean)
+    deleted = Column(Boolean)
 
     def __init__(self, username, password, nickname, email, signature,
                  self_introduction, default_language, campus):
@@ -80,6 +81,7 @@ class User(Base):
         self.authentication_mode = 0
         self.listing_mode = 0
         self.activated_backup = False
+        self.deleted = False
 
     @classmethod
     def encrypt_password(cl, raw_password, salt):

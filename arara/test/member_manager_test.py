@@ -238,13 +238,78 @@ class MemberManagerTest(AraraTestBase):
             pass
 
     def test_remove_user(self):
-        # XXX(serialx): User remove temp. removed.
-        # 현재는 사용자 제거 기능이 동작하지 않는다.
-        self.register_user(u"combacsa")
-        session_key = self.engine.login_manager.login(u'combacsa', u'combacsa', u'143.248.234.145')
+        session_key_sysop = self.engine.login_manager.login(u'SYSOP', u'SYSOP', '143.234.234.234')
+        self.engine.board_manager.add_board(session_key_sysop, u'board', u'테스트보드', u'Test Board', [])
+
+        self.register_user(u'combacsa')
+        self.register_user(u'hodduc', confirm=True, default_user_reg_dic={'email':'hodduc@kaist.ac.kr'})
+        self.register_user(u'mikkang')
+
+        session_key_combacsa = self.engine.login_manager.login(u'combacsa', 'combacsa', '127.0.0.1')
+        session_key_hodduc = self.engine.login_manager.login(u'hodduc', 'hodduc', '127.0.0.1')
+        session_key_mikkang = self.engine.login_manager.login(u'mikkang', 'mikkang', '127.0.0.1')
+
+        # 1. 호떡이 글을 쓴다
+        article = Article(**{'title': u'serialx is...', 'content': u'polarbear', 'heading': u''})
+        self.engine.article_manager.write_article(session_key_hodduc, u'board', article)
+
+        # 2. 호떡이 컴백서에게 쪽지를 보낸다
+        self.engine.messaging_manager.send_message(session_key_hodduc, u'combacsa', u'333')
+        # 3. 컴백서가 호떡에게 답장을 보낸다
+        self.engine.messaging_manager.send_message(session_key_combacsa, u'hodduc', u'333')
+        # 4. 미깡은 호떡을 블랙리스트 처리한다
+        self.engine.blacklist_manager.add_blacklist(session_key_mikkang, u'hodduc')
+
+        # 5. 충격을 받은 호떡은 아라를 탈퇴하기로 했다
+        self.engine.member_manager.remove_user(session_key_hodduc)
+
+        # 6. 호떡은 더 이상 글을 쓸 수 없다. 탈퇴했으니까...
         try:
-            self.engine.member_manager.remove_user(session_key)
-            self.fail("remove_user must fail")
+            article = Article(**{'title': u'serialx is...', 'content': u'polarbear', 'heading': u''})
+            self.engine.article_manager.write_article(session_key_hodduc, u'board', article)
+            self.fail('Not removed')
+        except InvalidOperation:
+            pass
+
+        # 7. 컴백서의 쪽지함에는 호떡과 주고받은 쪽지가 남아있어야 한다
+        combacsa_sent_message = self.engine.messaging_manager.sent_list(session_key_combacsa)
+        combacsa_recv_message = self.engine.messaging_manager.receive_list(session_key_combacsa)
+        self.assertEqual(combacsa_sent_message.results, 1)
+        self.assertEqual(combacsa_recv_message.results, 1)
+
+        # 8. 미깡의 블랙리스트에서는 호떡이 없어져야 한다
+        mikkang_blacklist = self.engine.blacklist_manager.get_blacklist(session_key_mikkang)
+        self.assertEqual(len(mikkang_blacklist), 0)
+
+        # 9. 호떡이 쓴 글은 남아있어야 한다.
+        article_list, _ = self.engine.article_manager.get_article_list('board', '', 1, 5)
+        self.assertEqual(article_list.results, 1)
+
+        # 10. 호떡은 다시 로그인해보지만 실패한다.
+        try:
+            session_key_hodduc = self.engine.login_manager.login(u'hodduc', 'hodduc', '127.0.0.1')
+            self.fail('Not removed')
+        except InvalidOperation:
+            pass
+
+        # 11. 호떡은 hodduc 아이디로 재가입하려고 했으나 실패한다
+        try:
+            self.register_user(u'hodduc')
+            self.fail()
+        except InvalidOperation:
+            pass
+
+        # 12. 호떡은 hodduc@kaist.ac.kr 이메일로 재가입하려고 했으나 실패한다
+        try:
+            self.register_user(u'hodduc2', confirm=True, default_user_reg_dic={'email':'hodduc@kaist.ac.kr'})
+            self.fail()
+        except InvalidOperation:
+            pass
+
+        # 13. 누군가 탈퇴한 호떡의 정보를 보려고 하면, 실패해야 한다
+        try:
+            self.engine.member_manager.query_by_username(session_key_combacsa, u'hodduc')
+            self.fail()
         except InvalidOperation:
             pass
 
