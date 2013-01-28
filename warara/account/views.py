@@ -248,6 +248,9 @@ def account_remove(request):
     server = warara_middleware.get_server()
     if request.method == 'POST':
         server.member_manager.remove_user(session_key)
+        del request.session['arara_session_key']
+        del request.session['arara_username']
+        del request.session['arara_userid']
         return HttpResponseRedirect("/")
     else:
         account = server.member_manager.get_info(session_key)
