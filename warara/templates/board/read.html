@@ -41,15 +41,16 @@
                     {{article.title}}
                 {% endif %}
         </a></h3>
-        <p class="smallCat">
         {% ifequal mode 'all' %}
+        <p class="smallCat">
             <a href="/board/{{article.board_name}}/">{{article.board_name}}</a>
-        {% else %}
-            {% if article.heading %}
-            <a href="{{ base_url }}?heading={{article.heading}}">{{article.heading}}</a>
-            {% endif %}
-        {% endifequal %}
         </p>
+        {% endifequal %}
+        {% if article.heading %}
+        <p class="smallCat">
+            <a href="/board/{{article.board_name}}/?heading={{article.heading}}">{{article.heading}}</a>
+        </p>
+        {% endif %}
         <div class="articleInfo" rel="{{article.id}}">
             <p class="author"><a {% if not article.anonymous %}href="#" class="nickname"{% endif %}>{{article.author_nickname}}</a> <span class="eng">{{article.author_username}}</span></p>
             <p class="readCount">조회 <span class="eng">{{article.hit}}</span></p>
