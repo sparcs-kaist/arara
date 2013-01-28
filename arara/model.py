@@ -258,7 +258,7 @@ class BoardHeading(Base):
 
     id = Column(Integer, primary_key=True)
     board_id = Column(Integer, ForeignKey('boards.id'), index=True)
-    heading = Column(Unicode(10))
+    heading = Column(Unicode(30))
 
     board = relationship(Board, backref='headings', lazy=False)
 
