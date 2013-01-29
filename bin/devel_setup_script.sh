@@ -129,12 +129,13 @@ KSEARCH_ENABLED = False
 
 # List of 3 boards which will be displayed on the top of the mobile page (default)
 DEFAULT_MOBILE_BOARDS = [
-    ('Garbages', 'garbages'),
+    ('Garbages', 'Garbages'),
     ('Love', 'Love'),
-    ('Food', 'food'),
+    ('Food', 'Food'),
     # ( display name, URI )
 ]
 
+# Ordered List of board name & icon which will be displayed on the boardlist page
 BOARD_ICON_MAP = [
     ('Garbages', 'Garbages/', 0, -4),
     ('Love', 'Love/', -57, -4),
@@ -163,7 +164,7 @@ BOARD_WITHOUT_ICON = [
     ('Lecture', 'Garbages/?heading=%EA%B0%95%EC%A2%8C'),
     ('moneytech', 'Garbages/?heading=%EC%9E%AC%ED%85%8C%ED%81%AC'),
     ('vehicle', 'Garbages/?heading=%ED%83%88%EA%B2%83'),
-    ('Filmspecial', 'Hobby/?heading=%EC%8A%A4%ED%8F%AC%EC%B8%A0'),
+    ('Filmspecial', 'Hobby/?heading=%EC%98%81%ED%99%94'),
     ('sportsEvent', 'Hobby/?heading=%EC%8A%A4%ED%8F%AC%EC%B8%A0'),
     ('bookshelf', 'Hobby/?heading=%EC%B1%85%EA%BD%82%EC%9D%B4'),
     ('AniMania', 'Hobby/?heading=%EB%A7%8C%ED%99%94'),
