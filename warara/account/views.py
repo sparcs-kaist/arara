@@ -165,7 +165,7 @@ def login(request):
     request.session["arara_username"] = username
     request.session["arara_userid"] = User_Info.id
 
-    request.session.set_expiry(3600)
+    # request.session.set_expiry(3600)   NO use with SESSION_EXPIRE_AT_BROWSER_CLOSE
     if current_page.find('register')+1:
         response = HttpResponseRedirect('/main/')
     else:
