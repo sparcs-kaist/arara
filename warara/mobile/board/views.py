@@ -223,6 +223,7 @@ def write_(request, board_name):
 #    r['url'] = ''.join(['/board/', board_name, '/']) XXX: 왜 있는 걸까?
     article_dic['content'] = request.POST.get('text', '')
     use_signature = request.POST.get('signature_check', None)
+    if use_signature == 'N': use_signature = None
     if use_signature:
         article_dic['content'] += '\n\n' + request.POST.get('signature', '')
     article_dic['title'] = request.POST.get('title', '')
