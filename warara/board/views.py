@@ -790,7 +790,7 @@ def fake_author(article_list, classify=True):
     prefix_nickname = u'아무개'
     prefix_username = u'Anonymous'
 
-    for article in article_list:
+    for article in sorted(article_list, key=lambda x: x.id):
         if not article.anonymous:
             continue
 
