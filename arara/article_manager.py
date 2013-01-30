@@ -926,6 +926,13 @@ class ArticleManager(arara_manager.ARAraManager):
         author = self.engine.member_manager._get_user_by_session(session, session_key)
         board = self.engine.board_manager._get_board_from_session(session, board_name)
         if not board.read_only:
+            # 만약 익명 게시판이면, 6시간 이내에 글을 썼으면 안된다
+            if board.type == BOARD_TYPE_ANONYMOUS:
+                last_article = self.get_article_list_by_username(author.username).filter_by(board_id=board.id).order_by(model.Article.id.desc()).first()
+                time_to_filter = datetime.datetime.fromtimestamp(time.time() - 21600)   # 6 Hours
+                if last_article is not None and last_article.last_modified_date >= time_to_filter:
+                    raise InvalidOperation('Cannot write article until %s' % (last_article.last_modified_date + datetime.timedelta(seconds = 21600)))
+
             # 글에 적합한 heading 객체를 찾는다
             heading = None
             heading_str = smart_unicode(article_dic.heading)
