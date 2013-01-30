@@ -432,7 +432,8 @@ class ArticleManager(arara_manager.ARAraManager):
                     model.Article.root_id==None,
                     model.Article.destroyed==False,
                     model.Article.board.has(model.Board.hide==False),
-                    model.Article.board.has(model.Board.deleted==False)))
+                    model.Article.board.has(model.Board.deleted==False),
+                    not_(model.Article.board.has(model.Board.type==2))))
 
         return query
 
