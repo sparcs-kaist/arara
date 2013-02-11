@@ -1179,6 +1179,47 @@ class ArticleManagerTest(AraraTestBase):
         self.assertEqual(10, len(l.hit))
         self.assertEqual(3, l.current_page)
 
+    def test_notice(self):
+        article_id = self._dummy_article_write(self.session_key_mikkang)
+        self.assertEqual(0, self.engine.article_manager.notice_list(u'board').results)
+        # 1. 시삽 권한 없이 공지로 만든다
+        try:
+            self.engine.article_manager.register_notice(self.session_key_mikkang, article_id)
+            self.fail('register with notice by normal user must fail.')
+        except InvalidOperation:
+            pass
+        # 2. 시삽이 공지로 만든다
+        self.engine.article_manager.register_notice(self.session_key_sysop, article_id)
+        self.assertEqual(1, self.engine.article_manager.notice_list(u'board').results)
+        # 3. 다른 글도 공지로 만든다
+        article_id2 = self._dummy_article_write(self.session_key_mikkang)
+        self.engine.article_manager.register_notice(self.session_key_sysop, article_id2)
+        self.assertEqual(2, self.engine.article_manager.notice_list(u'board').results)
+        # 4. 이미 있는 글을 공지로 만들어본다
+        try:
+            self.engine.article_manager.register_notice(self.session_key_sysop, article_id)
+            self.fail('Register notice to notice must fail.')
+        except InvalidOperation:
+            pass
+        # 5. 시삽 권한 없이 공지에서 내린다
+        try:
+            self.engine.article_manager.unregister_notice(self.session_key_mikkang, article_id)
+            self.fail('unregister with notice by normal user must fail.')
+        except InvalidOperation:
+            pass
+        # 6. 시삽이 공지에서 내린다
+        self.engine.article_manager.unregister_notice(self.session_key_sysop, article_id)
+        self.assertEqual(1, self.engine.article_manager.notice_list(u'board').results)
+
+        # 6. 공지가 아닌 글을 공지에서 내려본다
+        try:
+            self.engine.article_manager.unregister_notice(self.session_key_sysop, article_id)
+            self.fail('Unregistering an article that is not a notice must fail.')
+        except InvalidOperation:
+            pass
+
+        self.assertEqual(0, self.engine.article_manager.notice_list(u'board_h').results)
+
     def tearDown(self):
         super(ArticleManagerTest, self).tearDown()
  

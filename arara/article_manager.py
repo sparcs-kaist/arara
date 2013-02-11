@@ -6,6 +6,7 @@ import thread
 from sqlalchemy.exceptions import InvalidRequestError
 from sqlalchemy import and_, or_, not_, func
 from sqlalchemy.orm import eagerload
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.sql import func, select
 
 from libs import datetime2timestamp, filter_dict, smart_unicode
@@ -1680,6 +1681,112 @@ class ArticleManager(arara_manager.ARAraManager):
         # Part 5. 가져온다.
         return self.scrapped_article_list(session_key, page, page_length)
 
+    @require_login
+    @log_method_call_important
+    def register_notice(self, session_key, article_id):
+        '''
+        사용자가 SYSOP일 경우 해당 게시물을 공지로 만듬
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session (SYSOP)
+        @type  article_id: int
+        @param article_id: Article 게시물의 번호
+        @rtype: void
+        @return:
+            1. 성공: void
+            2. 실패:
+                1. 권한 없음 : InvalidOperation Exception
+                2. 이미 공지임 : InvalidOperation Exception
+                3. 기타 : InternalError Exception
+        '''
+        session = model.Session()
+        author = self.engine.member_manager._get_user_by_session(session, session_key)
+        if not author.is_sysop:
+            session.close()
+            raise InvalidOperation("NO_PERMISSION")
+
+        try:
+            article = session.query(model.Article).filter_by(id=article_id).one()
+        except NoResultFound:
+            session.close()
+            raise InvalidOperation("ARTICLE NOT EXISTS")
+        except MultipleResultsFound:
+            session.close()
+            raise InternalError()
+
+        try:
+            notice = session.query(model.BoardNotice).filter_by(article_id=article_id).one()
+            session.close()
+            raise InvalidOperation("ALREADY IN NOTICE")
+        except NoResultFound:
+            notice = model.BoardNotice(article=article)
+            session.add(notice)
+            session.commit()
+
+        session.close()
+
+    @require_login
+    @log_method_call_important
+    def unregister_notice(self, session_key, article_id):
+        '''
+        사용자가 SYSOP일 경우 해당 게시물을 공지에서 내림
+
+        @type  session_key: string
+        @param session_key: 사용자 Login Session (SYSOP)
+        @type  article_id: int
+        @param article_id: Article 게시물의 번호
+        @rtype: void
+        @return:
+            1. 성공: void
+            2. 실패:
+                1. 권한 없음 : InvalidOperation Exception
+                2. 이미 공지 아님 : InvalidOperation Exception
+                3. 기타 : InternalError Exception
+        '''
+        session = model.Session()
+        author = self.engine.member_manager._get_user_by_session(session, session_key)
+        if not author.is_sysop:
+            session.close()
+            raise InvalidOperation("NO_PERMISSION")
+
+        try:
+            article = session.query(model.Article).filter_by(id=article_id).one()
+        except NoResultFound:
+            session.close()
+            raise InvalidOperation("ARTICLE NOT EXISTS")
+        except MultipleResultsFound:
+            session.close()
+            raise InternalError()
+
+        try:
+            notice = session.query(model.BoardNotice).filter_by(article_id=article_id).one()
+        except NoResultFound:
+            session.close()
+            raise InvalidOperation("NOT A NOTICE")
+
+        session.delete(notice)
+        session.commit()
+        session.close()
+
+    @log_method_call
+    def notice_list(self, board_name):
+        '''
+        게시판의 공지 목록을 가져옴
+
+        @type  board_name: string
+        @param board_name: 게시판 이름
+        @rtype: list<ttypes.ArticleList>
+        @return: 게시물 목록
+        '''
+
+        session = model.Session()
+        board = self.engine.board_manager.get_board(board_name)
+        notices = session.query(model.BoardNotice).join(model.BoardNotice.article).filter(model.Article.board_id==board.id)
+        notices = [Article(**self._get_dict(article.article, LIST_ARTICLE_WHITELIST)) for article in notices]
+        notices = ArticleList(hit=notices, current_page=1, last_page=1, results=len(notices))
+
+        return notices
+
     __public__ = [
             get_today_best_list,
             get_today_best_list_specific,
@@ -1706,6 +1813,9 @@ class ArticleManager(arara_manager.ARAraManager):
             scrap_article,
             unscrap_article,
             scrapped_article_list,
-            scrapped_article_list_below]
+            scrapped_article_list_below,
+            register_notice,
+            unregister_notice,
+            notice_list]
 
 # vim: set et ts=8 sw=4 sts=4

@@ -369,6 +369,18 @@ class Article(Base):
     def __repr__(self):
         return "<Article('%s', '%s', %s)>" % (self.title, self.author.username, str(self.date))
 
+class BoardNotice(Base):
+    __tablename__  = 'board_notice'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    article_id = Column(Integer, ForeignKey('articles.id'), primary_key=True)
+    article = relationship(Article, backref=None, lazy=True)
+
+    def __init__(self, article):
+        '''
+        @type article: model.Article
+        '''
+        self.article = article
 
 class ArticleVoteStatus(Base):
     __tablename__  = 'article_vote_status'
