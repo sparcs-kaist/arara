@@ -74,6 +74,9 @@ def get_article_list(request, r, mode):
             request.session['heading'] = heading
         include_all_headings = (heading == None)
         article_result = server.article_manager.article_list(sess, r['board_name'], heading, page_no, page_length, include_all_headings)
+
+        if page_no == 1:
+            r['notice_list'] = server.article_manager.notice_list(r['board_name']).hit
     elif mode == 'total_list':
         article_result = server.article_manager.article_list(sess, u"", u"", page_no, page_length, True)
     elif mode == 'scrap_list':
@@ -744,6 +747,24 @@ def rss(request, board_name):
             description=u'author : %s date : %s' % (article.author_nickname, datetime.datetime.fromtimestamp(article.date)))
 
     return HttpResponse(feed.writeString('utf-8'), mimetype=feedgenerator.Atom1Feed.mime_type)
+
+@warara.prevent_cached_by_browser
+@warara.wrap_error
+def notice(request, board_name, article_id):
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+
+    server.article_manager.register_notice(sess, int(article_id))
+    return HttpResponse('<script>alert("Success");</script>')
+
+@warara.prevent_cached_by_browser
+@warara.wrap_error
+def unnotice(request, board_name, article_id):
+    server = warara_middleware.get_server()
+    sess, r = warara.check_logged_in(request)
+
+    server.article_manager.unregister_notice(sess, int(article_id))
+    return HttpResponse('<script>alert("Success");</script>')
 
 # Using Django's default HTML handling util, escape all tags and urlize, and do some content substitution.
 # 동시에 <a> tag 를 target="_blank" 로 설정되도록 regex 를 써서 바꿔버린다.

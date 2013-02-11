@@ -83,7 +83,8 @@ a:hover { color:#333; text-decoration:underline; }
 .articleList tbody td.indicator .new { color:#ed1556; text-decoration:underline; }
 .articleList tbody td.indicator .update { color:#0173b7; text-decoration:underline; }
 .articleList tbody td.recRead, .articleList tbody td.date { font-family:Helvetica,Arial,sans-serif; }
-
+.articleList tbody tr.notice .title { font-weight: bold; }
+.articleList tbody tr.notice .smallCat { font-weight: bold; }
 .articleList tbody tr.selected td { background:#f0f0f0; }
 
 .articleList a:link { color:#333; text-decoration:none; }

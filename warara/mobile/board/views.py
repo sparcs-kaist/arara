@@ -75,6 +75,9 @@ def get_article_list(request, r, mode):
             request.session['heading'] = heading
         include_all_headings = (heading == None)
         article_result = server.article_manager.article_list(sess, r['board_name'], heading, page_no, page_length, include_all_headings)
+
+        if page_no == 1:
+            r['notice_list'] = server.article_manager.notice_list(r['board_name']).hit
     elif mode == 'total_list':
         article_result = server.article_manager.article_list(sess, u"", u"", page_no, page_length, True)
     elif mode == 'read':

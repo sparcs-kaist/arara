@@ -22,6 +22,41 @@
         </tr>
     </thead>
     <tbody>
+        {% if notice_list %}
+        {% for article in notice_list %}
+        <tr class="notice">
+            <td class="indicator">
+                {% ifequal article.read_status 'U' %}<span class="update">U</span>{% endifequal %}
+                {% ifequal article.read_status 'N' %}<span class="new">N</span>{% endifequal %}
+                {% ifequal article.read_status 'R' %}&nbsp;{% endifequal %}
+            </td>
+            <td class="articleid hidden" rel="{{ article.id }}">{{ article.id }}</td>
+            <td class="author">
+                <a href="#" class="nickname">{{article.author_nickname|truncatechars:"8"}}</a><span class="username hidden">{{article.author_username}}</span>
+            </td>
+            <td class="smallCat">
+                공지사항
+            </td>
+            <td class="title {% if article.deleted %} deleted{% endif %}">
+                {% if logged_in %}
+                    <a href="{{ base_url }}{{article.id}}/?page_no={{page_no}}">
+                        {{ article.title }}
+                        {% if article.reply_count %}
+                        <span class="repCount">[{{article.reply_count}}]</span>
+                        {% endif %}
+                    </a>
+                {% else %}
+                    {{ article.title }}
+                    {% if article.reply_count %}
+                    <span class="repCount">[{{article.reply_count}}]</span>
+                    {% endif %}
+                {% endif %}
+            </td>
+            <td class="recRead"><span class="rec">+{{article.positive_vote}} -{{article.negative_vote}}</span> / {{article.hit}}</td>
+            <td class="date">{{article.date|date:"Y/m/d"}}</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
         {% for article in article_list %}
         <tr {% if article.deleted or article.blacklisted %} class = "deleted" {% endif %} rel="{{forloop.counter}}">
             <td class="indicator">

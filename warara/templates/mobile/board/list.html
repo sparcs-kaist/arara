@@ -14,6 +14,26 @@
 {% block board_content %}
 <div class="list">
     <ul>
+        {% for article in notice_list %}
+        <a href="{{ base_url}}{{article.id}}/?page_no={{page_no}}">
+        <li class="listLi">
+        <div>
+            <div class="listTitle">
+                <div class="listTitleWrap {% if article.reply_count %}listTitleReply{% endif %}">
+                    {{ article.title }}
+                </div></div>
+                {% if article.reply_count %}<span class="re_num">({{article.reply_count}})</span>{% endif %}
+            <span class="listInfo">
+                <span class="indicator">
+                    {% ifequal article.read_status 'U' %}<span class="update">U</span>{% endifequal %}
+                    {% ifequal article.read_status 'N' %}<span class="new">N</span>{% endifequal %}
+                    {% ifequal article.read_status 'R' %}{% endifequal %}
+                </span>
+                <b>공지사항</b></span>
+        </div>
+        </li>
+        </a>
+        {% endfor %}
         {% for article in article_list %}
         <a href="{{ base_url}}{{article.id}}/?page_no={{page_no}}">
         <li class="listLi">
