@@ -654,6 +654,9 @@ service ARAraThriftInterface {
     ArticleList notice_list(1:string board_name)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<Article> recent_articles(1:string board_name, 2:i32 count=5)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// ArticleManager Part End
 /// FileManager Part Begin
     FileInfo save_file(1:string session_key,

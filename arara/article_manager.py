@@ -32,6 +32,7 @@ SEARCH_ARTICLE_WHITELIST = ('id', 'title', 'heading', 'date', 'last_modified_dat
                     'deleted', 'author_username', 'author_nickname', 'author_id', 'vote', 'hit', 'content')
 BEST_ARTICLE_WHITELIST = ('id', 'title', 'date', 'last_modified_date', 'reply_count',
                     'deleted', 'author_username', 'author_nickname', 'author_id', 'positive_vote', 'negative_vote', 'hit', 'last_page', 'board_name', 'root_id')
+RECENT_ARTICLE_WHITELIST = BEST_ARTICLE_WHITELIST
 
 LIST_ORDER_ROOT_ID         = 0
 LIST_ORDER_LAST_REPLY_DATE = 1
@@ -1787,6 +1788,26 @@ class ArticleManager(arara_manager.ARAraManager):
 
         return notices
 
+    @log_method_call
+    def recent_article_list(self, board_name, count=5):
+        '''
+        게시판의 최근 글 count개를 가져옴
+
+        @type  board_name: string
+        @param board_name: 게시판 이름
+        @rtype: list<ttypes.Article>
+        @return: 게시물 목록
+        '''
+
+        session = model.Session()
+        basic_query = self._get_basic_query(session, board_name, None, True)
+        ordered_query = self._get_ordered_query(session, basic_query, LIST_ORDER_ROOT_ID)
+
+        article_dict_list = self._get_dict_list(ordered_query[:count], RECENT_ARTICLE_WHITELIST)
+        session.close()
+
+        return [Article(**article) for article in article_dict_list]
+
     __public__ = [
             get_today_best_list,
             get_today_best_list_specific,
@@ -1816,6 +1837,7 @@ class ArticleManager(arara_manager.ARAraManager):
             scrapped_article_list_below,
             register_notice,
             unregister_notice,
-            notice_list]
+            notice_list,
+            recent_article_list]
 
 # vim: set et ts=8 sw=4 sts=4

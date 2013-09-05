@@ -1220,6 +1220,27 @@ class ArticleManagerTest(AraraTestBase):
 
         self.assertEqual(0, self.engine.article_manager.notice_list(u'board_h').results)
 
+    def test_recent_articles(self):
+        # 글을 쓴다. 두 게시판에 5개씩.
+        self.engine.board_manager.add_board(self.session_key_sysop, u'board2', u'테스트보드2', u'Test Board2', [])
+        for i in range(5):
+            self._dummy_article_write(self.session_key_mikkang, title_append=str(i), board_name='board')
+        for i in range(5):
+            self._dummy_article_write(self.session_key_serialx, title_append=str(i+5), board_name='board2')
+
+        # 최근 게시물을 가져와본다.
+        recent_of_board = self.engine.article_manager.recent_article_list('board')
+        recent_of_board2 = self.engine.article_manager.recent_article_list('board2')
+        self.assertEqual(['TITLE4', 'TITLE3', 'TITLE2', 'TITLE1', 'TITLE0'], [a.title for a in recent_of_board])
+        self.assertEqual(['TITLE9', 'TITLE8', 'TITLE7', 'TITLE6', 'TITLE5'], [a.title for a in recent_of_board2])
+
+        recent_of_board = self.engine.article_manager.recent_article_list('board', count=3)
+        recent_of_board2 = self.engine.article_manager.recent_article_list('board2', count=3)
+        self.assertEqual(['TITLE4', 'TITLE3', 'TITLE2'], [a.title for a in recent_of_board])
+        self.assertEqual(['TITLE9', 'TITLE8', 'TITLE7'], [a.title for a in recent_of_board2])
+
+        # OK
+ 
     def tearDown(self):
         super(ArticleManagerTest, self).tearDown()
  
