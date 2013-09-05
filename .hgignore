@@ -11,3 +11,6 @@ arara/settings.py
 etc/arara_settings.py
 etc/warara_settings.py
 etc/supervisord.conf
+warara/media/CACHE/*
+env/*
+build/*
