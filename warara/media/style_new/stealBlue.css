@@ -126,7 +126,7 @@ a:hover { color:#333; text-decoration:underline; }
 .writeTable .writeTitle td, .writeTable .writeTitle th { border-top:2px #333 solid; }
 .writeTable .writeTitle input, .writeTable td textarea, .writeTable .writeAttach input { border:1px #dadada solid; }
 .writeTable .writeSignature td, .writeTable .writeSignature th { border-top:2px #aaa solid; }
-
+/*  Renewaled by hodduc
 .mainBody .mainNotice { background:#fff url(/media/image/stealBlue/b_notice.png) bottom left repeat-x; }
 .mainBody .mainItem { border-top:1px #dadada solid; }
 
@@ -153,6 +153,12 @@ a:hover { color:#333; text-decoration:underline; }
 
 .mainBody .bestArticles .top .BAtitle a, .mainBody .hotArticles .top .BAtitle a { color:#fff; }
 .mainBody .bestArticles .top a, .mainBody .hotArticles .top a { color:#fff; }
+*/
+
+.mainBody .mainItem .headerBest { color:#ff0060; }
+.mainBody .mainItem .header { border-bottom: 1px black solid; }
+.mainBody .mainItem .header a { color:black; }
+.mainBody .mainItem .title a { color:black; }
 
 #signInModal { z-index:1; background:url(/media/image/stealBlue/b_signin.png) bottom right no-repeat; }
 #signInModal .modalWindow { background:#fff; -moz-box-shadow: 0 10px 20px #444; -webkit-box-shadow: 0 10px 20px #444; box-shadow: 0 10px 20px #444; }

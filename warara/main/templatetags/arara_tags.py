@@ -1,7 +1,10 @@
 #-*- coding: utf-8 -*-
+import time
+import datetime
 from warara import warara_middleware
 from django import template
 from django.core.cache import cache
+from django.utils.dateformat import format as _format
 from etc import warara_settings
 register = template.Library()
 
@@ -35,6 +38,7 @@ WEATHER_ICON_SET = [
 CACHETIME_BOARD_LIST = 6
 #CACHETIME_BOARD_DESCRIPTION = 600
 CACHETIME_BOARD_DESCRIPTION = 6
+CACHETIME_BOARD_ALIAS = 6
 
 @register.tag(name="get_board_list")
 def do_get_board_list(parser, token):
@@ -151,6 +155,16 @@ def do_get_board_description(value, arg):
         cache.set('board_description.' + value, board_description, CACHETIME_BOARD_DESCRIPTION)
     return board_description
 
+@register.filter(name='get_board_alias')
+def do_get_board_alias(value):
+    "Get board name and board alias"
+    server = warara_middleware.get_server()
+    board_alias = cache.get('board_alias.' + value)
+    if not board_alias:
+        board_alias = server.board_manager.get_board(value).board_alias
+        cache.set('board_alias.' + value, board_alias, CACHETIME_BOARD_ALIAS)
+    return board_alias
+
 @register.filter(name='truncatechars')
 def do_truncatechars(value, arg):
     length = None
@@ -181,3 +195,35 @@ def do_truncatechars(value, arg):
     else:
         value = value[:i] + '...'
     return value
+
+@register.filter(name='date_relative')
+def do_date_relative(value):
+    """
+    Args:
+        value: Timestamp, seconds
+
+    Returns:
+        Relative datetime string if seconds <= weeks, or M/D type date string.
+    """
+
+    def create_time_string(seconds):
+        hours = seconds / 3600
+        minutes = (seconds % 3600) / 60
+        days = hours / 24
+
+        if days > 0:
+            return u"{}일 전".format(days)
+        elif hours > 0:
+            return u"{}시간 전".format(hours)
+        elif minutes > 0:
+            return u"{}분 전".format(minutes)
+        else:
+            return u"방금"
+
+    then = int(value)
+    now = int(time.mktime(time.localtime()))
+
+    if now - then > 604800:  # weeks
+        return _format(datetime.datetime.fromtimestamp(value), 'm/d')
+
+    return create_time_string(now - then)

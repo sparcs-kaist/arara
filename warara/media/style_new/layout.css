@@ -185,11 +185,11 @@ input { font-family:Dotum,돋움,Helvetica,Arial,sans-serif; }
 .writeBottom { margin:0; padding:10px 0 0 85px; }
 .writeBottom .darkButton { width:450px; margin-left:0; text-align:left; padding-left:10px; }
 .writeBottom .lightButton { width:97px; margin-left:5px; text-align:left; padding-left:10px; }
-
+/*
 .mainBody .mainNotice { height:105px; padding:20px 20px 19px 15px; }
 .mainBody .mainItem { padding:20px 20px 19px 20px; }
-#contents .mainBody .mainNotice h2 { display:block; font-family:Helvetica,Arial,sans-serif; width:69px; padding:7px 0 0 5px; height:23px; }
-#contents .mainBody .mainItem h2 { display:block; font-family:Helvetica,Arial,sans-serif; width:70px; padding-top:7px; height:23px; }
+#contents .mainBody .mainNotice h2 { display:block; font-family:Helvetica,Arial,sans-serif; padding:7px 0 0 5px; height:23px; }
+#contents .mainBody .mainItem h2 { display:block; font-family:Helvetica,Arial,sans-serif; padding-top:7px; height:23px; }
 
 .mainBody .mainNotice .mainHeader { float:left; width:75px; height:105px; }
 .mainBody .mainNotice .desc { padding-top:10px; font-size:0.9em; line-height:1.3; }
@@ -210,7 +210,7 @@ input { font-family:Dotum,돋움,Helvetica,Arial,sans-serif; }
 .mainBody .mainItem #KsearchButton { vertical-align:top; }
 
 .mainBody .mainItem .bestArticles { float:left; letter-spacing:-1px; }
-/* .mainBody .mainItem .hotArticles { float:right; width:49.5%; letter-spacing:-1px; } */
+.mainBody .mainItem .hotArticles { float:right; width:49.5%; letter-spacing:-1px; }
 .mainBody .mainItem .bestArticles td, .mainBody .mainItem .hotArticles td { height:30px; }
 .mainBody .mainItem .bestArticles th, .mainBody .mainItem .hotArticles th { padding-left:10px; font-family:Helvetica,Arial,sans-serif; font-size:1.17em; letter-spacing:-1px; font-weight:normal; text-align:left; font-style:oblique; }
 .mainBody .mainItem .bestArticles .top, .mainBody .mainItem .hotArticles .top { font-weight:bold; }
@@ -221,6 +221,26 @@ input { font-family:Dotum,돋움,Helvetica,Arial,sans-serif; }
 .mainBody .mainItem .BAauthor { width:70px; }
 .mainBody .mainItem .BAdateinfo {width:120px;}
 .mainBody .mainItem .second td, .mainBody .mainItem .second th { padding-top:5px; }
+*/
+
+.mainBody .mainItem ul,li { margin:0; padding:0; list-style:none; list-style-image:none; }
+.mainBody .mainItem { width:380px; min-width:380px; }
+.mainBody .mainItem { padding:20px 0 0 30px; }
+
+.mainBody .mainItem .title { font-weight:bold; }
+.mainBody .mainItem .hidden { display:none; }
+.mainBody .mainItem .header { width:100%; font-size:1.3em; font-weight:bold; padding: 4px; margin-bottom: 4px; }
+.mainBody .mainItem span { white-space: nowrap; display: inline-block; overflow: hidden; text-overflow: ellipsis; }
+
+.mainBody .mainItem .bestArticles .vote { width: 35px; text-align: center; font-weight: bold; font-size: 1.5em; }
+.mainBody .mainItem .bestArticles .title { width: 265px; }
+.mainBody .mainItem .bestArticles .author { width: 70px; text-align: right; }
+
+.mainBody .mainItem .recentArticles li { padding: 5px 0; }
+.mainBody .mainItem .recentArticles .title { width: 320px; margin-left: 4px; }
+.mainBody .mainItem .recentArticles .titleContent { max-width: 290px; margin-right: 5px; }
+.mainBody .mainItem .recentArticles .replyCount { font-weight: normal; color: #ff0060; }
+.mainBody .mainItem .recentArticles .dateinfo { width: 50px; text-align: right; }
 
 #signInModal { position:absolute; top:0; left:0; width:100%; height:100%; }
 #signInModal .modalMargin { width:100%; height:50%; margin-bottom:-140px; }
@@ -247,3 +267,4 @@ input { font-family:Dotum,돋움,Helvetica,Arial,sans-serif; }
 /* Deleted or Blacklisted article */
 .deleted{ -moz-opacity: 0.5; filter:alpha(opacity:50); opacity:0.5; }
 
+.fl { float:left; }

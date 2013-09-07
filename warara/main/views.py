@@ -2,6 +2,7 @@
 import sys
 import datetime
 import warara
+from collections import OrderedDict
 
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
@@ -13,7 +14,7 @@ from warara import warara_middleware
 from arara_thrift.ttypes import InvalidOperation
 from arara_thrift.ttypes import *
 
-from etc.warara_settings import KSEARCH_ENABLED
+from etc.warara_settings import KSEARCH_ENABLED, MAIN_BOARDS
 from warara.thirdparty.minidetector import detect_mobile
 
 @detect_mobile
@@ -37,7 +38,6 @@ def index(request):
     return HttpResponse(rendered)
 
 @warara.wrap_error
-@warara.cache_page(60)
 def main(request):
     server = warara_middleware.get_server() 
     sess, ctx = warara.check_logged_in(request)
@@ -65,6 +65,14 @@ def main(request):
             item.date = datetime.datetime.fromtimestamp(item.date)
         cache.set('weekly_best_list', ret, 60)
     ctx['weekly_best_list'] = enumerate(ret)
+
+    # Get recent article list of boards
+    ctx['recent_articles'] = OrderedDict()
+    for board in MAIN_BOARDS:
+        try:
+            ctx['recent_articles'][board] = server.article_manager.recent_article_list(board)
+        except InvalidOperation:
+            pass
 
     # Get messages for the current user
     if ctx['logged_in']:

@@ -96,3 +96,12 @@ ADMINS = (
 # If you somehow want to set memcached configuration, uncomment below
 # CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 # CACHE_MIDDLEWARE_SECONDS = 30  # (pipoket): Minimum caching time
+
+MAIN_BOARDS = (
+    'Notice',
+    'Love',
+    'Food',
+    'BuySell',
+    'QandA',
+    'Wanted',
+)

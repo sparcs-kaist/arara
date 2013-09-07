@@ -25,48 +25,47 @@
     </div>
     {% endif %}
 
-    <div class="mainItem" id="todayBest">
-        <div class="mainHeader">
-            <h2>Today</h2>
-            <p class="desc">지금<br/>KAIST는<br/>무엇을<br/>이야기하나</p>
-        </div>
-        <div class="mainItemContents">
-            <table class="bestArticles" cellspacing="0">
-                {% for no, todays_best in todays_best_list %}
-                {% if forloop.first %}
-                <tr class="top">  <th class="BANumber">best</th>
-                {% else %}
-                <tr class="second"> <th class="BANumber">{{no|add:"1"}}</th>
-                {% endif %}
-                    <td class="BAtitle">{% if logged_in %}<a href="/board/{{todays_best.board_name}}/{{todays_best.root_id}}/#{{todays_best.id}}">{{todays_best.title|truncatechars:"45"}}</a> {% else %}{{todays_best.title|truncatechars:"45"}}{% endif %}</td>
-                    <td class="BAauthor"><a href="#" class="nickname">{{todays_best.author_nickname}}</a><span class="username hidden">{{todays_best.author_username}}</span></td>
-                <td class="BAdateinfo">{% trans "vote" %} {{todays_best.positive_vote}} | {{todays_best.date|date:"m.d H:i"}} </td>
-            </tr>
+    <div class="mainItem fl">
+        <div class="header headerBest">투데이 베스트</div>
+        <ul class="bestArticles">
+            {% for no, todays_best in todays_best_list %}
+            <li>
+            <span class="vote">{{todays_best.positive_vote}}</span>
+            <span class="title">{% if logged_in %}<a href="/board/{{todays_best.board_name}}/{{todays_best.root_id}}/#{{todays_best.id}}">{{todays_best.title|truncatechars:"80"}}</a> {% else %}{{todays_best.title|truncatechars:"80"}}{% endif %}</span>
+            <span class="author"><a href="#" class="nickname">{{todays_best.author_nickname}}</a><span class="username hidden">{{todays_best.author_username}}</span></span>
+            </li>
             {% endfor %}
-        </table>
-    </div><div class="cb"></div>
-</div>
-<div class="mainItem" id="weeklyBest">
-    <div class="mainHeader">
-        <h2>Weekly</h2>
-        <p class="desc">이 주의<br/>KAIST는<br/>무엇을<br/>이야기하나</p>
+        </ul>
     </div>
-    <div class="mainItemContents">
-        <table class="bestArticles" cellspacing="0">
+    <div class="mainItem fl">
+        <div class="header headerBest">위클리 베스트</div>
+        <ul class="bestArticles">
             {% for no, weekly_best in weekly_best_list %}
-            {% if forloop.first %}
-            <tr class="top"> <th class="BANumber">best</th>
-            {% else %}
-            <tr class="second"> <th class="BANumber">{{no|add:"1"}}</th>
-            {% endif %}
-                <td class="BAtitle">{% if logged_in %}<a href="/board/{{weekly_best.board_name}}/{{weekly_best.root_id}}/#{{weekly_best.id}}">{{weekly_best.title|truncatechars:"45"}}</a> {% else %}{{weekly_best.title|truncatechars:"45"}}{% endif %}</td>
-                <td class="BAauthor"><a href="#" class="nickname">{{weekly_best.author_nickname}}</a><span class="username hidden">{{weekly_best.author_username}}</span></td>
-                <td class="BAdateinfo">{% trans "vote" %} {{weekly_best.positive_vote}} | {{weekly_best.date|date:"m.d H:i"}} </td>
-            </tr>
+            <li>
+            <span class="vote">{{weekly_best.positive_vote}}</span>
+            <span class="title">{% if logged_in %}<a href="/board/{{weekly_best.board_name}}/{{weekly_best.root_id}}/#{{weekly_best.id}}">{{weekly_best.title|truncatechars:"80"}}</a> {% else %}{{weekly_best.title|truncatechars:"80"}}{% endif %}</span>
+            <span class="author"><a href="#" class="nickname">{{weekly_best.author_nickname}}</a><span class="username hidden">{{weekly_best.author_username}}</span></span>
+            </li>
             {% endfor %}
-        </table>
-    </div><div class="cb"></div>
-</div>
+        </ul>
+    </div>
+    <div class="cb"></div>
+    {% for board_name, articles in recent_articles.items %}
+    <div class="mainItem fl">
+        <div class="header"><a href="/board/{{ board_name }}/">{{ board_name|get_board_alias }}</a></div>
+        <ul class="recentArticles">
+            {% for article in articles %}
+            <li>
+            <span class="title">
+                <span class="titleContent">{% if logged_in %}<a href="/board/{{article.board_name}}/{{article.root_id}}/#{{article.id}}">{{article.title|truncatechars:"80"}}</a> {% else %}{{article.title|truncatechars:"80"}}{% endif %}</span><span class="replyCount">({{ article.reply_count }})</span></span>
+            <span class="dateinfo">{{ article.date|date_relative }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% cycle '' '<div class="cb"></div>' %}
+    {% endfor %}
+    <div class="cb"></div>
 
 {% if has_banner %}
 <div class="mainItem" id="Banner">
