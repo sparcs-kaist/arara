@@ -15,4 +15,4 @@ before_script:
   - date
   - cp etc/arara_settings.py.sample etc/arara_settings.py
   - make
-script: make test
+script: py.test arara/test
