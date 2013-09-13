@@ -10,6 +10,9 @@ before_install:
   - sudo apt-get install -qq thrift-compiler
   - which thrift
 before_script:
+  - sudo echo "Asia/Seoul" > /etc/timezone
+  - export TZ=Asia/Seoul
+  - date
   - cp etc/arara_settings.py.sample etc/arara_settings.py
   - make
 script: make test
