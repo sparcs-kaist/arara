@@ -16,3 +16,8 @@ before_script:
   - cp etc/arara_settings.py.sample etc/arara_settings.py
   - make
 script: py.test arara/test
+notifications:
+  email:
+    - arara@sparcs.org
+  irc:
+    - "irc.ozinger.org#sparcs"
