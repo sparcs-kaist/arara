@@ -105,7 +105,7 @@ REDIS_PORT = 6379" > etc/arara_settings.py
 
 echo "#-*- coding: utf8 -*-
 # ARARA Server Type in ['THRIFT', 'DIRECT']
-SERVER_TYPE = 'THRIFT'
+SERVER_TYPE = 'DIRECT'
 
 # ARARA Server Setting (Applied when using THRIFT Server Type)
 ARARA_SERVER_HOST = '127.0.0.1'
