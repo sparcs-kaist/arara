@@ -9,6 +9,7 @@ from arara.notice_manager import NoticeManager
 from arara.search_manager import SearchManager
 from arara.file_manager import FileManager
 from arara.bot_manager import BotManager
+from arara.notification_manager import NotiManager
 from etc import arara_settings
 
 class ARAraEngine(object):
@@ -41,6 +42,7 @@ class ARAraEngine(object):
         self.search_manager = SearchManager(self)
         self.file_manager = FileManager(self)
         self.bot_manager = BotManager(self)
+        self.noti_manager = NotiManager(self)
 
     def shutdown(self):
         '''

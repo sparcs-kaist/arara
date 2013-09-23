@@ -266,6 +266,17 @@ struct WeatherInfo {
     10:i32 day_after_tomorrow_temperature_low,
 }
 
+struct Notification {
+    1:i32 type,
+    2:bool read,
+    3:string board_name,
+    4:i32 article_id,
+    5:i32 root_id,
+    6:string root_title,
+    7:string reply_author,
+    8:double time,
+}
+
 ////////////////////////////////////////
 // Section 3 : Service Definition
 ////////////////////////////////////////

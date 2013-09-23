@@ -1031,7 +1031,23 @@ class ArticleManager(arara_manager.ARAraManager):
         if board.type == BOARD_TYPE_ANONYMOUS:
             new_reply.is_searchable = False
         session.commit()
+
+        # hook for notification
+        # 1. hook for parent reply author
+        my_user_id = self.engine.login_manager.get_user_id(session_key)
+        if my_user_id != article.author.id:
+            self.engine.noti_manager._add_noti(article.author.id,
+                                               board_name, id, new_reply.root.id,
+                                               new_reply.root.title, new_reply.author_nickname)
+
+        # 2. hook for subscribed users
+        if new_reply.root:
+            self.engine.noti_manager._publish(my_user_id,
+                                             board_name, id, new_reply.root.id,
+                                             new_reply.root.title, new_reply.author_nickname)
+
         session.close()
+
         return id
 
     @require_login
