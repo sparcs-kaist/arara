@@ -50,17 +50,24 @@ a:hover { color:#333; text-decoration:underline; }
 
 #sideContents { -moz-text-shadow: 1px 1px 0 #333; -webkit-text-shadow: 1px 1px 0 #333; text-shadow: 1px 1px 0 #333; }
 
-#sideContents dl { border-bottom:1px #777 solid; }
 #sideContents dt { color:#fff; }
 #sideContents a:link { color:#ccc; text-decoration:none; }
 #sideContents a:visited { color:#ccc; text-decoration:none; }
 #sideContents a:hover { color:#fff; text-decoration:underline; }
 
-#sideContents #weather .future { border-top:1px #777 solid; }
+#sideContents .pinkbox { color:#fff; background:#ee496f; }
 
-#sideContents dt span.sideRight { color:#ccc; }
-#sideContents #myInfo span.sideRight { color:#fff; background:#ee496f; }
+#sideContents #weather .future { border-top:1px #777 solid; }
+#sideContents #notification dt a { color:#fff; text-decoration:none; }
+#sideContents #notification li { border-top:1px #777 solid; }
+#sideContents #notification li.unread a { color:#fff; }
+#sideContents #notification li.read a { color:#999; }
+#sideContents #notification li a:hover { text-decoration:none; }
+#sideContents #notification li:hover { background-color:#333; }
+#sideContents #notification span.title { text-decoration:underline; font-weight:bold; font-size:1.1em; }
+#sideContents #notification dd { border-bottom:1px #777 solid; }
 #sideContents #loginBox input { width:125px; }
+
 #footer { color:#aaa; -moz-text-shadow: 1px 1px 0 #333; -webkit-text-shadow: 1px 1px 0 #333; text-shadow: 1px 1px 0 #333; }
 #footer a:link { color:#ccc; text-decoration:none; }
 #footer a:visited { color:#ccc; text-decoration:none; }
