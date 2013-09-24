@@ -36,7 +36,7 @@ class RedisMockup(object):
         return val in self.data[key]
 
     def smembers(self, key):
-        return list(self.data[key])
+        return list(self.data.get(key, []))
 
     def srem(self, key, val):
         self.data[key].remove(val)
@@ -67,8 +67,11 @@ class RedisMockup(object):
                 self.data[key] = {}
             self.data[key][val] = score
 
-    def zrange(self, key, score_from, score_to, withscores, score_cast_func=int):
-        items = sorted(self.data[key].items(), key=operator.itemgetter(1, 0))
+    def zrange(self, key, score_from, score_to, withscores, score_cast_func=int, reverse=False):
+        if key not in self.data:
+            return []
+
+        items = sorted(self.data[key].items(), key=operator.itemgetter(1, 0), reverse=reverse)
 
         score_to += 1
         if score_to:
@@ -77,11 +80,17 @@ class RedisMockup(object):
             target_items = items[score_from:]
 
         if withscores:
-            return [x for item in target_items for x in item]
+            return target_items
         else:
             return [x for (x, y) in target_items]
 
+    def zrevrange(self, key, score_from, score_to, withscores, score_cast_func=int):
+        return self.zrange(key, score_from, score_to, withscores, score_cast_func, reverse=True)
+
     def zremrangebyrank(self, key, score_from, score_to):
+        if key not in self.data:
+            return
+
         items = sorted(self.data[key].items(), key=operator.itemgetter(1, 0))
 
         score_to += 1
@@ -92,6 +101,26 @@ class RedisMockup(object):
 
         for (value, score) in removing_items:
             del self.data[key][value]
+
+    def zremrangebyscore(self, key, score_from, score_to):
+        if key not in self.data:
+            return
+
+        if score_from == "-inf":
+            score_from = -99999999999999999999999999999999999999
+        else:
+            score_from = float(score_from)
+            score_to = float(score_to)
+
+        for (value, score) in self.data[key].items():
+            if score_from <= score <= score_to:
+                del self.data[key][value]
+
+    def expire(self, *args, **kwargs):
+        pass  # TODO
+
+    def zscore(self, key, value):
+        return self.data.get(key, {}).get(value)
 
 class TestMockupRedis(object):
     def test_set_type(self):

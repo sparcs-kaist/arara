@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load arara_tags %}
+
+{% block script %}
+{{ block.super }}
+<script type="text/javascript" src="/media/js/main.js"></script>
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="/media/style/main.css" />
+{% endblock %}
+
+{% block board_name %}Notifications{% endblock %}
+{% block content %}
+{{ block.super }}
+{% get_notification 0 999 %}
+<table class="noti-detail">
+    <thead>
+        <th>내용</th>
+        <th>시간</th>
+    </thead>
+    <tbody>
+        {% for n in noti %}
+        <tr>
+            <td><a href="/board/{{ n.board_name }}/{{ n.root_id }}#{{ n.article_id }}">
+                    <p class="content"><span class="title">{{ n.root_title }}</span> 에
+                    {% if n.type == 0 %}{{ n.reply_author }}님이 댓글을 달았습니다.
+                    {% else %}새 반응이 달렸습니다.
+                    {% endif %}</p></a></td>
+            <td><p class="time">{{ n.time|date_relative }}</p></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

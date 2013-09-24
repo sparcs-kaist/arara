@@ -266,6 +266,17 @@ struct WeatherInfo {
     10:i32 day_after_tomorrow_temperature_low,
 }
 
+struct Notification {
+    1:i32 type,
+    2:bool read,
+    3:string board_name,
+    4:i32 article_id,
+    5:i32 root_id,
+    6:string root_title,
+    7:string reply_author,
+    8:double time,
+}
+
 ////////////////////////////////////////
 // Section 3 : Service Definition
 ////////////////////////////////////////
@@ -783,4 +794,23 @@ service ARAraThriftInterface {
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// BotManager Part End
+/// NotificationManager Part Start
+    void subscribe(1:string session_key,
+                   2:i32 article_id)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void unsubscribe(1:string session_key,
+                   2:i32 article_id)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    bool is_subscribing(1:string session_key,
+                   2:i32 article_id)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<Notification> get_noti(1:string session_key,
+                  2:i32 offset = 0,
+                  3:i32 length = 15)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+/// NotificationManager Part End
 }

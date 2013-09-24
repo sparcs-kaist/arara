@@ -116,3 +116,8 @@ def get_user_info(request):
     else:
         return HttpResponse("Linear Algebra")
     assert ret, information
+
+@warara.wrap_error
+def noti(request):
+    session_key, ctx = warara.check_logged_in(request)
+    return HttpResponse(render_to_string('noti.html', ctx))
