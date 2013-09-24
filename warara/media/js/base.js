@@ -510,4 +510,17 @@ $(document).ready(function(){
     $.get(get_new_message_count_url, function(data){
         $("#countNewMessage").text(data);
     });
+    
+    /* konami code */
+    (function() { 
+      var s = [],
+      konami = "38,38,40,40,37,39,37,39,66,65";
+      $(window).keydown(function(e) {
+        s.push(e.keyCode)
+        if ( s.toString().indexOf( konami ) >= 0) {
+          s = [],
+          alert('We are hiring!')
+        }
+      })
+    })();
 });
