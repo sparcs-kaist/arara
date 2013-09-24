@@ -794,4 +794,23 @@ service ARAraThriftInterface {
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 /// BotManager Part End
+/// NotificationManager Part Start
+    void subscribe(1:string session_key,
+                   2:i32 article_id)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    void unsubscribe(1:string session_key,
+                   2:i32 article_id)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    bool is_subscribing(1:string session_key,
+                   2:i32 article_id)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+    list<Notification> get_noti(1:string session_key,
+                  2:i32 offset = 0,
+                  3:i32 length = 15)
+        throws (1:InvalidOperation invalid,
+                2:InternalError ouch, 3:NotLoggedIn not_logged_in),
+/// NotificationManager Part End
 }

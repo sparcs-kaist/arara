@@ -176,3 +176,10 @@ class NotiManager(arara_manager.ARAraManager):
             r.append(n)
 
         return r
+
+    __public__ = [
+            subscribe,
+            unsubscribe,
+            is_subscribing,
+            get_noti,
+    ]
