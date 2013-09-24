@@ -58,7 +58,7 @@ class RedisMockup(object):
         if kwargs:
             score_dict = kwargs
         elif args:
-            score_dict = {a: b for (a, b) in zip(args[1::2], args[::2])}
+            score_dict = dict(zip(args[1::2], args[::2]))
         else:
             score_dict = {}
 
