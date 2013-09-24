@@ -34,7 +34,7 @@ arara
     $ make
 
 다음으로 Application을 Setting합니다. arara에서는 크게 etc/arara_settings.py와 etc/warara_settings.py를 사용합니다.
-, 일반적으로는 다음 명령으로 자동으로 세팅할 수 있습니다:
+일반적으로는 다음 명령으로 자동으로 세팅할 수 있습니다:
 
     $ bin/devel_setup_script.sh
     
