@@ -2,6 +2,7 @@
 import time
 import datetime
 from warara import warara_middleware
+from arara_thrift.ttypes import NotLoggedIn
 from django import template
 from django.core.cache import cache
 from django.utils.dateformat import format as _format
@@ -135,6 +136,30 @@ class WeatherInfoNode(template.Node):
             ctx['has_weather'] = False
 
         return ""
+
+@register.tag(name="get_notification")
+def do_get_notification(parser, token):
+    offset, length = token.split_contents()[1:3]
+    return NotiNode(offset, length)
+
+class NotiNode(template.Node):
+    def __init__(self, offset, length):
+        self.offset = int(offset)
+        self.length = int(length)
+
+    def render(self, ctx):
+        server = warara_middleware.get_server()
+        if not 'arara_session' in ctx:
+            return ''
+        sess = ctx['arara_session']
+
+        try:
+            ctx['noti'] = server.noti_manager.get_noti(sess, self.offset, self.length)
+            ctx['unread_noti_count'] = sum(1 if not n.read else 0 for n in ctx['noti'])
+        except NotLoggedIn:
+            pass
+
+        return ''
 
 def weather_icon_replace(orig_url):
     # google의 icon을 아라 디자인에 맞는 weather icon으로 converting 하는 함수

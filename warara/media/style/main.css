@@ -95,3 +95,20 @@
     list-style-type: none;
 }
 
+table.noti-detail {
+    background: #fff;
+    margin: 45px;
+    width: 480px;
+    border-collapse: collapse;
+    text-align: left;
+}
+table.noti-detail th {
+    font-size: 14px;
+    font-weight: normal;
+    padding: 10px 8px;
+    border-bottom: 2px solid #999;
+}
+table.noti-detail td {
+    border-bottom: 1px solid #ccc;
+    padding: 6px 8px;
+}

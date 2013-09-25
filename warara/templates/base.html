@@ -168,7 +168,7 @@
                         <ul>
                             <li><a href="/account/">내 정보</a></li>
                             <li><a href="/account/password_modify/">비밀번호 수정</a></li>
-                            <li><a href="/message/inbox/">쪽지함</a><span class="sideRight" id="countNewMessage">0</span></li>
+                            <li><a href="/message/inbox/">쪽지함</a><span class="sideRight pinkbox" id="countNewMessage">0</span></li>
                             <li><a href="/blacklist/">블랙리스트</a></li>
                             <li><a href="/scrapbook/">스크랩북</a></li>
                             <li><strong><a href="/account/logout/">로그아웃</a></strong></li>
@@ -195,6 +195,25 @@
                     </dd>
                 </dl>
                 {% endif %}
+                {% get_notification 0 10 %}
+                <dl id="notification">
+                    <dt><a href="/main/noti/" style="display: block;">Notifications<span class="sideRight pinkbox">{{ unread_noti_count|default_if_none:"?" }}</span></a></dt>
+                    <dd>
+                    <ul>
+                        {% for n in noti %}
+                        <li class="{% if n.read %}read{% else %}unread{% endif %}">
+                        <a href="/board/{{ n.board_name }}/{{ n.root_id }}#{{ n.article_id }}">
+                            <p class="content"><span class="title">{{ n.root_title }}</span> 에
+                            {% if n.type == 0 %}{{ n.reply_author }}님이 댓글을 달았습니다.
+                            {% else %}새 반응이 달렸습니다.
+                            {% endif %}</p>
+                            <p class="time">{{ n.time|date_relative }}</p>
+                        </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    </dd>
+                </dl>
                 {% else %}
                 <dl id="loginBox">
                     <dt>Log In</dt>
