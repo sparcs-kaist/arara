@@ -173,7 +173,7 @@
     <legend>배너 선택</legend>
     <form method="post" action="/sysop/select_banner/">
         {% for banner in banner_list %}
-        <input type="checkbox" class="banner_select" name="select_banner_list" value={{ banner.id }} {% if banner.valid %}checked="checked"{% endif %}>{{ banner.content }}<br />
+        <input type="checkbox" class="banner_select" name="select_banner_list" value={{ banner.id }} {% if banner.valid %}checked="checked"{% endif %}>{{ banner.content }}({{ banner.weight }})<br />
         {% endfor %}
         사용자들에게 노출될 배너들의 체크박스를 선택합니다.
         <input type="submit" class="button" value="적용" />

@@ -75,6 +75,9 @@ def login(request):
     # Additional cookie for detect session mismatch
     checksum = hashlib.sha1(session_key+"@"+username).hexdigest()
     response.set_cookie(key='arara_checksum', value=checksum, max_age=None)
+    import logging
+    logger = logging.getLogger('main')
+    logger.info('WARARA Login: name %s, key %s, django sessid %s' % (username, session_key, request.session.session_key))
     return response
 
 @warara.prevent_cached_by_browser

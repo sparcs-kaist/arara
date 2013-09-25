@@ -210,6 +210,8 @@ class ArticleManager(arara_manager.ARAraManager):
                 article = session.query(model.Article).filter_by(board_id=board_id, id=article_id).one()
             else:
                 article = session.query(model.Article).filter_by(id = article_id).one()
+            if article.board_id == 46:
+                raise InvalidRequestError
         except InvalidRequestError:
             session.close()
             raise InvalidOperation("article does not exist")
@@ -649,6 +651,9 @@ class ArticleManager(arara_manager.ARAraManager):
 
         try:
             article = self._read_article(session, no)
+            # XXX(combacsa): 2013.02.10. 익명게시판 글 긴급 패치
+            if article.board_id == 46:
+                raise InvalidRequestError
             msg = self.engine.read_status_manager._check_stat(user_id, no)
             if msg == 'N':
                 article.hit += 1
@@ -727,7 +732,8 @@ class ArticleManager(arara_manager.ARAraManager):
                     model.Article.root_id==None,
                     model.Article.destroyed==False,
                     model.Article.board.has(model.Board.hide==False),
-                    model.Article.board.has(model.Board.deleted==False)))
+                    model.Article.board.has(model.Board.deleted==False),
+                    not_(model.Article.board.has(model.Board.type==2))))
         else:
             query = query.filter_by(board_id=board_id, root_id=None, destroyed=False)
             if not include_all_headings:
@@ -763,6 +769,7 @@ class ArticleManager(arara_manager.ARAraManager):
         if board_id == None:
             query = query.filter(model.Article.board.has(model.Board.hide==False))
             query = query.filter(model.Article.board.has(model.Board.deleted==False))
+            query = query.filter(not_(model.Article.board.has(model.Board.type==2)))
         else:
             query = query.filter(model.Article.board_id==board_id)
             if not include_all_headings:
@@ -930,7 +937,7 @@ class ArticleManager(arara_manager.ARAraManager):
         if not board.read_only:
             # 만약 익명 게시판이면, 6시간 이내에 글을 썼으면 안된다
             if board.type == BOARD_TYPE_ANONYMOUS:
-                last_article = self.get_article_list_by_username(author.username).filter_by(board_id=board.id).order_by(model.Article.id.desc()).first()
+                last_article = self.get_article_list_by_username(author.username).filter_by(board_id=board.id, root_id=None).order_by(model.Article.id.desc()).first()
                 time_to_filter = datetime.datetime.fromtimestamp(time.time() - 21600)   # 6 Hours
                 if last_article is not None and last_article.last_modified_date >= time_to_filter:
                     raise InvalidOperation('Cannot write article until %s' % (last_article.last_modified_date + datetime.timedelta(seconds = 21600)))

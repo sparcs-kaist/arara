@@ -701,11 +701,14 @@ def file_download(request, board_name, article_root_id, article_id, file_id):
     response['Content-Length'] = str(os.stat(file_path).st_size)
     if encoding is not None:
         response['Content-Encoding'] = encoding
-
-    if u'WebKit' in request.META['HTTP_USER_AGENT']:
-        filename_header = 'filename="%s"' % file.real_filename.encode('utf-8')
-    elif u'MSIE' in request.META['HTTP_USER_AGENT']:
-        filename_header = ''
+	
+    if request.META.has_key('HTTP_USER_AGENT') :
+    	if  u'WebKit' in request.META['HTTP_USER_AGENT']:
+            filename_header = 'filename="%s"' % file.real_filename.encode('utf-8')
+        elif u'MSIE' in request.META['HTTP_USER_AGENT']:
+            filename_header = ''
+        else:
+            filename_header = 'filename*=UTF-8\'\'%s' % urllib.quote(file.real_filename.encode('utf-8'))
     else:
         filename_header = 'filename*=UTF-8\'\'%s' % urllib.quote(file.real_filename.encode('utf-8'))
 
