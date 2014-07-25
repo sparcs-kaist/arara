@@ -3,6 +3,7 @@ import settings
 PROJECT_PATH = settings.PROJECT_PATH
 
 from django.conf.urls.defaults import *
+from django.views.generic import RedirectView
 
 urlpatterns = patterns('',
     (r'^$', 'warara.main.views.index'),
@@ -20,6 +21,6 @@ urlpatterns = patterns('',
     # Uncomment this for admin:
 #     (r'^admin/', include('django.contrib.admin.urls')),
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.join(PROJECT_PATH, 'media')}),
-    (r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url':'/media/image/favicon.ico'}),
+    (r'^favicon\.ico$', RedirectView.as_view(url='/media/image/favicon.ico')),
 
 )
