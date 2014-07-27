@@ -20,4 +20,4 @@ notifications:
   email:
     - arara@sparcs.org
   irc:
-    - "irc.ozinger.org#sparcs"
+    - "irc.ozinger.org#arara"
