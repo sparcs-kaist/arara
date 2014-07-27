@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
+from sqlalchemy.exc import InvalidRequestError, IntegrityError
 
 from libs import datetime2timestamp, filter_dict, smart_unicode
 from arara import arara_manager

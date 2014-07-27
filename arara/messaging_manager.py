@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from sqlalchemy.exceptions import InvalidRequestError
+from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy import or_, not_, and_
 
 from libs import datetime2timestamp, filter_dict, smart_unicode

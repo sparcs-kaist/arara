@@ -3,7 +3,7 @@ import datetime
 import time
 import thread
 
-from sqlalchemy.exceptions import InvalidRequestError
+from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy import and_, or_, not_, func
 from sqlalchemy.orm import eagerload
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound

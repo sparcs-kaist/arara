@@ -5,7 +5,7 @@ import hashlib
 import time
 
 from sqlalchemy import and_, or_, not_
-from sqlalchemy.exceptions import InvalidRequestError
+from sqlalchemy.exc import InvalidRequestError
 from arara import arara_manager
 from arara import model
 from arara_thrift.ttypes import *

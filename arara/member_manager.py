@@ -7,7 +7,7 @@ import logging
 import random
 import string
 
-from sqlalchemy.exceptions import InvalidRequestError, IntegrityError
+from sqlalchemy.exc import InvalidRequestError, IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy import or_, not_, and_
 

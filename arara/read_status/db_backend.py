@@ -2,7 +2,7 @@
 import logging
 import traceback
 
-from sqlalchemy.exceptions import InvalidRequestError
+from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.sql import func, select
 
 from arara import model

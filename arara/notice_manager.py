@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import random
-from sqlalchemy.exceptions import InvalidRequestError
+from sqlalchemy.exc import InvalidRequestError
 
 from libs import datetime2timestamp, filter_dict, is_keys_in_dict, timestamp2datetime
 

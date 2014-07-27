@@ -3,7 +3,7 @@ import xmlrpclib
 import time
 import logging
 
-from sqlalchemy.exceptions import InvalidRequestError
+from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy import and_, or_, not_
 
 from libs import datetime2timestamp, filter_dict, smart_unicode
