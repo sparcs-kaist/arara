@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import *
+from django.conf.urls import include, patterns
 
 urlpatterns = patterns('',
     (r'^$', 'warara.mobile.main.views.index'),

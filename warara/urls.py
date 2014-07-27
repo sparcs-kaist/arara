@@ -2,7 +2,7 @@ import os
 import settings
 PROJECT_PATH = settings.PROJECT_PATH
 
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns, include
 from django.views.generic import RedirectView
 
 urlpatterns = patterns('',
