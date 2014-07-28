@@ -14,9 +14,10 @@ before_script:
   - export TZ=Asia/Seoul
   - date
   - cp etc/arara_settings.py.sample etc/arara_settings.py
+  - cp etc/warara_settings.py.sample etc/warara_settings.py
   - make
   - export PYTHONPATH=`pwd`:.:$PYTHONPATH
-script: py.test arara libs
+script: PYTHONPATH=.:$PYTHONPATH py.test
 notifications:
   email:
     - arara@sparcs.org
