@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 from django.test import TestCase
+from django.test.client import Client
 
 from arara import model
 from arara import arara_engine
@@ -15,7 +16,8 @@ class WararaTestBase(TestCase):
         model.init_test_database()
         self.arara_engine = arara_engine.ARAraEngine()
         warara_middleware.set_server(self.arara_engine)
+        self.client = Client()
 
-    def test(self):
-        # Just to check weather setUp() runs or not
-        pass
+    def test_main(self):
+        response = self.client.get('/main/')
+        self.assertEquals(response.status_code, 200)

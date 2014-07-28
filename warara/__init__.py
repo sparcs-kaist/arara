@@ -1,8 +1,14 @@
+import hashlib
+
 from django.core.cache import cache
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
+
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'gen-py'))
+
 from arara_thrift.ttypes import *
-import hashlib
 
 def check_logged_in(request):
     r = {}
