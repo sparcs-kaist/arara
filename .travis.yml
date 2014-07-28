@@ -15,7 +15,8 @@ before_script:
   - date
   - cp etc/arara_settings.py.sample etc/arara_settings.py
   - make
-script: PYTHONPATH=.:$PYTHONPATH py.test
+  - export PYTHONPATH=`pwd`:.:$PYTHONPATH
+script: py.test
 notifications:
   email:
     - arara@sparcs.org
