@@ -2,7 +2,11 @@
 import sys
 import datetime
 import warara
-from collections import OrderedDict
+
+try:
+    from collections import OrderedDict
+except ImportError:
+    from ordereddict import OrderedDict
 
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect

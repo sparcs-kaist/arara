@@ -6,6 +6,7 @@ argparse==1.2.1
 django-appconf==0.6
 django-compressor==1.1
 hiredis==0.1.1
+ordereddict==1.1
 py==1.4.15
 pytest==2.3.5
 pytest_django==2.6.2
