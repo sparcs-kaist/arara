@@ -47,7 +47,12 @@ arara
 
     $ make test
     $ py.test arara/test (py.test가 설치되어 있는 경우)
-    
+
+Known TroubleShootnig
+-----
+
+_sqlite3 모듈을 불러오지 못하여 실행이 되지 않을 경우, Ubuntu 리눅스 기준 libsqlite3-dev 패키지를 설치하고 파이썬 바이너리를 다시 설치하면 문제가 해결될 수 있습니다.
+
 DIRECT vs THRIFT
 -----
 
@@ -84,6 +89,6 @@ Links
   <dt>SPARCS, developers' group in KAIST (Korea Advanced Institute of Science and Technology)</dt>
   <dd>http://sparcs.org</dd>
   <dt>IRC contact</dt>
-  <dd>#sparcs @irc.ozinger.org</dd>
+  <dd>#arara @irc.ozinger.org</dd>
 </dl>
      
