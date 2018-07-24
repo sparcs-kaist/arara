@@ -237,11 +237,11 @@ def do_date_relative(value):
         days = hours / 24
 
         if days > 0:
-            return u"{}일 전".format(days)
+            return u"{0}일 전".format(days)
         elif hours > 0:
-            return u"{}시간 전".format(hours)
+            return u"{0}시간 전".format(hours)
         elif minutes > 0:
-            return u"{}분 전".format(minutes)
+            return u"{0}분 전".format(minutes)
         else:
             return u"방금"
 

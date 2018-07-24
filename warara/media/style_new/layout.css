@@ -233,9 +233,9 @@ input { font-family:Dotum,돋움,Helvetica,Arial,sans-serif; }
 .mainBody .mainItem { width:380px; min-width:380px; }
 .mainBody .mainItem { padding:20px 0 0 30px; }
 
-.mainBody .mainItem .title { font-weight:bold; }
+/*.mainBody .mainItem .title { font-weight:bold; }*/
 .mainBody .mainItem .hidden { display:none; }
-.mainBody .mainItem .header { width:100%; font-size:1.3em; font-weight:bold; padding: 4px; margin-bottom: 4px; }
+.mainBody .mainItem .header { width:100%; font-size:1.3em; font-weight:bold; padding: 4px; margin-bottom: 4px; padding-left : 10px;}
 .mainBody .mainItem span { white-space: nowrap; display: inline-block; overflow: hidden; text-overflow: ellipsis; }
 
 .mainBody .mainItem .bestArticles .vote { width: 35px; text-align: center; font-weight: bold; font-size: 1.5em; }

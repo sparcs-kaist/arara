@@ -162,8 +162,8 @@ a:hover { color:#333; text-decoration:underline; }
 .mainBody .bestArticles .top a, .mainBody .hotArticles .top a { color:#fff; }
 */
 
-.mainBody .mainItem .headerBest { color:#ff0060; }
 .mainBody .mainItem .header { border-bottom: 1px black solid; }
+.mainBody .mainItem .headerBest { background-color:#333; color:white; border: 0; }
 .mainBody .mainItem .header a { color:black; }
 .mainBody .mainItem .title a { color:black; }
 

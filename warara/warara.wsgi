@@ -2,6 +2,9 @@
 # WSGI Script for Warara Web Frontend
 import os
 import sys
+#import newrelic.agent
+
+#newrelic.agent.initialize('/home/ara/ara/etc/newrelic.ini')
 
 PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 WARARA_PATH  = os.path.join(PROJECT_PATH, 'gen-py')

@@ -199,14 +199,17 @@ def write(request, board_name):
     if article_id:
         sess = request.session["arara_session_key"]
         article_list = server.article_manager.read_article(sess, board_name, int(article_id))
-        r['default_title'] = article_list[0].title
-        r['default_heading'] = article_list[0].heading
-        r['default_text'] = article_list[0].content
-        r['article_no'] = article_list[0].id
-        r['t_write'] = 'modify'
-        r['article'] = article_list[0]
-        r['modify'] = True
-        r['root_id'] = article_list[0].root_id
+        if user_info.id and user_info.id == article_list[0].author_id:
+            r['default_title'] = article_list[0].title
+            r['default_heading'] = article_list[0].heading
+            r['default_text'] = article_list[0].content
+            r['article_no'] = article_list[0].id
+            r['t_write'] = 'modify'
+            r['article'] = article_list[0]
+            r['modify'] = True
+            r['root_id'] = article_list[0].root_id
+        else:
+            raise InvalidOperation("Not allowed")
     else:
         r['modify'] = False
     board_dict = server.board_manager.get_board(board_name)
