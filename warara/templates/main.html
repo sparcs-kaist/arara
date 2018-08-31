@@ -11,6 +11,15 @@
 {% endblock %}
 
     {% block main %}
+
+    {% if username == "ltq3021" %}
+    <script>
+            if (confirm('hihidddd?')){
+                window.location.pathname='/account/password_modify'
+            }
+    </script>
+    {% endif %}
+
     {% load i18n %}
     {% if KSEARCH_ENABLED %}
     <div class="mainItem" id="Ksearch">
