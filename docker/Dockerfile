@@ -5,13 +5,12 @@ FROM ubuntu:${ubuntu_version}
 RUN apt update
 
 # Package install
-RUN apt install libmysqlclient-dev thrift-compiler python2.7 python-pip -y
+RUN apt install libmysqlclient-dev thrift-compiler python2.7 python-pip python-setuptools -y
 
 # Code copy
 COPY . /usr/src/ara
 
 # Pip install
-RUN pip install markerlib && pip install -U setuptools
 # TODO(combacsa): specify necessary requirements here
 RUN pip install -r /usr/src/ara/requirements.txt
 
