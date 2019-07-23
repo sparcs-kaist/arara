@@ -152,8 +152,12 @@ class NotiManager(arara_manager.ARAraManager):
         # TODO: Pipelining
         user_id = self.engine.login_manager.get_user_id(session_key)
 
-        # EXPIRE TIME이 지난 것들을 삭제함
-        self.noti.zremrangebyscore(user_id, "-inf", time.time() - NOTI_EXPIRE_TIME)
+        # Avoid error when there is no redis server
+        try:
+            # EXPIRE TIME이 지난 것들을 삭제함
+            self.noti.zremrangebyscore(user_id, "-inf", time.time() - NOTI_EXPIRE_TIME)
+        except Exception:
+            return []
 
         noti = self.noti.zrevrange(user_id, offset, offset+length-1, withscores=True, score_cast_func=float)
 
