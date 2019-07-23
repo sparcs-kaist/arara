@@ -4,6 +4,7 @@ import crypt
 import time
 import string
 import random
+import bcrypt
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -26,7 +27,8 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     username = Column(Unicode(40), unique=True, index=True)
-    password = Column(Unicode(50))
+    password = Column(Unicode(80))
+    password_reset = Column(Boolean)
     nickname = Column(Unicode(40), index=True)
     email = Column(Unicode(60), unique=True, index=True)
     signature = Column(Unicode(1024))
@@ -63,6 +65,7 @@ class User(Base):
         @type capus: string
         '''
         self.username = smart_unicode(username)
+        self.password_reset = True
         self.set_password(password)
         self.nickname = smart_unicode(nickname)
         self.email = smart_unicode(email)
@@ -84,27 +87,34 @@ class User(Base):
         self.deleted = False
 
     @classmethod
-    def encrypt_password(cl, raw_password, salt):
+    def encrypt_password(cl, raw_password, salt, password_reset):
         '''
         @type raw_password: string
         @type salt: string
         '''
-        pw = crypt.crypt(raw_password, salt)
-        asc1 = pw[1:2]
-        asc2 = pw[3:4]
 
-        # XXX (combacsa): Temporary fix for strange pw values.
-        #                 Don't know why "TypeError" occurs.
-        i = ord('0') + ord('0')
-        try:
-            i = ord(asc1) + ord(asc2)
-        except TypeError:
-            pass
-        while True:
-           pw = crypt.crypt(pw, pw)
-           i += 1
-           if not(i % 13 != 0):
-               break
+        if password_reset == False:
+            pw = crypt.crypt(raw_password, salt)
+            asc1 = pw[1:2]
+            asc2 = pw[3:4]
+
+            # XXX (combacsa): Temporary fix for strange pw values.
+            #                 Don't know why "TypeError" occurs.
+            i = ord('0') + ord('0')
+            try:
+                i = ord(asc1) + ord(asc2)
+            except TypeError:
+                pass
+            while True:
+                pw = crypt.crypt(pw, pw)
+                i += 1
+                if not(i % 13 != 0):
+                    break
+            
+        else:
+            salt = bcrypt.gensalt()
+            raw_password = str(raw_password)
+            pw = bcrypt.hashpw(raw_password, salt)
 
         return pw
 
@@ -114,12 +124,13 @@ class User(Base):
         @rtype: string
         '''
         salt = ''.join(random.sample(SALT_SET, 2))
-        return self.encrypt_password(raw_password, salt)
+        return self.encrypt_password(raw_password, salt, self.password_reset)
 
     def set_password(self, password):
         '''
         @type password: string
         '''
+        self.password_reset = True
         self.password = smart_unicode(self.crypt_password(password))
 
     def compare_password(self, password):
@@ -127,11 +138,19 @@ class User(Base):
         @type password: string
         @rtype: bool
         '''
-        hash_from_user = self.encrypt_password(password, self.password)
-        hash_from_db = self.password
-        hash_from_user = smart_unicode(hash_from_user.strip())
-        hash_from_db = smart_unicode(hash_from_db.strip())
-        return hash_from_user == hash_from_db
+        if self.password_reset == False:
+            hash_from_user = self.encrypt_password(password, self.password, self.password_reset)
+            hash_from_db = self.password
+            hash_from_user = smart_unicode(hash_from_user.strip())
+            hash_from_db = smart_unicode(hash_from_db.strip())
+
+            return hash_from_user == hash_from_db
+
+        else:
+            pwd_from_user = str(password)
+            pwd_from_db = str(self.password)
+
+            return bcrypt.checkpw(pwd_from_user, pwd_from_db)
 
     def __repr__(self):
         return "<User('%s', '%s')>" % (self.username, self.nickname)

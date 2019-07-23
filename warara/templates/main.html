@@ -12,9 +12,9 @@
 
     {% block main %}
 
-    {% if username == "ltq3021" %}
+    {% if password_reset_required %}
     <script>
-            if (confirm('hihidddd?')){
+            if (confirm('아라 비밀번호 보안 업데이트\n\n기존에 사용하던 비밀번호를 변경해야 합니다.\n자세한 사항은 공지를 참조해주시길 바랍니다.\n\n[확인]을 선택하면 비밀번호 변경 화면으로 이동합니다.\n[취소]를 선택하면 아라로 돌아갑니다.')){
                 window.location.pathname='/account/password_modify'
             }
     </script>

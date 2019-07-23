@@ -68,6 +68,7 @@ struct UserInformation {
     12: i32 layout,
     13: i32 id,
     14: i32 listing_mode,
+    15: bool password_reset,
 }
 
 struct UserPasswordInfo {

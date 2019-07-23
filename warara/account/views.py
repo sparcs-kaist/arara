@@ -164,6 +164,7 @@ def login(request):
     request.session["arara_session_key"] = session_key
     request.session["arara_username"] = username
     request.session["arara_userid"] = User_Info.id
+    request.session["arara_user_password_reset"] = User_Info.password_reset
 
     # request.session.set_expiry(3600)   NO use with SESSION_EXPIRE_AT_BROWSER_CLOSE
     if current_page.find('register')+1:

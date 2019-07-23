@@ -25,7 +25,8 @@ def check_logged_in(request):
         else:
             r['arara_session'] = sess
             r['logged_in'] = True
-            r['username'] = request.session.get('arara_username', 0);
+            r['username'] = request.session.get('arara_username', 0)
+            r['password_reset_required'] = not request.session.get('arara_user_password_reset', False)
     else:
         sess = ""
         r['logged_in'] = False
