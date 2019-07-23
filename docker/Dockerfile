@@ -11,6 +11,7 @@ RUN apt install libmysqlclient-dev thrift-compiler python2.7 python-pip -y
 COPY . /usr/src/ara
 
 # Pip install
+RUN pip install markerlib && pip install -U setuptools
 # TODO(combacsa): specify necessary requirements here
 RUN pip install -r /usr/src/ara/requirements.txt
 

@@ -8,6 +8,7 @@ before_install:
   - sudo apt-get install -qq thrift-compiler
   - which thrift
   - pip install markerlib
+  - pip install -U setuptools
 before_script:
   - sudo sh -c "echo \"Asia/Seoul\" > /etc/timezone"
   - export TZ=Asia/Seoul
