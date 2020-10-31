@@ -28,6 +28,25 @@
         <script type="text/javascript" src="/media/js/base.js"></script>
         {% block script %}
         {% endblock %}
+        <script type="text/javascript">
+            "use strict";
+
+            var setCookie = function(name, value, day) {
+                var date = new Date();
+                date.setTime(date.getTime() + day * 60 * 60 * 24 * 1000);
+                document.cookie = name + '=' + value + ';expires=' + date.toUTCString() + ';path=/';
+            };
+
+            var getCookie = function(name) {
+                var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+                return value? value[2] : null;
+            };
+
+            if(!getCookie('redirected_to_newara')) {
+                setCookie('redirected_to_newara', true, 365);
+                window.location.href = 'https://newara.sparcs.org/landing';
+            }
+        </script>
         {% endcompress %}
     </head>
 
