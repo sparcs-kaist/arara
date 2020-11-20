@@ -1,8 +1,7 @@
 arara
 =====
 
-이 저장소는 http://ara.kaist.ac.kr/ 의 서비스에 사용되는 Python BBS Application에 대한 저장소입니다.
-자세한 히스토리와 위키를 보려면 https://project.sparcs.org/arara/wiki/ 을 참고하시기 바랍니다.
+이 저장소는 과거 http://ara.kaist.ac.kr/ 의 서비스에 사용된 Python BBS Application에 대한 저장소입니다.
 
 기타 문의는
 
@@ -69,26 +68,19 @@ ARARA 엔진은 django로 이루어진 프론트엔드와 python backend로 구�
 
 현재 아라라 개발팀에서는 두 번째 방법을 권장하고 있으며, 이 문서에 있는 모든
 내용은 두 번째 방법을 기준으로 쓰여진 것입니다. 실제 http://ara.kaist.ac.kr/ 도
-이 방법으로 서비스되고 있습니다.
+이 방법으로 서비스되어 왔습니다.
 
 첫 번째 방법을 사용하고자 할 경우 etc/warara_settings에서 연결 방법을 DIRECT 대신
-THRIFT로 두면 됩니다. http://project.sparcs.org/arara/ 에
-관련 dependency와 세팅 방법이 잘 소개되어 있으니 참고하시기 바랍니다.
+THRIFT로 두면 됩니다.
 
 Links
 -----
 
 <dl>
-  <dt>ARA (Production)</dt>
-  <dd>http://ara.kaist.ac.kr/</dd>
-  <dt>ARAra Project wiki</dt>
-  <dd>http://project.sparcs.org/arara/</dd>
   <dt>Continuous Integration(Travis CI)</dt>
   <dd><a href="http://travis-ci.org/sparcs-kaist/arara/">http://travis-ci.org/sparcs-kaist/arara/ 
   <br/> <img src="https://secure.travis-ci.org/sparcs-kaist/arara.png?branch=master"></a></dd>
   <dt>SPARCS, developers' group in KAIST (Korea Advanced Institute of Science and Technology)</dt>
   <dd>http://sparcs.org</dd>
-  <dt>IRC contact</dt>
-  <dd>#arara @irc.ozinger.org</dd>
 </dl>
      
